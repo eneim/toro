@@ -39,9 +39,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
-
 import im.ene.lab.toro.R;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -68,8 +66,7 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-public class TextureVideoView
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) public class TextureVideoView
     extends TextureView implements MediaPlayerControl {
   // all possible internal states
   private static final int STATE_ERROR = -1;
@@ -259,13 +256,13 @@ public class TextureVideoView
   };
   TextureView.SurfaceTextureListener mSurfaceTextureListener = new SurfaceTextureListener() {
     @Override public void onSurfaceTextureAvailable(final SurfaceTexture surface, final int width,
-                                                    final int height) {
+        final int height) {
       mSurface = new Surface(surface);
       openVideo();
     }
 
     @Override public void onSurfaceTextureSizeChanged(final SurfaceTexture surface, final int width,
-                                                      final int height) {
+        final int height) {
       boolean isValidState = (mTargetState == STATE_PLAYING);
       boolean hasValidSize = (width > 0 && height > 0);
       if (mMediaPlayer != null && isValidState && hasValidSize) {
@@ -579,12 +576,12 @@ public class TextureVideoView
   /**
    * Sets video URI using specific headers.
    *
-   * @param uri     the URI of the video.
+   * @param uri the URI of the video.
    * @param headers the headers for the URI request.
-   *                Note that the cross domain redirection is allowed by default, but that can be
-   *                changed with key/value pairs through the headers parameter with
-   *                "android-allow-cross-domain-redirect" as the key and "0" or "1" as the value
-   *                to disallow or allow cross domain redirection.
+   * Note that the cross domain redirection is allowed by default, but that can be
+   * changed with key/value pairs through the headers parameter with
+   * "android-allow-cross-domain-redirect" as the key and "0" or "1" as the value
+   * to disallow or allow cross domain redirection.
    */
   public void setVideoURI(Uri uri, Map<String, String> headers) {
     mUri = uri;
