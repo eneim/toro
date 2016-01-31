@@ -47,13 +47,11 @@ import java.util.WeakHashMap;
 public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   private static final Object LOCK = new Object();
-
+  // Singleton
+  private static Toro sInstance = new Toro();
   // It requires client to detach Activity/unregister View to prevent Memory leak
   private WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
   private ArrayList<ToroManager> mManagers = new ArrayList<>();
-
-  // Singleton
-  private static Toro sInstance = new Toro();
 
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
@@ -137,42 +135,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
-  }
-
-  @Override public void onActivityStarted(Activity activity) {
-
-  }
-
-  @Override public void onActivityResumed(Activity activity) {
-    for (ToroManager manager : mManagers) {
-      if (manager.getPlayer() != null) {
-        manager.getPlayer().onActivityResumed();
-      }
-    }
-  }
-
-  @Override public void onActivityPaused(Activity activity) {
-    for (ToroManager manager : mManagers) {
-      if (manager.getPlayer() != null) {
-        manager.getPlayer().onActivityPaused();
-      }
-    }
-  }
-
-  @Override public void onActivityStopped(Activity activity) {
-
-  }
-
-  @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-  }
-
-  @Override public void onActivityDestroyed(Activity activity) {
-
-  }
-
   static void onAttachedToParent(ToroPlayer player, View container, ViewParent parent) {
     for (View view : sInstance.mEntries.keySet()) {
       if (view == parent) {
@@ -242,5 +204,41 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         break;
       }
     }
+  }
+
+  @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+  }
+
+  @Override public void onActivityStarted(Activity activity) {
+
+  }
+
+  @Override public void onActivityResumed(Activity activity) {
+    for (ToroManager manager : mManagers) {
+      if (manager.getPlayer() != null) {
+        manager.getPlayer().onActivityResumed();
+      }
+    }
+  }
+
+  @Override public void onActivityPaused(Activity activity) {
+    for (ToroManager manager : mManagers) {
+      if (manager.getPlayer() != null) {
+        manager.getPlayer().onActivityPaused();
+      }
+    }
+  }
+
+  @Override public void onActivityStopped(Activity activity) {
+
+  }
+
+  @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+  }
+
+  @Override public void onActivityDestroyed(Activity activity) {
+
   }
 }
