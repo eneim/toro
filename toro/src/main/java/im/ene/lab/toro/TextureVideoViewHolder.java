@@ -16,8 +16,8 @@
 
 package im.ene.lab.toro;
 
+import android.graphics.Rect;
 import android.view.View;
-
 import im.ene.lab.toro.widget.TextureVideoView;
 
 /**
@@ -121,4 +121,7 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
+  @Override public boolean isVideoFullyVisible(Rect viewRect) {
+    return false;
+  }
 }

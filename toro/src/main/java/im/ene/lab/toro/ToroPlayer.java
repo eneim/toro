@@ -28,10 +28,18 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
 
   /**
    * @param parentRect parent rect, get from {@link android.view.View#getLocalVisibleRect(Rect)}
-   * @param childRect  child rect,  get from {@link android.view.View#getLocalVisibleRect(Rect)}
+   * @param childRect child rect,  get from {@link android.view.View#getLocalVisibleRect(Rect)}
    * @return true if current Video is eager to play its video, or false otherwise
    */
   boolean wantsToPlay(@Nullable Rect parentRect, @NonNull Rect childRect);
+
+  /**
+   * See if current Player's view is fully visible or not
+   *
+   * @param viewRect largest bound of current Player.
+   * @return true if Player's video playable view is fully visible, false otherwise
+   */
+  boolean isVideoFullyVisible(Rect viewRect);
 
   /**
    * Support save/restore Video state (last played/paused position)
@@ -44,6 +52,19 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-depended Id
    */
   @Nullable Long getVideoId();
+
+  /**
+   * Position in Adapter
+   */
+  int getPlayerPosition();
+
+  /**
+   * To support Playing order/Playing policy, client must provide a comparison between Players
+   *
+   * @param other Another Player to compare with
+   * @return compare result between 2 Players
+   */
+  int compare(ToroPlayer other);
 
   /**
    * Host Activity paused

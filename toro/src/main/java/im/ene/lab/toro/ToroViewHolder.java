@@ -18,14 +18,14 @@ package im.ene.lab.toro;
 
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
+import android.util.Log;
 import android.view.View;
 
 /**
  * Created by eneim on 1/31/16.
  */
 abstract class ToroViewHolder extends BaseAdapter.ViewHolder
-    implements ToroPlayer,
-    MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+    implements ToroPlayer, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener {
 
   private final ToroPlayerHelper mHelper;
@@ -35,8 +35,7 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
     mHelper = new ToroPlayerHelper(this);
   }
 
-  @CallSuper
-  @Override public void onAttachedToParent() {
+  @CallSuper @Override public void onAttachedToParent() {
     mHelper.onAttachedToParent(itemView, itemView.getParent());
   }
 
@@ -44,13 +43,27 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
     mHelper.onDetachedFromParent(itemView, itemView.getParent());
   }
 
-  @CallSuper
-  @Override public void onPrepared(MediaPlayer mp) {
+  @CallSuper @Override public void onPrepared(MediaPlayer mp) {
     mHelper.onPrepared(itemView, mp);
   }
 
-  @CallSuper
-  @Override public void onCompletion(MediaPlayer mp) {
+  @CallSuper @Override public void onCompletion(MediaPlayer mp) {
     mHelper.onCompletion(mp);
+  }
+
+  private static final String TAG = "ToroViewHolder";
+
+  @Override public int compare(ToroPlayer other) {
+    if (!(other instanceof ToroViewHolder)) {
+      throw new IllegalStateException("Other player must be a child of ToroViewHolder");
+    }
+
+    Log.d(TAG, "compare() called with: " + "other = [" +
+        ((ToroViewHolder) other).getLayoutPosition() + "]" + " [" + getLayoutPosition() + "]");
+    return getLayoutPosition() - ((ToroViewHolder) other).getLayoutPosition();
+  }
+
+  @Override public int getPlayerPosition() {
+    return getAdapterPosition();
   }
 }

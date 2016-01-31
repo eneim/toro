@@ -29,10 +29,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewParent;
-
 import im.ene.lab.toro.widget.ToroListView;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.WeakHashMap;
 
 /**
@@ -43,12 +44,15 @@ import java.util.WeakHashMap;
  *
  * @<code> </code>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public final class Toro implements Application.ActivityLifecycleCallbacks {
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) public final class Toro
+    implements Application.ActivityLifecycleCallbacks {
 
   private static final Object LOCK = new Object();
+
   // Singleton
-  private static Toro sInstance = new Toro();
+  static Toro sInstance = new Toro();
+
+  ToroPolicy mPolicy = Policies.FIRST_VISIBLE;  // Default policy
   // It requires client to detach Activity/unregister View to prevent Memory leak
   private WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
   private ArrayList<ToroManager> mManagers = new ArrayList<>();
@@ -68,6 +72,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (application != null) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
     }
+  }
+
+  public static void policy(ToroPolicy policy) {
+    sInstance.mPolicy = policy;
   }
 
   public static void register(View view) {
@@ -170,8 +178,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         if (scrollHelper != null &&
             sInstance.mManagers.contains(scrollHelper.getManager()) &&
             player.equals(scrollHelper.getManager().getPlayer())) {
-          scrollHelper.getManager().saveVideoState(player.getVideoId(),
-              player.getCurrentPosition(), player.getDuration());
+          scrollHelper.getManager()
+              .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
+                  player.getDuration());
         }
       }
     }
@@ -186,8 +195,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  static void onPrepared(ToroPlayer player, View container,
-                         ViewParent parent, MediaPlayer mediaPlayer) {
+  static void onPrepared(ToroPlayer player, View container, ViewParent parent,
+      MediaPlayer mediaPlayer) {
     for (ToroManager manager : sInstance.mManagers) {
       if (player.equals(manager.getPlayer())) {
         manager.restoreVideoState(player, player.getVideoId());
@@ -240,5 +249,72 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   @Override public void onActivityDestroyed(Activity activity) {
 
+  }
+
+  static final class Policies {
+
+    static ToroPolicy FIRST_VISIBLE = new ToroPolicy() {
+      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+        if (candidates == null || candidates.size() < 1) {
+          return null;
+        }
+
+        Collections.sort(candidates, new Comparator<ToroPlayer>() {
+          @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
+            return lhs.compare(rhs);
+          }
+        });
+
+        return candidates.get(0);
+      }
+
+      @Override public boolean requireCompletelyVisible() {
+        return false;
+      }
+    };
+
+    static ToroPolicy LAST_VISIBLE = new ToroPolicy() {
+      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+        if (candidates == null || candidates.size() < 1) {
+          return null;
+        }
+
+        Collections.sort(candidates, new Comparator<ToroPlayer>() {
+          @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
+            return rhs.compare(lhs);
+          }
+        });
+
+        return candidates.get(0);
+      }
+
+      @Override public boolean requireCompletelyVisible() {
+        return false;
+      }
+    };
+
+    // Each of this policy's candidate must hold a completely visible Video playable view.
+    // Note that it is different to RecyclerView's completely Visible child
+    static ToroPolicy FIRST_COMPLETELY_VISIBLE = new ToroPolicy() {
+      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+        return FIRST_VISIBLE.getPlayer(candidates);
+      }
+
+      @Override public boolean requireCompletelyVisible() {
+        return true;
+      }
+    };
+
+    // Each of this policy's candidate must hold a completely visible Video playable view.
+    // Note that it is different to RecyclerView's completely Visible child
+    static ToroPolicy LAST_COMPLETELY_VISIBLE = new ToroPolicy() {
+      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+        return LAST_VISIBLE.getPlayer(candidates);
+      }
+
+      @Override public boolean requireCompletelyVisible() {
+        return true;
+      }
+    };
   }
 }
