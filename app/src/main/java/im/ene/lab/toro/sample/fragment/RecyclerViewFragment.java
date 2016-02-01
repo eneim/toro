@@ -39,7 +39,7 @@ public abstract class RecyclerViewFragment extends Fragment
   protected RecyclerView mRecyclerView;
 
   private static final ToroPolicy[] mPolicies = {
-      Toro.Policies.MOST_VISIBLE_TOP_DOWN, Toro.Policies.MOST_VISIBLE_KEEP_LAST
+      Toro.Policies.MOST_VISIBLE_TOP_DOWN, Toro.Policies.MOST_VISIBLE_TOP_DOWN_KEEP_LAST
   };
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -314,7 +314,7 @@ import java.util.WeakHashMap;
      * ToroPlayer#visibleAreaOffset()}). In case there are more than one item, chose the first item
      * on the top
      */
-    public static ToroPolicy MOST_VISIBLE_TOP_DOWN = new ToroPolicy() {
+    public static final ToroPolicy MOST_VISIBLE_TOP_DOWN = new ToroPolicy() {
       @Override public String getDescription() {
         return "Most visible item from top";
       }
@@ -352,7 +352,7 @@ import java.util.WeakHashMap;
      * on the top. But if current player is still playable, but not staying on the top, we still
      * keep it.
      */
-    public static ToroPolicy MOST_VISIBLE_KEEP_LAST = new ToroPolicy() {
+    public static final ToroPolicy MOST_VISIBLE_TOP_DOWN_KEEP_LAST = new ToroPolicy() {
       @Override public String getDescription() {
         return "Most visible item in list of candidates, chosen from top to bottom. "
             + "But if current player is not on the top but still playable, keep it";
@@ -370,6 +370,54 @@ import java.util.WeakHashMap;
           }
         });
 
+        return candidates.get(0);
+      }
+
+      @Override public boolean requireCompletelyVisible() {
+        return false;
+      }
+    };
+
+    /**
+     * Scan top down of candidates, chose the first playable Video
+     */
+    public static final ToroPolicy FIRST_PLAYABLE_TOP_DOWN = new ToroPolicy() {
+      @Override public String getDescription() {
+        return "Scan top down of candidates, chose the first playable Video";
+      }
+
+      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+        if (candidates == null || candidates.size() < 1) {
+          return null;
+        }
+
+        // 1. Sort candidates by the order of player
+        Collections.sort(candidates, new Comparator<ToroPlayer>() {
+          @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
+            return lhs.getPlayerPosition() - rhs.getPlayerPosition();
+          }
+        });
+
+        return candidates.get(0);
+      }
+
+      @Override public boolean requireCompletelyVisible() {
+        return false;
+      }
+    };
+
+    /**
+     * Scan top down of candidates, chose the first playable Video. But if current player is still
+     * playable, but not on the top, we keep using it
+     */
+    public static final ToroPolicy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroPolicy() {
+
+      @Override public String getDescription() {
+        return "Scan top down of candidates, chose the first playable Video. But if current player "
+            + "is still playable, but not on the top, we keep using it";
+      }
+
+      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
         return candidates.get(0);
       }
 
