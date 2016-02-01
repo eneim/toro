@@ -31,12 +31,7 @@ public class VideoSource {
 
   private static final String MP4_2 = "http://www.gomplayer.jp/img/sample/mp4_mpeg4_aac.mp4";
 
-  // private static final String HLS =
-  // "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
-
-  private static final String HLS =
-      "https://s3-ap-northeast-1.amazonaws.com/life-app-dev/converted_videos"
-          + "/50f3673a-1892-4e68-a7d6-241df4cfa706/index.m3u8";
+  private static final String HLS = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
 
   // May not support
   private static final String MOV =
