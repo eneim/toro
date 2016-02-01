@@ -17,6 +17,7 @@
 package im.ene.lab.toro;
 
 import android.graphics.Rect;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.MediaController;
@@ -34,12 +35,9 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
   boolean wantsToPlay(@Nullable Rect parentRect, @NonNull Rect childRect);
 
   /**
-   * See if current Player's view is fully visible or not
-   *
-   * @param viewRect largest bound of current Player.
-   * @return true if Player's video playable view is fully visible, false otherwise
+   * @return value from 0.0 ~ 1.0 the visible offset of current Video
    */
-  boolean isVideoFullyVisible(Rect viewRect);
+  @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();
 
   /**
    * Support save/restore Video state (last played/paused position)

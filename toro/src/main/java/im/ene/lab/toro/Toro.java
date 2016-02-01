@@ -44,29 +44,48 @@ import java.util.WeakHashMap;
  *
  * @<code> </code>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public final class Toro implements Application.ActivityLifecycleCallbacks {
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) public final class Toro
+    implements Application.ActivityLifecycleCallbacks {
 
   private static final Object LOCK = new Object();
 
   // Singleton
-  static Toro sInstance = new Toro();
+  static Toro sInstance;
 
-  ToroPolicy mPolicy = Policies.FIRST_VISIBLE;  // Default policy
+  ToroPolicy mPolicy = Policies.MOST_VISIBLE_TOP_DOWN;  // Default policy
   // It requires client to detach Activity/unregister View to prevent Memory leak
   WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
   ArrayList<ToroManager> mManagers = new ArrayList<>();
 
+  /**
+   * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
+   * visibility: free necessary resource if User doesn't need it anymore
+   *
+   * @param activity the Activity to which Toro gonna attach to
+   */
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
   }
 
+  /**
+   * Same purpose to {@link Toro#attach(Activity)}, but support overall the Application
+   */
   public static void init(Application application) {
+    if (sInstance == null) {
+      synchronized (LOCK) {
+        sInstance = new Toro();
+      }
+    }
+
     if (application != null) {
       application.registerActivityLifecycleCallbacks(sInstance);
     }
   }
 
+  /**
+   * Carefully detach current Activity from Toro. Should be coupled with {@link
+   * Toro#attach(Activity)}
+   */
   public static void detach(Activity activity) {
     Application application = activity.getApplication();
     if (application != null) {
@@ -74,11 +93,34 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  public static void policy(@NonNull ToroPolicy policy) {
+  /**
+   * Support custom playing policy
+   *
+   * @param policy requested policy from client
+   */
+  public static void setPolicy(@NonNull ToroPolicy policy) {
     sInstance.mPolicy = policy;
   }
 
+  public static ToroPolicy getPolicy() {
+    return sInstance.mPolicy;
+  }
+
+  /**
+   * Register a View (currently, must be one of RecyclerView or ListView) to listen to its Videos
+   *
+   * @param view which will be registered
+   */
   public static void register(View view) {
+    if (sInstance == null) {
+      throw new IllegalStateException(
+          "Toro has not been attached to your Activity or you Application. Please refer the doc");
+    }
+
+    if (view == null) {
+      throw new NullPointerException("Registering View must not be null");
+    }
+
     // Remove old images
     if (sInstance.mEntries.containsKey(view)) {
       synchronized (LOCK) {
@@ -125,7 +167,21 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
+  /**
+   * Unregister a registered View
+   *
+   * @param view which will be unregistered
+   */
   public static void unregister(View view) {
+    if (sInstance == null) {
+      throw new IllegalStateException(
+          "Toro has not been attached to your Activity or you Application. Please refer the doc");
+    }
+
+    if (view == null) {
+      throw new NullPointerException("Un-registering View must not be null");
+    }
+
     synchronized (LOCK) {
       // Obtain listener which will be removed
       ToroScrollHelper object = sInstance.mEntries.remove(view);
@@ -251,17 +307,34 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   }
 
-  static final class Policies {
+  public static final class Policies {
 
-    static ToroPolicy FIRST_VISIBLE = new ToroPolicy() {
+    /**
+     * Among all playable Videos, select the most visible item (Max {@link
+     * ToroPlayer#visibleAreaOffset()}). In case there are more than one item, chose the first item
+     * on the top
+     */
+    public static ToroPolicy MOST_VISIBLE_TOP_DOWN = new ToroPolicy() {
+      @Override public String getDescription() {
+        return "Most visible item from top";
+      }
+
       @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
 
+        // 1. Sort candidates by the order of player
         Collections.sort(candidates, new Comparator<ToroPlayer>() {
           @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
-            return lhs.compare(rhs);
+            return lhs.getPlayerPosition() - rhs.getPlayerPosition();
+          }
+        });
+
+        // 2. Sort candidates by the visible offset
+        Collections.sort(candidates, new Comparator<ToroPlayer>() {
+          @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
+            return Float.compare(rhs.visibleAreaOffset(), lhs.visibleAreaOffset());
           }
         });
 
@@ -273,15 +346,27 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
     };
 
-    static ToroPolicy LAST_VISIBLE = new ToroPolicy() {
+    /**
+     * Among all playable Videos, select the most visible item (Max {@link
+     * ToroPlayer#visibleAreaOffset()}). In case there are more than one item, chose the first item
+     * on the top. But if current player is still playable, but not staying on the top, we still
+     * keep it.
+     */
+    public static ToroPolicy MOST_VISIBLE_KEEP_LAST = new ToroPolicy() {
+      @Override public String getDescription() {
+        return "Most visible item in list of candidates, chosen from top to bottom. "
+            + "But if current player is not on the top but still playable, keep it";
+      }
+
       @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
 
+        // Sort candidates by the visible offset
         Collections.sort(candidates, new Comparator<ToroPlayer>() {
           @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
-            return rhs.compare(lhs);
+            return Float.compare(rhs.visibleAreaOffset(), lhs.visibleAreaOffset());
           }
         });
 
@@ -290,30 +375,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
       @Override public boolean requireCompletelyVisible() {
         return false;
-      }
-    };
-
-    // Each of this policy's candidate must hold a completely visible Video playable view.
-    // Note that it is different to RecyclerView's completely Visible child
-    static ToroPolicy FIRST_COMPLETELY_VISIBLE = new ToroPolicy() {
-      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
-        return FIRST_VISIBLE.getPlayer(candidates);
-      }
-
-      @Override public boolean requireCompletelyVisible() {
-        return true;
-      }
-    };
-
-    // Each of this policy's candidate must hold a completely visible Video playable view.
-    // Note that it is different to RecyclerView's completely Visible child
-    static ToroPolicy LAST_COMPLETELY_VISIBLE = new ToroPolicy() {
-      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
-        return LAST_VISIBLE.getPlayer(candidates);
-      }
-
-      @Override public boolean requireCompletelyVisible() {
-        return true;
       }
     };
   }

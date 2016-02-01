@@ -119,6 +119,14 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
     return visibleHeight > itemView.getHeight() * 0.7;
   }
 
+  @Override public float visibleAreaOffset() {
+    Rect videoRect = new Rect();
+    mVideoView.getLocalVisibleRect(videoRect);
+    float result =
+        mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
+    return result;
+  }
+
   @Nullable @Override public Long getVideoId() {
     return (long) getAdapterPosition();
   }
@@ -192,14 +200,5 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   @Override public void onSeekComplete(MediaPlayer mp) {
     Log.i(TAG, "onSeekComplete: ");
     // mCurrentState = State.STATE_IDLE;
-  }
-
-  private enum State {
-
-    STATE_UNKNOWN,
-
-    STATE_SEEKING,
-
-    STATE_IDLE
   }
 }

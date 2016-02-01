@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample;
+package im.ene.lab.toro.sample.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;

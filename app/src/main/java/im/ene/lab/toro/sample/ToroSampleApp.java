@@ -14,32 +14,18 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.sample;
 
-import android.graphics.Rect;
-import java.util.List;
+import android.app.Application;
+import im.ene.lab.toro.Toro;
 
 /**
  * Created by eneim on 2/1/16.
  */
-public interface ToroPolicy {
+public class ToroSampleApp extends Application {
 
-  /**
-   * @return Name of current Policy
-   * @hide
-   */
-  String getDescription();
-
-  /**
-   * Each item of #candidates returns true for {@link ToroPlayer#wantsToPlay(Rect, Rect)}. A Policy
-   * gives the best fit Player to start playing
-   */
-  ToroPlayer getPlayer(List<ToroPlayer> candidates);
-
-  /**
-   * Indicate that this Policy requires a ToroPlayer's video view is fully visible or not
-   *
-   * @return true if this Policy requires a fully visible Video playable view, false otherwise.
-   */
-  boolean requireCompletelyVisible();
+  @Override public void onCreate() {
+    super.onCreate();
+    Toro.init(this);
+  }
 }
