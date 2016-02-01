@@ -27,7 +27,6 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
     implements ToroPlayer, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener {
 
-  private static final String TAG = "ToroViewHolder";
   private final ToroViewHelper mHelper;
 
   public ToroViewHolder(View itemView) {
@@ -39,7 +38,7 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
     mHelper.onAttachedToParent(this, itemView, itemView.getParent());
   }
 
-  @Override public void onDetachedFromParent() {
+  @CallSuper @Override public void onDetachedFromParent() {
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
@@ -49,6 +48,18 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
 
   @CallSuper @Override public void onCompletion(MediaPlayer mp) {
     Toro.onCompletion(this, mp);
+  }
+
+  @CallSuper @Override public boolean onError(MediaPlayer mp, int what, int extra) {
+    return Toro.onError(this, mp, what, extra);
+  }
+
+  @CallSuper @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
+    return Toro.onInfo(this, mp, what, extra);
+  }
+
+  @CallSuper @Override public void onSeekComplete(MediaPlayer mp) {
+    Toro.onSeekComplete(this, mp);
   }
 
   @Override public int getPlayerPosition() {

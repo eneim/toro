@@ -199,49 +199,6 @@ import java.util.WeakHashMap;
     }
   }
 
-  static void onAttachedToParent(ToroPlayer player, View container, ViewParent parent) {
-    for (View view : sInstance.mEntries.keySet()) {
-      if (view == parent) {
-        ToroScrollHelper scrollHelper = sInstance.mEntries.get(view);
-        if (scrollHelper != null &&
-            sInstance.mManagers.contains(scrollHelper.getManager()) &&
-            scrollHelper.getManager().getPlayer() == null) {
-          scrollHelper.getManager().setPlayer(player);
-          scrollHelper.getManager().restoreVideoState(player, player.getVideoId());
-          // Check playing state
-          Rect containerRect = new Rect();
-          Rect parentRect = null;
-          container.getLocalVisibleRect(containerRect);
-          if (parent != null && parent instanceof View) {
-            parentRect = new Rect();
-            ((View) parent).getLocalVisibleRect(parentRect);
-          }
-
-          if (player.wantsToPlay(parentRect, containerRect)) {
-            scrollHelper.getManager().startVideo(player);
-          }
-        }
-      }
-    }
-  }
-
-  static void onDetachedFromParent(ToroPlayer player, View container, ViewParent parent) {
-    for (View view : sInstance.mEntries.keySet()) {
-      // Find ToroManager for current ViewParent
-      if (view == parent) {
-        ToroScrollHelper scrollHelper = sInstance.mEntries.get(view);
-        // Manually save Video state
-        if (scrollHelper != null &&
-            sInstance.mManagers.contains(scrollHelper.getManager()) &&
-            player.equals(scrollHelper.getManager().getPlayer())) {
-          scrollHelper.getManager()
-              .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
-                  player.getDuration());
-        }
-      }
-    }
-  }
-
   static void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
     for (ToroManager manager : sInstance.mManagers) {
       if (player.equals(manager.getPlayer())) {
@@ -269,6 +226,18 @@ import java.util.WeakHashMap;
         break;
       }
     }
+  }
+
+  static boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    return false;
+  }
+
+  static boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    return false;
+  }
+
+  static void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
+
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

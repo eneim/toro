@@ -17,7 +17,6 @@
 package im.ene.lab.toro.sample.viewholder;
 
 import android.graphics.Rect;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -48,9 +47,6 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
 
   private Handler mHandler = new Handler(this);
   private boolean mIsVideoPathSet = false;
-  // private State mCurrentState = State.STATE_UNKNOWN;
-
-  private SimpleVideoObject mItem;
 
   public VideoViewHolder(View itemView) {
     super(itemView);
@@ -65,7 +61,6 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
       throw new IllegalStateException("Unexpected object: " + item.toString());
     }
 
-    mItem = (SimpleVideoObject) item;
     Log.d(TAG, "bind() called with: " + "item = [" + item + "]");
     // mCurrentState = State.STATE_IDLE;
     mIsVideoPathSet = false;
@@ -81,37 +76,9 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
     mHandler.sendEmptyMessageDelayed(MESSAGE_PLAYER_PAUSE, MESSAGE_DELAY);
   }
 
-  @Override public void onAttachedToParent() {
-    super.onAttachedToParent();
-  }
-
-  @Override public void onDetachedFromParent() {
-    super.onDetachedFromParent();
-  }
-
-  @Override public int getDuration() {
-    return mVideoView == null ? 0 : mVideoView.getDuration();
-  }
-
-  @Override public int getCurrentPosition() {
-    return mVideoView == null ? 0 : mVideoView.getCurrentPosition();
-  }
-
   @Override public void seekTo(int pos) {
     // mCurrentState = State.STATE_SEEKING;
     mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, pos, 0), MESSAGE_DELAY);
-  }
-
-  @Override public boolean isPlaying() {
-    return mVideoView != null && mVideoView.isPlaying();
-  }
-
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
-  }
-
-  @Override public void onCompletion(MediaPlayer mp) {
-    super.onCompletion(mp);
   }
 
   @Override public boolean wantsToPlay(Rect parentRect, @NonNull Rect childRect) {
@@ -122,9 +89,7 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   @Override public float visibleAreaOffset() {
     Rect videoRect = new Rect();
     mVideoView.getLocalVisibleRect(videoRect);
-    float result =
-        mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
-    return result;
+    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
   }
 
   @Nullable @Override public Long getVideoId() {
@@ -145,14 +110,11 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   @Override public boolean handleMessage(Message msg) {
     switch (msg.what) {
       case MESSAGE_PLAYER_START:
-        Log.i(TAG, "MESSAGE_START called with: " + "msg = [" + msg + "]");
         if (mVideoView != null) {
           Rect outRect = new Rect();
           Rect videoRect = new Rect();
           itemView.getLocalVisibleRect(outRect);
           mVideoView.getGlobalVisibleRect(videoRect);
-
-          Log.i(TAG, "onPrepared: " + outRect + " | " + videoRect);
           mVideoView.start();
         } else {
           // View is unavailable, re-send the message to wait for it
@@ -177,28 +139,5 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
       default:
         return false;
     }
-  }
-
-  @Override public boolean onError(MediaPlayer mp, int what, int extra) {
-    Log.d(TAG, "onError() called with: "
-        + "mp = ["
-        + mp
-        + "], what = ["
-        + what
-        + "], extra = ["
-        + extra
-        + "]");
-    return false;
-  }
-
-  @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
-    Log.d(TAG, "onInfo() called with: " + "mp = [" + mp + "], what = [" + what + "], extra = [" +
-        extra + "]");
-    return false;
-  }
-
-  @Override public void onSeekComplete(MediaPlayer mp) {
-    Log.i(TAG, "onSeekComplete: ");
-    // mCurrentState = State.STATE_IDLE;
   }
 }
