@@ -30,6 +30,7 @@ dependencies {
   testCompile 'junit:junit:4.12'
   compile 'com.android.support:appcompat-v7:23.1.1'
   compile 'com.android.support:recyclerview-v7:23.1.1'
+  compile 'com.devbrackets.android:exomedia:2.5.2'
 }
 
 // build a jar with source files
