@@ -24,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-
 import im.ene.lab.toro.TextureVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -100,9 +99,7 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
 
   @Override public void seekTo(int pos) {
     // mCurrentState = State.STATE_SEEKING;
-    mHandler.sendMessageDelayed(
-        mHandler.obtainMessage(MESSAGE_SEEK, pos, 0), MESSAGE_DELAY
-    );
+    mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, pos, 0), MESSAGE_DELAY);
   }
 
   @Override public boolean isPlaying() {
@@ -120,6 +117,14 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   @Override public boolean wantsToPlay(Rect parentRect, @NonNull Rect childRect) {
     int visibleHeight = childRect.bottom - childRect.top;
     return visibleHeight > itemView.getHeight() * 0.7;
+  }
+
+  @Override public float visibleAreaOffset() {
+    Rect videoRect = new Rect();
+    mVideoView.getLocalVisibleRect(videoRect);
+    float result =
+        mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
+    return result;
   }
 
   @Nullable @Override public Long getVideoId() {
@@ -142,6 +147,12 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
       case MESSAGE_PLAYER_START:
         Log.i(TAG, "MESSAGE_START called with: " + "msg = [" + msg + "]");
         if (mVideoView != null) {
+          Rect outRect = new Rect();
+          Rect videoRect = new Rect();
+          itemView.getLocalVisibleRect(outRect);
+          mVideoView.getGlobalVisibleRect(videoRect);
+
+          Log.i(TAG, "onPrepared: " + outRect + " | " + videoRect);
           mVideoView.start();
         } else {
           // View is unavailable, re-send the message to wait for it
@@ -159,9 +170,8 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
           mVideoView.seekTo(msg.arg1);
         } else {
           mHandler.removeMessages(MESSAGE_SEEK);
-          mHandler.sendMessageDelayed(
-              mHandler.obtainMessage(MESSAGE_SEEK, msg.arg1, 0), MESSAGE_DELAY
-          );
+          mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, msg.arg1, 0),
+              MESSAGE_DELAY);
         }
         return true;
       default:
@@ -170,8 +180,14 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   }
 
   @Override public boolean onError(MediaPlayer mp, int what, int extra) {
-    Log.d(TAG, "onError() called with: " + "mp = [" + mp + "], what = [" + what + "], extra = ["
-        + extra + "]");
+    Log.d(TAG, "onError() called with: "
+        + "mp = ["
+        + mp
+        + "], what = ["
+        + what
+        + "], extra = ["
+        + extra
+        + "]");
     return false;
   }
 
@@ -184,14 +200,5 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   @Override public void onSeekComplete(MediaPlayer mp) {
     Log.i(TAG, "onSeekComplete: ");
     // mCurrentState = State.STATE_IDLE;
-  }
-
-  private enum State {
-
-    STATE_UNKNOWN,
-
-    STATE_SEEKING,
-
-    STATE_IDLE
   }
 }

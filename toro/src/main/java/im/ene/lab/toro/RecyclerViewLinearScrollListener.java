@@ -20,6 +20,9 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by eneim on 1/31/16.
@@ -28,49 +31,51 @@ import android.support.v7.widget.RecyclerView;
  */
 public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollListener {
 
-  private int mLastVideoPosition = -1;
-  private ToroPlayer mLastVideo = null;
-  private LinearLayoutManager mLayoutManager = null;
+  private int lastVideoPosition;
 
-  private Rect mParentRect = new Rect();
-  private Rect mChildRect = new Rect();
+  private Rect mParentRect;
+  private Rect mChildRect;
 
   public RecyclerViewLinearScrollListener(@NonNull ToroManager manager) {
     super(manager);
+    lastVideoPosition = -1;
+    mParentRect = new Rect();
+    mChildRect = new Rect();
   }
 
   @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
     if (newState != RecyclerView.SCROLL_STATE_IDLE) {
       return;
     }
-
-    // Check current playing position
-    if (mLastVideo != null) {
-      RecyclerView.ViewHolder viewHolder =
-          recyclerView.findViewHolderForLayoutPosition(mLastVideoPosition);
-      // Re-calculate the rectangles
-      if (viewHolder != null) {
-        recyclerView.getLocalVisibleRect(mParentRect);
-        viewHolder.itemView.getLocalVisibleRect(mChildRect);
-        // TODO Playing policy?
-        if (mLastVideo.wantsToPlay(mParentRect, mChildRect)) {  // Current view keep playing
-          return;
-        }
-      }
-    }
-
     // We require current layout manager to be a LinearLayoutManager.
     if (!(recyclerView.getLayoutManager() instanceof LinearLayoutManager)) {
       return;
     }
 
-    mLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-    int firstPosition = mLayoutManager.findFirstVisibleItemPosition();
-    int lastPosition = mLayoutManager.findLastVisibleItemPosition();
+    List<ToroPlayer> candidates = new ArrayList<>();
+    // Check current playing position
+    ToroPlayer lastVideo = mManager.getPlayer();
+    if (lastVideo != null) {
+      lastVideoPosition = lastVideo.getPlayerPosition();
+      RecyclerView.ViewHolder viewHolder =
+          recyclerView.findViewHolderForLayoutPosition(lastVideoPosition);
+      // Re-calculate the rectangles
+      if (viewHolder != null) {
+        recyclerView.getLocalVisibleRect(mParentRect);
+        viewHolder.itemView.getLocalVisibleRect(mChildRect);
+        if (lastVideo.wantsToPlay(mParentRect, mChildRect)) {
+          candidates.add(lastVideo);
+        }
+      }
+    }
+
+    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+    int firstPosition = layoutManager.findFirstVisibleItemPosition();
+    int lastPosition = layoutManager.findLastVisibleItemPosition();
     int videoPosition = -1;
     if ((firstPosition != RecyclerView.NO_POSITION || lastPosition != RecyclerView.NO_POSITION)
         && firstPosition <= lastPosition) { // for sure
-      ToroPlayer video = null;
+      ToroPlayer video;
       for (int i = firstPosition; i <= lastPosition; i++) {
         // detected a view holder for video player
         RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
@@ -81,38 +86,57 @@ public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollLi
           viewHolder.itemView.getLocalVisibleRect(mChildRect);
           // check that view position
           if (video.wantsToPlay(mParentRect, mChildRect)) {
-            videoPosition = i;
-            break;
-          } else {
-            mManager.saveVideoState(video.getVideoId(),
-                video.getCurrentPosition(), video.getDuration());
-            mManager.pauseVideo(video);
-            video = null;
+            if (!candidates.contains(video)) {
+              candidates.add(video);
+            }
           }
         }
       }
 
-      if (videoPosition == mLastVideoPosition) {  // Nothing changes, keep going
-        if (mLastVideo != null && !mLastVideo.isPlaying()) {
-          mManager.startVideo(mLastVideo);
+      if (Toro.getPolicy().requireCompletelyVisible()) {
+        for (Iterator<ToroPlayer> iterator = candidates.iterator(); iterator.hasNext(); ) {
+          ToroPlayer player = iterator.next();
+          if (player.visibleAreaOffset() < 1.f) {
+            iterator.remove();
+          }
+        }
+      }
+
+      video = Toro.getPolicy().getPlayer(candidates);
+
+      if (video == null) {
+        return;
+      }
+
+      for (ToroPlayer player : candidates) {
+        if (player == video) {
+          videoPosition = player.getPlayerPosition();
+          break;
+        }
+      }
+
+      if (videoPosition == lastVideoPosition) {  // Nothing changes, keep going
+        if (lastVideo != null && !lastVideo.isPlaying()) {
+          mManager.startVideo(lastVideo);
         }
         return;
       }
 
-      if (video != null) {
-        if (mLastVideo != null && mLastVideo.isPlaying()) {
-          mManager.saveVideoState(mLastVideo.getVideoId(),
-              mLastVideo.getCurrentPosition(), mLastVideo.getDuration());
-          mManager.pauseVideo(mLastVideo);
+      if (lastVideo != null) {
+        mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
+            lastVideo.getDuration());
+        if (lastVideo.isPlaying()) {
+          mManager.pauseVideo(lastVideo);
         }
-        // Switch video
-        mLastVideo = video;
-        mLastVideoPosition = videoPosition;
-
-        mManager.setPlayer(mLastVideo);
-        mManager.restoreVideoState(mLastVideo, mLastVideo.getVideoId());
-        mManager.startVideo(mLastVideo);
       }
+
+      // Switch video
+      lastVideo = video;
+      lastVideoPosition = videoPosition;
+
+      mManager.setPlayer(lastVideo);
+      mManager.restoreVideoState(lastVideo, lastVideo.getVideoId());
+      mManager.startVideo(lastVideo);
     }
   }
 }

@@ -17,7 +17,6 @@
 package im.ene.lab.toro;
 
 import android.view.View;
-
 import im.ene.lab.toro.widget.TextureVideoView;
 
 /**

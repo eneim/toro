@@ -21,8 +21,7 @@ package im.ene.lab.toro.sample.data;
  */
 public class VideoSource {
 
-  private static final String MP4 =
-      "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+  private static final String MP4 = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
 
   private static final String M4V =
       "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v";
@@ -30,11 +29,9 @@ public class VideoSource {
   private static final String MKV =
       "http://www.sample-videos.com/video/mkv/720/big_buck_bunny_720p_5mb.mkv";
 
-  private static final String MP4_2 =
-      "http://www.gomplayer.jp/img/sample/mp4_mpeg4_aac.mp4";
+  private static final String MP4_2 = "http://www.gomplayer.jp/img/sample/mp4_mpeg4_aac.mp4";
 
-  private static final String HLS =
-      "http://walterebert.com/playground/video/hls/sintel-trailer.m3u8";
+  private static final String HLS = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
 
   // May not support
   private static final String MOV =
@@ -48,6 +45,6 @@ public class VideoSource {
       "http://www.sample-videos.com/video/flv/720/big_buck_bunny_720p_5mb.flv";  // Old school
 
   public static final String[] SOURCES = {
-      MP4, MP4_2
+      MP4, HLS, MP4_2
   };
 }

@@ -85,6 +85,9 @@ import java.util.Map;
   private static final int SCALE_MODE_WIDTH = 0;
   // 1. Height: view height is fixed (or full fill parent), we re-calculate width by height
   private static final int SCALE_MODE_HEIGHT = 1;
+  // 2. Fit inside: scale to fit the most visible area. Don't use on large screen :trollface:
+  private static final int SCALE_MODE_FIT_INSIDE = 2;
+
   private String TAG = "TextureVideoView";
   // settable by the client
   private Uri mUri;

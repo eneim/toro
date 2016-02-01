@@ -15,20 +15,9 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ListView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="@dimen/activity_horizontal_margin"
-    >
-
-  <im.ene.lab.toro.widget.TextureVideoView
-      xmlns:android="http://schemas.android.com/apk/res/android"
-      android:id="@+id/video"
-      android:layout_width="match_parent"
-      android:layout_height="224dp"
-      android:layout_centerInParent="true"
-      app:videoScaleMode="fitHeight"
-      />
-
-</RelativeLayout>
+    android:layout_height="match_parent"
+    />

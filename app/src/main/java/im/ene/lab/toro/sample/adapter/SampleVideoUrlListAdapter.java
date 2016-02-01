@@ -16,62 +16,32 @@
 
 package im.ene.lab.toro.sample.adapter;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
-
 import im.ene.lab.toro.BaseAdapter;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.viewholder.BaseViewHolder;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class MyVideoListAdapter extends ToroAdapter<BaseAdapter.ViewHolder> {
-
-  private Cursor mVideosCursor;
+public class SampleVideoUrlListAdapter extends ToroAdapter<BaseAdapter.ViewHolder> {
 
   private List<SimpleVideoObject> mVideos = new ArrayList<>();
 
-  public MyVideoListAdapter(Context context) {
+  public SampleVideoUrlListAdapter() {
     super();
-    Uri uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-    String[] projection = {
-        MediaStore.Video.Media._ID, MediaStore.Video.Media.DATA,
-        MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Media.SIZE
-    };
+    setHasStableIds(true);
     for (String item : VideoSource.SOURCES) {
       mVideos.add(new SimpleVideoObject(item));
     }
-
-    this.mVideosCursor = context.getContentResolver().query(uri, projection, null, null, null);
-//    if (mVideosCursor != null) {
-//      while (mVideosCursor.moveToNext()) {
-//        mVideos.add(new SimpleVideoObject(mVideosCursor.getString(
-//            mVideosCursor.getColumnIndex(MediaStore.Video.Media.DATA))));
-//      }
-//    }
-
-    setHasStableIds(true);
   }
 
-  @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-    mVideosCursor.close();
-    mVideosCursor = null;
-    super.onDetachedFromRecyclerView(recyclerView);
-  }
-
-  @Override
-  public BaseAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, @BaseViewHolder.Type int
-      viewType) {
+  @Override public BaseAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+      @BaseViewHolder.Type int viewType) {
     return BaseViewHolder.createViewHolder(parent, viewType);
   }
 

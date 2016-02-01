@@ -17,6 +17,7 @@
 package im.ene.lab.toro;
 
 import android.graphics.Rect;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.MediaController;
@@ -28,10 +29,15 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
 
   /**
    * @param parentRect parent rect, get from {@link android.view.View#getLocalVisibleRect(Rect)}
-   * @param childRect  child rect,  get from {@link android.view.View#getLocalVisibleRect(Rect)}
+   * @param childRect child rect,  get from {@link android.view.View#getLocalVisibleRect(Rect)}
    * @return true if current Video is eager to play its video, or false otherwise
    */
   boolean wantsToPlay(@Nullable Rect parentRect, @NonNull Rect childRect);
+
+  /**
+   * @return value from 0.0 ~ 1.0 the visible offset of current Video
+   */
+  @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();
 
   /**
    * Support save/restore Video state (last played/paused position)
@@ -44,6 +50,19 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-depended Id
    */
   @Nullable Long getVideoId();
+
+  /**
+   * Position in Adapter
+   */
+  int getPlayerPosition();
+
+  /**
+   * To support Playing order/Playing policy, client must provide a comparison between Players
+   *
+   * @param other Another Player to compare with
+   * @return compare result between 2 Players
+   */
+  int compare(ToroPlayer other);
 
   /**
    * Host Activity paused

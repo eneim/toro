@@ -75,8 +75,12 @@ public abstract class BaseAdapter<VH extends BaseAdapter.ViewHolder>
     /**
      * @param listener
      */
-    public void setOnViewHolderClickListener(View.OnClickListener listener) {
+    public void setOnItemViewClickListener(View.OnClickListener listener) {
       itemView.setOnClickListener(listener);
+    }
+
+    public void setOnItemViewLongClickListener(View.OnLongClickListener listener) {
+      itemView.setOnLongClickListener(listener);
     }
 
     /**

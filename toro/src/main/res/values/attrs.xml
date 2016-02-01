@@ -18,8 +18,9 @@
 <resources>
   <declare-styleable name="TextureVideoView">
     <attr format="enum" name="videoScaleMode">
-      <enum name="width" value="0"/>
-      <enum name="height" value="1"/>
+      <enum name="fitWidth" value="0"/>
+      <enum name="fitHeight" value="1"/>
+      <enum name="fitInside" value="2"/>
     </attr>
   </declare-styleable>
 </resources>
