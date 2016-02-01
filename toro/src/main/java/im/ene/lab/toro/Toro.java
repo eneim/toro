@@ -44,8 +44,8 @@ import java.util.WeakHashMap;
  *
  * @<code> </code>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) public final class Toro
-    implements Application.ActivityLifecycleCallbacks {
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   private static final Object LOCK = new Object();
 
@@ -54,8 +54,8 @@ import java.util.WeakHashMap;
 
   ToroPolicy mPolicy = Policies.FIRST_VISIBLE;  // Default policy
   // It requires client to detach Activity/unregister View to prevent Memory leak
-  private WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
-  private ArrayList<ToroManager> mManagers = new ArrayList<>();
+  WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
+  ArrayList<ToroManager> mManagers = new ArrayList<>();
 
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
@@ -74,7 +74,7 @@ import java.util.WeakHashMap;
     }
   }
 
-  public static void policy(ToroPolicy policy) {
+  public static void policy(@NonNull ToroPolicy policy) {
     sInstance.mPolicy = policy;
   }
 

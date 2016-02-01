@@ -122,13 +122,9 @@ public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollLi
       if (lastVideo != null) {
         mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
             lastVideo.getDuration());
-        mManager.pauseVideo(lastVideo);
-      }
-
-      if (lastVideo != null && lastVideo.isPlaying()) {
-        mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
-            lastVideo.getDuration());
-        mManager.pauseVideo(lastVideo);
+        if (lastVideo.isPlaying()) {
+          mManager.pauseVideo(lastVideo);
+        }
       }
 
       // Switch video
