@@ -52,10 +52,10 @@ import java.util.WeakHashMap;
   // Singleton
   static Toro sInstance;
 
-  ToroPolicy mPolicy = Policies.MOST_VISIBLE_TOP_DOWN;  // Default policy
+  private ToroPolicy mPolicy = Policies.MOST_VISIBLE_TOP_DOWN;  // Default policy
   // It requires client to detach Activity/unregister View to prevent Memory leak
-  WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
-  ArrayList<ToroManager> mManagers = new ArrayList<>();
+  private final WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
+  private final ArrayList<ToroManager> mManagers = new ArrayList<>();
 
   /**
    * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
@@ -426,4 +426,62 @@ import java.util.WeakHashMap;
       }
     };
   }
+
+  static ToroViewHelper RECYCLER_VIEW_HELPER = new ToroViewHelper() {
+    @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
+      for (View view : sInstance.mEntries.keySet()) {
+        if (view == parent) {
+          ToroScrollHelper scrollHelper = sInstance.mEntries.get(view);
+          if (scrollHelper != null &&
+              sInstance.mManagers.contains(scrollHelper.getManager()) &&
+              scrollHelper.getManager().getPlayer() == null) {
+            scrollHelper.getManager().setPlayer(player);
+            scrollHelper.getManager().restoreVideoState(player, player.getVideoId());
+            // Check playing state
+            Rect containerRect = new Rect();
+            Rect parentRect = null;
+            itemView.getLocalVisibleRect(containerRect);
+            if (parent != null && parent instanceof View) {
+              parentRect = new Rect();
+              ((View) parent).getLocalVisibleRect(parentRect);
+            }
+
+            if (player.wantsToPlay(parentRect, containerRect)) {
+              scrollHelper.getManager().startVideo(player);
+            }
+          }
+        }
+      }
+    }
+
+    @Override
+    public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
+      for (View view : sInstance.mEntries.keySet()) {
+        // Find ToroManager for current ViewParent
+        if (view == parent) {
+          ToroScrollHelper scrollHelper = sInstance.mEntries.get(view);
+          // Manually save Video state
+          if (scrollHelper != null &&
+              sInstance.mManagers.contains(scrollHelper.getManager()) &&
+              player.equals(scrollHelper.getManager().getPlayer())) {
+            scrollHelper.getManager()
+                .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
+                    player.getDuration());
+          }
+        }
+      }
+    }
+  };
+
+  // TODO Fill this
+  static ToroViewHelper LIST_VIEW = new ToroViewHelper() {
+    @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
+
+    }
+
+    @Override
+    public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
+
+    }
+  };
 }

@@ -56,8 +56,9 @@ public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollLi
     // Check current playing position
     ToroPlayer lastVideo = mManager.getPlayer();
     if (lastVideo != null) {
+      lastVideoPosition = lastVideo.getPlayerPosition();
       RecyclerView.ViewHolder viewHolder =
-          recyclerView.findViewHolderForLayoutPosition(lastVideo.getPlayerPosition());
+          recyclerView.findViewHolderForLayoutPosition(lastVideoPosition);
       // Re-calculate the rectangles
       if (viewHolder != null) {
         recyclerView.getLocalVisibleRect(mParentRect);
@@ -92,7 +93,7 @@ public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollLi
         }
       }
 
-      if (Toro.sInstance.mPolicy.requireCompletelyVisible()) {
+      if (Toro.getPolicy().requireCompletelyVisible()) {
         for (Iterator<ToroPlayer> iterator = candidates.iterator(); iterator.hasNext(); ) {
           ToroPlayer player = iterator.next();
           if (player.visibleAreaOffset() < 1.f) {
@@ -101,7 +102,7 @@ public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollLi
         }
       }
 
-      video = Toro.sInstance.mPolicy.getPlayer(candidates);
+      video = Toro.getPolicy().getPlayer(candidates);
 
       if (video == null) {
         return;
