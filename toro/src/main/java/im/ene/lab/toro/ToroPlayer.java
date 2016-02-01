@@ -57,14 +57,6 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
   int getPlayerPosition();
 
   /**
-   * To support Playing order/Playing policy, client must provide a comparison between Players
-   *
-   * @param other Another Player to compare with
-   * @return compare result between 2 Players
-   */
-  int compare(ToroPlayer other);
-
-  /**
    * Host Activity paused
    */
   void onActivityPaused();

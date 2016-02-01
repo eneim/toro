@@ -18,7 +18,6 @@ package im.ene.lab.toro;
 
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -28,6 +27,7 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
     implements ToroPlayer, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
     MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener {
 
+  private static final String TAG = "ToroViewHolder";
   private final ToroViewHelper mHelper;
 
   public ToroViewHolder(View itemView) {
@@ -49,18 +49,6 @@ abstract class ToroViewHolder extends BaseAdapter.ViewHolder
 
   @CallSuper @Override public void onCompletion(MediaPlayer mp) {
     Toro.onCompletion(this, mp);
-  }
-
-  private static final String TAG = "ToroViewHolder";
-
-  @Override public int compare(ToroPlayer other) {
-    if (!(other instanceof ToroViewHolder)) {
-      throw new IllegalStateException("Other player must be a child of ToroViewHolder");
-    }
-
-    Log.d(TAG, "compare() called with: " + "other = [" +
-        ((ToroViewHolder) other).getLayoutPosition() + "]" + " [" + getLayoutPosition() + "]");
-    return getLayoutPosition() - ((ToroViewHolder) other).getLayoutPosition();
   }
 
   @Override public int getPlayerPosition() {
