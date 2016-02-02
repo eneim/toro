@@ -65,4 +65,5 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
   @Override public int getPlayerPosition() {
     return getAdapterPosition();
   }
+
 }

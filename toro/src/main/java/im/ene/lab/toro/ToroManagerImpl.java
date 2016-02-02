@@ -18,7 +18,6 @@ package im.ene.lab.toro;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
-import java.util.Arrays;
 import java.util.WeakHashMap;
 
 /**
@@ -39,10 +38,6 @@ public final class ToroManagerImpl implements ToroManager {
   }
 
   @Override public void startVideo(ToroPlayer player) {
-    Log.i(TAG, "startVideo: "
-        + Arrays.toString(player.getOnScreenLocation())
-        + " | "
-        + player.getVideoRect());
     player.start();
   }
 

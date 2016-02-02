@@ -19,7 +19,6 @@ package im.ene.lab.toro;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
-import android.view.ViewGroup;
 import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
@@ -127,29 +126,20 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
-  /** @hide */
-  @Override public Rect getVideoRect() {
+  protected Rect getVideoRect() {
     Rect rect = new Rect();
-    // The RecyclerView
-    ViewGroup parent = (ViewGroup) itemView.getParent();
-    int[] parentLocation = new int[2];
-    parent.getLocationOnScreen(parentLocation);
-
-    parent.getHitRect(rect);
     mVideoView.getGlobalVisibleRect(rect, new Point());
-
-    // Relative position with RecyclerView
-    rect.left -= parentLocation[0];
-    rect.right -= parentLocation[0];
-    rect.top -= parentLocation[1];
-    rect.bottom -= parentLocation[1];
-
     return rect;
   }
 
-  @Override public int[] getOnScreenLocation() {
-    int[] location = new int[2];
-    mVideoView.getLocationInWindow(location);
-    return location;
+  protected Rect getRecyclerViewRect() {
+    if (itemView.getParent() == null) {
+      return null;
+    }
+
+    Rect rect = new Rect();
+    rect.contains(0, 0, 0, 0);
+    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
+    return rect;
   }
 }

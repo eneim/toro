@@ -66,10 +66,4 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    */
   void onActivityResumed();
 
-  /** @hide */
-  // For debug only
-  Rect getVideoRect();
-
-  /** @hide */
-  int[] getOnScreenLocation();
 }

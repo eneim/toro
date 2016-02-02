@@ -87,13 +87,13 @@ public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Call
   }
 
   @Override public float visibleAreaOffset() {
-    // TODO fix this
     Rect videoRect = getVideoRect();
-    if (videoRect.bottom <= 0) {
+    Rect parentRect = getRecyclerViewRect();
+    if (!parentRect.contains(videoRect) || !parentRect.intersect(videoRect)) {
       return 0.f;
     }
 
-    return mVideoView.getHeight() <= 0 ? 0.f : videoRect.height() / (float) mVideoView.getHeight();
+    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
   }
 
   @Nullable @Override public Long getVideoId() {
