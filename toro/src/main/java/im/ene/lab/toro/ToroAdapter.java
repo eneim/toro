@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro;
 
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -36,7 +37,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     holder.onDetachedFromParent();
   }
 
-  @Override public void onBindViewHolder(VH holder, int position) {
+  @CallSuper @Override public void onBindViewHolder(VH holder, int position) {
     holder.bind(getItem(position));
     if (holder instanceof ToroPlayer) {
       ((ToroPlayer) holder).onViewHolderBound();

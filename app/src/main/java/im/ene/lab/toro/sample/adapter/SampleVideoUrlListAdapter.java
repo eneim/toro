@@ -63,8 +63,8 @@ public class SampleVideoUrlListAdapter extends ToroAdapter<ToroAdapter.ViewHolde
     return mVideos.get(position % mVideos.size());
   }
 
-  @Override public void onBindViewHolder(ToroAdapter.ViewHolder holder, int position) {
-    holder.bind(getItem(position));
+  @Override public void onBindViewHolder(ViewHolder holder, int position) {
+    super.onBindViewHolder(holder, position);
   }
 
   @Override public int getItemCount() {
