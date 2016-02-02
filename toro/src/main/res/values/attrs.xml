@@ -16,7 +16,7 @@
   -->
 
 <resources>
-  <declare-styleable name="TextureVideoView">
+  <declare-styleable name="ToroVideoView">
     <attr format="enum" name="videoScaleMode">
       <enum name="fitWidth" value="0"/>
       <enum name="fitHeight" value="1"/>

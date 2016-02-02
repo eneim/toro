@@ -66,7 +66,7 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) public class TextureVideoView
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) public class ToroVideoView
     extends TextureView implements MediaPlayerControl {
   // all possible internal states
   private static final int STATE_ERROR = -1;
@@ -218,6 +218,8 @@ import java.util.Map;
           mCurrentBufferPercentage = percent;
         }
       };
+
+  // TODO Apply this
   private OnPlaybackError mOnPlaybackErrorListener;
   private MediaPlayer.OnErrorListener mErrorListener = new MediaPlayer.OnErrorListener() {
     public boolean onError(MediaPlayer mp, int framework_err, int impl_err) {
@@ -241,7 +243,7 @@ import java.util.Map;
              * longer have a window, don't bother showing the user an error.
              */
       if (getWindowToken() != null) {
-        Resources r = getContext().getResources();
+        Resources resources = getContext().getResources();
         int messageId;
 
         if (framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
@@ -292,7 +294,7 @@ import java.util.Map;
     }
   };
 
-  public TextureVideoView(Context context) {
+  public ToroVideoView(Context context) {
     super(context);
     initVideoView();
   }
@@ -308,16 +310,16 @@ import java.util.Map;
     mTargetState = STATE_IDLE;
   }
 
-  public TextureVideoView(Context context, AttributeSet attrs) {
+  public ToroVideoView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
     initVideoView();
   }
 
-  public TextureVideoView(Context context, AttributeSet attrs, int defStyle) {
+  public ToroVideoView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TextureVideoView);
+    final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ToroVideoView);
     try {
-      mScaleMode = a.getInteger(R.styleable.TextureVideoView_videoScaleMode, SCALE_MODE_HEIGHT);
+      mScaleMode = a.getInteger(R.styleable.ToroVideoView_videoScaleMode, SCALE_MODE_HEIGHT);
     } finally {
       a.recycle();
     }
@@ -326,12 +328,12 @@ import java.util.Map;
 
   @Override public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
     super.onInitializeAccessibilityEvent(event);
-    event.setClassName(TextureVideoView.class.getName());
+    event.setClassName(ToroVideoView.class.getName());
   }
 
   @Override public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
     super.onInitializeAccessibilityNodeInfo(info);
-    info.setClassName(TextureVideoView.class.getName());
+    info.setClassName(ToroVideoView.class.getName());
   }
 
   @Override public boolean onKeyDown(int keyCode, KeyEvent event) {

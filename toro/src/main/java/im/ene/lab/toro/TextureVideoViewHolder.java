@@ -20,14 +20,14 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.widget.TextureVideoView;
+import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/31/16.
  */
 public abstract class TextureVideoViewHolder extends ToroViewHolder {
 
-  protected final TextureVideoView mVideoView;
+  protected final ToroVideoView mVideoView;
 
   public TextureVideoViewHolder(View itemView) {
     super(itemView);
@@ -44,7 +44,7 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract TextureVideoView getVideoView(View itemView);
+  protected abstract ToroVideoView getVideoView(View itemView);
 
   // Client needs to implement this method
   // @Override public boolean wantsToPlay(Rect parentRect, Rect childRect) {
