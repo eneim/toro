@@ -25,11 +25,11 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/31/16.
  */
-public abstract class TextureVideoViewHolder extends ToroViewHolder {
+public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   protected final ToroVideoView mVideoView;
 
-  public TextureVideoViewHolder(View itemView) {
+  public ToroVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = getVideoView(itemView);
 

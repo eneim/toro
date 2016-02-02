@@ -23,7 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import im.ene.lab.toro.TextureVideoViewHolder;
+import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.widget.ToroVideoView;
@@ -31,7 +31,7 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoViewHolder extends TextureVideoViewHolder implements Handler.Callback {
+public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Callback {
 
   private static final String TAG = "VideoViewHolder";
 
