@@ -70,10 +70,10 @@ import java.util.concurrent.ConcurrentHashMap;
             // Check playability
             Rect containerRect = new Rect();
             Rect parentRect = null;
-            itemView.getLocalVisibleRect(containerRect);
+            itemView.getGlobalVisibleRect(containerRect);
             if (parent != null && parent instanceof View) {
               parentRect = new Rect();
-              ((View) parent).getLocalVisibleRect(parentRect);
+              ((View) parent).getGlobalVisibleRect(parentRect);
             }
 
             if (player.wantsToPlay(parentRect, containerRect) && sInstance.mStrategy.allowsToPlay(
@@ -119,8 +119,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
       Rect containerRect = new Rect();
       Rect parentRect = new Rect();
-      itemView.getLocalVisibleRect(containerRect);
-      recyclerView.getLocalVisibleRect(parentRect);
+      itemView.getGlobalVisibleRect(containerRect);
+      recyclerView.getGlobalVisibleRect(parentRect);
 
       // Being pressed player is not be able to play, return
       if (!player.wantsToPlay(parentRect, containerRect) || !getStrategy().allowsToPlay(player,
@@ -312,10 +312,10 @@ import java.util.concurrent.ConcurrentHashMap;
         manager.restoreVideoState(player.getVideoId());
         Rect containerRect = new Rect();
         Rect parentRect = null;
-        container.getLocalVisibleRect(containerRect);
+        container.getGlobalVisibleRect(containerRect);
         if (parent != null && parent instanceof View) {
           parentRect = new Rect();
-          ((View) parent).getLocalVisibleRect(parentRect);
+          ((View) parent).getGlobalVisibleRect(parentRect);
         }
         if (player.wantsToPlay(parentRect, containerRect)) {
           manager.startPlayback();
