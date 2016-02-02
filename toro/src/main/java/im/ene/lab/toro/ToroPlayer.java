@@ -54,7 +54,7 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
   /**
    * Position in Adapter
    */
-  int getPlayerPosition();
+  int getItemPosition();
 
   /**
    * Host Activity paused

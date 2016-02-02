@@ -57,7 +57,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
     // Check current playing position
     ToroPlayer lastVideo = mManager.getPlayer();
     if (lastVideo != null) {
-      mLastVideoPosition = lastVideo.getPlayerPosition();
+      mLastVideoPosition = lastVideo.getItemPosition();
       RecyclerView.ViewHolder viewHolder =
           recyclerView.findViewHolderForLayoutPosition(mLastVideoPosition);
       // Re-calculate the rectangles
@@ -111,7 +111,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
 
       for (ToroPlayer player : candidates) {
         if (player == video) {
-          videoPosition = player.getPlayerPosition();
+          videoPosition = player.getItemPosition();
           break;
         }
       }

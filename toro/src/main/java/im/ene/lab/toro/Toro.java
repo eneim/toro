@@ -291,7 +291,7 @@ import java.util.concurrent.ConcurrentHashMap;
         // 1. Sort candidates by the order of player
         Collections.sort(candidates, new Comparator<ToroPlayer>() {
           @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
-            return lhs.getPlayerPosition() - rhs.getPlayerPosition();
+            return lhs.getItemPosition() - rhs.getItemPosition();
           }
         });
 
@@ -368,7 +368,7 @@ import java.util.concurrent.ConcurrentHashMap;
         // 1. Sort candidates by the order of player
         Collections.sort(candidates, new Comparator<ToroPlayer>() {
           @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
-            return lhs.getPlayerPosition() - rhs.getPlayerPosition();
+            return lhs.getItemPosition() - rhs.getItemPosition();
           }
         });
 
