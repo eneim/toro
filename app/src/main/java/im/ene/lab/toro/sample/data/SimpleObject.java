@@ -21,7 +21,9 @@ package im.ene.lab.toro.sample.data;
  */
 public class SimpleObject {
 
-  public String name = "Toro - a Video list manager";
+  public String name = "GitHub Wikis is a simple way to let others contribute content. "
+      + "Any GitHub user can create and edit pages to use for documentation, examples, "
+      + "support, or anything you wish.";
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;
