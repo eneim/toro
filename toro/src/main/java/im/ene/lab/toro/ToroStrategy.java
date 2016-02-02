@@ -25,7 +25,7 @@ import java.util.List;
 public interface ToroStrategy {
 
   /**
-   * @return Name of current Policy
+   * @return Description of current Strategy
    * @hide
    */
   String getDescription();
