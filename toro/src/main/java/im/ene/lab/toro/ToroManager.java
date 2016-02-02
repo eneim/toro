@@ -21,32 +21,25 @@ public interface ToroManager {
 
   /**
    * Start playing current video
-   *
-   * @param player
    */
-  void startVideo(ToroPlayer player);
+  void startPlayback();
 
   /**
    * Pause current video
-   *
-   * @param player
    */
-  void pauseVideo(ToroPlayer player);
+  void pausePlayback();
 
   /**
    * Save current video state
-   *
-   * @param player
-   * @param position
-   * @param duration
    */
   void saveVideoState(Long videoId, @Nullable Integer position, long duration);
 
   /**
    * Restore and setup state of a Video to current video player
-   *
-   * @param player
-   * @param videoId
    */
-  void restoreVideoState(ToroPlayer player, Long videoId);
+  void restoreVideoState(Long videoId);
+
+  void onRegistered();
+
+  void onUnregistered();
 }

@@ -22,7 +22,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -64,7 +63,8 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
       if (viewHolder != null) {
         recyclerView.getLocalVisibleRect(mParentRect);
         viewHolder.itemView.getLocalVisibleRect(mChildRect);
-        if (lastVideo.wantsToPlay(mParentRect, mChildRect)) {
+        if (lastVideo.wantsToPlay(mParentRect, mChildRect) && Toro.getStrategy()
+            .allowsToPlay(lastVideo, mParentRect, mChildRect)) {
           candidates.add(lastVideo);
         }
       }
@@ -86,7 +86,8 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
           recyclerView.getGlobalVisibleRect(mParentRect, new Point());
           viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
           // check that view position
-          if (video.wantsToPlay(mParentRect, mChildRect)) {
+          if (video.wantsToPlay(mParentRect, mChildRect) && Toro.getStrategy()
+              .allowsToPlay(video, mParentRect, mChildRect)) {
             if (!candidates.contains(video)) {
               candidates.add(video);
             }
@@ -94,16 +95,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
         }
       }
 
-      if (Toro.getStrategy().requireCompletelyVisible()) {
-        for (Iterator<ToroPlayer> iterator = candidates.iterator(); iterator.hasNext(); ) {
-          ToroPlayer player = iterator.next();
-          if (player.visibleAreaOffset() < 1.f) {
-            iterator.remove();
-          }
-        }
-      }
-
-      video = Toro.getStrategy().getPlayer(candidates);
+      video = Toro.getStrategy().elect(candidates);
 
       if (video == null) {
         return;
@@ -118,7 +110,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
 
       if (videoPosition == mLastVideoPosition) {  // Nothing changes, keep going
         if (lastVideo != null && !lastVideo.isPlaying()) {
-          mManager.startVideo(lastVideo);
+          mManager.startPlayback();
         }
         return;
       }
@@ -127,7 +119,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
         mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
             lastVideo.getDuration());
         if (lastVideo.isPlaying()) {
-          mManager.pauseVideo(lastVideo);
+          mManager.pausePlayback();
         }
       }
 
@@ -136,8 +128,8 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
       mLastVideoPosition = videoPosition;
 
       mManager.setPlayer(lastVideo);
-      mManager.restoreVideoState(lastVideo, lastVideo.getVideoId());
-      mManager.startVideo(lastVideo);
+      mManager.restoreVideoState(lastVideo.getVideoId());
+      mManager.startPlayback();
     }
   }
 }

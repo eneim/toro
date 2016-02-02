@@ -19,7 +19,6 @@ package com.sprylab.android.widget;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -200,7 +199,6 @@ public class TextureVideoView extends TextureView implements MediaPlayerControl 
              * longer have a window, don't bother showing the user an error.
              */
       if (getWindowToken() != null) {
-        Resources r = getContext().getResources();
         int messageId;
 
         if (framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {

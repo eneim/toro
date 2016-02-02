@@ -43,22 +43,37 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
+   */
   @CallSuper @Override public void onPrepared(MediaPlayer mp) {
     Toro.onPrepared(this, itemView, itemView.getParent(), mp);
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}
+   */
   @CallSuper @Override public void onCompletion(MediaPlayer mp) {
     Toro.onCompletion(this, mp);
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}
+   */
   @CallSuper @Override public boolean onError(MediaPlayer mp, int what, int extra) {
     return Toro.onError(this, mp, what, extra);
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnInfoListener#onInfo(MediaPlayer, int, int)}
+   */
   @CallSuper @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
     return Toro.onInfo(this, mp, what, extra);
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnSeekCompleteListener#onSeekComplete(MediaPlayer)}
+   */
   @CallSuper @Override public void onSeekComplete(MediaPlayer mp) {
     Toro.onSeekComplete(this, mp);
   }
@@ -69,5 +84,12 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
 
   @Override public boolean onLongClick(View v) {
     return mHelper.onItemLongClick(this, itemView, itemView.getParent());
+  }
+
+  /**
+   * Client should override this to support required behavior (setting thumbnail, for example)
+   */
+  @Override public void onViewHolderBound() {
+
   }
 }

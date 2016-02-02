@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.sample.adapter;
 
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -51,10 +52,14 @@ public class SampleVideoUrlListAdapter extends ToroAdapter<ToroAdapter.ViewHolde
   }
 
   @Override public long getItemId(int position) {
-    return getItem(position).hashCode();
+    if (getItem(position) != null) {
+      return getItem(position).hashCode();
+    } else {
+      return 0;
+    }
   }
 
-  private Object getItem(int position) {
+  @Nullable @Override protected Object getItem(int position) {
     return mVideos.get(position % mVideos.size());
   }
 

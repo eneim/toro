@@ -18,7 +18,6 @@ package im.ene.lab.toro.widget;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
@@ -127,13 +126,6 @@ import java.util.Map;
   private OnCompletionListener mOnCompletionListener;
   private MediaPlayer.OnPreparedListener mOnPreparedListener;
   private MediaPlayer.OnSeekCompleteListener mOnSeekCompleteListener;
-  private int mCurrentBufferPercentage;
-  private OnErrorListener mOnErrorListener;
-  private OnInfoListener mOnInfoListener;
-  private int mSeekWhenPrepared;  // recording the seek position while preparing
-  private boolean mCanPause;
-  private boolean mCanSeekBack;
-  private boolean mCanSeekForward;
   MediaPlayer.OnSeekCompleteListener mSeekCompleteListener =
       new MediaPlayer.OnSeekCompleteListener() {
         @Override public void onSeekComplete(MediaPlayer mp) {
@@ -144,6 +136,13 @@ import java.util.Map;
           }
         }
       };
+  private int mCurrentBufferPercentage;
+  private OnErrorListener mOnErrorListener;
+  private OnInfoListener mOnInfoListener;
+  private int mSeekWhenPrepared;  // recording the seek position while preparing
+  private boolean mCanPause;
+  private boolean mCanSeekBack;
+  private boolean mCanSeekForward;
   MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
     public void onPrepared(MediaPlayer mp) {
       mCurrentState = STATE_PREPARED;
@@ -243,7 +242,6 @@ import java.util.Map;
              * longer have a window, don't bother showing the user an error.
              */
       if (getWindowToken() != null) {
-        Resources resources = getContext().getResources();
         int messageId;
 
         if (framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
@@ -299,17 +297,6 @@ import java.util.Map;
     initVideoView();
   }
 
-  private void initVideoView() {
-    mVideoWidth = 0;
-    mVideoHeight = 0;
-    setSurfaceTextureListener(mSurfaceTextureListener);
-    setFocusable(true);
-    setFocusableInTouchMode(true);
-    requestFocus();
-    mCurrentState = STATE_IDLE;
-    mTargetState = STATE_IDLE;
-  }
-
   public ToroVideoView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
     initVideoView();
@@ -324,6 +311,17 @@ import java.util.Map;
       a.recycle();
     }
     initVideoView();
+  }
+
+  private void initVideoView() {
+    mVideoWidth = 0;
+    mVideoHeight = 0;
+    setSurfaceTextureListener(mSurfaceTextureListener);
+    setFocusable(true);
+    setFocusableInTouchMode(true);
+    requestFocus();
+    mCurrentState = STATE_IDLE;
+    mTargetState = STATE_IDLE;
   }
 
   @Override public void onInitializeAccessibilityEvent(AccessibilityEvent event) {

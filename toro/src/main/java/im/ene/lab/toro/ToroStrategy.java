@@ -19,9 +19,7 @@ package im.ene.lab.toro;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewParent;
 import java.util.List;
 
 /**
@@ -31,30 +29,23 @@ public interface ToroStrategy {
 
   /**
    * @return Description of current Strategy
-   * @hide
+   * @hide debug use only
    */
   String getDescription();
 
   /**
-   * Each item of #candidates returns true for {@link ToroPlayer#wantsToPlay(Rect, Rect)}. A Policy
-   * gives the best fit Player to start playing
+   * Each item of #candidates returns true for {@link ToroPlayer#wantsToPlay(Rect, Rect)}. A
+   * Strategy gives the best fit Player to start playing
    */
-  ToroPlayer getPlayer(List<ToroPlayer> candidates);
+  ToroPlayer elect(List<ToroPlayer> candidates);
 
   /**
    * Called after {@link ToroPlayer#wantsToPlay(Rect, Rect)} to verify that current player is
    * allowed to play by current Strategy
    *
    * @param player ToroPlayer object which wants to play, and wait for permission
-   * @param container The {@link RecyclerView.ViewHolder#itemView} which holds current player
-   * @param parent Top level RecyclerView parent
+   * @param parentRect Result from {@link View#getGlobalVisibleRect(Rect)} of parent RecyclerView
+   * @param childRect Result from {@link View#getGlobalVisibleRect(Rect)} of current itemView
    */
   boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect, @NonNull Rect childRect);
-
-  /**
-   * Indicate that this Policy requires a ToroPlayer's video view is fully visible or not
-   *
-   * @return true if this Policy requires a fully visible Video playable view, false otherwise.
-   */
-  boolean requireCompletelyVisible();
 }

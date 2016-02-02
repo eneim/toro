@@ -50,11 +50,110 @@ import java.util.concurrent.ConcurrentHashMap;
   private static final Object LOCK = new Object();
 
   // Singleton
-  static Toro sInstance;
-
-  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default policy
+  static volatile Toro sInstance;
   // It requires client to detach Activity/unregister View to prevent Memory leak
   private final ConcurrentHashMap<RecyclerView, ToroScrollListener> mMm = new ConcurrentHashMap<>();
+  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default policy
+
+  /**
+   * Helper object, support RecyclerView's ViewHolder
+   */
+  static ToroItemViewHelper RECYCLER_VIEW_HELPER = new ToroItemViewHelper() {
+    @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
+      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
+        RecyclerView key = entry.getKey();
+        if (key == parent) {
+          ToroScrollListener value = entry.getValue();
+          if (value != null && value.getManager().getPlayer() == null) {
+            value.getManager().setPlayer(player);
+            value.getManager().restoreVideoState(player.getVideoId());
+            // Check playability
+            Rect containerRect = new Rect();
+            Rect parentRect = null;
+            itemView.getLocalVisibleRect(containerRect);
+            if (parent != null && parent instanceof View) {
+              parentRect = new Rect();
+              ((View) parent).getLocalVisibleRect(parentRect);
+            }
+
+            if (player.wantsToPlay(parentRect, containerRect) && sInstance.mStrategy.allowsToPlay(
+                player, parentRect, containerRect)) {
+              value.getManager().startPlayback();
+            }
+          }
+        }
+      }
+    }
+
+    @Override
+    public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
+      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
+        RecyclerView key = entry.getKey();
+        if (key == parent) {
+          ToroScrollListener value = entry.getValue();
+          // Manually save Video state
+          if (value != null && player.equals(value.getManager().getPlayer())) {
+            value.getManager()
+                .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
+                    player.getDuration());
+          }
+        }
+      }
+    }
+
+    @Override public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
+      RecyclerView recyclerView = null;
+      ToroScrollListener listener = null;
+      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
+        recyclerView = entry.getKey();
+        if (recyclerView == parent) {
+          listener = entry.getValue();
+          break;
+        }
+      }
+
+      // Important components are missing, return
+      if (recyclerView == null || listener == null) {
+        return false;
+      }
+
+      Rect containerRect = new Rect();
+      Rect parentRect = new Rect();
+      itemView.getLocalVisibleRect(containerRect);
+      recyclerView.getLocalVisibleRect(parentRect);
+
+      // Being pressed player is not be able to play, return
+      if (!player.wantsToPlay(parentRect, containerRect) || !getStrategy().allowsToPlay(player,
+          parentRect, containerRect)) {
+        return false;
+      }
+
+      ToroManager manager = listener.getManager();
+      ToroPlayer currentPlayer = manager.getPlayer();
+
+      if (!player.equals(currentPlayer)) {
+        // All condition to switch players has passed, process the switching
+        // Manually save Video state
+        // Not the current player, and new player wants to play, so switch players
+        if (currentPlayer != null) {
+          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+              currentPlayer.getDuration());
+          if (currentPlayer.isPlaying()) {
+            manager.pausePlayback();
+          }
+        }
+
+        // Trigger new player
+        manager.setPlayer(player);
+        manager.restoreVideoState(player.getVideoId());
+        manager.startPlayback();
+
+        return true;
+      }
+
+      return false;
+    }
+  };
 
   /**
    * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
@@ -97,6 +196,10 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
+  public static ToroStrategy getStrategy() {
+    return sInstance.mStrategy;
+  }
+
   /**
    * Support custom playing policy
    *
@@ -104,10 +207,6 @@ import java.util.concurrent.ConcurrentHashMap;
    */
   public static void setStrategy(@NonNull ToroStrategy policy) {
     sInstance.mStrategy = policy;
-  }
-
-  public static ToroStrategy getStrategy() {
-    return sInstance.mStrategy;
   }
 
   /**
@@ -136,11 +235,12 @@ import java.util.concurrent.ConcurrentHashMap;
       // 1. retrieve current TotoManager instance
       ToroManager manager = null;
       RecyclerView.Adapter adapter = view.getAdapter();
+      // Client of this API should implement ToroManager to her Adapter.
       if (adapter instanceof ToroManager) {
         manager = (ToroManager) adapter;
       }
 
-      // Fallback to default Manager
+      // If no manager found, fallback to Built-in Manager
       if (manager == null) {
         manager = new ToroManagerImpl();
       }
@@ -159,6 +259,8 @@ import java.util.concurrent.ConcurrentHashMap;
       // Cache
       // sInstance.mManagers.add(manager);
       sInstance.mMm.put(view, listener);
+      // Trigger manager to init its resource
+      manager.onRegistered();
     }
   }
 
@@ -182,6 +284,7 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroScrollListener object = sInstance.mMm.remove(view);
       // Process related View
       if (object != null) {
+        object.getManager().onUnregistered();
         // Remove from Manager list
         // sInstance.mManagers.remove(object.getManager());
         // there is a set of <View, Listener> is removed
@@ -195,6 +298,7 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+        player.onStopPlayback();
         break;
       }
     }
@@ -205,7 +309,7 @@ import java.util.concurrent.ConcurrentHashMap;
     for (ToroScrollListener listener : sInstance.mMm.values()) {
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
-        manager.restoreVideoState(player, player.getVideoId());
+        manager.restoreVideoState(player.getVideoId());
         Rect containerRect = new Rect();
         Rect parentRect = null;
         container.getLocalVisibleRect(containerRect);
@@ -214,7 +318,7 @@ import java.util.concurrent.ConcurrentHashMap;
           ((View) parent).getLocalVisibleRect(parentRect);
         }
         if (player.wantsToPlay(parentRect, containerRect)) {
-          manager.startVideo(player);
+          manager.startPlayback();
         }
         break;
       }
@@ -222,6 +326,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   static boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    player.onStopPlayback();
     return false;
   }
 
@@ -283,7 +388,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "Most visible item from top";
       }
 
-      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -309,10 +414,6 @@ import java.util.concurrent.ConcurrentHashMap;
           @NonNull Rect childRect) {
         return true;
       }
-
-      @Override public boolean requireCompletelyVisible() {
-        return false;
-      }
     };
 
     /**
@@ -327,7 +428,7 @@ import java.util.concurrent.ConcurrentHashMap;
             + "But if current player is not on the top but still playable, keep it";
       }
 
-      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -346,10 +447,6 @@ import java.util.concurrent.ConcurrentHashMap;
           @NonNull Rect childRect) {
         return true;
       }
-
-      @Override public boolean requireCompletelyVisible() {
-        return false;
-      }
     };
 
     /**
@@ -360,7 +457,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "Scan top down of candidates, chose the first playable Video";
       }
 
-      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -379,15 +476,11 @@ import java.util.concurrent.ConcurrentHashMap;
           @NonNull Rect childRect) {
         return true;
       }
-
-      @Override public boolean requireCompletelyVisible() {
-        return false;
-      }
     };
 
     /**
-     * Scan top down of candidates, chose the first playable Video. But if current player is still
-     * playable, but not on the top, we keep using it
+     * Scan top down (by layout direction) of candidates, chose the first playable Video. But if
+     * current player is still playable, but not on the top, we keep using it
      */
     public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
 
@@ -396,7 +489,7 @@ import java.util.concurrent.ConcurrentHashMap;
             + "is still playable, but not on the top, we keep using it";
       }
 
-      @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
         return candidates.get(0);
       }
 
@@ -404,106 +497,6 @@ import java.util.concurrent.ConcurrentHashMap;
           @NonNull Rect childRect) {
         return true;
       }
-
-      @Override public boolean requireCompletelyVisible() {
-        return false;
-      }
     };
   }
-
-  static ToroItemViewHelper RECYCLER_VIEW_HELPER = new ToroItemViewHelper() {
-    @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
-      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        RecyclerView key = entry.getKey();
-        if (key == parent) {
-          ToroScrollListener value = entry.getValue();
-          if (value != null && value.getManager().getPlayer() == null) {
-            value.getManager().setPlayer(player);
-            value.getManager().restoreVideoState(player, player.getVideoId());
-            // Check playing state
-            Rect containerRect = new Rect();
-            Rect parentRect = null;
-            itemView.getLocalVisibleRect(containerRect);
-            if (parent != null && parent instanceof View) {
-              parentRect = new Rect();
-              ((View) parent).getLocalVisibleRect(parentRect);
-            }
-
-            if (player.wantsToPlay(parentRect, containerRect)) {
-              value.getManager().startVideo(player);
-            }
-          }
-        }
-      }
-    }
-
-    @Override
-    public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
-      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        RecyclerView key = entry.getKey();
-        if (key == parent) {
-          ToroScrollListener value = entry.getValue();
-          // Manually save Video state
-          if (value != null && player.equals(value.getManager().getPlayer())) {
-            value.getManager()
-                .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
-                    player.getDuration());
-          }
-        }
-      }
-    }
-
-    @Override public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
-      RecyclerView recyclerView = null;
-      ToroScrollListener listener = null;
-      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        recyclerView = entry.getKey();
-        if (recyclerView == parent) {
-          listener = entry.getValue();
-          break;
-        }
-      }
-
-      // Important components are missing, return
-      if (recyclerView == null || listener == null) {
-        return false;
-      }
-
-      Rect containerRect = new Rect();
-      Rect parentRect = new Rect();
-      itemView.getLocalVisibleRect(containerRect);
-      recyclerView.getLocalVisibleRect(parentRect);
-
-      // Being pressed player is not be able to play, return
-      if (!player.wantsToPlay(parentRect, containerRect) || !getStrategy().allowsToPlay(player,
-          parentRect, containerRect)) {
-        return false;
-      }
-
-      ToroManager manager = listener.getManager();
-      ToroPlayer currentPlayer = manager.getPlayer();
-
-      if (!player.equals(currentPlayer)) {
-        // All condition to switch players has passed, process the switching
-        // Manually save Video state
-        // Not the current player, and new player wants to play, so switch players
-        if (currentPlayer != null) {
-          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
-              currentPlayer.getDuration());
-          if (currentPlayer.isPlaying()) {
-            manager.pauseVideo(currentPlayer);
-          }
-        }
-
-        // Trigger new player
-        manager.setPlayer(player);
-        manager.restoreVideoState(player, player.getVideoId());
-        manager.startVideo(player);
-
-        return true;
-      }
-
-      return false;
-    }
-  };
 }

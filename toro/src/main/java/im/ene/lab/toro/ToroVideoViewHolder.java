@@ -44,6 +44,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnInfoListener(this);
     mVideoView.setOnSeekCompleteListener(this);
 
+    // TODO: setup long press support on demand
     itemView.setOnLongClickListener(this);
   }
 
@@ -145,5 +146,21 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     rect.contains(0, 0, 0, 0);
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
     return rect;
+  }
+
+  @Override public void onStartPlayback() {
+
+  }
+
+  @Override public void onPausePlayback() {
+
+  }
+
+  @Override public void onStopPlayback() {
+
+  }
+
+  @Override public void onPlaybackProgress(int position, int duration) {
+
   }
 }

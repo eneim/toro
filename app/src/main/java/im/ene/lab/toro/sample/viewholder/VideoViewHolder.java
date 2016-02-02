@@ -111,6 +111,11 @@ public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Call
     mHandler = new Handler(this);
   }
 
+  // TODO setup thumbnail, maybe?
+  @Override public void onViewHolderBound() {
+    super.onViewHolderBound();
+  }
+
   @Override public boolean handleMessage(Message msg) {
     switch (msg.what) {
       case MESSAGE_PLAYER_START:

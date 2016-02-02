@@ -17,9 +17,13 @@
 package im.ene.lab.toro;
 
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
+import android.support.v7.widget.RecyclerView;
 import android.widget.MediaController;
 
 /**
@@ -54,7 +58,7 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
   /**
    * Position in Adapter
    */
-  int getItemPosition();
+  @IntRange(from = 0) int getItemPosition();
 
   /**
    * Host Activity paused
@@ -66,4 +70,32 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    */
   void onActivityResumed();
 
+  /**
+   * Called response to {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
+   */
+  void onViewHolderBound();
+
+  /**
+   * Called after {@link MediaController.MediaPlayerControl#start()}
+   */
+  void onStartPlayback();
+
+  /**
+   * Called after {@link MediaController.MediaPlayerControl#pause()}
+   */
+  void onPausePlayback();
+
+  /**
+   * Called from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}
+   */
+  void onStopPlayback();
+
+  /**
+   * Callback from playback progress update. This method is called from main thread (UIThread)
+   *
+   * @param position current playing position
+   * @param duration total duration of current video
+   */
+  @UiThread
+  void onPlaybackProgress(int position, int duration);
 }
