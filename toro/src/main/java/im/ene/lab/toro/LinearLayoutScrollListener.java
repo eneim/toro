@@ -30,14 +30,14 @@ import java.util.List;
  *
  * @hide
  */
-public final class RecyclerViewLinearScrollListener extends RecyclerViewScrollListener {
+public final class LinearLayoutScrollListener extends ToroScrollListener {
 
   private int mLastVideoPosition;
 
   private Rect mParentRect;
   private Rect mChildRect;
 
-  public RecyclerViewLinearScrollListener(@NonNull ToroManager manager) {
+  public LinearLayoutScrollListener(@NonNull ToroManager manager) {
     super(manager);
     mLastVideoPosition = -1;
     mParentRect = new Rect();

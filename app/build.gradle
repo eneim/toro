@@ -27,4 +27,5 @@ dependencies {
   // compile 'com.github.eneim:Toro:-SNAPSHOT'
 
   // compile 'com.devbrackets.android:exomedia:2.5.2'
+  compile 'com.squareup.picasso:picasso:2.5.2'
 }

@@ -28,6 +28,8 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   protected final ToroVideoView mVideoView;
 
+  private static final String TAG = "ToroVideoViewHolder";
+
   public ToroVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = getVideoView(itemView);
@@ -41,6 +43,8 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnErrorListener(this);
     mVideoView.setOnInfoListener(this);
     mVideoView.setOnSeekCompleteListener(this);
+
+    itemView.setOnLongClickListener(this);
   }
 
   protected abstract ToroVideoView getVideoView(View itemView);

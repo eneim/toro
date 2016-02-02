@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @hide
  */
-public final class RecyclerViewStaggeredGridScrollListener extends RecyclerViewScrollListener {
+public final class StaggeredGridLayoutScrollListener extends ToroScrollListener {
 
   private int mLastVideoPosition = -1;
   private int mSpanCount;
@@ -41,7 +41,7 @@ public final class RecyclerViewStaggeredGridScrollListener extends RecyclerViewS
   private Rect mParentRect = new Rect();
   private Rect mChildRect = new Rect();
 
-  public RecyclerViewStaggeredGridScrollListener(@NonNull ToroManager manager) {
+  public StaggeredGridLayoutScrollListener(@NonNull ToroManager manager) {
     super(manager);
   }
 

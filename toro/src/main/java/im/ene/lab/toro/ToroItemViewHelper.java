@@ -16,13 +16,17 @@
 
 package im.ene.lab.toro;
 
+import android.view.View;
+import android.view.ViewParent;
+
 /**
  * Created by eneim on 2/1/16.
  */
-interface ToroScrollHelper {
+interface ToroItemViewHelper {
 
-  /**
-   * @return a ToroManager
-   */
-  ToroManager getManager();
+  void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent);
+
+  void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent);
+
+  boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent);
 }
