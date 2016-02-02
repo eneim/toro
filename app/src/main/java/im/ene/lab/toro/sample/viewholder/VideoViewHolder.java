@@ -87,9 +87,13 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   }
 
   @Override public float visibleAreaOffset() {
-    Rect videoRect = new Rect();
-    mVideoView.getLocalVisibleRect(videoRect);
-    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
+    // TODO fix this
+    Rect videoRect = getVideoRect();
+    if (videoRect.bottom <= 0) {
+      return 0.f;
+    }
+
+    return mVideoView.getHeight() <= 0 ? 0.f : videoRect.height() / (float) mVideoView.getHeight();
   }
 
   @Nullable @Override public Long getVideoId() {

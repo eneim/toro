@@ -16,11 +16,87 @@
 
 package im.ene.lab.toro;
 
-/**
- * Created by eneim on 1/29/16.
- * <p/>
- * To force client to use child class of {@link im.ene.lab.toro.BaseAdapter.ViewHolder}
- */
-public abstract class ToroAdapter<VH extends BaseAdapter.ViewHolder> extends BaseAdapter<VH> {
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 
+/**
+ * Created by eneim on 1/30/16.
+ */
+public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
+    extends RecyclerView.Adapter<VH> {
+
+  protected OnItemClickListener mOnItemClickListener;
+
+  private final String TAG = getClass().getSimpleName();
+
+  /**
+   * @param listener
+   */
+  public void setOnItemClickListener(OnItemClickListener listener) {
+    this.mOnItemClickListener = listener;
+  }
+
+  // Unusable
+  @Override public void onViewAttachedToWindow(VH holder) {
+    Log.d(TAG, "onViewAttachedToWindow() called with: " + "holder = [" + holder + "]");
+    holder.onAttachedToParent();
+  }
+
+  // Unusable
+  @Override public void onViewDetachedFromWindow(VH holder) {
+    Log.d(TAG, "onViewDetachedFromWindow() called with: " + "holder = [" + holder + "]");
+    holder.onDetachedFromParent();
+  }
+
+  // Unusable
+  @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+    super.onAttachedToRecyclerView(recyclerView);
+    Log.i(TAG, "onAttachedToRecyclerView: ");
+  }
+
+  // Unusable
+  @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    super.onDetachedFromRecyclerView(recyclerView);
+    Log.i(TAG, "onDetachedFromRecyclerView: ");
+  }
+
+  /**
+   *
+   */
+  public abstract static class ViewHolder extends RecyclerView.ViewHolder {
+
+    private final String TAG = getClass().getSimpleName();
+
+    public ViewHolder(View itemView) {
+      super(itemView);
+    }
+
+    /**
+     * @param listener
+     */
+    public void setOnItemViewClickListener(View.OnClickListener listener) {
+      itemView.setOnClickListener(listener);
+    }
+
+    public void setOnItemViewLongClickListener(View.OnLongClickListener listener) {
+      itemView.setOnLongClickListener(listener);
+    }
+
+    /**
+     * see {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
+     */
+    public void onAttachedToParent() {
+      Log.i(TAG, "onAttachedToParent: " + getAdapterPosition());
+    }
+
+    /**
+     * see {@link RecyclerView.Adapter#onDetachedFromRecyclerView(RecyclerView)}
+     */
+    public void onDetachedFromParent() {
+      Log.i(TAG, "onDetachedFromParent: " + getAdapterPosition());
+    }
+
+    public abstract void bind(Object object);
+  }
 }

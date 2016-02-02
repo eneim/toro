@@ -17,7 +17,6 @@
 package im.ene.lab.toro.sample.adapter;
 
 import android.view.ViewGroup;
-import im.ene.lab.toro.BaseAdapter;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -28,7 +27,7 @@ import java.util.List;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SampleVideoUrlListAdapter extends ToroAdapter<BaseAdapter.ViewHolder> {
+public class SampleVideoUrlListAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   private List<SimpleVideoObject> mVideos = new ArrayList<>();
 
@@ -40,7 +39,7 @@ public class SampleVideoUrlListAdapter extends ToroAdapter<BaseAdapter.ViewHolde
     }
   }
 
-  @Override public BaseAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
       @BaseViewHolder.Type int viewType) {
     return BaseViewHolder.createViewHolder(parent, viewType);
   }
@@ -59,11 +58,11 @@ public class SampleVideoUrlListAdapter extends ToroAdapter<BaseAdapter.ViewHolde
     return mVideos.get(position % mVideos.size());
   }
 
-  @Override public void onBindViewHolder(BaseAdapter.ViewHolder holder, int position) {
+  @Override public void onBindViewHolder(ToroAdapter.ViewHolder holder, int position) {
     holder.bind(getItem(position));
   }
 
   @Override public int getItemCount() {
-    return 100;
+    return 250;
   }
 }

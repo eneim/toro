@@ -23,6 +23,6 @@ import android.view.View;
  */
 public interface OnItemLongClickListener {
 
-  boolean onItemLongClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
+  boolean onItemLongClick(ToroAdapter adapter, ToroAdapter.ViewHolder viewHolder, View view,
       int adapterPosition, long itemId);
 }

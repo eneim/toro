@@ -27,6 +27,6 @@ public interface OnItemClickListener {
   /**
    * @param itemId value from {@link RecyclerView.Adapter#getItemId(int)}
    */
-  void onItemClick(BaseAdapter adapter, BaseAdapter.ViewHolder viewHolder, View view,
+  void onItemClick(ToroAdapter adapter, ToroAdapter.ViewHolder viewHolder, View view,
       int adapterPosition, long itemId);
 }

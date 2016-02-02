@@ -29,11 +29,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewParent;
-import im.ene.lab.toro.widget.ToroListView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
@@ -52,7 +52,7 @@ import java.util.WeakHashMap;
   // Singleton
   static Toro sInstance;
 
-  private ToroPolicy mPolicy = Policies.MOST_VISIBLE_TOP_DOWN;  // Default policy
+  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default policy
   // It requires client to detach Activity/unregister View to prevent Memory leak
   private final WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
   private final ArrayList<ToroManager> mManagers = new ArrayList<>();
@@ -98,12 +98,12 @@ import java.util.WeakHashMap;
    *
    * @param policy requested policy from client
    */
-  public static void setPolicy(@NonNull ToroPolicy policy) {
-    sInstance.mPolicy = policy;
+  public static void setStrategy(@NonNull ToroStrategy policy) {
+    sInstance.mStrategy = policy;
   }
 
-  public static ToroPolicy getPolicy() {
-    return sInstance.mPolicy;
+  public static ToroStrategy getStrategy() {
+    return sInstance.mStrategy;
   }
 
   /**
@@ -157,13 +157,6 @@ import java.util.WeakHashMap;
         sInstance.mManagers.add(manager);
         sInstance.mEntries.put(view, listener);
       }
-    } else if (view instanceof ToroListView) {
-      // TODO implement for ListView
-      synchronized (LOCK) {
-        ListViewScrollListener scrollListener = new ListViewScrollListener(new ToroManagerImpl());
-        ((ToroListView) view).addOnScrollListener(scrollListener);
-        sInstance.mEntries.put(view, scrollListener);
-      }
     }
   }
 
@@ -192,8 +185,6 @@ import java.util.WeakHashMap;
         // there is a set of <View, Listener> is removed
         if (view instanceof RecyclerView && object instanceof RecyclerViewScrollListener) {
           ((RecyclerView) view).removeOnScrollListener((RecyclerView.OnScrollListener) object);
-        } else if (view instanceof ToroListView && object instanceof ListViewScrollListener) {
-          ((ToroListView) view).removeOnScrollListener((ListViewScrollListener) object);
         }
       }
     }
@@ -276,14 +267,14 @@ import java.util.WeakHashMap;
 
   }
 
-  public static final class Policies {
+  public static final class Strategies {
 
     /**
      * Among all playable Videos, select the most visible item (Max {@link
      * ToroPlayer#visibleAreaOffset()}). In case there are more than one item, chose the first item
      * on the top
      */
-    public static final ToroPolicy MOST_VISIBLE_TOP_DOWN = new ToroPolicy() {
+    public static final ToroStrategy MOST_VISIBLE_TOP_DOWN = new ToroStrategy() {
       @Override public String getDescription() {
         return "Most visible item from top";
       }
@@ -321,7 +312,7 @@ import java.util.WeakHashMap;
      * on the top. But if current player is still playable, but not staying on the top, we still
      * keep it.
      */
-    public static final ToroPolicy MOST_VISIBLE_TOP_DOWN_KEEP_LAST = new ToroPolicy() {
+    public static final ToroStrategy MOST_VISIBLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
       @Override public String getDescription() {
         return "Most visible item in list of candidates, chosen from top to bottom. "
             + "But if current player is not on the top but still playable, keep it";
@@ -350,7 +341,7 @@ import java.util.WeakHashMap;
     /**
      * Scan top down of candidates, chose the first playable Video
      */
-    public static final ToroPolicy FIRST_PLAYABLE_TOP_DOWN = new ToroPolicy() {
+    public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN = new ToroStrategy() {
       @Override public String getDescription() {
         return "Scan top down of candidates, chose the first playable Video";
       }
@@ -379,7 +370,7 @@ import java.util.WeakHashMap;
      * Scan top down of candidates, chose the first playable Video. But if current player is still
      * playable, but not on the top, we keep using it
      */
-    public static final ToroPolicy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroPolicy() {
+    public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
 
       @Override public String getDescription() {
         return "Scan top down of candidates, chose the first playable Video. But if current player "
@@ -398,14 +389,15 @@ import java.util.WeakHashMap;
 
   static ToroViewHelper RECYCLER_VIEW_HELPER = new ToroViewHelper() {
     @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
-      for (View view : sInstance.mEntries.keySet()) {
-        if (view == parent) {
-          ToroScrollHelper scrollHelper = sInstance.mEntries.get(view);
-          if (scrollHelper != null &&
-              sInstance.mManagers.contains(scrollHelper.getManager()) &&
-              scrollHelper.getManager().getPlayer() == null) {
-            scrollHelper.getManager().setPlayer(player);
-            scrollHelper.getManager().restoreVideoState(player, player.getVideoId());
+      for (Map.Entry<View, ToroScrollHelper> entry : sInstance.mEntries.entrySet()) {
+        View key = entry.getKey();
+        if (key == parent) {
+          ToroScrollHelper value = entry.getValue();
+          if (value != null &&
+              sInstance.mManagers.contains(value.getManager()) &&
+              value.getManager().getPlayer() == null) {
+            value.getManager().setPlayer(player);
+            value.getManager().restoreVideoState(player, player.getVideoId());
             // Check playing state
             Rect containerRect = new Rect();
             Rect parentRect = null;
@@ -416,7 +408,7 @@ import java.util.WeakHashMap;
             }
 
             if (player.wantsToPlay(parentRect, containerRect)) {
-              scrollHelper.getManager().startVideo(player);
+              value.getManager().startVideo(player);
             }
           }
         }
@@ -425,15 +417,15 @@ import java.util.WeakHashMap;
 
     @Override
     public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
-      for (View view : sInstance.mEntries.keySet()) {
-        // Find ToroManager for current ViewParent
-        if (view == parent) {
-          ToroScrollHelper scrollHelper = sInstance.mEntries.get(view);
+      for (Map.Entry<View, ToroScrollHelper> entry : sInstance.mEntries.entrySet()) {
+        View key = entry.getKey();
+        if (key == parent) {
+          ToroScrollHelper value = entry.getValue();
           // Manually save Video state
-          if (scrollHelper != null &&
-              sInstance.mManagers.contains(scrollHelper.getManager()) &&
-              player.equals(scrollHelper.getManager().getPlayer())) {
-            scrollHelper.getManager()
+          if (value != null &&
+              sInstance.mManagers.contains(value.getManager()) &&
+              player.equals(value.getManager().getPlayer())) {
+            value.getManager()
                 .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
                     player.getDuration());
           }
@@ -442,15 +434,4 @@ import java.util.WeakHashMap;
     }
   };
 
-  // TODO Fill this
-  static ToroViewHelper LIST_VIEW = new ToroViewHelper() {
-    @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
-
-    }
-
-    @Override
-    public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
-
-    }
-  };
 }
