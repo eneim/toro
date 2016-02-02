@@ -89,7 +89,7 @@ public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Call
   @Override public float visibleAreaOffset() {
     Rect videoRect = getVideoRect();
     Rect parentRect = getRecyclerViewRect();
-    if (!parentRect.contains(videoRect) || !parentRect.intersect(videoRect)) {
+    if (!parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
       return 0.f;
     }
 
