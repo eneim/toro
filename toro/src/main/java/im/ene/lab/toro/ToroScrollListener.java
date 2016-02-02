@@ -16,13 +16,23 @@
 
 package im.ene.lab.toro;
 
-/**
- * Created by eneim on 2/1/16.
- */
-interface ToroScrollHelper {
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 
-  /**
-   * @return a ToroManager
-   */
-  ToroManager getManager();
+/**
+ * Created by eneim on 1/31/16.
+ *
+ * @hide
+ */
+public class ToroScrollListener extends RecyclerView.OnScrollListener {
+
+  @NonNull protected final ToroManager mManager;
+
+  public ToroScrollListener(@NonNull ToroManager manager) {
+    this.mManager = manager;
+  }
+
+  @NonNull protected final ToroManager getManager() {
+    return mManager;
+  }
 }

@@ -29,12 +29,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewParent;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by eneim on 1/31/16.
@@ -54,8 +53,7 @@ import java.util.WeakHashMap;
 
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default policy
   // It requires client to detach Activity/unregister View to prevent Memory leak
-  private final WeakHashMap<View, ToroScrollHelper> mEntries = new WeakHashMap<>();
-  private final ArrayList<ToroManager> mManagers = new ArrayList<>();
+  private final ConcurrentHashMap<RecyclerView, ToroScrollListener> mMm = new ConcurrentHashMap<>();
 
   /**
    * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
@@ -91,6 +89,11 @@ import java.util.WeakHashMap;
     if (application != null) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
     }
+
+    // Cleanup
+    for (RecyclerView view : sInstance.mMm.keySet()) {
+      unregister(view);
+    }
   }
 
   /**
@@ -111,7 +114,7 @@ import java.util.WeakHashMap;
    *
    * @param view which will be registered
    */
-  public static void register(View view) {
+  public static void register(RecyclerView view) {
     if (sInstance == null) {
       throw new IllegalStateException(
           "Toro has not been attached to your Activity or you Application. Please refer the doc");
@@ -122,41 +125,39 @@ import java.util.WeakHashMap;
     }
 
     // Remove old images
-    if (sInstance.mEntries.containsKey(view)) {
+    if (sInstance.mMm.containsKey(view)) {
       synchronized (LOCK) {
-        sInstance.mEntries.remove(view);
+        sInstance.mMm.remove(view);
       }
     }
 
-    if (view instanceof RecyclerView) {
-      synchronized (LOCK) {
-        // 1. retrieve current TotoManager instance
-        ToroManager manager = null;
-        RecyclerView.Adapter adapter = ((RecyclerView) view).getAdapter();
-        if (adapter instanceof ToroManager) {
-          manager = (ToroManager) adapter;
-        }
-
-        // Fallback to default Manager
-        if (manager == null) {
-          manager = new ToroManagerImpl();
-        }
-
-        RecyclerView.LayoutManager layoutManager = ((RecyclerView) view).getLayoutManager();
-        RecyclerViewScrollListener listener;
-        if (layoutManager instanceof LinearLayoutManager) {
-          listener = new RecyclerViewLinearScrollListener(manager);
-        } else if (layoutManager instanceof StaggeredGridLayoutManager) {
-          listener = new RecyclerViewStaggeredGridScrollListener(manager);
-        } else {
-          throw new IllegalArgumentException("Unexpected layout manager: " + layoutManager);
-        }
-
-        ((RecyclerView) view).addOnScrollListener(listener);
-        // Cache
-        sInstance.mManagers.add(manager);
-        sInstance.mEntries.put(view, listener);
+    synchronized (LOCK) {
+      // 1. retrieve current TotoManager instance
+      ToroManager manager = null;
+      RecyclerView.Adapter adapter = view.getAdapter();
+      if (adapter instanceof ToroManager) {
+        manager = (ToroManager) adapter;
       }
+
+      // Fallback to default Manager
+      if (manager == null) {
+        manager = new ToroManagerImpl();
+      }
+
+      RecyclerView.LayoutManager layoutManager = view.getLayoutManager();
+      ToroScrollListener listener;
+      if (layoutManager instanceof LinearLayoutManager) {
+        listener = new LinearLayoutScrollListener(manager);
+      } else if (layoutManager instanceof StaggeredGridLayoutManager) {
+        listener = new StaggeredGridLayoutScrollListener(manager);
+      } else {
+        throw new IllegalArgumentException("Unexpected layout manager: " + layoutManager);
+      }
+
+      view.addOnScrollListener(listener);
+      // Cache
+      // sInstance.mManagers.add(manager);
+      sInstance.mMm.put(view, listener);
     }
   }
 
@@ -165,7 +166,7 @@ import java.util.WeakHashMap;
    *
    * @param view which will be unregistered
    */
-  public static void unregister(View view) {
+  public static void unregister(RecyclerView view) {
     if (sInstance == null) {
       throw new IllegalStateException(
           "Toro has not been attached to your Activity or you Application. Please refer the doc");
@@ -177,21 +178,20 @@ import java.util.WeakHashMap;
 
     synchronized (LOCK) {
       // Obtain listener which will be removed
-      ToroScrollHelper object = sInstance.mEntries.remove(view);
+      ToroScrollListener object = sInstance.mMm.remove(view);
       // Process related View
       if (object != null) {
         // Remove from Manager list
-        sInstance.mManagers.remove(object.getManager());
+        // sInstance.mManagers.remove(object.getManager());
         // there is a set of <View, Listener> is removed
-        if (view instanceof RecyclerView && object instanceof RecyclerViewScrollListener) {
-          ((RecyclerView) view).removeOnScrollListener((RecyclerView.OnScrollListener) object);
-        }
+        view.removeOnScrollListener(object);
       }
     }
   }
 
   static void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
-    for (ToroManager manager : sInstance.mManagers) {
+    for (ToroScrollListener listener : sInstance.mMm.values()) {
+      ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
         break;
@@ -201,7 +201,8 @@ import java.util.WeakHashMap;
 
   static void onPrepared(ToroPlayer player, View container, ViewParent parent,
       MediaPlayer mediaPlayer) {
-    for (ToroManager manager : sInstance.mManagers) {
+    for (ToroScrollListener listener : sInstance.mMm.values()) {
+      ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.restoreVideoState(player, player.getVideoId());
         Rect containerRect = new Rect();
@@ -240,7 +241,8 @@ import java.util.WeakHashMap;
   }
 
   @Override public void onActivityResumed(Activity activity) {
-    for (ToroManager manager : mManagers) {
+    for (ToroScrollListener listener : sInstance.mMm.values()) {
+      ToroManager manager = listener.getManager();
       if (manager.getPlayer() != null) {
         manager.getPlayer().onActivityResumed();
       }
@@ -248,7 +250,8 @@ import java.util.WeakHashMap;
   }
 
   @Override public void onActivityPaused(Activity activity) {
-    for (ToroManager manager : mManagers) {
+    for (ToroScrollListener listener : sInstance.mMm.values()) {
+      ToroManager manager = listener.getManager();
       if (manager.getPlayer() != null) {
         manager.getPlayer().onActivityPaused();
       }
@@ -389,13 +392,11 @@ import java.util.WeakHashMap;
 
   static ToroViewHelper RECYCLER_VIEW_HELPER = new ToroViewHelper() {
     @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
-      for (Map.Entry<View, ToroScrollHelper> entry : sInstance.mEntries.entrySet()) {
+      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
         View key = entry.getKey();
         if (key == parent) {
-          ToroScrollHelper value = entry.getValue();
-          if (value != null &&
-              sInstance.mManagers.contains(value.getManager()) &&
-              value.getManager().getPlayer() == null) {
+          ToroScrollListener value = entry.getValue();
+          if (value != null && value.getManager().getPlayer() == null) {
             value.getManager().setPlayer(player);
             value.getManager().restoreVideoState(player, player.getVideoId());
             // Check playing state
@@ -417,14 +418,12 @@ import java.util.WeakHashMap;
 
     @Override
     public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
-      for (Map.Entry<View, ToroScrollHelper> entry : sInstance.mEntries.entrySet()) {
+      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
         View key = entry.getKey();
         if (key == parent) {
-          ToroScrollHelper value = entry.getValue();
+          ToroScrollListener value = entry.getValue();
           // Manually save Video state
-          if (value != null &&
-              sInstance.mManagers.contains(value.getManager()) &&
-              player.equals(value.getManager().getPlayer())) {
+          if (value != null && player.equals(value.getManager().getPlayer())) {
             value.getManager()
                 .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
                     player.getDuration());
@@ -433,5 +432,4 @@ import java.util.WeakHashMap;
       }
     }
   };
-
 }
