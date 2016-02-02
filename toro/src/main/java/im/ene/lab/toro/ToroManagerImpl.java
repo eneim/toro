@@ -73,6 +73,16 @@ public final class ToroManagerImpl implements ToroManager {
     if (mCurrentPlayer != null) {
       mCurrentPlayer.pause();
       mCurrentPlayer.onPausePlayback();
+      if (mMainThreadHandler != null) {
+        mMainThreadHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+      }
+    }
+  }
+
+  @Override public void onPlaybackStopped() {
+    mCurrentPlayer.onStopPlayback();
+    if (mMainThreadHandler != null) {
+      mMainThreadHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
     }
   }
 

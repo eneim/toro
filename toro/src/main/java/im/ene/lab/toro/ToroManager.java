@@ -1,5 +1,6 @@
 package im.ene.lab.toro;
 
+import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 
 /**
@@ -28,6 +29,11 @@ public interface ToroManager {
    * Pause current video
    */
   void pausePlayback();
+
+  /**
+   * Called by {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}
+   */
+  void onPlaybackStopped();
 
   /**
    * Save current video state
