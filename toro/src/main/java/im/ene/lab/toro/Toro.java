@@ -24,6 +24,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -304,6 +305,11 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
+      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
+          @NonNull Rect childRect) {
+        return true;
+      }
+
       @Override public boolean requireCompletelyVisible() {
         return false;
       }
@@ -336,6 +342,11 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
+      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
+          @NonNull Rect childRect) {
+        return true;
+      }
+
       @Override public boolean requireCompletelyVisible() {
         return false;
       }
@@ -364,6 +375,11 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
+      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
+          @NonNull Rect childRect) {
+        return true;
+      }
+
       @Override public boolean requireCompletelyVisible() {
         return false;
       }
@@ -382,6 +398,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
       @Override public ToroPlayer getPlayer(List<ToroPlayer> candidates) {
         return candidates.get(0);
+      }
+
+      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
+          @NonNull Rect childRect) {
+        return true;
       }
 
       @Override public boolean requireCompletelyVisible() {
@@ -433,32 +454,42 @@ import java.util.concurrent.ConcurrentHashMap;
     }
 
     @Override public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
-      RecyclerView key = null;
-      ToroScrollListener value = null;
+      RecyclerView recyclerView = null;
+      ToroScrollListener listener = null;
       for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        key = entry.getKey();
-        if (key == parent) {
-          value = entry.getValue();
+        recyclerView = entry.getKey();
+        if (recyclerView == parent) {
+          listener = entry.getValue();
           break;
         }
       }
 
-      if (key == null || value == null) {
+      // Important components are missing, return
+      if (recyclerView == null || listener == null) {
         return false;
       }
 
-      // Manually save Video state
-      ToroManager manager = value.getManager();
-      ToroPlayer currentPlayer = manager.getPlayer();
       Rect containerRect = new Rect();
       Rect parentRect = new Rect();
       itemView.getLocalVisibleRect(containerRect);
-      key.getLocalVisibleRect(parentRect);
-      if (!player.equals(currentPlayer) && player.wantsToPlay(parentRect, containerRect)) {
+      recyclerView.getLocalVisibleRect(parentRect);
+
+      // Being pressed player is not be able to play, return
+      if (!player.wantsToPlay(parentRect, containerRect) || !getStrategy().allowsToPlay(player,
+          parentRect, containerRect)) {
+        return false;
+      }
+
+      ToroManager manager = listener.getManager();
+      ToroPlayer currentPlayer = manager.getPlayer();
+
+      if (!player.equals(currentPlayer)) {
+        // All condition to switch players has passed, process the switching
+        // Manually save Video state
         // Not the current player, and new player wants to play, so switch players
         if (currentPlayer != null) {
-          manager.saveVideoState(currentPlayer.getVideoId(),
-              currentPlayer.getCurrentPosition(), currentPlayer.getDuration());
+          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+              currentPlayer.getDuration());
           if (currentPlayer.isPlaying()) {
             manager.pauseVideo(currentPlayer);
           }
@@ -468,9 +499,11 @@ import java.util.concurrent.ConcurrentHashMap;
         manager.setPlayer(player);
         manager.restoreVideoState(player, player.getVideoId());
         manager.startVideo(player);
+
+        return true;
       }
 
-      return true;
+      return false;
     }
   };
 }

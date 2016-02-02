@@ -17,6 +17,11 @@
 package im.ene.lab.toro;
 
 import android.graphics.Rect;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.ViewParent;
 import java.util.List;
 
 /**
@@ -35,6 +40,16 @@ public interface ToroStrategy {
    * gives the best fit Player to start playing
    */
   ToroPlayer getPlayer(List<ToroPlayer> candidates);
+
+  /**
+   * Called after {@link ToroPlayer#wantsToPlay(Rect, Rect)} to verify that current player is
+   * allowed to play by current Strategy
+   *
+   * @param player ToroPlayer object which wants to play, and wait for permission
+   * @param container The {@link RecyclerView.ViewHolder#itemView} which holds current player
+   * @param parent Top level RecyclerView parent
+   */
+  boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect, @NonNull Rect childRect);
 
   /**
    * Indicate that this Policy requires a ToroPlayer's video view is fully visible or not
