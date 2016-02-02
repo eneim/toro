@@ -22,9 +22,11 @@ import android.view.ViewParent;
 /**
  * Created by eneim on 2/1/16.
  */
-interface ToroViewHelper {
+interface ToroItemViewHelper {
 
   void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent);
 
   void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent);
+
+  boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent);
 }

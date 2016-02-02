@@ -25,9 +25,10 @@ import android.view.View;
  */
 abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener {
+    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener,
+    View.OnLongClickListener {
 
-  private final ToroViewHelper mHelper;
+  private final ToroItemViewHelper mHelper;
 
   public ToroViewHolder(View itemView) {
     super(itemView);
@@ -66,4 +67,7 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     return getAdapterPosition();
   }
 
+  @Override public boolean onLongClick(View v) {
+    return mHelper.onItemLongClick(this, itemView, itemView.getParent());
+  }
 }

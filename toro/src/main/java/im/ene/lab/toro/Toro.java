@@ -390,10 +390,10 @@ import java.util.concurrent.ConcurrentHashMap;
     };
   }
 
-  static ToroViewHelper RECYCLER_VIEW_HELPER = new ToroViewHelper() {
+  static ToroItemViewHelper RECYCLER_VIEW_HELPER = new ToroItemViewHelper() {
     @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
       for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        View key = entry.getKey();
+        RecyclerView key = entry.getKey();
         if (key == parent) {
           ToroScrollListener value = entry.getValue();
           if (value != null && value.getManager().getPlayer() == null) {
@@ -419,7 +419,7 @@ import java.util.concurrent.ConcurrentHashMap;
     @Override
     public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
       for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        View key = entry.getKey();
+        RecyclerView key = entry.getKey();
         if (key == parent) {
           ToroScrollListener value = entry.getValue();
           // Manually save Video state
@@ -430,6 +430,47 @@ import java.util.concurrent.ConcurrentHashMap;
           }
         }
       }
+    }
+
+    @Override public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
+      RecyclerView key = null;
+      ToroScrollListener value = null;
+      for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
+        key = entry.getKey();
+        if (key == parent) {
+          value = entry.getValue();
+          break;
+        }
+      }
+
+      if (key == null || value == null) {
+        return false;
+      }
+
+      // Manually save Video state
+      ToroManager manager = value.getManager();
+      ToroPlayer currentPlayer = manager.getPlayer();
+      Rect containerRect = new Rect();
+      Rect parentRect = new Rect();
+      itemView.getLocalVisibleRect(containerRect);
+      key.getLocalVisibleRect(parentRect);
+      if (!player.equals(currentPlayer) && player.wantsToPlay(parentRect, containerRect)) {
+        // Not the current player, and new player wants to play, so switch players
+        if (currentPlayer != null) {
+          manager.saveVideoState(currentPlayer.getVideoId(),
+              currentPlayer.getCurrentPosition(), currentPlayer.getDuration());
+          if (currentPlayer.isPlaying()) {
+            manager.pauseVideo(currentPlayer);
+          }
+        }
+
+        // Trigger new player
+        manager.setPlayer(player);
+        manager.restoreVideoState(player, player.getVideoId());
+        manager.startVideo(player);
+      }
+
+      return true;
     }
   };
 }
