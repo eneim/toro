@@ -20,14 +20,14 @@ import android.support.annotation.IntDef;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.BaseAdapter;
+import im.ene.lab.toro.ToroAdapter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public abstract class BaseViewHolder extends BaseAdapter.ViewHolder {
+public abstract class BaseViewHolder extends ToroAdapter.ViewHolder {
 
   public static final int VIEW_TYPE_NO_VIDEO = 1;
 
@@ -42,8 +42,8 @@ public abstract class BaseViewHolder extends BaseAdapter.ViewHolder {
     super(itemView);
   }
 
-  public static BaseAdapter.ViewHolder createViewHolder(ViewGroup parent, @Type int viewType) {
-    final BaseAdapter.ViewHolder viewHolder;
+  public static ToroAdapter.ViewHolder createViewHolder(ViewGroup parent, @Type int viewType) {
+    final ToroAdapter.ViewHolder viewHolder;
     final View view;
     if (viewType == VIEW_TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())

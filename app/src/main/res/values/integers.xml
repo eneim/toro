@@ -15,22 +15,6 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    android:background="#20000000"
-    android:padding="4dp"
-    >
-
-  <im.ene.lab.toro.widget.ToroVideoView
-      xmlns:android="http://schemas.android.com/apk/res/android"
-      android:id="@+id/video"
-      android:layout_width="match_parent"
-      android:layout_height="224dp"
-      android:layout_centerInParent="true"
-      app:videoScaleMode="fitHeight"
-      />
-
-</RelativeLayout>
+<resources>
+  <integer name="staggered_span_count">2</integer>
+</resources>

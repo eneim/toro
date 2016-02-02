@@ -18,7 +18,6 @@ package im.ene.lab.toro;
 
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import java.util.WeakHashMap;
 
 /**
@@ -46,16 +45,19 @@ public final class ToroManagerImpl implements ToroManager {
     player.pause();
   }
 
-  @Override
-  public void saveVideoState(Long videoId, @Nullable Integer position, long duration) {
+  @Override public void saveVideoState(Long videoId, @Nullable Integer position, long duration) {
     if (videoId != null) {
       mVideoStates.put(videoId, position == null ? 0 : position);
     }
   }
 
   @Override public void restoreVideoState(ToroPlayer player, Long videoId) {
-    Log.d(TAG, "restoreVideoState() called with: " + "player = [" + player + "], videoId = ["
-        + videoId + "]");
+    Log.d(TAG, "restoreVideoState() called with: "
+        + "player = ["
+        + player
+        + "], videoId = ["
+        + videoId
+        + "]");
     Integer position = mVideoStates.get(videoId);
     if (position == null) {
       position = 0;

@@ -22,10 +22,10 @@ import java.util.List;
 /**
  * Created by eneim on 2/1/16.
  */
-public interface ToroPolicy {
+public interface ToroStrategy {
 
   /**
-   * @return Name of current Policy
+   * @return Description of current Strategy
    * @hide
    */
   String getDescription();

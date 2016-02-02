@@ -23,15 +23,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import im.ene.lab.toro.TextureVideoViewHolder;
+import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.widget.TextureVideoView;
+import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoViewHolder extends TextureVideoViewHolder implements Handler.Callback {
+public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Callback {
 
   private static final String TAG = "VideoViewHolder";
 
@@ -52,8 +52,8 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
     super(itemView);
   }
 
-  @Override protected TextureVideoView getVideoView(View itemView) {
-    return (TextureVideoView) itemView.findViewById(R.id.video);
+  @Override protected ToroVideoView getVideoView(View itemView) {
+    return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
   @Override public void bind(Object item) {
@@ -87,8 +87,12 @@ public class VideoViewHolder extends TextureVideoViewHolder implements Handler.C
   }
 
   @Override public float visibleAreaOffset() {
-    Rect videoRect = new Rect();
-    mVideoView.getLocalVisibleRect(videoRect);
+    Rect videoRect = getVideoRect();
+    Rect parentRect = getRecyclerViewRect();
+    if (!parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
+      return 0.f;
+    }
+
     return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
   }
 

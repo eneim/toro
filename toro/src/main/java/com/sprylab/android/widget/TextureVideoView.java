@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright (C) 2006 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.widget;
+package com.sprylab.android.widget;
 
-import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -27,7 +27,6 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.net.Uri;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -39,7 +38,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
-import im.ene.lab.toro.R;
 import java.io.IOException;
 import java.util.Map;
 
@@ -49,7 +47,7 @@ import java.util.Map;
  * providers), takes care of computing its measurement from the video so that
  * it can be used in any layout manager, and provides various display options
  * such as scaling and tinting.<p>
- * <p/>
+ *
  * <em>Note: VideoView does not retain its full state when going into the
  * background.</em>  In particular, it does not restore the current play state,
  * play position or selected tracks.  Applications should
@@ -58,7 +56,7 @@ import java.util.Map;
  * {@link android.app.Activity#onRestoreInstanceState}.<p>
  * Also note that the audio session id (from {@link #getAudioSessionId}) may
  * change from its previously returned value when the VideoView is restored.<p>
- * <p/>
+ *
  * This code is based on the official Android sources for 6.0.1_r10 with the following differences:
  * <ol>
  * <li>extends {@link android.view.TextureView} instead of a {@link android.view.SurfaceView}
@@ -66,8 +64,7 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) public class TextureVideoView
-    extends TextureView implements MediaPlayerControl {
+public class TextureVideoView extends TextureView implements MediaPlayerControl {
   // all possible internal states
   private static final int STATE_ERROR = -1;
   private static final int STATE_IDLE = 0;
@@ -76,18 +73,6 @@ import java.util.Map;
   private static final int STATE_PLAYING = 3;
   private static final int STATE_PAUSED = 4;
   private static final int STATE_PLAYBACK_COMPLETED = 5;
-  // Seeking flags
-  // We don't allow any action interrupt seeking process
-  private static final int STATE_SEEK_BEGIN = 6;
-  private static final int STATE_SEEK_END = 7;
-  // Scale mode
-  // 0. Width: view width is fixed (or full fill parent), we re-calculate height by width
-  private static final int SCALE_MODE_WIDTH = 0;
-  // 1. Height: view height is fixed (or full fill parent), we re-calculate width by height
-  private static final int SCALE_MODE_HEIGHT = 1;
-  // 2. Fit inside: scale to fit the most visible area. Don't use on large screen :trollface:
-  private static final int SCALE_MODE_FIT_INSIDE = 2;
-
   private String TAG = "TextureVideoView";
   // settable by the client
   private Uri mUri;
@@ -99,12 +84,6 @@ import java.util.Map;
   // of STATE_PAUSED.
   private int mCurrentState = STATE_IDLE;
   private int mTargetState = STATE_IDLE;
-
-  // Watch seeking state
-  private int mSeekState = STATE_IDLE;
-
-  // Scale mode
-  private int mScaleMode = SCALE_MODE_HEIGHT;
 
   // All the stuff we need for playing and showing a video
   private Surface mSurface = null;
@@ -126,7 +105,6 @@ import java.util.Map;
   private MediaController mMediaController;
   private OnCompletionListener mOnCompletionListener;
   private MediaPlayer.OnPreparedListener mOnPreparedListener;
-  private MediaPlayer.OnSeekCompleteListener mOnSeekCompleteListener;
   private int mCurrentBufferPercentage;
   private OnErrorListener mOnErrorListener;
   private OnInfoListener mOnInfoListener;
@@ -134,16 +112,6 @@ import java.util.Map;
   private boolean mCanPause;
   private boolean mCanSeekBack;
   private boolean mCanSeekForward;
-  MediaPlayer.OnSeekCompleteListener mSeekCompleteListener =
-      new MediaPlayer.OnSeekCompleteListener() {
-        @Override public void onSeekComplete(MediaPlayer mp) {
-          Log.d(TAG, "onSeekComplete() called with: " + "mp = [" + mp + "]");
-          mSeekState = STATE_SEEK_END;
-          if (mOnSeekCompleteListener != null) {
-            mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
-          }
-        }
-      };
   MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
     public void onPrepared(MediaPlayer mp) {
       mCurrentState = STATE_PREPARED;
@@ -156,13 +124,11 @@ import java.util.Map;
       if (mMediaController != null) {
         mMediaController.setEnabled(true);
       }
-
       mVideoWidth = mp.getVideoWidth();
       mVideoHeight = mp.getVideoHeight();
 
-      // mSeekWhenPrepared may be changed after seekTo() call
-      int seekToPosition = mSeekWhenPrepared;
-
+      int seekToPosition =
+          mSeekWhenPrepared;  // mSeekWhenPrepared may be changed after seekTo() call
       if (seekToPosition != 0) {
         seekTo(seekToPosition);
       }
@@ -212,13 +178,6 @@ import java.util.Map;
       return true;
     }
   };
-  private MediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
-      new MediaPlayer.OnBufferingUpdateListener() {
-        public void onBufferingUpdate(MediaPlayer mp, int percent) {
-          mCurrentBufferPercentage = percent;
-        }
-      };
-  private OnPlaybackError mOnPlaybackErrorListener;
   private MediaPlayer.OnErrorListener mErrorListener = new MediaPlayer.OnErrorListener() {
     public boolean onError(MediaPlayer mp, int framework_err, int impl_err) {
       Log.d(TAG, "Error: " + framework_err + "," + impl_err);
@@ -250,20 +209,31 @@ import java.util.Map;
           messageId = android.R.string.VideoView_error_text_unknown;
         }
 
-        if (mOnPlaybackErrorListener != null) {
-          mOnPlaybackErrorListener.onError(messageId);
-        }
+        new AlertDialog.Builder(getContext()).setMessage(messageId)
+            .setPositiveButton(android.R.string.VideoView_error_button,
+                new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int whichButton) {
+                                        /* If we get here, there is no onError listener, so
+                                         * at least inform them that the video is over.
+                                         */
+                    if (mOnCompletionListener != null) {
+                      mOnCompletionListener.onCompletion(mMediaPlayer);
+                    }
+                  }
+                })
+            .setCancelable(false)
+            .show();
       }
       return true;
     }
   };
+  private MediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
+      new MediaPlayer.OnBufferingUpdateListener() {
+        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+          mCurrentBufferPercentage = percent;
+        }
+      };
   TextureView.SurfaceTextureListener mSurfaceTextureListener = new SurfaceTextureListener() {
-    @Override public void onSurfaceTextureAvailable(final SurfaceTexture surface, final int width,
-        final int height) {
-      mSurface = new Surface(surface);
-      openVideo();
-    }
-
     @Override public void onSurfaceTextureSizeChanged(final SurfaceTexture surface, final int width,
         final int height) {
       boolean isValidState = (mTargetState == STATE_PLAYING);
@@ -274,6 +244,12 @@ import java.util.Map;
         }
         start();
       }
+    }
+
+    @Override public void onSurfaceTextureAvailable(final SurfaceTexture surface, final int width,
+        final int height) {
+      mSurface = new Surface(surface);
+      openVideo();
     }
 
     @Override public boolean onSurfaceTextureDestroyed(final SurfaceTexture surface) {
@@ -297,17 +273,6 @@ import java.util.Map;
     initVideoView();
   }
 
-  private void initVideoView() {
-    mVideoWidth = 0;
-    mVideoHeight = 0;
-    setSurfaceTextureListener(mSurfaceTextureListener);
-    setFocusable(true);
-    setFocusableInTouchMode(true);
-    requestFocus();
-    mCurrentState = STATE_IDLE;
-    mTargetState = STATE_IDLE;
-  }
-
   public TextureVideoView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
     initVideoView();
@@ -315,76 +280,7 @@ import java.util.Map;
 
   public TextureVideoView(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TextureVideoView);
-    try {
-      mScaleMode = a.getInteger(R.styleable.TextureVideoView_videoScaleMode, SCALE_MODE_HEIGHT);
-    } finally {
-      a.recycle();
-    }
     initVideoView();
-  }
-
-  @Override public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
-    super.onInitializeAccessibilityEvent(event);
-    event.setClassName(TextureVideoView.class.getName());
-  }
-
-  @Override public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
-    super.onInitializeAccessibilityNodeInfo(info);
-    info.setClassName(TextureVideoView.class.getName());
-  }
-
-  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
-    boolean isKeyCodeSupported = keyCode != KeyEvent.KEYCODE_BACK &&
-        keyCode != KeyEvent.KEYCODE_VOLUME_UP &&
-        keyCode != KeyEvent.KEYCODE_VOLUME_DOWN &&
-        keyCode != KeyEvent.KEYCODE_VOLUME_MUTE &&
-        keyCode != KeyEvent.KEYCODE_MENU &&
-        keyCode != KeyEvent.KEYCODE_CALL &&
-        keyCode != KeyEvent.KEYCODE_ENDCALL;
-    if (isInPlaybackState() && isKeyCodeSupported && mMediaController != null) {
-      if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-        if (mMediaPlayer.isPlaying()) {
-          pause();
-          mMediaController.show();
-        } else {
-          start();
-          mMediaController.hide();
-        }
-        return true;
-      } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-        if (!mMediaPlayer.isPlaying()) {
-          start();
-          mMediaController.hide();
-        }
-        return true;
-      } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
-          || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-        if (mMediaPlayer.isPlaying()) {
-          pause();
-          mMediaController.show();
-        }
-        return true;
-      } else {
-        toggleMediaControlsVisibility();
-      }
-    }
-
-    return super.onKeyDown(keyCode, event);
-  }
-
-  @Override public boolean onTrackballEvent(MotionEvent ev) {
-    if (isInPlaybackState() && mMediaController != null) {
-      toggleMediaControlsVisibility();
-    }
-    return false;
-  }
-
-  @Override public boolean onTouchEvent(MotionEvent ev) {
-    if (isInPlaybackState() && mMediaController != null) {
-      toggleMediaControlsVisibility();
-    }
-    return false;
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -406,26 +302,12 @@ import java.util.Map;
         height = heightSpecSize;
 
         // for compatibility, we adjust size based on aspect ratio
-        switch (mScaleMode) {
-          case SCALE_MODE_WIDTH:
-            if (mVideoWidth * height < width * mVideoHeight) {
-              //Log.i("@@@", "image too wide, correcting");
-              height = width * mVideoHeight / mVideoWidth;
-            } else if (mVideoWidth * height > width * mVideoHeight) {
-              //Log.i("@@@", "image too tall, correcting");
-              width = height * mVideoWidth / mVideoHeight;
-            }
-            break;
-          case SCALE_MODE_HEIGHT:
-          default:
-            if (mVideoWidth * height < width * mVideoHeight) {
-              //Log.i("@@@", "image too wide, correcting");
-              width = height * mVideoWidth / mVideoHeight;
-            } else if (mVideoWidth * height > width * mVideoHeight) {
-              //Log.i("@@@", "image too tall, correcting");
-              height = width * mVideoHeight / mVideoWidth;
-            }
-            break;
+        if (mVideoWidth * height < width * mVideoHeight) {
+          //Log.i("@@@", "image too wide, correcting");
+          width = height * mVideoWidth / mVideoHeight;
+        } else if (mVideoWidth * height > width * mVideoHeight) {
+          //Log.i("@@@", "image too tall, correcting");
+          height = width * mVideoHeight / mVideoWidth;
         }
       } else if (widthSpecMode == MeasureSpec.EXACTLY) {
         // only the width is fixed, adjust the height to match aspect ratio if possible
@@ -464,98 +346,29 @@ import java.util.Map;
     setMeasuredDimension(width, height);
   }
 
-  private boolean isInPlaybackState() {
-    return (mMediaPlayer != null &&
-        mCurrentState != STATE_ERROR &&
-        mCurrentState != STATE_IDLE &&
-        mCurrentState != STATE_PREPARING);
+  @Override public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
+    super.onInitializeAccessibilityEvent(event);
+    event.setClassName(TextureVideoView.class.getName());
   }
 
-  @Override public void start() {
-    if (isInPlaybackState()) {
-      mMediaPlayer.start();
-      mCurrentState = STATE_PLAYING;
-    }
-    mTargetState = STATE_PLAYING;
-  }
-
-  private void toggleMediaControlsVisibility() {
-    if (mMediaController.isShowing()) {
-      mMediaController.hide();
-    } else {
-      mMediaController.show();
-    }
-  }
-
-  @Override public void pause() {
-    if (isInPlaybackState()) {
-      if (mMediaPlayer.isPlaying()) {
-        mMediaPlayer.pause();
-        mCurrentState = STATE_PAUSED;
-      }
-    }
-    mTargetState = STATE_PAUSED;
-  }
-
-  @Override public int getDuration() {
-    if (isInPlaybackState()) {
-      return mMediaPlayer.getDuration();
-    }
-
-    return -1;
-  }
-
-  @Override public int getCurrentPosition() {
-    if (isInPlaybackState()) {
-      return mMediaPlayer.getCurrentPosition();
-    }
-    return 0;
-  }
-
-  @Override public void seekTo(int msec) {
-    if (isInPlaybackState()) {
-      mSeekState = STATE_SEEK_BEGIN;
-      mMediaPlayer.seekTo(msec);
-      mSeekWhenPrepared = 0;
-    } else {
-      mSeekWhenPrepared = msec;
-    }
-  }
-
-  @Override public boolean isPlaying() {
-    return isInPlaybackState() && mMediaPlayer.isPlaying();
-  }
-
-  @Override public int getBufferPercentage() {
-    if (mMediaPlayer != null) {
-      return mCurrentBufferPercentage;
-    }
-    return 0;
-  }
-
-  @Override public boolean canPause() {
-    return mCanPause;
-  }
-
-  @Override public boolean canSeekBackward() {
-    return mCanSeekBack;
-  }
-
-  @Override public boolean canSeekForward() {
-    return mCanSeekForward;
-  }
-
-  public int getAudioSessionId() {
-    if (mAudioSession == 0) {
-      MediaPlayer foo = new MediaPlayer();
-      mAudioSession = foo.getAudioSessionId();
-      foo.release();
-    }
-    return mAudioSession;
+  @Override public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
+    super.onInitializeAccessibilityNodeInfo(info);
+    info.setClassName(TextureVideoView.class.getName());
   }
 
   public int resolveAdjustedSize(int desiredSize, int measureSpec) {
     return getDefaultSize(desiredSize, measureSpec);
+  }
+
+  private void initVideoView() {
+    mVideoWidth = 0;
+    mVideoHeight = 0;
+    setSurfaceTextureListener(mSurfaceTextureListener);
+    setFocusable(true);
+    setFocusableInTouchMode(true);
+    requestFocus();
+    mCurrentState = STATE_IDLE;
+    mTargetState = STATE_IDLE;
   }
 
   /**
@@ -595,6 +408,18 @@ import java.util.Map;
     invalidate();
   }
 
+  public void stopPlayback() {
+    if (mMediaPlayer != null) {
+      mMediaPlayer.stop();
+      mMediaPlayer.release();
+      mMediaPlayer = null;
+      mCurrentState = STATE_IDLE;
+      mTargetState = STATE_IDLE;
+      AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+      am.abandonAudioFocus(null);
+    }
+  }
+
   private void openVideo() {
     if (mUri == null || mSurface == null) {
       // not ready for playback just yet, will try again later
@@ -616,7 +441,6 @@ import java.util.Map;
         mAudioSession = mMediaPlayer.getAudioSessionId();
       }
       mMediaPlayer.setOnPreparedListener(mPreparedListener);
-      mMediaPlayer.setOnSeekCompleteListener(mSeekCompleteListener);
       mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
       mMediaPlayer.setOnCompletionListener(mCompletionListener);
       mMediaPlayer.setOnErrorListener(mErrorListener);
@@ -648,21 +472,12 @@ import java.util.Map;
     }
   }
 
-  /*
-   * release the media player in any state
-   */
-  private void release(boolean cleartargetstate) {
-    if (mMediaPlayer != null) {
-      mMediaPlayer.reset();
-      mMediaPlayer.release();
-      mMediaPlayer = null;
-      mCurrentState = STATE_IDLE;
-      if (cleartargetstate) {
-        mTargetState = STATE_IDLE;
-      }
-      AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-      am.abandonAudioFocus(null);
+  public void setMediaController(MediaController controller) {
+    if (mMediaController != null) {
+      mMediaController.hide();
     }
+    mMediaController = controller;
+    attachMediaController();
   }
 
   private void attachMediaController() {
@@ -674,26 +489,6 @@ import java.util.Map;
     }
   }
 
-  public void stopPlayback() {
-    if (mMediaPlayer != null) {
-      mMediaPlayer.stop();
-      mMediaPlayer.release();
-      mMediaPlayer = null;
-      mCurrentState = STATE_IDLE;
-      mTargetState = STATE_IDLE;
-      AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-      am.abandonAudioFocus(null);
-    }
-  }
-
-  public void setMediaController(MediaController controller) {
-    if (mMediaController != null) {
-      mMediaController.hide();
-    }
-    mMediaController = controller;
-    attachMediaController();
-  }
-
   /**
    * Register a callback to be invoked when the media file
    * is loaded and ready to go.
@@ -702,15 +497,6 @@ import java.util.Map;
    */
   public void setOnPreparedListener(MediaPlayer.OnPreparedListener l) {
     mOnPreparedListener = l;
-  }
-
-  /**
-   * Register a callback to be invoked when user seeks the video
-   *
-   * @param l The callback that will be called
-   */
-  public void setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener l) {
-    mOnSeekCompleteListener = l;
   }
 
   /**
@@ -745,6 +531,102 @@ import java.util.Map;
     mOnInfoListener = l;
   }
 
+  /*
+   * release the media player in any state
+   */
+  private void release(boolean cleartargetstate) {
+    if (mMediaPlayer != null) {
+      mMediaPlayer.reset();
+      mMediaPlayer.release();
+      mMediaPlayer = null;
+      mCurrentState = STATE_IDLE;
+      if (cleartargetstate) {
+        mTargetState = STATE_IDLE;
+      }
+      AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+      am.abandonAudioFocus(null);
+    }
+  }
+
+  @Override public boolean onTouchEvent(MotionEvent ev) {
+    if (isInPlaybackState() && mMediaController != null) {
+      toggleMediaControlsVisiblity();
+    }
+    return false;
+  }
+
+  @Override public boolean onTrackballEvent(MotionEvent ev) {
+    if (isInPlaybackState() && mMediaController != null) {
+      toggleMediaControlsVisiblity();
+    }
+    return false;
+  }
+
+  @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+    boolean isKeyCodeSupported = keyCode != KeyEvent.KEYCODE_BACK &&
+        keyCode != KeyEvent.KEYCODE_VOLUME_UP &&
+        keyCode != KeyEvent.KEYCODE_VOLUME_DOWN &&
+        keyCode != KeyEvent.KEYCODE_VOLUME_MUTE &&
+        keyCode != KeyEvent.KEYCODE_MENU &&
+        keyCode != KeyEvent.KEYCODE_CALL &&
+        keyCode != KeyEvent.KEYCODE_ENDCALL;
+    if (isInPlaybackState() && isKeyCodeSupported && mMediaController != null) {
+      if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+        if (mMediaPlayer.isPlaying()) {
+          pause();
+          mMediaController.show();
+        } else {
+          start();
+          mMediaController.hide();
+        }
+        return true;
+      } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
+        if (!mMediaPlayer.isPlaying()) {
+          start();
+          mMediaController.hide();
+        }
+        return true;
+      } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
+          || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+        if (mMediaPlayer.isPlaying()) {
+          pause();
+          mMediaController.show();
+        }
+        return true;
+      } else {
+        toggleMediaControlsVisiblity();
+      }
+    }
+
+    return super.onKeyDown(keyCode, event);
+  }
+
+  private void toggleMediaControlsVisiblity() {
+    if (mMediaController.isShowing()) {
+      mMediaController.hide();
+    } else {
+      mMediaController.show();
+    }
+  }
+
+  @Override public void start() {
+    if (isInPlaybackState()) {
+      mMediaPlayer.start();
+      mCurrentState = STATE_PLAYING;
+    }
+    mTargetState = STATE_PLAYING;
+  }
+
+  @Override public void pause() {
+    if (isInPlaybackState()) {
+      if (mMediaPlayer.isPlaying()) {
+        mMediaPlayer.pause();
+        mCurrentState = STATE_PAUSED;
+      }
+    }
+    mTargetState = STATE_PAUSED;
+  }
+
   public void suspend() {
     release(false);
   }
@@ -753,8 +635,66 @@ import java.util.Map;
     openVideo();
   }
 
-  public interface OnPlaybackError {
+  @Override public int getDuration() {
+    if (isInPlaybackState()) {
+      return mMediaPlayer.getDuration();
+    }
 
-    void onError(int resourceId);
+    return -1;
+  }
+
+  @Override public int getCurrentPosition() {
+    if (isInPlaybackState()) {
+      return mMediaPlayer.getCurrentPosition();
+    }
+    return 0;
+  }
+
+  @Override public void seekTo(int msec) {
+    if (isInPlaybackState()) {
+      mMediaPlayer.seekTo(msec);
+      mSeekWhenPrepared = 0;
+    } else {
+      mSeekWhenPrepared = msec;
+    }
+  }
+
+  @Override public boolean isPlaying() {
+    return isInPlaybackState() && mMediaPlayer.isPlaying();
+  }
+
+  @Override public int getBufferPercentage() {
+    if (mMediaPlayer != null) {
+      return mCurrentBufferPercentage;
+    }
+    return 0;
+  }
+
+  private boolean isInPlaybackState() {
+    return (mMediaPlayer != null &&
+        mCurrentState != STATE_ERROR &&
+        mCurrentState != STATE_IDLE &&
+        mCurrentState != STATE_PREPARING);
+  }
+
+  @Override public boolean canPause() {
+    return mCanPause;
+  }
+
+  @Override public boolean canSeekBackward() {
+    return mCanSeekBack;
+  }
+
+  @Override public boolean canSeekForward() {
+    return mCanSeekForward;
+  }
+
+  public int getAudioSessionId() {
+    if (mAudioSession == 0) {
+      MediaPlayer foo = new MediaPlayer();
+      mAudioSession = foo.getAudioSessionId();
+      foo.release();
+    }
+    return mAudioSession;
   }
 }

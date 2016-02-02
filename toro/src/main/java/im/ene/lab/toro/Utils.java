@@ -16,32 +16,38 @@
 
 package im.ene.lab.toro;
 
-import android.widget.AbsListView;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Created by eneim on 1/31/16.
- *
- * @hide
+ * Created by eneim on 2/1/16.
  */
-public class ListViewScrollListener implements AbsListView.OnScrollListener, ToroScrollHelper {
+final class Utils {
 
-  protected final ToroManager mManager;
-
-  public ListViewScrollListener(ToroManager manager) {
-    this.mManager = manager;
+  private Utils() {
+    throw new AssertionError("Not supported");
   }
 
-  @Override public void onScrollStateChanged(AbsListView view, int scrollState) {
+  static Integer[] asArray(int[] array) {
+    if (array == null) {
+      return null;
+    }
 
+    Integer[] result = new Integer[array.length];
+    if (array.length > 0) {
+      for (int i = 0; i < array.length; i++) {
+        result[i] = array[i];
+      }
+    }
+
+    return result;
   }
 
-  @Override
-  public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                       int totalItemCount) {
-
+  static <T> List<T> asList(T[] array) {
+    return Arrays.asList(array);
   }
 
-  @Override public ToroManager getManager() {
-    return mManager;
+  static List<Integer> asList(int[] array) {
+    return asList(asArray(array));
   }
 }

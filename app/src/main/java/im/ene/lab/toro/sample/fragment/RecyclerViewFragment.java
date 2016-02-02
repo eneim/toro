@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import im.ene.lab.toro.Toro;
-import im.ene.lab.toro.ToroPolicy;
+import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
 
 /**
@@ -38,9 +38,9 @@ public abstract class RecyclerViewFragment extends Fragment
 
   protected RecyclerView mRecyclerView;
 
-  private static final ToroPolicy[] mPolicies = {
-      Toro.Policies.MOST_VISIBLE_TOP_DOWN, Toro.Policies.MOST_VISIBLE_TOP_DOWN_KEEP_LAST,
-      Toro.Policies.FIRST_PLAYABLE_TOP_DOWN, Toro.Policies.FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST
+  private static final ToroStrategy[] mPolicies = {
+      Toro.Strategies.MOST_VISIBLE_TOP_DOWN, Toro.Strategies.MOST_VISIBLE_TOP_DOWN_KEEP_LAST,
+      Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN, Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST
   };
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,12 +60,12 @@ public abstract class RecyclerViewFragment extends Fragment
     policiesContainer.setOnCheckedChangeListener(this);
 
     policiesContainer.removeAllViews();
-    for (ToroPolicy policy : mPolicies) {
+    for (ToroStrategy policy : mPolicies) {
       RadioButton checkBox = (RadioButton) LayoutInflater.from(policiesContainer.getContext())
           .inflate(R.layout.policy_checkbox, policiesContainer, false);
       checkBox.setText(policy.getDescription());
       policiesContainer.addView(checkBox);
-      checkBox.setChecked(Toro.getPolicy() == policy);
+      checkBox.setChecked(Toro.getStrategy() == policy);
     }
   }
 
@@ -82,9 +82,9 @@ public abstract class RecyclerViewFragment extends Fragment
     RadioButton buttonView = (RadioButton) group.findViewById(checkedId);
     if (buttonView != null) {
       String policyName = buttonView.getText() + "";
-      for (ToroPolicy policy : mPolicies) {
+      for (ToroStrategy policy : mPolicies) {
         if (policy.getDescription().equals(policyName)) {
-          Toro.setPolicy(policy);
+          Toro.setStrategy(policy);
           mRecyclerView.getAdapter().notifyDataSetChanged();
           break;
         }

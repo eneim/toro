@@ -16,17 +16,19 @@
 
 package im.ene.lab.toro;
 
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.view.View;
-import im.ene.lab.toro.widget.TextureVideoView;
+import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/31/16.
  */
-public abstract class TextureVideoViewHolder extends ToroViewHolder {
+public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final TextureVideoView mVideoView;
+  protected final ToroVideoView mVideoView;
 
-  public TextureVideoViewHolder(View itemView) {
+  public ToroVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = getVideoView(itemView);
 
@@ -41,7 +43,7 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract TextureVideoView getVideoView(View itemView);
+  protected abstract ToroVideoView getVideoView(View itemView);
 
   // Client needs to implement this method
   // @Override public boolean wantsToPlay(Rect parentRect, Rect childRect) {
@@ -120,4 +122,24 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
+  @Override public float visibleAreaOffset() {
+    return 0;
+  }
+
+  protected Rect getVideoRect() {
+    Rect rect = new Rect();
+    mVideoView.getGlobalVisibleRect(rect, new Point());
+    return rect;
+  }
+
+  protected Rect getRecyclerViewRect() {
+    if (itemView.getParent() == null) {
+      return null;
+    }
+
+    Rect rect = new Rect();
+    rect.contains(0, 0, 0, 0);
+    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
+    return rect;
+  }
 }

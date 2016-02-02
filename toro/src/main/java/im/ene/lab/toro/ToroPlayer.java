@@ -65,4 +65,5 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    * Host Activity resumed
    */
   void onActivityResumed();
+
 }
