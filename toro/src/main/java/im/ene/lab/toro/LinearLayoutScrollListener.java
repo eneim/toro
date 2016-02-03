@@ -61,11 +61,17 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
           recyclerView.findViewHolderForLayoutPosition(mLastVideoPosition);
       // Re-calculate the rectangles
       if (viewHolder != null) {
-        recyclerView.getLocalVisibleRect(mParentRect);
-        viewHolder.itemView.getLocalVisibleRect(mChildRect);
+        recyclerView.getGlobalVisibleRect(mParentRect, new Point());
+        viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
         if (lastVideo.wantsToPlay() && lastVideo.isAbleToPlay() &&
             Toro.getStrategy().allowsToPlay(lastVideo)) {
           candidates.add(lastVideo);
+        } else {
+          mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
+              lastVideo.getDuration());
+          if (lastVideo.isPlaying()) {
+            mManager.pausePlayback();
+          }
         }
       }
     }

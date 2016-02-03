@@ -297,6 +297,7 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+        manager.pausePlayback();
         player.onPlaybackStopped();
         break;
       }

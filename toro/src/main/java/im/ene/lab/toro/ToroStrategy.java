@@ -42,4 +42,12 @@ public interface ToroStrategy {
    * @param player ToroPlayer object which wants to play, and wait for permission
    */
   boolean allowsToPlay(ToroPlayer player);
+
+  /**
+   * After a video completely played, our Strategy needs to knows if User wants to replay it or not
+   *
+   * @param player just finished player player
+   * @return true if we allow the player to replay, false otherwise
+   */
+  boolean allowsImmediateReplay(ToroPlayer player);
 }
