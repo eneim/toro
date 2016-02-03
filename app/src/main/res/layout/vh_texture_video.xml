@@ -15,20 +15,20 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:background="#20000000"
     android:padding="4dp"
     >
 
   <im.ene.lab.toro.widget.ToroVideoView
-      xmlns:android="http://schemas.android.com/apk/res/android"
       android:id="@+id/video"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
+      android:layout_height="200dp"
+      android:layout_centerInParent="true"
       android:layout_gravity="center"
       app:videoScaleMode="fitHeight"
       />
@@ -37,6 +37,13 @@
       android:id="@+id/thumbnail"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_alignBottom="@id/video"
+      android:layout_alignEnd="@id/video"
+      android:layout_alignLeft="@id/video"
+      android:layout_alignRight="@id/video"
+      android:layout_alignStart="@id/video"
+      android:layout_alignTop="@id/video"
+      android:layout_centerInParent="true"
       android:background="#40ffffff"
       android:padding="16dp"
       android:scaleType="centerInside"
@@ -46,7 +53,9 @@
       android:id="@+id/info"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_gravity="bottom|end"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
       android:layout_margin="4dp"
       android:background="#80000000"
       android:gravity="center"
@@ -55,8 +64,9 @@
       android:paddingEnd="8dp"
       android:paddingStart="8dp"
       android:paddingTop="4dp"
+      android:singleLine="true"
       android:textAppearance="@style/TextAppearance.AppCompat.Small"
       android:textColor="@android:color/white"
       />
 
-</FrameLayout>
+</RelativeLayout>

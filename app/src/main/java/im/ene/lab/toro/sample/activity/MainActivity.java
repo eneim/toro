@@ -3,7 +3,7 @@ package im.ene.lab.toro.sample.activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.sample.fragment.SingleVideoListFragment;
+import im.ene.lab.toro.sample.fragment.StaggeredVideoListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
     if (fragment == null) {
-      fragment = SingleVideoListFragment.newInstance();
+      fragment = StaggeredVideoListFragment.newInstance();
       getSupportFragmentManager().beginTransaction()
           .replace(android.R.id.content, fragment)
           .commit();
