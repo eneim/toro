@@ -53,7 +53,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   @CallSuper @Override
-  public void setOnItemViewLongClickListener(final View.OnLongClickListener listener) {
+  public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
     if (allowLongPressSupport()) {
       // Client set different long click listener, but this View holder tends to support Long
       // press, so we must support it
@@ -68,7 +68,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
       mLongClickListener = null;
     }
 
-    super.setOnItemViewLongClickListener(new View.OnLongClickListener() {
+    super.setOnItemLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
         if (mLongClickListener != null) {
           mLongClickListener.onLongClick(v);  // we can ignore this boolean result

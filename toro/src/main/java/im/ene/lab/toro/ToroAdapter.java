@@ -67,7 +67,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     /**
      * Client can setup long click listener from inside viewHolder
      */
-    public void setOnItemViewLongClickListener(View.OnLongClickListener listener) {
+    public void setOnItemLongClickListener(View.OnLongClickListener listener) {
       itemView.setOnLongClickListener(listener);
     }
 
