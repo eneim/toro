@@ -91,7 +91,6 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   }
 
   @Override public void onPlaybackStarted() {
-    Log.e(TAG, toString() + " START PLAYBACK");
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         VideoViewHolder.super.onPlaybackStarted();
@@ -102,12 +101,10 @@ public class VideoViewHolder extends ToroVideoViewHolder {
 
   @Override public void onPlaybackProgress(int position, int duration) {
     super.onPlaybackProgress(position, duration);
-    Log.d(TAG, toString() + " position = [" + position + "], duration = [" + duration + "]");
     mInfo.setText(Util.timeStamp(position, duration));
   }
 
   @Override public void onPlaybackPaused() {
-    Log.e(TAG, toString() + " PAUSE PLAYBACK");
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         VideoViewHolder.super.onPlaybackPaused();
@@ -117,7 +114,6 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   }
 
   @Override public void onPlaybackStopped() {
-    Log.e(TAG, toString() + " STOP PLAYBACK");
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         VideoViewHolder.super.onPlaybackStopped();
@@ -134,6 +130,16 @@ public class VideoViewHolder extends ToroVideoViewHolder {
       }
     }).start();
     mInfo.setText("Error");
+  }
+
+  @Override protected boolean allowLongPressSupport() {
+    return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
+  }
+
+  @Override public float visibleAreaOffset() {
+    float result = super.visibleAreaOffset();
+    Log.d(TAG, "visibleAreaOffset() returned: " + result);
+    return result;
   }
 
   @Override public String toString() {

@@ -50,14 +50,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   protected abstract ToroVideoView getVideoView(View itemView);
 
-  @Override public void onActivityPaused() {
-
-  }
-
-  @Override public void onActivityResumed() {
-
-  }
-
   // Client could override this method for better practice
   @Override public void start() {
     if (mVideoView != null) {
@@ -161,19 +153,4 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return rect;
   }
 
-  @Override public void onPlaybackStarted() {
-
-  }
-
-  @Override public void onPlaybackPaused() {
-
-  }
-
-  @Override public void onPlaybackStopped() {
-
-  }
-
-  @Override public void onPlaybackProgress(int position, int duration) {
-
-  }
 }

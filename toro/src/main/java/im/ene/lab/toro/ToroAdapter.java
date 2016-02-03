@@ -19,7 +19,6 @@ package im.ene.lab.toro;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -63,35 +62,40 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
 
     public ViewHolder(View itemView) {
       super(itemView);
-      Log.e(TAG, toString() + " CREATED");
+    }
+
+    /**
+     * Client can setup long click listener from inside viewHolder
+     */
+    public void setOnItemViewLongClickListener(View.OnLongClickListener listener) {
+      itemView.setOnLongClickListener(listener);
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
      */
     @CallSuper public void onAttachedToParent() {
-      Log.w(TAG, toString() + " ATTACHED");
+
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onDetachedFromRecyclerView(RecyclerView)}
      */
     @CallSuper public void onDetachedFromParent() {
-      Log.w(TAG, toString() + " DETACHED");
+
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}
      */
     @CallSuper public void onRecycled() {
-      Log.i(TAG, toString() + " RECYCLED");
+
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onFailedToRecycleView(RecyclerView.ViewHolder)}
      */
     @CallSuper public boolean onFailedToRecycle() {
-      Log.i(TAG, toString() + " FAILED TO RECYCLE");
       return false;
     }
 
@@ -100,7 +104,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
      * int)}
      */
     @CallSuper public void onViewHolderBound() {
-      Log.i(TAG, toString() + " BOUND");
+
     }
 
     /**

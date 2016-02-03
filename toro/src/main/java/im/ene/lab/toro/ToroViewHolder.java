@@ -33,19 +33,53 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     super(itemView);
     mHelper = Toro.RECYCLER_VIEW_HELPER;
     if (allowLongPressSupport()) {
+      if (mLongClickListener == null) {
+        mLongClickListener = new View.OnLongClickListener() {
+          @Override public boolean onLongClick(View v) {
+            return mHelper.onItemLongClick(ToroViewHolder.this, ToroViewHolder.this.itemView,
+                ToroViewHolder.this.itemView.getParent());
+          }
+        };
+      }
+
       itemView.setOnLongClickListener(mLongClickListener);
+    } else {
+      mLongClickListener = null;
     }
   }
 
   @CallSuper @Override public void onActivityResumed() {
-    mLongClickListener = new View.OnLongClickListener() {
-      @Override public boolean onLongClick(View v) {
-        return mHelper.onItemLongClick(ToroViewHolder.this, itemView, itemView.getParent());
+
+  }
+
+  @CallSuper @Override
+  public void setOnItemViewLongClickListener(final View.OnLongClickListener listener) {
+    if (allowLongPressSupport()) {
+      // Client set different long click listener, but this View holder tends to support Long
+      // press, so we must support it
+      if (mLongClickListener == null) {
+        mLongClickListener = new View.OnLongClickListener() {
+          @Override public boolean onLongClick(View v) {
+            return mHelper.onItemLongClick(ToroViewHolder.this, itemView, itemView.getParent());
+          }
+        };
       }
-    };
+    } else {
+      mLongClickListener = null;
+    }
+
+    super.setOnItemViewLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        if (mLongClickListener != null) {
+          mLongClickListener.onLongClick(v);  // we can ignore this boolean result
+        }
+        return listener.onLongClick(v);
+      }
+    });
   }
 
   @CallSuper @Override public void onActivityPaused() {
+    // Release listener to prevent memory leak
     mLongClickListener = null;
   }
 
@@ -107,5 +141,25 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
    */
   protected boolean allowLongPressSupport() {
     return false;
+  }
+
+  @Override public void onPlaybackStarted() {
+
+  }
+
+  @Override public void onPlaybackPaused() {
+
+  }
+
+  @Override public void onPlaybackStopped() {
+
+  }
+
+  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+
+  }
+
+  @Override public void onPlaybackProgress(int position, int duration) {
+
   }
 }

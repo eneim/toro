@@ -17,4 +17,6 @@
 
 <resources>
   <integer name="staggered_span_count">2</integer>
+
+  <bool name="accept_long_press">false</bool>
 </resources>

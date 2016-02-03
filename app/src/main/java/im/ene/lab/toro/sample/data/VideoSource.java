@@ -45,6 +45,6 @@ public class VideoSource {
       "http://www.sample-videos.com/video/flv/720/big_buck_bunny_720p_5mb.flv";  // Old school
 
   public static final String[] SOURCES = {
-      MP4_2, HLS, MOV, MP4
+      MP4_2, HLS, MP4
   };
 }
