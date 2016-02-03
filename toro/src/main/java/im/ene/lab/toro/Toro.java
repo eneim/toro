@@ -297,6 +297,7 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+        manager.pausePlayback();
         player.onPlaybackStopped();
         break;
       }
@@ -420,6 +421,10 @@ import java.util.concurrent.ConcurrentHashMap;
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
+      }
     };
 
     /**
@@ -452,6 +457,10 @@ import java.util.concurrent.ConcurrentHashMap;
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
+      }
     };
 
     /**
@@ -480,6 +489,10 @@ import java.util.concurrent.ConcurrentHashMap;
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
+      }
     };
 
     /**
@@ -503,6 +516,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
+      }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
       }
     };
   }

@@ -65,6 +65,12 @@ public final class StaggeredGridLayoutScrollListener extends ToroScrollListener 
         if (lastVideo.wantsToPlay() && lastVideo.isAbleToPlay() &&
             Toro.getStrategy().allowsToPlay(lastVideo)) {
           candidates.add(lastVideo);
+        } else {
+          mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
+              lastVideo.getDuration());
+          if (lastVideo.isPlaying()) {
+            mManager.pausePlayback();
+          }
         }
       }
     }
