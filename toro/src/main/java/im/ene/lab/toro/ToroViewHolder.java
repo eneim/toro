@@ -36,10 +36,12 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
   }
 
   @CallSuper @Override public void onAttachedToParent() {
+    super.onAttachedToParent();
     mHelper.onAttachedToParent(this, itemView, itemView.getParent());
   }
 
   @CallSuper @Override public void onDetachedFromParent() {
+    super.onDetachedFromParent();
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
@@ -86,10 +88,4 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     return mHelper.onItemLongClick(this, itemView, itemView.getParent());
   }
 
-  /**
-   * Client should override this to support required behavior (setting thumbnail, for example)
-   */
-  @Override public void onViewHolderBound() {
-
-  }
 }

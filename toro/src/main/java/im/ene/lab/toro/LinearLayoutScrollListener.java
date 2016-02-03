@@ -86,8 +86,8 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
           recyclerView.getGlobalVisibleRect(mParentRect, new Point());
           viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
           // check that view position
-          if (video.wantsToPlay(mParentRect, mChildRect) && Toro.getStrategy()
-              .allowsToPlay(video, mParentRect, mChildRect)) {
+          if (video.wantsToPlay(mParentRect, mChildRect) &&
+              Toro.getStrategy().allowsToPlay(video, mParentRect, mChildRect)) {
             if (!candidates.contains(video)) {
               candidates.add(video);
             }

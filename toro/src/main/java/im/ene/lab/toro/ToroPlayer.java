@@ -23,7 +23,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
-import android.support.v7.widget.RecyclerView;
 import android.widget.MediaController;
 
 /**
@@ -69,11 +68,6 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    * Host Activity resumed
    */
   void onActivityResumed();
-
-  /**
-   * Called response to {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)}
-   */
-  void onViewHolderBound();
 
   /**
    * Called after {@link MediaController.MediaPlayerControl#start()}

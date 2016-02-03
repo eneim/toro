@@ -76,8 +76,8 @@ import java.util.concurrent.ConcurrentHashMap;
               ((View) parent).getGlobalVisibleRect(parentRect);
             }
 
-            if (player.wantsToPlay(parentRect, containerRect) && sInstance.mStrategy.allowsToPlay(
-                player, parentRect, containerRect)) {
+            if (player.wantsToPlay(parentRect, containerRect) &&
+                getStrategy().allowsToPlay(player, parentRect, containerRect)) {
               value.getManager().startPlayback();
             }
           }
@@ -123,8 +123,8 @@ import java.util.concurrent.ConcurrentHashMap;
       recyclerView.getGlobalVisibleRect(parentRect);
 
       // Being pressed player is not be able to play, return
-      if (!player.wantsToPlay(parentRect, containerRect) || !getStrategy().allowsToPlay(player,
-          parentRect, containerRect)) {
+      if (!player.wantsToPlay(parentRect, containerRect) ||
+          !getStrategy().allowsToPlay(player, parentRect, containerRect)) {
         return false;
       }
 
@@ -298,7 +298,7 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
-        player.onStopPlayback();
+        manager.onPlaybackStopped();
         break;
       }
     }
@@ -317,7 +317,8 @@ import java.util.concurrent.ConcurrentHashMap;
           parentRect = new Rect();
           ((View) parent).getGlobalVisibleRect(parentRect);
         }
-        if (player.wantsToPlay(parentRect, containerRect)) {
+        if (player.wantsToPlay(parentRect, containerRect) &&
+            getStrategy().allowsToPlay(player, parentRect, containerRect)) {
           manager.startPlayback();
         }
         break;

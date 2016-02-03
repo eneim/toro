@@ -19,6 +19,7 @@ package im.ene.lab.toro;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -27,21 +28,25 @@ import android.view.View;
 public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     extends RecyclerView.Adapter<VH> {
 
-  private final String TAG = getClass().getSimpleName();
+  @CallSuper @Override public void onViewRecycled(VH holder) {
+    holder.onRecycled();
+  }
 
-  @Override public void onViewAttachedToWindow(VH holder) {
+  @CallSuper @Override public boolean onFailedToRecycleView(VH holder) {
+    return holder.onFailedToRecycle();
+  }
+
+  @CallSuper @Override public void onViewAttachedToWindow(VH holder) {
     holder.onAttachedToParent();
   }
 
-  @Override public void onViewDetachedFromWindow(VH holder) {
+  @CallSuper @Override public void onViewDetachedFromWindow(VH holder) {
     holder.onDetachedFromParent();
   }
 
   @CallSuper @Override public void onBindViewHolder(VH holder, int position) {
     holder.bind(getItem(position));
-    if (holder instanceof ToroPlayer) {
-      ((ToroPlayer) holder).onViewHolderBound();
-    }
+    holder.onViewHolderBound();
   }
 
   /**
@@ -54,20 +59,48 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
    */
   public abstract static class ViewHolder extends RecyclerView.ViewHolder {
 
+    private final String TAG = getClass().getSimpleName();
+
     public ViewHolder(View itemView) {
       super(itemView);
+      Log.e(TAG, toString() + " CREATED");
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
      */
-    public void onAttachedToParent() {
+    @CallSuper public void onAttachedToParent() {
+      Log.w(TAG, toString() + " ATTACHED");
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onDetachedFromRecyclerView(RecyclerView)}
      */
-    public void onDetachedFromParent() {
+    @CallSuper public void onDetachedFromParent() {
+      Log.w(TAG, toString() + " DETACHED");
+    }
+
+    /**
+     * Called by {@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}
+     */
+    @CallSuper public void onRecycled() {
+      Log.i(TAG, toString() + " RECYCLED");
+    }
+
+    /**
+     * Called by {@link RecyclerView.Adapter#onFailedToRecycleView(RecyclerView.ViewHolder)}
+     */
+    @CallSuper public boolean onFailedToRecycle() {
+      Log.i(TAG, toString() + " FAILED TO RECYCLE");
+      return false;
+    }
+
+    /**
+     * Called response to {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder,
+     * int)}
+     */
+    @CallSuper public void onViewHolderBound() {
+      Log.i(TAG, toString() + " BOUND");
     }
 
     /**

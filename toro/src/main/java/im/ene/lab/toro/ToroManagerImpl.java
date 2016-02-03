@@ -27,22 +27,24 @@ import java.util.WeakHashMap;
  */
 public final class ToroManagerImpl implements ToroManager {
 
-  private static final String TAG = "ToroManager";
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
+
   private final WeakHashMap<Long, Integer> mVideoStates = new WeakHashMap<>();
-  private ToroPlayer mCurrentPlayer;
+
+  private ToroPlayer mPlayer;
+
   // This Handler will send Message to Main Thread
-  private Handler mMainThreadHandler;
+  private Handler mUiHandler;
+
   private Handler.Callback mCallback = new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       switch (msg.what) {
         case MESSAGE_PLAYBACK_PROGRESS:
-          if (mCurrentPlayer != null) {
-            mCurrentPlayer.onPlaybackProgress(mCurrentPlayer.getCurrentPosition(),
-                mCurrentPlayer.getDuration());
+          if (mPlayer != null) {
+            mPlayer.onPlaybackProgress(mPlayer.getCurrentPosition(), mPlayer.getDuration());
           }
-          mMainThreadHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-          mMainThreadHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
+          mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+          mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
           return true;
         default:
           return false;
@@ -51,38 +53,42 @@ public final class ToroManagerImpl implements ToroManager {
   };
 
   public ToroPlayer getPlayer() {
-    return this.mCurrentPlayer;
+    return this.mPlayer;
   }
 
   public void setPlayer(ToroPlayer player) {
-    this.mCurrentPlayer = player;
+    this.mPlayer = player;
   }
 
   @Override public void startPlayback() {
-    if (mCurrentPlayer != null) {
-      mCurrentPlayer.start();
-      mCurrentPlayer.onStartPlayback();
+    if (mPlayer != null) {
+      mPlayer.start();
+      mPlayer.onStartPlayback();
     }
 
-    if (mMainThreadHandler != null) {
-      mMainThreadHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
+    if (mUiHandler != null) {
+      mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
     }
   }
 
   @Override public void pausePlayback() {
-    if (mCurrentPlayer != null) {
-      mCurrentPlayer.pause();
-      mCurrentPlayer.onPausePlayback();
-      if (mMainThreadHandler != null) {
-        mMainThreadHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-      }
+    if (mPlayer != null) {
+      mPlayer.pause();
+      mPlayer.onPausePlayback();
+    }
+
+    if (mUiHandler != null) {
+      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
     }
   }
 
   @Override public void onPlaybackStopped() {
-    mCurrentPlayer.onStopPlayback();
-    if (mMainThreadHandler != null) {
-      mMainThreadHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+    if (mPlayer != null) {
+      mPlayer.onStopPlayback();
+    }
+
+    if (mUiHandler != null) {
+      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
     }
   }
 
@@ -93,7 +99,7 @@ public final class ToroManagerImpl implements ToroManager {
   }
 
   @Override public void restoreVideoState(Long videoId) {
-    if (mCurrentPlayer == null) {
+    if (mPlayer == null) {
       return;
     }
 
@@ -104,18 +110,18 @@ public final class ToroManagerImpl implements ToroManager {
 
     // See {@link android.media.MediaPlayer#seekTo(int)}
     try {
-      mCurrentPlayer.seekTo(position);
+      mPlayer.seekTo(position);
     } catch (IllegalStateException er) {
       er.printStackTrace();
     }
   }
 
   @Override public void onRegistered() {
-    mMainThreadHandler = new Handler(Looper.getMainLooper(), mCallback);
+    mUiHandler = new Handler(Looper.getMainLooper(), mCallback);
   }
 
   @Override public void onUnregistered() {
-    mMainThreadHandler.removeCallbacksAndMessages(null);
-    mMainThreadHandler = null;
+    mUiHandler.removeCallbacksAndMessages(null);
+    mUiHandler = null;
   }
 }

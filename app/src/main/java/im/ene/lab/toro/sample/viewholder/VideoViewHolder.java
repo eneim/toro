@@ -17,8 +17,6 @@
 package im.ene.lab.toro.sample.viewholder;
 
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -31,22 +29,11 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Callback {
+public class VideoViewHolder extends ToroVideoViewHolder {
 
-  private static final String TAG = "VideoViewHolder";
-
-  private static final int MESSAGE_PLAYER_START = 1;
-
-  private static final int MESSAGE_PLAYER_PAUSE = 1 << 1;
-
-  private static final int MESSAGE_SEEK = 1 << 2;
-
-  private static final int MESSAGE_DELAY = 200;
+  private final String TAG = getClass().getSimpleName();
 
   public static final int LAYOUT_RES = R.layout.vh_texture_video;
-
-  private Handler mHandler = new Handler(this);
-  private boolean mIsVideoPathSet = false;
 
   public VideoViewHolder(View itemView) {
     super(itemView);
@@ -63,22 +50,11 @@ public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Call
 
     Log.d(TAG, "bind() called with: " + "item = [" + item + "]");
     // mCurrentState = State.STATE_IDLE;
-    mIsVideoPathSet = false;
     mVideoView.setVideoPath(((SimpleVideoObject) item).video);
-    mIsVideoPathSet = true;
   }
 
-  @Override public void start() {
-    mHandler.sendEmptyMessageDelayed(MESSAGE_PLAYER_START, MESSAGE_DELAY);
-  }
-
-  @Override public void pause() {
-    mHandler.sendEmptyMessageDelayed(MESSAGE_PLAYER_PAUSE, MESSAGE_DELAY);
-  }
-
-  @Override public void seekTo(int pos) {
-    // mCurrentState = State.STATE_SEEKING;
-    mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, pos, 0), MESSAGE_DELAY);
+  @Override public boolean isPlaying() {
+    return super.isPlaying();
   }
 
   @Override public boolean wantsToPlay(Rect parentRect, @NonNull Rect childRect) {
@@ -100,53 +76,27 @@ public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Call
     return (long) getAdapterPosition();
   }
 
-  @Override public void onActivityPaused() {
-    if (mHandler != null) {
-      mHandler.removeCallbacksAndMessages(null);
-    }
-    mHandler = null;
+  @Override public void onStartPlayback() {
+    super.onStartPlayback();
+    Log.e(TAG, toString() + " START PLAYBACK");
   }
 
-  @Override public void onActivityResumed() {
-    mHandler = new Handler(this);
+  @Override public void onPlaybackProgress(int position, int duration) {
+    super.onPlaybackProgress(position, duration);
+    Log.d(TAG, toString() + " position = [" + position + "], duration = [" + duration + "]");
   }
 
-  // TODO setup thumbnail, maybe?
-  @Override public void onViewHolderBound() {
-    super.onViewHolderBound();
+  @Override public void onPausePlayback() {
+    super.onPausePlayback();
+    Log.e(TAG, toString() + " PAUSE PLAYBACK");
   }
 
-  @Override public boolean handleMessage(Message msg) {
-    switch (msg.what) {
-      case MESSAGE_PLAYER_START:
-        if (mVideoView != null) {
-          Rect outRect = new Rect();
-          Rect videoRect = new Rect();
-          itemView.getLocalVisibleRect(outRect);
-          mVideoView.getGlobalVisibleRect(videoRect);
-          mVideoView.start();
-        } else {
-          // View is unavailable, re-send the message to wait for it
-          mHandler.removeMessages(msg.what);
-          mHandler.sendEmptyMessageDelayed(msg.what, MESSAGE_DELAY);
-        }
-        return true;
-      case MESSAGE_PLAYER_PAUSE:
-        if (mVideoView != null) {
-          mVideoView.pause();
-        }
-        return true;
-      case MESSAGE_SEEK:
-        if (mVideoView != null && mIsVideoPathSet) {
-          mVideoView.seekTo(msg.arg1);
-        } else {
-          mHandler.removeMessages(MESSAGE_SEEK);
-          mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, msg.arg1, 0),
-              MESSAGE_DELAY);
-        }
-        return true;
-      default:
-        return false;
-    }
+  @Override public void onStopPlayback() {
+    super.onStopPlayback();
+    Log.e(TAG, toString() + " STOP PLAYBACK");
+  }
+
+  @Override public String toString() {
+    return "Video: " + getVideoId();
   }
 }
