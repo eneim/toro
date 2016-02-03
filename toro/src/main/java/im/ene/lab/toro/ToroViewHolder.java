@@ -23,14 +23,30 @@ import android.view.View;
 /**
  * Created by eneim on 1/31/16.
  */
-public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
-    implements ToroPlayer, View.OnLongClickListener {
+public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
   private final ToroItemViewHelper mHelper;
+
+  private View.OnLongClickListener mLongClickListener;
 
   public ToroViewHolder(View itemView) {
     super(itemView);
     mHelper = Toro.RECYCLER_VIEW_HELPER;
+    if (allowLongPressSupport()) {
+      itemView.setOnLongClickListener(mLongClickListener);
+    }
+  }
+
+  @CallSuper @Override public void onActivityResumed() {
+    mLongClickListener = new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        return mHelper.onItemLongClick(ToroViewHolder.this, itemView, itemView.getParent());
+      }
+    };
+  }
+
+  @CallSuper @Override public void onActivityPaused() {
+    mLongClickListener = null;
   }
 
   @CallSuper @Override public void onAttachedToParent() {
@@ -86,7 +102,10 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     return getAdapterPosition();
   }
 
-  @Override public boolean onLongClick(View v) {
-    return mHelper.onItemLongClick(this, itemView, itemView.getParent());
+  /**
+   * Allow long press to play support or not
+   */
+  protected boolean allowLongPressSupport() {
+    return false;
   }
 }

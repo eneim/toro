@@ -46,9 +46,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnErrorListener(this);
     mVideoView.setOnInfoListener(this);
     mVideoView.setOnSeekCompleteListener(this);
-
-    // TODO: setup long press support on demand
-    itemView.setOnLongClickListener(this);
   }
 
   protected abstract ToroVideoView getVideoView(View itemView);
