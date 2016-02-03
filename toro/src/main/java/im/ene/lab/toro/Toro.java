@@ -421,6 +421,10 @@ import java.util.concurrent.ConcurrentHashMap;
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
+      }
     };
 
     /**
@@ -453,6 +457,10 @@ import java.util.concurrent.ConcurrentHashMap;
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
+      }
     };
 
     /**
@@ -481,6 +489,10 @@ import java.util.concurrent.ConcurrentHashMap;
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
+      }
     };
 
     /**
@@ -504,6 +516,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
       @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
+      }
+
+      @Override public boolean allowsImmediateReplay() {
+        return false;
       }
     };
   }
