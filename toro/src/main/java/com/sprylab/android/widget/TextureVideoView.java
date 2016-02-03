@@ -123,11 +123,13 @@ public class TextureVideoView extends TextureView implements MediaPlayerControl 
       if (mMediaController != null) {
         mMediaController.setEnabled(true);
       }
+
       mVideoWidth = mp.getVideoWidth();
       mVideoHeight = mp.getVideoHeight();
 
-      int seekToPosition =
-          mSeekWhenPrepared;  // mSeekWhenPrepared may be changed after seekTo() call
+      // mSeekWhenPrepared may be changed after seekTo() call
+      int seekToPosition = mSeekWhenPrepared;
+
       if (seekToPosition != 0) {
         seekTo(seekToPosition);
       }
