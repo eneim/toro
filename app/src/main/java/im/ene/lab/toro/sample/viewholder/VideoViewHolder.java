@@ -78,8 +78,9 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   @Override public void onViewHolderBound() {
     super.onViewHolderBound();
     Picasso.with(itemView.getContext())
-        .load("https://aeseda.psu.edu/wp-content/themes/theme-mingle/assets/images/placeholder.jpg")
+        .load(R.drawable.toro_place_holder)
         .fit()
+        .centerInside()
         .into(mThumbnail);
     mInfo.setText("Bound");
   }
