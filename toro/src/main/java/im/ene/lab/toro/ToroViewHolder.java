@@ -24,9 +24,7 @@ import android.view.View;
  * Created by eneim on 1/31/16.
  */
 abstract class ToroViewHolder extends ToroAdapter.ViewHolder
-    implements ToroPlayer, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener,
-    View.OnLongClickListener {
+    implements ToroPlayer, View.OnLongClickListener {
 
   private final ToroItemViewHelper mHelper;
 
@@ -60,9 +58,11 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}
+   * Implement from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}. This method
+   * is closed and called only by {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}, Client
+   * should use {@link ToroPlayer#onPlaybackError(MediaPlayer, int, int)}
    */
-  @CallSuper @Override public boolean onError(MediaPlayer mp, int what, int extra) {
+  @CallSuper @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
     return Toro.onError(this, mp, what, extra);
   }
 
@@ -80,12 +80,11 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     Toro.onSeekComplete(this, mp);
   }
 
-  @Override public int getItemPosition() {
+  @Override public int getPlayOrder() {
     return getAdapterPosition();
   }
 
   @Override public boolean onLongClick(View v) {
     return mHelper.onItemLongClick(this, itemView, itemView.getParent());
   }
-
 }

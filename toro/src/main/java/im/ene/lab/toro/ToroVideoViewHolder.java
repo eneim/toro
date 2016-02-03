@@ -18,6 +18,7 @@ package im.ene.lab.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.view.View;
 import im.ene.lab.toro.widget.ToroVideoView;
 
@@ -29,6 +30,8 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   protected final ToroVideoView mVideoView;
 
   private static final String TAG = "ToroVideoViewHolder";
+
+  private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
     super(itemView);
@@ -128,7 +131,30 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   }
 
   @Override public float visibleAreaOffset() {
-    return 0;
+    Rect videoRect = getVideoRect();
+    Rect parentRect = getRecyclerViewRect();
+    if (!parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
+      return 0.f;
+    }
+
+    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
+  }
+
+  @Override public boolean wantsToPlay() {
+    return false;
+  }
+
+  @Override public boolean isAbleToPlay() {
+    return mPlayable;
+  }
+
+  @Override public void onPrepared(MediaPlayer mp) {
+    super.onPrepared(mp);
+    mPlayable = true;
+  }
+
+  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+    mPlayable = false;
   }
 
   protected Rect getVideoRect() {
@@ -148,15 +174,15 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return rect;
   }
 
-  @Override public void onStartPlayback() {
+  @Override public void onPlaybackStarted() {
 
   }
 
-  @Override public void onPausePlayback() {
+  @Override public void onPlaybackPaused() {
 
   }
 
-  @Override public void onStopPlayback() {
+  @Override public void onPlaybackStopped() {
 
   }
 

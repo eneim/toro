@@ -1,12 +1,14 @@
 package im.ene.lab.toro;
 
-import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 
 /**
  * Created by eneim on 1/29/16.
  */
 public interface ToroManager {
+
+  /* BEGIN Setup current unique Player */
 
   /**
    * @return latest Video Player
@@ -20,6 +22,25 @@ public interface ToroManager {
    */
   void setPlayer(ToroPlayer player);
 
+  /* END Setup current unique Player */
+
+  /* BEGIN Setup own life cycle */
+
+  /**
+   * Called after being registered to a RecyclerView. See {@link Toro#register(RecyclerView)}
+   */
+  void onRegistered();
+
+  /**
+   * Called before being unregistered from a RecyclerView. See {@link
+   * Toro#unregister(RecyclerView)}
+   */
+  void onUnregistered();
+
+  /* END Setup own life cycle */
+
+  /* BEGIN Directly control current player */
+
   /**
    * Start playing current video
    */
@@ -31,11 +52,6 @@ public interface ToroManager {
   void pausePlayback();
 
   /**
-   * Called by {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}
-   */
-  void onPlaybackStopped();
-
-  /**
    * Save current video state
    */
   void saveVideoState(Long videoId, @Nullable Integer position, long duration);
@@ -45,7 +61,5 @@ public interface ToroManager {
    */
   void restoreVideoState(Long videoId);
 
-  void onRegistered();
-
-  void onUnregistered();
+  /* END Directly control current player */
 }

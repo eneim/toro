@@ -56,15 +56,15 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
     // Check current playing position
     ToroPlayer lastVideo = mManager.getPlayer();
     if (lastVideo != null) {
-      mLastVideoPosition = lastVideo.getItemPosition();
+      mLastVideoPosition = lastVideo.getPlayOrder();
       RecyclerView.ViewHolder viewHolder =
           recyclerView.findViewHolderForLayoutPosition(mLastVideoPosition);
       // Re-calculate the rectangles
       if (viewHolder != null) {
         recyclerView.getLocalVisibleRect(mParentRect);
         viewHolder.itemView.getLocalVisibleRect(mChildRect);
-        if (lastVideo.wantsToPlay(mParentRect, mChildRect) && Toro.getStrategy()
-            .allowsToPlay(lastVideo, mParentRect, mChildRect)) {
+        if (lastVideo.wantsToPlay() && lastVideo.isAbleToPlay() &&
+            Toro.getStrategy().allowsToPlay(lastVideo)) {
           candidates.add(lastVideo);
         }
       }
@@ -86,8 +86,8 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
           recyclerView.getGlobalVisibleRect(mParentRect, new Point());
           viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
           // check that view position
-          if (video.wantsToPlay(mParentRect, mChildRect) &&
-              Toro.getStrategy().allowsToPlay(video, mParentRect, mChildRect)) {
+          if (video.wantsToPlay() && video.isAbleToPlay() &&
+              Toro.getStrategy().allowsToPlay(video)) {
             if (!candidates.contains(video)) {
               candidates.add(video);
             }
@@ -95,7 +95,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
         }
       }
 
-      video = Toro.getStrategy().elect(candidates);
+      video = Toro.getStrategy().findBestPlayer(candidates);
 
       if (video == null) {
         return;
@@ -103,7 +103,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
 
       for (ToroPlayer player : candidates) {
         if (player == video) {
-          videoPosition = player.getItemPosition();
+          videoPosition = player.getPlayOrder();
           break;
         }
       }

@@ -24,7 +24,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -76,8 +75,8 @@ import java.util.concurrent.ConcurrentHashMap;
               ((View) parent).getGlobalVisibleRect(parentRect);
             }
 
-            if (player.wantsToPlay(parentRect, containerRect) &&
-                getStrategy().allowsToPlay(player, parentRect, containerRect)) {
+            if (player.wantsToPlay() && player.isAbleToPlay() &&
+                getStrategy().allowsToPlay(player)) {
               value.getManager().startPlayback();
             }
           }
@@ -123,8 +122,8 @@ import java.util.concurrent.ConcurrentHashMap;
       recyclerView.getGlobalVisibleRect(parentRect);
 
       // Being pressed player is not be able to play, return
-      if (!player.wantsToPlay(parentRect, containerRect) ||
-          !getStrategy().allowsToPlay(player, parentRect, containerRect)) {
+      if (!player.wantsToPlay() || !player.isAbleToPlay() ||
+          !getStrategy().allowsToPlay(player)) {
         return false;
       }
 
@@ -298,7 +297,7 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
-        manager.onPlaybackStopped();
+        player.onPlaybackStopped();
         break;
       }
     }
@@ -317,8 +316,7 @@ import java.util.concurrent.ConcurrentHashMap;
           parentRect = new Rect();
           ((View) parent).getGlobalVisibleRect(parentRect);
         }
-        if (player.wantsToPlay(parentRect, containerRect) &&
-            getStrategy().allowsToPlay(player, parentRect, containerRect)) {
+        if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player)) {
           manager.startPlayback();
         }
         break;
@@ -327,7 +325,15 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   static boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    player.onStopPlayback();
+    for (ToroScrollListener listener : sInstance.mMm.values()) {
+      ToroManager manager = listener.getManager();
+      if (player.equals(manager.getPlayer())) {
+        manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+        manager.pausePlayback();
+        player.onPlaybackError(mp, what, extra);
+        break;
+      }
+    }
     return false;
   }
 
@@ -389,7 +395,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "Most visible item from top";
       }
 
-      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -397,7 +403,7 @@ import java.util.concurrent.ConcurrentHashMap;
         // 1. Sort candidates by the order of player
         Collections.sort(candidates, new Comparator<ToroPlayer>() {
           @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
-            return lhs.getItemPosition() - rhs.getItemPosition();
+            return lhs.getPlayOrder() - rhs.getPlayOrder();
           }
         });
 
@@ -411,8 +417,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
-          @NonNull Rect childRect) {
+      @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
     };
@@ -429,7 +434,7 @@ import java.util.concurrent.ConcurrentHashMap;
             + "But if current player is not on the top but still playable, keep it";
       }
 
-      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -444,8 +449,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
-          @NonNull Rect childRect) {
+      @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
     };
@@ -458,7 +462,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "Scan top down of candidates, chose the first playable Video";
       }
 
-      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -466,15 +470,14 @@ import java.util.concurrent.ConcurrentHashMap;
         // 1. Sort candidates by the order of player
         Collections.sort(candidates, new Comparator<ToroPlayer>() {
           @Override public int compare(ToroPlayer lhs, ToroPlayer rhs) {
-            return lhs.getItemPosition() - rhs.getItemPosition();
+            return lhs.getPlayOrder() - rhs.getPlayOrder();
           }
         });
 
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
-          @NonNull Rect childRect) {
+      @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
     };
@@ -490,12 +493,11 @@ import java.util.concurrent.ConcurrentHashMap;
             + "is still playable, but not on the top, we keep using it";
       }
 
-      @Override public ToroPlayer elect(List<ToroPlayer> candidates) {
+      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player, @Nullable Rect parentRect,
-          @NonNull Rect childRect) {
+      @Override public boolean allowsToPlay(ToroPlayer player) {
         return true;
       }
     };

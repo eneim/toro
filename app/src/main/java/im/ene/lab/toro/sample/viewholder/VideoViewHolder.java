@@ -16,14 +16,21 @@
 
 package im.ene.lab.toro.sample.viewholder;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.annotation.NonNull;
+import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.lab.toro.sample.util.Util;
 import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
@@ -35,8 +42,13 @@ public class VideoViewHolder extends ToroVideoViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_texture_video;
 
+  private ImageView mThumbnail;
+  private TextView mInfo;
+
   public VideoViewHolder(View itemView) {
     super(itemView);
+    mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+    mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
   @Override protected ToroVideoView getVideoView(View itemView) {
@@ -48,52 +60,79 @@ public class VideoViewHolder extends ToroVideoViewHolder {
       throw new IllegalStateException("Unexpected object: " + item.toString());
     }
 
-    Log.d(TAG, "bind() called with: " + "item = [" + item + "]");
-    // mCurrentState = State.STATE_IDLE;
     mVideoView.setVideoPath(((SimpleVideoObject) item).video);
   }
 
-  @Override public boolean isPlaying() {
-    return super.isPlaying();
-  }
-
-  @Override public boolean wantsToPlay(Rect parentRect, @NonNull Rect childRect) {
+  @Override public boolean wantsToPlay() {
+    Rect childRect = new Rect();
+    itemView.getGlobalVisibleRect(childRect, new Point());
     int visibleHeight = childRect.bottom - childRect.top;
-    return visibleHeight > itemView.getHeight() * 0.7;
-  }
-
-  @Override public float visibleAreaOffset() {
-    Rect videoRect = getVideoRect();
-    Rect parentRect = getRecyclerViewRect();
-    if (!parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
-      return 0.f;
-    }
-
-    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
+    // wants to play if user could see at lease 0.75 of video
+    return visibleHeight > itemView.getHeight() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
     return (long) getAdapterPosition();
   }
 
-  @Override public void onStartPlayback() {
-    super.onStartPlayback();
+  @Override public void onViewHolderBound() {
+    super.onViewHolderBound();
+    Picasso.with(itemView.getContext())
+        .load("https://aeseda.psu.edu/wp-content/themes/theme-mingle/assets/images/placeholder.jpg")
+        .fit()
+        .into(mThumbnail);
+    mInfo.setText("Bound");
+  }
+
+  @Override public void onPrepared(MediaPlayer mp) {
+    super.onPrepared(mp);
+    mInfo.setText("Prepared");
+  }
+
+  @Override public void onPlaybackStarted() {
     Log.e(TAG, toString() + " START PLAYBACK");
+    mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackStarted();
+      }
+    }).start();
+    mInfo.setText("Started");
   }
 
   @Override public void onPlaybackProgress(int position, int duration) {
     super.onPlaybackProgress(position, duration);
     Log.d(TAG, toString() + " position = [" + position + "], duration = [" + duration + "]");
+    mInfo.setText(Util.timeStamp(position, duration));
   }
 
-  @Override public void onPausePlayback() {
-    super.onPausePlayback();
+  @Override public void onPlaybackPaused() {
     Log.e(TAG, toString() + " PAUSE PLAYBACK");
+    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackPaused();
+      }
+    }).start();
+    mInfo.setText("Paused");
   }
 
-  @Override public void onStopPlayback() {
-    super.onStopPlayback();
+  @Override public void onPlaybackStopped() {
     Log.e(TAG, toString() + " STOP PLAYBACK");
+    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackStopped();
+      }
+    }).start();
+    mInfo.setText("Completed");
+  }
+
+  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+    super.onPlaybackError(mp, what, extra);
+    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackStopped();
+      }
+    }).start();
+    mInfo.setText("Error");
   }
 
   @Override public String toString() {
