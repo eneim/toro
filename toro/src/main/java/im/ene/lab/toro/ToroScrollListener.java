@@ -24,7 +24,7 @@ import android.support.v7.widget.RecyclerView;
  *
  * @hide
  */
-public class ToroScrollListener extends RecyclerView.OnScrollListener {
+public abstract class ToroScrollListener extends RecyclerView.OnScrollListener {
 
   @NonNull protected final ToroManager mManager;
 

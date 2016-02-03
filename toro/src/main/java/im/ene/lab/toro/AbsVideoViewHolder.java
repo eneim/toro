@@ -16,24 +16,29 @@
 
 package im.ene.lab.toro;
 
+import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.view.View;
-import im.ene.lab.toro.widget.ToroVideoView;
+import android.widget.VideoView;
+import com.sprylab.android.widget.TextureVideoView;
 
 /**
- * Created by eneim on 1/31/16.
+ * Created by eneim on 2/3/16.
+ *
+ * ViewHolder to support {@link VideoView}
  */
-public abstract class ToroVideoViewHolder extends ToroViewHolder {
+public abstract class AbsVideoViewHolder extends ToroViewHolder {
 
-  protected final ToroVideoView mVideoView;
+  protected final VideoView mVideoView;
 
   private static final String TAG = "ToroVideoViewHolder";
 
   private boolean mPlayable = true; // normally true
 
-  public ToroVideoViewHolder(View itemView) {
+  public AbsVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = getVideoView(itemView);
 
@@ -44,11 +49,15 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnPreparedListener(this);
     mVideoView.setOnCompletionListener(this);
     mVideoView.setOnErrorListener(this);
-    mVideoView.setOnInfoListener(this);
-    mVideoView.setOnSeekCompleteListener(this);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      mVideoView.setOnInfoListener(this);
+    }
+    // This is unsupported
+    // mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract ToroVideoView getVideoView(View itemView);
+  protected abstract VideoView getVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -101,7 +110,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return mVideoView != null && mVideoView.canSeekForward();
   }
 
-  @Override public int getAudioSessionId() {
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override public int getAudioSessionId() {
     if (mVideoView != null) {
       return mVideoView.getAudioSessionId();
     }
@@ -130,6 +139,14 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   @Override public void onPrepared(MediaPlayer mp) {
     super.onPrepared(mp);
     mPlayable = true;
+  }
+
+  /**
+   * This method is unsupported by {@link TextureVideoView}
+   */
+  /** @hide */
+  @Deprecated @Override public final void onSeekComplete(MediaPlayer mp) {
+    super.onSeekComplete(mp);
   }
 
   @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {

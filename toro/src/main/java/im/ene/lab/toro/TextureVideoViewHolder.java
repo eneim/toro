@@ -20,20 +20,20 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.view.View;
-import im.ene.lab.toro.widget.ToroVideoView;
+import com.sprylab.android.widget.TextureVideoView;
 
 /**
- * Created by eneim on 1/31/16.
+ * Created by eneim on 2/3/16.
  */
-public abstract class ToroVideoViewHolder extends ToroViewHolder {
+public abstract class TextureVideoViewHolder extends ToroViewHolder {
 
-  protected final ToroVideoView mVideoView;
+  protected final TextureVideoView mVideoView;
 
   private static final String TAG = "ToroVideoViewHolder";
 
   private boolean mPlayable = true; // normally true
 
-  public ToroVideoViewHolder(View itemView) {
+  public TextureVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = getVideoView(itemView);
 
@@ -45,10 +45,11 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnCompletionListener(this);
     mVideoView.setOnErrorListener(this);
     mVideoView.setOnInfoListener(this);
-    mVideoView.setOnSeekCompleteListener(this);
+    // This is unsupported
+    // mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract ToroVideoView getVideoView(View itemView);
+  protected abstract TextureVideoView getVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -130,6 +131,14 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   @Override public void onPrepared(MediaPlayer mp) {
     super.onPrepared(mp);
     mPlayable = true;
+  }
+
+  /**
+   * This method is unsupported by {@link TextureVideoView}
+   */
+  /** @hide */
+  @Deprecated @Override public final void onSeekComplete(MediaPlayer mp) {
+    super.onSeekComplete(mp);
   }
 
   @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
