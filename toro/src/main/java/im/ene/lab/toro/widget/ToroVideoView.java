@@ -89,14 +89,14 @@ import java.util.Map;
 
   // Scale mode
   // 0. Width: view width is fixed (or full fill parent), we re-calculate height by width
-  private static final int SCALE_MODE_WIDTH = 0;
+  private static final int SCALE_MODE_FIT_WIDTH = 0;
   // 1. Height: view height is fixed (or full fill parent), we re-calculate width by height
-  private static final int SCALE_MODE_HEIGHT = 1;
+  private static final int SCALE_MODE_FIT_HEIGHT = 1;
   // 2. Fit inside: scale to fit the most visible area. Don't use on large screen :trollface:
   private static final int SCALE_MODE_FIT_INSIDE = 2;
 
   // Scale mode
-  private int mScaleMode = SCALE_MODE_HEIGHT;
+  private int mScaleMode = SCALE_MODE_FIT_HEIGHT;
 
   // All the stuff we need for playing and showing a video
   private Surface mSurface = null;
@@ -298,7 +298,7 @@ import java.util.Map;
     super(context, attrs, defStyle);
     final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ToroVideoView);
     try {
-      mScaleMode = a.getInteger(R.styleable.ToroVideoView_videoScaleMode, SCALE_MODE_HEIGHT);
+      mScaleMode = a.getInteger(R.styleable.ToroVideoView_videoScaleMode, SCALE_MODE_FIT_HEIGHT);
     } finally {
       a.recycle();
     }
@@ -399,7 +399,7 @@ import java.util.Map;
 
         // for compatibility, we adjust size based on aspect ratio
         switch (mScaleMode) {
-          case SCALE_MODE_WIDTH:
+          case SCALE_MODE_FIT_WIDTH:
             if (mVideoWidth * height < width * mVideoHeight) {
               //Log.i("@@@", "image too wide, correcting");
               height = width * mVideoHeight / mVideoWidth;
@@ -408,7 +408,7 @@ import java.util.Map;
               width = height * mVideoWidth / mVideoHeight;
             }
             break;
-          case SCALE_MODE_HEIGHT:
+          case SCALE_MODE_FIT_HEIGHT:
           default:
             if (mVideoWidth * height < width * mVideoHeight) {
               //Log.i("@@@", "image too wide, correcting");
