@@ -45,4 +45,8 @@ public class NormalViewHolder extends BaseViewHolder {
 
     mTextView.setText(((SimpleObject) item).name);
   }
+
+  @Override public String toString() {
+    return "Normal " + getAdapterPosition();
+  }
 }

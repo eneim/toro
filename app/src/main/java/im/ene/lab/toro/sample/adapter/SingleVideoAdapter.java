@@ -19,6 +19,7 @@ package im.ene.lab.toro.sample.adapter;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.viewholder.BaseViewHolder;
@@ -26,13 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by eneim on 1/30/16.
+ * Created by eneim on 2/3/16.
  */
-public class SampleVideoUrlListAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
-
+public class SingleVideoAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
   private List<SimpleVideoObject> mVideos = new ArrayList<>();
 
-  public SampleVideoUrlListAdapter() {
+  public SingleVideoAdapter() {
     super();
     setHasStableIds(true);
     for (String item : VideoSource.SOURCES) {
@@ -60,6 +60,9 @@ public class SampleVideoUrlListAdapter extends ToroAdapter<ToroAdapter.ViewHolde
   }
 
   @Nullable @Override protected Object getItem(int position) {
+    if (position != 2 && position != 3 && position != 5) {
+      return new SimpleObject();
+    }
     return mVideos.get(position % mVideos.size());
   }
 

@@ -23,10 +23,8 @@ import android.view.View;
 /**
  * Created by eneim on 1/31/16.
  */
-abstract class ToroViewHolder extends ToroAdapter.ViewHolder
-    implements ToroPlayer, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnSeekCompleteListener,
-    View.OnLongClickListener {
+public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
+    implements ToroPlayer, View.OnLongClickListener {
 
   private final ToroItemViewHelper mHelper;
 
@@ -36,34 +34,55 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
   }
 
   @CallSuper @Override public void onAttachedToParent() {
+    super.onAttachedToParent();
     mHelper.onAttachedToParent(this, itemView, itemView.getParent());
   }
 
   @CallSuper @Override public void onDetachedFromParent() {
+    super.onDetachedFromParent();
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
+   */
   @CallSuper @Override public void onPrepared(MediaPlayer mp) {
     Toro.onPrepared(this, itemView, itemView.getParent(), mp);
   }
 
-  @CallSuper @Override public void onCompletion(MediaPlayer mp) {
+  /**
+   * Implement from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}. This method
+   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, MediaPlayer)}, Client
+   * should use {@link ToroPlayer#onPlaybackStopped()}
+   */
+  @Override public final void onCompletion(MediaPlayer mp) {
     Toro.onCompletion(this, mp);
   }
 
-  @CallSuper @Override public boolean onError(MediaPlayer mp, int what, int extra) {
+  /**
+   * Implement from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}. This method
+   * is closed and called only by {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}, Client
+   * should use {@link ToroPlayer#onPlaybackError(MediaPlayer, int, int)}
+   */
+  @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
     return Toro.onError(this, mp, what, extra);
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnInfoListener#onInfo(MediaPlayer, int, int)}
+   */
   @CallSuper @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
     return Toro.onInfo(this, mp, what, extra);
   }
 
+  /**
+   * Implement from {@link MediaPlayer.OnSeekCompleteListener#onSeekComplete(MediaPlayer)}
+   */
   @CallSuper @Override public void onSeekComplete(MediaPlayer mp) {
     Toro.onSeekComplete(this, mp);
   }
 
-  @Override public int getPlayerPosition() {
+  @Override public int getPlayOrder() {
     return getAdapterPosition();
   }
 

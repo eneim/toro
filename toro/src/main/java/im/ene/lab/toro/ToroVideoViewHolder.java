@@ -18,6 +18,7 @@ package im.ene.lab.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.view.View;
 import im.ene.lab.toro.widget.ToroVideoView;
 
@@ -29,6 +30,8 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   protected final ToroVideoView mVideoView;
 
   private static final String TAG = "ToroVideoViewHolder";
+
+  private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
     super(itemView);
@@ -44,20 +47,11 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnInfoListener(this);
     mVideoView.setOnSeekCompleteListener(this);
 
+    // TODO: setup long press support on demand
     itemView.setOnLongClickListener(this);
   }
 
   protected abstract ToroVideoView getVideoView(View itemView);
-
-  // Client needs to implement this method
-  // @Override public boolean wantsToPlay(Rect parentRect, Rect childRect) {
-  //   return false;
-  // }
-
-  // Client needs to implement this method
-  // @Nullable @Override public Long getVideoId() {
-  //   return null;
-  // }
 
   @Override public void onActivityPaused() {
 
@@ -127,16 +121,39 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   }
 
   @Override public float visibleAreaOffset() {
-    return 0;
+    Rect videoRect = getVideoRect();
+    Rect parentRect = getRecyclerViewRect();
+    if (parentRect != null && !parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
+      return 0.f;
+    }
+
+    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
   }
 
-  protected Rect getVideoRect() {
+  @Override public boolean wantsToPlay() {
+    return false;
+  }
+
+  @Override public boolean isAbleToPlay() {
+    return mPlayable;
+  }
+
+  @Override public void onPrepared(MediaPlayer mp) {
+    super.onPrepared(mp);
+    mPlayable = true;
+  }
+
+  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+    mPlayable = false;
+  }
+
+  private Rect getVideoRect() {
     Rect rect = new Rect();
     mVideoView.getGlobalVisibleRect(rect, new Point());
     return rect;
   }
 
-  protected Rect getRecyclerViewRect() {
+  private Rect getRecyclerViewRect() {
     if (itemView.getParent() == null) {
       return null;
     }
@@ -145,5 +162,21 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     rect.contains(0, 0, 0, 0);
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
     return rect;
+  }
+
+  @Override public void onPlaybackStarted() {
+
+  }
+
+  @Override public void onPlaybackPaused() {
+
+  }
+
+  @Override public void onPlaybackStopped() {
+
+  }
+
+  @Override public void onPlaybackProgress(int position, int duration) {
+
   }
 }

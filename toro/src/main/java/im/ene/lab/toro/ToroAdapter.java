@@ -16,6 +16,8 @@
 
 package im.ene.lab.toro;
 
+import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -26,40 +28,31 @@ import android.view.View;
 public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     extends RecyclerView.Adapter<VH> {
 
-  protected OnItemClickListener mOnItemClickListener;
-
-  private final String TAG = getClass().getSimpleName();
-
-  /**
-   * @param listener
-   */
-  public void setOnItemClickListener(OnItemClickListener listener) {
-    this.mOnItemClickListener = listener;
+  @CallSuper @Override public void onViewRecycled(VH holder) {
+    holder.onRecycled();
   }
 
-  // Unusable
-  @Override public void onViewAttachedToWindow(VH holder) {
-    Log.d(TAG, "onViewAttachedToWindow() called with: " + "holder = [" + holder + "]");
+  @CallSuper @Override public boolean onFailedToRecycleView(VH holder) {
+    return holder.onFailedToRecycle();
+  }
+
+  @CallSuper @Override public void onViewAttachedToWindow(VH holder) {
     holder.onAttachedToParent();
   }
 
-  // Unusable
-  @Override public void onViewDetachedFromWindow(VH holder) {
-    Log.d(TAG, "onViewDetachedFromWindow() called with: " + "holder = [" + holder + "]");
+  @CallSuper @Override public void onViewDetachedFromWindow(VH holder) {
     holder.onDetachedFromParent();
   }
 
-  // Unusable
-  @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-    super.onAttachedToRecyclerView(recyclerView);
-    Log.i(TAG, "onAttachedToRecyclerView: ");
+  @CallSuper @Override public void onBindViewHolder(VH holder, int position) {
+    holder.bind(getItem(position));
+    holder.onViewHolderBound();
   }
 
-  // Unusable
-  @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-    super.onDetachedFromRecyclerView(recyclerView);
-    Log.i(TAG, "onDetachedFromRecyclerView: ");
-  }
+  /**
+   * Require client to feed data. Actually object returned from this method could be null.
+   */
+  @Nullable protected abstract Object getItem(int position);
 
   /**
    *
@@ -70,33 +63,50 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
 
     public ViewHolder(View itemView) {
       super(itemView);
+      Log.e(TAG, toString() + " CREATED");
     }
 
     /**
-     * @param listener
+     * Called by {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
      */
-    public void setOnItemViewClickListener(View.OnClickListener listener) {
-      itemView.setOnClickListener(listener);
-    }
-
-    public void setOnItemViewLongClickListener(View.OnLongClickListener listener) {
-      itemView.setOnLongClickListener(listener);
+    @CallSuper public void onAttachedToParent() {
+      Log.w(TAG, toString() + " ATTACHED");
     }
 
     /**
-     * see {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
+     * Called by {@link RecyclerView.Adapter#onDetachedFromRecyclerView(RecyclerView)}
      */
-    public void onAttachedToParent() {
-      Log.i(TAG, "onAttachedToParent: " + getAdapterPosition());
+    @CallSuper public void onDetachedFromParent() {
+      Log.w(TAG, toString() + " DETACHED");
     }
 
     /**
-     * see {@link RecyclerView.Adapter#onDetachedFromRecyclerView(RecyclerView)}
+     * Called by {@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}
      */
-    public void onDetachedFromParent() {
-      Log.i(TAG, "onDetachedFromParent: " + getAdapterPosition());
+    @CallSuper public void onRecycled() {
+      Log.i(TAG, toString() + " RECYCLED");
     }
 
-    public abstract void bind(Object object);
+    /**
+     * Called by {@link RecyclerView.Adapter#onFailedToRecycleView(RecyclerView.ViewHolder)}
+     */
+    @CallSuper public boolean onFailedToRecycle() {
+      Log.i(TAG, toString() + " FAILED TO RECYCLE");
+      return false;
+    }
+
+    /**
+     * Called response to {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder,
+     * int)}
+     */
+    @CallSuper public void onViewHolderBound() {
+      Log.i(TAG, toString() + " BOUND");
+    }
+
+    /**
+     * Accept null object, but client must acknowledge this, and try to supply valid object to
+     * ViewHolder
+     */
+    public abstract void bind(@Nullable Object object);
   }
 }

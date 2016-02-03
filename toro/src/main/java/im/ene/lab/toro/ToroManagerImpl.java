@@ -16,8 +16,10 @@
 
 package im.ene.lab.toro;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import java.util.WeakHashMap;
 
 /**
@@ -25,50 +27,91 @@ import java.util.WeakHashMap;
  */
 public final class ToroManagerImpl implements ToroManager {
 
-  private static final String TAG = "ToroManager";
+  private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
+
   private final WeakHashMap<Long, Integer> mVideoStates = new WeakHashMap<>();
-  private ToroPlayer mCurrentPlayer;
+  protected ToroPlayer mPlayer;
+  // This Handler will send Message to Main Thread
+  private Handler mUiHandler;
+  private Handler.Callback mCallback = new Handler.Callback() {
+    @Override public boolean handleMessage(Message msg) {
+      switch (msg.what) {
+        case MESSAGE_PLAYBACK_PROGRESS:
+          if (mPlayer != null) {
+            mPlayer.onPlaybackProgress(mPlayer.getCurrentPosition(), mPlayer.getDuration());
+          }
+          mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+          mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
+          return true;
+        default:
+          return false;
+      }
+    }
+  };
 
-  public ToroPlayer getPlayer() {
-    return this.mCurrentPlayer;
+  @Override public ToroPlayer getPlayer() {
+    return mPlayer;
   }
 
-  public void setPlayer(ToroPlayer player) {
-    this.mCurrentPlayer = player;
+  @Override public void setPlayer(ToroPlayer player) {
+    this.mPlayer = player;
   }
 
-  @Override public void startVideo(ToroPlayer player) {
-    player.start();
+  @Override public void startPlayback() {
+    if (mPlayer != null) {
+      // Remove old callback if exist
+      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+      if (mPlayer.getDuration() > 0) {
+        mPlayer.start();
+        mPlayer.onPlaybackStarted();
+        if (mUiHandler != null) {
+          mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
+        }
+      }
+    }
   }
 
-  @Override public void pauseVideo(ToroPlayer player) {
-    player.pause();
+  @Override public void pausePlayback() {
+    if (mPlayer != null) {
+      mPlayer.pause();
+      mPlayer.onPlaybackPaused();
+    }
+
+    if (mUiHandler != null) {
+      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+    }
   }
 
   @Override public void saveVideoState(Long videoId, @Nullable Integer position, long duration) {
     if (videoId != null) {
-      mVideoStates.put(videoId, position == null ? 0 : position);
+      mVideoStates.put(videoId, position == null ? Integer.valueOf(0) : position);
     }
   }
 
-  @Override public void restoreVideoState(ToroPlayer player, Long videoId) {
-    Log.d(TAG, "restoreVideoState() called with: "
-        + "player = ["
-        + player
-        + "], videoId = ["
-        + videoId
-        + "]");
+  @Override public void restoreVideoState(Long videoId) {
+    if (mPlayer == null) {
+      return;
+    }
+
     Integer position = mVideoStates.get(videoId);
     if (position == null) {
       position = 0;
     }
 
-    Log.d(TAG, "restoreVideoState: " + position);
     // See {@link android.media.MediaPlayer#seekTo(int)}
     try {
-      player.seekTo(position);
+      mPlayer.seekTo(position);
     } catch (IllegalStateException er) {
       er.printStackTrace();
     }
+  }
+
+  @Override public void onRegistered() {
+    mUiHandler = new Handler(Looper.getMainLooper(), mCallback);
+  }
+
+  @Override public void onUnregistered() {
+    mUiHandler.removeCallbacksAndMessages(null);
+    mUiHandler = null;
   }
 }

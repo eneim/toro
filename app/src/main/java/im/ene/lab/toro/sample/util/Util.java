@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.sample.util;
 
-import android.view.View;
+import android.support.v4.util.TimeUtils;
 
 /**
- * Created by eneim on 2/1/16.
+ * Created by eneim on 2/3/16.
  */
-public interface OnItemLongClickListener {
+public class Util {
 
-  boolean onItemLongClick(ToroAdapter adapter, ToroAdapter.ViewHolder viewHolder, View view,
-      int adapterPosition, long itemId);
+  public static String timeStamp(int position, int duration) {
+    StringBuilder posTime = new StringBuilder();
+    TimeUtils.formatDuration(position, posTime);
+    StringBuilder durationTime = new StringBuilder();
+    TimeUtils.formatDuration(duration, durationTime);
+
+    return posTime + " / " + durationTime.toString();
+  }
 }

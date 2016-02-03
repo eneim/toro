@@ -16,23 +16,33 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.widget.MediaController;
 
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer extends MediaController.MediaPlayerControl {
+public interface ToroPlayer
+    extends MediaController.MediaPlayerControl, MediaPlayer.OnPreparedListener,
+    MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener,
+    MediaPlayer.OnSeekCompleteListener {
 
   /**
-   * @param parentRect parent rect, get from {@link android.view.View#getLocalVisibleRect(Rect)}
-   * @param childRect child rect,  get from {@link android.view.View#getLocalVisibleRect(Rect)}
-   * @return true if current Video is eager to play its video, or false otherwise
+   * This player wants to play or not. Client must provide reasonable motivation for this Player to
+   * be played. For example, it could be properly visible by User, therefore It wants to behave.
    */
-  boolean wantsToPlay(@Nullable Rect parentRect, @NonNull Rect childRect);
+  boolean wantsToPlay();
+
+  /**
+   * Called after {@link ToroPlayer#wantsToPlay()} returning <b>true</b>, indicate that even if
+   * this player wants to play that much, is It able to play (Video is correctly set or there is no
+   * Error)
+   */
+  boolean isAbleToPlay();
 
   /**
    * @return value from 0.0 ~ 1.0 the visible offset of current Video
@@ -52,9 +62,12 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
   @Nullable Long getVideoId();
 
   /**
-   * Position in Adapter
+   * In case there is a list of Players who want to play, Toro wants to know their orders, then
+   * Toro will decide who could start, based on Toro' playback {@link ToroStrategy}
    */
-  int getPlayerPosition();
+  @IntRange(from = 0) int getPlayOrder();
+
+  /* Host activity lifecycle callback */
 
   /**
    * Host Activity paused
@@ -66,4 +79,37 @@ public interface ToroPlayer extends MediaController.MediaPlayerControl {
    */
   void onActivityResumed();
 
+  /* Playback lifecycle callback */
+
+  /**
+   * Callback after this player starts playing
+   */
+  void onPlaybackStarted();
+
+  /**
+   * Callback after this player pauses playing
+   */
+  void onPlaybackPaused();
+
+  /**
+   * Callback after this player stops playing
+   */
+  void onPlaybackStopped();
+
+  /**
+   * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
+   *
+   * This method has the same signature with {@link ToroPlayer#onError(MediaPlayer, int, int)}, but
+   * {@link ToroPlayer#onError(MediaPlayer, int, int)} will be called explicitly by Toro, so this
+   * method will prevent infinite loop
+   */
+  void onPlaybackError(MediaPlayer mp, int what, int extra);
+
+  /**
+   * Callback from playback progress update. This method is called from main thread (UIThread)
+   *
+   * @param position current playing position
+   * @param duration total duration of current video
+   */
+  @UiThread void onPlaybackProgress(int position, int duration);
 }

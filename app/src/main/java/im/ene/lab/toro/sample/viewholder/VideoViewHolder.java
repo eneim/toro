@@ -16,40 +16,39 @@
 
 package im.ene.lab.toro.sample.viewholder;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.NonNull;
+import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.lab.toro.sample.util.Util;
 import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Callback {
+public class VideoViewHolder extends ToroVideoViewHolder {
 
-  private static final String TAG = "VideoViewHolder";
-
-  private static final int MESSAGE_PLAYER_START = 1;
-
-  private static final int MESSAGE_PLAYER_PAUSE = 1 << 1;
-
-  private static final int MESSAGE_SEEK = 1 << 2;
-
-  private static final int MESSAGE_DELAY = 200;
+  private final String TAG = getClass().getSimpleName();
 
   public static final int LAYOUT_RES = R.layout.vh_texture_video;
 
-  private Handler mHandler = new Handler(this);
-  private boolean mIsVideoPathSet = false;
+  private ImageView mThumbnail;
+  private TextView mInfo;
 
   public VideoViewHolder(View itemView) {
     super(itemView);
+    mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+    mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
   @Override protected ToroVideoView getVideoView(View itemView) {
@@ -61,87 +60,83 @@ public class VideoViewHolder extends ToroVideoViewHolder implements Handler.Call
       throw new IllegalStateException("Unexpected object: " + item.toString());
     }
 
-    Log.d(TAG, "bind() called with: " + "item = [" + item + "]");
-    // mCurrentState = State.STATE_IDLE;
-    mIsVideoPathSet = false;
     mVideoView.setVideoPath(((SimpleVideoObject) item).video);
-    mIsVideoPathSet = true;
   }
 
-  @Override public void start() {
-    mHandler.sendEmptyMessageDelayed(MESSAGE_PLAYER_START, MESSAGE_DELAY);
-  }
-
-  @Override public void pause() {
-    mHandler.sendEmptyMessageDelayed(MESSAGE_PLAYER_PAUSE, MESSAGE_DELAY);
-  }
-
-  @Override public void seekTo(int pos) {
-    // mCurrentState = State.STATE_SEEKING;
-    mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, pos, 0), MESSAGE_DELAY);
-  }
-
-  @Override public boolean wantsToPlay(Rect parentRect, @NonNull Rect childRect) {
+  @Override public boolean wantsToPlay() {
+    Rect childRect = new Rect();
+    itemView.getGlobalVisibleRect(childRect, new Point());
     int visibleHeight = childRect.bottom - childRect.top;
-    return visibleHeight > itemView.getHeight() * 0.7;
-  }
-
-  @Override public float visibleAreaOffset() {
-    Rect videoRect = getVideoRect();
-    Rect parentRect = getRecyclerViewRect();
-    if (!parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
-      return 0.f;
-    }
-
-    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
+    // wants to play if user could see at lease 0.75 of video
+    return visibleHeight > itemView.getHeight() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
     return (long) getAdapterPosition();
   }
 
-  @Override public void onActivityPaused() {
-    if (mHandler != null) {
-      mHandler.removeCallbacksAndMessages(null);
-    }
-    mHandler = null;
+  @Override public void onViewHolderBound() {
+    super.onViewHolderBound();
+    Picasso.with(itemView.getContext())
+        .load(R.drawable.toro_place_holder)
+        .fit()
+        .centerInside()
+        .into(mThumbnail);
+    mInfo.setText("Bound");
   }
 
-  @Override public void onActivityResumed() {
-    mHandler = new Handler(this);
+  @Override public void onPrepared(MediaPlayer mp) {
+    super.onPrepared(mp);
+    mInfo.setText("Prepared");
   }
 
-  @Override public boolean handleMessage(Message msg) {
-    switch (msg.what) {
-      case MESSAGE_PLAYER_START:
-        if (mVideoView != null) {
-          Rect outRect = new Rect();
-          Rect videoRect = new Rect();
-          itemView.getLocalVisibleRect(outRect);
-          mVideoView.getGlobalVisibleRect(videoRect);
-          mVideoView.start();
-        } else {
-          // View is unavailable, re-send the message to wait for it
-          mHandler.removeMessages(msg.what);
-          mHandler.sendEmptyMessageDelayed(msg.what, MESSAGE_DELAY);
-        }
-        return true;
-      case MESSAGE_PLAYER_PAUSE:
-        if (mVideoView != null) {
-          mVideoView.pause();
-        }
-        return true;
-      case MESSAGE_SEEK:
-        if (mVideoView != null && mIsVideoPathSet) {
-          mVideoView.seekTo(msg.arg1);
-        } else {
-          mHandler.removeMessages(MESSAGE_SEEK);
-          mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_SEEK, msg.arg1, 0),
-              MESSAGE_DELAY);
-        }
-        return true;
-      default:
-        return false;
-    }
+  @Override public void onPlaybackStarted() {
+    Log.e(TAG, toString() + " START PLAYBACK");
+    mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackStarted();
+      }
+    }).start();
+    mInfo.setText("Started");
+  }
+
+  @Override public void onPlaybackProgress(int position, int duration) {
+    super.onPlaybackProgress(position, duration);
+    Log.d(TAG, toString() + " position = [" + position + "], duration = [" + duration + "]");
+    mInfo.setText(Util.timeStamp(position, duration));
+  }
+
+  @Override public void onPlaybackPaused() {
+    Log.e(TAG, toString() + " PAUSE PLAYBACK");
+    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackPaused();
+      }
+    }).start();
+    mInfo.setText("Paused");
+  }
+
+  @Override public void onPlaybackStopped() {
+    Log.e(TAG, toString() + " STOP PLAYBACK");
+    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackStopped();
+      }
+    }).start();
+    mInfo.setText("Completed");
+  }
+
+  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+    super.onPlaybackError(mp, what, extra);
+    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationEnd(Animator animation) {
+        VideoViewHolder.super.onPlaybackStopped();
+      }
+    }).start();
+    mInfo.setText("Error");
+  }
+
+  @Override public String toString() {
+    return "Video: " + getVideoId();
   }
 }
