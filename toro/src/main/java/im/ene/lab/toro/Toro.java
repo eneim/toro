@@ -494,6 +494,10 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+        if (candidates == null || candidates.size() < 1) {
+          return null;
+        }
+
         return candidates.get(0);
       }
 

@@ -60,7 +60,7 @@ public class SingleVideoAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Nullable @Override protected Object getItem(int position) {
-    if (position != 2 && position != 3) {
+    if (position != 2 && position != 3 && position != 5) {
       return new SimpleObject();
     }
     return mVideos.get(position % mVideos.size());

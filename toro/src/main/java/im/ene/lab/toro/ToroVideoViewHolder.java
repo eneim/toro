@@ -53,16 +53,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   protected abstract ToroVideoView getVideoView(View itemView);
 
-  // Client needs to implement this method
-  // @Override public boolean wantsToPlay(Rect parentRect, Rect childRect) {
-  //   return false;
-  // }
-
-  // Client needs to implement this method
-  // @Nullable @Override public Long getVideoId() {
-  //   return null;
-  // }
-
   @Override public void onActivityPaused() {
 
   }
@@ -133,7 +123,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   @Override public float visibleAreaOffset() {
     Rect videoRect = getVideoRect();
     Rect parentRect = getRecyclerViewRect();
-    if (!parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
+    if (parentRect != null && !parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
       return 0.f;
     }
 
@@ -157,13 +147,13 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mPlayable = false;
   }
 
-  protected Rect getVideoRect() {
+  private Rect getVideoRect() {
     Rect rect = new Rect();
     mVideoView.getGlobalVisibleRect(rect, new Point());
     return rect;
   }
 
-  protected Rect getRecyclerViewRect() {
+  private Rect getRecyclerViewRect() {
     if (itemView.getParent() == null) {
       return null;
     }

@@ -23,7 +23,7 @@ import android.view.View;
 /**
  * Created by eneim on 1/31/16.
  */
-abstract class ToroViewHolder extends ToroAdapter.ViewHolder
+public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, View.OnLongClickListener {
 
   private final ToroItemViewHelper mHelper;
@@ -51,9 +51,11 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}
+   * Implement from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}. This method
+   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, MediaPlayer)}, Client
+   * should use {@link ToroPlayer#onPlaybackStopped()}
    */
-  @CallSuper @Override public void onCompletion(MediaPlayer mp) {
+  @Override public final void onCompletion(MediaPlayer mp) {
     Toro.onCompletion(this, mp);
   }
 
@@ -62,7 +64,7 @@ abstract class ToroViewHolder extends ToroAdapter.ViewHolder
    * is closed and called only by {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}, Client
    * should use {@link ToroPlayer#onPlaybackError(MediaPlayer, int, int)}
    */
-  @CallSuper @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
+  @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
     return Toro.onError(this, mp, what, extra);
   }
 
