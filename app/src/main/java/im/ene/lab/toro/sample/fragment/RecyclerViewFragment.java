@@ -38,7 +38,7 @@ public abstract class RecyclerViewFragment extends Fragment
 
   protected RecyclerView mRecyclerView;
 
-  private static final ToroStrategy[] mPolicies = {
+  private static final ToroStrategy[] STRATEGIES = {
       Toro.Strategies.MOST_VISIBLE_TOP_DOWN, Toro.Strategies.MOST_VISIBLE_TOP_DOWN_KEEP_LAST,
       Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN, Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST
   };
@@ -54,23 +54,26 @@ public abstract class RecyclerViewFragment extends Fragment
     mRecyclerView.setLayoutManager(getLayoutManager());
     mRecyclerView.setAdapter(getAdapter());
 
-    Toro.register(mRecyclerView);
-
     RadioGroup policiesContainer = (RadioGroup) view.findViewById(R.id.policies_container);
     policiesContainer.setOnCheckedChangeListener(this);
 
     policiesContainer.removeAllViews();
-    for (ToroStrategy policy : mPolicies) {
+    for (ToroStrategy strategy : STRATEGIES) {
       RadioButton checkBox = (RadioButton) LayoutInflater.from(policiesContainer.getContext())
           .inflate(R.layout.policy_checkbox, policiesContainer, false);
-      checkBox.setText(policy.getDescription());
+      checkBox.setText(strategy.getDescription());
       policiesContainer.addView(checkBox);
-      checkBox.setChecked(Toro.getStrategy() == policy);
+      checkBox.setChecked(Toro.getStrategy() == strategy);
     }
   }
 
-  @Override public void onDestroyView() {
-    super.onDestroyView();
+  @Override public void onResume() {
+    super.onResume();
+    Toro.register(mRecyclerView);
+  }
+
+  @Override public void onPause() {
+    super.onPause();
     Toro.unregister(mRecyclerView);
   }
 
@@ -82,7 +85,7 @@ public abstract class RecyclerViewFragment extends Fragment
     RadioButton buttonView = (RadioButton) group.findViewById(checkedId);
     if (buttonView != null) {
       String policyName = buttonView.getText() + "";
-      for (ToroStrategy policy : mPolicies) {
+      for (ToroStrategy policy : STRATEGIES) {
         if (policy.getDescription().equals(policyName)) {
           Toro.setStrategy(policy);
           mRecyclerView.getAdapter().notifyDataSetChanged();
