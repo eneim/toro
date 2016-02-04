@@ -47,8 +47,8 @@ public abstract class BaseViewHolder extends ToroAdapter.ViewHolder {
     final View view;
     if (viewType == VIEW_TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())
-          .inflate(VideoViewHolder.LAYOUT_RES, parent, false);
-      viewHolder = new VideoViewHolder(view);
+          .inflate(SampleToroVideoViewHolder.LAYOUT_RES, parent, false);
+      viewHolder = new SampleToroVideoViewHolder(view);
     } else {
       view = LayoutInflater.from(parent.getContext())
           .inflate(NormalViewHolder.LAYOUT_RES, parent, false);

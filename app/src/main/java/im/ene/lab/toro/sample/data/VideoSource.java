@@ -23,28 +23,13 @@ public class VideoSource {
 
   private static final String MP4 = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
 
-  private static final String M4V =
-      "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v";
+  private static final String HLS =
+      "http://csm.cds1.yospace.com/csm/restart/41728753/666021318435.m3u8";
 
   private static final String MKV =
-      "http://www.sample-videos.com/video/mkv/720/big_buck_bunny_720p_5mb.mkv";
-
-  private static final String MP4_2 = "http://www.gomplayer.jp/img/sample/mp4_mpeg4_aac.mp4";
-
-  private static final String HLS = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8";
-
-  // May not support
-  private static final String MOV =
-      "http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_h264.mov";
-
-  // 3GP, but Java, why ...
-  private static final String THREEGP =
-      "http://www.sample-videos.com/video/3gp/240/big_buck_bunny_240p_5mb.3gp";
-
-  private static final String FLV =
-      "http://www.sample-videos.com/video/flv/720/big_buck_bunny_720p_5mb.flv";  // Old school
+      "http://www.sample-videos.com/video/mkv/480/big_buck_bunny_480p_2mb.mkv";
 
   public static final String[] SOURCES = {
-      MP4_2, HLS, MP4
+      MP4, HLS, MKV
   };
 }

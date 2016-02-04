@@ -23,7 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.adapter.SampleVideoUrlListAdapter;
+import im.ene.lab.toro.sample.adapter.AllVideosListAdapter;
 
 /**
  * Created by eneim on 2/1/16.
@@ -39,7 +39,6 @@ public class StaggeredVideoListFragment extends RecyclerViewFragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    // mRecyclerView.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
   }
 
   @NonNull @Override protected RecyclerView.LayoutManager getLayoutManager() {
@@ -49,6 +48,6 @@ public class StaggeredVideoListFragment extends RecyclerViewFragment {
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new SampleVideoUrlListAdapter();
+    return new AllVideosListAdapter();
   }
 }

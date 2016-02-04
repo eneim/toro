@@ -22,7 +22,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,16 +35,16 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoViewHolder extends ToroVideoViewHolder {
+public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
-  public static final int LAYOUT_RES = R.layout.vh_texture_video;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video;
 
   private ImageView mThumbnail;
   private TextView mInfo;
 
-  public VideoViewHolder(View itemView) {
+  public SampleToroVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
@@ -93,7 +92,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackStarted();
+        SampleToroVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -107,7 +106,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackPaused();
+        SampleToroVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -116,7 +115,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStopped() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackStopped();
+        SampleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Completed");
@@ -126,7 +125,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
     super.onPlaybackError(mp, what, extra);
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackStopped();
+        SampleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error");
@@ -134,12 +133,6 @@ public class VideoViewHolder extends ToroVideoViewHolder {
 
   @Override protected boolean allowLongPressSupport() {
     return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
-  }
-
-  @Override public float visibleAreaOffset() {
-    float result = super.visibleAreaOffset();
-    Log.d(TAG, "visibleAreaOffset() returned: " + result);
-    return result;
   }
 
   @Override public String toString() {

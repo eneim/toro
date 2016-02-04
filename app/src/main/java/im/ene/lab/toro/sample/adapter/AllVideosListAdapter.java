@@ -28,11 +28,11 @@ import java.util.List;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SampleVideoUrlListAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class AllVideosListAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   private List<SimpleVideoObject> mVideos = new ArrayList<>();
 
-  public SampleVideoUrlListAdapter() {
+  public AllVideosListAdapter() {
     super();
     setHasStableIds(true);
     for (String item : VideoSource.SOURCES) {

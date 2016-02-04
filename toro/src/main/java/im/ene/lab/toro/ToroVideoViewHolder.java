@@ -148,7 +148,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     }
 
     Rect rect = new Rect();
-    rect.contains(0, 0, 0, 0);
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
     return rect;
   }
