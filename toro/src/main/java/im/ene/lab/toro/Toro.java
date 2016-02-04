@@ -179,6 +179,7 @@ import java.util.concurrent.ConcurrentHashMap;
    * Toro#attach(Activity)}
    */
   public static void detach(Activity activity) {
+    checkNotNull();
     Application application = activity.getApplication();
     if (application != null) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
@@ -191,6 +192,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   public static ToroStrategy getStrategy() {
+    checkNotNull();
     return sInstance.mStrategy;
   }
 
@@ -200,6 +202,7 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param policy requested policy from client
    */
   public static void setStrategy(@NonNull ToroStrategy policy) {
+    checkNotNull();
     sInstance.mStrategy = policy;
   }
 
@@ -209,11 +212,7 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be registered
    */
   public static void register(RecyclerView view) {
-    if (sInstance == null) {
-      throw new IllegalStateException(
-          "Toro has not been attached to your Activity or you Application. Please refer the doc");
-    }
-
+    checkNotNull();
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
@@ -264,11 +263,7 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be unregistered
    */
   public static void unregister(RecyclerView view) {
-    if (sInstance == null) {
-      throw new IllegalStateException(
-          "Toro has not been attached to your Activity or you Application. Please refer the doc");
-    }
-
+    checkNotNull();
     if (view == null) {
       throw new NullPointerException("Un-registering View must not be null");
     }
@@ -291,6 +286,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   static void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
+    checkNotNull();
     player.onPlaybackStopped();
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       ToroManager manager = listener.getManager();
@@ -304,6 +300,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
   static void onPrepared(ToroPlayer player, View container, ViewParent parent,
       MediaPlayer mediaPlayer) {
+    checkNotNull();
     player.onVideoPrepared(mediaPlayer);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       ToroManager manager = listener.getManager();
@@ -320,6 +317,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   static boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    checkNotNull();
     player.onPlaybackError(mp, what, extra);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       ToroManager manager = listener.getManager();
@@ -333,11 +331,12 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   static boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    checkNotNull();
     return false;
   }
 
   static void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
-
+    checkNotNull();
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -518,5 +517,12 @@ import java.util.concurrent.ConcurrentHashMap;
         return false;
       }
     };
+  }
+
+  private static void checkNotNull() {
+    if (sInstance == null) {
+      throw new IllegalStateException(
+          "Toro has not been attached to your Activity or you Application. Please refer the doc");
+    }
   }
 }
