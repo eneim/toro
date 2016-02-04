@@ -19,6 +19,7 @@ package im.ene.lab.toro;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.support.annotation.CallSuper;
 import android.view.View;
 import im.ene.lab.toro.widget.ToroVideoView;
 
@@ -27,15 +28,13 @@ import im.ene.lab.toro.widget.ToroVideoView;
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final ToroVideoView mVideoView;
-
   private static final String TAG = "ToroVideoViewHolder";
-
+  protected final ToroVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
     super(itemView);
-    mVideoView = getVideoView(itemView);
+    mVideoView = findVideoView(itemView);
 
     if (mVideoView == null) {
       throw new NullPointerException("Unusable ViewHolder");
@@ -48,7 +47,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract ToroVideoView getVideoView(View itemView);
+  protected abstract ToroVideoView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -127,8 +126,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return mPlayable;
   }
 
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
+  @CallSuper @Override public void onVideoPrepared(MediaPlayer mp) {
     mPlayable = true;
   }
 
@@ -148,8 +146,11 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     }
 
     Rect rect = new Rect();
-    rect.contains(0, 0, 0, 0);
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
     return rect;
+  }
+
+  @Override public View getVideoView() {
+    return mVideoView;
   }
 }

@@ -66,18 +66,11 @@ import java.util.concurrent.ConcurrentHashMap;
           if (value != null && value.getManager().getPlayer() == null) {
             value.getManager().setPlayer(player);
             value.getManager().restoreVideoState(player.getVideoId());
-            // Check playability
-            Rect containerRect = new Rect();
-            Rect parentRect = null;
-            itemView.getGlobalVisibleRect(containerRect);
-            if (parent != null && parent instanceof View) {
-              parentRect = new Rect();
-              ((View) parent).getGlobalVisibleRect(parentRect);
-            }
 
             if (player.wantsToPlay() && player.isAbleToPlay() &&
-                getStrategy().allowsToPlay(player)) {
+                getStrategy().allowsToPlay(player, parent)) {
               value.getManager().startPlayback();
+              player.onPlaybackStarted();
             }
           }
         }
@@ -87,14 +80,18 @@ import java.util.concurrent.ConcurrentHashMap;
     @Override
     public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
       for (Map.Entry<RecyclerView, ToroScrollListener> entry : sInstance.mMm.entrySet()) {
-        RecyclerView key = entry.getKey();
-        if (key == parent) {
-          ToroScrollListener value = entry.getValue();
+        RecyclerView recyclerView = entry.getKey();
+        if (recyclerView == parent) {
+          ToroScrollListener listener = entry.getValue();
           // Manually save Video state
-          if (value != null && player.equals(value.getManager().getPlayer())) {
-            value.getManager()
+          if (listener != null && player.equals(listener.getManager().getPlayer())) {
+            listener.getManager()
                 .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
                     player.getDuration());
+            if (player.isPlaying()) {
+              listener.getManager().pausePlayback();
+              player.onPlaybackPaused();
+            }
           }
         }
       }
@@ -116,14 +113,9 @@ import java.util.concurrent.ConcurrentHashMap;
         return false;
       }
 
-      Rect containerRect = new Rect();
-      Rect parentRect = new Rect();
-      itemView.getGlobalVisibleRect(containerRect);
-      recyclerView.getGlobalVisibleRect(parentRect);
-
       // Being pressed player is not be able to play, return
       if (!player.wantsToPlay() || !player.isAbleToPlay() ||
-          !getStrategy().allowsToPlay(player)) {
+          !getStrategy().allowsToPlay(player, parent)) {
         return false;
       }
 
@@ -309,15 +301,10 @@ import java.util.concurrent.ConcurrentHashMap;
     for (ToroScrollListener listener : sInstance.mMm.values()) {
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
+        manager.getPlayer().onVideoPrepared(mediaPlayer);
         manager.restoreVideoState(player.getVideoId());
-        Rect containerRect = new Rect();
-        Rect parentRect = null;
-        container.getGlobalVisibleRect(containerRect);
-        if (parent != null && parent instanceof View) {
-          parentRect = new Rect();
-          ((View) parent).getGlobalVisibleRect(parentRect);
-        }
-        if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player)) {
+        if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player,
+            parent)) {
           manager.startPlayback();
         }
         break;
@@ -392,8 +379,9 @@ import java.util.concurrent.ConcurrentHashMap;
      * on the top
      */
     public static final ToroStrategy MOST_VISIBLE_TOP_DOWN = new ToroStrategy() {
+
       @Override public String getDescription() {
-        return "Most visible item from top";
+        return "MOST_VISIBLE_TOP_DOWN";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -418,7 +406,10 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+        Rect rect = new Rect();
+        player.getVideoView().getDrawingRect(rect);
+        player.getVideoView().getWindowVisibleDisplayFrame(rect);
         return true;
       }
 
@@ -435,8 +426,7 @@ import java.util.concurrent.ConcurrentHashMap;
      */
     public static final ToroStrategy MOST_VISIBLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
       @Override public String getDescription() {
-        return "Most visible item in list of candidates, chosen from top to bottom. "
-            + "But if current player is not on the top but still playable, keep it";
+        return "MOST_VISIBLE_TOP_DOWN_KEEP_LAST";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -454,7 +444,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         return true;
       }
 
@@ -468,7 +458,7 @@ import java.util.concurrent.ConcurrentHashMap;
      */
     public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN = new ToroStrategy() {
       @Override public String getDescription() {
-        return "Scan top down of candidates, chose the first playable Video";
+        return "FIRST_PLAYABLE_TOP_DOWN";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -486,7 +476,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         return true;
       }
 
@@ -502,8 +492,7 @@ import java.util.concurrent.ConcurrentHashMap;
     public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
 
       @Override public String getDescription() {
-        return "Scan top down of candidates, chose the first playable Video. But if current player "
-            + "is still playable, but not on the top, we keep using it";
+        return "FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -514,7 +503,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         return true;
       }
 

@@ -24,7 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.sample.adapter.SampleVideoUrlListAdapter;
+import im.ene.lab.toro.sample.adapter.AllVideosListAdapter;
 
 /**
  * Created by eneim on 2/1/16.
@@ -48,6 +48,6 @@ public class SampleVideoListFragment extends RecyclerViewFragment {
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new SampleVideoUrlListAdapter();
+    return new AllVideosListAdapter();
   }
 }

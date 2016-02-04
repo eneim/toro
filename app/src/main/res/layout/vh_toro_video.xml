@@ -23,7 +23,7 @@
     android:padding="4dp"
     >
 
-  <com.sprylab.android.widget.TextureVideoView
+  <im.ene.lab.toro.widget.ToroVideoView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="180dp"

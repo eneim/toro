@@ -21,6 +21,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.view.View;
 import android.widget.MediaController;
 
 /**
@@ -67,6 +68,13 @@ public interface ToroPlayer
    */
   @IntRange(from = 0) int getPlayOrder();
 
+  /**
+   * Retrieve current player's View
+   *
+   * @return attached video view
+   */
+  View getVideoView();
+
   /* Host activity lifecycle callback */
 
   /**
@@ -80,6 +88,13 @@ public interface ToroPlayer
   void onActivityResumed();
 
   /* Playback lifecycle callback */
+
+  /**
+   * Replace {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
+   *
+   * @param mp media player which is prepared
+   */
+  void onVideoPrepared(MediaPlayer mp);
 
   /**
    * Callback after this player starts playing

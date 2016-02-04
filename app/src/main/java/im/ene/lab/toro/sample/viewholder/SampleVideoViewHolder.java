@@ -22,44 +22,46 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.toro.ToroVideoViewHolder;
+import im.ene.lab.toro.AbsVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.util.Util;
-import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoViewHolder extends ToroVideoViewHolder {
+public class SampleVideoViewHolder extends AbsVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
-  public static final int LAYOUT_RES = R.layout.vh_texture_video;
+  public static final int LAYOUT_RES = R.layout.vh_video_view;
 
   private ImageView mThumbnail;
   private TextView mInfo;
 
-  public VideoViewHolder(View itemView) {
+  public SampleVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
-  @Override protected ToroVideoView getVideoView(View itemView) {
-    return (ToroVideoView) itemView.findViewById(R.id.video);
+  @Override protected VideoView findVideoView(View itemView) {
+    return (VideoView) itemView.findViewById(R.id.video);
   }
+
+  private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {
     if (!(item instanceof SimpleVideoObject)) {
       throw new IllegalStateException("Unexpected object: " + item.toString());
     }
 
+    mItem = (SimpleVideoObject) item;
     mVideoView.setVideoPath(((SimpleVideoObject) item).video);
   }
 
@@ -85,15 +87,15 @@ public class VideoViewHolder extends ToroVideoViewHolder {
     mInfo.setText("Bound");
   }
 
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
+  @Override public void onVideoPrepared(MediaPlayer mp) {
+    super.onVideoPrepared(mp);
     mInfo.setText("Prepared");
   }
 
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackStarted();
+        SampleVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -107,7 +109,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackPaused();
+        SampleVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -116,7 +118,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStopped() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackStopped();
+        SampleVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Completed");
@@ -126,7 +128,7 @@ public class VideoViewHolder extends ToroVideoViewHolder {
     super.onPlaybackError(mp, what, extra);
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        VideoViewHolder.super.onPlaybackStopped();
+        SampleVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error");
@@ -134,12 +136,6 @@ public class VideoViewHolder extends ToroVideoViewHolder {
 
   @Override protected boolean allowLongPressSupport() {
     return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
-  }
-
-  @Override public float visibleAreaOffset() {
-    float result = super.visibleAreaOffset();
-    Log.d(TAG, "visibleAreaOffset() returned: " + result);
-    return result;
   }
 
   @Override public String toString() {

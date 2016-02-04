@@ -16,8 +16,6 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -35,8 +33,6 @@ public final class StaggeredGridLayoutScrollListener extends ToroScrollListener 
 
   private static final String TAG = "Staggered";
   private int mLastVideoPosition = -1;
-  private Rect mParentRect = new Rect();
-  private Rect mChildRect = new Rect();
 
   public StaggeredGridLayoutScrollListener(@NonNull ToroManager manager) {
     super(manager);
@@ -60,10 +56,8 @@ public final class StaggeredGridLayoutScrollListener extends ToroScrollListener 
           recyclerView.findViewHolderForLayoutPosition(mLastVideoPosition);
       // Re-calculate the rectangles
       if (viewHolder != null) {
-        recyclerView.getGlobalVisibleRect(mParentRect);
-        viewHolder.itemView.getGlobalVisibleRect(mChildRect);
         if (lastVideo.wantsToPlay() && lastVideo.isAbleToPlay() &&
-            Toro.getStrategy().allowsToPlay(lastVideo)) {
+            Toro.getStrategy().allowsToPlay(lastVideo, recyclerView)) {
           candidates.add(lastVideo);
         } else {
           mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
@@ -95,11 +89,9 @@ public final class StaggeredGridLayoutScrollListener extends ToroScrollListener 
         if (viewHolder != null && viewHolder instanceof ToroPlayer) {
           video = (ToroPlayer) viewHolder;
           // Re-calculate the rectangles
-          recyclerView.getHitRect(mParentRect);
-          viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
           // check that view position
           if (video.wantsToPlay() && video.isAbleToPlay() &&
-              Toro.getStrategy().allowsToPlay(video)) {
+              Toro.getStrategy().allowsToPlay(video, recyclerView)) {
             if (!candidates.contains(video)) {
               candidates.add(video);
             }

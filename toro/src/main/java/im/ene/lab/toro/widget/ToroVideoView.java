@@ -75,18 +75,6 @@ import java.util.Map;
   private static final int STATE_PLAYING = 3;
   private static final int STATE_PAUSED = 4;
   private static final int STATE_PLAYBACK_COMPLETED = 5;
-  // Seeking flags
-  // We don't allow any action interrupt seeking process
-  private static final int STATE_SEEK_BEGIN = 6;
-  private static final int STATE_SEEK_END = 7;
-  // Scale mode
-  // 0. Width: view width is fixed (or full fill parent), we re-calculate height by width
-  private static final int SCALE_MODE_WIDTH = 0;
-  // 1. Height: view height is fixed (or full fill parent), we re-calculate width by height
-  private static final int SCALE_MODE_HEIGHT = 1;
-  // 2. Fit inside: scale to fit the most visible area. Don't use on large screen :trollface:
-  private static final int SCALE_MODE_FIT_INSIDE = 2;
-
   private String TAG = "TextureVideoView";
   // settable by the client
   private Uri mUri;
@@ -99,11 +87,16 @@ import java.util.Map;
   private int mCurrentState = STATE_IDLE;
   private int mTargetState = STATE_IDLE;
 
-  // Watch seeking state
-  private int mSeekState = STATE_IDLE;
+  // Scale mode
+  // 0. Width: view width is fixed (or full fill parent), we re-calculate height by width
+  private static final int SCALE_MODE_FIT_WIDTH = 0;
+  // 1. Height: view height is fixed (or full fill parent), we re-calculate width by height
+  private static final int SCALE_MODE_FIT_HEIGHT = 1;
+  // 2. Fit inside: scale to fit the most visible area. Don't use on large screen :trollface:
+  private static final int SCALE_MODE_FIT_INSIDE = 2;
 
   // Scale mode
-  private int mScaleMode = SCALE_MODE_HEIGHT;
+  private int mScaleMode = SCALE_MODE_FIT_HEIGHT;
 
   // All the stuff we need for playing and showing a video
   private Surface mSurface = null;
@@ -130,7 +123,6 @@ import java.util.Map;
       new MediaPlayer.OnSeekCompleteListener() {
         @Override public void onSeekComplete(MediaPlayer mp) {
           Log.d(TAG, "onSeekComplete() called with: " + "mp = [" + mp + "]");
-          mSeekState = STATE_SEEK_END;
           if (mOnSeekCompleteListener != null) {
             mOnSeekCompleteListener.onSeekComplete(mMediaPlayer);
           }
@@ -211,15 +203,6 @@ import java.util.Map;
       return true;
     }
   };
-  private MediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
-      new MediaPlayer.OnBufferingUpdateListener() {
-        public void onBufferingUpdate(MediaPlayer mp, int percent) {
-          mCurrentBufferPercentage = percent;
-        }
-      };
-
-  // TODO Apply this
-  private OnPlaybackError mOnPlaybackErrorListener;
   private MediaPlayer.OnErrorListener mErrorListener = new MediaPlayer.OnErrorListener() {
     public boolean onError(MediaPlayer mp, int framework_err, int impl_err) {
       Log.d(TAG, "Error: " + framework_err + "," + impl_err);
@@ -257,13 +240,16 @@ import java.util.Map;
       return true;
     }
   };
-  TextureView.SurfaceTextureListener mSurfaceTextureListener = new SurfaceTextureListener() {
-    @Override public void onSurfaceTextureAvailable(final SurfaceTexture surface, final int width,
-        final int height) {
-      mSurface = new Surface(surface);
-      openVideo();
-    }
+  private MediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
+      new MediaPlayer.OnBufferingUpdateListener() {
+        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+          mCurrentBufferPercentage = percent;
+        }
+      };
 
+  // TODO Apply this
+  private OnPlaybackError mOnPlaybackErrorListener;
+  TextureView.SurfaceTextureListener mSurfaceTextureListener = new SurfaceTextureListener() {
     @Override public void onSurfaceTextureSizeChanged(final SurfaceTexture surface, final int width,
         final int height) {
       boolean isValidState = (mTargetState == STATE_PLAYING);
@@ -274,6 +260,12 @@ import java.util.Map;
         }
         start();
       }
+    }
+
+    @Override public void onSurfaceTextureAvailable(final SurfaceTexture surface, final int width,
+        final int height) {
+      mSurface = new Surface(surface);
+      openVideo();
     }
 
     @Override public boolean onSurfaceTextureDestroyed(final SurfaceTexture surface) {
@@ -306,7 +298,7 @@ import java.util.Map;
     super(context, attrs, defStyle);
     final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ToroVideoView);
     try {
-      mScaleMode = a.getInteger(R.styleable.ToroVideoView_videoScaleMode, SCALE_MODE_HEIGHT);
+      mScaleMode = a.getInteger(R.styleable.ToroVideoView_videoScaleMode, SCALE_MODE_FIT_HEIGHT);
     } finally {
       a.recycle();
     }
@@ -407,7 +399,7 @@ import java.util.Map;
 
         // for compatibility, we adjust size based on aspect ratio
         switch (mScaleMode) {
-          case SCALE_MODE_WIDTH:
+          case SCALE_MODE_FIT_WIDTH:
             if (mVideoWidth * height < width * mVideoHeight) {
               //Log.i("@@@", "image too wide, correcting");
               height = width * mVideoHeight / mVideoWidth;
@@ -416,7 +408,7 @@ import java.util.Map;
               width = height * mVideoWidth / mVideoHeight;
             }
             break;
-          case SCALE_MODE_HEIGHT:
+          case SCALE_MODE_FIT_HEIGHT:
           default:
             if (mVideoWidth * height < width * mVideoHeight) {
               //Log.i("@@@", "image too wide, correcting");
@@ -514,7 +506,6 @@ import java.util.Map;
 
   @Override public void seekTo(int msec) {
     if (isInPlaybackState()) {
-      mSeekState = STATE_SEEK_BEGIN;
       mMediaPlayer.seekTo(msec);
       mSeekWhenPrepared = 0;
     } else {
