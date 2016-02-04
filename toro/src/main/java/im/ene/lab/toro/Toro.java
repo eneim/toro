@@ -519,7 +519,7 @@ import java.util.concurrent.ConcurrentHashMap;
     };
   }
 
-  private static void checkNotNull() {
+  static void checkNotNull() {
     if (sInstance == null) {
       throw new IllegalStateException(
           "Toro has not been attached to your Activity or you Application. Please refer the doc");

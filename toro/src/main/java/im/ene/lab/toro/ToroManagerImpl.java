@@ -20,7 +20,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import java.util.WeakHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by eneim on 1/31/16.
@@ -29,7 +30,8 @@ public final class ToroManagerImpl implements ToroManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
-  private final WeakHashMap<Long, Integer> mVideoStates = new WeakHashMap<>();
+  private final Map<Long, Integer> mVideoStates = new HashMap<>();
+
   protected ToroPlayer mPlayer;
   // This Handler will send Message to Main Thread
   private Handler mUiHandler;
@@ -48,6 +50,10 @@ public final class ToroManagerImpl implements ToroManager {
       }
     }
   };
+
+  public ToroManagerImpl() {
+    Toro.checkNotNull();
+  }
 
   @Override public ToroPlayer getPlayer() {
     return mPlayer;
