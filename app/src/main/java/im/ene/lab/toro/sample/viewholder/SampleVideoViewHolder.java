@@ -84,8 +84,8 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
     mInfo.setText("Bound");
   }
 
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
+  @Override public void onVideoPrepared(MediaPlayer mp) {
+    super.onVideoPrepared(mp);
     mInfo.setText("Prepared");
   }
 

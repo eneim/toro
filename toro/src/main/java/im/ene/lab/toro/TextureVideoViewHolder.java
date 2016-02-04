@@ -19,6 +19,7 @@ package im.ene.lab.toro;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.support.annotation.CallSuper;
 import android.view.View;
 import com.sprylab.android.widget.TextureVideoView;
 
@@ -126,8 +127,8 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     return mPlayable;
   }
 
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
+  @CallSuper
+  @Override public void onVideoPrepared(MediaPlayer mp) {
     mPlayable = true;
   }
 

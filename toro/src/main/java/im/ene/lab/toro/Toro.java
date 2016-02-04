@@ -301,6 +301,7 @@ import java.util.concurrent.ConcurrentHashMap;
     for (ToroScrollListener listener : sInstance.mMm.values()) {
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
+        manager.getPlayer().onVideoPrepared(mediaPlayer);
         manager.restoreVideoState(player.getVideoId());
         if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player,
             parent)) {

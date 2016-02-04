@@ -96,7 +96,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   /**
    * Implement from {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
    */
-  @CallSuper @Override public void onPrepared(MediaPlayer mp) {
+  @CallSuper @Override public final void onPrepared(MediaPlayer mp) {
     Toro.onPrepared(this, itemView, itemView.getParent(), mp);
   }
 

@@ -74,6 +74,11 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     return (long) getAdapterPosition();
   }
 
+  @Override public void onVideoPrepared(MediaPlayer mp) {
+    super.onVideoPrepared(mp);
+    mInfo.setText("Prepared");
+  }
+
   @Override public void onViewHolderBound() {
     super.onViewHolderBound();
     Picasso.with(itemView.getContext())
@@ -82,11 +87,6 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
         .centerInside()
         .into(mThumbnail);
     mInfo.setText("Bound");
-  }
-
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
-    mInfo.setText("Prepared");
   }
 
   @Override public void onPlaybackStarted() {

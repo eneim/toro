@@ -21,6 +21,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.support.annotation.CallSuper;
 import android.view.View;
 import android.widget.VideoView;
 import com.sprylab.android.widget.TextureVideoView;
@@ -136,8 +137,8 @@ public abstract class AbsVideoViewHolder extends ToroViewHolder {
     return mPlayable;
   }
 
-  @Override public void onPrepared(MediaPlayer mp) {
-    super.onPrepared(mp);
+  @CallSuper
+  @Override public void onVideoPrepared(MediaPlayer mp) {
     mPlayable = true;
   }
 

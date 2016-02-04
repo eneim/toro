@@ -54,7 +54,7 @@ public abstract class RecyclerViewFragment extends Fragment
     mRecyclerView.setLayoutManager(getLayoutManager());
     mRecyclerView.setAdapter(getAdapter());
 
-    Toro.register(mRecyclerView);
+    // Toro.register(mRecyclerView);
 
     RadioGroup policiesContainer = (RadioGroup) view.findViewById(R.id.policies_container);
     policiesContainer.setOnCheckedChangeListener(this);
@@ -70,7 +70,7 @@ public abstract class RecyclerViewFragment extends Fragment
   }
 
   @Override public void onDestroyView() {
-    Toro.unregister(mRecyclerView);
+    // Toro.unregister(mRecyclerView);
     super.onDestroyView();
   }
 
