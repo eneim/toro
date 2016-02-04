@@ -62,6 +62,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
               lastVideo.getDuration());
           if (lastVideo.isPlaying()) {
             mManager.pausePlayback();
+            lastVideo.onPlaybackPaused();
           }
         }
       }
@@ -105,6 +106,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
       if (videoPosition == mLastVideoPosition) {  // Nothing changes, keep going
         if (lastVideo != null && !lastVideo.isPlaying()) {
           mManager.startPlayback();
+          lastVideo.onPlaybackStarted();
         }
         return;
       }
@@ -114,6 +116,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
             lastVideo.getDuration());
         if (lastVideo.isPlaying()) {
           mManager.pausePlayback();
+          lastVideo.onPlaybackPaused();
         }
       }
 
@@ -124,6 +127,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
       mManager.setPlayer(lastVideo);
       mManager.restoreVideoState(lastVideo.getVideoId());
       mManager.startPlayback();
+      lastVideo.onPlaybackStarted();
     }
   }
 }

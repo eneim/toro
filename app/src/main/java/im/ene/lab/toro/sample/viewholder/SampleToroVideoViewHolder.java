@@ -60,6 +60,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
+  private boolean mIsVideoSet = false;
   private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {
@@ -68,6 +69,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
     }
 
     mItem = (SimpleVideoObject) item;
+    mIsVideoSet = false;
     mHandler.removeMessages(MESSAGE_SET_VIDEO);
     mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 200);
   }
@@ -77,11 +79,25 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
     itemView.getGlobalVisibleRect(childRect, new Point());
     int visibleHeight = childRect.bottom - childRect.top;
     // wants to play if user could see at lease 0.75 of video
-    return visibleHeight > itemView.getHeight() * 0.75;
+    return visibleHeight >= itemView.getHeight() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
     return (long) getAdapterPosition();
+  }
+
+  @Override public void start() {
+    if (mIsVideoSet) {
+      super.start();
+    } else {
+      mHandler.removeMessages(MESSAGE_SET_VIDEO);
+      mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 200);
+    }
+  }
+
+  @Override public void onActivityPaused() {
+    super.onActivityPaused();
+    mHandler.removeCallbacksAndMessages(null);
   }
 
   @Override public void onVideoPrepared(MediaPlayer mp) {
@@ -152,6 +168,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
   @Override public boolean handleMessage(Message msg) {
     if (msg.what == MESSAGE_SET_VIDEO) {
       if (mVideoView != null && mItem != null) {
+        mIsVideoSet = true;
         mVideoView.setVideoPath(mItem.video);
       } else {
         mHandler.removeMessages(MESSAGE_SET_VIDEO);
