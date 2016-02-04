@@ -54,11 +54,14 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
     return (VideoView) itemView.findViewById(R.id.video);
   }
 
+  private SimpleVideoObject mItem;
+
   @Override public void bind(Object item) {
     if (!(item instanceof SimpleVideoObject)) {
       throw new IllegalStateException("Unexpected object: " + item.toString());
     }
 
+    mItem = (SimpleVideoObject) item;
     mVideoView.setVideoPath(((SimpleVideoObject) item).video);
   }
 
