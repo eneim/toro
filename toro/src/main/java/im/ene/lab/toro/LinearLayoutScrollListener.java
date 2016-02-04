@@ -16,8 +16,6 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,14 +31,9 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
 
   private int mLastVideoPosition;
 
-  private Rect mParentRect;
-  private Rect mChildRect;
-
   public LinearLayoutScrollListener(@NonNull ToroManager manager) {
     super(manager);
     mLastVideoPosition = -1;
-    mParentRect = new Rect();
-    mChildRect = new Rect();
   }
 
   @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -61,10 +54,8 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
           recyclerView.findViewHolderForLayoutPosition(mLastVideoPosition);
       // Re-calculate the rectangles
       if (viewHolder != null) {
-        recyclerView.getGlobalVisibleRect(mParentRect, new Point());
-        viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
         if (lastVideo.wantsToPlay() && lastVideo.isAbleToPlay() &&
-            Toro.getStrategy().allowsToPlay(lastVideo)) {
+            Toro.getStrategy().allowsToPlay(lastVideo, recyclerView)) {
           candidates.add(lastVideo);
         } else {
           mManager.saveVideoState(lastVideo.getVideoId(), lastVideo.getCurrentPosition(),
@@ -88,12 +79,9 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
         RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
         if (viewHolder != null && viewHolder instanceof ToroPlayer) {
           video = (ToroPlayer) viewHolder;
-          // Re-calculate the rectangles
-          recyclerView.getGlobalVisibleRect(mParentRect, new Point());
-          viewHolder.itemView.getGlobalVisibleRect(mChildRect, new Point());
           // check that view position
           if (video.wantsToPlay() && video.isAbleToPlay() &&
-              Toro.getStrategy().allowsToPlay(video)) {
+              Toro.getStrategy().allowsToPlay(video, recyclerView)) {
             if (!candidates.contains(video)) {
               candidates.add(video);
             }

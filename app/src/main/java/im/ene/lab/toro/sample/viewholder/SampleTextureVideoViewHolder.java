@@ -50,7 +50,7 @@ public class SampleTextureVideoViewHolder extends TextureVideoViewHolder {
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
-  @Override protected TextureVideoView getVideoView(View itemView) {
+  @Override protected TextureVideoView findVideoView(View itemView) {
     return (TextureVideoView) itemView.findViewById(R.id.video);
   }
 

@@ -19,8 +19,9 @@ package im.ene.lab.toro.sample.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.adapter.AllVideosListAdapter;
@@ -42,9 +43,12 @@ public class StaggeredVideoListFragment extends RecyclerViewFragment {
   }
 
   @NonNull @Override protected RecyclerView.LayoutManager getLayoutManager() {
-    return new StaggeredGridLayoutManager(
+    //return new StaggeredGridLayoutManager(
+    //    getContext().getResources().getInteger(R.integer.staggered_span_count),
+    //    StaggeredGridLayoutManager.VERTICAL);
+    return new GridLayoutManager(getContext(),
         getContext().getResources().getInteger(R.integer.staggered_span_count),
-        StaggeredGridLayoutManager.VERTICAL);
+        LinearLayoutManager.VERTICAL, false);
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {

@@ -21,6 +21,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.view.View;
 import android.widget.MediaController;
 
 /**
@@ -66,6 +67,13 @@ public interface ToroPlayer
    * Toro will decide who could start, based on Toro' playback {@link ToroStrategy}
    */
   @IntRange(from = 0) int getPlayOrder();
+
+  /**
+   * Retrieve current player's View
+   *
+   * @return attached video view
+   */
+  View getVideoView();
 
   /* Host activity lifecycle callback */
 

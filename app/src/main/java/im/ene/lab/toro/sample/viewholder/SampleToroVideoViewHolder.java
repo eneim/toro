@@ -50,7 +50,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
-  @Override protected ToroVideoView getVideoView(View itemView) {
+  @Override protected ToroVideoView findVideoView(View itemView) {
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 

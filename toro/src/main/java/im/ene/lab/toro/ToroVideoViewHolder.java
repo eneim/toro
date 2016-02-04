@@ -27,15 +27,13 @@ import im.ene.lab.toro.widget.ToroVideoView;
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final ToroVideoView mVideoView;
-
   private static final String TAG = "ToroVideoViewHolder";
-
+  protected final ToroVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
     super(itemView);
-    mVideoView = getVideoView(itemView);
+    mVideoView = findVideoView(itemView);
 
     if (mVideoView == null) {
       throw new NullPointerException("Unusable ViewHolder");
@@ -48,7 +46,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract ToroVideoView getVideoView(View itemView);
+  protected abstract ToroVideoView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -150,5 +148,9 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     Rect rect = new Rect();
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
     return rect;
+  }
+
+  @Override public View getVideoView() {
+    return mVideoView;
   }
 }

@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro;
 
+import android.view.ViewParent;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public interface ToroStrategy {
    *
    * @param player ToroPlayer object which wants to play, and wait for permission
    */
-  boolean allowsToPlay(ToroPlayer player);
+  boolean allowsToPlay(ToroPlayer player, ViewParent parent);
 
   /**
    * After a video completely played, our Strategy needs to knows if User wants to replay it or not

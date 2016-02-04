@@ -66,17 +66,9 @@ import java.util.concurrent.ConcurrentHashMap;
           if (value != null && value.getManager().getPlayer() == null) {
             value.getManager().setPlayer(player);
             value.getManager().restoreVideoState(player.getVideoId());
-            // Check playability
-            Rect containerRect = new Rect();
-            Rect parentRect = null;
-            itemView.getGlobalVisibleRect(containerRect);
-            if (parent != null && parent instanceof View) {
-              parentRect = new Rect();
-              ((View) parent).getGlobalVisibleRect(parentRect);
-            }
 
             if (player.wantsToPlay() && player.isAbleToPlay() &&
-                getStrategy().allowsToPlay(player)) {
+                getStrategy().allowsToPlay(player, parent)) {
               value.getManager().startPlayback();
               player.onPlaybackStarted();
             }
@@ -121,14 +113,9 @@ import java.util.concurrent.ConcurrentHashMap;
         return false;
       }
 
-      Rect containerRect = new Rect();
-      Rect parentRect = new Rect();
-      itemView.getGlobalVisibleRect(containerRect);
-      recyclerView.getGlobalVisibleRect(parentRect);
-
       // Being pressed player is not be able to play, return
       if (!player.wantsToPlay() || !player.isAbleToPlay() ||
-          !getStrategy().allowsToPlay(player)) {
+          !getStrategy().allowsToPlay(player, parent)) {
         return false;
       }
 
@@ -315,7 +302,8 @@ import java.util.concurrent.ConcurrentHashMap;
       ToroManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.restoreVideoState(player.getVideoId());
-        if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player)) {
+        if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player,
+            parent)) {
           manager.startPlayback();
         }
         break;
@@ -390,6 +378,7 @@ import java.util.concurrent.ConcurrentHashMap;
      * on the top
      */
     public static final ToroStrategy MOST_VISIBLE_TOP_DOWN = new ToroStrategy() {
+
       @Override public String getDescription() {
         return "MOST_VISIBLE_TOP_DOWN";
       }
@@ -416,7 +405,10 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+        Rect rect = new Rect();
+        player.getVideoView().getDrawingRect(rect);
+        player.getVideoView().getWindowVisibleDisplayFrame(rect);
         return true;
       }
 
@@ -451,7 +443,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         return true;
       }
 
@@ -483,7 +475,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         return true;
       }
 
@@ -510,7 +502,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return candidates.get(0);
       }
 
-      @Override public boolean allowsToPlay(ToroPlayer player) {
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         return true;
       }
 

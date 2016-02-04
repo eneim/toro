@@ -50,7 +50,7 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
-  @Override protected VideoView getVideoView(View itemView) {
+  @Override protected VideoView findVideoView(View itemView) {
     return (VideoView) itemView.findViewById(R.id.video);
   }
 
