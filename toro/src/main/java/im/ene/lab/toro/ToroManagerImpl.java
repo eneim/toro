@@ -59,14 +59,11 @@ public final class ToroManagerImpl implements ToroManager {
 
   @Override public void startPlayback() {
     if (mPlayer != null) {
-      // Remove old callback if exist
-      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-      if (mPlayer.getDuration() > 0) {
-        mPlayer.start();
-        mPlayer.onPlaybackStarted();
-        if (mUiHandler != null) {
-          mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
-        }
+      mPlayer.start();
+      if (mUiHandler != null) {
+        // Remove old callback if exist
+        mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+        mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
       }
     }
   }
@@ -74,7 +71,6 @@ public final class ToroManagerImpl implements ToroManager {
   @Override public void pausePlayback() {
     if (mPlayer != null) {
       mPlayer.pause();
-      mPlayer.onPlaybackPaused();
     }
 
     if (mUiHandler != null) {

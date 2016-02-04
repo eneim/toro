@@ -21,8 +21,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,15 +35,11 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Handler.Callback {
+public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video;
-
-  private Handler mHandler = new Handler(this);
-
-  private static final int MESSAGE_SET_VIDEO = 1;
 
   private ImageView mThumbnail;
   private TextView mInfo;
@@ -60,6 +54,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
+  // private boolean mIsVideoSet = false;
   private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {
@@ -68,8 +63,10 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
     }
 
     mItem = (SimpleVideoObject) item;
-    mHandler.removeMessages(MESSAGE_SET_VIDEO);
-    mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 200);
+    // mIsVideoSet = false;
+    mVideoView.setVideoPath(mItem.video);
+    // mHandler.removeMessages(MESSAGE_SET_VIDEO);
+    // mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 200);
   }
 
   @Override public boolean wantsToPlay() {
@@ -147,19 +144,5 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder implements Ha
 
   @Override public String toString() {
     return "Video: " + getVideoId();
-  }
-
-  @Override public boolean handleMessage(Message msg) {
-    if (msg.what == MESSAGE_SET_VIDEO) {
-      if (mVideoView != null && mItem != null) {
-        mVideoView.setVideoPath(mItem.video);
-      } else {
-        mHandler.removeMessages(MESSAGE_SET_VIDEO);
-        mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 100);
-      }
-
-      return true;
-    }
-    return false;
   }
 }

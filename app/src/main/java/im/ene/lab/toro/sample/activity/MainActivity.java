@@ -23,14 +23,14 @@ public class MainActivity extends AppCompatActivity {
     mPager = (ViewPager) findViewById(R.id.view_pager);
 
     ArrayList<Fragment> items = new ArrayList<>();
-    items.add(SingleVideoListFragment.newInstance());
     items.add(StaggeredVideoListFragment.newInstance());
     items.add(SampleVideoListFragment.newInstance());
+    items.add(SingleVideoListFragment.newInstance());
 
     ArrayList<String> titles = new ArrayList<>();
-    titles.add(SingleVideoListFragment.class.getSimpleName());
     titles.add(StaggeredVideoListFragment.class.getSimpleName());
     titles.add(SampleVideoListFragment.class.getSimpleName());
+    titles.add(SingleVideoListFragment.class.getSimpleName());
 
     ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, items);
     mPager.setAdapter(adapter);
