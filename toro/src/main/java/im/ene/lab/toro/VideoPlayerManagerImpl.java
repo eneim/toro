@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Created by eneim on 1/31/16.
  */
-public final class ToroManagerImpl implements ToroManager {
+public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
@@ -51,7 +51,7 @@ public final class ToroManagerImpl implements ToroManager {
     }
   };
 
-  public ToroManagerImpl() {
+  public VideoPlayerManagerImpl() {
     Toro.checkNotNull();
   }
 

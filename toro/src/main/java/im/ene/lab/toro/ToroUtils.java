@@ -22,9 +22,9 @@ import java.util.List;
 /**
  * Created by eneim on 2/1/16.
  */
-final class Utils {
+final class ToroUtils {
 
-  private Utils() {
+  private ToroUtils() {
     throw new AssertionError("Not supported");
   }
 

@@ -121,6 +121,15 @@ public interface ToroPlayer
   void onPlaybackError(MediaPlayer mp, int what, int extra);
 
   /**
+   * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
+   *
+   * This method has the same signature with {@link ToroPlayer#onInfo(MediaPlayer, int, int)} , but
+   * {@link ToroPlayer#onInfo(MediaPlayer, int, int)} will be called explicitly by Toro, so this
+   * method will prevent infinite loop
+   */
+  void onPlaybackInfo(MediaPlayer mp, int what, int extra);
+
+  /**
    * Callback from playback progress update. This method is called from main thread (UIThread)
    *
    * @param position current playing position

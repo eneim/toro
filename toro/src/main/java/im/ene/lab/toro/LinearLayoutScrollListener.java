@@ -31,7 +31,7 @@ public final class LinearLayoutScrollListener extends ToroScrollListener {
 
   private int mLastVideoPosition;
 
-  public LinearLayoutScrollListener(@NonNull ToroManager manager) {
+  public LinearLayoutScrollListener(@NonNull VideoPlayerManager manager) {
     super(manager);
     mLastVideoPosition = -1;
   }

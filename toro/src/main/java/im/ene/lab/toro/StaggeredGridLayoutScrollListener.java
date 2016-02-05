@@ -34,7 +34,7 @@ public final class StaggeredGridLayoutScrollListener extends ToroScrollListener 
   private static final String TAG = "Staggered";
   private int mLastVideoPosition = -1;
 
-  public StaggeredGridLayoutScrollListener(@NonNull ToroManager manager) {
+  public StaggeredGridLayoutScrollListener(@NonNull VideoPlayerManager manager) {
     super(manager);
   }
 
@@ -77,8 +77,8 @@ public final class StaggeredGridLayoutScrollListener extends ToroScrollListener 
 
     layoutManager.findFirstCompletelyVisibleItemPositions(null);
 
-    List<Integer> firstVisiblePositions = Utils.asList(firstVisibleItemPositions);
-    List<Integer> lastVisiblePositions = Utils.asList(lastVisibleItemPositions);
+    List<Integer> firstVisiblePositions = ToroUtils.asList(firstVisibleItemPositions);
+    List<Integer> lastVisiblePositions = ToroUtils.asList(lastVisibleItemPositions);
     int videoPosition = -1;
     ToroPlayer video;
     try {

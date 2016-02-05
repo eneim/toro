@@ -132,14 +132,6 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     mPlayable = true;
   }
 
-  /**
-   * This method is unsupported by {@link TextureVideoView}
-   */
-  /** @hide */
-  @Deprecated @Override public final void onSeekComplete(MediaPlayer mp) {
-    super.onSeekComplete(mp);
-  }
-
   @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
     mPlayable = false;
   }

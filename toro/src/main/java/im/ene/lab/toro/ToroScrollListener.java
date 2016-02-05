@@ -26,13 +26,13 @@ import android.support.v7.widget.RecyclerView;
  */
 public abstract class ToroScrollListener extends RecyclerView.OnScrollListener {
 
-  @NonNull protected final ToroManager mManager;
+  @NonNull protected final VideoPlayerManager mManager;
 
-  public ToroScrollListener(@NonNull ToroManager manager) {
+  public ToroScrollListener(@NonNull VideoPlayerManager manager) {
     this.mManager = manager;
   }
 
-  @NonNull protected final ToroManager getManager() {
+  @NonNull protected final VideoPlayerManager getManager() {
     return mManager;
   }
 }
