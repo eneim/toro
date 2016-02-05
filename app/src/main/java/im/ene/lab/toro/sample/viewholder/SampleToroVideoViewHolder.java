@@ -135,7 +135,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
         SampleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
-    mInfo.setText("Error");
+    mInfo.setText("Error: videoId = " + getVideoId());
   }
 
   @Override protected boolean allowLongPressSupport() {
