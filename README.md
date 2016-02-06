@@ -49,7 +49,11 @@
 
 ## How to use
 
-##### 0. Add Toro to your project
+##### 0. Prerequirement
+
+- From Android SDK level 16 (4.1)
+
+##### 0+. Add Toro to your project
 
 - Add this to Project's top level ```build.gradle```
 
