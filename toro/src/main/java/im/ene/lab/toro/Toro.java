@@ -130,6 +130,7 @@ import java.util.concurrent.ConcurrentHashMap;
       VideoPlayerManager manager = listener.getManager();
       ToroPlayer currentPlayer = manager.getPlayer();
 
+      // Being pressed player is a new one
       if (!player.equals(currentPlayer)) {
         // All condition to switch players has passed, process the switching
         // Manually save Video state
@@ -158,6 +159,11 @@ import java.util.concurrent.ConcurrentHashMap;
             manager.pausePlayback();
             currentPlayer.onPlaybackPaused();
           }
+        } else {
+          // It's paused, so we resume it
+          manager.restoreVideoState(currentPlayer.getVideoId());
+          manager.startPlayback();
+          currentPlayer.onPlaybackStarted();
         }
       }
 

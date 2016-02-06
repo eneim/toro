@@ -36,16 +36,16 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
+public class HorizontalMixedToroVideoViewHolder extends ToroVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_complicated;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_complicated_horizontal;
 
   private ImageView mThumbnail;
   private TextView mInfo;
 
-  public MixedToroVideoViewHolder(View itemView) {
+  public HorizontalMixedToroVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
@@ -96,7 +96,7 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MixedToroVideoViewHolder.super.onPlaybackStarted();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -110,7 +110,7 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MixedToroVideoViewHolder.super.onPlaybackPaused();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -119,7 +119,7 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStopped() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MixedToroVideoViewHolder.super.onPlaybackStopped();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Completed");
@@ -129,14 +129,14 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
     super.onPlaybackError(mp, what, extra);
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MixedToroVideoViewHolder.super.onPlaybackStopped();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());
   }
 
   @Override protected boolean allowLongPressSupport() {
-    return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
+    return true;
   }
 
   @Override public String toString() {

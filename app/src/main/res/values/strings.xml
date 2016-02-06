@@ -18,4 +18,8 @@
   <string name="fragment_multi_video_complicated_grid">
     Multi Video Complicated Grid
   </string>
+
+  <string name="fragment_multi_video_dual_list">
+    Multi Video Dual List
+  </string>
 </resources>

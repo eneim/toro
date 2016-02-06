@@ -24,6 +24,7 @@ import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
@@ -34,7 +35,7 @@ public class ShowCaseActivity extends AppCompatActivity {
 
   @StringDef({
       SingleVideoSimpleListFragment.TAG, MultiVideoStaggeredGridFragment.TAG,
-      MultiVideoComplicatedGridFragment.TAG
+      MultiVideoComplicatedGridFragment.TAG, DualVideoListFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -64,8 +65,10 @@ public class ShowCaseActivity extends AppCompatActivity {
       return SingleVideoSimpleListFragment.newInstance();
     } else if (MultiVideoStaggeredGridFragment.TAG.equals(name)) {
       return MultiVideoStaggeredGridFragment.newInstance();
-    } else if (MultiVideoComplicatedGridFragment.TAG.equals(name)){
+    } else if (MultiVideoComplicatedGridFragment.TAG.equals(name)) {
       return MultiVideoComplicatedGridFragment.newInstance();
+    } else if (DualVideoListFragment.TAG.equals(name)) {
+      return DualVideoListFragment.newInstance();
     } else {
       return null;
     }

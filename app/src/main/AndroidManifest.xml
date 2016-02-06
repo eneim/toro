@@ -12,12 +12,6 @@
       android:name=".ToroSampleApp"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity
-        android:launchMode="singleTop"
-        android:name=".activity.MainActivity"
-        android:parentActivityName=".activity.HomeActivity"
-        android:theme="@style/AppTheme">
-    </activity>
     <activity android:name=".activity.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
