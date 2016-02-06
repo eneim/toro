@@ -71,7 +71,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     itemView.getGlobalVisibleRect(childRect, new Point());
     int visibleHeight = childRect.bottom - childRect.top;
     // wants to play if user could see at lease 0.75 of video
-    return visibleHeight > itemView.getHeight() * 0.75;
+    return visibleHeight > mVideoView.getHeight() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
