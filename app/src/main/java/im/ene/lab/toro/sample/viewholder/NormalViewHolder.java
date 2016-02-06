@@ -18,13 +18,14 @@ package im.ene.lab.toro.sample.viewholder;
 
 import android.view.View;
 import android.widget.TextView;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleObject;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class NormalViewHolder extends BaseViewHolder {
+public class NormalViewHolder extends ToroAdapter.ViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_normal_view;
 

@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Toro</string>
+  <string name="app_name">Toro</string>
+  <string name="activity_show_case">Toro Showcase</string>
+
+  <string name="fragment_single_video_simple_list">
+    Single Video Simple List
+  </string>
+
+  <string name="fragment_multi_video_staggered_grid">
+    Multi Video Staggered Grid
+  </string>
 </resources>

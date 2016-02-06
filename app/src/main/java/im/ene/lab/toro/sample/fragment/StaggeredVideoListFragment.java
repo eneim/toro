@@ -16,29 +16,21 @@
 
 package im.ene.lab.toro.sample.fragment;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.View;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.adapter.AllVideosListAdapter;
+import im.ene.lab.toro.sample.adapter.MultiVideosSimpleListAdapter;
 
 /**
  * Created by eneim on 2/1/16.
  */
 public class StaggeredVideoListFragment extends RecyclerViewFragment {
 
-  public static StaggeredVideoListFragment newInstance() {
-    Bundle args = new Bundle();
-    StaggeredVideoListFragment fragment = new StaggeredVideoListFragment();
-    fragment.setArguments(args);
-    return fragment;
-  }
+  public static final String TAG = "StaggeredVideoListFragment";
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  public static StaggeredVideoListFragment newInstance() {
+    return new StaggeredVideoListFragment();
   }
 
   @NonNull @Override protected RecyclerView.LayoutManager getLayoutManager() {
@@ -48,6 +40,6 @@ public class StaggeredVideoListFragment extends RecyclerViewFragment {
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new AllVideosListAdapter();
+    return new MultiVideosSimpleListAdapter();
   }
 }

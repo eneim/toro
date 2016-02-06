@@ -24,8 +24,15 @@ import im.ene.lab.toro.Toro;
  */
 public class ToroSampleApp extends Application {
 
+  private static ToroSampleApp sApp;
+
   @Override public void onCreate() {
     super.onCreate();
     Toro.init(this);
+    sApp = this;
+  }
+
+  public static String packageName() {
+    return sApp.getPackageName();
   }
 }

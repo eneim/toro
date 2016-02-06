@@ -16,22 +16,20 @@
 
 package im.ene.lab.toro.sample.fragment;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import im.ene.lab.toro.sample.adapter.SingleVideoAdapter;
+import im.ene.lab.toro.sample.adapter.SingleVideoSimpleListAdapter;
 
 /**
  * Created by eneim on 2/3/16.
  */
-public class SingleVideoListFragment extends RecyclerViewFragment {
+public class SingleVideoSimpleListFragment extends RecyclerViewFragment {
 
-  public static SingleVideoListFragment newInstance() {
-    Bundle args = new Bundle();
-    SingleVideoListFragment fragment = new SingleVideoListFragment();
-    fragment.setArguments(args);
-    return fragment;
+  public static final String TAG = "SingleVideoSimpleListFragment";
+
+  public static SingleVideoSimpleListFragment newInstance() {
+    return new SingleVideoSimpleListFragment();
   }
 
   @NonNull @Override protected RecyclerView.LayoutManager getLayoutManager() {
@@ -39,6 +37,6 @@ public class SingleVideoListFragment extends RecyclerViewFragment {
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new SingleVideoAdapter();
+    return new SingleVideoSimpleListAdapter();
   }
 }

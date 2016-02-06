@@ -7,8 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.fragment.SampleVideoListFragment;
-import im.ene.lab.toro.sample.fragment.SingleVideoListFragment;
+import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.StaggeredVideoListFragment;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +23,13 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<Fragment> items = new ArrayList<>();
     items.add(StaggeredVideoListFragment.newInstance());
-    items.add(SampleVideoListFragment.newInstance());
-    items.add(SingleVideoListFragment.newInstance());
+    items.add(SingleVideoSimpleListFragment.newInstance());
+    //items.add(SingleVideoListFragment.newInstance());
 
     ArrayList<String> titles = new ArrayList<>();
     titles.add(StaggeredVideoListFragment.class.getSimpleName());
-    titles.add(SampleVideoListFragment.class.getSimpleName());
-    titles.add(SingleVideoListFragment.class.getSimpleName());
+    titles.add(SingleVideoSimpleListFragment.class.getSimpleName());
+    //titles.add(SingleVideoListFragment.class.getSimpleName());
 
     ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), titles, items);
     mPager.setAdapter(adapter);
@@ -41,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private final List<Fragment> mItems;
     private final List<String> mTitles;
 
-    public ViewPagerAdapter(FragmentManager fm,
-        ArrayList<String> titles,
+    public ViewPagerAdapter(FragmentManager fm, ArrayList<String> titles,
         ArrayList<Fragment> items) {
       super(fm);
       this.mTitles = titles;

@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,7 +55,6 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
-  // private boolean mIsVideoSet = false;
   private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {
@@ -63,10 +63,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     }
 
     mItem = (SimpleVideoObject) item;
-    // mIsVideoSet = false;
-    mVideoView.setVideoPath(mItem.video);
-    // mHandler.removeMessages(MESSAGE_SET_VIDEO);
-    // mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 200);
+    mVideoView.setVideoURI(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {
