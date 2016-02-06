@@ -16,10 +16,10 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.view.View;
 import com.sprylab.android.widget.TextureVideoView;
 
@@ -28,7 +28,6 @@ import com.sprylab.android.widget.TextureVideoView;
  */
 public abstract class TextureVideoViewHolder extends ToroViewHolder {
 
-  private static final String TAG = "ToroVideoViewHolder";
   protected final TextureVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
@@ -44,8 +43,6 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnCompletionListener(this);
     mVideoView.setOnErrorListener(this);
     mVideoView.setOnInfoListener(this);
-    // This is unsupported
-    // mVideoView.setOnSeekCompleteListener(this);
   }
 
   protected abstract TextureVideoView findVideoView(View itemView);
@@ -120,15 +117,15 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
   }
 
   @Override public boolean wantsToPlay() {
-    return false;
+    // Default implementation
+    return visibleAreaOffset() >= 0.75;
   }
 
   @Override public boolean isAbleToPlay() {
     return mPlayable;
   }
 
-  @CallSuper
-  @Override public void onVideoPrepared(MediaPlayer mp) {
+  @CallSuper @Override public void onVideoPrepared(MediaPlayer mp) {
     mPlayable = true;
   }
 
@@ -136,24 +133,7 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     mPlayable = false;
   }
 
-  private Rect getVideoRect() {
-    Rect rect = new Rect();
-    mVideoView.getGlobalVisibleRect(rect, new Point());
-    return rect;
-  }
-
-  private Rect getRecyclerViewRect() {
-    if (itemView.getParent() == null) {
-      return null;
-    }
-
-    Rect rect = new Rect();
-    rect.contains(0, 0, 0, 0);
-    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
-    return rect;
-  }
-
-  @Override public View getVideoView() {
+  @NonNull @Override public View getVideoView() {
     return mVideoView;
   }
 }

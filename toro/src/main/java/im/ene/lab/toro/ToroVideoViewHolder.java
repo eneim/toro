@@ -16,10 +16,10 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.lab.toro.widget.ToroVideoView;
 
@@ -28,7 +28,6 @@ import im.ene.lab.toro.widget.ToroVideoView;
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  private static final String TAG = "ToroVideoViewHolder";
   protected final ToroVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
@@ -119,7 +118,8 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   }
 
   @Override public boolean wantsToPlay() {
-    return false;
+    // Default implementation
+    return visibleAreaOffset() >= 0.75;
   }
 
   @Override public boolean isAbleToPlay() {
@@ -134,23 +134,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mPlayable = false;
   }
 
-  private Rect getVideoRect() {
-    Rect rect = new Rect();
-    mVideoView.getGlobalVisibleRect(rect, new Point());
-    return rect;
-  }
-
-  private Rect getRecyclerViewRect() {
-    if (itemView.getParent() == null) {
-      return null;
-    }
-
-    Rect rect = new Rect();
-    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
-    return rect;
-  }
-
-  @Override public View getVideoView() {
+  @NonNull @Override public View getVideoView() {
     return mVideoView;
   }
 }

@@ -16,15 +16,13 @@
 
 package im.ene.lab.toro;
 
-import android.annotation.TargetApi;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.VideoView;
-import com.sprylab.android.widget.TextureVideoView;
 
 /**
  * Created by eneim on 2/3/16.
@@ -34,9 +32,6 @@ import com.sprylab.android.widget.TextureVideoView;
 public abstract class AbsVideoViewHolder extends ToroViewHolder {
 
   protected final VideoView mVideoView;
-
-  private static final String TAG = "ToroVideoViewHolder";
-
   private boolean mPlayable = true; // normally true
 
   public AbsVideoViewHolder(View itemView) {
@@ -50,12 +45,9 @@ public abstract class AbsVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnPreparedListener(this);
     mVideoView.setOnCompletionListener(this);
     mVideoView.setOnErrorListener(this);
-
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       mVideoView.setOnInfoListener(this);
     }
-    // This is unsupported
-    // mVideoView.setOnSeekCompleteListener(this);
   }
 
   protected abstract VideoView findVideoView(View itemView);
@@ -111,7 +103,7 @@ public abstract class AbsVideoViewHolder extends ToroViewHolder {
     return mVideoView != null && mVideoView.canSeekForward();
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override public int getAudioSessionId() {
+  @Override public int getAudioSessionId() {
     if (mVideoView != null) {
       return mVideoView.getAudioSessionId();
     }
@@ -130,15 +122,15 @@ public abstract class AbsVideoViewHolder extends ToroViewHolder {
   }
 
   @Override public boolean wantsToPlay() {
-    return false;
+    // Default implementation
+    return visibleAreaOffset() >= 0.75;
   }
 
   @Override public boolean isAbleToPlay() {
     return mPlayable;
   }
 
-  @CallSuper
-  @Override public void onVideoPrepared(MediaPlayer mp) {
+  @CallSuper @Override public void onVideoPrepared(MediaPlayer mp) {
     mPlayable = true;
   }
 
@@ -146,24 +138,7 @@ public abstract class AbsVideoViewHolder extends ToroViewHolder {
     mPlayable = false;
   }
 
-  private Rect getVideoRect() {
-    Rect rect = new Rect();
-    mVideoView.getGlobalVisibleRect(rect, new Point());
-    return rect;
-  }
-
-  private Rect getRecyclerViewRect() {
-    if (itemView.getParent() == null) {
-      return null;
-    }
-
-    Rect rect = new Rect();
-    rect.contains(0, 0, 0, 0);
-    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
-    return rect;
-  }
-
-  @Override public View getVideoView() {
+  @NonNull @Override public View getVideoView() {
     return mVideoView;
   }
 }

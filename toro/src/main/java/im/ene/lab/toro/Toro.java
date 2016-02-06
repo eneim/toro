@@ -549,6 +549,10 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+        if (player.getVideoView() == null) {
+          return false;
+        }
+
         Rect rect = new Rect();
         player.getVideoView().getDrawingRect(rect);
         player.getVideoView().getWindowVisibleDisplayFrame(rect);

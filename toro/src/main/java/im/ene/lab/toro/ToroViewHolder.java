@@ -16,6 +16,8 @@
 
 package im.ene.lab.toro;
 
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
@@ -172,10 +174,61 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   @Override public void onPlaybackInfo(MediaPlayer mp, int what, int extra) {
-    
+
   }
 
   @Override public void onPlaybackProgress(int position, int duration) {
 
+  }
+
+  @Override public float visibleAreaOffset() {
+    Rect videoRect = getVideoRect();
+    Rect parentRect = getRecyclerViewRect();
+    if (parentRect != null && !parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
+      return 0.f;
+    }
+
+    return getVideoView().getHeight() <= 0 ? 1.f
+        : videoRect.height() / (float) getVideoView().getHeight();
+  }
+
+  protected final Rect getVideoRect() {
+    Rect rect = new Rect();
+    getVideoView().getGlobalVisibleRect(rect, new Point());
+    return rect;
+  }
+
+  protected final Rect getRecyclerViewRect() {
+    if (itemView.getParent() == null) {
+      return null;
+    }
+
+    Rect rect = new Rect();
+    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
+    return rect;
+  }
+
+  @Override public void onVideoPrepared(MediaPlayer mp) {
+
+  }
+
+  @Override public int getBufferPercentage() {
+    return 0;
+  }
+
+  @Override public boolean canPause() {
+    return true;
+  }
+
+  @Override public boolean canSeekBackward() {
+    return true;
+  }
+
+  @Override public boolean canSeekForward() {
+    return true;
+  }
+
+  @Override public int getAudioSessionId() {
+    return 0;
   }
 }
