@@ -5,16 +5,16 @@
 [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
 
 
-> ***Video List by RecyclerView made simple. Auto play/pause supported with smart caching last playing position.***
+> ***Auto playback on Video list made easy, special built for RecyclerView***
 
 ## Introduction and motivation
 
-- I wanted to apply ***Auto playback on scrolling*** features like Facebook App or Twitter App into my app. But there's not any good solution out there, and even those which are trying to solve the same problem, I did not find them useful, so I create this with the following targets:
-  - Easy to use, support modern components from Android's support libraries. Target Android SDK from 16 up (I hate the rest, sorry).
-  - Support RecyclerView by adding support layers on tops of its LayoutManager/Adapter/ViewHolder.
-  - **Keep the code base transparent with original RecyclerView**. Provide useful methods set on top of them. See [ToroAdapter](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java), [ToroAdapter$ViewHolder](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java#L59).
-  - **OUT-OF-THE-BOX support**: User can just extends my pre-code classes, I have prepared the rest for them. See [ToroVideoViewHolder]() and its relatives
-  - Highly cusomizeable.
+- Add ***Auto playback on scrolling*** features like Facebook App or Twitter App into your App by **Toro**:
+  - Easy to use. Target Android SDK from 16 up (I hate the rest, sorry).
+  - Adding support layers on tops of RecyclerView's **LayoutManager/Adapter/ViewHolder**.
+  - **Transparent code with original RecyclerView**. Provide useful methods set on top of them. See [ToroAdapter](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java), [ToroAdapter$ViewHolder](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java#L59).
+  - **OUT-OF-THE-BOX** usability: just extends my pre-coded classes, I have prepared the rest for them. See [ToroVideoViewHolder and its relatives](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s))
+  - Highly customizeable.
   - Take care of possible issues: Video playing is a pain in Android. I wish Toro could help its users feel good. So Toro listen to Activity's life cycle to init/release its resource. Further more, Toro creates and supports **Playback Lifecycle** which is super helpful for those who want to catch up with the playback progress as well as update UI before/after playing. All of those features are usable out of the box.
   - Super easy to setup: see usage section.
 
