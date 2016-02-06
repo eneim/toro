@@ -38,12 +38,12 @@
 
 ## Toro in Action
 
-<!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_1.gif" width="180">-->
-<!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_2.gif" width="180">-->
-<!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_4.gif" width="180">-->
-<!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_5.gif" width="180">-->
+<img src="https://github.com/eneim/Toro/blob/master/art/sample_1.gif" width="180">
+<img src="https://github.com/eneim/Toro/blob/master/art/sample_2.gif" width="180">
+<img src="https://github.com/eneim/Toro/blob/master/art/sample_4.gif" width="180">
+<img src="https://github.com/eneim/Toro/blob/master/art/sample_5.gif" width="180">
 
-<!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_3.gif" width="360">-->
+<img src="https://github.com/eneim/Toro/blob/master/art/sample_3.gif" width="360">
 
 ## How to use
 
