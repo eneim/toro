@@ -25,9 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewParent;
 import java.util.Collections;
@@ -59,7 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
   private final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
 
   // !IMPORTANT I limit this Map capacity to 3
-  private StateLinkedList mStates;
+  private LinkedStateList mStates;
 
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default strategy
 
@@ -206,7 +204,7 @@ import java.util.concurrent.ConcurrentHashMap;
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
     if (sInstance.mStates == null) {
-      sInstance.mStates = new StateLinkedList(3);
+      sInstance.mStates = new LinkedStateList(3);
     }
   }
 
@@ -292,17 +290,7 @@ import java.util.concurrent.ConcurrentHashMap;
       playerManager = new VideoPlayerManagerImpl();
     }
 
-    RecyclerView.LayoutManager layoutManager = view.getLayoutManager();
-    ToroScrollListener listener;
-    if (layoutManager instanceof LinearLayoutManager) {
-      listener = new LinearLayoutScrollListener(playerManager);
-    } else if (layoutManager instanceof StaggeredGridLayoutManager) {
-      listener = new StaggeredGridLayoutScrollListener(playerManager);
-    } else {
-      throw new IllegalArgumentException(
-          "Unexpected layout manager: " + layoutManager.getClass().getSimpleName());
-    }
-
+    ToroScrollListener listener = new ToroScrollListener(playerManager);
     view.addOnScrollListener(listener);
     // Cache
     sInstance.mViews.put(view.hashCode(), view);
@@ -434,7 +422,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
     if (mStates == null) {
-      mStates = new StateLinkedList(3);
+      mStates = new LinkedStateList(3);
     }
   }
 
@@ -686,11 +674,11 @@ import java.util.concurrent.ConcurrentHashMap;
     private Integer position;
   }
 
-  private static class StateLinkedList extends LinkedHashMap<Integer, State> {
+  private static class LinkedStateList extends LinkedHashMap<Integer, State> {
 
     private int mCapacity = 1;
 
-    public StateLinkedList(int initialCapacity) {
+    public LinkedStateList(int initialCapacity) {
       super(initialCapacity);
       mCapacity = initialCapacity;
     }
