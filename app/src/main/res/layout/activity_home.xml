@@ -22,15 +22,36 @@
     >
 
   <android.support.v4.widget.NestedScrollView
+      android:id="@+id/strategies_scrollview"
+      android:layout_width="match_parent"
+      android:layout_height="200dp"
+      android:layout_alignParentTop="true"
+      android:background="?attr/colorPrimary"
+      android:clipToPadding="false"
+      android:padding="@dimen/activity_horizontal_margin"
+      android:theme="@style/Theme.AppCompat"
+      >
+
+    <RadioGroup
+        android:id="@+id/strategies_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.AppCompat"
+        />
+  </android.support.v4.widget.NestedScrollView>
+
+  <android.support.v4.widget.NestedScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:layout_below="@+id/strategies_scrollview"
       >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:divider="?android:attr/listDivider"
         android:orientation="vertical"
-        style="?attr/buttonBarStyle"
+        android:showDividers="middle|end"
         >
 
       <TextView
