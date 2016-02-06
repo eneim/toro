@@ -60,6 +60,7 @@ public class DeadlySimpleListFragment extends Fragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
     mRecyclerView.setLayoutManager(
@@ -201,4 +202,5 @@ public class DeadlySimpleListFragment extends Fragment {
       return 100;
     }
   }
+
 }
