@@ -25,13 +25,13 @@ import im.ene.lab.toro.sample.data.SimpleObject;
 /**
  * Created by eneim on 1/30/16.
  */
-public class NormalViewHolder extends ToroAdapter.ViewHolder {
+public class TextViewHolder extends ToroAdapter.ViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_normal_view;
 
   private TextView mTextView;
 
-  public NormalViewHolder(View itemView) {
+  public TextViewHolder(View itemView) {
     super(itemView);
     mTextView = (TextView) itemView.findViewById(R.id.text);
     if (mTextView == null) {

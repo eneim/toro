@@ -24,15 +24,17 @@ import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
+import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
-import im.ene.lab.toro.sample.fragment.StaggeredVideoListFragment;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class ShowCaseActivity extends AppCompatActivity {
 
   @StringDef({
-      SingleVideoSimpleListFragment.TAG, StaggeredVideoListFragment.TAG
+      SingleVideoSimpleListFragment.TAG, MultiVideoStaggeredGridFragment.TAG,
+      MultiVideoComplicatedGridFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -60,8 +62,10 @@ public class ShowCaseActivity extends AppCompatActivity {
   @Nullable private Fragment getFragment(String name) {
     if (SingleVideoSimpleListFragment.TAG.equals(name)) {
       return SingleVideoSimpleListFragment.newInstance();
-    } else if (StaggeredVideoListFragment.TAG.equals(name)) {
-      return StaggeredVideoListFragment.newInstance();
+    } else if (MultiVideoStaggeredGridFragment.TAG.equals(name)) {
+      return MultiVideoStaggeredGridFragment.newInstance();
+    } else if (MultiVideoComplicatedGridFragment.TAG.equals(name)){
+      return MultiVideoComplicatedGridFragment.newInstance();
     } else {
       return null;
     }

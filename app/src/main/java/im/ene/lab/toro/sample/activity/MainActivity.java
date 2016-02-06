@@ -8,7 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
-import im.ene.lab.toro.sample.fragment.StaggeredVideoListFragment;
+import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +22,12 @@ public class MainActivity extends AppCompatActivity {
     mPager = (ViewPager) findViewById(R.id.view_pager);
 
     ArrayList<Fragment> items = new ArrayList<>();
-    items.add(StaggeredVideoListFragment.newInstance());
+    items.add(MultiVideoStaggeredGridFragment.newInstance());
     items.add(SingleVideoSimpleListFragment.newInstance());
     //items.add(SingleVideoListFragment.newInstance());
 
     ArrayList<String> titles = new ArrayList<>();
-    titles.add(StaggeredVideoListFragment.class.getSimpleName());
+    titles.add(MultiVideoStaggeredGridFragment.class.getSimpleName());
     titles.add(SingleVideoSimpleListFragment.class.getSimpleName());
     //titles.add(SingleVideoListFragment.class.getSimpleName());
 

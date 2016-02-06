@@ -21,8 +21,9 @@ import android.support.v7.app.AppCompatActivity;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
+import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
-import im.ene.lab.toro.sample.fragment.StaggeredVideoListFragment;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -37,6 +38,10 @@ public class HomeActivity extends AppCompatActivity {
   }
 
   @OnClick(R.id.btn_multi_video_staggered_grid) void multiVideoStaggeredGrid() {
-    startActivity(ShowCaseActivity.createIntent(this, StaggeredVideoListFragment.TAG));
+    startActivity(ShowCaseActivity.createIntent(this, MultiVideoStaggeredGridFragment.TAG));
+  }
+
+  @OnClick(R.id.btn_multi_video_complicated_grid) void multiVideoComplicatedGrid() {
+    startActivity(ShowCaseActivity.createIntent(this, MultiVideoComplicatedGridFragment.TAG));
   }
 }

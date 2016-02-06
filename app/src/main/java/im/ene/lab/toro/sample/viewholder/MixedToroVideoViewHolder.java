@@ -36,16 +36,16 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
+public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_complicated;
 
   private ImageView mThumbnail;
   private TextView mInfo;
 
-  public SampleToroVideoViewHolder(View itemView) {
+  public MixedToroVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
@@ -71,7 +71,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     itemView.getGlobalVisibleRect(childRect, new Point());
     int visibleHeight = childRect.bottom - childRect.top;
     // wants to play if user could see at lease 0.75 of video
-    return visibleHeight > itemView.getHeight() * 0.75;
+    return visibleHeight > mVideoView.getHeight() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
@@ -96,7 +96,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackStarted();
+        MixedToroVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -110,7 +110,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackPaused();
+        MixedToroVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -119,7 +119,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStopped() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackStopped();
+        MixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Completed");
@@ -129,7 +129,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     super.onPlaybackError(mp, what, extra);
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackStopped();
+        MixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());

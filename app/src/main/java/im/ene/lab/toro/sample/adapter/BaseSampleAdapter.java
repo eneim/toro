@@ -23,8 +23,9 @@ import android.view.ViewGroup;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
-import im.ene.lab.toro.sample.viewholder.NormalViewHolder;
-import im.ene.lab.toro.sample.viewholder.SampleToroVideoViewHolder;
+import im.ene.lab.toro.sample.viewholder.MixedToroVideoViewHolder;
+import im.ene.lab.toro.sample.viewholder.SimpleToroVideoViewHolder;
+import im.ene.lab.toro.sample.viewholder.TextViewHolder;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -38,10 +39,13 @@ public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHold
   public static final int VIEW_TYPE_NO_VIDEO = 1;
 
   public static final int VIEW_TYPE_VIDEO = 1 << 1;
+
+  public static final int VIEW_TYPE_VIDEO_MIXED = 1 << 2;
+
   protected List<SimpleVideoObject> mVideos = new ArrayList<>();
 
   @IntDef({
-      VIEW_TYPE_NO_VIDEO, VIEW_TYPE_VIDEO
+      VIEW_TYPE_NO_VIDEO, VIEW_TYPE_VIDEO, VIEW_TYPE_VIDEO_MIXED
   }) @Retention(RetentionPolicy.SOURCE) public @interface Type {
   }
 
@@ -58,12 +62,16 @@ public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHold
     final View view;
     if (viewType == VIEW_TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())
-          .inflate(SampleToroVideoViewHolder.LAYOUT_RES, parent, false);
-      viewHolder = new SampleToroVideoViewHolder(view);
+          .inflate(SimpleToroVideoViewHolder.LAYOUT_RES, parent, false);
+      viewHolder = new SimpleToroVideoViewHolder(view);
+    } else if (viewType == VIEW_TYPE_VIDEO_MIXED) {
+      view = LayoutInflater.from(parent.getContext())
+          .inflate(MixedToroVideoViewHolder.LAYOUT_RES, parent, false);
+      viewHolder = new MixedToroVideoViewHolder(view);
     } else {
       view = LayoutInflater.from(parent.getContext())
-          .inflate(NormalViewHolder.LAYOUT_RES, parent, false);
-      viewHolder = new NormalViewHolder(view);
+          .inflate(TextViewHolder.LAYOUT_RES, parent, false);
+      viewHolder = new TextViewHolder(view);
     }
 
     return viewHolder;

@@ -55,6 +55,17 @@
           style="?attr/buttonBarButtonStyle"
           />
 
+      <TextView
+          android:id="@+id/btn_multi_video_complicated_grid"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:maxLines="2"
+          android:minHeight="?attr/actionBarSize"
+          android:text="@string/fragment_multi_video_complicated_grid"
+          style="?attr/buttonBarButtonStyle"
+          />
+
     </LinearLayout>
   </android.support.v4.widget.NestedScrollView>
 

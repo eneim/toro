@@ -17,14 +17,15 @@
 package im.ene.lab.toro.sample.data;
 
 import android.support.annotation.NonNull;
-import java.util.UUID;
 
 /**
  * Created by eneim on 1/30/16.
  */
 public class SimpleVideoObject {
 
-  public final String name = UUID.randomUUID().toString();
+  public final String name = "GitHub Wikis is a simple way to let others contribute content. "
+      + "Any GitHub user can create and edit pages to use for documentation, examples, "
+      + "support, or anything you wish.";
 
   public final String video;
 
