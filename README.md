@@ -2,6 +2,8 @@
 
 <img src="https://github.com/eneim/Toro/blob/master/art/web_hi_res_512.png" width="256">
 
+[![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
+
 
 > ***Video List by RecyclerView made simple. Auto play/pause supported with smart caching last playing position.***
 
