@@ -104,7 +104,7 @@ public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
 ### Contribute to Toro
 
-- Incompleted ...
+- Composing... please wait.
 
 ### License
 
