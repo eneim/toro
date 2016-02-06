@@ -16,7 +16,9 @@
 
 package im.ene.lab.toro.sample.fragment;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,7 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
+import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -64,15 +69,29 @@ public class DeadlySimpleListFragment extends Fragment {
     mRecyclerView.setAdapter(new Adapter());
   }
 
+  @Override public void onResume() {
+    super.onResume();
+    Toro.register(mRecyclerView);
+  }
+
+  @Override public void onPause() {
+    Toro.unregister(mRecyclerView);
+    super.onPause();
+  }
+
   /**
-   * Simple implementation by extending {@link ToroAdapter.ViewHolder}
+   * Simple implementation by extending {@link ToroAdapter.ViewHolder} and implementing {@link
+   * ToroPlayer}
    */
-  private static class SimpleViewHolder extends ToroAdapter.ViewHolder {
+  private static class SimpleViewHolder extends ToroViewHolder {
 
     private static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
     private ToroVideoView mVideoView;
     private ImageView mThumbnail;
+
+    private SimpleVideoObject mItem;
+    private boolean mPlayable = true;
 
     public SimpleViewHolder(View itemView) {
       super(itemView);
@@ -82,6 +101,7 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public void bind(@Nullable Object object) {
       if (mVideoView != null && object instanceof SimpleVideoObject) {
+        mItem = (SimpleVideoObject) object;
         mVideoView.setVideoPath(((SimpleVideoObject) object).video);
       }
     }
@@ -92,6 +112,66 @@ public class DeadlySimpleListFragment extends Fragment {
           .fit()
           .centerInside()
           .into(mThumbnail);
+    }
+
+    @Override public void onVideoPrepared(MediaPlayer mp) {
+      mPlayable = true;
+    }
+
+    @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+      mPlayable = false;
+    }
+
+    @Override public void onPlaybackStarted() {
+      mThumbnail.setVisibility(View.INVISIBLE);
+    }
+
+    @Override public void onPlaybackPaused() {
+      mThumbnail.setVisibility(View.VISIBLE);
+    }
+
+    @Override public void onPlaybackStopped() {
+      mThumbnail.setVisibility(View.INVISIBLE);
+    }
+
+    @Override public boolean wantsToPlay() {
+      return super.visibleAreaOffset() >= 0.8;
+    }
+
+    @Override public boolean isAbleToPlay() {
+      return mPlayable;
+    }
+
+    @Nullable @Override public Long getVideoId() {
+      return (long) mItem.hashCode();
+    }
+
+    @NonNull @Override public View getVideoView() {
+      return mVideoView;
+    }
+
+    @Override public void start() {
+      mVideoView.start();
+    }
+
+    @Override public void pause() {
+      mVideoView.pause();
+    }
+
+    @Override public int getDuration() {
+      return mVideoView.getDuration();
+    }
+
+    @Override public int getCurrentPosition() {
+      return mVideoView.getCurrentPosition();
+    }
+
+    @Override public void seekTo(int pos) {
+      mVideoView.seekTo(pos);
+    }
+
+    @Override public boolean isPlaying() {
+      return mVideoView.isPlaying();
     }
   }
 
