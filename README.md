@@ -9,7 +9,7 @@
 
 ## Introduction and motivation
 
-- I wanted to apply features like Facebook App or Twitter App into my app. But there's not any good solution out there, and even those which are trying to solve the same problem, I did not find them useful, so I create this with the following targets:
+- I wanted to apply ***Auto playback on scrolling*** features like Facebook App or Twitter App into my app. But there's not any good solution out there, and even those which are trying to solve the same problem, I did not find them useful, so I create this with the following targets:
   - Easy to use, support modern components from Android's support libraries. Target Android SDK from 16 up (I hate the rest, sorry).
   - Support RecyclerView by adding support layers on tops of its LayoutManager/Adapter/ViewHolder.
   - **Keep the code base transparent with original RecyclerView**. Provide useful methods set on top of them. See [ToroAdapter](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java), [ToroAdapter$ViewHolder](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java#L59).
