@@ -24,7 +24,9 @@ Video List by RecyclerView made simple. Auto play/pause supported with smart cac
 
 - Out of the box support for RecyclerView, either being used with LinearLayoutManager or StaggeredGridLayoutManager.
 
-- Built-in Player Manager to support auto play/pause and caching last played position. (**note that: with Android default Media Player, due to Video's format, encoding, the resume timestamp may be incorrect**). 
+- Powerful, yet flexible and customizable: there are a lot of powerful built-in API, but the core interfaces are easy to customize.
+
+- Built-in Player Manager, support auto play/pause and caching last played position. (**note that: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies**). 
 
 - Provide smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L516), but user could always create their own.
 
@@ -42,6 +44,8 @@ Video List by RecyclerView made simple. Auto play/pause supported with smart cac
 <img src="https://github.com/eneim/Toro/blob/master/art/sample_3.gif" width="360">
 
 ### How to use
+
+- Standard usage (for everyone)
 
 ### Customize
 
