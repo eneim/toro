@@ -24,10 +24,12 @@ import android.view.ViewParent;
 /**
  * Created by eneim on 2/1/16.
  *
+ * Internal API
+ *
  * A helper class to support Video's callbacks from {@link MediaPlayer} as well as {@link
  * RecyclerView.Adapter}
  */
-public interface VideoViewHolderHelper {
+interface VideoViewHolderHelper {
 
   /* BEGIN: Callback for View */
 

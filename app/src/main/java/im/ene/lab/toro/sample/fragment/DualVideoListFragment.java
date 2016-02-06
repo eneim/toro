@@ -49,10 +49,12 @@ public class DualVideoListFragment extends Fragment {
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     getChildFragmentManager().beginTransaction()
-        .replace(R.id.fragment_top, TopFragment.newInstance()).commit();
+        .replace(R.id.fragment_top, TopFragment.newInstance())
+        .commit();
 
     getChildFragmentManager().beginTransaction()
-        .replace(R.id.fragment_bottom, BottomFragment.newInstance()).commit();
+        .replace(R.id.fragment_bottom, BottomFragment.newInstance())
+        .commit();
   }
 
   public static class TopFragment extends RecyclerViewFragment {
