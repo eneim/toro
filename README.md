@@ -47,7 +47,28 @@
 
 ## How to use
 
-### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
+##### 0. Add Toro to your project
+
+- Add this to app module ```build.gradle```
+
+```
+allprojects {
+		repositories {
+			...
+			maven { url "https://jitpack.io" }
+		}
+	}
+```
+
+- Add this to dependencies
+
+```
+dependencies {
+	        compile 'com.github.eneim:Toro:1.0.0'
+	}
+```
+
+##### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
 
 ##### 1. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
 
