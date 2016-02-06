@@ -26,11 +26,11 @@
 
 - Out of the box support for RecyclerView, either being used with LinearLayoutManager or StaggeredGridLayoutManager.
 
-- Powerful, yet flexible and highly customizable: there are a lot of powerful built-in API, but the core interfaces are easy to customize. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+- Powerful, flexible and highly customizable API. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Powerful built-in APIs, support auto play/pause and caching last played position. (**note that: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies**). 
+- Auto play/pause and caching last played position. (**note that: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies**). 
 
-- Smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L516), but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+- Selective playback: find the best playable item, defined by smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L516), but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
 - Smartly support Grid (with many Video in one window) by built-in [Long press listener](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L108). Turning ON/OFF in one line of code. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
  
