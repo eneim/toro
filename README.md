@@ -7,7 +7,7 @@
 
 > ***Auto playback on Video list made easy, special built for RecyclerView***
 
-## Introduction and motivation
+## 1. Introduction and motivation
 
 - Add ***Auto playback on scrolling*** features like Facebook App or Twitter App into your App by **Toro**:
   - Easy to use. Target Android SDK from 16 up (I hate the rest, sorry).
@@ -22,7 +22,7 @@
 
 - I drop supporting for ListView/GridView since those components are obsolete and hard to maintaince. But I made a on-going branch which provide some code base with the same thinking with the rest of this library. So any one can take a look and create their own helpers.
 
-## Main features:
+## 2. Main features:
 
 - Out of the box support for RecyclerView, either being used with LinearLayoutManager or StaggeredGridLayoutManager.
 
@@ -38,7 +38,7 @@
 
 **See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
-## Toro in Action
+## 3. Toro in Action
 
 <img src="https://github.com/eneim/Toro/blob/master/art/sample_1.gif" width="180">
 <img src="https://github.com/eneim/Toro/blob/master/art/sample_2.gif" width="180">
@@ -47,13 +47,13 @@
 
 <img src="https://github.com/eneim/Toro/blob/master/art/sample_3.gif" width="360">
 
-## How to use
+## 4. How to use
 
 ##### 0. Prerequirement
 
 - From Android SDK level 16 (4.1)
 
-##### 0+. Add Toro to your project
+##### 1. Add Toro to your project
 
 - Add this to Project's top level ```build.gradle```
 
@@ -75,11 +75,11 @@ dependencies {
 
 ##### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
 
-##### 1. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
+##### 2. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
 
-##### 2. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
+##### 3. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
 
-##### 3. Create ViewHolder to use with **Toro**: by default, just simply extend one of ```ToroVideoViewHolder```, ```TextureVideoViewHolder``` or ```AbsVideoViewHolder```. See [ToroViewHolder](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s)#toroviewholder) for more information.
+##### 4. Create ViewHolder to use with **Toro**: by default, just simply extend one of ```ToroVideoViewHolder```, ```TextureVideoViewHolder``` or ```AbsVideoViewHolder```. See [ToroViewHolder](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s)#toroviewholder) for more information.
 
   - A sample ViewHolder's code (see Sample app for more):
   
@@ -106,7 +106,7 @@ public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
 }
 ```
 
-##### 4. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
+##### 5. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
 
 ### Contribute to Toro
 
