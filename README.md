@@ -49,23 +49,22 @@
 
 ##### 0. Add Toro to your project
 
-- Add this to app module ```build.gradle```
+- Add this to Project's top level ```build.gradle```
 
 ```
 allprojects {
-		repositories {
-			...
-			maven { url "https://jitpack.io" }
-		}
+	repositories {
+		maven { url "https://jitpack.io" }
 	}
+}
 ```
 
 - Add this to dependencies
 
 ```
 dependencies {
-	        compile 'com.github.eneim:Toro:1.0.0'
-	}
+	compile 'com.github.eneim:Toro:1.0.0'
+}
 ```
 
 ##### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
