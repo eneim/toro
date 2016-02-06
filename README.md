@@ -16,7 +16,7 @@
   - Adding support layers on tops of RecyclerView's **LayoutManager/Adapter/ViewHolder**.
   - **Transparent code with original RecyclerView**. Provide useful methods set on top of them. See [ToroAdapter](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java), [ToroAdapter$ViewHolder](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java#L59).
   - **OUT-OF-THE-BOX** usability: just extends my pre-coded classes, I have prepared the rest for them. See [ToroVideoViewHolder and its relatives](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s))
-  - Highly customizeable.
+  - Highly customizeable: use can custom almost the important logic parts, **Toro** listens to your changes.
   - Video Player lifecycle: Toro listen to Activity's life cycle to init/release its resource. Further more, Toro creates and supports **Playback Lifecycle** which is super helpful for those who want to catch up with the playback progress as well as update UI before/after playing. All of those features are usable out of the box. See [Video Player lifecycle](https://github.com/eneim/Toro/wiki/2.1-Video-Player-Lifecycle).
   - Super easy to setup: see usage section.
 
