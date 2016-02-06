@@ -1,20 +1,20 @@
 # Toro
 
-<img src="https://github.com/eneim/Toro/blob/master/art/web_hi_res_512.png" width="160">
+<img src="https://github.com/eneim/Toro/blob/master/art/web_hi_res_512.png" width="256">
 
 
-Video List by RecyclerView made simple. Auto play/pause supported with smart caching last playing position.
+> ***Video List by RecyclerView made simple. Auto play/pause supported with smart caching last playing position.***
 
 ### Introduction and motivation
 
-- I was required to create auto-playing feature like Facebook App or Twitter App. There's not any good solution out there, and even those are dealing the same problem, I did not find them useful, so I create this with the following targets:
+- I wanted to apply features like Facebook App or Twitter App into my app. But there's not any good solution out there, and even those which are trying to solve the same problem, I did not find them useful, so I create this with the following targets:
   - Easy to use, support modern components from Android's support libraries. Target Android SDK from 16 up (I hate the rest, sorry).
   - Support RecyclerView by adding support layers on tops of its LayoutManager/Adapter/ViewHolder.
-  - Keep the code base transparent with original RecyclerView. Provide useful methods set on top of them. See [ToroAdapter](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java), [ToroAdapter$ViewHolder](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java#L59).
-  - OUT-OF-THE-BOX usage: User can just extends my pre-code classes, I have prepared the rest for them. See [ToroVideoViewHolder]() and its relatives
+  - **Keep the code base transparent with original RecyclerView**. Provide useful methods set on top of them. See [ToroAdapter](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java), [ToroAdapter$ViewHolder](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroAdapter.java#L59).
+  - **OUT-OF-THE-BOX support**: User can just extends my pre-code classes, I have prepared the rest for them. See [ToroVideoViewHolder]() and its relatives
+  - Highly cusomizeable.
   - Take care of possible issues: Video playing is a pain in Android. I wish Toro could help its users feel good. So Toro listen to Activity's life cycle to init/release its resource. Further more, Toro creates and supports **Playback Lifecycle** which is super helpful for those who want to catch up with the playback progress as well as update UI before/after playing. All of those features are usable out of the box.
   - Super easy to setup: see usage section.
-  - ...
 
 - There are some other [working ideas](https://github.com/danylovolokh/VideoPlayerManager), but those libraries have different approaches, which are in **my oppinion**, not as good as I expected: User of those libraries need to re-write a lot of code to match their implementation. I try to make our components as close to official **RecyclerView/Adapter/ViewHolder/LayoutManager** as possible, and just provide some useful methods on top of them. 
 
@@ -24,15 +24,17 @@ Video List by RecyclerView made simple. Auto play/pause supported with smart cac
 
 - Out of the box support for RecyclerView, either being used with LinearLayoutManager or StaggeredGridLayoutManager.
 
-- Powerful, yet flexible and customizable: there are a lot of powerful built-in API, but the core interfaces are easy to customize.
+- Powerful, yet flexible and highly customizable: there are a lot of powerful built-in API, but the core interfaces are easy to customize. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Built-in Player Manager, support auto play/pause and caching last played position. (**note that: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies**). 
+- Powerful built-in APIs, support auto play/pause and caching last played position. (**note that: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies**). 
 
-- Provide smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L516), but user could always create their own.
+- Smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L516), but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Smartly support Grid (with many Video in one window) by built-in [Long press listener](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L108). Turning ON/OFF in one line of code.
+- Smartly support Grid (with many Video in one window) by built-in [Long press listener](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L108). Turning ON/OFF in one line of code. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
  
 - **I create lots of built-in code, but keep Toro highly customizable.** You are free to decide how you want to start your player, but if you don't know, just let Toro help you to decide.
+
+**See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
 ### Toro in Action
 
