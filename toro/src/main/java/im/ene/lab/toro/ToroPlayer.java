@@ -61,7 +61,7 @@ public interface ToroPlayer
    * <p/>
    * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-depended Id
    */
-  @Nullable Long getVideoId();
+  @Nullable String getVideoId();
 
   /**
    * In case there is a list of Players who want to play, Toro wants to know their orders, then

@@ -142,8 +142,8 @@ public class DeadlySimpleListFragment extends Fragment {
       return mPlayable;
     }
 
-    @Nullable @Override public Long getVideoId() {
-      return (long) mItem.hashCode();
+    @Nullable @Override public String getVideoId() {
+      return (long) mItem.hashCode() + " - " + getAdapterPosition();
     }
 
     @NonNull @Override public View getVideoView() {

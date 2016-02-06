@@ -74,8 +74,8 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
         && childRect.width() > mVideoView.getWidth() * 0.75;
   }
 
-  @Nullable @Override public Long getVideoId() {
-    return (long) getAdapterPosition();
+  @Nullable @Override public String getVideoId() {
+    return "TEST: " + getAdapterPosition();
   }
 
   @Override public void onVideoPrepared(MediaPlayer mp) {

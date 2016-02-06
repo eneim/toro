@@ -30,7 +30,7 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
-  private final Map<Long, Integer> mVideoStates = new HashMap<>();
+  private final Map<String, Integer> mVideoStates = new HashMap<>();
 
   protected ToroPlayer mPlayer;
   // This Handler will send Message to Main Thread
@@ -84,13 +84,13 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   }
 
-  @Override public void saveVideoState(Long videoId, @Nullable Integer position, long duration) {
+  @Override public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
     if (videoId != null) {
       mVideoStates.put(videoId, position == null ? Integer.valueOf(0) : position);
     }
   }
 
-  @Override public void restoreVideoState(Long videoId) {
+  @Override public void restoreVideoState(String videoId) {
     if (mPlayer == null) {
       return;
     }
