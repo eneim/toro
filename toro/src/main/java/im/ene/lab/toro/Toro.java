@@ -149,6 +149,16 @@ import java.util.concurrent.ConcurrentHashMap;
         manager.startPlayback();
         player.onPlaybackStarted();
         return true;
+      } else {
+        // Pressing current player, pause it if it is playing
+        if (currentPlayer.isPlaying()) {
+          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+              currentPlayer.getDuration());
+          if (currentPlayer.isPlaying()) {
+            manager.pausePlayback();
+            currentPlayer.onPlaybackPaused();
+          }
+        }
       }
 
       return false;
