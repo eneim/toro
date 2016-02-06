@@ -19,8 +19,8 @@
     android:layout_width="160dp"
     android:layout_height="match_parent"
     android:layout_margin="4dp"
-    android:background="#20000000"
     android:padding="4dp"
+    android:theme="@style/Theme.AppCompat"
     >
 
   <TextView

@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
@@ -51,9 +52,12 @@ public class ShowCaseActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_show_case);
 
+    String name = getIntent().getStringExtra(EXTRA_FRAGMENT_NAME);
+    setTitle(getFragmentTitle(name));
+
     Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.container);
     if (fragment == null) {
-      fragment = getFragment(getIntent().getStringExtra(EXTRA_FRAGMENT_NAME));
+      fragment = getFragment(name);
       if (fragment != null) {
         getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
       }
@@ -62,15 +66,33 @@ public class ShowCaseActivity extends AppCompatActivity {
 
   @Nullable private Fragment getFragment(String name) {
     if (SingleVideoSimpleListFragment.TAG.equals(name)) {
+      setTitle(R.string.fragment_single_video_simple_list);
       return SingleVideoSimpleListFragment.newInstance();
     } else if (MultiVideoStaggeredGridFragment.TAG.equals(name)) {
+      setTitle(R.string.fragment_multi_video_staggered_grid);
       return MultiVideoStaggeredGridFragment.newInstance();
     } else if (MultiVideoComplicatedGridFragment.TAG.equals(name)) {
+      setTitle(R.string.fragment_multi_video_complicated_grid);
       return MultiVideoComplicatedGridFragment.newInstance();
     } else if (DualVideoListFragment.TAG.equals(name)) {
+      setTitle(R.string.fragment_multi_video_dual_list);
       return DualVideoListFragment.newInstance();
     } else {
       return null;
+    }
+  }
+
+  @StringRes private int getFragmentTitle(String name) {
+    if (SingleVideoSimpleListFragment.TAG.equals(name)) {
+      return R.string.fragment_single_video_simple_list;
+    } else if (MultiVideoStaggeredGridFragment.TAG.equals(name)) {
+      return R.string.fragment_multi_video_staggered_grid;
+    } else if (MultiVideoComplicatedGridFragment.TAG.equals(name)) {
+      return R.string.fragment_multi_video_complicated_grid;
+    } else if (DualVideoListFragment.TAG.equals(name)) {
+      return R.string.fragment_multi_video_dual_list;
+    } else {
+      return R.string.app_name;
     }
   }
 }

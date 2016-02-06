@@ -18,9 +18,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:minWidth="240dp"
     android:layout_height="match_parent"
     android:layout_margin="4dp"
+    android:minWidth="240dp"
     android:padding="4dp"
     >
 
@@ -33,6 +33,7 @@
       android:gravity="center_vertical"
       android:minWidth="64dp"
       android:orientation="vertical"
+      android:theme="@style/Theme.AppCompat"
       >
 
     <ImageButton
@@ -54,6 +55,7 @@
       android:layout_toEndOf="@id/left"
       android:layout_toRightOf="@id/left"
       android:orientation="vertical"
+      android:theme="@style/Theme.AppCompat"
       >
 
     <TextView
@@ -71,7 +73,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#20000000"
+        android:theme="@style/Theme.AppCompat"
         >
 
       <im.ene.lab.toro.widget.ToroVideoView

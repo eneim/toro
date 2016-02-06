@@ -18,7 +18,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80ffffff"
     >
 
   <FrameLayout
@@ -27,6 +26,8 @@
       android:layout_height="160dp"
       android:layout_alignParentTop="true"
       android:layout_margin="4dp"
+      android:background="?attr/colorPrimary"
+      android:theme="@style/Theme.AppCompat"
       />
 
   <FrameLayout
@@ -35,6 +36,5 @@
       android:layout_height="match_parent"
       android:layout_alignParentBottom="true"
       android:layout_below="@id/fragment_top"
-      android:layout_margin="4dp"
       />
 </RelativeLayout>
