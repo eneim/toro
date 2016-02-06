@@ -98,6 +98,17 @@
           style="?attr/buttonBarButtonStyle"
           />
 
+      <TextView
+          android:id="@+id/btn_deadly_simple_list"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:maxLines="2"
+          android:minHeight="?attr/actionBarSize"
+          android:text="@string/fragment_deadly_simple_list"
+          style="?attr/buttonBarButtonStyle"
+          />
+
     </LinearLayout>
   </android.support.v4.widget.NestedScrollView>
 

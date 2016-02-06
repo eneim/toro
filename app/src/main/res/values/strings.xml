@@ -22,4 +22,8 @@
   <string name="fragment_multi_video_dual_list">
     Multi Video Dual List
   </string>
+
+  <string name="fragment_deadly_simple_list">
+    Deadly Simple Video List
+  </string>
 </resources>

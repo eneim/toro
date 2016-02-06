@@ -58,8 +58,6 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
    */
   public abstract static class ViewHolder extends RecyclerView.ViewHolder {
 
-    private final String TAG = getClass().getSimpleName();
-
     public ViewHolder(View itemView) {
       super(itemView);
     }
@@ -88,14 +86,14 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     /**
      * Called by {@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}
      */
-    @CallSuper public void onRecycled() {
+    public void onRecycled() {
 
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onFailedToRecycleView(RecyclerView.ViewHolder)}
      */
-    @CallSuper public boolean onFailedToRecycle() {
+    public boolean onFailedToRecycle() {
       return false;
     }
 
@@ -103,7 +101,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
      * Called response to {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder,
      * int)}
      */
-    @CallSuper public void onViewHolderBound() {
+    public void onViewHolderBound() {
 
     }
 

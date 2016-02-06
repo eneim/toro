@@ -27,6 +27,7 @@ import butterknife.OnClick;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
@@ -72,6 +73,10 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
 
   @OnClick(R.id.btn_multi_video_dual_list) void multiVideoDualList() {
     startActivity(ShowCaseActivity.createIntent(this, DualVideoListFragment.TAG));
+  }
+
+  @OnClick(R.id.btn_deadly_simple_list) void deadlySimpleVideoList() {
+    startActivity(ShowCaseActivity.createIntent(this, DeadlySimpleListFragment.TAG));
   }
 
   @Override public void onCheckedChanged(RadioGroup group, int checkedId) {

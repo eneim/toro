@@ -25,6 +25,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
@@ -36,7 +37,7 @@ public class ShowCaseActivity extends AppCompatActivity {
 
   @StringDef({
       SingleVideoSimpleListFragment.TAG, MultiVideoStaggeredGridFragment.TAG,
-      MultiVideoComplicatedGridFragment.TAG, DualVideoListFragment.TAG
+      MultiVideoComplicatedGridFragment.TAG, DualVideoListFragment.TAG, DeadlySimpleListFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -77,6 +78,8 @@ public class ShowCaseActivity extends AppCompatActivity {
     } else if (DualVideoListFragment.TAG.equals(name)) {
       setTitle(R.string.fragment_multi_video_dual_list);
       return DualVideoListFragment.newInstance();
+    } else if (DeadlySimpleListFragment.TAG.equals(name)) {
+      return DeadlySimpleListFragment.newInstance();
     } else {
       return null;
     }
@@ -91,6 +94,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return R.string.fragment_multi_video_complicated_grid;
     } else if (DualVideoListFragment.TAG.equals(name)) {
       return R.string.fragment_multi_video_dual_list;
+    } else if (DeadlySimpleListFragment.TAG.equals(name)) {
+      return R.string.fragment_deadly_simple_list;
     } else {
       return R.string.app_name;
     }
