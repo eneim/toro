@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,16 +36,16 @@ import im.ene.lab.toro.widget.ToroVideoView;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
+public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
   private ImageView mThumbnail;
   private TextView mInfo;
 
-  public SampleToroVideoViewHolder(View itemView) {
+  public SimpleToroVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
@@ -54,7 +55,6 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
-  // private boolean mIsVideoSet = false;
   private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {
@@ -63,18 +63,15 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     }
 
     mItem = (SimpleVideoObject) item;
-    // mIsVideoSet = false;
-    mVideoView.setVideoPath(mItem.video);
-    // mHandler.removeMessages(MESSAGE_SET_VIDEO);
-    // mHandler.sendEmptyMessageDelayed(MESSAGE_SET_VIDEO, 200);
+    mVideoView.setVideoURI(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {
     Rect childRect = new Rect();
     itemView.getGlobalVisibleRect(childRect, new Point());
-    int visibleHeight = childRect.bottom - childRect.top;
     // wants to play if user could see at lease 0.75 of video
-    return visibleHeight > itemView.getHeight() * 0.75;
+    return childRect.height() > mVideoView.getHeight() * 0.75
+        && childRect.width() > mVideoView.getWidth() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
@@ -99,7 +96,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackStarted();
+        SimpleToroVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -113,7 +110,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackPaused();
+        SimpleToroVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -122,7 +119,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStopped() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackStopped();
+        SimpleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Completed");
@@ -132,7 +129,7 @@ public class SampleToroVideoViewHolder extends ToroVideoViewHolder {
     super.onPlaybackError(mp, what, extra);
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleToroVideoViewHolder.super.onPlaybackStopped();
+        SimpleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());

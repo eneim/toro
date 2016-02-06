@@ -15,39 +15,10 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
+<android.support.v7.widget.RecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
-  <HorizontalScrollView
-      android:id="@+id/policies"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      >
-
-    <RadioGroup
-        android:id="@+id/policies_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:orientation="horizontal"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        style="?attr/buttonBarStyle"
-        >
-
-    </RadioGroup>
-  </HorizontalScrollView>
-
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/recycler_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_above="@id/policies"
-      android:layout_alignParentTop="true"
-      />
-
-</RelativeLayout>
+    android:layout_alignParentTop="true"
+    />

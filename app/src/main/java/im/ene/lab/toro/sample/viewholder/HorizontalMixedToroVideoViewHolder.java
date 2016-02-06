@@ -21,37 +21,38 @@ import android.animation.AnimatorListenerAdapter;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.toro.AbsVideoViewHolder;
+import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.util.Util;
+import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SampleVideoViewHolder extends AbsVideoViewHolder {
+public class HorizontalMixedToroVideoViewHolder extends ToroVideoViewHolder {
 
   private final String TAG = getClass().getSimpleName();
 
-  public static final int LAYOUT_RES = R.layout.vh_video_view;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_complicated_horizontal;
 
   private ImageView mThumbnail;
   private TextView mInfo;
 
-  public SampleVideoViewHolder(View itemView) {
+  public HorizontalMixedToroVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
-  @Override protected VideoView findVideoView(View itemView) {
-    return (VideoView) itemView.findViewById(R.id.video);
+  @Override protected ToroVideoView findVideoView(View itemView) {
+    return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
   private SimpleVideoObject mItem;
@@ -62,19 +63,24 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
     }
 
     mItem = (SimpleVideoObject) item;
-    mVideoView.setVideoPath(((SimpleVideoObject) item).video);
+    mVideoView.setVideoURI(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {
     Rect childRect = new Rect();
     itemView.getGlobalVisibleRect(childRect, new Point());
-    int visibleHeight = childRect.bottom - childRect.top;
     // wants to play if user could see at lease 0.75 of video
-    return visibleHeight > itemView.getHeight() * 0.75;
+    return childRect.height() > mVideoView.getHeight() * 0.75
+        && childRect.width() > mVideoView.getWidth() * 0.75;
   }
 
   @Nullable @Override public Long getVideoId() {
     return (long) getAdapterPosition();
+  }
+
+  @Override public void onVideoPrepared(MediaPlayer mp) {
+    super.onVideoPrepared(mp);
+    mInfo.setText("Prepared");
   }
 
   @Override public void onViewHolderBound() {
@@ -87,15 +93,10 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
     mInfo.setText("Bound");
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
-    super.onVideoPrepared(mp);
-    mInfo.setText("Prepared");
-  }
-
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleVideoViewHolder.super.onPlaybackStarted();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -109,7 +110,7 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleVideoViewHolder.super.onPlaybackPaused();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -118,7 +119,7 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
   @Override public void onPlaybackStopped() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleVideoViewHolder.super.onPlaybackStopped();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Completed");
@@ -128,14 +129,14 @@ public class SampleVideoViewHolder extends AbsVideoViewHolder {
     super.onPlaybackError(mp, what, extra);
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SampleVideoViewHolder.super.onPlaybackStopped();
+        HorizontalMixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
-    mInfo.setText("Error");
+    mInfo.setText("Error: videoId = " + getVideoId());
   }
 
   @Override protected boolean allowLongPressSupport() {
-    return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
+    return true;
   }
 
   @Override public String toString() {

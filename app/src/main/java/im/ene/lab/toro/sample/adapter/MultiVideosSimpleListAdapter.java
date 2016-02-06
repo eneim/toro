@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.data;
+package im.ene.lab.toro.sample.adapter;
 
-import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.ToroSampleApp;
+import android.support.annotation.Nullable;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class VideoSource {
+public class MultiVideosSimpleListAdapter extends BaseSampleAdapter {
 
-  private static final String MP4 = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+  public MultiVideosSimpleListAdapter() {
+    super();
+  }
 
-  private static final String LOCAL =
-      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.sample;
-
-  public static final String[] SOURCES = {
-      MP4, LOCAL
-  };
+  @Nullable @Override protected Object getItem(int position) {
+    return mVideos.get(position % mVideos.size());
+  }
 }

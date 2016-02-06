@@ -1,3 +1,25 @@
 <resources>
-    <string name="app_name">Toro</string>
+  <string name="app_name">Toro</string>
+  <string name="activity_show_case">Toro Showcase</string>
+
+  <string name="sample">
+    GitHub Wikis is a simple way to let others contribute content. Any GitHub user can create and
+    edit pages to use for documentation, examples, support, or anything you wish.
+  </string>
+
+  <string name="fragment_single_video_simple_list">
+    Single Video Simple List
+  </string>
+
+  <string name="fragment_multi_video_staggered_grid">
+    Multi Video Staggered Grid
+  </string>
+
+  <string name="fragment_multi_video_complicated_grid">
+    Multi Video Complicated Grid
+  </string>
+
+  <string name="fragment_multi_video_dual_list">
+    Multi Video Dual List
+  </string>
 </resources>

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="im.ene.lab.toro.sample">
 
-  <!-- Play video from internet-->
+  <!-- Play video from internet -->
   <uses-permission android:name="android.permission.INTERNET"/>
 
   <application
@@ -13,16 +12,19 @@
       android:name=".ToroSampleApp"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity
-        android:launchMode="singleTop"
-        android:name=".activity.MainActivity"
-        android:theme="@style/AppTheme">
+    <activity android:name=".activity.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".activity.ShowCaseActivity"
+        android:parentActivityName=".activity.HomeActivity"/>
   </application>
 
 </manifest>

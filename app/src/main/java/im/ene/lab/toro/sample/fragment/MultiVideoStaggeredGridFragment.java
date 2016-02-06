@@ -16,38 +16,30 @@
 
 package im.ene.lab.toro.sample.fragment;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import im.ene.lab.toro.sample.adapter.AllVideosListAdapter;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.adapter.MultiVideosSimpleListAdapter;
 
 /**
  * Created by eneim on 2/1/16.
  */
-public class SampleVideoListFragment extends RecyclerViewFragment {
+public class MultiVideoStaggeredGridFragment extends RecyclerViewFragment {
 
-  public static SampleVideoListFragment newInstance() {
-    Bundle args = new Bundle();
-    SampleVideoListFragment fragment = new SampleVideoListFragment();
-    fragment.setArguments(args);
-    return fragment;
-  }
+  public static final String TAG = "StaggeredVideoListFragment";
 
-  @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    return super.onCreateView(inflater, container, savedInstanceState);
+  public static MultiVideoStaggeredGridFragment newInstance() {
+    return new MultiVideoStaggeredGridFragment();
   }
 
   @NonNull @Override protected RecyclerView.LayoutManager getLayoutManager() {
-    return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    return new StaggeredGridLayoutManager(
+        getContext().getResources().getInteger(R.integer.staggered_span_count),
+        StaggeredGridLayoutManager.VERTICAL);
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new AllVideosListAdapter();
+    return new MultiVideosSimpleListAdapter();
   }
 }

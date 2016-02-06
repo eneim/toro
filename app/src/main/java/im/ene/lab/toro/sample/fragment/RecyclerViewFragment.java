@@ -20,28 +20,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import im.ene.lab.toro.Toro;
-import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 
 /**
  * Created by eneim on 2/1/16.
  */
-public abstract class RecyclerViewFragment extends Fragment
-    implements RadioGroup.OnCheckedChangeListener {
+public abstract class RecyclerViewFragment extends Fragment {
 
   protected RecyclerView mRecyclerView;
-
-  private static final ToroStrategy[] STRATEGIES = {
-      Toro.Strategies.MOST_VISIBLE_TOP_DOWN, Toro.Strategies.MOST_VISIBLE_TOP_DOWN_KEEP_LAST,
-      Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN, Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST
-  };
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -51,20 +44,14 @@ public abstract class RecyclerViewFragment extends Fragment
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-    mRecyclerView.setLayoutManager(getLayoutManager());
-    mRecyclerView.setAdapter(getAdapter());
-
-    RadioGroup policiesContainer = (RadioGroup) view.findViewById(R.id.policies_container);
-    policiesContainer.setOnCheckedChangeListener(this);
-
-    policiesContainer.removeAllViews();
-    for (ToroStrategy strategy : STRATEGIES) {
-      RadioButton checkBox = (RadioButton) LayoutInflater.from(policiesContainer.getContext())
-          .inflate(R.layout.policy_checkbox, policiesContainer, false);
-      checkBox.setText(strategy.getDescription());
-      policiesContainer.addView(checkBox);
-      checkBox.setChecked(Toro.getStrategy() == strategy);
+    RecyclerView.LayoutManager layoutManager = getLayoutManager();
+    mRecyclerView.setLayoutManager(layoutManager);
+    if (layoutManager instanceof LinearLayoutManager) {
+      mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+          ((LinearLayoutManager) layoutManager).getOrientation()));
     }
+
+    mRecyclerView.setAdapter(getAdapter());
   }
 
   @Override public void onResume() {
@@ -80,18 +67,4 @@ public abstract class RecyclerViewFragment extends Fragment
   @NonNull protected abstract RecyclerView.LayoutManager getLayoutManager();
 
   @NonNull protected abstract RecyclerView.Adapter getAdapter();
-
-  @Override public void onCheckedChanged(RadioGroup group, int checkedId) {
-    RadioButton buttonView = (RadioButton) group.findViewById(checkedId);
-    if (buttonView != null) {
-      String policyName = buttonView.getText() + "";
-      for (ToroStrategy policy : STRATEGIES) {
-        if (policy.getDescription().equals(policyName)) {
-          Toro.setStrategy(policy);
-          mRecyclerView.getAdapter().notifyDataSetChanged();
-          break;
-        }
-      }
-    }
-  }
 }
