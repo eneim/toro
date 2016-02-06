@@ -5,7 +5,7 @@
 
 > ***Video List by RecyclerView made simple. Auto play/pause supported with smart caching last playing position.***
 
-### Introduction and motivation
+## Introduction and motivation
 
 - I wanted to apply features like Facebook App or Twitter App into my app. But there's not any good solution out there, and even those which are trying to solve the same problem, I did not find them useful, so I create this with the following targets:
   - Easy to use, support modern components from Android's support libraries. Target Android SDK from 16 up (I hate the rest, sorry).
@@ -20,7 +20,7 @@
 
 - I drop supporting for ListView/GridView since those components are obsolete and hard to maintaince. But I made a on-going branch which provide some code base with the same thinking with the rest of this library. So any one can take a look and create their own helpers.
 
-### Main features:
+## Main features:
 
 - Out of the box support for RecyclerView, either being used with LinearLayoutManager or StaggeredGridLayoutManager.
 
@@ -36,7 +36,7 @@
 
 **See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
-### Toro in Action
+## Toro in Action
 
 <!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_1.gif" width="180">-->
 <!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_2.gif" width="180">-->
@@ -45,132 +45,46 @@
 
 <!--<img src="https://github.com/eneim/Toro/blob/master/art/sample_3.gif" width="360">-->
 
-### How to use
+## How to use
 
-- **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
+### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
 
--1. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
+##### 1. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
 
--2. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
+##### 2. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
 
--3. Create Adapter and ViewHolder to use with **Toro**:
-  - Reference sample code: 
+##### 3. Create ViewHolder to use with **Toro**: by default, just simply extend one of ```ToroVideoViewHolder```, ```TextureVideoViewHolder``` or ```AbsVideoViewHolder```. See [ToroViewHolder](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s)#toroviewholder) for more information.
+
+  - A sample ViewHolder's code (see Sample app for more):
   
-  ```
-  public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
+```
+public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
-  private final String TAG = getClass().getSimpleName();
-
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
-
-  private ImageView mThumbnail;
-  private TextView mInfo;
-
-  public SimpleToroVideoViewHolder(View itemView) {
+  public DeadlySimpleToroVideoViewHolder(View itemView) {
     super(itemView);
-    mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
-    mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
   @Override protected ToroVideoView findVideoView(View itemView) {
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
-  private SimpleVideoObject mItem;
-
-  @Override public void bind(Object item) {
-    if (!(item instanceof SimpleVideoObject)) {
-      throw new IllegalStateException("Unexpected object: " + item.toString());
-    }
-
-    mItem = (SimpleVideoObject) item;
-    mVideoView.setVideoURI(Uri.parse(mItem.video));
-  }
-
-  @Override public boolean wantsToPlay() {
-    Rect childRect = new Rect();
-    itemView.getGlobalVisibleRect(childRect, new Point());
-    // wants to play if user could see at lease 0.75 of video
-    return childRect.height() > mVideoView.getHeight() * 0.75
-        && childRect.width() > mVideoView.getWidth() * 0.75;
-  }
-
   @Nullable @Override public String getVideoId() {
-    return "TEST: " + getAdapterPosition();
+    return "my awesome video's id and its order: " + getAdapterPosition();
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
-    super.onVideoPrepared(mp);
-    mInfo.setText("Prepared");
-  }
-
-  @Override public void onViewHolderBound() {
-    super.onViewHolderBound();
-    Picasso.with(itemView.getContext())
-        .load(R.drawable.toro_place_holder)
-        .fit()
-        .centerInside()
-        .into(mThumbnail);
-    mInfo.setText("Bound");
-  }
-
-  @Override public void onPlaybackStarted() {
-    mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackStarted();
-      }
-    }).start();
-    mInfo.setText("Started");
-  }
-
-  @Override public void onPlaybackProgress(int position, int duration) {
-    super.onPlaybackProgress(position, duration);
-    mInfo.setText(Util.timeStamp(position, duration));
-  }
-
-  @Override public void onPlaybackPaused() {
-    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackPaused();
-      }
-    }).start();
-    mInfo.setText("Paused");
-  }
-
-  @Override public void onPlaybackStopped() {
-    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackStopped();
-      }
-    }).start();
-    mInfo.setText("Completed");
-  }
-
-  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
-    super.onPlaybackError(mp, what, extra);
-    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
-      @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackStopped();
-      }
-    }).start();
-    mInfo.setText("Error: videoId = " + getVideoId());
-  }
-
-  @Override protected boolean allowLongPressSupport() {
-    return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
-  }
-
-  @Override public String toString() {
-    return "Video: " + getVideoId();
+  @Override public void bind(@Nullable Object object) {
+    if (object != null && object instanceof SimpleVideoObject) {
+      mVideoView.setVideoPath(((SimpleVideoObject) object).video);
+    }
   }
 }
 ```
 
-- 4. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
-
-### Customize
+##### 4. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
 
 ### Contribute to Toro
+
+- Incompleted ...
 
 ### License
 
