@@ -24,9 +24,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
@@ -54,6 +56,21 @@ public abstract class RecyclerViewFragment extends Fragment {
     }
 
     mRecyclerView.setAdapter(getAdapter());
+
+    final String TAG = "RecyclerViewFragment";
+
+    final ViewTreeObserver treeObserver = mRecyclerView.getViewTreeObserver();
+
+    treeObserver.addOnGlobalFocusChangeListener(new ViewTreeObserver.OnGlobalFocusChangeListener() {
+      @Override public void onGlobalFocusChanged(View oldFocus, View newFocus) {
+        Log.d(TAG, "onGlobalFocusChanged() called with: "
+            + "oldFocus = ["
+            + oldFocus
+            + "], newFocus = ["
+            + newFocus
+            + "]");
+      }
+    });
   }
 
   @Override public void onResume() {
