@@ -412,9 +412,9 @@ import java.util.concurrent.ConcurrentHashMap;
           return false;
         }
 
-        Rect rect = new Rect();
-        player.getVideoView().getDrawingRect(rect);
-        player.getVideoView().getWindowVisibleDisplayFrame(rect);
+        //Rect rect = new Rect();
+        //player.getVideoView().getDrawingRect(rect);
+        //player.getVideoView().getWindowVisibleDisplayFrame(rect);
         return true;
       }
 
