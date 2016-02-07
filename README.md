@@ -26,7 +26,14 @@
 
 ## 2. Main features:
 
-- Out of the box support for RecyclerView, either being used with LinearLayoutManager or StaggeredGridLayoutManager.
+- Auto start/pause/resume by scrolling your RecyclerView, support all Layout managers.
+
+- Playback behavior decided by User, not by library:
+  - Customizable Strategy to decide which is the best component to start playback. Optimized built-in Strategies to help you start.
+  - UI-based logic, straight-forward approach: you see the Video, then it should play. **Default**: you see 75% of the Video then it should start playing. **Advance**: you decide how much the visible Video should trigger the playback.
+  - Decision from both side: Toro's core and your components. Toro listen to your components: does it want to play, is it able to play (well-prepared or had error), then Toro's strategy will decide if it allows your component to play or not. **Default**: built-in Strategy and components do the rest. **Advance**: you have control to the both side.
+  - Built-in widgets: an abstract ViewHolder for original VideoView, an abstract ViewHolder for "TextureView version" of VideoView: [TextureVideoView](https://github.com/sprylab/texturevideoview), and an abstract ViewHolder for my customized version of TextureVideoView: ToroVideoView, with more flexible API and less *annoying* error processing.
+  - Many more for you to discover.
 
 - Powerful, flexible and highly customizable API. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
