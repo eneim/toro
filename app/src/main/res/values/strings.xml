@@ -26,4 +26,8 @@
   <string name="fragment_deadly_simple_list">
     Deadly Simple Video List
   </string>
+
+  <string name="fragment_view_pager">
+    ViewPager
+  </string>
 </resources>

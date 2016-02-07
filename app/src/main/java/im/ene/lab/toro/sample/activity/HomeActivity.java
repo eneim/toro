@@ -32,6 +32,7 @@ import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
+import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
 
 public class HomeActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -77,6 +78,10 @@ public class HomeActivity extends AppCompatActivity implements RadioGroup.OnChec
 
   @OnClick(R.id.btn_deadly_simple_list) void deadlySimpleVideoList() {
     startActivity(ShowCaseActivity.createIntent(this, DeadlySimpleListFragment.TAG));
+  }
+
+  @OnClick(R.id.btn_view_pager) void viewPager() {
+    startActivity(ShowCaseActivity.createIntent(this, ViewPagerFragment.TAG));
   }
 
   @Override public void onCheckedChanged(RadioGroup group, int checkedId) {

@@ -109,6 +109,17 @@
           style="?attr/buttonBarButtonStyle"
           />
 
+      <TextView
+          android:id="@+id/btn_view_pager"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:ellipsize="end"
+          android:maxLines="2"
+          android:minHeight="?attr/actionBarSize"
+          android:text="@string/fragment_view_pager"
+          style="?attr/buttonBarButtonStyle"
+          />
+
     </LinearLayout>
   </android.support.v4.widget.NestedScrollView>
 

@@ -16,6 +16,8 @@
 
 package im.ene.lab.toro.sample.fragment;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,7 +43,7 @@ public abstract class RecyclerViewFragment extends Fragment {
     return inflater.inflate(R.layout.generic_recycler_view, container, false);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
     RecyclerView.LayoutManager layoutManager = getLayoutManager();
