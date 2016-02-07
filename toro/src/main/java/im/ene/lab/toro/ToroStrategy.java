@@ -49,5 +49,6 @@ public interface ToroStrategy {
    *
    * @return true if we allow the player to replay, false otherwise
    */
+  @SuppressWarnings("unused")
   boolean allowsImmediateReplay();
 }

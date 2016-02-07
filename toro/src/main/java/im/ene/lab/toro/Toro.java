@@ -19,6 +19,7 @@ package im.ene.lab.toro;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -408,14 +409,21 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        if (player.getVideoView() == null) {
-          return false;
+        Rect windowRect = new Rect();
+        Rect parentRect = new Rect();
+        if (parent instanceof View) {
+          // 1. Get Window's vision from parent
+          ((View) parent).getWindowVisibleDisplayFrame(windowRect);
+          // 2. Get parent's global rect
+          ((View) parent).getGlobalVisibleRect(parentRect, new Point());
         }
+        // 3. Get player global rect
+        Rect videoRect = new Rect();
+        player.getVideoView().getGlobalVisibleRect(videoRect, new Point());
 
-        //Rect rect = new Rect();
-        //player.getVideoView().getDrawingRect(rect);
-        //player.getVideoView().getWindowVisibleDisplayFrame(rect);
-        return true;
+        // Condition: window contains parent, and parent contains Video or parent intersects Video
+        return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
+            || parentRect.intersect(videoRect));
       }
 
       @Override public boolean allowsImmediateReplay() {
@@ -450,7 +458,21 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        return true;
+        Rect windowRect = new Rect();
+        Rect parentRect = new Rect();
+        if (parent instanceof View) {
+          // 1. Get Window's vision from parent
+          ((View) parent).getWindowVisibleDisplayFrame(windowRect);
+          // 2. Get parent's global rect
+          ((View) parent).getGlobalVisibleRect(parentRect, new Point());
+        }
+        // 3. Get player global rect
+        Rect videoRect = new Rect();
+        player.getVideoView().getGlobalVisibleRect(videoRect, new Point());
+
+        // Condition: window contains parent, and parent contains Video or parent intersects Video
+        return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
+            || parentRect.intersect(videoRect));
       }
 
       @Override public boolean allowsImmediateReplay() {
@@ -482,7 +504,21 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        return true;
+        Rect windowRect = new Rect();
+        Rect parentRect = new Rect();
+        if (parent instanceof View) {
+          // 1. Get Window's vision from parent
+          ((View) parent).getWindowVisibleDisplayFrame(windowRect);
+          // 2. Get parent's global rect
+          ((View) parent).getGlobalVisibleRect(parentRect, new Point());
+        }
+        // 3. Get player global rect
+        Rect videoRect = new Rect();
+        player.getVideoView().getGlobalVisibleRect(videoRect, new Point());
+
+        // Condition: window contains parent, and parent contains Video or parent intersects Video
+        return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
+            || parentRect.intersect(videoRect));
       }
 
       @Override public boolean allowsImmediateReplay() {
@@ -509,7 +545,21 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        return true;
+        Rect windowRect = new Rect();
+        Rect parentRect = new Rect();
+        if (parent instanceof View) {
+          // 1. Get Window's vision from parent
+          ((View) parent).getWindowVisibleDisplayFrame(windowRect);
+          // 2. Get parent's global rect
+          ((View) parent).getGlobalVisibleRect(parentRect, new Point());
+        }
+        // 3. Get player global rect
+        Rect videoRect = new Rect();
+        player.getVideoView().getGlobalVisibleRect(videoRect, new Point());
+
+        // Condition: window contains parent, and parent contains Video or parent intersects Video
+        return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
+            || parentRect.intersect(videoRect));
       }
 
       @Override public boolean allowsImmediateReplay() {
