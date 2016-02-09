@@ -76,7 +76,7 @@ allprojects {
 
 ```
 dependencies {
-	compile 'com.github.eneim:Toro:1.0.0'
+	compile 'com.github.eneim:Toro:1.1.0'
 }
 ```
 
