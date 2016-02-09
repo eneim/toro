@@ -132,7 +132,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   /**
-   * Register a View (currently, must be one of RecyclerView or ListView) to listen to its Videos
+   * Register a View (currently, must be one of RecyclerView) to listen to its Videos
    *
    * @param view which will be registered
    */
@@ -169,14 +169,15 @@ import java.util.concurrent.ConcurrentHashMap;
     sInstance.mListeners.put(view.hashCode(), listener);
 
     final State state;
-    if (!sInstance.mStates.containsKey(view.hashCode())) {
+    if (sInstance.mStates.containsKey(view.hashCode())) {
+      state = sInstance.mStates.get(view.hashCode());
+    } else {
       state = new State();
       sInstance.mStates.put(view.hashCode(), state);
-    } else {
-      state = sInstance.mStates.get(view.hashCode());
     }
 
     if (state != null && state.player != null) {
+      // Cold start playManager from a saved state
       playerManager.setPlayer(state.player);
       playerManager.saveVideoState(state.player.getVideoId(), state.position,
           state.player.getDuration());
@@ -224,7 +225,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
+  final void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
     player.onPlaybackStopped();
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
@@ -239,38 +240,48 @@ import java.util.concurrent.ConcurrentHashMap;
   final void onPrepared(ToroPlayer player, View container, ViewParent parent,
       MediaPlayer mediaPlayer) {
     player.onVideoPrepared(mediaPlayer);
+    VideoPlayerManager manager = null;
+    ToroScrollListener listener;
+    RecyclerView view;
+    // Find correct Player manager for this player
     for (Map.Entry<Integer, ToroScrollListener> entry : sInstance.mListeners.entrySet()) {
       Integer key = entry.getKey();
-      ToroScrollListener listener = entry.getValue();
-      RecyclerView view = sInstance.mViews.get(key);
+      view = sInstance.mViews.get(key);
       if (view != null && view == parent) { // Found the parent view in our cache
-        VideoPlayerManager manager = listener.getManager();
-        // 1. Check if current manager wrapped this player
-        if (player.equals(manager.getPlayer())) {
-          if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player,
-              parent)) {
-            manager.restoreVideoState(player.getVideoId());
-            manager.startPlayback();
-            player.onPlaybackStarted();
-          }
-          break;
-        } else {
-          if (manager.getPlayer() == null) {
-            if (player.wantsToPlay() && player.isAbleToPlay() && getStrategy().allowsToPlay(player,
-                parent)) {
-              manager.setPlayer(player);
-              manager.restoreVideoState(player.getVideoId());
-              manager.startPlayback();
-              player.onPlaybackStarted();
-            }
-          }
-          break;
+        listener = entry.getValue();
+        manager = listener.getManager();
+        break;
+      }
+    }
+
+    if (manager == null) {
+      return;
+    }
+
+    // 1. Check if current manager wrapped this player
+    if (player.equals(manager.getPlayer())) {
+      if (player.wantsToPlay() && player.isAbleToPlay() // \n
+          && getStrategy().allowsToPlay(player, parent)) {
+        manager.restoreVideoState(player.getVideoId());
+        manager.startPlayback();
+        player.onPlaybackStarted();
+      }
+    } else {
+      // There is no current player, but this guy is prepared, so let's him go ...
+      if (manager.getPlayer() == null) {
+        // ... if it's possible
+        if (player.wantsToPlay() && player.isAbleToPlay() // \n
+            && getStrategy().allowsToPlay(player, parent)) {
+          manager.setPlayer(player);
+          manager.restoreVideoState(player.getVideoId());
+          manager.startPlayback();
+          player.onPlaybackStarted();
         }
       }
     }
   }
 
-  boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+  final boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
     player.onPlaybackError(mp, what, extra);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
@@ -283,12 +294,12 @@ import java.util.concurrent.ConcurrentHashMap;
     return false;
   }
 
-  boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+  final boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
     player.onPlaybackInfo(mp, what, extra);
     return true;
   }
 
-  void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
+  final void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
     // Do nothing
   }
 

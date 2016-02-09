@@ -25,14 +25,16 @@ import java.util.Map;
 
 /**
  * Created by eneim on 1/31/16.
+ *
+ * Internal API
  */
-public final class VideoPlayerManagerImpl implements VideoPlayerManager {
+final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
   private final Map<String, Integer> mVideoStates = new HashMap<>();
 
-  protected ToroPlayer mPlayer;
+  private ToroPlayer mPlayer;
   // This Handler will send Message to Main Thread
   private Handler mUiHandler;
   private Handler.Callback mCallback = new Handler.Callback() {
@@ -51,15 +53,15 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   };
 
-  public VideoPlayerManagerImpl() {
+  VideoPlayerManagerImpl() {
     Toro.checkNotNull();
   }
 
-  @Override public ToroPlayer getPlayer() {
+  @Override public final ToroPlayer getPlayer() {
     return mPlayer;
   }
 
-  @Override public void setPlayer(ToroPlayer player) {
+  @Override public final void setPlayer(ToroPlayer player) {
     this.mPlayer = player;
   }
 
