@@ -22,6 +22,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.MediaController;
 
@@ -66,16 +67,18 @@ public interface ToroPlayer
   /**
    * In case there is a list of Players who want to play, Toro wants to know their orders, then
    * Toro will decide who could start, based on Toro' playback {@link ToroStrategy}
+   *
+   * In RecyclerView (which is the only widget Toro currently support), this method expect
+   * ViewHolder's Adapter position (see {@link RecyclerView.ViewHolder#getAdapterPosition()})
    */
-  @IntRange(from = 0) int getPlayOrder();
+  @IntRange(from = RecyclerView.NO_POSITION) int getPlayOrder();
 
   /**
    * Retrieve current player's View
    *
    * @return attached video view
    */
-  @NonNull
-  View getVideoView();
+  @NonNull View getVideoView();
 
   /* Host activity lifecycle callback */
 
