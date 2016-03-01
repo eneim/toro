@@ -348,9 +348,9 @@ import java.util.concurrent.ConcurrentHashMap;
         state.player = manager.getPlayer();
         state.position = manager.getPlayer().getCurrentPosition();
 
-        manager.saveVideoState(manager.getPlayer().getVideoId(),
-            manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
         if (manager.getPlayer().isPlaying()) {
+          manager.saveVideoState(manager.getPlayer().getVideoId(),
+              manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
           manager.pausePlayback();
           manager.getPlayer().onPlaybackPaused();
         }
