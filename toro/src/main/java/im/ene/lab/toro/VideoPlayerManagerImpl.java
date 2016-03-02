@@ -77,12 +77,12 @@ final class VideoPlayerManagerImpl implements VideoPlayerManager {
   }
 
   @Override public void pausePlayback() {
-    if (mPlayer != null) {
-      mPlayer.pause();
-    }
-
     if (mUiHandler != null) {
       mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+    }
+
+    if (mPlayer != null) {
+      mPlayer.pause();
     }
   }
 

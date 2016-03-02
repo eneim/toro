@@ -57,13 +57,6 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
         if (currentVideo.wantsToPlay() && currentVideo.isAbleToPlay() &&
             Toro.getStrategy().allowsToPlay(currentVideo, recyclerView)) {
           candidates.add(currentVideo);
-        } else {
-          mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
-              currentVideo.getDuration());
-          if (currentVideo.isPlaying()) {
-            mManager.pausePlayback();
-            currentVideo.onPlaybackPaused();
-          }
         }
       }
     }
@@ -135,9 +128,9 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
     // Current player is not elected, it must resign ...
     if (currentVideo != null) {
-      mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
-          currentVideo.getDuration());
       if (currentVideo.isPlaying()) {
+        mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
+            currentVideo.getDuration());
         mManager.pausePlayback();
         currentVideo.onPlaybackPaused();
       }

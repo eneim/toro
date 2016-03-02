@@ -54,10 +54,10 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
         ToroScrollListener listener = Toro.sInstance.mListeners.get(view.hashCode());
         // Manually save Video state
         if (listener != null && player.equals(listener.getManager().getPlayer())) {
-          listener.getManager()
-              .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
-                  player.getDuration());
           if (player.isPlaying()) {
+            listener.getManager()
+                .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
+                    player.getDuration());
             listener.getManager().pausePlayback();
             player.onPlaybackPaused();
           }
@@ -98,9 +98,9 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
       // Manually save Video state
       // Not the current player, and new player wants to play, so switch players
       if (currentPlayer != null) {
-        manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
-            currentPlayer.getDuration());
         if (currentPlayer.isPlaying()) {
+          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+              currentPlayer.getDuration());
           manager.pausePlayback();
           currentPlayer.onPlaybackPaused();
         }
@@ -117,10 +117,8 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
       if (currentPlayer.isPlaying()) {
         manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
             currentPlayer.getDuration());
-        if (currentPlayer.isPlaying()) {
-          manager.pausePlayback();
-          currentPlayer.onPlaybackPaused();
-        }
+        manager.pausePlayback();
+        currentPlayer.onPlaybackPaused();
       } else {
         // It's paused, so we resume it
         manager.restoreVideoState(currentPlayer.getVideoId());
