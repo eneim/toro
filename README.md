@@ -64,7 +64,7 @@
 
 - Add this to Project's top level ```build.gradle```
 
-```
+```groovy
 allprojects {
 	repositories {
 		maven { url "https://jitpack.io" }
@@ -74,7 +74,7 @@ allprojects {
 
 - Add this to dependencies
 
-```
+```groovy
 dependencies {
 	compile 'com.github.eneim:Toro:1.1.0'
 }
@@ -90,7 +90,7 @@ dependencies {
 
   - A sample ViewHolder's code (see Sample app for more):
   
-```
+```java
 public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
   public DeadlySimpleToroVideoViewHolder(View itemView) {
