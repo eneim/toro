@@ -110,30 +110,27 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     // Ask strategy to elect one
     final ToroPlayer electedPlayer = Toro.getStrategy().findBestPlayer(candidates);
 
-    if (electedPlayer == null) {
-      // There is no good one, bye
-      return;
-    }
-
-    // From here, we have a candidate to playback
-    // Actually we added current video into candidate list too
-    if (currentVideo != null && electedPlayer.getPlayOrder() == currentVideo.getPlayOrder()) {
-      // Nothing changes, keep going
-      if (!currentVideo.isPlaying()) {
+    if (electedPlayer == currentVideo) {
+      // No thing changes, no new President.
+      if (currentVideo != null && !currentVideo.isPlaying()) {
+        mManager.restoreVideoState(currentVideo.getVideoId());
         mManager.startPlayback();
         currentVideo.onPlaybackStarted();
       }
       return;
     }
 
-    // Current player is not elected, it must resign ...
-    if (currentVideo != null) {
-      if (currentVideo.isPlaying()) {
-        mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
-            currentVideo.getDuration());
-        mManager.pausePlayback();
-        currentVideo.onPlaybackPaused();
-      }
+    // Current player is not elected anymore, stop it.
+    if (currentVideo != null && currentVideo.isPlaying()) {
+      mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
+          currentVideo.getDuration());
+      mManager.pausePlayback();
+      currentVideo.onPlaybackPaused();
+    }
+
+    if (electedPlayer == null) {
+      // There is no good one, bye
+      return;
     }
 
     // New president!

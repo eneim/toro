@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity
             Snackbar.make(mContent, "Strategy: " + Toro.getStrategy().getDescription(),
                 Snackbar.LENGTH_LONG).setAction(android.R.string.ok, new View.OnClickListener() {
               @Override public void onClick(View v) {
-
+                // Do nothing
               }
             }).show();
           }
