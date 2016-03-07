@@ -1,5 +1,28 @@
 # Release note
 
+### 1.2.0 (DRAFT, 2016.03.07)
+
+Breaking changes. Client should take care of this release.
+
+- Add customizable ```Toro$Config``` class (with currently support for ***loop playback*** only).
+- Support ***loop playback***. Current player would automatically repeat **immediately** after it completes. Loop playback is disable by default. Setup from Application class, via ```Toro$Config#loopAble``` value. Usage:
+
+```java
+Toro.Config config = new Toro.Config(); // by default, loopAble is false
+config.loopAble = true;
+Toro.init(MyApp.this, config);
+```
+- Ability to temporary pause all playing players by new **ToroStrategy**: ***REST***. This Strategy will disable all player. This is useful in case Client would like to open a Dialog (Eg: Bigger screen playback) on top of current screen, then it wants to pause the player until that Dialog dismisses. Usage (see sample App for more information):
+
+```java
+Toro.rest(true);  // Tell Toro you want to take a rest
+// Do stuff which requires the player to be silent.
+Toro.rest(false); // Done stuff, resume the playback.
+```
+Please note that using this feature should be careful. It's really simple implementation, for really simple usecase. So please don't screw up your App.
+
+- Better UI for sample App.
+
 ### 1.1.0 (2016.02.09)
 
 **Happy Vietnam New Lunar Year!**
