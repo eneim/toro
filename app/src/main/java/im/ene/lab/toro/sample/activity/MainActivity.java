@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
   private static class StrategyAdapter extends ArrayAdapter<ToroStrategy> {
 
     private LayoutInflater inflater;
-    private int resource;
+    private int resource; // MUST be TextView layout resource
 
     public StrategyAdapter(Context context, int resource) {
       super(context, resource, mStrategies);
