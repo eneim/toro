@@ -21,6 +21,8 @@ Toro.rest(false); // Done stuff, resume the playback.
 ```
 Please note that using this feature should be careful. It's really simple implementation, for really simple usecase. So please don't screw up your App.
 
+- Custom LayoutManager: Client can now add their own LayoutManager. The requirement is that LayoutManager must implement **ToroLayoutManager** interface to help Toro to travel throw the Chilren. Sample is coming soon.
+
 - Better UI for sample App.
 
 ### 1.1.0 (2016.02.09)
