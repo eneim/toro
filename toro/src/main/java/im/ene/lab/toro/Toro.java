@@ -49,23 +49,37 @@ import java.util.concurrent.ConcurrentHashMap;
 
   private static final Object LOCK = new Object();
 
+  /**
+   * Stop playback
+   */
+  private static final ToroStrategy REST = new ToroStrategy() {
+    @Override public String getDescription() {
+      return "Rest";
+    }
+
+    @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      return null;
+    }
+
+    @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+      return false;
+    }
+  };
   // Singleton
   static volatile Toro sInstance;
-
-  // It requires client to detach Activity/unregister View to prevent Memory leak
-  // Use RecyclerView#hashCode() to sync between maps
-  final Map<Integer, RecyclerView> mViews = new ConcurrentHashMap<>();
-  final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
-
-  // !IMPORTANT I limit this Map capacity to 3
-  private LinkedStateList mStates;
-
-  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default strategy
-
+  static Config sConfig = new Config();
   /**
    * Helper object, support RecyclerView's ViewHolder
    */
   private static VideoViewHolderHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
+  private static ToroStrategy sActiveStrategy;
+  // It requires client to detach Activity/unregister View to prevent Memory leak
+  // Use RecyclerView#hashCode() to sync between maps
+  final Map<Integer, RecyclerView> mViews = new ConcurrentHashMap<>();
+  final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
+  // !IMPORTANT I limit this Map capacity to 3
+  private LinkedStateList mStates;
+  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default strategy
 
   /**
    * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
@@ -93,6 +107,11 @@ import java.util.concurrent.ConcurrentHashMap;
     if (application != null) {
       application.registerActivityLifecycleCallbacks(sInstance);
     }
+  }
+
+  public static void init(Application application, Config config) {
+    init(application);
+    setConfig(config);
   }
 
   /**
@@ -128,7 +147,13 @@ import java.util.concurrent.ConcurrentHashMap;
    */
   public static void setStrategy(@NonNull ToroStrategy strategy) {
     checkNotNull();
+    if (sInstance.mStrategy == strategy) {
+      // Nothing changes
+      return;
+    }
+
     sInstance.mStrategy = strategy;
+    notifyStrategyChanged(strategy);
   }
 
   /**
@@ -225,6 +250,62 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
+  @Nullable static VideoViewHolderHelper getHelper(@NonNull ToroPlayer player) {
+    checkNotNull();
+    if (player instanceof RecyclerView.ViewHolder) {
+      return RECYCLER_VIEW_HELPER;
+    }
+
+    return null;
+  }
+
+  static void checkNotNull() {
+    if (sInstance == null) {
+      throw new IllegalStateException(
+          "Toro has not been attached to your Activity or you Application. Please refer the doc");
+    }
+  }
+
+  /**
+   * Dynamically setup config
+   *
+   * @return current config
+   */
+  public static Config getConfig() {
+    return sConfig;
+  }
+
+  public static void setConfig(Config config) {
+    checkNotNull();
+    if (config == null) {
+      throw new IllegalArgumentException("Config must not be null");
+    }
+    sConfig = config;
+  }
+
+  public static void rest(boolean willPause) {
+    if (willPause) {
+      sActiveStrategy = getStrategy();
+      setStrategy(REST);
+    } else {
+      if (sActiveStrategy != null) {
+        setStrategy(sActiveStrategy);
+      } else {
+        setStrategy(getStrategy());
+      }
+    }
+  }
+
+  private static void notifyStrategyChanged(ToroStrategy newStrategy) {
+    for (RecyclerView view : sInstance.mViews.values()) {
+      int hash = view.hashCode();
+      ToroScrollListener listener = sInstance.mListeners.get(hash);
+      if (listener != null) {
+        listener.onScrollStateChanged(view, RecyclerView.SCROLL_STATE_IDLE);
+      }
+    }
+  }
+
   final void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
     // 1. find manager for this player
     VideoPlayerManager manager = null;
@@ -238,7 +319,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
 
     // 2. Apply strategies
-    if (!isLoopAble) {
+    if (!sConfig.loopAble) {
       player.onPlaybackStopped();
       if (manager != null) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
@@ -453,7 +534,6 @@ import java.util.concurrent.ConcurrentHashMap;
         return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
             || parentRect.intersect(videoRect));
       }
-
     };
 
     /**
@@ -499,7 +579,6 @@ import java.util.concurrent.ConcurrentHashMap;
         return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
             || parentRect.intersect(videoRect));
       }
-
     };
 
     /**
@@ -542,7 +621,6 @@ import java.util.concurrent.ConcurrentHashMap;
         return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
             || parentRect.intersect(videoRect));
       }
-
     };
 
     /**
@@ -580,31 +658,20 @@ import java.util.concurrent.ConcurrentHashMap;
         return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
             || parentRect.intersect(videoRect));
       }
-
     };
   }
 
-  @Nullable static VideoViewHolderHelper getHelper(@NonNull ToroPlayer player) {
-    checkNotNull();
-    if (player instanceof RecyclerView.ViewHolder) {
-      return RECYCLER_VIEW_HELPER;
+  /**
+   * This class allows support for more flexible, dynamically customizable configuration.
+   */
+  // FIXME this is may be a bad practice. Please help if you have any better ideas
+  public static class Config {
+    public boolean loopAble = false;
+
+    // default
+    public Config() {
+      this.loopAble = false;
     }
-
-    return null;
-  }
-
-  static void checkNotNull() {
-    if (sInstance == null) {
-      throw new IllegalStateException(
-          "Toro has not been attached to your Activity or you Application. Please refer the doc");
-    }
-  }
-
-  static boolean isLoopAble = false;
-
-  public static void setLoopAble(boolean loop) {
-    checkNotNull();
-    isLoopAble = loop;
   }
 
   /**

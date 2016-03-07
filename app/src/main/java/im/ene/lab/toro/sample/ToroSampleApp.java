@@ -30,8 +30,9 @@ public class ToroSampleApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    Toro.init(this);
-    Toro.setLoopAble(true);
+    Toro.Config config = new Toro.Config();
+    config.loopAble = true;
+    Toro.init(this, config);
     sApp = this;
   }
 
