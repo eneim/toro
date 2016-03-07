@@ -55,6 +55,11 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
+  @Override public void setOnItemClickListener(View.OnClickListener listener) {
+    super.setOnItemClickListener(listener);
+    mInfo.setOnClickListener(listener);
+  }
+
   private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {

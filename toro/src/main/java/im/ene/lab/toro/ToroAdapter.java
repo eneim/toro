@@ -70,6 +70,13 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     }
 
     /**
+     * Setup on click listener to current ViewHolder's components.
+     */
+    public void setOnItemClickListener(View.OnClickListener listener) {
+      itemView.setOnClickListener(listener);
+    }
+
+    /**
      * Called by {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
      */
     @CallSuper public void onAttachedToParent() {

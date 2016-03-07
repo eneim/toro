@@ -16,10 +16,13 @@
 
 package im.ene.lab.toro.sample.adapter;
 
+import android.content.DialogInterface;
 import android.support.annotation.IntDef;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -74,6 +77,20 @@ public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHold
       viewHolder = new TextViewHolder(view);
     }
 
+    viewHolder.setOnItemClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        Toro.rest(true);
+        new AlertDialog.Builder(v.getContext()).setTitle("Sample Action")
+            .setMessage("Sample Content")
+            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+              @Override public void onDismiss(DialogInterface dialog) {
+                Toro.rest(false);
+              }
+            })
+            .create()
+            .show();
+      }
+    });
     return viewHolder;
   }
 
