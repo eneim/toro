@@ -17,6 +17,8 @@
 package im.ene.lab.toro.sample;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import im.ene.lab.toro.Toro;
 
 /**
@@ -29,7 +31,12 @@ public class ToroSampleApp extends Application {
   @Override public void onCreate() {
     super.onCreate();
     Toro.init(this);
+    Toro.setLoopAble(true);
     sApp = this;
+  }
+
+  public static SharedPreferences pref() {
+    return sApp.getSharedPreferences("toro_pref", Context.MODE_PRIVATE);
   }
 
   public static String packageName() {

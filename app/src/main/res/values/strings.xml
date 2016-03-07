@@ -11,23 +11,57 @@
     Single Video Simple List
   </string>
 
+  <string name="fragment_single_video_simple_list_detail">
+    Simple RecyclerView with Vertical LinearLayoutManager. Contains only one Video at a specific position.
+  </string>
+
   <string name="fragment_multi_video_staggered_grid">
     Multi Video Staggered Grid
+  </string>
+
+  <string name="fragment_multi_video_staggered_grid_detail">
+    Simple RecyclerView with Vertical StaggeredGridLayoutManager. All items are Videos.
   </string>
 
   <string name="fragment_multi_video_complicated_grid">
     Multi Video Complicated Grid
   </string>
 
+  <string name="fragment_multi_video_complicated_grid_detail">
+    RecyclerView with Vertical GridLayoutManager, custom span size. Items are mixed between Text only, Video only and both Text and Video.
+  </string>
+
   <string name="fragment_multi_video_dual_list">
-    Multi Video Dual List
+    Multi Video Dual Lists
+  </string>
+
+  <string name="fragment_multi_video_dual_list_detail">
+    2 Separated RecyclerViews in same layout:
+    \n\n    - Top RecyclerView with Horizontal LinearLayoutManager. Items are mixed from Video-only and Video-Text items.
+    \n\n    - Bottom RecyclerView with Vertical StaggeredGridLayoutManager.Items are all Videos.
   </string>
 
   <string name="fragment_deadly_simple_list">
     Deadly Simple Video List
   </string>
 
+  <string name="fragment_deadly_simple_list_detail">
+    Very simple implementation for a Video List. a RecyclerView with Vertical LinearLayoutManager, simple Video list.
+  </string>
+
   <string name="fragment_view_pager">
     ViewPager
   </string>
+
+  <string name="fragment_view_pager_detail">
+    ViewPager, contains 2 fragments. Each fragment is a single RecyclerView.
+  </string>
+
+  <string name="title_activity_main">MainActivity</string>
+
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
+
+  <string name="action_settings">Settings</string>
+  <string name="io_16_svg_9">M62.9830112,123.091342 L69.5380112,130.000342 C69.5380112,130.000342 98.2840112,88.6243418 101.805011,81.9203418 C105.327011,75.2173418 114.139011,59.1523418 108.211011,44.1023418 C102.825011,30.4313418 88.0470112,19.5173418 71.3630112,20.6153418 C70.1200112,20.7453418 68.8590112,20.9423418 67.5840112,21.2103418 C48.5450112,25.2153418 39.0310112,44.0353418 38.5240112,54.1943418 C37.9910112,64.8703418 42.2120112,79.3353418 56.8640112,85.9883418 C69.3430112,91.6553418 83.1350112,87.6803418 83.1350112,87.6803418 L65.6550112,69.2563418 C65.6550112,69.2563418 61.5780112,70.0393418 61.1460112,70.1443418 L61.5940112,70.0803418 C57.1640112,70.7143418 49.0780112,71.9663418 39.3840112,67.5643418 C24.7320112,60.9113418 20.5100112,46.4463418 21.0440112,35.7703418 C21.5500112,25.6113418 31.0660112,6.79134177 50.1040112,2.78634177 C53.8170112,2.00534177 57.4030112,1.82734177 60.8120112,2.15834177 C74.4200112,3.88134177 86.0680112,13.8443418 90.7300112,25.6793418 C96.6590112,40.7283418 87.8460112,56.7933418 84.3260112,63.4973418 C80.8040112,70.2003418 52.0570112,111.576342 52.0570112,111.576342 L62.9830112,123.091342 L62.9830112,123.091342 Z</string>
 </resources>

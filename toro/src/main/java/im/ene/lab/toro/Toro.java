@@ -226,13 +226,30 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   final void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
-    player.onPlaybackStopped();
+    // 1. find manager for this player
+    VideoPlayerManager manager = null;
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
-      VideoPlayerManager manager = listener.getManager();
+      manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
+        break;
+      } else {
+        manager = null;
+      }
+    }
+
+    // 2. Apply strategies
+    if (!isLoopAble) {
+      player.onPlaybackStopped();
+      if (manager != null) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
         manager.pausePlayback();
-        break;
+      }
+    } else {
+      if (manager != null) {
+        manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+        manager.pausePlayback();
+        // immediately repeat
+        manager.startPlayback();
       }
     }
   }
@@ -394,7 +411,7 @@ import java.util.concurrent.ConcurrentHashMap;
     public static final ToroStrategy MOST_VISIBLE_TOP_DOWN = new ToroStrategy() {
 
       @Override public String getDescription() {
-        return "MOST_VISIBLE_TOP_DOWN";
+        return "Most visible item, top - down";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -437,9 +454,6 @@ import java.util.concurrent.ConcurrentHashMap;
             || parentRect.intersect(videoRect));
       }
 
-      @Override public boolean allowsImmediateReplay() {
-        return false;
-      }
     };
 
     /**
@@ -450,7 +464,7 @@ import java.util.concurrent.ConcurrentHashMap;
      */
     public static final ToroStrategy MOST_VISIBLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
       @Override public String getDescription() {
-        return "MOST_VISIBLE_TOP_DOWN_KEEP_LAST";
+        return "Most visible item, top - down. Keep last playing item.";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -486,9 +500,6 @@ import java.util.concurrent.ConcurrentHashMap;
             || parentRect.intersect(videoRect));
       }
 
-      @Override public boolean allowsImmediateReplay() {
-        return false;
-      }
     };
 
     /**
@@ -496,7 +507,7 @@ import java.util.concurrent.ConcurrentHashMap;
      */
     public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN = new ToroStrategy() {
       @Override public String getDescription() {
-        return "FIRST_PLAYABLE_TOP_DOWN";
+        return "First playable item, top - down";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -532,9 +543,6 @@ import java.util.concurrent.ConcurrentHashMap;
             || parentRect.intersect(videoRect));
       }
 
-      @Override public boolean allowsImmediateReplay() {
-        return false;
-      }
     };
 
     /**
@@ -544,7 +552,7 @@ import java.util.concurrent.ConcurrentHashMap;
     public static final ToroStrategy FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST = new ToroStrategy() {
 
       @Override public String getDescription() {
-        return "FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST";
+        return "First playable item, top - down. Keep last playing item.";
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -573,9 +581,6 @@ import java.util.concurrent.ConcurrentHashMap;
             || parentRect.intersect(videoRect));
       }
 
-      @Override public boolean allowsImmediateReplay() {
-        return false;
-      }
     };
   }
 
@@ -593,6 +598,13 @@ import java.util.concurrent.ConcurrentHashMap;
       throw new IllegalStateException(
           "Toro has not been attached to your Activity or you Application. Please refer the doc");
     }
+  }
+
+  static boolean isLoopAble = false;
+
+  public static void setLoopAble(boolean loop) {
+    checkNotNull();
+    isLoopAble = loop;
   }
 
   /**
