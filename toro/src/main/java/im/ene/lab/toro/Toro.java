@@ -318,9 +318,9 @@ import java.util.concurrent.ConcurrentHashMap;
       }
     }
 
+    player.onPlaybackStopped();
     // 2. Apply strategies
     if (!sConfig.loopAble) {
-      player.onPlaybackStopped();
       if (manager != null) {
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
         manager.pausePlayback();
@@ -330,6 +330,7 @@ import java.util.concurrent.ConcurrentHashMap;
         manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
         manager.pausePlayback();
         // immediately repeat
+        manager.restoreVideoState(player.getVideoId());
         manager.startPlayback();
       }
     }
