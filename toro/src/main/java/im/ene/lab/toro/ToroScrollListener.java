@@ -86,6 +86,10 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       } catch (NullPointerException er) {
         er.printStackTrace();
       }
+    } else if (recyclerView.getLayoutManager() instanceof ToroLayoutManager) {
+      ToroLayoutManager layoutManager = (ToroLayoutManager) recyclerView.getLayoutManager();
+      firstPosition = layoutManager.getFirstVisibleItemPosition();
+      lastPosition = layoutManager.getLastVisibleItemPosition();
     }
 
     if (firstPosition <= lastPosition &&  // don't want to screw up the for loop
