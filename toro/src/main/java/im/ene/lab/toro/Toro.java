@@ -25,7 +25,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
@@ -50,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
   private static final Object LOCK = new Object();
 
   /**
-   * Stop playback
+   * Stop playback strategy
    */
   private static final ToroStrategy REST = new ToroStrategy() {
     @Override public String getDescription() {
@@ -65,21 +64,30 @@ import java.util.concurrent.ConcurrentHashMap;
       return false;
     }
   };
-  // Singleton
+
+  // Singleton, GOD object
   static volatile Toro sInstance;
+
+  // Configuration
   static Config sConfig = new Config();
+
   /**
    * Helper object, support RecyclerView's ViewHolder
    */
-  private static VideoViewHolderHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
+  static VideoViewItemHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
+
   private static ToroStrategy sActiveStrategy;
+
   // It requires client to detach Activity/unregister View to prevent Memory leak
   // Use RecyclerView#hashCode() to sync between maps
   final Map<Integer, RecyclerView> mViews = new ConcurrentHashMap<>();
   final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
+
   // !IMPORTANT I limit this Map capacity to 3
   private LinkedStateList mStates;
-  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;  // Default strategy
+
+  // Default strategy
+  private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;
 
   /**
    * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
@@ -250,15 +258,6 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  @Nullable static VideoViewHolderHelper getHelper(@NonNull ToroPlayer player) {
-    checkNotNull();
-    if (player instanceof RecyclerView.ViewHolder) {
-      return RECYCLER_VIEW_HELPER;
-    }
-
-    return null;
-  }
-
   static void checkNotNull() {
     if (sInstance == null) {
       throw new IllegalStateException(
@@ -318,20 +317,19 @@ import java.util.concurrent.ConcurrentHashMap;
       }
     }
 
-    player.onPlaybackStopped();
-    // 2. Apply strategies
-    if (!sConfig.loopAble) {
+    // Normally stop playback
+    if (manager != null) {
+      manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+      manager.pausePlayback();
+      player.onPlaybackStopped();
+    }
+
+    if (sConfig.loopAble) { // It's loop-able, so restart it immediately
       if (manager != null) {
-        manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
-        manager.pausePlayback();
-      }
-    } else {
-      if (manager != null) {
-        manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
-        manager.pausePlayback();
         // immediately repeat
         manager.restoreVideoState(player.getVideoId());
         manager.startPlayback();
+        player.onPlaybackStarted();
       }
     }
   }

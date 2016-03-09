@@ -16,7 +16,6 @@
 
 package im.ene.lab.toro;
 
-import android.media.MediaPlayer;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
@@ -24,8 +23,13 @@ import java.util.Map;
 
 /**
  * Created by eneim on 2/6/16.
+ *
+ * This helper class provide internal access to Toro's helper methods. It will hook into each
+ * ViewHolder's transaction to trigger the expected behavior. Client is not recommended to override
+ * this, but in case it wants to provide custom behaviors, it is recommended to call super method
+ * from this Helper.
  */
-public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
+public class RecyclerViewItemHelper extends VideoViewItemHelper {
 
   @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
     Toro.checkNotNull();
@@ -128,31 +132,5 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
     }
 
     return false;
-  }
-
-  @Override public void onPrepared(ToroPlayer player, View itemView, ViewParent parent,
-      MediaPlayer mediaPlayer) {
-    Toro.checkNotNull();
-    Toro.sInstance.onPrepared(player, itemView, parent, mediaPlayer);
-  }
-
-  @Override public void onCompletion(ToroPlayer player, MediaPlayer mp) {
-    Toro.checkNotNull();
-    Toro.sInstance.onCompletion(player, mp);
-  }
-
-  @Override public boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    Toro.checkNotNull();
-    return Toro.sInstance.onError(player, mp, what, extra);
-  }
-
-  @Override public boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    Toro.checkNotNull();
-    return Toro.sInstance.onInfo(player, mp, what, extra);
-  }
-
-  @Override public void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
-    Toro.checkNotNull();
-    Toro.sInstance.onSeekComplete(player, mp);
   }
 }

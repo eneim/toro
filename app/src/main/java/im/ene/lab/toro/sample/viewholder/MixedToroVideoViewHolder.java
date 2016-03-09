@@ -18,8 +18,6 @@ package im.ene.lab.toro.sample.viewholder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -67,11 +65,7 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
   }
 
   @Override public boolean wantsToPlay() {
-    Rect childRect = new Rect();
-    itemView.getGlobalVisibleRect(childRect, new Point());
-    // wants to play if user could see at lease 0.75 of video
-    return childRect.height() > mVideoView.getHeight() * 0.75
-        && childRect.width() > mVideoView.getWidth() * 0.75;
+    return visibleAreaOffset() >= 0.85;
   }
 
   @Nullable @Override public String getVideoId() {

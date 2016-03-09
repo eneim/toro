@@ -136,7 +136,7 @@ public class DeadlySimpleListFragment extends Fragment {
     }
 
     @Override public boolean wantsToPlay() {
-      return super.visibleAreaOffset() >= 0.8;
+      return visibleAreaOffset() >= 0.85;
     }
 
     @Override public boolean isAbleToPlay() {
