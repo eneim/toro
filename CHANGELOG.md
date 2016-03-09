@@ -23,6 +23,8 @@ Please note that using this feature should be careful. It's really simple implem
 
 - Custom LayoutManager: Client can now add their own LayoutManager. The requirement is that LayoutManager must implement **ToroLayoutManager** interface to help Toro to travel throw the Chilren. Sample is coming soon.
 
+- Custom ViewHolder with RecyclerViewItemHelper: RecyclerViewItemHelper is now public and non-final. This allows client to create their own ViewHolder, but still get support from Toro's core methods. Just use/extend RecyclerViewItemHelper wisely. See **CustomViewHolder.java** for the first step.
+
 - Better UI for sample App.
 
 ### 1.1.0 (2016.02.09)
