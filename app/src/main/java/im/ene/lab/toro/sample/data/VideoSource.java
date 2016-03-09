@@ -36,6 +36,6 @@ public class VideoSource {
       "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.vertical;
 
   public static final String[] SOURCES = {
-      HORIZONTAL, MP4, SQUARE, VERTICAL
+      MP4, SQUARE, HORIZONTAL, VERTICAL
   };
 }

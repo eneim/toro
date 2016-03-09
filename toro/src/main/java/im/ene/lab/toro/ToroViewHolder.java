@@ -28,19 +28,19 @@ import android.view.View;
  */
 public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
-  @Nullable private final VideoViewHolderHelper mHelper;
+  private final VideoViewItemHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
   public ToroViewHolder(View itemView) {
     super(itemView);
-    mHelper = Toro.getHelper(this);
+    mHelper = Toro.RECYCLER_VIEW_HELPER;
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper != null && mHelper.onItemLongClick(ToroViewHolder.this,
-                ToroViewHolder.this.itemView, ToroViewHolder.this.itemView.getParent());
+            return mHelper.onItemLongClick(ToroViewHolder.this, ToroViewHolder.this.itemView,
+                ToroViewHolder.this.itemView.getParent());
           }
         };
       }
@@ -63,8 +63,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper != null && mHelper.onItemLongClick(ToroViewHolder.this, itemView,
-                itemView.getParent());
+            return mHelper.onItemLongClick(ToroViewHolder.this, itemView, itemView.getParent());
           }
         };
       }
@@ -74,10 +73,12 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
     super.setOnItemLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
+        boolean longClicked = false;
+
         if (mLongClickListener != null) {
-          mLongClickListener.onLongClick(v);  // we can ignore this boolean result
+          longClicked = mLongClickListener.onLongClick(v);  // we can ignore this boolean result
         }
-        return listener.onLongClick(v);
+        return listener.onLongClick(v) && longClicked;
       }
     });
   }
@@ -89,25 +90,19 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @CallSuper @Override public void onAttachedToParent() {
     super.onAttachedToParent();
-    if (mHelper != null) {
-      mHelper.onAttachedToParent(this, itemView, itemView.getParent());
-    }
+    mHelper.onAttachedToParent(this, itemView, itemView.getParent());
   }
 
   @CallSuper @Override public void onDetachedFromParent() {
     super.onDetachedFromParent();
-    if (mHelper != null) {
-      mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
-    }
+    mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
   /**
    * Implement from {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
    */
   @CallSuper @Override public final void onPrepared(MediaPlayer mp) {
-    if (mHelper != null) {
-      mHelper.onPrepared(this, itemView, itemView.getParent(), mp);
-    }
+    mHelper.onPrepared(this, itemView, itemView.getParent(), mp);
   }
 
   /**
@@ -116,9 +111,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
    * should use {@link ToroPlayer#onPlaybackStopped()}
    */
   @Override public final void onCompletion(MediaPlayer mp) {
-    if (mHelper != null) {
-      mHelper.onCompletion(this, mp);
-    }
+    mHelper.onCompletion(this, mp);
   }
 
   /**
@@ -127,23 +120,21 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
    * should use {@link ToroPlayer#onPlaybackError(MediaPlayer, int, int)}
    */
   @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
-    return mHelper != null && mHelper.onError(this, mp, what, extra);
+    return mHelper.onError(this, mp, what, extra);
   }
 
   /**
    * Implement from {@link MediaPlayer.OnInfoListener#onInfo(MediaPlayer, int, int)}
    */
   @CallSuper @Override public final boolean onInfo(MediaPlayer mp, int what, int extra) {
-    return mHelper != null && mHelper.onInfo(this, mp, what, extra);
+    return mHelper.onInfo(this, mp, what, extra);
   }
 
   /**
    * Implement from {@link MediaPlayer.OnSeekCompleteListener#onSeekComplete(MediaPlayer)}
    */
   @CallSuper @Override public final void onSeekComplete(MediaPlayer mp) {
-    if (mHelper != null) {
-      mHelper.onSeekComplete(this, mp);
-    }
+    mHelper.onSeekComplete(this, mp);
   }
 
   @Override public int getPlayOrder() {
@@ -188,8 +179,9 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
       return 0.f;
     }
 
-    return getVideoView().getHeight() <= 0 ? 1.f
-        : videoRect.height() / (float) getVideoView().getHeight();
+    float area = videoRect.height() * videoRect.width();
+    float viewArea = getVideoView().getWidth() * getVideoView().getHeight();
+    return viewArea <= 0.f ? 1.f : area / viewArea;
   }
 
   protected final Rect getVideoRect() {
@@ -198,7 +190,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     return rect;
   }
 
-  protected final Rect getRecyclerViewRect() {
+  @Nullable protected final Rect getRecyclerViewRect() {
     if (itemView.getParent() == null) {
       return null;
     }

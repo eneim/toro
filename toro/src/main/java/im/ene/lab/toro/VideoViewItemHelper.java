@@ -17,6 +17,7 @@
 package im.ene.lab.toro;
 
 import android.media.MediaPlayer;
+import android.support.annotation.CallSuper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
@@ -24,12 +25,10 @@ import android.view.ViewParent;
 /**
  * Created by eneim on 2/1/16.
  *
- * Internal API
- *
  * A helper class to support Video's callbacks from {@link MediaPlayer} as well as {@link
  * RecyclerView.Adapter}
  */
-interface VideoViewHolderHelper {
+class VideoViewItemHelper {
 
   /* BEGIN: Callback for View */
 
@@ -40,7 +39,9 @@ interface VideoViewHolderHelper {
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
    */
-  void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent);
+  public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
+
+  }
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
@@ -49,7 +50,9 @@ interface VideoViewHolderHelper {
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
    */
-  void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent);
+  public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
+
+  }
 
   /**
    * Support long press on Video, called by {@link View.OnLongClickListener#onLongClick(View)}
@@ -59,7 +62,9 @@ interface VideoViewHolderHelper {
    * @param parent parent which holds current ViewHolder
    * @return boolean response to {@link View.OnLongClickListener#onLongClick(View)}
    */
-  boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent);
+  public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
+    return false;
+  }
   /* END: Callback for View */
 
   /* BEGIN: Callback for MediaPlayer */
@@ -72,7 +77,11 @@ interface VideoViewHolderHelper {
    * @param parent parent which holds current ViewHolder
    * @param mediaPlayer current MediaPlayer
    */
-  void onPrepared(ToroPlayer player, View itemView, ViewParent parent, MediaPlayer mediaPlayer);
+  @CallSuper public void onPrepared(ToroPlayer player, View itemView, ViewParent parent,
+      MediaPlayer mediaPlayer) {
+    Toro.checkNotNull();
+    Toro.sInstance.onPrepared(player, itemView, parent, mediaPlayer);
+  }
 
   /**
    * Callback from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}
@@ -80,7 +89,10 @@ interface VideoViewHolderHelper {
    * @param player current ToroPlayer instance
    * @param mp completed MediaPlayer
    */
-  void onCompletion(ToroPlayer player, MediaPlayer mp);
+  @CallSuper public void onCompletion(ToroPlayer player, MediaPlayer mp) {
+    Toro.checkNotNull();
+    Toro.sInstance.onCompletion(player, mp);
+  }
 
   /**
    * Callback from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}
@@ -88,7 +100,10 @@ interface VideoViewHolderHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra);
+  @CallSuper public boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    Toro.checkNotNull();
+    return Toro.sInstance.onError(player, mp, what, extra);
+  }
 
   /**
    * Callback from {@link MediaPlayer.OnInfoListener#onInfo(MediaPlayer, int, int)}
@@ -96,11 +111,17 @@ interface VideoViewHolderHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra);
+  @CallSuper public boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
+    Toro.checkNotNull();
+    return Toro.sInstance.onInfo(player, mp, what, extra);
+  }
 
   /**
    * Callback from {@link MediaPlayer.OnSeekCompleteListener#onSeekComplete(MediaPlayer)}
    */
-  void onSeekComplete(ToroPlayer player, MediaPlayer mp);
+  @CallSuper public void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
+    Toro.checkNotNull();
+    Toro.sInstance.onSeekComplete(player, mp);
+  }
   /* END: Callback for MediaPlayer */
 }
