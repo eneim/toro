@@ -45,6 +45,7 @@ import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
+import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
 import java.util.ArrayList;
@@ -99,6 +100,10 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
     return true;
+  }
+
+  @OnClick(R.id.btn_simple_video_list) void simpleVideoList() {
+    startActivity(ShowCaseActivity.createIntent(this, SimpleVideoListFragment.TAG));
   }
 
   @OnClick(R.id.btn_single_video_simple_list) void singleVideoSimpleList() {

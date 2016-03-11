@@ -29,6 +29,7 @@ import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
+import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
 import java.lang.annotation.Retention;
@@ -37,9 +38,9 @@ import java.lang.annotation.RetentionPolicy;
 public class ShowCaseActivity extends AppCompatActivity {
 
   @StringDef({
-      SingleVideoSimpleListFragment.TAG, MultiVideoStaggeredGridFragment.TAG,
-      MultiVideoComplicatedGridFragment.TAG, DualVideoListFragment.TAG,
-      DeadlySimpleListFragment.TAG, ViewPagerFragment.TAG
+      SimpleVideoListFragment.TAG, SingleVideoSimpleListFragment.TAG,
+      MultiVideoStaggeredGridFragment.TAG, MultiVideoComplicatedGridFragment.TAG,
+      DualVideoListFragment.TAG, DeadlySimpleListFragment.TAG, ViewPagerFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -84,6 +85,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return DeadlySimpleListFragment.newInstance();
     } else if (ViewPagerFragment.TAG.equals(name)) {
       return ViewPagerFragment.newInstance();
+    } else if (SimpleVideoListFragment.TAG.equals(name)) {
+      return SimpleVideoListFragment.newInstance();
     } else {
       return null;
     }
@@ -102,6 +105,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return R.string.fragment_deadly_simple_list;
     } else if (ViewPagerFragment.TAG.equals(name)) {
       return R.string.fragment_view_pager;
+    } else if (SimpleVideoListFragment.TAG.equals(name)) {
+      return R.string.fragment_simple_video_list;
     } else {
       return R.string.app_name;
     }

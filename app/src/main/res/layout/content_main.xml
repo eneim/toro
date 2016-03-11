@@ -29,203 +29,68 @@
       android:orientation="vertical"
       >
 
-    <android.support.design.internal.ForegroundLinearLayout
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_simple_video_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_simple_video_list_detail"
+        app:btn_title="@string/fragment_simple_video_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_single_video_simple_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/fragment_single_video_simple_list"
-          android:textAppearance="@style/TextAppearance.AppCompat.Button"
-          />
+        app:btn_subtitle="@string/fragment_single_video_simple_list_detail"
+        app:btn_title="@string/fragment_single_video_simple_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
 
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:text="@string/fragment_single_video_simple_list_detail"
-          style="@style/TextAppearance.AppCompat.Caption"
-          />
-
-    </android.support.design.internal.ForegroundLinearLayout>
-
-    <android.support.design.internal.ForegroundLinearLayout
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_multi_video_staggered_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/fragment_multi_video_staggered_grid"
-          android:textAppearance="@style/TextAppearance.AppCompat.Button"
-          />
+        app:btn_subtitle="@string/fragment_multi_video_staggered_grid_detail"
+        app:btn_title="@string/fragment_multi_video_staggered_grid"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
 
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:text="@string/fragment_multi_video_staggered_grid_detail"
-          style="@style/TextAppearance.AppCompat.Caption"
-          />
-
-    </android.support.design.internal.ForegroundLinearLayout>
-
-    <android.support.design.internal.ForegroundLinearLayout
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_multi_video_complicated_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/fragment_multi_video_complicated_grid"
-          android:textAppearance="@style/TextAppearance.AppCompat.Button"
-          />
+        app:btn_subtitle="@string/fragment_multi_video_complicated_grid_detail"
+        app:btn_title="@string/fragment_multi_video_complicated_grid"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
 
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:text="@string/fragment_multi_video_complicated_grid_detail"
-          style="@style/TextAppearance.AppCompat.Caption"
-          />
-
-    </android.support.design.internal.ForegroundLinearLayout>
-
-    <android.support.design.internal.ForegroundLinearLayout
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_multi_video_dual_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/fragment_multi_video_dual_list"
-          android:textAppearance="@style/TextAppearance.AppCompat.Button"
-          />
+        app:btn_subtitle="@string/fragment_multi_video_dual_list_detail"
+        app:btn_title="@string/fragment_multi_video_dual_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
 
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:text="@string/fragment_multi_video_dual_list_detail"
-          style="@style/TextAppearance.AppCompat.Caption"
-          />
-
-    </android.support.design.internal.ForegroundLinearLayout>
-
-    <android.support.design.internal.ForegroundLinearLayout
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_deadly_simple_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/fragment_deadly_simple_list"
-          android:textAppearance="@style/TextAppearance.AppCompat.Button"
-          />
+        app:btn_subtitle="@string/fragment_deadly_simple_list_detail"
+        app:btn_title="@string/fragment_deadly_simple_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
 
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:text="@string/fragment_deadly_simple_list_detail"
-          style="@style/TextAppearance.AppCompat.Caption"
-          />
-
-    </android.support.design.internal.ForegroundLinearLayout>
-
-    <android.support.design.internal.ForegroundLinearLayout
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:elevation="4dp"
-        android:focusable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:orientation="vertical"
-        android:padding="8dp"
-        >
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:ellipsize="end"
-          android:maxLines="1"
-          android:text="@string/fragment_view_pager"
-          android:textAppearance="@style/TextAppearance.AppCompat.Button"
-          />
-
-      <android.support.v7.widget.AppCompatTextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_margin="4dp"
-          android:text="@string/fragment_view_pager_detail"
-          style="@style/TextAppearance.AppCompat.Caption"
-          />
-
-    </android.support.design.internal.ForegroundLinearLayout>
+        app:btn_subtitle="@string/fragment_view_pager_detail"
+        app:btn_title="@string/fragment_view_pager"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
 
   </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

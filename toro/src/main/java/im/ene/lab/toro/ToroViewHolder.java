@@ -175,13 +175,14 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   @Override public float visibleAreaOffset() {
     Rect videoRect = getVideoRect();
     Rect parentRect = getRecyclerViewRect();
-    if (parentRect != null && !parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
+
+    if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
+      float area = videoRect.height() * videoRect.width();
+      float viewArea = getVideoView().getWidth() * getVideoView().getHeight();
+      return viewArea <= 0.f ? 1.f : area / viewArea;
+    } else {
       return 0.f;
     }
-
-    float area = videoRect.height() * videoRect.width();
-    float viewArea = getVideoView().getWidth() * getVideoView().getHeight();
-    return viewArea <= 0.f ? 1.f : area / viewArea;
   }
 
   protected final Rect getVideoRect() {
@@ -191,7 +192,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   @Nullable protected final Rect getRecyclerViewRect() {
-    if (itemView.getParent() == null) {
+    if (itemView.getParent() == null) { // view is not attached to RecyclerView
       return null;
     }
 

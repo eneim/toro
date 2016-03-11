@@ -7,6 +7,14 @@
     edit pages to use for documentation, examples, support, or anything you wish.
   </string>
 
+  <string name="fragment_simple_video_list">
+    Simple Video List
+  </string>
+
+  <string name="fragment_simple_video_list_detail">
+    Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video.
+  </string>
+
   <string name="fragment_single_video_simple_list">
     Single Video Simple List
   </string>
