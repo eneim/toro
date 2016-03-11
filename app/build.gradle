@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
 
+repositories {
+  maven { url 'https://github.com/500px/greedo-layout-for-android/raw/master/releases/' }
+}
+
 android {
   compileSdkVersion 23
   buildToolsVersion "23.0.2"
@@ -31,7 +35,7 @@ android {
 }
 
 ext {
-  support_version = '23.2.0'
+  support_version = '23.2.1'
 }
 
 dependencies {
@@ -42,6 +46,7 @@ dependencies {
 
   compile project(':toro')
 
+  compile 'com.fivehundredpx:greedo-layout:1.0.0'
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
 }
