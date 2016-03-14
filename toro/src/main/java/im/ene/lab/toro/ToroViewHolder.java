@@ -224,4 +224,8 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   @Override public int getAudioSessionId() {
     return 0;
   }
+
+  @Override public boolean isLoopAble() {
+    return false;
+  }
 }

@@ -44,6 +44,10 @@ public class CustomViewHolder extends RecyclerView.ViewHolder implements ToroPla
     return false;
   }
 
+  @Override public boolean isLoopAble() {
+    return true;
+  }
+
   @Override public float visibleAreaOffset() {
     return 0;
   }
