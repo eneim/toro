@@ -48,6 +48,13 @@ public interface ToroPlayer
   boolean isAbleToPlay();
 
   /**
+   * Indicate that this Player is able to replay right after it stops (loop-able) or not.
+   *
+   * @return true if this Player is loopable, false otherwise
+   */
+  boolean isLoopAble();
+
+  /**
    * @return value from 0.0 ~ 1.0 the visible offset of current Video
    */
   @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();

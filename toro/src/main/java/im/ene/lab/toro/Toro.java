@@ -30,7 +30,6 @@ import android.view.View;
 import android.view.ViewParent;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -324,7 +323,8 @@ import java.util.concurrent.ConcurrentHashMap;
       player.onPlaybackStopped();
     }
 
-    if (sConfig.loopAble) { // It's loop-able, so restart it immediately
+    // if (sConfig.loopAble) { // It's loop-able, so restart it immediately
+    if (player.isLoopAble()) {
       if (manager != null) {
         // immediately repeat
         manager.restoreVideoState(player.getVideoId());
@@ -670,31 +670,6 @@ import java.util.concurrent.ConcurrentHashMap;
     // default
     public Config() {
       this.loopAble = false;
-    }
-  }
-
-  /**
-   * Used to save current playing states. Need to be cleaned after each Activity has been
-   * destroyed.
-   */
-  private static class State {
-
-    private ToroPlayer player;
-
-    private Integer position;
-  }
-
-  private static class LinkedStateList extends LinkedHashMap<Integer, State> {
-
-    private int mCapacity = 1;
-
-    public LinkedStateList(int initialCapacity) {
-      super(initialCapacity);
-      mCapacity = initialCapacity;
-    }
-
-    @Override protected boolean removeEldestEntry(Entry<Integer, State> eldest) {
-      return size() > mCapacity;
     }
   }
 }
