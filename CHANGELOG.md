@@ -6,12 +6,20 @@ Breaking changes. Client should take care of this release.
 
 - Add customizable ```Toro$Config``` class (with currently support for ***loop playback*** only).
 - Better error handling, see [this PR](https://github.com/eneim/Toro/pull/26). ToroPlayer#onPlaybackError(...) will now require a boolean response.
-- Support ***loop playback***. Current player would automatically repeat **immediately** after it completes. Loop playback is disable by default. Setup from Application class, via ```Toro$Config#loopAble``` value. Usage:
+- Support ***loop playback***. Current player would automatically repeat **immediately** after it completes. Loop playback is disable by default. Setup via ```ToroPlayer#isLoopAble()```. A Player which is eager to loop must return true from there. Usage:
 
 ```java
-Toro.Config config = new Toro.Config(); // by default, loopAble is false
-config.loopAble = true;
-Toro.init(MyApp.this, config);
+public class MyToroPlayerViewHolder extends ToroViewHolder {
+
+  // Do stuff
+  
+  // Support loop on this ViewHolder
+  @Override public boolean isLoopAble() {
+    return true;
+    // You may want to control it better
+    // return getAdapterPosition() % 2 == 0;
+  }
+}
 ```
 - Ability to temporary pause all playing players by new **ToroStrategy**: ***REST***. This Strategy will disable all player. This is useful in case Client would like to open a Dialog (Eg: Bigger screen playback) on top of current screen, then it wants to pause the player until that Dialog dismisses. Usage (see sample App for more information):
 
