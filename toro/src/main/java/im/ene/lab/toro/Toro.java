@@ -379,7 +379,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   final boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    player.onPlaybackError(mp, what, extra);
+    boolean handle = player.onPlaybackError(mp, what, extra);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
@@ -388,7 +388,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return true;
       }
     }
-    return false;
+    return handle;
   }
 
   final boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
