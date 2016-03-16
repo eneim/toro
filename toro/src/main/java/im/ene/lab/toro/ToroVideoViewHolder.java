@@ -119,8 +119,9 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mPlayable = true;
   }
 
-  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
     mPlayable = false;
+    return super.onPlaybackError(mp, what, extra);
   }
 
   @NonNull @Override public View getVideoView() {

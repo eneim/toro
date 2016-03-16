@@ -88,8 +88,8 @@ public class CustomViewHolder extends RecyclerView.ViewHolder implements ToroPla
 
   }
 
-  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
-
+  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+    return true;
   }
 
   @Override public void onPlaybackInfo(MediaPlayer mp, int what, int extra) {

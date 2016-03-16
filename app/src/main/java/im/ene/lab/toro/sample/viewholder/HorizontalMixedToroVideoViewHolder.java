@@ -119,14 +119,14 @@ public class HorizontalMixedToroVideoViewHolder extends ToroVideoViewHolder {
     mInfo.setText("Completed");
   }
 
-  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
-    super.onPlaybackError(mp, what, extra);
+  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         HorizontalMixedToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());
+    return super.onPlaybackError(mp, what, extra);
   }
 
   @Override protected boolean allowLongPressSupport() {

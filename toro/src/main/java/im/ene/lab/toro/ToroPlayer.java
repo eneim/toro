@@ -130,7 +130,7 @@ public interface ToroPlayer
    * {@link ToroPlayer#onError(MediaPlayer, int, int)} will be called explicitly by Toro, so this
    * method will prevent infinite loop
    */
-  void onPlaybackError(MediaPlayer mp, int what, int extra);
+  boolean onPlaybackError(MediaPlayer mp, int what, int extra);
 
   /**
    * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}

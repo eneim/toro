@@ -16,7 +16,6 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -106,16 +105,6 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
-  @Override public float visibleAreaOffset() {
-    Rect videoRect = getVideoRect();
-    Rect parentRect = getRecyclerViewRect();
-    if (parentRect != null && !parentRect.contains(videoRect) && !parentRect.intersect(videoRect)) {
-      return 0.f;
-    }
-
-    return mVideoView.getHeight() <= 0 ? 1.f : videoRect.height() / (float) mVideoView.getHeight();
-  }
-
   @Override public boolean wantsToPlay() {
     // Default implementation
     return visibleAreaOffset() >= 0.75;
@@ -129,8 +118,9 @@ public abstract class TextureVideoViewHolder extends ToroViewHolder {
     mPlayable = true;
   }
 
-  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
     mPlayable = false;
+    return super.onPlaybackError(mp, what, extra);
   }
 
   @NonNull @Override public View getVideoView() {
