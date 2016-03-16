@@ -5,6 +5,7 @@
 Breaking changes. Client should take care of this release.
 
 - Add customizable ```Toro$Config``` class (with currently support for ***loop playback*** only).
+- Better error handling, see [this PR](https://github.com/eneim/Toro/pull/26). ToroPlayer#onPlaybackError(...) will now require a boolean response.
 - Support ***loop playback***. Current player would automatically repeat **immediately** after it completes. Loop playback is disable by default. Setup from Application class, via ```Toro$Config#loopAble``` value. Usage:
 
 ```java
