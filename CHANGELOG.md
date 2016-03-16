@@ -30,7 +30,7 @@ Toro.rest(false); // Done stuff, resume the playback.
 ```
 Please note that using this feature should be careful. It's really simple implementation, for really simple usecase. So please don't screw up your App.
 
-- Custom LayoutManager: Client can now add their own LayoutManager. The requirement is that LayoutManager must implement **ToroLayoutManager** interface to help Toro to travel throw the Chilren. Sample is coming soon.
+- Custom LayoutManager: Client can now add their own LayoutManager. The requirement is that LayoutManager must implement **ToroLayoutManager** interface to help Toro to travel throw the Children. Sample is coming soon.
 
 - Custom ViewHolder with RecyclerViewItemHelper: RecyclerViewItemHelper is now public and non-final. This allows client to create their own ViewHolder, but still get support from Toro's core methods. Just use/extend RecyclerViewItemHelper wisely. See **CustomViewHolder.java** for the first step.
 
