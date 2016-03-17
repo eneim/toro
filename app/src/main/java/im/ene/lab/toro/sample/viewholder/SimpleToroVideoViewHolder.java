@@ -70,7 +70,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
   }
 
   @Override public boolean wantsToPlay() {
-    return visibleAreaOffset() >= 0.85;
+    return visibleAreaOffset() >= 0.75;
   }
 
   @Nullable @Override public String getVideoId() {
