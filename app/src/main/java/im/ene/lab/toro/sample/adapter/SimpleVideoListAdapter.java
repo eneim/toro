@@ -32,6 +32,6 @@ public class SimpleVideoListAdapter extends BaseSampleAdapter {
   }
 
   @Override public int getItemViewType(int position) {
-    return VIEW_TYPE_VIDEO_MIXED;
+    return VIEW_TYPE_VIDEO;
   }
 }
