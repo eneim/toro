@@ -125,7 +125,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     }
 
     // Current player is not elected anymore, stop it.
-    if (currentVideo != null && currentVideo.isPlaying()) {
+    if (currentVideo != null) {
       mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
           currentVideo.getDuration());
       mManager.pausePlayback();
