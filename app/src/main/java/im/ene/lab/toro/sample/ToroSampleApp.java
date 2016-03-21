@@ -20,6 +20,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import im.ene.lab.toro.Toro;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by eneim on 2/1/16.
@@ -30,6 +33,7 @@ public class ToroSampleApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+    Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     Toro.Config config = new Toro.Config();
     config.loopAble = true;
     Toro.init(this, config);
