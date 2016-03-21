@@ -18,6 +18,7 @@ package im.ene.lab.toro;
 
 /**
  * Created by eneim on 3/14/16.
+ *
  * Used to save current playing states. Need to be cleaned after each Activity has been destroyed.
  */
 class State {

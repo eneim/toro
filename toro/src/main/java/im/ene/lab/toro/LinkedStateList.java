@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 
 /**
  * Created by eneim on 3/14/16.
+ *
+ * A linked-list with specific capacity
  */
 class LinkedStateList extends LinkedHashMap<Integer, State> {
 
