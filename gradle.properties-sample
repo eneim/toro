@@ -17,4 +17,4 @@
 # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
 # org.gradle.parallel=true
 
-FABRIC_API_KEY = c749ed56cf449260b5ba59007c628a7152b5513e
+FABRIC_API_KEY = YOUR_FABRIC_API_KEY

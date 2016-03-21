@@ -26,8 +26,8 @@
     </activity>
 
     <activity-alias
-        android:name=".Launcher"
         android:label="@string/app_name"
+        android:name=".Launcher"
         android:targetActivity=".activity.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -35,6 +35,10 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity-alias>
+
+    <meta-data
+        android:name="io.fabric.ApiKey"
+        android:value="${fabric_api_key}"/>
   </application>
 
 </manifest>
