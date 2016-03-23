@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity
   private static final String PREF_KEY_STRATEGY = "pref_playback_strategy_position";
 
   private void setupStrategy() {
-    final int lastSelected = ToroSampleApp.pref().getInt(PREF_KEY_STRATEGY, 2);
+    final int lastSelected = ToroSampleApp.pref().getInt(PREF_KEY_STRATEGY, 0);
     new AlertDialog.Builder(this).setSingleChoiceItems(
         new StrategyAdapter(this, android.R.layout.simple_list_item_single_choice), lastSelected,
         new DialogInterface.OnClickListener() {
