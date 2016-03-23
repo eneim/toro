@@ -96,18 +96,18 @@ public class RecyclerViewItemHelper extends VideoViewItemHelper {
     VideoPlayerManager manager = listener.getManager();
     ToroPlayer currentPlayer = manager.getPlayer();
 
-    // Being pressed player is a new one
-    if (!player.equals(currentPlayer)) {
-      // All condition to switch players has passed, process the switching
+    if (!player.equals(currentPlayer)) { // Being pressed player is a new one
+      // All conditions to switch players has passed, process the switching
       // Manually save Video state
       // Not the current player, and new player wants to play, so switch players
       if (currentPlayer != null) {
         if (currentPlayer.isPlaying()) {
           manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
               currentPlayer.getDuration());
-          manager.pausePlayback();
-          currentPlayer.onPlaybackPaused();
         }
+        // Force pause
+        manager.pausePlayback();
+        currentPlayer.onPlaybackPaused();
       }
 
       // Trigger new player
