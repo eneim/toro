@@ -55,6 +55,7 @@ public abstract class RecyclerViewFragment extends Fragment {
           ((LinearLayoutManager) layoutManager).getOrientation()));
     }
 
+    mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setAdapter(getAdapter());
 
     final String TAG = "RecyclerViewFragment";

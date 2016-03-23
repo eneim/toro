@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
-    int lastSelected = ToroSampleApp.pref().getInt(PREF_KEY_STRATEGY, 2);
+    int lastSelected = ToroSampleApp.pref().getInt(PREF_KEY_STRATEGY, 0);
     Toro.setStrategy(mStrategies.get(lastSelected));
   }
 
