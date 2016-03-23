@@ -21,6 +21,7 @@ import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -172,14 +173,16 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   }
 
+  private static final String TAG = "ToroViewHolder";
+
   @Override public float visibleAreaOffset() {
     Rect videoRect = getVideoRect();
     Rect parentRect = getRecyclerViewRect();
 
     if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
-      float area = videoRect.height() * videoRect.width();
+      float visibleArea = videoRect.height() * videoRect.width();
       float viewArea = getVideoView().getWidth() * getVideoView().getHeight();
-      return viewArea <= 0.f ? 1.f : area / viewArea;
+      return viewArea <= 0.f ? 1.f : visibleArea / viewArea;
     } else {
       return 0.f;
     }
@@ -187,7 +190,9 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   protected final Rect getVideoRect() {
     Rect rect = new Rect();
-    getVideoView().getGlobalVisibleRect(rect, new Point());
+    Point offset = new Point();
+    getVideoView().getGlobalVisibleRect(rect, offset);
+    Log.i(TAG, "VideoView Rect: " + getVideoId() + " | " + offset + " | " + rect);
     return rect;
   }
 
@@ -197,7 +202,9 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     }
 
     Rect rect = new Rect();
-    ((View) itemView.getParent()).getGlobalVisibleRect(rect, new Point());
+    Point offset = new Point();
+    ((View) itemView.getParent()).getGlobalVisibleRect(rect, offset);
+    Log.e(TAG, "Parent    Rect: " + getVideoId() + " | " + offset + " | " + rect);
     return rect;
   }
 
@@ -225,6 +232,11 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     return 0;
   }
 
+  /**
+   * Indicate that this Player is able to replay right after it stops (loop-able) or not.
+   *
+   * @return true if this Player is loop-able, false otherwise
+   */
   @Override public boolean isLoopAble() {
     return false;
   }
