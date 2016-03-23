@@ -138,6 +138,10 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
   }
 
+  @Override public boolean isLoopAble() {
+    return true;
+  }
+
   @Override public String toString() {
     return "Video: " + getVideoId();
   }
