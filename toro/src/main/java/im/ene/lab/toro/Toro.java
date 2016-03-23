@@ -67,15 +67,12 @@ import java.util.concurrent.ConcurrentHashMap;
   // Singleton, GOD object
   static volatile Toro sInstance;
 
-  // Configuration
-  static Config sConfig = new Config();
-
   /**
    * Helper object, support RecyclerView's ViewHolder
    */
   static VideoViewItemHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
 
-  private static ToroStrategy sActiveStrategy;
+  private static ToroStrategy cachedStrategy;
 
   // It requires client to detach Activity/unregister View to prevent Memory leak
   // Use RecyclerView#hashCode() to sync between maps
@@ -114,11 +111,6 @@ import java.util.concurrent.ConcurrentHashMap;
     if (application != null) {
       application.registerActivityLifecycleCallbacks(sInstance);
     }
-  }
-
-  public static void init(Application application, Config config) {
-    init(application);
-    setConfig(config);
   }
 
   /**
@@ -264,32 +256,18 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  /**
-   * Dynamically setup config
-   *
-   * @return current config
-   */
-  public static Config getConfig() {
-    return sConfig;
-  }
-
-  public static void setConfig(Config config) {
-    checkNotNull();
-    if (config == null) {
-      throw new IllegalArgumentException("Config must not be null");
-    }
-    sConfig = config;
-  }
-
   public static void rest(boolean willPause) {
     if (willPause) {
-      sActiveStrategy = getStrategy();
+      cachedStrategy = getStrategy();
       setStrategy(REST);
     } else {
-      if (sActiveStrategy != null) {
-        setStrategy(sActiveStrategy);
-      } else {
-        setStrategy(getStrategy());
+      // Don't allow to unrest if  Toro has not been in rested state. Be careful.
+      if (getStrategy() != REST) {
+        throw new IllegalStateException("Toro has already waken up.");
+      }
+
+      if (cachedStrategy != null) { // Actually, cachedStrategy would not be null here.
+        setStrategy(cachedStrategy);
       }
     }
   }
@@ -658,18 +636,5 @@ import java.util.concurrent.ConcurrentHashMap;
             || parentRect.intersect(videoRect));
       }
     };
-  }
-
-  /**
-   * This class allows support for more flexible, dynamically customizable configuration.
-   */
-  // FIXME this is may be a bad practice. Please help if you have any better ideas
-  public static class Config {
-    public boolean loopAble = false;
-
-    // default
-    public Config() {
-      this.loopAble = false;
-    }
   }
 }
