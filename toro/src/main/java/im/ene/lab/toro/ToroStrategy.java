@@ -26,7 +26,6 @@ public interface ToroStrategy {
 
   /**
    * @return Description of current Strategy
-   * @hide debug use only
    */
   String getDescription();
 
