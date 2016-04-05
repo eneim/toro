@@ -4,8 +4,8 @@
 
 Breaking changes. Clients should take care of this release.
 
-- **[CHANGE]** Better error handling, see [this PR](https://github.com/eneim/Toro/pull/26/files). ToroPlayer#onPlaybackError(...) will now require a ***boolean response***.
-- **[CHANGE]** **[NEW FEATURE]** Support ***loop playback***. Current playing **ToroPlayer** could automatically repeat **immediately** after it completes latest playback. Loop playback is disable by default. Setup by extending ```ToroPlayer#isLoopAble()``` and return ***true***. Sample usage:
+- **[CHANGE]** Better error handling, see [this PR](https://github.com/eneim/Toro/pull/26/files). ```ToroPlayer#onPlaybackError(...)``` will now require a ***boolean response***.
+- **[CHANGE]** **[NEW FEATURE]** Support ***loop playback***. Current playing **ToroPlayer** could automatically repeat **immediately** after it completes latest playback. Loop playback is ***disable*** by default. Setup by overriding ```ToroPlayer#isLoopAble()``` and return ***true***. Sample usage:
 
 ```java
 public class MyLoopAblePlayerViewHolder extends ToroViewHolder {
