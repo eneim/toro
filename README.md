@@ -1,11 +1,11 @@
 # Toro
 
-[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 
 <img src="https://github.com/eneim/Toro/blob/master/art/web_hi_res_512.png" width="256">
 
-[![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
+
 
 
 
