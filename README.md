@@ -13,22 +13,24 @@
 
 ## 1. Main features:
 
-- Auto start/pause/resume by scrolling your RecyclerView, support all Layout managers. Last-minute caching: Toro remembers last playback position and resume from where you left (**note that: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies**). 
+- Auto start/pause/resume video by scrolling your RecyclerView, support all Official built-in LayoutManagers. 
+
+- Smart caching: Toro remembers last playback position and resume from where you left (*note: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies*). 
 
 - Playback behavior decided by User, not by library:
-  - Customizable Strategy to decide which is the best component to start playback. Optimized built-in Strategies to help you start.
-  - UI-based logic, straight-forward approach: you see the Video, then it should play. **Default**: you see 75% of the Video then it should start playing. **Advance**: you decide how much the visible Video should trigger the playback.
-  - Decision from both side: Toro's core and your components. Toro listen to your components: does it want to play, is it able to play (well-prepared or had error), then Toro's strategy will decide if it allows your component to play or not. **Default**: built-in Strategy and components do the rest. **Advance**: you have control to the both side.
+  - Customizable playback Strategy to decide which is the best component to start playback. Optimized built-in Strategies to help you start.
+  - UI-based logic, straight-forward approach: you see the Video, then it should play. **Default**: you see 75% of the Video then it should start playing. **Advance**: you decide how much the visible Video should trigger the playback. See [Wiki](https://github.com/eneim/Toro/wiki) for more details. 
+  - Decision from both side: Toro's core and your implementation. Toro listens to your widget: does it want to play?, is it able to play (video is well-prepared or not), then Toro's strategy will decide if it allows your video to play or not. **Default**: built-in Strategy and widget do the rest. **Advance**: you have control to the both side: your custom ViewHolder and your custom Strategy. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
   
 - Built-in widgets: an abstract ViewHolder for original VideoView, an abstract ViewHolder for "TextureView version" of VideoView: [TextureVideoView](https://github.com/sprylab/texturevideoview), and an abstract ViewHolder for my customized version of TextureVideoView: ToroVideoView, with more flexible API and less *annoying* error processing.
 
 - Powerful, flexible and highly customizable API. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Selective playback: find the best playable item, defined by smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L516), but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+- Selective playback: find the best playable item, defined by smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L465), but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Smartly support Grid (with many Video in one window) by built-in [Long press listener](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L108). Turning ON/OFF in one line of code. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+- Smart long press: support Grid (with many Videos in one window) by built-in [Long press listener](https://github.com/eneim/Toro/blob/develop/toro/src/main/java/im/ene/lab/toro/RecyclerViewItemHelper.java#L73). Turning ON/OFF in one line of code. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
  
-- **I create lots of built-in code, but keep Toro highly customizable.** You are free to decide how you want to start your player, but if you don't know, just let Toro help you to decide.
+- **I create lots of built-in components, but keep Toro highly customizable.** You are free to decide how you want to start your player, but if you don't know, just let Toro help you to decide.
 
 **See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
