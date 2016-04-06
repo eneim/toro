@@ -77,10 +77,16 @@ allprojects {
 - Add this to dependencies
 
 ```groovy
+ext {
+	toro_latest_version = '1.2.0'
+}
+
 dependencies {
-	compile 'com.github.eneim:Toro:1.2.0'
+	compile 'com.github.eneim:Toro:${toro_latest_version}'
 }
 ```
+
+Latest version is always visible by jitpack badge: [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
 
 ##### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
 
