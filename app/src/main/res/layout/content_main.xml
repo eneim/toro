@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016 eneim@Eneim Labs, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      >
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_simple_video_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_simple_video_list_detail"
+        app:btn_title="@string/fragment_simple_video_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_single_video_simple_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_single_video_simple_list_detail"
+        app:btn_title="@string/fragment_single_video_simple_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_multi_video_staggered_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_multi_video_staggered_grid_detail"
+        app:btn_title="@string/fragment_multi_video_staggered_grid"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_multi_video_complicated_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_multi_video_complicated_grid_detail"
+        app:btn_title="@string/fragment_multi_video_complicated_grid"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_multi_video_dual_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_multi_video_dual_list_detail"
+        app:btn_title="@string/fragment_multi_video_dual_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_deadly_simple_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_deadly_simple_list_detail"
+        app:btn_title="@string/fragment_deadly_simple_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:btn_subtitle="@string/fragment_view_pager_detail"
+        app:btn_title="@string/fragment_view_pager"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+  </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

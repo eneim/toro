@@ -26,7 +26,6 @@ public interface ToroStrategy {
 
   /**
    * @return Description of current Strategy
-   * @hide debug use only
    */
   String getDescription();
 
@@ -44,12 +43,4 @@ public interface ToroStrategy {
    */
   boolean allowsToPlay(ToroPlayer player, ViewParent parent);
 
-  /**
-   * After a video completely played, our Strategy needs to knows if User wants to replay it or not
-   *
-   * !IMPORTANT currently unused (1.0.0)
-   *
-   * @return true if we allow the player to replay, false otherwise
-   */
-  @SuppressWarnings("unused") boolean allowsImmediateReplay();
 }

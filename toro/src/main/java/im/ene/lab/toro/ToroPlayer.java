@@ -48,6 +48,13 @@ public interface ToroPlayer
   boolean isAbleToPlay();
 
   /**
+   * Indicate that this Player is able to replay right after it stops (loop-able) or not.
+   *
+   * @return true if this Player is loopable, false otherwise
+   */
+  boolean isLoopAble();
+
+  /**
    * @return value from 0.0 ~ 1.0 the visible offset of current Video
    */
   @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();
@@ -123,7 +130,7 @@ public interface ToroPlayer
    * {@link ToroPlayer#onError(MediaPlayer, int, int)} will be called explicitly by Toro, so this
    * method will prevent infinite loop
    */
-  void onPlaybackError(MediaPlayer mp, int what, int extra);
+  boolean onPlaybackError(MediaPlayer mp, int what, int extra);
 
   /**
    * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}

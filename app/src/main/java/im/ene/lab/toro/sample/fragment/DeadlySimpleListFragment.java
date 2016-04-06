@@ -119,8 +119,9 @@ public class DeadlySimpleListFragment extends Fragment {
       mPlayable = true;
     }
 
-    @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
+    @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
       mPlayable = false;
+      return super.onPlaybackError(mp, what, extra);
     }
 
     @Override public void onPlaybackStarted() {
@@ -136,7 +137,7 @@ public class DeadlySimpleListFragment extends Fragment {
     }
 
     @Override public boolean wantsToPlay() {
-      return super.visibleAreaOffset() >= 0.8;
+      return visibleAreaOffset() >= 0.85;
     }
 
     @Override public boolean isAbleToPlay() {

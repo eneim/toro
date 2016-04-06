@@ -1,5 +1,7 @@
 # Toro
 
+[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 <img src="https://github.com/eneim/Toro/blob/master/art/web_hi_res_512.png" width="256">
 
 [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
@@ -64,7 +66,7 @@
 
 - Add this to Project's top level ```build.gradle```
 
-```
+```groovy
 allprojects {
 	repositories {
 		maven { url "https://jitpack.io" }
@@ -74,7 +76,7 @@ allprojects {
 
 - Add this to dependencies
 
-```
+```groovy
 dependencies {
 	compile 'com.github.eneim:Toro:1.1.0'
 }
@@ -90,7 +92,7 @@ dependencies {
 
   - A sample ViewHolder's code (see Sample app for more):
   
-```
+```java
 public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
   public DeadlySimpleToroVideoViewHolder(View itemView) {

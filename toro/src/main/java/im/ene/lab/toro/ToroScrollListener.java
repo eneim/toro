@@ -57,13 +57,6 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
         if (currentVideo.wantsToPlay() && currentVideo.isAbleToPlay() &&
             Toro.getStrategy().allowsToPlay(currentVideo, recyclerView)) {
           candidates.add(currentVideo);
-        } else {
-          mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
-              currentVideo.getDuration());
-          if (currentVideo.isPlaying()) {
-            mManager.pausePlayback();
-            currentVideo.onPlaybackPaused();
-          }
         }
       }
     }
@@ -93,6 +86,10 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       } catch (NullPointerException er) {
         er.printStackTrace();
       }
+    } else if (recyclerView.getLayoutManager() instanceof ToroLayoutManager) {
+      ToroLayoutManager layoutManager = (ToroLayoutManager) recyclerView.getLayoutManager();
+      firstPosition = layoutManager.getFirstVisibleItemPosition();
+      lastPosition = layoutManager.getLastVisibleItemPosition();
     }
 
     if (firstPosition <= lastPosition &&  // don't want to screw up the for loop
@@ -117,30 +114,27 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     // Ask strategy to elect one
     final ToroPlayer electedPlayer = Toro.getStrategy().findBestPlayer(candidates);
 
-    if (electedPlayer == null) {
-      // There is no good one, bye
-      return;
-    }
-
-    // From here, we have a candidate to playback
-    // Actually we added current video into candidate list too
-    if (currentVideo != null && electedPlayer.getPlayOrder() == currentVideo.getPlayOrder()) {
-      // Nothing changes, keep going
-      if (!currentVideo.isPlaying()) {
+    if (electedPlayer == currentVideo) {
+      // No thing changes, no new President.
+      if (currentVideo != null && !currentVideo.isPlaying()) {
+        mManager.restoreVideoState(currentVideo.getVideoId());
         mManager.startPlayback();
         currentVideo.onPlaybackStarted();
       }
       return;
     }
 
-    // Current player is not elected, it must resign ...
+    // Current player is not elected anymore, stop it.
     if (currentVideo != null) {
       mManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
           currentVideo.getDuration());
-      if (currentVideo.isPlaying()) {
-        mManager.pausePlayback();
-        currentVideo.onPlaybackPaused();
-      }
+      mManager.pausePlayback();
+      currentVideo.onPlaybackPaused();
+    }
+
+    if (electedPlayer == null) {
+      // There is no good one, bye
+      return;
     }
 
     // New president!

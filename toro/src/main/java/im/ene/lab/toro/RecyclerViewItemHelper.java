@@ -16,7 +16,6 @@
 
 package im.ene.lab.toro;
 
-import android.media.MediaPlayer;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
@@ -24,8 +23,13 @@ import java.util.Map;
 
 /**
  * Created by eneim on 2/6/16.
+ *
+ * This helper class provide internal access to Toro's helper methods. It will hook into each
+ * ViewHolder's transaction to trigger the expected behavior. Client is not recommended to override
+ * this, but in case it wants to provide custom behaviors, it is recommended to call super method
+ * from this Helper.
  */
-public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
+public class RecyclerViewItemHelper extends VideoViewItemHelper {
 
   @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
     Toro.checkNotNull();
@@ -54,10 +58,10 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
         ToroScrollListener listener = Toro.sInstance.mListeners.get(view.hashCode());
         // Manually save Video state
         if (listener != null && player.equals(listener.getManager().getPlayer())) {
-          listener.getManager()
-              .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
-                  player.getDuration());
           if (player.isPlaying()) {
+            listener.getManager()
+                .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
+                    player.getDuration());
             listener.getManager().pausePlayback();
             player.onPlaybackPaused();
           }
@@ -92,18 +96,18 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
     VideoPlayerManager manager = listener.getManager();
     ToroPlayer currentPlayer = manager.getPlayer();
 
-    // Being pressed player is a new one
-    if (!player.equals(currentPlayer)) {
-      // All condition to switch players has passed, process the switching
+    if (!player.equals(currentPlayer)) { // Being pressed player is a new one
+      // All conditions to switch players has passed, process the switching
       // Manually save Video state
       // Not the current player, and new player wants to play, so switch players
       if (currentPlayer != null) {
-        manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
-            currentPlayer.getDuration());
         if (currentPlayer.isPlaying()) {
-          manager.pausePlayback();
-          currentPlayer.onPlaybackPaused();
+          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+              currentPlayer.getDuration());
         }
+        // Force pause
+        manager.pausePlayback();
+        currentPlayer.onPlaybackPaused();
       }
 
       // Trigger new player
@@ -117,10 +121,8 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
       if (currentPlayer.isPlaying()) {
         manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
             currentPlayer.getDuration());
-        if (currentPlayer.isPlaying()) {
-          manager.pausePlayback();
-          currentPlayer.onPlaybackPaused();
-        }
+        manager.pausePlayback();
+        currentPlayer.onPlaybackPaused();
       } else {
         // It's paused, so we resume it
         manager.restoreVideoState(currentPlayer.getVideoId());
@@ -130,31 +132,5 @@ public final class RecyclerViewItemHelper implements VideoViewHolderHelper {
     }
 
     return false;
-  }
-
-  @Override public void onPrepared(ToroPlayer player, View itemView, ViewParent parent,
-      MediaPlayer mediaPlayer) {
-    Toro.checkNotNull();
-    Toro.sInstance.onPrepared(player, itemView, parent, mediaPlayer);
-  }
-
-  @Override public void onCompletion(ToroPlayer player, MediaPlayer mp) {
-    Toro.checkNotNull();
-    Toro.sInstance.onCompletion(player, mp);
-  }
-
-  @Override public boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    Toro.checkNotNull();
-    return Toro.sInstance.onError(player, mp, what, extra);
-  }
-
-  @Override public boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    Toro.checkNotNull();
-    return Toro.sInstance.onInfo(player, mp, what, extra);
-  }
-
-  @Override public void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
-    Toro.checkNotNull();
-    Toro.sInstance.onSeekComplete(player, mp);
   }
 }

@@ -17,7 +17,12 @@
 package im.ene.lab.toro.sample;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
 import im.ene.lab.toro.Toro;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by eneim on 2/1/16.
@@ -28,8 +33,13 @@ public class ToroSampleApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+    Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     Toro.init(this);
     sApp = this;
+  }
+
+  public static SharedPreferences pref() {
+    return sApp.getSharedPreferences("toro_pref", Context.MODE_PRIVATE);
   }
 
   public static String packageName() {

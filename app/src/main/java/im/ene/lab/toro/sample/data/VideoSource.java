@@ -26,10 +26,16 @@ public class VideoSource {
 
   private static final String MP4 = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
 
-  private static final String LOCAL =
-      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.sample;
+  private static final String HORIZONTAL =
+      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.horizontal;
+
+  private static final String SQUARE =
+      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.square;
+
+  private static final String VERTICAL =
+      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.vertical;
 
   public static final String[] SOURCES = {
-      MP4, LOCAL
+      MP4, SQUARE, HORIZONTAL, VERTICAL
   };
 }

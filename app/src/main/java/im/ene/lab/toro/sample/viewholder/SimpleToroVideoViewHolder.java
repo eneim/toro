@@ -18,8 +18,6 @@ package im.ene.lab.toro.sample.viewholder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -55,6 +53,11 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
+  @Override public void setOnItemClickListener(View.OnClickListener listener) {
+    super.setOnItemClickListener(listener);
+    mInfo.setOnClickListener(listener);
+  }
+
   private SimpleVideoObject mItem;
 
   @Override public void bind(Object item) {
@@ -67,11 +70,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
   }
 
   @Override public boolean wantsToPlay() {
-    Rect childRect = new Rect();
-    itemView.getGlobalVisibleRect(childRect, new Point());
-    // wants to play if user could see at lease 0.75 of video
-    return childRect.height() > mVideoView.getHeight() * 0.75
-        && childRect.width() > mVideoView.getWidth() * 0.75;
+    return visibleAreaOffset() >= 0.75;
   }
 
   @Nullable @Override public String getVideoId() {
@@ -125,18 +124,22 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     mInfo.setText("Completed");
   }
 
-  @Override public void onPlaybackError(MediaPlayer mp, int what, int extra) {
-    super.onPlaybackError(mp, what, extra);
+  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         SimpleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());
+    return super.onPlaybackError(mp, what, extra);
   }
 
   @Override protected boolean allowLongPressSupport() {
     return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
+  }
+
+  @Override public boolean isLoopAble() {
+    return true;
   }
 
   @Override public String toString() {
