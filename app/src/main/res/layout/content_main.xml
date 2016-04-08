@@ -75,6 +75,15 @@
         />
 
     <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_toggleable_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/fragment_toggleable_list_detail"
+        app:btn_title="@string/fragment_toggleable_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_deadly_simple_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

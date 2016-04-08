@@ -65,6 +65,14 @@
     ViewPager, contains 2 fragments. Each fragment is a single RecyclerView.
   </string>
 
+  <string name="fragment_toggleable_list">
+    Simple Toggleable Video List
+  </string>
+
+  <string name="fragment_toggleable_list_detail">
+    Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video. Auto-playback is toggle-able by Toggle button.
+  </string>
+
   <string name="title_activity_main">MainActivity</string>
 
   <string name="navigation_drawer_open">Open navigation drawer</string>

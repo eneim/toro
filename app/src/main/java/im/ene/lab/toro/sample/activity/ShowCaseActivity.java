@@ -29,6 +29,7 @@ import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
+import im.ene.lab.toro.sample.fragment.SimpleToggleableListFragment;
 import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
@@ -40,7 +41,8 @@ public class ShowCaseActivity extends AppCompatActivity {
   @StringDef({
       SimpleVideoListFragment.TAG, SingleVideoSimpleListFragment.TAG,
       MultiVideoStaggeredGridFragment.TAG, MultiVideoComplicatedGridFragment.TAG,
-      DualVideoListFragment.TAG, DeadlySimpleListFragment.TAG, ViewPagerFragment.TAG
+      DualVideoListFragment.TAG, DeadlySimpleListFragment.TAG, ViewPagerFragment.TAG,
+      SimpleToggleableListFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -87,6 +89,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return ViewPagerFragment.newInstance();
     } else if (SimpleVideoListFragment.TAG.equals(name)) {
       return SimpleVideoListFragment.newInstance();
+    } else if (SimpleToggleableListFragment.TAG.equals(name)){
+      return SimpleToggleableListFragment.newInstance();
     } else {
       return null;
     }
@@ -107,6 +111,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return R.string.fragment_view_pager;
     } else if (SimpleVideoListFragment.TAG.equals(name)) {
       return R.string.fragment_simple_video_list;
+    } else if (SimpleToggleableListFragment.TAG.equals(name)){
+      return R.string.fragment_toggleable_list;
     } else {
       return R.string.app_name;
     }

@@ -45,6 +45,7 @@ import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoStaggeredGridFragment;
+import im.ene.lab.toro.sample.fragment.SimpleToggleableListFragment;
 import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
@@ -120,6 +121,10 @@ public class MainActivity extends AppCompatActivity
 
   @OnClick(R.id.btn_multi_video_dual_list) void multiVideoDualList() {
     startActivity(ShowCaseActivity.createIntent(this, DualVideoListFragment.TAG));
+  }
+
+  @OnClick(R.id.btn_toggleable_list) void toggleAbleList() {
+    startActivity(ShowCaseActivity.createIntent(this, SimpleToggleableListFragment.TAG));
   }
 
   @OnClick(R.id.btn_deadly_simple_list) void deadlySimpleVideoList() {
