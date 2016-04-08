@@ -38,4 +38,8 @@ public class VideoSource {
   public static final String[] SOURCES = {
       MP4, SQUARE, HORIZONTAL, VERTICAL
   };
+
+  public static final String[] YOUTUBES = {
+      "J3IvOfvH1ys", "e7t3svG9PTk", "9m6MoBM-sFI", "7BR7Iee_mz8", "PZqzvs-AXYA", "Pms0pcyPbAM"
+  };
 }

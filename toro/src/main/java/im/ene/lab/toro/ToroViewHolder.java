@@ -192,7 +192,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     Rect rect = new Rect();
     Point offset = new Point();
     getVideoView().getGlobalVisibleRect(rect, offset);
-    Log.i(TAG, "VideoView Rect: " + getVideoId() + " | " + offset + " | " + rect);
     return rect;
   }
 
@@ -204,7 +203,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     Rect rect = new Rect();
     Point offset = new Point();
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, offset);
-    Log.e(TAG, "Parent    Rect: " + getVideoId() + " | " + offset + " | " + rect);
     return rect;
   }
 

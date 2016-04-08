@@ -17,4 +17,7 @@
 # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
 # org.gradle.parallel=true
 
+YOUTUBE_API_KEY = SAMPLE_API_KEY
 FABRIC_API_KEY = YOUR_FABRIC_API_KEY
+
+APP_ID = forked.app.id

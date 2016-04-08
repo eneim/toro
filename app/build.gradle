@@ -20,13 +20,15 @@ android {
   buildToolsVersion "23.0.3"
 
   defaultConfig {
-    applicationId "im.ene.lab.toro.sample"
+    applicationId "${APP_ID}"
     minSdkVersion 15
     targetSdkVersion 23
     versionCode 1
     versionName "1.0"
 
+    buildConfigField "String", "YOUTUBE_API_KEY", "\"${YOUTUBE_API_KEY}\""
     manifestPlaceholders = [fabric_api_key: "${FABRIC_API_KEY}"]
+
     vectorDrawables.useSupportLibrary = true
   }
   buildTypes {
