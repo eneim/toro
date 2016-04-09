@@ -29,21 +29,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by eneim on 4/8/16.
+ *
+ * Youtube Video Manager + Video Adapter. This is the core of Youtube Support part.
  */
-public abstract class YoutubeListAdapter extends ToroAdapter<YoutubeViewHolder>
-    implements VideoPlayerManager, Handler.Callback {
+public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
+    implements VideoPlayerManager /* very important */, Handler.Callback {
 
   final FragmentManager mFragmentManager;
 
   private final ConcurrentHashMap<String, Integer> mVideoStates = new ConcurrentHashMap<>();
   private final Handler mHandler = new Handler(Looper.getMainLooper(), this);
   private final int MESSAGE_PROGRESS = 4;
+
   final YoutubeViewHolderHelper mHelper;
   YouTubePlayer mYoutubePlayer;
   // Current player widget
   private YoutubeViewHolder mPlayer;
 
-  public YoutubeListAdapter(FragmentManager fragmentManager) {
+  public YoutubeVideoAdapter(FragmentManager fragmentManager) {
     super();
     this.mFragmentManager = fragmentManager;
     this.mHelper = new YoutubeViewHolderHelper();

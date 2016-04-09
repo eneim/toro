@@ -50,7 +50,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   /**
    * Parent Adapter which holds some important controllers
    */
-  protected final YoutubeListAdapter mParent;
+  protected final YoutubeVideoAdapter mParent;
 
   /**
    * Id for {@link YouTubePlayerSupportFragment}, will be generated manually and must be set for
@@ -64,7 +64,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   private boolean isSeeking = false;
   private boolean isStarting = false;
 
-  public YoutubeViewHolder(View itemView, YoutubeListAdapter parent) {
+  public YoutubeViewHolder(View itemView, YoutubeVideoAdapter parent) {
     super(itemView);
     this.mParent = parent;
     if (this.mParent.mFragmentManager == null) {
@@ -84,11 +84,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @Override public final boolean isAbleToPlay() {
-    return true;  // Always true. Because Youtube API won't listen to this...
-  }
-
-  @Override public boolean isLoopAble() {
-    return getDuration() < 60 * 1_000;  // only loop video less than 1 minute
+    return true;  // Always true for safety. Actually Youtube API won't listen to this...
   }
 
   @CallSuper @Override public void onViewHolderBound() {
@@ -189,7 +185,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   @CallSuper @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
     mHelper.onError(this, null, 0, 0);
-    mHelper.onError(this, errorReason);
+    mHelper.onYoutubeError(this, errorReason);
   }
 
   @CallSuper @Override public final void onPlaying() {
@@ -253,7 +249,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
-
+    // TODO Handle error
   }
 
   @IntDef({

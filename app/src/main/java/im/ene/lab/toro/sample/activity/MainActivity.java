@@ -18,6 +18,7 @@ package im.ene.lab.toro.sample.activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setRequestedOrientation(getResources().getBoolean(R.bool.is_large_screen) ? //
+        ActivityInfo.SCREEN_ORIENTATION_USER : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 

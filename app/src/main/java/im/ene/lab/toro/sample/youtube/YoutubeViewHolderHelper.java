@@ -26,9 +26,9 @@ import im.ene.lab.toro.ToroPlayer;
  */
 public class YoutubeViewHolderHelper extends RecyclerViewItemHelper {
 
-  private static final String TAG = "YT-VH-Helper";
+  private static final String TAG = "YTVHH";
 
-  // From YoutubePlayer
+  // Adapt from YoutubePlayer
   public void onPlaying() {
     Log.d(TAG, "onPlaying() called with: " + "");
   }
@@ -69,7 +69,7 @@ public class YoutubeViewHolderHelper extends RecyclerViewItemHelper {
     player.onPlaybackStopped();
   }
 
-  public void onError(ToroPlayer player, YouTubePlayer.ErrorReason errorReason) {
+  public void onYoutubeError(ToroPlayer player, YouTubePlayer.ErrorReason errorReason) {
     player.onPlaybackError(null, 0, 0);
   }
 

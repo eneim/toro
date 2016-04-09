@@ -37,7 +37,7 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.youtube.YoutubeListAdapter;
+import im.ene.lab.toro.sample.youtube.YoutubeVideoAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.util.Util;
@@ -62,7 +62,7 @@ public class YoutubeListFragment extends RecyclerViewFragment {
     return new Adapter(getChildFragmentManager());
   }
 
-  private static class Adapter extends YoutubeListAdapter {
+  private static class Adapter extends YoutubeVideoAdapter {
 
     public Adapter(FragmentManager fragmentManager) {
       super(fragmentManager);
@@ -91,7 +91,8 @@ public class YoutubeListFragment extends RecyclerViewFragment {
     @Bind(R.id.thumbnail) YouTubeThumbnailView mThumbnail;
     @Bind(R.id.video_id) TextView mVideoId;
     @Bind(R.id.info) TextView mInfo;
-    @Bind(R.id.container) FrameLayout mContainer;
+    @Bind(R.id.container) FrameLayout mContainer; // Require a neat implementation. See below.
+
     private SimpleVideoObject mItem;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -99,7 +100,7 @@ public class YoutubeListFragment extends RecyclerViewFragment {
       super(itemView, adapter);
       TAG = toString();
       ButterKnife.bind(this, itemView);
-      // Require an container for Youtube Fragment
+      // Require a container for Youtube Fragment
       View view = mContainer.getChildAt(0);
       if (view != null) {
         view.setId(mFragmentId);
@@ -118,9 +119,6 @@ public class YoutubeListFragment extends RecyclerViewFragment {
 
     @Override public void onPlaybackStarted() {
       super.onPlaybackStarted();
-      if (mThumbnail != null) {
-        mThumbnail.setVisibility(View.INVISIBLE);
-      }
       mInfo.setText("Started");
     }
 
@@ -134,12 +132,13 @@ public class YoutubeListFragment extends RecyclerViewFragment {
       }
 
       mItem = (SimpleVideoObject) object;
-      mVideoId.setText(mItem.video);
+      mVideoId.setText(mItem.video + " | Loop: " + isLoopAble());
     }
 
     @Override public void onViewHolderBound() {
       super.onViewHolderBound();
       mInfo.setText("Bound");
+      // Bind thumbnail first
       mThumbnail.initialize(BuildConfig.YOUTUBE_API_KEY, this);
     }
 
@@ -150,12 +149,12 @@ public class YoutubeListFragment extends RecyclerViewFragment {
 
     @Override public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView,
         YouTubeThumbnailLoader youTubeThumbnailLoader) {
-      youTubeThumbnailLoader.setVideo(mItem.video);
+      youTubeThumbnailLoader.setVideo(getYoutubeVideoId());
     }
 
     @Override public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
         YouTubeInitializationResult youTubeInitializationResult) {
-
+      // TODO Handle error
     }
 
     private final String TAG;
@@ -168,6 +167,9 @@ public class YoutubeListFragment extends RecyclerViewFragment {
 
     @Override public void onLoaded(String s) {
       super.onLoaded(s);
+      if (mThumbnail != null) {
+        mThumbnail.setVisibility(View.INVISIBLE);
+      }
       mInfo.setText("Loaded");
     }
 

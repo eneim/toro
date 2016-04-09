@@ -18,6 +18,7 @@ package im.ene.lab.toro.sample.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
@@ -57,8 +58,9 @@ public class ShowCaseActivity extends AppCompatActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    setRequestedOrientation(getResources().getBoolean(R.bool.is_large_screen) ? //
+        ActivityInfo.SCREEN_ORIENTATION_USER : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     setContentView(R.layout.activity_show_case);
-
     String name = getIntent().getStringExtra(EXTRA_FRAGMENT_NAME);
     setTitle(getFragmentTitle(name));
 

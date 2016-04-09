@@ -35,6 +35,7 @@ public class Util {
 
   private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
+  // Copy from AOSP
   /**
    * Generate a value suitable for use in {@link #setId(int)}.
    * This value will not collide with ID values generated at build time by aapt for R.id.
