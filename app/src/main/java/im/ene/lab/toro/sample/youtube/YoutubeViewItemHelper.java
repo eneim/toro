@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.sample.youtube;
 
+import android.support.annotation.UiThread;
 import android.util.Log;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.lab.toro.RecyclerViewItemHelper;
@@ -24,7 +25,18 @@ import im.ene.lab.toro.ToroPlayer;
 /**
  * Created by eneim on 4/8/16.
  */
-public class YoutubeViewHolderHelper extends RecyclerViewItemHelper {
+public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
+
+  private static YoutubeViewItemHelper INSTANCE;
+
+  // Prefer to use singleton of this class. This method must be call on UIThread
+  @UiThread public static YoutubeViewItemHelper getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new YoutubeViewItemHelper();
+    }
+
+    return INSTANCE;
+  }
 
   private static final String TAG = "YTVHH";
 

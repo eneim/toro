@@ -58,7 +58,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
    */
   protected final int mFragmentId;
 
-  private final YoutubeViewHolderHelper mHelper;
+  private final YoutubeViewItemHelper mHelper;
   protected YouTubePlayerSupportFragment mYtFragment;
   private int seekPosition = 0;
   private boolean isSeeking = false;
@@ -71,7 +71,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
       throw new IllegalArgumentException(
           "This View requires a YoutubeListAdapter parent which holds a non-null FragmentManager");
     }
-    this.mHelper = mParent.mHelper;
+    this.mHelper = YoutubeViewItemHelper.getInstance();
     this.mFragmentId = Util.generateViewId();
   }
 

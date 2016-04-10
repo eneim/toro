@@ -41,7 +41,6 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
   private final Handler mHandler = new Handler(Looper.getMainLooper(), this);
   private final int MESSAGE_PROGRESS = 4;
 
-  final YoutubeViewHolderHelper mHelper;
   YouTubePlayer mYoutubePlayer;
   // Current player widget
   private YoutubeViewHolder mPlayer;
@@ -49,7 +48,6 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
   public YoutubeVideoAdapter(FragmentManager fragmentManager) {
     super();
     this.mFragmentManager = fragmentManager;
-    this.mHelper = new YoutubeViewHolderHelper();
   }
 
   /**
