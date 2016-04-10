@@ -59,7 +59,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   protected final int mFragmentId;
 
   private final YoutubeViewHolderHelper mHelper;
-  protected YouTubePlayerSupportFragment mYoutubeFragment;
+  protected YouTubePlayerSupportFragment mYtFragment;
   private int seekPosition = 0;
   private boolean isSeeking = false;
   private boolean isStarting = false;
@@ -93,12 +93,12 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
       throw new RuntimeException("View with Id: " + mFragmentId + " must be setup");
     }
 
-    if ((mYoutubeFragment =
+    if ((mYtFragment =
         (YouTubePlayerSupportFragment) mParent.mFragmentManager.findFragmentById(mFragmentId))
         == null) {
-      mYoutubeFragment = YouTubePlayerSupportFragment.newInstance();
+      mYtFragment = YouTubePlayerSupportFragment.newInstance();
       // Add youtube player fragment to this ViewHolder
-      mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mYoutubeFragment).commit();
+      mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mYtFragment).commit();
     }
   }
 
@@ -109,8 +109,8 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
       mParent.mYoutubePlayer.release();
     }
     // Re-setup the Player. This is annoying though.
-    if (mYoutubeFragment != null) {
-      mYoutubeFragment.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+    if (mYtFragment != null) {
+      mYtFragment.initialize(BuildConfig.YOUTUBE_API_KEY, this);
     }
   }
 
