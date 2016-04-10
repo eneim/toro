@@ -57,6 +57,14 @@
     Very simple implementation for a Video List. a RecyclerView with Vertical LinearLayoutManager, simple Video list.
   </string>
 
+  <string name="fragment_youtube_video_list">
+    Youtube Videos (Alpha)
+  </string>
+
+  <string name="fragment_youtube_video_list_detail">
+    A test with Youtube Videos, using Youtube Player API. Still unstable and need more improvement.
+  </string>
+
   <string name="fragment_view_pager">
     ViewPager
   </string>

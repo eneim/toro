@@ -93,6 +93,16 @@
         />
 
     <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_youtube_video_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#e5e5e5"
+        app:btn_subtitle="@string/fragment_youtube_video_list_detail"
+        app:btn_title="@string/fragment_youtube_video_list"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
