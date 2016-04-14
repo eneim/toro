@@ -9,7 +9,7 @@
 
 
 
-> ***Video list auto playback made easy, specially built for RecyclerView***
+> ***Video list auto playback made simple, specially built for RecyclerView***
 
 ## 1. Main features:
 
