@@ -98,6 +98,7 @@ dependencies {
   compile "com.android.support:design:${support_version}"
 
   compile project(':toro')
+  // compile 'com.github.eneim:Toro:1.2.0'
 
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
