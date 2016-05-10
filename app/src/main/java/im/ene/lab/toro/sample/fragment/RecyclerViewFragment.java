@@ -47,7 +47,7 @@ public abstract class RecyclerViewFragment extends Fragment {
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    final ToroStrategy backup = Toro.getStrategy();
+    final ToroStrategy oldStrategy = Toro.getStrategy();
 
     Toro.setStrategy(new ToroStrategy() {
       boolean isFirstPlayerDone = false;
@@ -57,15 +57,15 @@ public abstract class RecyclerViewFragment extends Fragment {
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return backup.findBestPlayer(candidates);
+        return oldStrategy.findBestPlayer(candidates);
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         boolean allowToPlay =
-            (isFirstPlayerDone || player.getPlayOrder() == 0) && backup.allowsToPlay(player,
+            (isFirstPlayerDone || player.getPlayOrder() == 0) && oldStrategy.allowsToPlay(player,
                 parent);
 
-        if (player.getPlayOrder() == 0) {
+        if (player.getPlayOrder() == 0) { // A work-around to keep track of first video on top.
           isFirstPlayerDone = true;
         }
         return allowToPlay;
