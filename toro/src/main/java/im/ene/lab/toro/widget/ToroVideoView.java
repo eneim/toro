@@ -615,7 +615,7 @@ import java.util.Map;
     release(false);
 
     AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-    if (mRequestAudioFocus){
+    if (mRequestAudioFocus) {
       am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
@@ -706,7 +706,7 @@ import java.util.Map;
     attachMediaController();
   }
 
-  public void shouldRequestAudioFocus(boolean should){
+  public void shouldRequestAudioFocus(boolean should) {
     this.mRequestAudioFocus = should;
   }
 
