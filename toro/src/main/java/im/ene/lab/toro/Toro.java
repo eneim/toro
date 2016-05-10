@@ -26,7 +26,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import java.util.Collections;
@@ -41,7 +40,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * Control Application's lifecycle to properly handling callbacks, prevent Memory leak and
  * unexpected behavior;
  *
- * @<code> </code>
+ * <code>
+ *
+ * </code>
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) public final class Toro
     implements Application.ActivityLifecycleCallbacks {
@@ -75,6 +76,7 @@ import java.util.concurrent.ConcurrentHashMap;
    */
   static VideoViewItemHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
 
+  // Used to swap strategies if need. It should be a strong reference.
   private static ToroStrategy cachedStrategy;
 
   // It requires client to detach Activity/unregister View to prevent Memory leak
@@ -82,7 +84,7 @@ import java.util.concurrent.ConcurrentHashMap;
   final Map<Integer, RecyclerView> mViews = new ConcurrentHashMap<>();
   final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
 
-  // !IMPORTANT I limit this Map capacity to 3
+  // !IMPORTANT: I limit this Map capacity to 3
   private LinkedStateList mStates;
 
   // Default strategy
@@ -255,7 +257,7 @@ import java.util.concurrent.ConcurrentHashMap;
   static void checkNotNull() {
     if (sInstance == null) {
       throw new IllegalStateException(
-          "Toro has not been attached to your Activity or you Application. Please refer the doc");
+          "Toro has not been attached to your Activity or your Application. Please refer the wiki");
     }
   }
 
@@ -264,22 +266,22 @@ import java.util.concurrent.ConcurrentHashMap;
       cachedStrategy = getStrategy();
       setStrategy(REST);
     } else {
-      // Don't allow to unrest if  Toro has not been in rested state. Be careful.
+      // Don't allow to unrest if Toro has not been in rested state. Be careful.
       if (getStrategy() != REST) {
         throw new IllegalStateException("Toro has already waken up.");
       }
 
       if (cachedStrategy != null) { // Actually, cachedStrategy would not be null here.
         setStrategy(cachedStrategy);
+        cachedStrategy = null;  // release
       }
     }
   }
 
   private static void notifyStrategyChanged(ToroStrategy newStrategy) {
     for (RecyclerView view : sInstance.mViews.values()) {
-      int hash = view.hashCode();
-      ToroScrollListener listener = sInstance.mListeners.get(hash);
-      if (listener != null) {
+      ToroScrollListener listener = sInstance.mListeners.get(view.hashCode());
+      if (listener != null) { // Trigger an 'idle scroll'
         listener.onScrollStateChanged(view, RecyclerView.SCROLL_STATE_IDLE);
       }
     }
@@ -462,6 +464,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
+  // Built-in Strategies
   public static final class Strategies {
 
     /**
@@ -600,15 +603,13 @@ import java.util.concurrent.ConcurrentHashMap;
     // 3. Get player global rect
     View videoView = player.getVideoView();
     Rect videoRect = new Rect();
-
+    // Headache !!!
     int[] screenLoc = new int[2];
     videoView.getLocationOnScreen(screenLoc);
     videoRect.left += screenLoc[0];
     videoRect.right += screenLoc[0] + videoView.getWidth();
     videoRect.top += screenLoc[1];
     videoRect.bottom += screenLoc[1] + videoView.getHeight();
-
-    Log.i(TAG, "doAllowsToPlay: " + videoRect);
 
     // Condition: window contains parent, and parent contains Video or parent intersects Video
     return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
