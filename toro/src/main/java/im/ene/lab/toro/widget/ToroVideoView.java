@@ -156,6 +156,7 @@ import java.util.Map;
   private boolean mCanPause;
   private boolean mCanSeekBack;
   private boolean mCanSeekForward;
+  private boolean mRequestAudioFocus = true;
   MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
     public void onPrepared(MediaPlayer mp) {
       mCurrentState = STATE_PREPARED;
@@ -614,7 +615,9 @@ import java.util.Map;
     release(false);
 
     AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-    am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    if (mRequestAudioFocus) {
+      am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    }
 
     try {
       mMediaPlayer = new MediaPlayer();
@@ -701,6 +704,10 @@ import java.util.Map;
     }
     mMediaController = controller;
     attachMediaController();
+  }
+
+  public void shouldRequestAudioFocus(boolean should) {
+    this.mRequestAudioFocus = should;
   }
 
   /**
