@@ -39,4 +39,8 @@ public class MultiVideosComplicatedListAdapter extends BaseSampleAdapter {
   @Nullable @Override protected Object getItem(int position) {
     return position % 6 != 0 ? mVideos.get(0) : new SimpleObject();
   }
+
+  @Override public int firstVideoPosition() {
+    return 1;
+  }
 }

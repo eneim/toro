@@ -17,15 +17,8 @@
 package im.ene.lab.toro.sample.facebook;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
-import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.lab.toro.VideoPlayerManagerImpl;
-import im.ene.lab.toro.sample.adapter.SimpleVideoListAdapter;
 import im.ene.lab.toro.sample.fragment.RecyclerViewFragment;
 
 /**
@@ -49,60 +42,5 @@ public class FbFeedFragment extends RecyclerViewFragment {
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
     return new FbFeedAdapter();
-  }
-
-  private class Adapter extends SimpleVideoListAdapter implements VideoPlayerManager {
-
-    private final VideoPlayerManager mDelegate;
-
-    public Adapter() {
-      mDelegate = new VideoPlayerManagerImpl();
-    }
-
-    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      final ViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-      // overwriting the setting
-      viewHolder.setOnItemClickListener(new View.OnClickListener() {
-        @Override public void onClick(View v) {
-          FbPLayerDialogFragment player = FbPLayerDialogFragment.newInstance();
-          player.show(getChildFragmentManager(), FbPLayerDialogFragment.TAG);
-        }
-      });
-
-      return viewHolder;
-    }
-
-    @Override public ToroPlayer getPlayer() {
-      return mDelegate.getPlayer();
-    }
-
-    @Override public void setPlayer(ToroPlayer player) {
-      mDelegate.setPlayer(player);
-    }
-
-    @Override public void onRegistered() {
-      mDelegate.onRegistered();
-    }
-
-    @Override public void onUnregistered() {
-      mDelegate.onUnregistered();
-    }
-
-    @Override public void startPlayback() {
-      mDelegate.startPlayback();
-    }
-
-    @Override public void pausePlayback() {
-      mDelegate.pausePlayback();
-    }
-
-    @Override
-    public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
-      mDelegate.saveVideoState(videoId, position, duration);
-    }
-
-    @Override public void restoreVideoState(String videoId) {
-      mDelegate.restoreVideoState(videoId);
-    }
   }
 }

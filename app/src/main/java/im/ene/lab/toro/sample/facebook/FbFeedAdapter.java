@@ -19,21 +19,43 @@ package im.ene.lab.toro.sample.facebook;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.lab.toro.VideoPlayerManagerImpl;
+import im.ene.lab.toro.sample.adapter.OrderedVideoList;
+import im.ene.lab.toro.sample.data.SimpleObject;
+import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.lab.toro.sample.data.VideoSource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by eneim on 5/13/16.
  */
-public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
+    implements VideoPlayerManager, OrderedVideoList {
+
+  private final VideoPlayerManager delegate;
+
+  protected List<SimpleVideoObject> mVideos = new ArrayList<>();
+
+  public FbFeedAdapter() {
+    this.delegate = new VideoPlayerManagerImpl();
+    for (String item : VideoSource.SOURCES) {
+      this.mVideos.add(new SimpleVideoObject(item));
+    }
+  }
 
   @Nullable @Override protected Object getItem(int position) {
-    return (int) (Math.random() * 512);
+    return position % 3 == 1 ? mVideos.get((position - 1) % mVideos.size()) : new SimpleObject();
   }
 
   @Override public int getItemViewType(int position) {
-    return (int) getItem(position) % 4 == 1 ? (Math.random() > 0.35
-        ? FbItemViewHolder.POST_TYPE_PHOTO : FbItemViewHolder.POST_TYPE_VIDEO)
-        : FbItemViewHolder.POST_TYPE_TEXT;
+    return getItem(position) instanceof SimpleVideoObject ? FbItemViewHolder.POST_TYPE_VIDEO
+        : (position % 5 == 2 ? FbItemViewHolder.POST_TYPE_TEXT
+            : FbItemViewHolder.POST_TYPE_PHOTO);
   }
 
   @Override
@@ -42,7 +64,8 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
     if (viewHolder instanceof FbItemViewHolder.VideoPost) {
       viewHolder.setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          // TODO
+          // TODO Fixme
+          Toast.makeText(v.getContext(), "Clicked", Toast.LENGTH_SHORT).show();
         }
       });
     }
@@ -52,5 +75,41 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   @Override public int getItemCount() {
     return 512; // magic number
+  }
+
+  @Override public ToroPlayer getPlayer() {
+    return delegate.getPlayer();
+  }
+
+  @Override public void setPlayer(ToroPlayer player) {
+    delegate.setPlayer(player);
+  }
+
+  @Override public void onRegistered() {
+    delegate.onRegistered();
+  }
+
+  @Override public void onUnregistered() {
+    delegate.onUnregistered();
+  }
+
+  @Override public void startPlayback() {
+    delegate.startPlayback();
+  }
+
+  @Override public void pausePlayback() {
+    delegate.pausePlayback();
+  }
+
+  @Override public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
+    delegate.saveVideoState(videoId, position, duration);
+  }
+
+  @Override public void restoreVideoState(String videoId) {
+    delegate.restoreVideoState(videoId);
+  }
+
+  @Override public int firstVideoPosition() {
+    return 1;
   }
 }

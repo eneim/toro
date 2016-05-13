@@ -37,7 +37,8 @@ import java.util.List;
 /**
  * Created by eneim on 2/6/16.
  */
-public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
+    implements OrderedVideoList {
 
   public static final int VIEW_TYPE_NO_VIDEO = 1;
 
@@ -110,5 +111,9 @@ public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHold
 
   @Override public int getItemCount() {
     return 512; // Magic number :trollface:
+  }
+
+  @Override public int firstVideoPosition() {
+    return 0;
   }
 }

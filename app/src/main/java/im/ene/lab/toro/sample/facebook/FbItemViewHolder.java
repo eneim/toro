@@ -107,9 +107,5 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     public VideoPost(View itemView) {
       super(itemView);
     }
-
-    @Override public void bind(@Nullable Object object) {
-
-    }
   }
 }

@@ -16,26 +16,10 @@
 
 package im.ene.lab.toro.sample.adapter;
 
-import android.support.annotation.Nullable;
-import im.ene.lab.toro.sample.data.SimpleObject;
-
 /**
- * Created by eneim on 2/3/16.
+ * Created by eneim on 5/14/16.
  */
-public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
+public interface OrderedVideoList {
 
-  public SingleVideoSimpleListAdapter() {
-    super();
-  }
-
-  @Nullable @Override protected Object getItem(int position) {
-    if (position == 1) {
-      return mVideos.get(0);
-    }
-    return new SimpleObject();
-  }
-
-  @Override public int firstVideoPosition() {
-    return 1;
-  }
+  int firstVideoPosition();
 }
