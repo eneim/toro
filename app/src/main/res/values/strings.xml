@@ -81,6 +81,14 @@
     Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video. Auto-playback is toggle-able by Toggle button.
   </string>
 
+  <string name="facebook_feed">
+    Simple Facebook alike timeline
+  </string>
+
+  <string name="facebook_feed_detail">
+    Simple timeline feed which mimics Facebook\'s behaviour.
+  </string>
+
   <string name="title_activity_main">MainActivity</string>
 
   <string name="navigation_drawer_open">Open navigation drawer</string>

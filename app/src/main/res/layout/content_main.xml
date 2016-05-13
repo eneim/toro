@@ -48,6 +48,15 @@
         />
 
     <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/btn_facebook_feed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/facebook_feed_detail"
+        app:btn_title="@string/facebook_feed"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.lab.toro.sample.widget.SampleItemButton
         android:id="@+id/btn_multi_video_staggered_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

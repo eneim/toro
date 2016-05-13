@@ -26,6 +26,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.facebook.FbFeedFragment;
 import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
@@ -44,7 +45,7 @@ public class ShowCaseActivity extends AppCompatActivity {
       SimpleVideoListFragment.TAG, SingleVideoSimpleListFragment.TAG,
       MultiVideoStaggeredGridFragment.TAG, MultiVideoComplicatedGridFragment.TAG,
       DualVideoListFragment.TAG, DeadlySimpleListFragment.TAG, ViewPagerFragment.TAG,
-      SimpleToggleableListFragment.TAG, YoutubeListFragment.TAG
+      SimpleToggleableListFragment.TAG, YoutubeListFragment.TAG, FbFeedFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -96,7 +97,9 @@ public class ShowCaseActivity extends AppCompatActivity {
       return SimpleToggleableListFragment.newInstance();
     } else if (YoutubeListFragment.TAG.equals(name)) {
       return YoutubeListFragment.newInstance();
-    } else {
+    } else if (FbFeedFragment.TAG.equals(name)) {
+      return FbFeedFragment.newInstance();
+    } else  {
       return null;
     }
   }
@@ -120,6 +123,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return R.string.fragment_toggleable_list;
     } else if (YoutubeListFragment.TAG.equals(name)) {
       return R.string.fragment_youtube_video_list;
+    } else if (FbFeedFragment.TAG.equals(name)) {
+      return R.string.facebook_feed;
     } else {
       return R.string.app_name;
     }

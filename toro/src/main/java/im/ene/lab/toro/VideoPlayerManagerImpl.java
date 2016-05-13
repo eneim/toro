@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * Internal API
  */
-final class VideoPlayerManagerImpl implements VideoPlayerManager {
+public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
@@ -53,7 +53,7 @@ final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   };
 
-  VideoPlayerManagerImpl() {
+  public VideoPlayerManagerImpl() {
     Toro.checkNotNull();
   }
 

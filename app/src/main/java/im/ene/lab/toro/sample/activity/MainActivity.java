@@ -42,6 +42,7 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.ToroSampleApp;
+import im.ene.lab.toro.sample.facebook.FbFeedFragment;
 import im.ene.lab.toro.sample.fragment.DeadlySimpleListFragment;
 import im.ene.lab.toro.sample.fragment.DualVideoListFragment;
 import im.ene.lab.toro.sample.fragment.MultiVideoComplicatedGridFragment;
@@ -141,6 +142,10 @@ public class MainActivity extends AppCompatActivity
 
   @OnClick(R.id.btn_view_pager) void viewPager() {
     startActivity(ShowCaseActivity.createIntent(this, ViewPagerFragment.TAG));
+  }
+
+  @OnClick(R.id.btn_facebook_feed) void facebookFeed() {
+    startActivity(ShowCaseActivity.createIntent(this, FbFeedFragment.TAG));
   }
 
   private static final List<ToroStrategy> mStrategies;
