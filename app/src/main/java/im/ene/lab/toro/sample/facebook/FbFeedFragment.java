@@ -32,8 +32,7 @@ import im.ene.lab.toro.sample.fragment.RecyclerViewFragment;
  * Created by eneim on 5/12/16.
  *
  * This is the normal Facebook feed list, which is different to 'Video playlist' which contains
- * only
- * Video.
+ * only Video.
  */
 public class FbFeedFragment extends RecyclerViewFragment {
 

@@ -111,7 +111,7 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   }
 
   @Nullable @Override public Integer getSavedPosition(String videoId) {
-    if (videoId.equals(getPlayer().getVideoId())) {
+    if (getPlayer() != null && videoId.equals(getPlayer().getVideoId())) {
       return getPlayer().getCurrentPosition();
     }
     return mVideoStates.get(videoId);
