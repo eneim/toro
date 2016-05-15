@@ -61,5 +61,7 @@ public interface VideoPlayerManager {
    */
   void restoreVideoState(String videoId);
 
+  @Nullable
+  Integer getSavedPosition(String videoId);
   /* END Directly control current player */
 }

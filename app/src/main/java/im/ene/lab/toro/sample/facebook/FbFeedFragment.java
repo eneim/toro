@@ -16,9 +16,16 @@
 
 package im.ene.lab.toro.sample.facebook;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import im.ene.lab.toro.Toro;
+import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.fragment.RecyclerViewFragment;
 
 /**
@@ -42,5 +49,48 @@ public class FbFeedFragment extends RecyclerViewFragment {
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
     return new FbFeedAdapter();
+  }
+
+  @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    if (mAdapter instanceof FbFeedAdapter) {
+      ((FbFeedAdapter) mAdapter).setOnItemClickListener(listener);
+    }
+  }
+
+  public static final int RESUME_REQUEST_CODE = 1024;
+
+  private OnItemClickListener listener = new OnItemClickListener() {
+    @Override
+    public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder,
+        View view, int adapterPosition, long itemId) {
+      SimpleVideoObject initItem = null;
+      int initPosition = 0;
+      int initDuration = 0;
+      if (adapter instanceof FbFeedAdapter) {
+        initItem = (SimpleVideoObject) ((FbFeedAdapter) adapter).getItem(adapterPosition);
+        initPosition = ((FbFeedAdapter) adapter).getPlayer().getCurrentPosition();
+        initDuration = ((FbFeedAdapter) adapter).getPlayer().getDuration();
+      }
+
+      if (initItem != null) {
+        FbPLayerDialogFragment player =
+            FbPLayerDialogFragment.newInstance(initItem, initPosition, initDuration);
+        player.setTargetFragment(FbFeedFragment.this, RESUME_REQUEST_CODE);
+        player.show(getChildFragmentManager(), FbPLayerDialogFragment.TAG);
+      }
+    }
+  };
+
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == RESUME_REQUEST_CODE) {
+      Toro.rest(true);
+      VideoPlayerManager manager = ((VideoPlayerManager) mAdapter);
+      int latestPosition = data.getIntExtra(FbPLayerDialogFragment.ARGS_LATEST_TIMESTAMP, 0);
+      manager.saveVideoState(manager.getPlayer().getVideoId(), latestPosition,
+          manager.getPlayer().getDuration());
+      Toro.rest(false);
+    }
   }
 }

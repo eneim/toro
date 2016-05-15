@@ -28,13 +28,15 @@ import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.lab.toro.sample.facebook.TrackablePlayer;
 import im.ene.lab.toro.sample.util.Util;
 import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
+public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
+    implements TrackablePlayer, ToroVideoView.OnReleasedListener{
 
   private final String TAG = getClass().getSimpleName();
 
@@ -47,6 +49,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
+    mVideoView.setOnReleasedListener(this);
   }
 
   @Override protected ToroVideoView findVideoView(View itemView) {
@@ -74,7 +77,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
   }
 
   @Nullable @Override public String getVideoId() {
-    return "TEST: " + getAdapterPosition();
+    return mItem.toString() + "-" + getAdapterPosition();
   }
 
   @Override public void onVideoPrepared(MediaPlayer mp) {
@@ -99,6 +102,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
       }
     }).start();
     mInfo.setText("Started");
+    isReleased = false;
   }
 
   @Override public void onPlaybackProgress(int position, int duration) {
@@ -144,5 +148,23 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
   @Override public String toString() {
     return "Video: " + getVideoId();
+  }
+
+  private int latestPosition;
+  private int duration;
+  private boolean isReleased = false;
+
+  @Override public int getLatestPosition() {
+    return !isReleased ? getCurrentPosition() : latestPosition;
+  }
+
+  @Override public int getPlaybackDuration() {
+    return !isReleased ? getDuration() : duration;
+  }
+
+  @Override public void onReleased(@Nullable Uri video, int position, int duration) {
+    this.isReleased = true;
+    this.latestPosition = position;
+    this.duration = duration;
   }
 }

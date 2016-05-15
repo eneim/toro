@@ -107,5 +107,9 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     public VideoPost(View itemView) {
       super(itemView);
     }
+
+    @Override protected boolean allowLongPressSupport() {
+      return true;
+    }
   }
 }

@@ -16,14 +16,16 @@
 
 package im.ene.lab.toro.sample.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoObject {
+public class SimpleVideoObject implements Parcelable {
 
-  public final String name = "GitHub Wikis is a simple way to let others contribute content. "
+  public String name = "GitHub Wikis is a simple way to let others contribute content. "
       + "Any GitHub user can create and edit pages to use for documentation, examples, "
       + "support, or anything you wish.";
 
@@ -32,6 +34,21 @@ public class SimpleVideoObject {
   public SimpleVideoObject(@NonNull String video) {
     this.video = video;
   }
+
+  protected SimpleVideoObject(Parcel in) {
+    name = in.readString();
+    video = in.readString();
+  }
+
+  public static final Creator<SimpleVideoObject> CREATOR = new Creator<SimpleVideoObject>() {
+    @Override public SimpleVideoObject createFromParcel(Parcel in) {
+      return new SimpleVideoObject(in);
+    }
+
+    @Override public SimpleVideoObject[] newArray(int size) {
+      return new SimpleVideoObject[size];
+    }
+  };
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;
@@ -50,9 +67,15 @@ public class SimpleVideoObject {
   }
 
   @Override public String toString() {
-    return "SimpleVideoObject{" +
-        "name='" + name + '\'' +
-        ", video='" + video + '\'' +
-        '}';
+    return "VID{" + ", video='" + video + "}";
+  }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(name);
+    dest.writeString(video);
   }
 }

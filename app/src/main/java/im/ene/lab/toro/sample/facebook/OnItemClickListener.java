@@ -16,12 +16,14 @@
 
 package im.ene.lab.toro.sample.facebook;
 
-import im.ene.lab.toro.sample.data.VideoSource;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
- * Created by eneim on 5/13/16.
+ * Created by eneim on 5/14/16.
  */
-public class FbFeed {
+public interface OnItemClickListener {
 
-  private static final String video = VideoSource.SOURCES[0];
+  void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,
+      int adapterPosition, long itemId);
 }

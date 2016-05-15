@@ -17,9 +17,9 @@
 package im.ene.lab.toro.sample.facebook;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
@@ -38,6 +38,11 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
     implements VideoPlayerManager, OrderedVideoList {
 
   private final VideoPlayerManager delegate;
+  private OnItemClickListener clickListener;
+
+  public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+    this.clickListener = onItemClickListener;
+  }
 
   protected List<SimpleVideoObject> mVideos = new ArrayList<>();
 
@@ -64,8 +69,12 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
     if (viewHolder instanceof FbItemViewHolder.VideoPost) {
       viewHolder.setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          // TODO Fixme
-          Toast.makeText(v.getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+          int pos = viewHolder.getAdapterPosition();
+          if (pos == RecyclerView.NO_POSITION || clickListener == null) {
+            return;
+          }
+
+          clickListener.onItemClick(FbFeedAdapter.this, viewHolder, v, pos, getItemId(pos));
         }
       });
     }
@@ -107,6 +116,10 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
   @Override public void restoreVideoState(String videoId) {
     delegate.restoreVideoState(videoId);
+  }
+
+  @Nullable @Override public Integer getSavedPosition(String videoId) {
+    return delegate.getSavedPosition(videoId);
   }
 
   @Override public int firstVideoPosition() {

@@ -149,4 +149,8 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
         return false;
     }
   }
+
+  @Nullable @Override public Integer getSavedPosition(String videoId) {
+    return mVideoStates.get(videoId);
+  }
 }
