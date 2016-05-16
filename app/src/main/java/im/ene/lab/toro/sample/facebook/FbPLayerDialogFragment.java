@@ -154,7 +154,6 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
 
   @Override public void onDismiss(DialogInterface dialog) {
     Integer latestPosition = adapter.getSavedPosition(initItem.toString() + "-0"); // first item
-    Toro.unregister(recyclerView);
     if (getTargetFragment() != null && latestPosition != null) {
       Intent result = new Intent();
       result.putExtra(ARGS_LATEST_TIMESTAMP, latestPosition);
