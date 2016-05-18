@@ -1,5 +1,9 @@
 # Release note
 
+### 1.3.0 (DRAFT)
+
+Maybe some breaking changes
+
 ### 1.2.0 (2016.04.06)
 
 Breaking changes. Clients should take care of this release.
