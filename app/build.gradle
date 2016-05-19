@@ -60,6 +60,7 @@ android {
     buildConfigField "String", "YOUTUBE_API_KEY", "\"${TORO_SAMPLE_YOUTUBE_API_KEY}\""
     manifestPlaceholders = [fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}"]
 
+    signingConfigs.debug
     vectorDrawables.useSupportLibrary = true
   }
 
