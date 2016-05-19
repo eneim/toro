@@ -33,12 +33,12 @@ android {
   buildToolsVersion "23.0.3"
 
   signingConfigs {
-    release {
-      keyAlias toro_prodKeyAlias != null ? toro_prodKeyAlias : ""
-      keyPassword toro_prodKeyPassword != null ? toro_prodKeyPassword : ""
-      storeFile toro_prodStoreFile != null ? file(toro_prodStoreFile) : file("./")
-      storePassword toro_prodStorePassword != null ? toro_prodStorePassword : ""
-    }
+//    release {
+//      keyAlias toro_prodKeyAlias
+//      keyPassword toro_prodKeyPassword
+//      storeFile toro_prodStoreFile
+//      storePassword toro_prodStorePassword
+//    }
 
     debug {
       keyAlias "debug"
@@ -60,13 +60,12 @@ android {
     buildConfigField "String", "YOUTUBE_API_KEY", "\"${TORO_SAMPLE_YOUTUBE_API_KEY}\""
     manifestPlaceholders = [fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}"]
 
-    signingConfigs.debug
     vectorDrawables.useSupportLibrary = true
   }
 
   buildTypes {
     release {
-      signingConfig signingConfigs.release
+      signingConfig signingConfigs.debug
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
