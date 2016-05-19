@@ -33,12 +33,12 @@ android {
   buildToolsVersion "23.0.3"
 
   signingConfigs {
-//    release {
-//      keyAlias toro_prodKeyAlias
-//      keyPassword toro_prodKeyPassword
-//      storeFile toro_prodStoreFile
-//      storePassword toro_prodStorePassword
-//    }
+    release {
+      keyAlias toro_prodKeyAlias
+      keyPassword toro_prodKeyPassword
+      storeFile file(toro_prodStoreFile)
+      storePassword toro_prodStorePassword
+    }
 
     debug {
       keyAlias "debug"
@@ -65,7 +65,7 @@ android {
 
   buildTypes {
     release {
-      signingConfig signingConfigs.debug
+      signingConfig signingConfigs.release
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
