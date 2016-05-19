@@ -36,7 +36,7 @@ import im.ene.lab.toro.widget.ToroVideoView;
  * Created by eneim on 1/30/16.
  */
 public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
-    implements TrackablePlayer, ToroVideoView.OnReleasedListener{
+    implements TrackablePlayer, ToroVideoView.OnReleasedListener {
 
   private final String TAG = getClass().getSimpleName();
 
