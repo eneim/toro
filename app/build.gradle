@@ -34,10 +34,10 @@ android {
 
   signingConfigs {
     release {
-      keyAlias toro_prodKeyAlias
-      keyPassword toro_prodKeyPassword
-      storeFile file(toro_prodStoreFile)
-      storePassword toro_prodStorePassword
+      keyAlias toro_prodKeyAlias != null ? toro_prodKeyAlias : ""
+      keyPassword toro_prodKeyPassword != null ? toro_prodKeyPassword : ""
+      storeFile toro_prodStoreFile != null ? file(toro_prodStoreFile) : file("./")
+      storePassword toro_prodStorePassword != null ? toro_prodStorePassword : ""
     }
 
     debug {
@@ -55,7 +55,7 @@ android {
 
     versionCode dateTimeInt()
     versionName dateTimeString()
-    archivesBaseName = "toro_sample-${versionName}"
+    archivesBaseName = "toro_sample"
 
     buildConfigField "String", "YOUTUBE_API_KEY", "\"${TORO_SAMPLE_YOUTUBE_API_KEY}\""
     manifestPlaceholders = [fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}"]

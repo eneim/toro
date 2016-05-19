@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
+package im.ene.lab.toro.sample.widget;
 
-import android.support.annotation.Nullable;
-import im.ene.lab.toro.sample.data.SimpleObject;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import im.ene.lab.toro.sample.R;
 
 /**
- * Created by eneim on 2/3/16.
+ * Created by eneim on 5/13/16.
  */
-public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
+public abstract class LargeDialogFragment extends DialogFragment {
 
-  public SingleVideoSimpleListAdapter() {
-    super();
-  }
-
-  @Nullable @Override protected Object getItem(int position) {
-    if (position == 1) {
-      return mVideos.get(0);
-    }
-    return new SimpleObject();
-  }
-
-  @Override public int firstVideoPosition() {
-    return 1;
+  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
+    return new Dialog(getContext(), R.style.Toro_Dialog_Fullscreen);
   }
 }

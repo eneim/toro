@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * Internal API
  */
-final class VideoPlayerManagerImpl implements VideoPlayerManager {
+public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
@@ -53,7 +53,7 @@ final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   };
 
-  VideoPlayerManagerImpl() {
+  public VideoPlayerManagerImpl() {
     Toro.checkNotNull();
   }
 
@@ -108,6 +108,13 @@ final class VideoPlayerManagerImpl implements VideoPlayerManager {
     } catch (IllegalStateException er) {
       er.printStackTrace();
     }
+  }
+
+  @Nullable @Override public Integer getSavedPosition(String videoId) {
+    if (getPlayer() != null && videoId.equals(getPlayer().getVideoId())) {
+      return getPlayer().getCurrentPosition();
+    }
+    return mVideoStates.get(videoId);
   }
 
   @Override public void onRegistered() {

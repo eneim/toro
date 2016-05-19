@@ -29,4 +29,14 @@
 
   <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+  <style name="Toro.Dialog.Fullscreen" parent="Theme.AppCompat.Light.DialogWhenLarge">
+    <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
+  </style>
+
+  <style name="Facebook.Button.Feed" parent="android:Widget">
+    <item name="android:gravity">center</item>
+    <item name="android:clickable">true</item>
+    <item name="android:background">?attr/selectableItemBackground</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+  </style>
 </resources>

@@ -27,6 +27,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -152,6 +153,7 @@ import java.util.Map;
   private int mCurrentBufferPercentage;
   private OnErrorListener mOnErrorListener;
   private OnInfoListener mOnInfoListener;
+  private OnReleasedListener mOnReleasedListener;
   private int mSeekWhenPrepared;  // recording the seek position while preparing
   private boolean mCanPause;
   private boolean mCanSeekBack;
@@ -291,6 +293,7 @@ import java.util.Map;
     }
 
     @Override public boolean onSurfaceTextureDestroyed(final SurfaceTexture surface) {
+      Log.d(TAG, "onSurfaceTextureDestroyed() called with: " + "surface = [" + surface + "]");
       // after we return from this we can't use the surface any more
       if (mSurface != null) {
         mSurface.release();
@@ -665,6 +668,9 @@ import java.util.Map;
    */
   private void release(boolean cleartargetstate) {
     if (mMediaPlayer != null) {
+      if (mOnReleasedListener != null) {
+        mOnReleasedListener.onReleased(mUri, getCurrentPosition(), getDuration());
+      }
       mMediaPlayer.reset();
       mMediaPlayer.release();
       mMediaPlayer = null;
@@ -761,6 +767,10 @@ import java.util.Map;
     mOnInfoListener = l;
   }
 
+  public void setOnReleasedListener(OnReleasedListener listener) {
+    this.mOnReleasedListener = listener;
+  }
+
   public void suspend() {
     release(false);
   }
@@ -772,5 +782,16 @@ import java.util.Map;
   public interface OnPlaybackError {
 
     void onError(int resourceId);
+  }
+
+  public interface OnReleasedListener {
+
+    /**
+     * Called right before {@link #release(boolean)} get called with true parameter
+     * @param video current Video Uri
+     * @param position latest playback position right before releasing
+     * @param duration latest playback video's duration right before releasing
+     */
+    void onReleased(@Nullable Uri video, int position, int duration);
   }
 }

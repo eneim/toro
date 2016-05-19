@@ -14,28 +14,14 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
-
-import android.support.annotation.Nullable;
-import im.ene.lab.toro.sample.data.SimpleObject;
+package im.ene.lab.toro.sample.facebook;
 
 /**
- * Created by eneim on 2/3/16.
+ * Created by eneim on 5/15/16.
  */
-public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
+public interface TrackablePlayer {
 
-  public SingleVideoSimpleListAdapter() {
-    super();
-  }
+  int getLatestPosition();
 
-  @Nullable @Override protected Object getItem(int position) {
-    if (position == 1) {
-      return mVideos.get(0);
-    }
-    return new SimpleObject();
-  }
-
-  @Override public int firstVideoPosition() {
-    return 1;
-  }
+  int getPlaybackDuration();
 }

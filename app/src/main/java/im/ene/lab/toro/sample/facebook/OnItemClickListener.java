@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
+package im.ene.lab.toro.sample.facebook;
 
-import android.support.annotation.Nullable;
-import im.ene.lab.toro.sample.data.SimpleObject;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
- * Created by eneim on 2/3/16.
+ * Created by eneim on 5/14/16.
  */
-public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
+public interface OnItemClickListener {
 
-  public SingleVideoSimpleListAdapter() {
-    super();
-  }
-
-  @Nullable @Override protected Object getItem(int position) {
-    if (position == 1) {
-      return mVideos.get(0);
-    }
-    return new SimpleObject();
-  }
-
-  @Override public int firstVideoPosition() {
-    return 1;
-  }
+  void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,
+      int adapterPosition, long itemId);
 }
