@@ -1,5 +1,6 @@
 # Toro
 
+<a href="http://www.methodscount.com/?lib=com.github.eneim%3AToro%3A1.2.0"><img src="https://img.shields.io/badge/Methods and size-core: 610 | deps: 17357 | 76 KB-e91e63.svg"></img></a>
 [![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 
