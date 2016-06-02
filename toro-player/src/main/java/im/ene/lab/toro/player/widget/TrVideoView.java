@@ -24,6 +24,7 @@ import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -69,6 +70,19 @@ import java.util.Map;
  */
 public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlayer {
 
+  public interface OnReleasedListener {
+
+    /**
+     * Called right before {@link #release(boolean)} )} get called with true
+     * parameter
+     *
+     * @param video current Video Uri
+     * @param position latest playback position right before releasing
+     * @param duration latest playback video's duration right before releasing
+     */
+    void onReleased(@Nullable Uri video, long position, long duration);
+  }
+
   private String TAG = "TextureVideoView";
   // settable by the client
   private Uri mUri;
@@ -97,12 +111,15 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   private int mAudioSession;
   private int mVideoWidth;
   private int mVideoHeight;
+
   private TrMediaPlayer.MediaController mMediaController;
   private OnCompletionListener mOnCompletionListener;
   private OnPreparedListener mOnPreparedListener;
-  private int mCurrentBufferPercentage;
   private OnErrorListener mOnErrorListener;
   private OnInfoListener mOnInfoListener;
+  private OnReleasedListener mOnReleaseListener;
+
+  private int mCurrentBufferPercentage;
   private long mSeekWhenPrepared;  // recording the seek position while preparing
   private boolean mCanPause;
   private boolean mCanSeekBack;
@@ -516,6 +533,10 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
     mOnSeekCompleteListener = listener;
   }
 
+  public void setOnReleasedListener(OnReleasedListener listener) {
+    this.mOnReleaseListener = listener;
+  }
+
   TextureView.SurfaceTextureListener mSurfaceTextureListener = new SurfaceTextureListener() {
     @Override public void onSurfaceTextureSizeChanged(final SurfaceTexture surface, final int width,
         final int height) {
@@ -556,6 +577,9 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
    */
   private void release(boolean clearTargetState) {
     if (mMediaPlayer != null) {
+      if (this.mOnReleaseListener != null) {
+        mOnReleaseListener.onReleased(mUri, getCurrentPosition(), getDuration());
+      }
       mMediaPlayer.reset();
       mMediaPlayer.release();
       mMediaPlayer = null;
@@ -671,12 +695,12 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
     return 0;
   }
 
-  @Override public void seekTo(long millisec) {
+  @Override public void seekTo(long milliSec) {
     if (isInPlaybackState()) {
-      mMediaPlayer.seekTo(millisec);
+      mMediaPlayer.seekTo(milliSec);
       mSeekWhenPrepared = 0;
     } else {
-      mSeekWhenPrepared = millisec;
+      mSeekWhenPrepared = milliSec;
     }
   }
 
@@ -712,9 +736,9 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
 
   public int getAudioSessionId() {
     if (mAudioSession == 0) {
-      MediaPlayer foo = new MediaPlayer();
-      mAudioSession = foo.getAudioSessionId();
-      foo.release();
+      MediaPlayer player = new MediaPlayer();
+      mAudioSession = player.getAudioSessionId();
+      player.release();
     }
     return mAudioSession;
   }

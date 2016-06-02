@@ -31,13 +31,12 @@ import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.facebook.TrackablePlayer;
 import im.ene.lab.toro.sample.util.Util;
-import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
 public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
-    implements TrackablePlayer, ToroVideoView.OnReleasedListener {
+    implements TrackablePlayer, TrVideoView.OnReleasedListener {
 
   private final String TAG = getClass().getSimpleName();
 
@@ -50,7 +49,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
-    // mVideoView.setOnReleasedListener(this);
+    mVideoView.setOnReleasedListener(this);
   }
 
   @Override protected TrVideoView findVideoView(View itemView) {
@@ -151,8 +150,8 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     return "Video: " + getVideoId();
   }
 
-  private int latestPosition;
-  private int duration;
+  private long latestPosition;
+  private long duration;
   private boolean isReleased = false;
 
   @Override public long getLatestPosition() {
@@ -163,7 +162,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     return !isReleased ? getDuration() : duration;
   }
 
-  @Override public void onReleased(@Nullable Uri video, int position, int duration) {
+  @Override public void onReleased(@Nullable Uri video, long position, long duration) {
     this.isReleased = true;
     this.latestPosition = position;
     this.duration = duration;

@@ -40,9 +40,6 @@ public interface TrMediaPlayer {
 
   interface IMediaPlayer /* extends MediaController.MediaPlayerControl */ {
 
-    // Asynchronously prepare the Media Source
-    // void prepare();
-
     void start();
 
     void pause();
