@@ -31,7 +31,6 @@
       android:layout_centerInParent="true"
       android:layout_gravity="center"
       android:minWidth="160dp"
-      app:videoScaleMode="fitHeight"
       />
 
   <ImageView
