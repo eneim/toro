@@ -72,5 +72,7 @@ public class TrMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRenderer
     this.audioSessionId = audioSessionId;
   }
 
-
+  public int getAudioSessionId() {
+    return this.audioSessionId;
+  }
 }

@@ -37,7 +37,7 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 /**
  * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
-public class ExtractorRendererBuilder implements DemoPlayer.RendererBuilder {
+public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -53,7 +53,7 @@ public class ExtractorRendererBuilder implements DemoPlayer.RendererBuilder {
   }
 
   @Override
-  public void buildRenderers(DemoPlayer player) {
+  public void buildRenderers(ExoMediaPlayer player) {
     Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
     Handler mainHandler = player.getMainHandler();
 
@@ -72,10 +72,10 @@ public class ExtractorRendererBuilder implements DemoPlayer.RendererBuilder {
         mainHandler.getLooper());
 
     // Invoke the callback.
-    TrackRenderer[] renderers = new TrackRenderer[DemoPlayer.RENDERER_COUNT];
-    renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
-    renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
-    renderers[DemoPlayer.TYPE_TEXT] = textRenderer;
+    TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
+    renderers[ExoMediaPlayer.TYPE_VIDEO] = videoRenderer;
+    renderers[ExoMediaPlayer.TYPE_AUDIO] = audioRenderer;
+    renderers[ExoMediaPlayer.TYPE_TEXT] = textRenderer;
     player.onRenderers(renderers, bandwidthMeter);
   }
 

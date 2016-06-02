@@ -22,7 +22,6 @@ import android.net.Uri;
 import android.support.annotation.IntRange;
 import android.view.Surface;
 import android.view.View;
-import im.ene.lab.toro.player.internal.DemoPlayer;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.NativeMediaPlayer;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
@@ -101,7 +100,7 @@ public interface TrMediaPlayer {
       return new NativeMediaPlayer();
     }
 
-    public static TrMediaPlayer createExoPlayer(DemoPlayer.RendererBuilder builder) {
+    public static TrMediaPlayer createExoPlayer(ExoMediaPlayer.RendererBuilder builder) {
       return new ExoMediaPlayer(builder);
     }
   }

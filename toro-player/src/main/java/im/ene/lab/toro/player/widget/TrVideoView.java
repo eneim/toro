@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.player.widget;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,6 +25,7 @@ import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,6 +39,8 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.internal.ExoMediaPlayer;
+import im.ene.lab.toro.player.internal.ExtractorRendererBuilder;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
@@ -128,17 +132,20 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   private boolean mCanSeekForward;
 
   public TrVideoView(Context context) {
-    super(context);
-    initVideoView();
+    this(context, null);
   }
 
   public TrVideoView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
-    initVideoView();
   }
 
   public TrVideoView(Context context, AttributeSet attrs, int defStyle) {
-    super(context, attrs, defStyle);
+    this(context, attrs, defStyle, 0);
+  }
+
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+  public TrVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    super(context, attrs, defStyleAttr, defStyleRes);
     initVideoView();
   }
 
@@ -294,11 +301,11 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
     am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
     try {
-      //DemoPlayer.RendererBuilder builder =
-      //    new ExtractorRendererBuilder(getContext(), "ToroPlayer", mUri);
-      // mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
+      ExoMediaPlayer.RendererBuilder builder =
+          new ExtractorRendererBuilder(getContext(), "ToroPlayer", mUri);
+      mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
 
-      mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
+      // mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
 
       if (mAudioSession != 0) {
         mMediaPlayer.setAudioSessionId(mAudioSession);
