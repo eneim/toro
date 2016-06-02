@@ -34,6 +34,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
@@ -292,6 +294,10 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
     am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 
     try {
+      //DemoPlayer.RendererBuilder builder =
+      //    new ExtractorRendererBuilder(getContext(), "ToroPlayer", mUri);
+      // mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
+
       mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
 
       if (mAudioSession != 0) {
@@ -320,13 +326,15 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
       Log.w(TAG, "Unable to open content: " + mUri, ex);
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      mErrorListener.onError(mMediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
+      mErrorListener.onError(mMediaPlayer,
+          new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
       return;
     } catch (IllegalArgumentException ex) {
       Log.w(TAG, "Unable to open content: " + mUri, ex);
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      mErrorListener.onError(mMediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
+      mErrorListener.onError(mMediaPlayer,
+          new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
       return;
     }
   }
@@ -420,17 +428,17 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   };
 
   OnInfoListener mInfoListener = new OnInfoListener() {
-    public boolean onInfo(TrMediaPlayer mp, int arg1, int arg2) {
+    public boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
       if (mOnInfoListener != null) {
-        mOnInfoListener.onInfo(mp, arg1, arg2);
+        mOnInfoListener.onInfo(mp, info);
       }
       return true;
     }
   };
 
   OnErrorListener mErrorListener = new OnErrorListener() {
-    public boolean onError(TrMediaPlayer mp, int framework_err, int impl_err) {
-      Log.d(TAG, "Error: " + framework_err + "," + impl_err);
+    public boolean onError(TrMediaPlayer mp, PlaybackException er) {
+      Log.d(TAG, "Error: " + er.toString());
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
       if (mMediaController != null) {
@@ -439,7 +447,7 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
 
             /* If an error handler has been supplied, use it and finish. */
       if (mOnErrorListener != null) {
-        if (mOnErrorListener.onError(mMediaPlayer, framework_err, impl_err)) {
+        if (mOnErrorListener.onError(mMediaPlayer, er)) {
           return true;
         }
       }
@@ -453,7 +461,7 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
         Resources r = getContext().getResources();
         int messageId;
 
-        if (framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
+        if (er.what == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
           messageId = android.R.string.VideoView_error_text_invalid_progressive_playback;
         } else {
           messageId = android.R.string.VideoView_error_text_unknown;

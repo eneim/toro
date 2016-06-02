@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.player.listener;
 
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 
 /**
@@ -30,5 +31,5 @@ public interface OnInfoListener /* extends MediaPlayer.OnInfoListener */ {
    * Returning false, or not having an OnErrorListener at all, will
    * cause the info to be discarded.
    */
-  boolean onInfo(TrMediaPlayer mp, int what, int extra);
+  boolean onInfo(TrMediaPlayer mp, PlaybackInfo info);
 }

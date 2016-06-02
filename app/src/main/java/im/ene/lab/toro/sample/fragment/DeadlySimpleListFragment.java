@@ -31,6 +31,7 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.widget.TrVideoView;
 import im.ene.lab.toro.sample.R;
@@ -119,9 +120,9 @@ public class DeadlySimpleListFragment extends Fragment {
       mPlayable = true;
     }
 
-    @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
+    @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
       mPlayable = false;
-      return super.onPlaybackError(mp, what, extra);
+      return super.onPlaybackError(mp, error);
     }
 
     @Override public void onPlaybackStarted() {

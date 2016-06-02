@@ -21,6 +21,7 @@ import android.util.Log;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.lab.toro.RecyclerViewItemHelper;
 import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.player.PlaybackException;
 
 /**
  * Created by eneim on 4/8/16.
@@ -82,7 +83,9 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
   }
 
   public void onYoutubeError(ToroPlayer player, YouTubePlayer.ErrorReason errorReason) {
-    player.onPlaybackError(null, 0, 0);
+    PlaybackException error =
+        errorReason != null ? new PlaybackException(errorReason.name(), 0, 0) : null;
+    player.onPlaybackError(null, error);
   }
 
   public void onYoutubePlayerChanged(YouTubePlayer newPlayer) {

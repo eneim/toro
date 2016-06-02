@@ -19,6 +19,7 @@ package im.ene.lab.toro;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.widget.TrVideoView;
 
@@ -115,9 +116,9 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mPlayable = true;
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
     mPlayable = false;
-    return super.onPlaybackError(mp, what, extra);
+    return super.onPlaybackError(mp, error);
   }
 
   @NonNull @Override public View getVideoView() {

@@ -20,6 +20,8 @@ import android.support.annotation.CallSuper;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
@@ -104,9 +106,9 @@ class VideoViewItemHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  @CallSuper public boolean onError(ToroPlayer player, TrMediaPlayer mp, int what, int extra) {
+  @CallSuper public boolean onError(ToroPlayer player, TrMediaPlayer mp, PlaybackException error) {
     Toro.checkNotNull();
-    return Toro.sInstance.onError(player, mp, what, extra);
+    return Toro.sInstance.onError(player, mp, error);
   }
 
   /**
@@ -115,9 +117,9 @@ class VideoViewItemHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  @CallSuper public boolean onInfo(ToroPlayer player, TrMediaPlayer mp, int what, int extra) {
+  @CallSuper public boolean onInfo(ToroPlayer player, TrMediaPlayer mp, PlaybackInfo info) {
     Toro.checkNotNull();
-    return Toro.sInstance.onInfo(player, mp, what, extra);
+    return Toro.sInstance.onInfo(player, mp, info);
   }
 
   /**

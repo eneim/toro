@@ -24,6 +24,7 @@ import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.util.Util;
 import java.lang.annotation.Retention;
@@ -180,7 +181,9 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @CallSuper @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
-    mHelper.onError(this, null, 0, 0);
+    PlaybackException error =
+        errorReason != null ? new PlaybackException(errorReason.name(), 0, 0) : null;
+    mHelper.onError(this, null, error);
     mHelper.onYoutubeError(this, errorReason);
   }
 

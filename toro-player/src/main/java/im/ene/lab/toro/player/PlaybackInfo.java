@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.listener;
-
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.TrMediaPlayer;
+package im.ene.lab.toro.player;
 
 /**
  * Created by eneim on 6/2/16.
  */
-public interface OnErrorListener /* extends MediaPlayer.OnErrorListener */ {
+public class PlaybackInfo {
 
-  /**
-   * Called to indicate an error.
-   *
-   * @return True if the method handled the error, false if it didn't.
-   * Returning false, or not having an OnErrorListener at all, will
-   * cause the OnCompletionListener to be called.
-   */
-  boolean onError(TrMediaPlayer mp, PlaybackException exception);
+  private final String info;
+
+  public PlaybackInfo(String info) {
+    this.info = info;
+  }
+
+  public String getInfo() {
+    return info;
+  }
 }

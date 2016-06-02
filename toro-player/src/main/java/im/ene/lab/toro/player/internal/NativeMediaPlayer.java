@@ -20,6 +20,8 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
@@ -131,7 +133,7 @@ public class NativeMediaPlayer implements TrMediaPlayer {
 
     mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
       @Override public boolean onError(MediaPlayer mp, int what, int extra) {
-        return listener.onError(NativeMediaPlayer.this, what, extra);
+        return listener.onError(NativeMediaPlayer.this, new PlaybackException(what, extra));
       }
     });
   }
@@ -141,7 +143,8 @@ public class NativeMediaPlayer implements TrMediaPlayer {
 
     mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
       @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
-        return listener.onInfo(NativeMediaPlayer.this, what, extra);
+        String info = "{what:" + what + ", extra:" + extra + "}";
+        return listener.onInfo(NativeMediaPlayer.this, new PlaybackInfo(info));
       }
     });
   }

@@ -22,6 +22,8 @@ import android.net.Uri;
 import android.support.annotation.IntRange;
 import android.view.Surface;
 import android.view.View;
+import im.ene.lab.toro.player.internal.DemoPlayer;
+import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.NativeMediaPlayer;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
@@ -98,6 +100,10 @@ public interface TrMediaPlayer {
     public static TrMediaPlayer createNativePlayer() {
       return new NativeMediaPlayer();
     }
+
+    public static TrMediaPlayer createExoPlayer(DemoPlayer.RendererBuilder builder) {
+      return new ExoMediaPlayer(builder);
+    }
   }
 
   /** see {@link MediaPlayer#start()} */
@@ -122,7 +128,7 @@ public interface TrMediaPlayer {
   long getCurrentPosition();
 
   /** see {@link MediaPlayer#seekTo(int)} */
-  void seekTo(long millisec);
+  void seekTo(long milliSec);
 
   /** see {@link MediaPlayer#isPlaying()} */
   boolean isPlaying();
