@@ -60,7 +60,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   private final YoutubeViewItemHelper mHelper;
   protected YouTubePlayerSupportFragment mYtFragment;
-  private int seekPosition = 0;
+  private long seekPosition = 0;
   private boolean isSeeking = false;
   private boolean isStarting = false;
 
@@ -81,10 +81,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   public final boolean isStarting() {
     return this.isStarting;
-  }
-
-  @Override public final boolean isAbleToPlay() {
-    return true;  // Always true for safety. Actually Youtube API won't listen to this...
   }
 
   @CallSuper @Override public void onViewHolderBound() {
@@ -125,7 +121,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
   }
 
-  @Override public final int getDuration() {
+  @Override public final long getDuration() {
     try {
       return mParent.mYoutubePlayer != null ? mParent.mYoutubePlayer.getDurationMillis() : -1;
     } catch (IllegalStateException er) {
@@ -134,7 +130,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
   }
 
-  @Override public final int getCurrentPosition() {
+  @Override public final long getCurrentPosition() {
     try {
       return mParent.mYoutubePlayer != null ? mParent.mYoutubePlayer.getCurrentTimeMillis() : 0;
     } catch (IllegalStateException er) {
@@ -143,7 +139,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
   }
 
-  @CallSuper @Override public final void seekTo(int pos) {
+  @CallSuper @Override public final void seekTo(long pos) {
     isSeeking = true;
     seekPosition = pos;
   }
@@ -239,7 +235,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     if (!isRecover) {
       if (isSeeking) {
         isSeeking = false;
-        youTubePlayer.loadVideo(getYoutubeVideoId(), seekPosition);
+        youTubePlayer.loadVideo(getYoutubeVideoId(), (int) seekPosition);
       } else {
         youTubePlayer.loadVideo(getYoutubeVideoId());
       }

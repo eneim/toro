@@ -21,9 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.lab.toro.ToroAdapter;
-import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.lab.toro.VideoPlayerManagerImpl;
+import im.ene.lab.toro.sample.adapter.BaseCustomAdapter;
 import im.ene.lab.toro.sample.adapter.OrderedVideoList;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -34,10 +32,9 @@ import java.util.List;
 /**
  * Created by eneim on 5/13/16.
  */
-public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements VideoPlayerManager, OrderedVideoList {
+public class FbFeedAdapter extends BaseCustomAdapter<ToroAdapter.ViewHolder>
+    implements OrderedVideoList {
 
-  private final VideoPlayerManager delegate;
   private OnItemClickListener clickListener;
 
   public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -47,7 +44,7 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
   protected List<SimpleVideoObject> mVideos = new ArrayList<>();
 
   public FbFeedAdapter() {
-    this.delegate = new VideoPlayerManagerImpl();
+    super();
     for (String item : VideoSource.SOURCES) {
       this.mVideos.add(new SimpleVideoObject(item));
     }
@@ -59,8 +56,7 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
   @Override public int getItemViewType(int position) {
     return getItem(position) instanceof SimpleVideoObject ? FbItemViewHolder.POST_TYPE_VIDEO
-        : (position % 5 == 2 ? FbItemViewHolder.POST_TYPE_TEXT
-            : FbItemViewHolder.POST_TYPE_PHOTO);
+        : (position % 5 == 2 ? FbItemViewHolder.POST_TYPE_TEXT : FbItemViewHolder.POST_TYPE_PHOTO);
   }
 
   @Override
@@ -84,42 +80,6 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
   @Override public int getItemCount() {
     return 512; // magic number
-  }
-
-  @Override public ToroPlayer getPlayer() {
-    return delegate.getPlayer();
-  }
-
-  @Override public void setPlayer(ToroPlayer player) {
-    delegate.setPlayer(player);
-  }
-
-  @Override public void onRegistered() {
-    delegate.onRegistered();
-  }
-
-  @Override public void onUnregistered() {
-    delegate.onUnregistered();
-  }
-
-  @Override public void startPlayback() {
-    delegate.startPlayback();
-  }
-
-  @Override public void pausePlayback() {
-    delegate.pausePlayback();
-  }
-
-  @Override public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
-    delegate.saveVideoState(videoId, position, duration);
-  }
-
-  @Override public void restoreVideoState(String videoId) {
-    delegate.restoreVideoState(videoId);
-  }
-
-  @Nullable @Override public Integer getSavedPosition(String videoId) {
-    return delegate.getSavedPosition(videoId);
   }
 
   @Override public int firstVideoPosition() {

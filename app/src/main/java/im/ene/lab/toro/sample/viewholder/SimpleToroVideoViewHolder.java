@@ -18,7 +18,6 @@ package im.ene.lab.toro.sample.viewholder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -26,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.widget.TrVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.facebook.TrackablePlayer;
@@ -49,11 +50,11 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
-    mVideoView.setOnReleasedListener(this);
+    // mVideoView.setOnReleasedListener(this);
   }
 
-  @Override protected ToroVideoView findVideoView(View itemView) {
-    return (ToroVideoView) itemView.findViewById(R.id.video);
+  @Override protected TrVideoView findVideoView(View itemView) {
+    return (TrVideoView) itemView.findViewById(R.id.video);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -80,7 +81,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     return mItem.toString() + "-" + getAdapterPosition();
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
+  @Override public void onVideoPrepared(TrMediaPlayer mp) {
     super.onVideoPrepared(mp);
     mInfo.setText("Prepared");
   }
@@ -105,7 +106,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     isReleased = false;
   }
 
-  @Override public void onPlaybackProgress(int position, int duration) {
+  @Override public void onPlaybackProgress(long position, long duration) {
     super.onPlaybackProgress(position, duration);
     mInfo.setText(Util.timeStamp(position, duration));
   }
@@ -128,7 +129,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     mInfo.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         SimpleToroVideoViewHolder.super.onPlaybackStopped();
@@ -154,11 +155,11 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
   private int duration;
   private boolean isReleased = false;
 
-  @Override public int getLatestPosition() {
+  @Override public long getLatestPosition() {
     return !isReleased ? getCurrentPosition() : latestPosition;
   }
 
-  @Override public int getPlaybackDuration() {
+  @Override public long getPlaybackDuration() {
     return !isReleased ? getDuration() : duration;
   }
 

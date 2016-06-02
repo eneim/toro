@@ -141,7 +141,7 @@ public class YoutubeListFragment extends RecyclerViewFragment {
       mThumbnail.initialize(BuildConfig.YOUTUBE_API_KEY, this);
     }
 
-    @Override public void onPlaybackProgress(int position, int duration) {
+    @Override public void onPlaybackProgress(long position, long duration) {
       super.onPlaybackProgress(position, duration);
       mInfo.setText(Util.timeStamp(position, duration));
     }

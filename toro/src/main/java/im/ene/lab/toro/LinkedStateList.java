@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
  *
  * A linked-list with specific capacity
  */
-class LinkedStateList extends LinkedHashMap<Integer, State> {
+class LinkedStateList extends LinkedHashMap<Integer, SavedState> {
 
   private int mCapacity = 1;
 
@@ -32,7 +32,7 @@ class LinkedStateList extends LinkedHashMap<Integer, State> {
     mCapacity = initialCapacity;
   }
 
-  @Override protected boolean removeEldestEntry(Entry<Integer, State> eldest) {
+  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
     return size() > mCapacity;
   }
 }

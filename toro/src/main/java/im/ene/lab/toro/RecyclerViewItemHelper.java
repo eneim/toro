@@ -38,8 +38,7 @@ public class RecyclerViewItemHelper extends VideoViewItemHelper {
       if (view != null && view == parent) {
         ToroScrollListener listener = Toro.sInstance.mListeners.get(view.hashCode());
         if (listener != null && listener.getManager().getPlayer() == null) {
-          if (player.wantsToPlay() && player.isAbleToPlay() &&
-              Toro.getStrategy().allowsToPlay(player, parent)) {
+          if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
             listener.getManager().setPlayer(player);
             listener.getManager().restoreVideoState(player.getVideoId());
             listener.getManager().startPlayback();
@@ -88,8 +87,7 @@ public class RecyclerViewItemHelper extends VideoViewItemHelper {
     }
 
     // Being pressed player is not be able to play, return
-    if (!player.wantsToPlay() || !player.isAbleToPlay() ||
-        !Toro.getStrategy().allowsToPlay(player, parent)) {
+    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
       return false;
     }
 

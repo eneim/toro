@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.player.internal;
+
+import android.media.MediaPlayer;
 
 /**
- * Created by eneim on 3/14/16.
- *
- * Used to save current playing states. Need to be cleaned after each Activity has been destroyed.
+ * Created by eneim on 6/2/16.
  */
-class State {
+public interface MediaPlayerListener
+    extends MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener,
+    MediaPlayer.OnVideoSizeChangedListener {
 
-  ToroPlayer player;
-
-  Integer position;
 }

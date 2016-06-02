@@ -24,15 +24,19 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.MediaController;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.listener.OnCompletionListener;
+import im.ene.lab.toro.player.listener.OnErrorListener;
+import im.ene.lab.toro.player.listener.OnInfoListener;
+import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 
 /**
  * Created by eneim on 1/29/16.
  */
 public interface ToroPlayer
-    extends MediaController.MediaPlayerControl, MediaPlayer.OnPreparedListener,
-    MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener,
-    MediaPlayer.OnSeekCompleteListener {
+    extends TrMediaPlayer.IMediaPlayer, OnPreparedListener, OnCompletionListener, OnErrorListener,
+    OnInfoListener, OnSeekCompleteListener {
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to
@@ -41,16 +45,19 @@ public interface ToroPlayer
   boolean wantsToPlay();
 
   /**
+   * !Deprecated From 2.0.0. User will just need to tell Toro by {@link ToroPlayer#wantsToPlay()}.
+   * Toro 2.0 will not listen to this Method anymore.
+   *
    * Called after {@link ToroPlayer#wantsToPlay()} returning <b>true</b>, indicate that even if
    * this player wants to play that much, is It able to play (Video is correctly set or there is no
    * Error)
    */
-  boolean isAbleToPlay();
+  // @Deprecated boolean isAbleToPlay();
 
   /**
    * Indicate that this Player is able to replay right after it stops (loop-able) or not.
    *
-   * @return true if this Player is loopable, false otherwise
+   * @return true if this Player is loop-able, false otherwise
    */
   boolean isLoopAble();
 
@@ -106,7 +113,7 @@ public interface ToroPlayer
    *
    * @param mp media player which is prepared
    */
-  void onVideoPrepared(MediaPlayer mp);
+  void onVideoPrepared(TrMediaPlayer mp);
 
   /**
    * Callback after this player starts playing
@@ -130,7 +137,7 @@ public interface ToroPlayer
    * {@link ToroPlayer#onError(MediaPlayer, int, int)} will be called explicitly by Toro, so this
    * method will prevent infinite loop
    */
-  boolean onPlaybackError(MediaPlayer mp, int what, int extra);
+  boolean onPlaybackError(TrMediaPlayer mp, int what, int extra);
 
   /**
    * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
@@ -139,7 +146,7 @@ public interface ToroPlayer
    * {@link ToroPlayer#onInfo(MediaPlayer, int, int)} will be called explicitly by Toro, so this
    * method will prevent infinite loop
    */
-  void onPlaybackInfo(MediaPlayer mp, int what, int extra);
+  void onPlaybackInfo(TrMediaPlayer mp, int what, int extra);
 
   /**
    * Callback from playback progress update. This method is called from main thread (UIThread)
@@ -147,5 +154,5 @@ public interface ToroPlayer
    * @param position current playing position
    * @param duration total duration of current video
    */
-  @UiThread void onPlaybackProgress(int position, int duration);
+  @UiThread void onPlaybackProgress(long position, long duration);
 }

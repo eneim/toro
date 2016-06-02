@@ -18,7 +18,6 @@ package im.ene.lab.toro.sample.viewholder;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -26,10 +25,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.widget.TrVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.util.Util;
-import im.ene.lab.toro.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
@@ -49,8 +49,8 @@ public class HorizontalSimpleToroVideoViewHolder extends ToroVideoViewHolder {
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
-  @Override protected ToroVideoView findVideoView(View itemView) {
-    return (ToroVideoView) itemView.findViewById(R.id.video);
+  @Override protected TrVideoView findVideoView(View itemView) {
+    return (TrVideoView) itemView.findViewById(R.id.video);
   }
 
   private SimpleVideoObject mItem;
@@ -72,7 +72,7 @@ public class HorizontalSimpleToroVideoViewHolder extends ToroVideoViewHolder {
     return "TEST: " + getAdapterPosition();
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
+  @Override public void onVideoPrepared(TrMediaPlayer mp) {
     super.onVideoPrepared(mp);
     mInfo.setText("Prepared");
   }
@@ -96,7 +96,7 @@ public class HorizontalSimpleToroVideoViewHolder extends ToroVideoViewHolder {
     mInfo.setText("Started");
   }
 
-  @Override public void onPlaybackProgress(int position, int duration) {
+  @Override public void onPlaybackProgress(long position, long duration) {
     super.onPlaybackProgress(position, duration);
     mInfo.setText(Util.timeStamp(position, duration));
   }
@@ -119,7 +119,7 @@ public class HorizontalSimpleToroVideoViewHolder extends ToroVideoViewHolder {
     mInfo.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         HorizontalSimpleToroVideoViewHolder.super.onPlaybackStopped();

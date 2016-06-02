@@ -64,8 +64,8 @@ public class FbFeedFragment extends RecyclerViewFragment {
     public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder,
         View view, int adapterPosition, long itemId) {
       SimpleVideoObject initItem = null;
-      int initPosition = 0;
-      int initDuration = 0;
+      long initPosition = 0;
+      long initDuration = 0;
       if (adapter instanceof FbFeedAdapter) {
         initItem = (SimpleVideoObject) ((FbFeedAdapter) adapter).getItem(adapterPosition);
         initPosition = ((FbFeedAdapter) adapter).getPlayer().getCurrentPosition();
@@ -86,7 +86,7 @@ public class FbFeedFragment extends RecyclerViewFragment {
     if (requestCode == RESUME_REQUEST_CODE) {
       Toro.rest(true);
       VideoPlayerManager manager = ((VideoPlayerManager) mAdapter);
-      int latestPosition = data.getIntExtra(FbPLayerDialogFragment.ARGS_LATEST_TIMESTAMP, 0);
+      long latestPosition = data.getLongExtra(FbPLayerDialogFragment.ARGS_LATEST_TIMESTAMP, 0);
       manager.saveVideoState(manager.getPlayer().getVideoId(), latestPosition,
           manager.getPlayer().getDuration());
       Toro.rest(false);

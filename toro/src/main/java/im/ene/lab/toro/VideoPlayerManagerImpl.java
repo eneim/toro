@@ -32,7 +32,7 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
 
-  private final Map<String, Integer> mVideoStates = new HashMap<>();
+  private final Map<String, Long> mVideoStates = new HashMap<>();
 
   private ToroPlayer mPlayer;
   // This Handler will send Message to Main Thread
@@ -86,9 +86,9 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   }
 
-  @Override public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
+  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
     if (videoId != null) {
-      mVideoStates.put(videoId, position == null ? Integer.valueOf(0) : position);
+      mVideoStates.put(videoId, position == null ? Long.valueOf(0) : position);
     }
   }
 
@@ -97,9 +97,9 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
       return;
     }
 
-    Integer position = mVideoStates.get(videoId);
+    Long position = mVideoStates.get(videoId);
     if (position == null) {
-      position = 0;
+      position = 0L;
     }
 
     // See {@link android.media.MediaPlayer#seekTo(int)}
@@ -110,7 +110,7 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   }
 
-  @Nullable @Override public Integer getSavedPosition(String videoId) {
+  @Nullable @Override public Long getSavedPosition(String videoId) {
     if (getPlayer() != null && videoId.equals(getPlayer().getVideoId())) {
       return getPlayer().getCurrentPosition();
     }

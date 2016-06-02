@@ -16,7 +16,6 @@
 
 package im.ene.lab.toro.sample.fragment;
 
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,11 +31,12 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.widget.TrVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
-import im.ene.lab.toro.widget.ToroVideoView;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,7 +88,7 @@ public class DeadlySimpleListFragment extends Fragment {
 
     private static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
-    private ToroVideoView mVideoView;
+    private TrVideoView mVideoView;
     private ImageView mThumbnail;
 
     private SimpleVideoObject mItem;
@@ -96,7 +96,7 @@ public class DeadlySimpleListFragment extends Fragment {
 
     public SimpleViewHolder(View itemView) {
       super(itemView);
-      mVideoView = (ToroVideoView) itemView.findViewById(R.id.video);
+      mVideoView = (TrVideoView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     }
 
@@ -115,11 +115,11 @@ public class DeadlySimpleListFragment extends Fragment {
           .into(mThumbnail);
     }
 
-    @Override public void onVideoPrepared(MediaPlayer mp) {
+    @Override public void onVideoPrepared(TrMediaPlayer mp) {
       mPlayable = true;
     }
 
-    @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+    @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
       mPlayable = false;
       return super.onPlaybackError(mp, what, extra);
     }
@@ -137,11 +137,7 @@ public class DeadlySimpleListFragment extends Fragment {
     }
 
     @Override public boolean wantsToPlay() {
-      return visibleAreaOffset() >= 0.85;
-    }
-
-    @Override public boolean isAbleToPlay() {
-      return mPlayable;
+      return visibleAreaOffset() >= 0.75 && mPlayable;
     }
 
     @Nullable @Override public String getVideoId() {
@@ -160,15 +156,15 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView.pause();
     }
 
-    @Override public int getDuration() {
+    @Override public long getDuration() {
       return mVideoView.getDuration();
     }
 
-    @Override public int getCurrentPosition() {
+    @Override public long getCurrentPosition() {
       return mVideoView.getCurrentPosition();
     }
 
-    @Override public void seekTo(int pos) {
+    @Override public void seekTo(long pos) {
       mVideoView.seekTo(pos);
     }
 

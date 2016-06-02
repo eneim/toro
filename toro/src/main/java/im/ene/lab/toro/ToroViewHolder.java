@@ -18,11 +18,15 @@ package im.ene.lab.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.listener.OnCompletionListener;
+import im.ene.lab.toro.player.listener.OnErrorListener;
+import im.ene.lab.toro.player.listener.OnInfoListener;
+import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 
 /**
  * Created by eneim on 1/31/16.
@@ -100,41 +104,41 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
+   * Implement from {@link OnPreparedListener}
    */
-  @Override public final void onPrepared(MediaPlayer mp) {
+  @Override public final void onPrepared(TrMediaPlayer mp) {
     mHelper.onPrepared(this, itemView, itemView.getParent(), mp);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}. This method
-   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, MediaPlayer)}, Client
+   * Implement from {@link OnCompletionListener}. This method
+   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, TrMediaPlayer)}, Client
    * should use {@link ToroPlayer#onPlaybackStopped()}
    */
-  @Override public final void onCompletion(MediaPlayer mp) {
+  @Override public final void onCompletion(TrMediaPlayer mp) {
     mHelper.onCompletion(this, mp);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}. This method
-   * is closed and called only by {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}, Client
-   * should use {@link ToroPlayer#onPlaybackError(MediaPlayer, int, int)}
+   * Implement from {@link OnErrorListener}. This method
+   * is closed and called only by {@link Toro#onError(ToroPlayer, TrMediaPlayer, int, int)}, Client
+   * should use {@link ToroPlayer#onPlaybackError(TrMediaPlayer, int, int)}
    */
-  @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
+  @Override public final boolean onError(TrMediaPlayer mp, int what, int extra) {
     return mHelper.onError(this, mp, what, extra);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnInfoListener#onInfo(MediaPlayer, int, int)}
+   * Implement from {@link OnInfoListener}
    */
-  @Override public final boolean onInfo(MediaPlayer mp, int what, int extra) {
+  @Override public final boolean onInfo(TrMediaPlayer mp, int what, int extra) {
     return mHelper.onInfo(this, mp, what, extra);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnSeekCompleteListener#onSeekComplete(MediaPlayer)}
+   * Implement from {@link OnSeekCompleteListener}
    */
-  @Override public final void onSeekComplete(MediaPlayer mp) {
+  @Override public final void onSeekComplete(TrMediaPlayer mp) {
     mHelper.onSeekComplete(this, mp);
   }
 
@@ -161,15 +165,15 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   }
 
-  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
     return true;  // don't want to see the annoying dialog
   }
 
-  @Override public void onPlaybackInfo(MediaPlayer mp, int what, int extra) {
+  @Override public void onPlaybackInfo(TrMediaPlayer mp, int what, int extra) {
 
   }
 
-  @Override public void onPlaybackProgress(int position, int duration) {
+  @Override public void onPlaybackProgress(long position, long duration) {
 
   }
 
@@ -206,7 +210,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     return rect;
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
+  @Override public void onVideoPrepared(TrMediaPlayer mp) {
 
   }
 

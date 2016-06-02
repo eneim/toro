@@ -37,7 +37,7 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
 
   final FragmentManager mFragmentManager;
 
-  private final ConcurrentHashMap<String, Integer> mVideoStates = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, Long> mVideoStates = new ConcurrentHashMap<>();
   private final Handler mHandler = new Handler(Looper.getMainLooper(), this);
   private final int MESSAGE_PROGRESS = 4;
 
@@ -111,7 +111,7 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
   /**
    * Save current video state
    */
-  @Override public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
+  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
     if (videoId != null) {
       mVideoStates.put(videoId, position == null ? Integer.valueOf(0) : position);
     }
@@ -125,9 +125,9 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
       return;
     }
 
-    Integer position = mVideoStates.get(videoId);
+    Long position = mVideoStates.get(videoId);
     if (position == null) {
-      position = 0;
+      position = 0L;
     }
 
     // See {@link android.media.MediaPlayer#seekTo(int)}
@@ -150,7 +150,7 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
     }
   }
 
-  @Nullable @Override public Integer getSavedPosition(String videoId) {
+  @Nullable @Override public Long getSavedPosition(String videoId) {
     return mVideoStates.get(videoId);
   }
 }

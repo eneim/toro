@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Util {
 
-  public static String timeStamp(int position, int duration) {
+  public static String timeStamp(long position, long duration) {
     StringBuilder posTime = new StringBuilder();
     TimeUtils.formatDuration(position, posTime);
     StringBuilder durationTime = new StringBuilder();

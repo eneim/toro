@@ -50,7 +50,7 @@ android {
 
   defaultConfig {
     applicationId "${TORO_SAMPLE_APP_ID}"
-    minSdkVersion 15
+    minSdkVersion 16
     targetSdkVersion 23
 
     versionCode dateTimeInt()
@@ -87,18 +87,19 @@ android {
   }
 }
 
-ext {
-  support_version = '23.3.0'
-}
-
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
   testCompile 'junit:junit:4.12'
-  compile "com.android.support:appcompat-v7:${support_version}"
-  compile "com.android.support:design:${support_version}"
+  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
   compile project(':toro')
   // compile 'com.github.eneim:Toro:1.2.0'
+
+  // preview
+  compile ('com.devbrackets.android:exomedia:3.0.0-preview3') {
+    exclude group: 'com.android.support', module: 'appcompat-v7'
+  }
 
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'

@@ -21,7 +21,7 @@ package im.ene.lab.toro.sample.facebook;
  */
 public interface TrackablePlayer {
 
-  int getLatestPosition();
+  long getLatestPosition();
 
-  int getPlaybackDuration();
+  long getPlaybackDuration();
 }

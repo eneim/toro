@@ -16,18 +16,18 @@
 
 package im.ene.lab.toro;
 
-import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.widget.ToroVideoView;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.widget.TrVideoView;
 
 /**
  * Created by eneim on 1/31/16.
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final ToroVideoView mVideoView;
+  protected final TrVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
@@ -45,7 +45,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract ToroVideoView findVideoView(View itemView);
+  protected abstract TrVideoView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -60,15 +60,15 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     }
   }
 
-  @Override public int getDuration() {
+  @Override public long getDuration() {
     return mVideoView != null ? mVideoView.getDuration() : -1;
   }
 
-  @Override public int getCurrentPosition() {
+  @Override public long getCurrentPosition() {
     return mVideoView != null ? mVideoView.getCurrentPosition() : 0;
   }
 
-  @Override public void seekTo(int pos) {
+  @Override public void seekTo(long pos) {
     if (mVideoView != null) {
       mVideoView.seekTo(pos);
     }
@@ -108,18 +108,14 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   @Override public boolean wantsToPlay() {
     // Default implementation
-    return visibleAreaOffset() >= 0.75;
+    return visibleAreaOffset() >= 0.75 && mPlayable;
   }
 
-  @Override public boolean isAbleToPlay() {
-    return mPlayable;
-  }
-
-  @CallSuper @Override public void onVideoPrepared(MediaPlayer mp) {
+  @CallSuper @Override public void onVideoPrepared(TrMediaPlayer mp) {
     mPlayable = true;
   }
 
-  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
     mPlayable = false;
     return super.onPlaybackError(mp, what, extra);
   }

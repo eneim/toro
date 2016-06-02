@@ -54,7 +54,7 @@ public interface VideoPlayerManager {
   /**
    * Save current video state
    */
-  void saveVideoState(String videoId, @Nullable Integer position, long duration);
+  void saveVideoState(String videoId, @Nullable Long position, long duration);
 
   /**
    * Restore and setup state of a Video to current video player
@@ -62,6 +62,6 @@ public interface VideoPlayerManager {
   void restoreVideoState(String videoId);
 
   @Nullable
-  Integer getSavedPosition(String videoId);
+  Long getSavedPosition(String videoId);
   /* END Directly control current player */
 }
