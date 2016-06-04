@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
-
-import android.net.Uri;
+package im.ene.lab.toro.player.trial;
 
 /**
- * Created by eneim on 6/3/16.
+ * Created by eneim on 6/4/16.
+ *
+ * Define some core actions of a MediaPlayer. Those actions are supposed to be used by User
+ * Interface.
  */
-public class DrmMediaSource extends MediaSource {
+public interface MultiMediaPlayerWidget extends MediaPlayerWidget {
 
-  public final String provider;
+  void next();
 
-  public final String contentId;
+  void previous();
 
-  public DrmMediaSource(Uri mediaUri, String provider, String contentId) {
-    super(mediaUri, VideoType.DASH);
-    this.provider = provider;
-    this.contentId = contentId;
-  }
+  void shuffle(boolean willShuffle);
+
+  void repeat(int mode);
 }

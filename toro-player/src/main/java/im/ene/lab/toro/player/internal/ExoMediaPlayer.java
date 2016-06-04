@@ -20,6 +20,7 @@ import android.media.MediaCodec.CryptoException;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.FloatRange;
 import android.util.Log;
 import android.view.Surface;
 import com.google.android.exoplayer.CodecCounters;
@@ -713,6 +714,10 @@ public class ExoMediaPlayer
           break;
       }
     }
+  }
+
+  public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    player.sendMessage(audioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
   }
 
   private void pushSurface(boolean blockForSurfacePush) {

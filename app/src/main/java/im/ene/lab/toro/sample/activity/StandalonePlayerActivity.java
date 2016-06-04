@@ -20,7 +20,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.player.core.PlayerViewImpl;
+import im.ene.lab.toro.player.trial.MediaPlayerView;
 import im.ene.lab.toro.sample.R;
 
 /**
@@ -28,17 +28,17 @@ import im.ene.lab.toro.sample.R;
  */
 public class StandalonePlayerActivity extends AppCompatActivity {
 
-  private PlayerViewImpl mVideoPlayerView;
+  private MediaPlayerView mVideoPlayerView;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.sample_videoplayer);
-    mVideoPlayerView = (PlayerViewImpl) findViewById(R.id.player_view);
+    mVideoPlayerView = (MediaPlayerView) findViewById(R.id.player_view);
   }
 
   @Override protected void onResume() {
     super.onResume();
-    mVideoPlayerView.setVideoUri(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
+    mVideoPlayerView.setMediaUri(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
     mVideoPlayerView.start();
   }
 

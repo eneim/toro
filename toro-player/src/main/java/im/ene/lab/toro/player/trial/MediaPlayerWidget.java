@@ -14,18 +14,31 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
+package im.ene.lab.toro.player.trial;
 
 import android.net.Uri;
+import android.support.annotation.FloatRange;
+import im.ene.lab.toro.player.MediaSource;
 
 /**
- * Created by eneim on 6/3/16.
+ * Created by eneim on 6/4/16.
+ *
+ * Define some core actions of a MediaPlayer. Those actions are supposed to be used by User
+ * Interface.
  */
-public class MediaSource {
+public interface MediaPlayerWidget {
 
-  public final Uri mediaUri;
+  void play();
 
-  public MediaSource(Uri mediaUri) {
-    this.mediaUri = mediaUri;
-  }
+  void pause();
+
+  void seekTo(long milliSec);
+
+  void setVolume(@FloatRange(from = 0.f, to = 1.f) float factor);
+
+  /* void mute(); */ // this is equal to setVolume(0), so it will be ignored
+
+  void setMediaSource(MediaSource source);
+
+  void setMediaUri(Uri uri);
 }

@@ -16,8 +16,33 @@
 
 package im.ene.lab.toro.player.trial;
 
+import android.content.Context;
+import android.net.Uri;
+
 /**
  * Created by eneim on 6/4/16.
+ *
+ * The controller for {@link MediaPlayerWidget}, which supposes to take the responsibility to
+ * control the whole playback cycle. {@link android.media.MediaPlayer} is a real example for this.
  */
-public class ExoMediaPlayerView {
+// TODO Rename this interface
+public interface MediaPlayer {
+
+  void create();
+
+  void release();
+
+  void start();
+
+  void restart();
+
+  void stop();
+
+  void pause();
+
+  void resume();
+
+  void seekTo(long milliSec);
+
+  void setMediaSource(Context context, Uri uri);
 }
