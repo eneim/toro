@@ -33,7 +33,7 @@ import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.TrVideoView;
+import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -89,7 +89,7 @@ public class DeadlySimpleListFragment extends Fragment {
 
     private static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
-    private TrVideoView mVideoView;
+    private VideoPlayerView mVideoView;
     private ImageView mThumbnail;
 
     private SimpleVideoObject mItem;
@@ -97,7 +97,7 @@ public class DeadlySimpleListFragment extends Fragment {
 
     public SimpleViewHolder(View itemView) {
       super(itemView);
-      mVideoView = (TrVideoView) itemView.findViewById(R.id.video);
+      mVideoView = (VideoPlayerView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     }
 
@@ -151,6 +151,11 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public void start() {
       mVideoView.start();
+    }
+
+    @Override public void start(long position) {
+      seekTo(position);
+      start();
     }
 
     @Override public void pause() {

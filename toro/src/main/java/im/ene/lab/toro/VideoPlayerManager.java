@@ -46,6 +46,8 @@ public interface VideoPlayerManager {
    */
   void startPlayback();
 
+  void startPlayback(long position);
+
   /**
    * Pause current video
    */

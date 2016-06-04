@@ -43,6 +43,8 @@ public interface TrMediaPlayer {
 
     void start();
 
+    void start(long position);
+
     void pause();
 
     /* int */ long getDuration();
@@ -70,7 +72,7 @@ public interface TrMediaPlayer {
     int getAudioSessionId();
   }
 
-  interface MediaController {
+  interface Controller {
 
     /** see {@link android.widget.MediaController#hide()} */
     void hide();
@@ -180,4 +182,5 @@ public interface TrMediaPlayer {
 
   /** see {@link MediaPlayer#prepareAsync()} */
   void prepareAsync() throws IllegalStateException;
+
 }

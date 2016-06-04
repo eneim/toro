@@ -34,6 +34,8 @@ import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.SingleSampleSource;
 import com.google.android.exoplayer.TimeRange;
 import com.google.android.exoplayer.TrackRenderer;
+import com.google.android.exoplayer.audio.AudioCapabilities;
+import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.chunk.ChunkSampleSource;
 import com.google.android.exoplayer.chunk.Format;
@@ -74,9 +76,14 @@ public class ExoMediaPlayer
     SingleSampleSource.EventListener, DefaultBandwidthMeter.EventListener,
     MediaCodecVideoTrackRenderer.EventListener, MediaCodecAudioTrackRenderer.EventListener,
     StreamingDrmSessionManager.EventListener, DashChunkSource.EventListener, TextRenderer,
-    MetadataRenderer<List<Id3Frame>>, DebugTextViewHelper.Provider {
+    MetadataRenderer<List<Id3Frame>>, DebugTextViewHelper.Provider,
+    AudioCapabilitiesReceiver.Listener {
 
   private static final String TAG = "TrDemoPlayer";
+
+  @Override public void onAudioCapabilitiesChanged(AudioCapabilities audioCapabilities) {
+
+  }
 
   /**
    * Builds renderers for the player.
@@ -233,9 +240,9 @@ public class ExoMediaPlayer
   private OnSeekCompleteListener onSeekCompleteListener;
 
   public ExoMediaPlayer(RendererBuilder rendererBuilder) {
-    this.rendererBuilder = rendererBuilder;
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
     player.addListener(this);
+    this.rendererBuilder = rendererBuilder;
     playerControl = new PlayerControl(player);
     mainHandler = new Handler();
     listeners = new CopyOnWriteArrayList<>();
@@ -319,6 +326,7 @@ public class ExoMediaPlayer
     if (this.backgrounded == backgrounded) {
       return;
     }
+
     this.backgrounded = backgrounded;
     if (backgrounded) {
       videoTrackToRestore = getSelectedTrack(TYPE_VIDEO);
@@ -433,7 +441,6 @@ public class ExoMediaPlayer
   }
 
   @Override public void pause() {
-    Log.e(TAG, "pause() called with: " + "");
     setPlayWhenReady(false);
   }
 
@@ -502,6 +509,12 @@ public class ExoMediaPlayer
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, int state) {
+    Log.d(TAG, "onPlayerStateChanged() called with: "
+        + "playWhenReady = ["
+        + playWhenReady
+        + "], state = ["
+        + state
+        + "]");
     maybeReportPlayerState();
   }
 
@@ -659,6 +672,8 @@ public class ExoMediaPlayer
     // Do nothing.
   }
 
+  private boolean mediaPrepared = false;
+
   private void maybeReportPlayerState() {
     boolean playWhenReady = player.getPlayWhenReady();
     int playbackState = getPlaybackState();
@@ -669,24 +684,21 @@ public class ExoMediaPlayer
       lastReportedPlayWhenReady = playWhenReady;
       lastReportedPlaybackState = playbackState;
 
-      Log.d(TAG, "onPlayerStateChanged() called with: "
-          + "playWhenReady = ["
-          + playWhenReady
-          + "], state = ["
-          + playbackState
-          + "]");
-
       // Other listener
       switch (getPlaybackState()) {
         case STATE_BUFFERING:
+          if (!mediaPrepared) {
+            if (this.onPreparedListener != null) {
+              this.onPreparedListener.onPrepared(this);
+            }
+          }
+
+          mediaPrepared = true;
           if (this.onBufferingUpdateListener != null) {
             this.onBufferingUpdateListener.onBufferingUpdate(this, getBufferedPercentage());
           }
           break;
         case STATE_READY:
-          if (this.onPreparedListener != null) {
-            this.onPreparedListener.onPrepared(this);
-          }
           break;
         case STATE_ENDED:
           if (this.onCompletionListener != null) {
@@ -696,6 +708,7 @@ public class ExoMediaPlayer
         case STATE_PREPARING:
         case STATE_IDLE:
         default:
+          mediaPrepared = false;
           Log.i(TAG, "onStateChanged: OTHERS");
           break;
       }
@@ -718,7 +731,7 @@ public class ExoMediaPlayer
   private int audioSessionId;
 
   @Override public void setAudioSessionId(int audioSessionId) {
-      this.audioSessionId = audioSessionId;
+    this.audioSessionId = audioSessionId;
   }
 
   @Override public int getAudioSessionId() {

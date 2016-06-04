@@ -205,6 +205,10 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       delegate.startPlayback();
     }
 
+    @Override public void startPlayback(long position) {
+      delegate.startPlayback(position);
+    }
+
     @Override public void pausePlayback() {
       delegate.pausePlayback();
     }

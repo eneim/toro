@@ -27,7 +27,7 @@ import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.TrVideoView;
+import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.facebook.TrackablePlayer;
@@ -37,7 +37,7 @@ import im.ene.lab.toro.sample.util.Util;
  * Created by eneim on 1/30/16.
  */
 public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
-    implements TrackablePlayer, TrVideoView.OnReleasedListener {
+    implements TrackablePlayer, VideoPlayerView.OnReleasedListener {
 
   private final String TAG = getClass().getSimpleName();
 
@@ -53,8 +53,8 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     mVideoView.setOnReleasedListener(this);
   }
 
-  @Override protected TrVideoView findVideoView(View itemView) {
-    return (TrVideoView) itemView.findViewById(R.id.video);
+  @Override protected VideoPlayerView findVideoView(View itemView) {
+    return (VideoPlayerView) itemView.findViewById(R.id.video);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {

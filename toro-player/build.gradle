@@ -45,5 +45,6 @@ dependencies {
     exclude group: 'com.google.android.exoplayer', module: 'exoplayer'
   }
 
+  compile "com.google.android.gms:play-services-ads:8.4.0"
   compile "com.google.android.exoplayer:exoplayer:r1.5.8"
 }

@@ -21,14 +21,14 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.TrVideoView;
+import im.ene.lab.toro.player.widget.VideoPlayerView;
 
 /**
  * Created by eneim on 1/31/16.
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final TrVideoView mVideoView;
+  protected final VideoPlayerView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
@@ -46,7 +46,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract TrVideoView findVideoView(View itemView);
+  protected abstract VideoPlayerView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -119,6 +119,11 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
   @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
     mPlayable = false;
     return super.onPlaybackError(mp, error);
+  }
+
+  @Override public void start(long position) {
+    seekTo(position);
+    start();
   }
 
   @NonNull @Override public View getVideoView() {

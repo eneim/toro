@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package im.ene.lab.toro.player.internal;
+package com.google.android.exoplayer.demo.player;
 
-import android.media.MediaCodec.CryptoException;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.Surface;
 import com.google.android.exoplayer.CodecCounters;
 import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -46,6 +42,12 @@ import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.util.DebugTextViewHelper;
 import com.google.android.exoplayer.util.PlayerControl;
+
+import android.media.MediaCodec.CryptoException;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Surface;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -56,13 +58,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * with one of a number of {@link RendererBuilder} classes to suit different use cases (e.g. DASH,
  * SmoothStreaming and so on).
  */
-public class OldDemoPlayer
-    implements ExoPlayer.Listener, ChunkSampleSource.EventListener, HlsSampleSource.EventListener,
-    ExtractorSampleSource.EventListener, SingleSampleSource.EventListener,
-    DefaultBandwidthMeter.EventListener, MediaCodecVideoTrackRenderer.EventListener,
-    MediaCodecAudioTrackRenderer.EventListener, StreamingDrmSessionManager.EventListener,
-    DashChunkSource.EventListener, TextRenderer, MetadataRenderer<List<Id3Frame>>,
-    DebugTextViewHelper.Provider {
+public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventListener,
+    HlsSampleSource.EventListener, ExtractorSampleSource.EventListener,
+    SingleSampleSource.EventListener, DefaultBandwidthMeter.EventListener,
+    MediaCodecVideoTrackRenderer.EventListener, MediaCodecAudioTrackRenderer.EventListener,
+    StreamingDrmSessionManager.EventListener, DashChunkSource.EventListener, TextRenderer,
+    MetadataRenderer<List<Id3Frame>>, DebugTextViewHelper.Provider {
 
   /**
    * Builds renderers for the player.
@@ -71,17 +72,16 @@ public class OldDemoPlayer
     /**
      * Builds renderers for playback.
      *
-     * @param player The player for which renderers are being built. {@link ExoMediaPlayer#onRenderers}
-     * should be invoked once the renderers have been built. If building fails,
-     * {@link ExoMediaPlayer#onRenderersError} should be invoked.
+     * @param player The player for which renderers are being built. {@link DemoPlayer#onRenderers}
+     *     should be invoked once the renderers have been built. If building fails,
+     *     {@link DemoPlayer#onRenderersError} should be invoked.
      */
-    void buildRenderers(ExoMediaPlayer player);
-
+    void buildRenderers(DemoPlayer player);
     /**
      * Cancels the current build operation, if there is one. Else does nothing.
      * <p>
-     * A canceled build operation must not invoke {@link ExoMediaPlayer#onRenderers} or
-     * {@link ExoMediaPlayer#onRenderersError} on the player, which may have been released.
+     * A canceled build operation must not invoke {@link DemoPlayer#onRenderers} or
+     * {@link DemoPlayer#onRenderersError} on the player, which may have been released.
      */
     void cancel();
   }
@@ -90,12 +90,9 @@ public class OldDemoPlayer
    * A listener for core events.
    */
   public interface Listener {
-
     void onStateChanged(boolean playWhenReady, int playbackState);
-
     void onError(Exception e);
-
-    void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
+    void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
         float pixelWidthHeightRatio);
   }
 
@@ -108,21 +105,13 @@ public class OldDemoPlayer
    * will be invoked.
    */
   public interface InternalErrorListener {
-
     void onRendererInitializationError(Exception e);
-
     void onAudioTrackInitializationError(AudioTrack.InitializationException e);
-
     void onAudioTrackWriteError(AudioTrack.WriteException e);
-
     void onAudioTrackUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs);
-
     void onDecoderInitializationError(DecoderInitializationException e);
-
     void onCryptoError(CryptoException e);
-
     void onLoadError(int sourceId, IOException e);
-
     void onDrmSessionManagerError(Exception e);
   }
 
@@ -130,24 +119,16 @@ public class OldDemoPlayer
    * A listener for debugging information.
    */
   public interface InfoListener {
-
     void onVideoFormatEnabled(Format format, int trigger, long mediaTimeMs);
-
     void onAudioFormatEnabled(Format format, int trigger, long mediaTimeMs);
-
     void onDroppedFrames(int count, long elapsed);
-
     void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate);
-
     void onLoadStarted(int sourceId, long length, int type, int trigger, Format format,
         long mediaStartTimeMs, long mediaEndTimeMs);
-
     void onLoadCompleted(int sourceId, long bytesLoaded, int type, int trigger, Format format,
         long mediaStartTimeMs, long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs);
-
     void onDecoderInitialized(String decoderName, long elapsedRealtimeMs,
         long initializationDurationMs);
-
     void onAvailableRangeChanged(int sourceId, TimeRange availableRange);
   }
 
@@ -155,7 +136,6 @@ public class OldDemoPlayer
    * A listener for receiving notifications of timed text.
    */
   public interface CaptionListener {
-
     void onCues(List<Cue> cues);
   }
 
@@ -163,7 +143,6 @@ public class OldDemoPlayer
    * A listener for receiving ID3 metadata parsed from the media stream.
    */
   public interface Id3MetadataListener {
-
     void onId3Metadata(List<Id3Frame> id3Frames);
   }
 
@@ -198,7 +177,6 @@ public class OldDemoPlayer
 
   private Surface surface;
   private TrackRenderer videoRenderer;
-  private TrackRenderer audioRenderer;
   private CodecCounters codecCounters;
   private Format videoFormat;
   private int videoTrackToRestore;
@@ -211,7 +189,7 @@ public class OldDemoPlayer
   private InternalErrorListener internalErrorListener;
   private InfoListener infoListener;
 
-  public OldDemoPlayer(RendererBuilder rendererBuilder) {
+  public DemoPlayer(RendererBuilder rendererBuilder) {
     this.rendererBuilder = rendererBuilder;
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
     player.addListener(this);
@@ -310,17 +288,16 @@ public class OldDemoPlayer
     rendererBuilder.cancel();
     videoFormat = null;
     videoRenderer = null;
-    audioRenderer = null;
     rendererBuildingState = RENDERER_BUILDING_STATE_BUILDING;
     maybeReportPlayerState();
-    // rendererBuilder.buildRenderers(this);
+    rendererBuilder.buildRenderers(this);
   }
 
   /**
    * Invoked with the results from a {@link RendererBuilder}.
    *
-   * @param renderers Renderers indexed by {@link ExoMediaPlayer} TYPE_* constants. An individual
-   * element may be null if there do not exist tracks of the corresponding type.
+   * @param renderers Renderers indexed by {@link DemoPlayer} TYPE_* constants. An individual
+   *     element may be null if there do not exist tracks of the corresponding type.
    * @param bandwidthMeter Provides an estimate of the currently available bandwidth. May be null.
    */
   /* package */ void onRenderers(TrackRenderer[] renderers, BandwidthMeter bandwidthMeter) {
@@ -332,11 +309,10 @@ public class OldDemoPlayer
     }
     // Complete preparation.
     this.videoRenderer = renderers[TYPE_VIDEO];
-    this.audioRenderer = renderers[TYPE_AUDIO];
     this.codecCounters = videoRenderer instanceof MediaCodecTrackRenderer
         ? ((MediaCodecTrackRenderer) videoRenderer).codecCounters
-        : audioRenderer instanceof MediaCodecTrackRenderer
-            ? ((MediaCodecTrackRenderer) renderers[TYPE_AUDIO]).codecCounters : null;
+        : renderers[TYPE_AUDIO] instanceof MediaCodecTrackRenderer
+        ? ((MediaCodecTrackRenderer) renderers[TYPE_AUDIO]).codecCounters : null;
     this.bandwidthMeter = bandwidthMeter;
     pushSurface(false);
     player.prepare(renderers);
@@ -367,10 +343,6 @@ public class OldDemoPlayer
     player.seekTo(positionMs);
   }
 
-  public void stop() {
-    player.stop();
-  }
-
   public void release() {
     rendererBuilder.cancel();
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
@@ -391,19 +363,23 @@ public class OldDemoPlayer
     return playerState;
   }
 
-  @Override public Format getFormat() {
+  @Override
+  public Format getFormat() {
     return videoFormat;
   }
 
-  @Override public BandwidthMeter getBandwidthMeter() {
+  @Override
+  public BandwidthMeter getBandwidthMeter() {
     return bandwidthMeter;
   }
 
-  @Override public CodecCounters getCodecCounters() {
+  @Override
+  public CodecCounters getCodecCounters() {
     return codecCounters;
   }
 
-  @Override public long getCurrentPosition() {
+  @Override
+  public long getCurrentPosition() {
     return player.getCurrentPosition();
   }
 
@@ -427,37 +403,43 @@ public class OldDemoPlayer
     return mainHandler;
   }
 
-  @Override public void onPlayerStateChanged(boolean playWhenReady, int state) {
+  @Override
+  public void onPlayerStateChanged(boolean playWhenReady, int state) {
     maybeReportPlayerState();
   }
 
-  @Override public void onPlayerError(ExoPlaybackException exception) {
+  @Override
+  public void onPlayerError(ExoPlaybackException exception) {
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     for (Listener listener : listeners) {
       listener.onError(exception);
     }
   }
 
-  @Override public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
+  @Override
+  public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees,
       float pixelWidthHeightRatio) {
     for (Listener listener : listeners) {
       listener.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
     }
   }
 
-  @Override public void onDroppedFrames(int count, long elapsed) {
+  @Override
+  public void onDroppedFrames(int count, long elapsed) {
     if (infoListener != null) {
       infoListener.onDroppedFrames(count, elapsed);
     }
   }
 
-  @Override public void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate) {
+  @Override
+  public void onBandwidthSample(int elapsedMs, long bytes, long bitrateEstimate) {
     if (infoListener != null) {
       infoListener.onBandwidthSample(elapsedMs, bytes, bitrateEstimate);
     }
   }
 
-  @Override public void onDownstreamFormatChanged(int sourceId, Format format, int trigger,
+  @Override
+  public void onDownstreamFormatChanged(int sourceId, Format format, int trigger,
       long mediaTimeMs) {
     if (infoListener == null) {
       return;
@@ -470,29 +452,34 @@ public class OldDemoPlayer
     }
   }
 
-  @Override public void onDrmKeysLoaded() {
+  @Override
+  public void onDrmKeysLoaded() {
     // Do nothing.
   }
 
-  @Override public void onDrmSessionManagerError(Exception e) {
+  @Override
+  public void onDrmSessionManagerError(Exception e) {
     if (internalErrorListener != null) {
       internalErrorListener.onDrmSessionManagerError(e);
     }
   }
 
-  @Override public void onDecoderInitializationError(DecoderInitializationException e) {
+  @Override
+  public void onDecoderInitializationError(DecoderInitializationException e) {
     if (internalErrorListener != null) {
       internalErrorListener.onDecoderInitializationError(e);
     }
   }
 
-  @Override public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
+  @Override
+  public void onAudioTrackInitializationError(AudioTrack.InitializationException e) {
     if (internalErrorListener != null) {
       internalErrorListener.onAudioTrackInitializationError(e);
     }
   }
 
-  @Override public void onAudioTrackWriteError(AudioTrack.WriteException e) {
+  @Override
+  public void onAudioTrackWriteError(AudioTrack.WriteException e) {
     if (internalErrorListener != null) {
       internalErrorListener.onAudioTrackWriteError(e);
     }
@@ -505,48 +492,56 @@ public class OldDemoPlayer
     }
   }
 
-  @Override public void onCryptoError(CryptoException e) {
+  @Override
+  public void onCryptoError(CryptoException e) {
     if (internalErrorListener != null) {
       internalErrorListener.onCryptoError(e);
     }
   }
 
-  @Override public void onDecoderInitialized(String decoderName, long elapsedRealtimeMs,
+  @Override
+  public void onDecoderInitialized(String decoderName, long elapsedRealtimeMs,
       long initializationDurationMs) {
     if (infoListener != null) {
       infoListener.onDecoderInitialized(decoderName, elapsedRealtimeMs, initializationDurationMs);
     }
   }
 
-  @Override public void onLoadError(int sourceId, IOException e) {
+  @Override
+  public void onLoadError(int sourceId, IOException e) {
     if (internalErrorListener != null) {
       internalErrorListener.onLoadError(sourceId, e);
     }
   }
 
-  @Override public void onCues(List<Cue> cues) {
+  @Override
+  public void onCues(List<Cue> cues) {
     if (captionListener != null && getSelectedTrack(TYPE_TEXT) != TRACK_DISABLED) {
       captionListener.onCues(cues);
     }
   }
 
-  @Override public void onMetadata(List<Id3Frame> id3Frames) {
+  @Override
+  public void onMetadata(List<Id3Frame> id3Frames) {
     if (id3MetadataListener != null && getSelectedTrack(TYPE_METADATA) != TRACK_DISABLED) {
       id3MetadataListener.onId3Metadata(id3Frames);
     }
   }
 
-  @Override public void onAvailableRangeChanged(int sourceId, TimeRange availableRange) {
+  @Override
+  public void onAvailableRangeChanged(int sourceId, TimeRange availableRange) {
     if (infoListener != null) {
       infoListener.onAvailableRangeChanged(sourceId, availableRange);
     }
   }
 
-  @Override public void onPlayWhenReadyCommitted() {
+  @Override
+  public void onPlayWhenReadyCommitted() {
     // Do nothing.
   }
 
-  @Override public void onDrawnToSurface(Surface surface) {
+  @Override
+  public void onDrawnToSurface(Surface surface) {
     // Do nothing.
   }
 
@@ -568,7 +563,8 @@ public class OldDemoPlayer
     }
   }
 
-  @Override public void onLoadCanceled(int sourceId, long bytesLoaded) {
+  @Override
+  public void onLoadCanceled(int sourceId, long bytesLoaded) {
     // Do nothing.
   }
 
@@ -595,10 +591,12 @@ public class OldDemoPlayer
     }
 
     if (blockForSurfacePush) {
-      player.blockingSendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE,
-          surface);
+      player.blockingSendMessage(
+          videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, surface);
     } else {
-      player.sendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, surface);
+      player.sendMessage(
+          videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, surface);
     }
   }
+
 }

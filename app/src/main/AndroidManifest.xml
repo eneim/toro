@@ -26,6 +26,34 @@
         android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name="com.google.android.exoplayer.demo.SampleChooserActivity"
+        android:theme="@style/Theme.AppCompat">
+    </activity>
+
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name="com.google.android.libraries.mediaframework.demo.MainActivity"
+        android:theme="@style/Theme.AppCompat">
+    </activity>
+
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name="com.google.android.exoplayer.demo.PlayerActivity"
+        android:theme="@style/Theme.AppCompat.NoActionBar">
+    </activity>
+
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name=".activity.StandalonePlayerActivity"
+        android:theme="@style/Theme.AppCompat.NoActionBar">
+    </activity>
+
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
@@ -40,6 +68,11 @@
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
+
+    <!-- Google Play Services (gms) is required by the Google IMA SDK -->
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version" />
   </application>
 
 </manifest>

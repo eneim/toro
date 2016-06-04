@@ -311,7 +311,7 @@ import java.util.concurrent.ConcurrentHashMap;
       if (manager != null) {
         // immediately repeat
         manager.restoreVideoState(player.getVideoId());
-        manager.startPlayback();
+        manager.startPlayback(0);
         player.onPlaybackStarted();
       }
     }

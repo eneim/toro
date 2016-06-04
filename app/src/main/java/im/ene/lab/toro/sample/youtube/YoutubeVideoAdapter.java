@@ -153,4 +153,16 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
   @Nullable @Override public Long getSavedPosition(String videoId) {
     return mVideoStates.get(videoId);
   }
+
+  @Override public void startPlayback(long position) {
+    if (mPlayer != null && !mPlayer.isStarting()) {
+      mPlayer.start(position);
+
+      if (mHandler != null) {
+        // Remove old callback if exist
+        mHandler.removeMessages(MESSAGE_PROGRESS);
+        mHandler.sendEmptyMessageDelayed(MESSAGE_PROGRESS, 250);
+      }
+    }
+  }
 }

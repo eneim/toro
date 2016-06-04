@@ -40,7 +40,7 @@ import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
-import im.ene.lab.toro.player.internal.ExtractorRendererBuilder;
+import im.ene.lab.toro.player.internal.RendererBuilderFactory;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
@@ -74,7 +74,7 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
-public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlayer {
+public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMediaPlayer {
 
   public interface OnReleasedListener {
 
@@ -118,7 +118,7 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   private int mVideoWidth;
   private int mVideoHeight;
 
-  private TrMediaPlayer.MediaController mMediaController;
+  private TrMediaPlayer.Controller mController;
   private OnCompletionListener mOnCompletionListener;
   private OnPreparedListener mOnPreparedListener;
   private OnErrorListener mOnErrorListener;
@@ -131,20 +131,20 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   private boolean mCanSeekBack;
   private boolean mCanSeekForward;
 
-  public TrVideoView(Context context) {
+  public VideoPlayerView(Context context) {
     this(context, null);
   }
 
-  public TrVideoView(Context context, AttributeSet attrs) {
+  public VideoPlayerView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public TrVideoView(Context context, AttributeSet attrs, int defStyle) {
+  public VideoPlayerView(Context context, AttributeSet attrs, int defStyle) {
     this(context, attrs, defStyle, 0);
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public TrVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+  public VideoPlayerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     initVideoView();
   }
@@ -214,12 +214,12 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
 
   @Override public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
     super.onInitializeAccessibilityEvent(event);
-    event.setClassName(TrVideoView.class.getName());
+    event.setClassName(VideoPlayerView.class.getName());
   }
 
   @Override public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
     super.onInitializeAccessibilityNodeInfo(info);
-    info.setClassName(TrVideoView.class.getName());
+    info.setClassName(VideoPlayerView.class.getName());
   }
 
   public int resolveAdjustedSize(int desiredSize, int measureSpec) {
@@ -302,7 +302,7 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
 
     try {
       ExoMediaPlayer.RendererBuilder builder =
-          new ExtractorRendererBuilder(getContext(), "ToroPlayer", mUri);
+          RendererBuilderFactory.createRendererBuilder(getContext(), mUri);
       mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
 
       // mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
@@ -312,6 +312,7 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
       } else {
         mAudioSession = mMediaPlayer.getAudioSessionId();
       }
+
       mMediaPlayer.setOnPreparedListener(mPreparedListener);
       mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
       mMediaPlayer.setOnCompletionListener(mCompletionListener);
@@ -346,20 +347,20 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
     }
   }
 
-  public void setMediaController(TrMediaPlayer.MediaController controller) {
-    if (mMediaController != null) {
-      mMediaController.hide();
+  public void setMediaController(TrMediaPlayer.Controller controller) {
+    if (mController != null) {
+      mController.hide();
     }
-    mMediaController = controller;
+    mController = controller;
     attachMediaController();
   }
 
   private void attachMediaController() {
-    if (mMediaPlayer != null && mMediaController != null) {
-      mMediaController.setMediaPlayer(this);
+    if (mMediaPlayer != null && mController != null) {
+      mController.setMediaPlayer(this);
       View anchorView = this.getParent() instanceof View ? (View) this.getParent() : this;
-      mMediaController.setAnchorView(anchorView);
-      mMediaController.setEnabled(isInPlaybackState());
+      mController.setAnchorView(anchorView);
+      mController.setEnabled(isInPlaybackState());
     }
   }
 
@@ -383,8 +384,8 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
       if (mOnPreparedListener != null) {
         mOnPreparedListener.onPrepared(mMediaPlayer);
       }
-      if (mMediaController != null) {
-        mMediaController.setEnabled(true);
+      if (mController != null) {
+        mController.setEnabled(true);
       }
 
       mVideoWidth = mp.getVideoWidth();
@@ -402,13 +403,13 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
         // start the video here instead of in the callback.
         if (mTargetState == STATE_PLAYING) {
           start();
-          if (mMediaController != null) {
-            mMediaController.show();
+          if (mController != null) {
+            mController.show();
           }
         } else if (!isPlaying() && (seekToPosition != 0 || getCurrentPosition() > 0)) {
-          if (mMediaController != null) {
+          if (mController != null) {
             // Show the media controls when we're paused into a video and make 'em stick.
-            mMediaController.show(0);
+            mController.show(0);
           }
         }
       } else {
@@ -425,8 +426,8 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
     public void onCompletion(TrMediaPlayer mp) {
       mCurrentState = STATE_PLAYBACK_COMPLETED;
       mTargetState = STATE_PLAYBACK_COMPLETED;
-      if (mMediaController != null) {
-        mMediaController.hide();
+      if (mController != null) {
+        mController.hide();
       }
       if (mOnCompletionListener != null) {
         mOnCompletionListener.onCompletion(mMediaPlayer);
@@ -448,8 +449,8 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
       Log.d(TAG, "Error: " + er.toString());
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      if (mMediaController != null) {
-        mMediaController.hide();
+      if (mController != null) {
+        mController.hide();
       }
 
             /* If an error handler has been supplied, use it and finish. */
@@ -495,6 +496,8 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
 
   OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
     public void onBufferingUpdate(TrMediaPlayer mp, int percent) {
+      Log.d(TAG,
+          "onBufferingUpdate() called with: " + "mp = [" + mp + "], percent = [" + percent + "]");
       mCurrentBufferPercentage = percent;
     }
   };
@@ -577,7 +580,7 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
         mSurface.release();
         mSurface = null;
       }
-      if (mMediaController != null) mMediaController.hide();
+      if (mController != null) mController.hide();
       release(true);
       return true;
     }
@@ -609,14 +612,14 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   }
 
   @Override public boolean onTouchEvent(MotionEvent ev) {
-    if (isInPlaybackState() && mMediaController != null) {
+    if (isInPlaybackState() && mController != null) {
       toggleMediaControlsVisibility();
     }
     return false;
   }
 
   @Override public boolean onTrackballEvent(MotionEvent ev) {
-    if (isInPlaybackState() && mMediaController != null) {
+    if (isInPlaybackState() && mController != null) {
       toggleMediaControlsVisibility();
     }
     return false;
@@ -630,27 +633,27 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
         keyCode != KeyEvent.KEYCODE_MENU &&
         keyCode != KeyEvent.KEYCODE_CALL &&
         keyCode != KeyEvent.KEYCODE_ENDCALL;
-    if (isInPlaybackState() && isKeyCodeSupported && mMediaController != null) {
+    if (isInPlaybackState() && isKeyCodeSupported && mController != null) {
       if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
         if (mMediaPlayer.isPlaying()) {
           pause();
-          mMediaController.show();
+          mController.show();
         } else {
           start();
-          mMediaController.hide();
+          mController.hide();
         }
         return true;
       } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
         if (!mMediaPlayer.isPlaying()) {
           start();
-          mMediaController.hide();
+          mController.hide();
         }
         return true;
       } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
           || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
         if (mMediaPlayer.isPlaying()) {
           pause();
-          mMediaController.show();
+          mController.show();
         }
         return true;
       } else {
@@ -662,15 +665,24 @@ public class TrVideoView extends TextureView implements TrMediaPlayer.IMediaPlay
   }
 
   private void toggleMediaControlsVisibility() {
-    if (mMediaController.isShowing()) {
-      mMediaController.hide();
+    if (mController.isShowing()) {
+      mController.hide();
     } else {
-      mMediaController.show();
+      mController.show();
     }
   }
 
   @Override public void start() {
     if (isInPlaybackState()) {
+      mMediaPlayer.start();
+      mCurrentState = STATE_PLAYING;
+    }
+    mTargetState = STATE_PLAYING;
+  }
+
+  @Override public void start(long position) {
+    if (isInPlaybackState()) {
+      seekTo(position);
       mMediaPlayer.start();
       mCurrentState = STATE_PLAYING;
     }

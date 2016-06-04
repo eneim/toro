@@ -189,4 +189,5 @@ public class NativeMediaPlayer implements TrMediaPlayer {
   @Override public void prepareAsync() throws IllegalStateException {
     mediaPlayer.prepareAsync();
   }
+
 }
