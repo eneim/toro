@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import im.ene.lab.toro.player.develop.MediaPlayerView;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
 import im.ene.lab.toro.sample.R;
 
 /**
@@ -46,7 +46,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
       @Override public void onClick(View v) {
         playRequested = !playRequested;
         if (playRequested) {
-          mVideoPlayerView.play();
+          mVideoPlayerView.start();
         } else {
           mVideoPlayerView.pause();
         }

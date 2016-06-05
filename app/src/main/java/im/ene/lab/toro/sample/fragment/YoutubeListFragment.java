@@ -81,6 +81,7 @@ public class YoutubeListFragment extends RecyclerViewFragment {
     @Override public int getItemCount() {
       return VideoSource.YOUTUBES.length * 10;
     }
+
   }
 
   static class ViewHolder extends YoutubeViewHolder

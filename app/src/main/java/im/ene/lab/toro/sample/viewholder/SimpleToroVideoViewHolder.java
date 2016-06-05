@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -50,11 +51,11 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
-    mVideoView.setOnReleasedListener(this);
+    // mVideoView.setOnReleasedListener(this);
   }
 
-  @Override protected VideoPlayerView findVideoView(View itemView) {
-    return (VideoPlayerView) itemView.findViewById(R.id.video);
+  @Override protected MediaPlayerView findVideoView(View itemView) {
+    return (MediaPlayerView) itemView.findViewById(R.id.video);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -70,7 +71,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     }
 
     mItem = (SimpleVideoObject) item;
-    mVideoView.setVideoURI(Uri.parse(mItem.video));
+    mVideoView.setMediaUri(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {

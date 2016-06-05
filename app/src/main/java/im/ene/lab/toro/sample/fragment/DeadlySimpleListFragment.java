@@ -18,6 +18,7 @@ package im.ene.lab.toro.sample.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,9 +33,10 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.develop.MediaPlayerView;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -190,6 +192,18 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public void setBackgroundAudioEnabled(boolean enabled) {
       mVideoView.setBackgroundAudioEnabled(enabled);
+    }
+
+    @Override public void setMediaSource(@NonNull MediaSource source) {
+      mVideoView.setMediaSource(source);
+    }
+
+    @Override public void setMediaUri(Uri uri) {
+      mVideoView.setMediaUri(uri);
+    }
+
+    @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+      mVideoView.setVolume(volume);
     }
 
     @Override public boolean isLoopAble() {

@@ -21,7 +21,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.FloatRange;
-import android.util.Log;
 import android.view.Surface;
 import com.google.android.exoplayer.CodecCounters;
 import com.google.android.exoplayer.DummyTrackRenderer;
@@ -78,8 +77,6 @@ public class ExoMediaPlayer
     StreamingDrmSessionManager.EventListener, DashChunkSource.EventListener, TextRenderer,
     MetadataRenderer<List<Id3Frame>>, DebugTextViewHelper.Provider,
     AudioCapabilitiesReceiver.Listener {
-
-  private static final String TAG = "TrDemoPlayer";
 
   @Override public void onAudioCapabilitiesChanged(AudioCapabilities audioCapabilities) {
 
@@ -506,12 +503,6 @@ public class ExoMediaPlayer
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, int state) {
-    Log.d(TAG, "onPlayerStateChanged() called with: "
-        + "playWhenReady = ["
-        + playWhenReady
-        + "], state = ["
-        + state
-        + "]");
     maybeReportPlayerState();
   }
 
@@ -635,7 +626,6 @@ public class ExoMediaPlayer
 
   @Override public void onPlayWhenReadyCommitted() {
     // Do nothing.
-    Log.d(TAG, "onPlayWhenReadyCommitted() called with: " + getPlayWhenReady());
   }
 
   @Override public void onDrawnToSurface(Surface surface) {
@@ -716,7 +706,7 @@ public class ExoMediaPlayer
     }
   }
 
-  public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
     player.sendMessage(audioRenderer, MediaCodecAudioTrackRenderer.MSG_SET_VOLUME, volume);
   }
 

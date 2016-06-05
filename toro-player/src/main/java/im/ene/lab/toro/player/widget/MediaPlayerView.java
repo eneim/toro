@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.develop;
+package im.ene.lab.toro.player.widget;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -40,6 +40,7 @@ import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.internal.EventLogger;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
@@ -52,8 +53,7 @@ import java.util.List;
 /**
  * Created by eneim on 6/4/16.
  */
-public class MediaPlayerView extends TextureView
-    implements MediaPlayerWidget, TrMediaPlayer.IMediaPlayer {
+public class MediaPlayerView extends TextureView implements TrMediaPlayer.IMediaPlayer {
 
   private static final String TAG = "MediaPlayerView";
 
@@ -393,16 +393,6 @@ public class MediaPlayerView extends TextureView
     mMediaPlayer.setBackgrounded(backgrounded);
   }
 
-  @Override public void play() {
-    mPlayRequested = true;
-    if (mMediaPlayer == null) {
-      preparePlayer(true);
-    } else {
-      mMediaPlayer.setBackgrounded(false);
-      mMediaPlayer.setPlayWhenReady(mPlayRequested);
-    }
-  }
-
   @Override public void pause() {
     mPlayRequested = false;
     if (mMediaPlayer != null) {
@@ -462,7 +452,13 @@ public class MediaPlayerView extends TextureView
   // IMediaPlayer
 
   @Override public void start() {
-    play();
+    mPlayRequested = true;
+    if (mMediaPlayer == null) {
+      preparePlayer(true);
+    } else {
+      mMediaPlayer.setBackgrounded(false);
+      mMediaPlayer.setPlayWhenReady(mPlayRequested);
+    }
   }
 
   @Override public void start(long position) {

@@ -16,19 +16,22 @@
 
 package im.ene.lab.toro;
 
+import android.net.Uri;
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
+import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.VideoPlayerView;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
 
 /**
  * Created by eneim on 1/31/16.
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final VideoPlayerView mVideoView;
+  protected final MediaPlayerView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
@@ -45,7 +48,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnInfoListener(this);
   }
 
-  protected abstract VideoPlayerView findVideoView(View itemView);
+  protected abstract MediaPlayerView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -125,5 +128,17 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   @Override public void setBackgroundAudioEnabled(boolean enabled) {
     mVideoView.setBackgroundAudioEnabled(enabled);
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    mVideoView.setVolume(volume);
+  }
+
+  @Override public void setMediaSource(@NonNull MediaSource source) {
+    mVideoView.setMediaSource(source);
+  }
+
+  @Override public void setMediaUri(Uri uri) {
+    mVideoView.setMediaUri(uri);
   }
 }

@@ -29,27 +29,6 @@
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name="com.google.android.exoplayer.demo.SampleChooserActivity"
-        android:theme="@style/Theme.AppCompat">
-    </activity>
-
-    <activity
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name="com.google.android.libraries.mediaframework.demo.MainActivity"
-        android:theme="@style/Theme.AppCompat">
-    </activity>
-
-    <activity
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name="com.google.android.exoplayer.demo.PlayerActivity"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
-    </activity>
-
-    <activity
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
         android:name=".activity.StandalonePlayerActivity"
         android:theme="@style/Theme.AppCompat.NoActionBar">
     </activity>

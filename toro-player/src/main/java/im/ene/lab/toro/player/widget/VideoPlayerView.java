@@ -26,6 +26,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.FloatRange;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -36,6 +38,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
@@ -73,6 +76,7 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
+@Deprecated
 public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMediaPlayer {
 
   public interface OnReleasedListener {
@@ -241,8 +245,8 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
    *
    * @param path the path of the video.
    */
-  public void setVideoPath(String path) {
-    setVideoURI(Uri.parse(path));
+  public void setMediaPath(String path) {
+    setMediaUri(Uri.parse(path));
   }
 
   /**
@@ -250,8 +254,14 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
    *
    * @param uri the URI of the video.
    */
-  public void setVideoURI(Uri uri) {
-    setVideoURI(uri, null);
+  public void setMediaUri(Uri uri) {
+    setMediaUri(uri, null);
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    if (mMediaPlayer != null) {
+      mMediaPlayer.setVolume(volume);
+    }
   }
 
   /**
@@ -264,7 +274,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
    * "android-allow-cross-domain-redirect" as the key and "0" or "1" as the value
    * to disallow or allow cross domain redirection.
    */
-  public void setVideoURI(Uri uri, Map<String, String> headers) {
+  public void setMediaUri(Uri uri, Map<String, String> headers) {
     mUri = uri;
     mHeaders = headers;
     mSeekWhenPrepared = 0;
@@ -760,5 +770,9 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
 
   @Override public void setBackgroundAudioEnabled(boolean enabled) {
     mBackgroundAudioEnabled = enabled;
+  }
+
+  @Override public void setMediaSource(@NonNull MediaSource source) {
+    setMediaUri(source.mediaUri);
   }
 }

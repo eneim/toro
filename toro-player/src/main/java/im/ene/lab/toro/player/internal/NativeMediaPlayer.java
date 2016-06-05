@@ -19,6 +19,7 @@ package im.ene.lab.toro.player.internal;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.view.Surface;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
@@ -179,4 +180,7 @@ public class NativeMediaPlayer implements TrMediaPlayer {
     mediaPlayer.prepareAsync();
   }
 
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    mediaPlayer.setVolume(volume, volume);
+  }
 }

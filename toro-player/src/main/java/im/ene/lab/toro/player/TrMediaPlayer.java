@@ -19,7 +19,9 @@ package im.ene.lab.toro.player;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.View;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
@@ -68,14 +70,11 @@ public interface TrMediaPlayer {
 
     void setBackgroundAudioEnabled(boolean enabled);
 
-    // setup Listeners
-    // void setOnPreparedListener(OnPreparedListener listener);
+    void setMediaSource(@NonNull MediaSource source);
 
-    // void setOnCompletionListener(OnCompletionListener listener);
+    void setMediaUri(Uri uri);
 
-    // void setOnErrorListener(OnErrorListener listener);
-
-    // void setOnInfoListener(OnInfoListener listener);
+    void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
   }
 
   interface Controller {
@@ -186,4 +185,6 @@ public interface TrMediaPlayer {
   /** see {@link MediaPlayer#prepareAsync()} */
   void prepareAsync() throws IllegalStateException;
 
+  /** see {@link MediaPlayer#setVolume(float, float)} */
+  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
 }
