@@ -282,23 +282,24 @@ public class MediaPlayerView extends TextureView implements TrMediaPlayer.IMedia
   }
 
   public MediaPlayerView(Context context) {
-    this(context, null);
+    super(context);
+    initialize(context);
   }
 
   public MediaPlayerView(Context context, AttributeSet attrs) {
-    this(context, attrs, 0);
+    super(context, attrs);
+    initialize(context);
   }
 
   public MediaPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
-    this(context, attrs, defStyleAttr, 0);
+    super(context, attrs, defStyleAttr);
+    initialize(context);
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public MediaPlayerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     initialize(context);
-    setSurfaceTextureListener(mSurfaceTextureListener);
-    getSurfaceTexture();
   }
 
   private void initialize(Context context) {
@@ -307,6 +308,7 @@ public class MediaPlayerView extends TextureView implements TrMediaPlayer.IMedia
     setFocusableInTouchMode(true);
     requestFocus();
     this.mAudioCapabilities = AudioCapabilities.getCapabilities(context);
+    setSurfaceTextureListener(mSurfaceTextureListener);
   }
 
   private void releasePlayer() {

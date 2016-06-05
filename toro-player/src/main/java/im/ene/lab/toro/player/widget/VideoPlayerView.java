@@ -312,11 +312,10 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     }
 
     try {
-      ExoMediaPlayer.RendererBuilder builder =
-          RendererBuilderFactory.createRendererBuilder(getContext(), mUri);
-      mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
-
-      // mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
+      //ExoMediaPlayer.RendererBuilder builder =
+      //    RendererBuilderFactory.createRendererBuilder(getContext(), mUri);
+      //mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
+      mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
 
       if (mAudioSession != 0) {
         mMediaPlayer.setAudioSessionId(mAudioSession);
