@@ -27,6 +27,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import java.util.Collections;
 import java.util.Comparator;
@@ -300,7 +302,7 @@ import java.util.concurrent.ConcurrentHashMap;
     // Normally stop playback
     if (manager != null) {
       manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
-      manager.pausePlayback();
+      manager.stopPlayback();
       player.onPlaybackStopped();
     }
 
@@ -357,8 +359,8 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  final boolean onError(ToroPlayer player, TrMediaPlayer mp, int what, int extra) {
-    boolean handle = player.onPlaybackError(mp, what, extra);
+  final boolean onError(ToroPlayer player, TrMediaPlayer mp, PlaybackException error) {
+    boolean handle = player.onPlaybackError(mp, error);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
@@ -370,13 +372,9 @@ import java.util.concurrent.ConcurrentHashMap;
     return handle;
   }
 
-  final boolean onInfo(ToroPlayer player, TrMediaPlayer mp, int what, int extra) {
-    player.onPlaybackInfo(mp, what, extra);
+  final boolean onInfo(ToroPlayer player, TrMediaPlayer mp, PlaybackInfo info) {
+    player.onPlaybackInfo(mp, info);
     return true;
-  }
-
-  final void onSeekComplete(ToroPlayer player, TrMediaPlayer mp) {
-    // Do nothing
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

@@ -19,16 +19,18 @@ package im.ene.lab.toro.player;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.View;
+import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.NativeMediaPlayer;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -42,7 +44,11 @@ public interface TrMediaPlayer {
 
     void start();
 
+    void start(long position);
+
     void pause();
+
+    void stop();
 
     /* int */ long getDuration();
 
@@ -54,12 +60,6 @@ public interface TrMediaPlayer {
 
     @IntRange(from = 0, to = 100) int getBufferPercentage();
 
-    boolean canPause();
-
-    boolean canSeekBackward();
-
-    boolean canSeekForward();
-
     /**
      * Get the audio session id for the player used by this VideoView. This can be used to
      * apply audio effects to the audio track of a video.
@@ -67,9 +67,17 @@ public interface TrMediaPlayer {
      * @return The audio session, or 0 if there was an error.
      */
     int getAudioSessionId();
+
+    void setBackgroundAudioEnabled(boolean enabled);
+
+    void setMediaSource(@NonNull MediaSource source);
+
+    void setMediaUri(Uri uri);
+
+    void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
   }
 
-  interface MediaController {
+  interface Controller {
 
     /** see {@link android.widget.MediaController#hide()} */
     void hide();
@@ -98,6 +106,10 @@ public interface TrMediaPlayer {
     public static TrMediaPlayer createNativePlayer() {
       return new NativeMediaPlayer();
     }
+
+    public static TrMediaPlayer createExoPlayer(ExoMediaPlayer.RendererBuilder builder) {
+      return new ExoMediaPlayer(builder);
+    }
   }
 
   /** see {@link MediaPlayer#start()} */
@@ -122,7 +134,7 @@ public interface TrMediaPlayer {
   long getCurrentPosition();
 
   /** see {@link MediaPlayer#seekTo(int)} */
-  void seekTo(long millisec);
+  void seekTo(long milliSec);
 
   /** see {@link MediaPlayer#isPlaying()} */
   boolean isPlaying();
@@ -157,9 +169,6 @@ public interface TrMediaPlayer {
   /** see {@link MediaPlayer#setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener)} */
   void setOnBufferingUpdateListener(OnBufferingUpdateListener listener);
 
-  /** see {@link MediaPlayer#setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener)} */
-  void setOnSeekCompleteListener(OnSeekCompleteListener listener);
-
   /** see {@link MediaPlayer#setDataSource(Context, Uri, Map)} */
   void setDataSource(Context context, Uri uri, Map<String, String> headers)
       throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
@@ -175,4 +184,7 @@ public interface TrMediaPlayer {
 
   /** see {@link MediaPlayer#prepareAsync()} */
   void prepareAsync() throws IllegalStateException;
+
+  /** see {@link MediaPlayer#setVolume(float, float)} */
+  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
 }

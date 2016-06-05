@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.listener;
+package im.ene.lab.toro.player;
 
-import im.ene.lab.toro.player.TrMediaPlayer;
+import android.net.Uri;
 
 /**
- * Created by eneim on 6/2/16.
+ * Created by eneim on 6/3/16.
  */
-public interface OnSeekCompleteListener /* extends MediaPlayer.OnSeekCompleteListener */ {
+public class MediaSource {
 
-  /**
-   * Called to indicate the completion of a seek operation.
-   *
-   * @param mp the MediaPlayer that issued the seek operation
-   */
-  void onSeekComplete(TrMediaPlayer mp);
+  public final Uri mediaUri;
+
+  public MediaSource(Uri mediaUri) {
+    this.mediaUri = mediaUri;
+  }
 }

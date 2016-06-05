@@ -85,4 +85,5 @@ public class FbFeedAdapter extends BaseCustomAdapter<ToroAdapter.ViewHolder>
   @Override public int firstVideoPosition() {
     return 1;
   }
+
 }

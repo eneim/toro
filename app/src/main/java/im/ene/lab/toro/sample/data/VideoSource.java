@@ -36,7 +36,11 @@ public class VideoSource {
       "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.vertical;
 
   public static final String[] SOURCES = {
-      MP4, SQUARE, HORIZONTAL, VERTICAL
+      MP4,
+      "https://storage.googleapis.com/wvmedia/clear/vp9/tears/tears.mpd",
+      "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd",
+      "http://vod.leasewebcdn.com/bbb.flv?ri=1024&rs=150&start=0"
+      // SQUARE, HORIZONTAL, VERTICAL
   };
 
   public static final String[] YOUTUBES = {

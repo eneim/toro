@@ -25,8 +25,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ToroVideoViewHolder;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.TrVideoView;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
+import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.facebook.TrackablePlayer;
@@ -36,7 +38,7 @@ import im.ene.lab.toro.sample.util.Util;
  * Created by eneim on 1/30/16.
  */
 public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
-    implements TrackablePlayer, TrVideoView.OnReleasedListener {
+    implements TrackablePlayer, VideoPlayerView.OnReleasedListener {
 
   private final String TAG = getClass().getSimpleName();
 
@@ -49,11 +51,11 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
-    mVideoView.setOnReleasedListener(this);
+    // mVideoView.setOnReleasedListener(this);
   }
 
-  @Override protected TrVideoView findVideoView(View itemView) {
-    return (TrVideoView) itemView.findViewById(R.id.video);
+  @Override protected MediaPlayerView findVideoView(View itemView) {
+    return (MediaPlayerView) itemView.findViewById(R.id.video);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -69,7 +71,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     }
 
     mItem = (SimpleVideoObject) item;
-    mVideoView.setVideoURI(Uri.parse(mItem.video));
+    mVideoView.setMediaUri(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {
@@ -128,14 +130,14 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     mInfo.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         SimpleToroVideoViewHolder.super.onPlaybackStopped();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());
-    return super.onPlaybackError(mp, what, extra);
+    return super.onPlaybackError(mp, error);
   }
 
   @Override protected boolean allowLongPressSupport() {

@@ -21,12 +21,13 @@ import android.graphics.Rect;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.view.View;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 
 /**
  * Created by eneim on 1/31/16.
@@ -121,25 +122,19 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   /**
    * Implement from {@link OnErrorListener}. This method
-   * is closed and called only by {@link Toro#onError(ToroPlayer, TrMediaPlayer, int, int)}, Client
-   * should use {@link ToroPlayer#onPlaybackError(TrMediaPlayer, int, int)}
+   * is closed and called only by {@link Toro#onError(ToroPlayer, TrMediaPlayer,
+   * PlaybackException)}, Client should use {@link ToroPlayer#onPlaybackError(TrMediaPlayer,
+   * PlaybackException)}
    */
-  @Override public final boolean onError(TrMediaPlayer mp, int what, int extra) {
-    return mHelper.onError(this, mp, what, extra);
+  @Override public final boolean onError(TrMediaPlayer mp, PlaybackException error) {
+    return mHelper.onError(this, mp, error);
   }
 
   /**
    * Implement from {@link OnInfoListener}
    */
-  @Override public final boolean onInfo(TrMediaPlayer mp, int what, int extra) {
-    return mHelper.onInfo(this, mp, what, extra);
-  }
-
-  /**
-   * Implement from {@link OnSeekCompleteListener}
-   */
-  @Override public final void onSeekComplete(TrMediaPlayer mp) {
-    mHelper.onSeekComplete(this, mp);
+  @Override public final boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
+    return mHelper.onInfo(this, mp, info);
   }
 
   @Override public int getPlayOrder() {
@@ -165,11 +160,11 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
     return true;  // don't want to see the annoying dialog
   }
 
-  @Override public void onPlaybackInfo(TrMediaPlayer mp, int what, int extra) {
+  @Override public void onPlaybackInfo(TrMediaPlayer mp, PlaybackInfo info) {
 
   }
 
@@ -216,18 +211,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @Override public int getBufferPercentage() {
     return 0;
-  }
-
-  @Override public boolean canPause() {
-    return true;
-  }
-
-  @Override public boolean canSeekBackward() {
-    return true;
-  }
-
-  @Override public boolean canSeekForward() {
-    return true;
   }
 
   @Override public int getAudioSessionId() {

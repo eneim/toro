@@ -16,7 +16,9 @@
 
 package im.ene.lab.toro.sample.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,8 +33,10 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.player.MediaSource;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.TrVideoView;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -86,9 +90,9 @@ public class DeadlySimpleListFragment extends Fragment {
    */
   private static class SimpleViewHolder extends ToroViewHolder {
 
-    private static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
+    private static final int LAYOUT_RES = R.layout.vh_toro_video_deadly_simple;
 
-    private TrVideoView mVideoView;
+    private MediaPlayerView mVideoView;
     private ImageView mThumbnail;
 
     private SimpleVideoObject mItem;
@@ -96,18 +100,19 @@ public class DeadlySimpleListFragment extends Fragment {
 
     public SimpleViewHolder(View itemView) {
       super(itemView);
-      mVideoView = (TrVideoView) itemView.findViewById(R.id.video);
+      mVideoView = (MediaPlayerView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+      mVideoView.setOnPreparedListener(this);
+      mVideoView.setOnCompletionListener(this);
     }
 
     @Override public void bind(@Nullable Object object) {
-      if (mVideoView != null && object instanceof SimpleVideoObject) {
-        mItem = (SimpleVideoObject) object;
-        mVideoView.setVideoPath(((SimpleVideoObject) object).video);
+      if (!(object instanceof SimpleVideoObject)) {
+        throw new IllegalArgumentException("This ViewHolder needs a SimpleVideoObject");
       }
-    }
 
-    @Override public void onViewHolderBound() {
+      mItem = (SimpleVideoObject) object;
+      mVideoView.setMediaUri(Uri.parse((mItem.video)));
       Picasso.with(itemView.getContext())
           .load(R.drawable.toro_place_holder)
           .fit()
@@ -115,13 +120,17 @@ public class DeadlySimpleListFragment extends Fragment {
           .into(mThumbnail);
     }
 
+    @Override public void onViewHolderBound() {
+      // Do nothing
+    }
+
     @Override public void onVideoPrepared(TrMediaPlayer mp) {
       mPlayable = true;
     }
 
-    @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
+    @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
       mPlayable = false;
-      return super.onPlaybackError(mp, what, extra);
+      return super.onPlaybackError(mp, error);
     }
 
     @Override public void onPlaybackStarted() {
@@ -152,8 +161,17 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView.start();
     }
 
+    @Override public void start(long position) {
+      seekTo(position);
+      start();
+    }
+
     @Override public void pause() {
       mVideoView.pause();
+    }
+
+    @Override public void stop() {
+      mVideoView.stop();
     }
 
     @Override public long getDuration() {
@@ -170,6 +188,26 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public boolean isPlaying() {
       return mVideoView.isPlaying();
+    }
+
+    @Override public void setBackgroundAudioEnabled(boolean enabled) {
+      mVideoView.setBackgroundAudioEnabled(enabled);
+    }
+
+    @Override public void setMediaSource(@NonNull MediaSource source) {
+      mVideoView.setMediaSource(source);
+    }
+
+    @Override public void setMediaUri(Uri uri) {
+      mVideoView.setMediaUri(uri);
+    }
+
+    @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+      mVideoView.setVolume(volume);
+    }
+
+    @Override public boolean isLoopAble() {
+      return true;
     }
   }
 
@@ -199,5 +237,4 @@ public class DeadlySimpleListFragment extends Fragment {
       return 100;
     }
   }
-
 }

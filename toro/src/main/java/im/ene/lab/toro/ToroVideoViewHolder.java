@@ -16,18 +16,22 @@
 
 package im.ene.lab.toro;
 
+import android.net.Uri;
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
+import im.ene.lab.toro.player.MediaSource;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.TrVideoView;
+import im.ene.lab.toro.player.widget.MediaPlayerView;
 
 /**
  * Created by eneim on 1/31/16.
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final TrVideoView mVideoView;
+  protected final MediaPlayerView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
@@ -42,10 +46,9 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnCompletionListener(this);
     mVideoView.setOnErrorListener(this);
     mVideoView.setOnInfoListener(this);
-    mVideoView.setOnSeekCompleteListener(this);
   }
 
-  protected abstract TrVideoView findVideoView(View itemView);
+  protected abstract MediaPlayerView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -86,18 +89,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
-  @Override public boolean canPause() {
-    return mVideoView != null && mVideoView.canPause();
-  }
-
-  @Override public boolean canSeekBackward() {
-    return mVideoView != null && mVideoView.canSeekBackward();
-  }
-
-  @Override public boolean canSeekForward() {
-    return mVideoView != null && mVideoView.canSeekForward();
-  }
-
   @Override public int getAudioSessionId() {
     if (mVideoView != null) {
       return mVideoView.getAudioSessionId();
@@ -115,12 +106,39 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mPlayable = true;
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
     mPlayable = false;
-    return super.onPlaybackError(mp, what, extra);
+    return super.onPlaybackError(mp, error);
+  }
+
+  @Override public void start(long position) {
+    seekTo(position);
+    start();
+  }
+
+  @Override public void stop() {
+    if (mVideoView != null) {
+      mVideoView.stop();
+    }
   }
 
   @NonNull @Override public View getVideoView() {
     return mVideoView;
+  }
+
+  @Override public void setBackgroundAudioEnabled(boolean enabled) {
+    mVideoView.setBackgroundAudioEnabled(enabled);
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    mVideoView.setVolume(volume);
+  }
+
+  @Override public void setMediaSource(@NonNull MediaSource source) {
+    mVideoView.setMediaSource(source);
+  }
+
+  @Override public void setMediaUri(Uri uri) {
+    mVideoView.setMediaUri(uri);
   }
 }

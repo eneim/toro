@@ -4,7 +4,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.fabric.tools:gradle:1.+'
+    classpath 'io.fabric.tools:gradle:1.21.5'
   }
 }
 apply plugin: 'com.android.application'
@@ -95,11 +95,6 @@ dependencies {
 
   compile project(':toro')
   // compile 'com.github.eneim:Toro:1.2.0'
-
-  // preview
-  compile ('com.devbrackets.android:exomedia:3.0.0-preview3') {
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-  }
 
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'

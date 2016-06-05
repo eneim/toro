@@ -56,8 +56,16 @@ public abstract class BaseCustomAdapter<VH extends ToroAdapter.ViewHolder> exten
     delegate.startPlayback();
   }
 
+  @Override public void startPlayback(long position) {
+    delegate.startPlayback(position);
+  }
+
   @Override public void pausePlayback() {
     delegate.pausePlayback();
+  }
+
+  @Override public void stopPlayback() {
+    delegate.stopPlayback();
   }
 
   @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {

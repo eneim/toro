@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.internal;
-
-import android.media.MediaPlayer;
+package im.ene.lab.toro.player;
 
 /**
  * Created by eneim on 6/2/16.
  */
-public interface MediaPlayerListener
-    extends MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener,
-    MediaPlayer.OnVideoSizeChangedListener {
+public class PlaybackInfo {
 
+  private final String info;
+
+  public PlaybackInfo(String info) {
+    this.info = info;
+  }
+
+  public String getInfo() {
+    return info;
+  }
 }

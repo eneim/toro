@@ -16,14 +16,19 @@
 
 package im.ene.lab.toro.sample.youtube;
 
+import android.net.Uri;
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.player.MediaSource;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.util.Util;
 import java.lang.annotation.Retention;
@@ -121,6 +126,11 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
   }
 
+  @Override public void stop() {
+    // FIXME
+    pause();
+  }
+
   @Override public final long getDuration() {
     try {
       return mParent.mYoutubePlayer != null ? mParent.mYoutubePlayer.getDurationMillis() : -1;
@@ -180,7 +190,9 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @CallSuper @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
-    mHelper.onError(this, null, 0, 0);
+    PlaybackException error =
+        errorReason != null ? new PlaybackException(errorReason.name(), 0, 0) : null;
+    mHelper.onError(this, null, error);
     mHelper.onYoutubeError(this, errorReason);
   }
 
@@ -246,6 +258,18 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
     // TODO Handle error
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+
+  }
+
+  @Override public void setMediaUri(Uri uri) {
+
+  }
+
+  @Override public void setMediaSource(@NonNull MediaSource source) {
+
   }
 
   @IntDef({

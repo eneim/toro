@@ -81,6 +81,7 @@ public class YoutubeListFragment extends RecyclerViewFragment {
     @Override public int getItemCount() {
       return VideoSource.YOUTUBES.length * 10;
     }
+
   }
 
   static class ViewHolder extends YoutubeViewHolder
@@ -198,6 +199,15 @@ public class YoutubeListFragment extends RecyclerViewFragment {
 
     @Override public String toString() {
       return Integer.toHexString(hashCode()) + " position=" + getAdapterPosition();
+    }
+
+    @Override public void start(long position) {
+      seekTo(position);
+      start();
+    }
+
+    @Override public void setBackgroundAudioEnabled(boolean enabled) {
+
     }
   }
 }

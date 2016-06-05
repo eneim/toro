@@ -46,10 +46,18 @@ public interface VideoPlayerManager {
    */
   void startPlayback();
 
+  @Deprecated
+  void startPlayback(long position);
+
   /**
    * Pause current video
    */
   void pausePlayback();
+
+  /**
+   * Stop current video. Used when the Video is detached from its parent.
+   */
+  void stopPlayback();
 
   /**
    * Save current video state

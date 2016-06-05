@@ -61,7 +61,7 @@ public class RecyclerViewItemHelper extends VideoViewItemHelper {
             listener.getManager()
                 .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
                     player.getDuration());
-            listener.getManager().pausePlayback();
+            listener.getManager().stopPlayback();
             player.onPlaybackPaused();
           }
         }

@@ -76,6 +76,17 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   }
 
+  @Override public void startPlayback(long position) {
+    if (mPlayer != null) {
+      mPlayer.start(position);
+      if (mUiHandler != null) {
+        // Remove old callback if exist
+        mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+        mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
+      }
+    }
+  }
+
   @Override public void pausePlayback() {
     if (mUiHandler != null) {
       mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
@@ -83,6 +94,16 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
     if (mPlayer != null) {
       mPlayer.pause();
+    }
+  }
+
+  @Override public void stopPlayback() {
+    if (mUiHandler != null) {
+      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+    }
+
+    if (mPlayer != null) {
+      mPlayer.stop();
     }
   }
 

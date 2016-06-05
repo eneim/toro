@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.player.listener;
 
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
 
 /**
@@ -30,5 +31,5 @@ public interface OnErrorListener /* extends MediaPlayer.OnErrorListener */ {
    * Returning false, or not having an OnErrorListener at all, will
    * cause the OnCompletionListener to be called.
    */
-  boolean onError(TrMediaPlayer mp, int what, int extra);
+  boolean onError(TrMediaPlayer mp, PlaybackException exception);
 }

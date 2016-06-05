@@ -24,19 +24,20 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 
 /**
  * Created by eneim on 1/29/16.
  */
 public interface ToroPlayer
     extends TrMediaPlayer.IMediaPlayer, OnPreparedListener, OnCompletionListener, OnErrorListener,
-    OnInfoListener, OnSeekCompleteListener {
+    OnInfoListener {
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to
@@ -131,22 +132,22 @@ public interface ToroPlayer
   void onPlaybackStopped();
 
   /**
-   * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
+   * Called from {@link Toro#onError(ToroPlayer, TrMediaPlayer, PlaybackException)}
    *
-   * This method has the same signature with {@link ToroPlayer#onError(MediaPlayer, int, int)}, but
-   * {@link ToroPlayer#onError(MediaPlayer, int, int)} will be called explicitly by Toro, so this
-   * method will prevent infinite loop
+   * This method has the same signature with {@link ToroPlayer#onError(TrMediaPlayer,
+   * PlaybackException)}, but {@link ToroPlayer#onError(TrMediaPlayer, PlaybackException)} will be
+   * called explicitly by Toro, so this method will prevent infinite loop
    */
-  boolean onPlaybackError(TrMediaPlayer mp, int what, int extra);
+  boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error);
 
   /**
-   * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
+   * Called from {@link Toro#onInfo(ToroPlayer, TrMediaPlayer, PlaybackInfo)}
    *
-   * This method has the same signature with {@link ToroPlayer#onInfo(MediaPlayer, int, int)} , but
-   * {@link ToroPlayer#onInfo(MediaPlayer, int, int)} will be called explicitly by Toro, so this
-   * method will prevent infinite loop
+   * This method has the same signature with {@link ToroPlayer#onInfo(TrMediaPlayer, PlaybackInfo)}
+   * , but {@link ToroPlayer##onInfo(TrMediaPlayer, PlaybackInfo)} will be called explicitly by
+   * Toro, so this method will prevent infinite loop
    */
-  void onPlaybackInfo(TrMediaPlayer mp, int what, int extra);
+  void onPlaybackInfo(TrMediaPlayer mp, PlaybackInfo info);
 
   /**
    * Callback from playback progress update. This method is called from main thread (UIThread)

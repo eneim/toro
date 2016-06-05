@@ -19,14 +19,16 @@ package im.ene.lab.toro.player.internal;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.view.Surface;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -131,7 +133,7 @@ public class NativeMediaPlayer implements TrMediaPlayer {
 
     mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
       @Override public boolean onError(MediaPlayer mp, int what, int extra) {
-        return listener.onError(NativeMediaPlayer.this, what, extra);
+        return listener.onError(NativeMediaPlayer.this, new PlaybackException(what, extra));
       }
     });
   }
@@ -141,7 +143,8 @@ public class NativeMediaPlayer implements TrMediaPlayer {
 
     mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
       @Override public boolean onInfo(MediaPlayer mp, int what, int extra) {
-        return listener.onInfo(NativeMediaPlayer.this, what, extra);
+        String info = "{what:" + what + ", extra:" + extra + "}";
+        return listener.onInfo(NativeMediaPlayer.this, new PlaybackInfo(info));
       }
     });
   }
@@ -152,16 +155,6 @@ public class NativeMediaPlayer implements TrMediaPlayer {
     mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
       @Override public void onBufferingUpdate(MediaPlayer mp, int percent) {
         listener.onBufferingUpdate(NativeMediaPlayer.this, percent);
-      }
-    });
-  }
-
-  @Override public void setOnSeekCompleteListener(final OnSeekCompleteListener listener) {
-    if (listener == null) return;
-
-    mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-      @Override public void onSeekComplete(MediaPlayer mp) {
-        listener.onSeekComplete(NativeMediaPlayer.this);
       }
     });
   }
@@ -185,5 +178,9 @@ public class NativeMediaPlayer implements TrMediaPlayer {
 
   @Override public void prepareAsync() throws IllegalStateException {
     mediaPlayer.prepareAsync();
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    mediaPlayer.setVolume(volume, volume);
   }
 }
