@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright (C) 2016 Brian Wernick
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.trial;
+package com.devbrackets.android.exomedia.listener;
 
 /**
- * Created by eneim on 6/4/16.
- *
- * Define some core actions of a MediaPlayer. Those actions are supposed to be used by User
- * Interface.
+ * Interface definition for a callback to be invoked when the media
+ * source is ready for playback.
  */
-public interface MultiMediaPlayerWidget extends MediaPlayerWidget {
-
-  void next();
-
-  void previous();
-
-  void shuffle(boolean willShuffle);
-
-  void repeat(int mode);
+public interface OnPreparedListener {
+    /**
+     * Called when the media file is ready for playback.
+     */
+    void onPrepared();
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.trial;
+package im.ene.lab.toro.player.develop;
 
 import android.net.Uri;
 import android.support.annotation.FloatRange;
@@ -31,6 +31,8 @@ public interface MediaPlayerWidget {
   void play();
 
   void pause();
+
+  void stop();
 
   void seekTo(long milliSec);
 

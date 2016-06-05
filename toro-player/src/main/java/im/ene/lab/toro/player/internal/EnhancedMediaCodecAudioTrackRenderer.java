@@ -26,33 +26,33 @@ import com.google.android.exoplayer.drm.DrmSessionManager;
 /**
  * Created by eneim on 6/2/16.
  */
-public class TrMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRenderer {
+public class EnhancedMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRenderer {
 
   private int audioSessionId = 0;
 
-  public TrMediaCodecAudioTrackRenderer(SampleSource source,
+  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source,
       MediaCodecSelector mediaCodecSelector) {
     super(source, mediaCodecSelector);
   }
 
-  public TrMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
       DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys) {
     super(source, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys);
   }
 
-  public TrMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
       Handler eventHandler, EventListener eventListener) {
     super(source, mediaCodecSelector, eventHandler, eventListener);
   }
 
-  public TrMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
       DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys,
       Handler eventHandler, EventListener eventListener) {
     super(source, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler,
         eventListener);
   }
 
-  public TrMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
       DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys,
       Handler eventHandler, EventListener eventListener, AudioCapabilities audioCapabilities,
       int streamType) {
@@ -60,7 +60,7 @@ public class TrMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRenderer
         eventListener, audioCapabilities, streamType);
   }
 
-  public TrMediaCodecAudioTrackRenderer(SampleSource[] sources,
+  public EnhancedMediaCodecAudioTrackRenderer(SampleSource[] sources,
       MediaCodecSelector mediaCodecSelector, DrmSessionManager drmSessionManager,
       boolean playClearSamplesWithoutKeys, Handler eventHandler, EventListener eventListener,
       AudioCapabilities audioCapabilities, int streamType) {

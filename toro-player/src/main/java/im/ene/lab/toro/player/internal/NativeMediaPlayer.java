@@ -28,7 +28,6 @@ import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -155,16 +154,6 @@ public class NativeMediaPlayer implements TrMediaPlayer {
     mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
       @Override public void onBufferingUpdate(MediaPlayer mp, int percent) {
         listener.onBufferingUpdate(NativeMediaPlayer.this, percent);
-      }
-    });
-  }
-
-  @Override public void setOnSeekCompleteListener(final OnSeekCompleteListener listener) {
-    if (listener == null) return;
-
-    mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-      @Override public void onSeekComplete(MediaPlayer mp) {
-        listener.onSeekComplete(NativeMediaPlayer.this);
       }
     });
   }

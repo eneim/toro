@@ -29,7 +29,6 @@ import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -57,12 +56,6 @@ public interface TrMediaPlayer {
 
     @IntRange(from = 0, to = 100) int getBufferPercentage();
 
-    boolean canPause();
-
-    boolean canSeekBackward();
-
-    boolean canSeekForward();
-
     /**
      * Get the audio session id for the player used by this VideoView. This can be used to
      * apply audio effects to the audio track of a video.
@@ -70,6 +63,17 @@ public interface TrMediaPlayer {
      * @return The audio session, or 0 if there was an error.
      */
     int getAudioSessionId();
+
+    void setBackgroundAudioEnabled(boolean enabled);
+
+    // setup Listeners
+    // void setOnPreparedListener(OnPreparedListener listener);
+
+    // void setOnCompletionListener(OnCompletionListener listener);
+
+    // void setOnErrorListener(OnErrorListener listener);
+
+    // void setOnInfoListener(OnInfoListener listener);
   }
 
   interface Controller {
@@ -163,9 +167,6 @@ public interface TrMediaPlayer {
 
   /** see {@link MediaPlayer#setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener)} */
   void setOnBufferingUpdateListener(OnBufferingUpdateListener listener);
-
-  /** see {@link MediaPlayer#setOnSeekCompleteListener(MediaPlayer.OnSeekCompleteListener)} */
-  void setOnSeekCompleteListener(OnSeekCompleteListener listener);
 
   /** see {@link MediaPlayer#setDataSource(Context, Uri, Map)} */
   void setDataSource(Context context, Uri uri, Map<String, String> headers)

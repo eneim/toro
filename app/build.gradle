@@ -96,11 +96,6 @@ dependencies {
   compile project(':toro')
   // compile 'com.github.eneim:Toro:1.2.0'
 
-  // preview
-  compile ('com.devbrackets.android:exomedia:3.0.0-preview3') {
-    exclude group: 'com.android.support', module: 'appcompat-v7'
-  }
-
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
   compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {

@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.sample.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,7 +34,7 @@ import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.VideoPlayerView;
+import im.ene.lab.toro.player.develop.MediaPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -87,9 +88,9 @@ public class DeadlySimpleListFragment extends Fragment {
    */
   private static class SimpleViewHolder extends ToroViewHolder {
 
-    private static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
+    private static final int LAYOUT_RES = R.layout.vh_toro_video_deadly_simple;
 
-    private VideoPlayerView mVideoView;
+    private MediaPlayerView mVideoView;
     private ImageView mThumbnail;
 
     private SimpleVideoObject mItem;
@@ -97,14 +98,15 @@ public class DeadlySimpleListFragment extends Fragment {
 
     public SimpleViewHolder(View itemView) {
       super(itemView);
-      mVideoView = (VideoPlayerView) itemView.findViewById(R.id.video);
+      mVideoView = (MediaPlayerView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+      mVideoView.setOnPreparedListener(this);
     }
 
     @Override public void bind(@Nullable Object object) {
       if (mVideoView != null && object instanceof SimpleVideoObject) {
         mItem = (SimpleVideoObject) object;
-        mVideoView.setVideoPath(((SimpleVideoObject) object).video);
+        mVideoView.setMediaUri(Uri.parse(((SimpleVideoObject) object).video));
       }
     }
 
@@ -176,6 +178,10 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public boolean isPlaying() {
       return mVideoView.isPlaying();
+    }
+
+    @Override public void setBackgroundAudioEnabled(boolean enabled) {
+      mVideoView.setBackgroundAudioEnabled(enabled);
     }
   }
 

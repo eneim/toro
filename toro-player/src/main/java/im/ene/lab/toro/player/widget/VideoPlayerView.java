@@ -46,7 +46,6 @@ import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -118,7 +117,10 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   private int mVideoWidth;
   private int mVideoHeight;
 
+  private boolean mBackgroundAudioEnabled = false;
+
   private TrMediaPlayer.Controller mController;
+
   private OnCompletionListener mOnCompletionListener;
   private OnPreparedListener mOnPreparedListener;
   private OnErrorListener mOnErrorListener;
@@ -127,9 +129,6 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
 
   private int mCurrentBufferPercentage;
   private long mSeekWhenPrepared;  // recording the seek position while preparing
-  private boolean mCanPause;
-  private boolean mCanSeekBack;
-  private boolean mCanSeekForward;
 
   public VideoPlayerView(Context context) {
     this(context, null);
@@ -296,9 +295,11 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     // called start() previously
     release(false);
 
-    AudioManager am =
-        (AudioManager) getContext().getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-    am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    if (!mBackgroundAudioEnabled) {
+      AudioManager am = (AudioManager) getContext().getApplicationContext()
+          .getSystemService(Context.AUDIO_SERVICE);
+      am.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    }
 
     try {
       ExoMediaPlayer.RendererBuilder builder =
@@ -319,9 +320,12 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       mMediaPlayer.setOnErrorListener(mErrorListener);
       mMediaPlayer.setOnInfoListener(mInfoListener);
       mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
+
       mCurrentBufferPercentage = 0;
       mMediaPlayer.setDataSource(getContext().getApplicationContext(), mUri, mHeaders);
       mMediaPlayer.setSurface(mSurface);
+
+      // NOTE ExoPlayer's already dealt with this by MediaCodecAudioTrackRenderer
       mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
       mMediaPlayer.setScreenOnWhilePlaying(true);
       mMediaPlayer.prepareAsync();
@@ -378,8 +382,6 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   OnPreparedListener mPreparedListener = new OnPreparedListener() {
     public void onPrepared(TrMediaPlayer mp) {
       mCurrentState = STATE_PREPARED;
-
-      mCanPause = mCanSeekBack = mCanSeekForward = true;
 
       if (mOnPreparedListener != null) {
         mOnPreparedListener.onPrepared(mMediaPlayer);
@@ -542,13 +544,6 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
    */
   public void setOnInfoListener(OnInfoListener l) {
     mOnInfoListener = l;
-  }
-
-  // FIXME Use this
-  private OnSeekCompleteListener mOnSeekCompleteListener;
-
-  public void setOnSeekCompleteListener(OnSeekCompleteListener listener) {
-    mOnSeekCompleteListener = listener;
   }
 
   public void setOnReleasedListener(OnReleasedListener listener) {
@@ -749,18 +744,6 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
         mCurrentState != STATE_PREPARING);
   }
 
-  @Override public boolean canPause() {
-    return mCanPause;
-  }
-
-  @Override public boolean canSeekBackward() {
-    return mCanSeekBack;
-  }
-
-  @Override public boolean canSeekForward() {
-    return mCanSeekForward;
-  }
-
   public int getAudioSessionId() {
     if (mAudioSession == 0) {
       MediaPlayer player = new MediaPlayer();
@@ -768,5 +751,9 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       player.release();
     }
     return mAudioSession;
+  }
+
+  @Override public void setBackgroundAudioEnabled(boolean enabled) {
+    mBackgroundAudioEnabled = enabled;
   }
 }

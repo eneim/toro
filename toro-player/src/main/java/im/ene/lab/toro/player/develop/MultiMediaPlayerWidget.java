@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.internal;
-
-import android.media.MediaPlayer;
+package im.ene.lab.toro.player.develop;
 
 /**
- * Created by eneim on 6/2/16.
+ * Created by eneim on 6/4/16.
+ *
+ * Define some core actions of a MediaPlayer. Those actions are supposed to be used by User
+ * Interface.
  */
-public interface MediaPlayerListener
-    extends MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-    MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener,
-    MediaPlayer.OnVideoSizeChangedListener {
+public interface MultiMediaPlayerWidget extends MediaPlayerWidget {
 
+  void next();
+
+  void previous();
+
+  void shuffle(boolean willShuffle);
+
+  void repeat(int mode);
 }

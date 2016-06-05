@@ -14,35 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.trial;
+package com.devbrackets.android.exomedia.core.listener;
 
-import android.content.Context;
-import android.net.Uri;
+import com.devbrackets.android.exomedia.core.exoplayer.EMExoPlayer;
+import com.devbrackets.android.exomedia.listener.OnSeekCompletionListener;
 
 /**
- * Created by eneim on 6/4/16.
- *
- * The controller for {@link MediaPlayerWidget}, which supposes to take the responsibility to
- * control the whole playback cycle. {@link android.media.MediaPlayer} is a real example for this.
+ * A listener for core EMExoPlayer events
  */
-// TODO Rename this interface
-public interface MediaPlayer {
+public interface ExoPlayerListener extends OnSeekCompletionListener {
+    void onStateChanged(boolean playWhenReady, int playbackState);
 
-  void create();
+    void onError(EMExoPlayer emExoPlayer, Exception e);
 
-  void release();
-
-  void start();
-
-  void restart();
-
-  void stop();
-
-  void pause();
-
-  void resume();
-
-  void seekTo(long milliSec);
-
-  void setMediaSource(Context context, Uri uri);
+    void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
+        float pixelWidthHeightRatio);
 }

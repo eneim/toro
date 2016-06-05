@@ -377,10 +377,6 @@ import java.util.concurrent.ConcurrentHashMap;
     return true;
   }
 
-  final void onSeekComplete(ToroPlayer player, TrMediaPlayer mp) {
-    // Do nothing
-  }
-
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
     if (mStates == null) {
       mStates = new LinkedStateList(3);

@@ -204,5 +204,9 @@ public class YoutubeListFragment extends RecyclerViewFragment {
       seekTo(position);
       start();
     }
+
+    @Override public void setBackgroundAudioEnabled(boolean enabled) {
+
+    }
   }
 }

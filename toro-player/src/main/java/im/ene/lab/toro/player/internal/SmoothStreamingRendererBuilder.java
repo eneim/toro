@@ -21,7 +21,6 @@ import android.media.MediaCodec;
 import android.os.Handler;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
@@ -48,7 +47,7 @@ import com.google.android.exoplayer.util.Util;
 import java.io.IOException;
 
 /**
- * A {@link RendererBuilder} for SmoothStreaming.
+ * A {@link ExoMediaPlayer.RendererBuilder} for SmoothStreaming.
  */
 public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
@@ -173,7 +172,7 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       ChunkSampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource, loadControl,
           AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_AUDIO);
-      TrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(audioSampleSource,
+      TrackRenderer audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource,
           MediaCodecSelector.DEFAULT, drmSessionManager, true, mainHandler, player,
           AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
 

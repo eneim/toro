@@ -58,7 +58,6 @@ import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Collections;
@@ -238,7 +237,6 @@ public class ExoMediaPlayer
   private OnCompletionListener onCompletionListener;
   private OnVideoSizeChangedListener onVideoSizeChangedListener;
   private OnBufferingUpdateListener onBufferingUpdateListener;
-  private OnSeekCompleteListener onSeekCompleteListener;
 
   public ExoMediaPlayer(RendererBuilder rendererBuilder) {
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
@@ -368,10 +366,12 @@ public class ExoMediaPlayer
     // Complete preparation.
     this.videoRenderer = renderers[TYPE_VIDEO];
     this.audioRenderer = renderers[TYPE_AUDIO];
+    if (!(this.audioRenderer instanceof EnhancedMediaCodecAudioTrackRenderer)) {
+      throw new RuntimeException("Audio Renderer must be a TrMediaCodecAudioTrackRenderer");
+    }
     this.codecCounters = videoRenderer instanceof MediaCodecTrackRenderer
         ? ((MediaCodecTrackRenderer) videoRenderer).codecCounters
-        : audioRenderer instanceof MediaCodecTrackRenderer
-            ? ((MediaCodecTrackRenderer) renderers[TYPE_AUDIO]).codecCounters : null;
+        : ((EnhancedMediaCodecAudioTrackRenderer) renderers[TYPE_AUDIO]).codecCounters;
     this.bandwidthMeter = bandwidthMeter;
     pushSurface(false);
     player.prepare(renderers);
@@ -427,10 +427,6 @@ public class ExoMediaPlayer
 
   @Override public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener) {
     this.onBufferingUpdateListener = listener;
-  }
-
-  @Override public void setOnSeekCompleteListener(OnSeekCompleteListener listener) {
-    this.onSeekCompleteListener = listener;
   }
 
   @Override public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
@@ -528,7 +524,6 @@ public class ExoMediaPlayer
 
   @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
       float pixelWidthHeightRatio) {
-    // TODO reset these value on data source changes
     this.videoWidth = width;
     this.videoHeight = height;
 
@@ -640,6 +635,7 @@ public class ExoMediaPlayer
 
   @Override public void onPlayWhenReadyCommitted() {
     // Do nothing.
+    Log.d(TAG, "onPlayWhenReadyCommitted() called with: " + getPlayWhenReady());
   }
 
   @Override public void onDrawnToSurface(Surface surface) {
@@ -705,12 +701,16 @@ public class ExoMediaPlayer
           if (this.onCompletionListener != null) {
             this.onCompletionListener.onCompletion(this);
           }
+          this.videoWidth = 0;
+          this.videoHeight = 0;
+          mediaPrepared = false;
           break;
         case STATE_PREPARING:
         case STATE_IDLE:
         default:
+          this.videoWidth = 0;
+          this.videoHeight = 0;
           mediaPrepared = false;
-          Log.i(TAG, "onStateChanged: OTHERS");
           break;
       }
     }
@@ -733,14 +733,15 @@ public class ExoMediaPlayer
     }
   }
 
-  private int audioSessionId;
+  // private int audioSessionId;
 
   @Override public void setAudioSessionId(int audioSessionId) {
-    this.audioSessionId = audioSessionId;
+    // Have no effect
   }
 
   @Override public int getAudioSessionId() {
-    return this.audioSessionId;
+    return audioRenderer != null
+        ? ((EnhancedMediaCodecAudioTrackRenderer) audioRenderer).getAudioSessionId() : 0;
   }
 
   @Override public void setOnErrorListener(OnErrorListener listener) {
@@ -761,6 +762,6 @@ public class ExoMediaPlayer
   }
 
   @Override public void setScreenOnWhilePlaying(boolean screenOnWhilePlaying) {
-    // TODO FIXME
+    // left blank
   }
 }

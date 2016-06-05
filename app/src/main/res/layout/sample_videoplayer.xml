@@ -21,11 +21,20 @@
     android:orientation="vertical"
     >
 
-  <im.ene.lab.toro.player.trial.MediaPlayerView
+  <im.ene.lab.toro.player.develop.MediaPlayerView
       android:id="@+id/player_view"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
-      android:minHeight="10dp"
+      />
+
+  <Button
+      android:id="@+id/btn_play_pause"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
+      android:layout_margin="8dp"
+      android:padding="8dp"
+      android:text="Pause"
       />
 </FrameLayout>

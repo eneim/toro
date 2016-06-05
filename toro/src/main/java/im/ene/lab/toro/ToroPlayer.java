@@ -31,14 +31,13 @@ import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 
 /**
  * Created by eneim on 1/29/16.
  */
 public interface ToroPlayer
     extends TrMediaPlayer.IMediaPlayer, OnPreparedListener, OnCompletionListener, OnErrorListener,
-    OnInfoListener, OnSeekCompleteListener {
+    OnInfoListener {
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to

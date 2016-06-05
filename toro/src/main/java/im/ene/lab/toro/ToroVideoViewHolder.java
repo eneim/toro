@@ -43,7 +43,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnCompletionListener(this);
     mVideoView.setOnErrorListener(this);
     mVideoView.setOnInfoListener(this);
-    mVideoView.setOnSeekCompleteListener(this);
   }
 
   protected abstract VideoPlayerView findVideoView(View itemView);
@@ -87,18 +86,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
-  @Override public boolean canPause() {
-    return mVideoView != null && mVideoView.canPause();
-  }
-
-  @Override public boolean canSeekBackward() {
-    return mVideoView != null && mVideoView.canSeekBackward();
-  }
-
-  @Override public boolean canSeekForward() {
-    return mVideoView != null && mVideoView.canSeekForward();
-  }
-
   @Override public int getAudioSessionId() {
     if (mVideoView != null) {
       return mVideoView.getAudioSessionId();
@@ -128,5 +115,9 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   @NonNull @Override public View getVideoView() {
     return mVideoView;
+  }
+
+  @Override public void setBackgroundAudioEnabled(boolean enabled) {
+    mVideoView.setBackgroundAudioEnabled(enabled);
   }
 }

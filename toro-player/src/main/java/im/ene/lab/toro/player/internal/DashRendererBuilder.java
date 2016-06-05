@@ -22,7 +22,6 @@ import android.os.Handler;
 import android.util.Log;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
@@ -230,7 +229,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
       ChunkSampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource, loadControl,
           AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_AUDIO);
-      TrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(audioSampleSource,
+      TrackRenderer audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource,
           MediaCodecSelector.DEFAULT, drmSessionManager, true, mainHandler, player,
           AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
 

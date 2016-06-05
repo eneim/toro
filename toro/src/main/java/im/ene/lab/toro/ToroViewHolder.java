@@ -28,7 +28,6 @@ import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
 import im.ene.lab.toro.player.listener.OnPreparedListener;
-import im.ene.lab.toro.player.listener.OnSeekCompleteListener;
 
 /**
  * Created by eneim on 1/31/16.
@@ -138,13 +137,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     return mHelper.onInfo(this, mp, info);
   }
 
-  /**
-   * Implement from {@link OnSeekCompleteListener}
-   */
-  @Override public final void onSeekComplete(TrMediaPlayer mp) {
-    mHelper.onSeekComplete(this, mp);
-  }
-
   @Override public int getPlayOrder() {
     return getAdapterPosition();
   }
@@ -219,18 +211,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @Override public int getBufferPercentage() {
     return 0;
-  }
-
-  @Override public boolean canPause() {
-    return true;
-  }
-
-  @Override public boolean canSeekBackward() {
-    return true;
-  }
-
-  @Override public boolean canSeekForward() {
-    return true;
   }
 
   @Override public int getAudioSessionId() {

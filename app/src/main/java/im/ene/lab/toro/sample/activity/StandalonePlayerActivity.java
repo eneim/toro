@@ -20,7 +20,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.player.trial.MediaPlayerView;
+import android.view.View;
+import android.widget.Button;
+import im.ene.lab.toro.player.develop.MediaPlayerView;
 import im.ene.lab.toro.sample.R;
 
 /**
@@ -30,16 +32,43 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
   private MediaPlayerView mVideoPlayerView;
 
+  private Button mPlayPause;
+  private boolean playRequested = true;
+
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.sample_videoplayer);
     mVideoPlayerView = (MediaPlayerView) findViewById(R.id.player_view);
+    mVideoPlayerView.setMediaUri(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
+
+    mPlayPause = (Button) findViewById(R.id.btn_play_pause);
+    mPlayPause.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        playRequested = !playRequested;
+        if (playRequested) {
+          mVideoPlayerView.play();
+        } else {
+          mVideoPlayerView.pause();
+        }
+        updateButtonText();
+      }
+    });
+    updateButtonText();
+  }
+
+  private void updateButtonText() {
+    if (playRequested) {
+      mPlayPause.setText("PAUSE");
+    } else {
+      mPlayPause.setText("PLAY");
+    }
   }
 
   @Override protected void onResume() {
     super.onResume();
-    mVideoPlayerView.setMediaUri(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
-    mVideoPlayerView.start();
+    if (playRequested) {
+      mVideoPlayerView.start();
+    }
   }
 
   @Override protected void onPause() {

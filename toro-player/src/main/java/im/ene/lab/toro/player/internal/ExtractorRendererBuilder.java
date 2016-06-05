@@ -65,7 +65,7 @@ public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder 
     MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
         sampleSource, MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
         mainHandler, player, 50);
-    MediaCodecAudioTrackRenderer audioRenderer = new TrMediaCodecAudioTrackRenderer(sampleSource,
+    MediaCodecAudioTrackRenderer audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(sampleSource,
         MediaCodecSelector.DEFAULT, null, true, mainHandler, player,
         AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
     TrackRenderer textRenderer = new TextTrackRenderer(sampleSource, player,

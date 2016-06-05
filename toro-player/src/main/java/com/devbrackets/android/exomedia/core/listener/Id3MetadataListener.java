@@ -1,11 +1,12 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright (C) 2016 Brian Wernick,
+ * Copyright (C) 2014 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +15,15 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.listener;
+package com.devbrackets.android.exomedia.core.listener;
 
-import im.ene.lab.toro.player.TrMediaPlayer;
+import com.google.android.exoplayer.metadata.id3.Id3Frame;
+
+import java.util.List;
 
 /**
- * Created by eneim on 6/2/16.
+ * A listener for receiving ID3 metadata parsed from the media stream.
  */
-public interface OnSeekCompleteListener /* extends MediaPlayer.OnSeekCompleteListener */ {
-
-  /**
-   * Called to indicate the completion of a seek operation.
-   *
-   * @param mp the MediaPlayer that issued the seek operation
-   */
-  void onSeekComplete(TrMediaPlayer mp);
+public interface Id3MetadataListener {
+    void onId3Metadata(List<Id3Frame> metadata);
 }

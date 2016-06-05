@@ -161,7 +161,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
         HlsSampleSource audioSampleSource = new HlsSampleSource(audioChunkSource, loadControl,
             AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
             ExoMediaPlayer.TYPE_AUDIO);
-        audioRenderer = new MediaCodecAudioTrackRenderer(
+        audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(
             new SampleSource[] {sampleSource, audioSampleSource}, MediaCodecSelector.DEFAULT, null,
             true, player.getMainHandler(), player, AudioCapabilities.getCapabilities(context),
             AudioManager.STREAM_MUSIC);
