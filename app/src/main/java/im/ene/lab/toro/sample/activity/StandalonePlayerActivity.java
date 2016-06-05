@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import im.ene.lab.toro.player.widget.MediaPlayerView;
+import im.ene.lab.toro.player.widget.TextureVideoView;
 import im.ene.lab.toro.sample.R;
 
 /**
@@ -30,7 +30,7 @@ import im.ene.lab.toro.sample.R;
  */
 public class StandalonePlayerActivity extends AppCompatActivity {
 
-  private MediaPlayerView mVideoPlayerView;
+  private TextureVideoView mVideoPlayerView;
 
   private Button mPlayPause;
   private boolean playRequested = true;
@@ -38,7 +38,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.sample_videoplayer);
-    mVideoPlayerView = (MediaPlayerView) findViewById(R.id.player_view);
+    mVideoPlayerView = (TextureVideoView) findViewById(R.id.player_view);
     mVideoPlayerView.setMediaUri(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
 
     mPlayPause = (Button) findViewById(R.id.btn_play_pause);
