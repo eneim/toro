@@ -213,6 +213,10 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       delegate.pausePlayback();
     }
 
+    @Override public void stopPlayback() {
+      delegate.stopPlayback();
+    }
+
     @Override
     public void saveVideoState(String videoId, @Nullable Long position, long duration) {
       delegate.saveVideoState(videoId, position, duration);

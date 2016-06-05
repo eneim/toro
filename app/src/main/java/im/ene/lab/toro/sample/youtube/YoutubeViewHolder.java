@@ -122,6 +122,11 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
   }
 
+  @Override public void stop() {
+    // FIXME
+    pause();
+  }
+
   @Override public final long getDuration() {
     try {
       return mParent.mYoutubePlayer != null ? mParent.mYoutubePlayer.getDurationMillis() : -1;

@@ -113,6 +113,12 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     start();
   }
 
+  @Override public void stop() {
+    if (mVideoView != null) {
+      mVideoView.stop();
+    }
+  }
+
   @NonNull @Override public View getVideoView() {
     return mVideoView;
   }

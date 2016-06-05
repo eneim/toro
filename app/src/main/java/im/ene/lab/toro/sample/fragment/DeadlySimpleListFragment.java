@@ -101,21 +101,25 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView = (MediaPlayerView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
       mVideoView.setOnPreparedListener(this);
+      mVideoView.setOnCompletionListener(this);
     }
 
     @Override public void bind(@Nullable Object object) {
-      if (mVideoView != null && object instanceof SimpleVideoObject) {
-        mItem = (SimpleVideoObject) object;
-        mVideoView.setMediaUri(Uri.parse(((SimpleVideoObject) object).video));
+      if (!(object instanceof SimpleVideoObject)) {
+        throw new IllegalArgumentException("This ViewHolder needs a SimpleVideoObject");
       }
-    }
 
-    @Override public void onViewHolderBound() {
+      mItem = (SimpleVideoObject) object;
+      mVideoView.setMediaUri(Uri.parse((mItem.video)));
       Picasso.with(itemView.getContext())
           .load(R.drawable.toro_place_holder)
           .fit()
           .centerInside()
           .into(mThumbnail);
+    }
+
+    @Override public void onViewHolderBound() {
+      // Do nothing
     }
 
     @Override public void onVideoPrepared(TrMediaPlayer mp) {
@@ -164,6 +168,10 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView.pause();
     }
 
+    @Override public void stop() {
+      mVideoView.stop();
+    }
+
     @Override public long getDuration() {
       return mVideoView.getDuration();
     }
@@ -182,6 +190,10 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public void setBackgroundAudioEnabled(boolean enabled) {
       mVideoView.setBackgroundAudioEnabled(enabled);
+    }
+
+    @Override public boolean isLoopAble() {
+      return true;
     }
   }
 
@@ -211,5 +223,4 @@ public class DeadlySimpleListFragment extends Fragment {
       return 100;
     }
   }
-
 }

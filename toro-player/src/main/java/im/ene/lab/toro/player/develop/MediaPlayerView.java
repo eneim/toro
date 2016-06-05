@@ -111,7 +111,7 @@ public class MediaPlayerView extends TextureView
     }
   };
 
-  private ExoMediaPlayer.Listener mPlayerListener = new ExoMediaPlayer.Listener() {
+  private final ExoMediaPlayer.Listener mPlayerListener = new ExoMediaPlayer.Listener() {
     @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
       mPlaybackState = playbackState;
       setKeepScreenOn(isInPlayableState());
@@ -312,6 +312,8 @@ public class MediaPlayerView extends TextureView
   private void releasePlayer() {
     if (mMediaPlayer != null) {
       mPlayerPosition = mMediaPlayer.getCurrentPosition();
+      mMediaPlayer.removeListener(mEventLogger);
+      mMediaPlayer.removeListener(mPlayerListener);
       mMediaPlayer.release();
       mMediaPlayer = null;
       mEventLogger.endSession();
@@ -371,9 +373,8 @@ public class MediaPlayerView extends TextureView
     mPlayerPosition = 0;
     mAudioCapabilitiesReceiver.unregister();
     mAudioCapabilitiesReceiver = null;
+
     mAudioCapabilities = null;
-    mPlayerListener = null;
-    mUri = null;
   }
 
   private void maybeNotifyAudioCapabilitiesChanged(AudioCapabilities audioCapabilities) {
@@ -395,7 +396,7 @@ public class MediaPlayerView extends TextureView
   @Override public void play() {
     mPlayRequested = true;
     if (mMediaPlayer == null) {
-      preparePlayer(mPlayRequested);
+      preparePlayer(true);
     } else {
       mMediaPlayer.setBackgrounded(false);
       mMediaPlayer.setPlayWhenReady(mPlayRequested);
@@ -435,7 +436,7 @@ public class MediaPlayerView extends TextureView
   }
 
   @Override public void setMediaSource(@NonNull MediaSource source) {
-    if (source == null || source.mediaUri == null) {
+    if (source.mediaUri == null) {
       throw new IllegalArgumentException("MediaSource must not be null");
     }
 

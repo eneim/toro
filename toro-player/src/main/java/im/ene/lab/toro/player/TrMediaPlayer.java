@@ -46,6 +46,8 @@ public interface TrMediaPlayer {
 
     void pause();
 
+    void stop();
+
     /* int */ long getDuration();
 
     /* int */ long getCurrentPosition();

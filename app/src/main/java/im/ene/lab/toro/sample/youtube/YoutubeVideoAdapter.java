@@ -165,4 +165,14 @@ public abstract class YoutubeVideoAdapter extends ToroAdapter<YoutubeViewHolder>
       }
     }
   }
+
+  @Override public void stopPlayback() {
+    if (mHandler != null) {
+      mHandler.removeMessages(MESSAGE_PROGRESS);
+    }
+
+    if (mPlayer != null) {
+      mPlayer.stop();
+    }
+  }
 }

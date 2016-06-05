@@ -97,6 +97,16 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
     }
   }
 
+  @Override public void stopPlayback() {
+    if (mUiHandler != null) {
+      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
+    }
+
+    if (mPlayer != null) {
+      mPlayer.stop();
+    }
+  }
+
   @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
     if (videoId != null) {
       mVideoStates.put(videoId, position == null ? Long.valueOf(0) : position);

@@ -302,7 +302,7 @@ import java.util.concurrent.ConcurrentHashMap;
     // Normally stop playback
     if (manager != null) {
       manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
-      manager.pausePlayback();
+      manager.stopPlayback();
       player.onPlaybackStopped();
     }
 
@@ -311,7 +311,7 @@ import java.util.concurrent.ConcurrentHashMap;
       if (manager != null) {
         // immediately repeat
         manager.restoreVideoState(player.getVideoId());
-        manager.startPlayback(0);
+        manager.startPlayback();
         player.onPlaybackStarted();
       }
     }

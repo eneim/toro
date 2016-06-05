@@ -694,6 +694,11 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     mTargetState = STATE_PAUSED;
   }
 
+  @Override public void stop() {
+    // FIXME
+    pause();
+  }
+
   public void suspend() {
     release(false);
   }
