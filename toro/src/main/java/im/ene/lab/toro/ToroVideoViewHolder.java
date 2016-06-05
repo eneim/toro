@@ -24,14 +24,14 @@ import android.view.View;
 import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.widget.MediaPlayerView;
+import im.ene.lab.toro.player.widget.VideoPlayerView;
 
 /**
  * Created by eneim on 1/31/16.
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
-  protected final MediaPlayerView mVideoView;
+  protected final VideoPlayerView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
@@ -48,7 +48,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setOnInfoListener(this);
   }
 
-  protected abstract MediaPlayerView findVideoView(View itemView);
+  protected abstract VideoPlayerView findVideoView(View itemView);
 
   // Client could override this method for better practice
   @Override public void start() {
