@@ -42,8 +42,6 @@ import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.internal.ExoMediaPlayer;
-import im.ene.lab.toro.player.internal.RendererBuilderFactory;
 import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
 import im.ene.lab.toro.player.listener.OnCompletionListener;
 import im.ene.lab.toro.player.listener.OnErrorListener;
@@ -135,15 +133,18 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   private long mSeekWhenPrepared;  // recording the seek position while preparing
 
   public VideoPlayerView(Context context) {
-    this(context, null);
+    super(context);
+    initVideoView();
   }
 
   public VideoPlayerView(Context context, AttributeSet attrs) {
-    this(context, attrs, 0);
+    super(context, attrs);
+    initVideoView();
   }
 
   public VideoPlayerView(Context context, AttributeSet attrs, int defStyle) {
-    this(context, attrs, defStyle, 0);
+    super(context, attrs, defStyle);
+    initVideoView();
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
