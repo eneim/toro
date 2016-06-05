@@ -102,6 +102,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       if (mMediaPlayer != null) {
         mMediaPlayer.blockingClearSurface();
       }
+      mPlayerNeedsPrepare = true;
       VideoPlayerView.this.mSurface = null;
       return true;
     }
@@ -130,8 +131,10 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   };
 
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare && (mPlaybackState != ExoMediaPlayer.STATE_IDLE) && (mPlaybackState
-        != ExoMediaPlayer.STATE_PREPARING) && (mPlaybackState != ExoMediaPlayer.STATE_ENDED);
+    return !mPlayerNeedsPrepare
+        && (mPlaybackState != ExoMediaPlayer.STATE_IDLE)
+        && (mPlaybackState != ExoMediaPlayer.STATE_PREPARING)
+        && (mPlaybackState != ExoMediaPlayer.STATE_ENDED);
   }
 
   private Uri mUri;
@@ -210,6 +213,8 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       if (mOnPreparedListener != null) {
         mOnPreparedListener.onPrepared(mp);
       }
+
+
     }
   };
 
@@ -428,27 +433,27 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   }
 
   @Override public void setMediaSource(@NonNull MediaSource source) {
-    if (source.mediaUri == null) {
+    setMediaUri(source.mediaUri);
+  }
+
+  @Override public void setMediaUri(Uri uri) {
+    if (uri == null) {
       throw new IllegalArgumentException("MediaSource must not be null");
     }
 
-    if (requiresPermission(source.mediaUri)) {
+    if (requiresPermission(uri)) {
       throw new RuntimeException("Permission to read this URI is not granted. "
           + "Consider to request READ_EXTERNAL_STORAGE permission.");
     }
 
-    if (this.mUri == source.mediaUri) {
+    if (this.mUri == uri) {
       return;
     }
 
     this.mPlayerPosition = 0;
-    this.mUri = source.mediaUri;
+    this.mUri = uri;
     mPlayRequested = false;
     releasePlayer();
-  }
-
-  @Override public void setMediaUri(Uri uri) {
-    setMediaSource(new MediaSource(uri));
   }
 
   // IMediaPlayer

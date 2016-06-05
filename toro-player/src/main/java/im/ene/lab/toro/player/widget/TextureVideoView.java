@@ -74,8 +74,8 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
-@Deprecated
-public class TextureVideoView extends TextureView implements TrMediaPlayer.IMediaPlayer {
+@Deprecated public class TextureVideoView extends TextureView
+    implements TrMediaPlayer.IMediaPlayer {
 
   public interface OnReleasedListener {
 
@@ -101,8 +101,9 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
   private static final int STATE_PREPARING = 1;
   private static final int STATE_PREPARED = 2;
   private static final int STATE_PLAYING = 3;
-  private static final int STATE_PAUSED = 4;
-  private static final int STATE_PLAYBACK_COMPLETED = 5;
+  private static final int STATE_SEEKING = 4;
+  private static final int STATE_PAUSED = 5;
+  private static final int STATE_ENDED = 5;
 
   // mCurrentState is a TextureVideoView object's current state.
   // mTargetState is the state that a method caller intends to reach.
@@ -131,6 +132,7 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
 
   private int mCurrentBufferPercentage;
   private long mSeekWhenPrepared;  // recording the seek position while preparing
+  private long mPlayerPosition;
 
   public TextureVideoView(Context context) {
     super(context);
@@ -279,6 +281,7 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
     mUri = uri;
     mHeaders = headers;
     mSeekWhenPrepared = 0;
+    mPlayerPosition = 0;
     openVideo();
     requestLayout();
     invalidate();
@@ -313,9 +316,6 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
     }
 
     try {
-      //ExoMediaPlayer.RendererBuilder builder =
-      //    RendererBuilderFactory.createRendererBuilder(getContext(), mUri);
-      //mMediaPlayer = TrMediaPlayer.Factory.createExoPlayer(builder);
       mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
 
       if (mAudioSession != 0) {
@@ -403,8 +403,8 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
       mVideoWidth = mp.getVideoWidth();
       mVideoHeight = mp.getVideoHeight();
 
-      long seekToPosition =
-          mSeekWhenPrepared;  // mSeekWhenPrepared may be changed after seekTo() call
+      long seekToPosition = (mCurrentState == STATE_SEEKING) ? mSeekWhenPrepared
+          : mPlayerPosition;  // mSeekWhenPrepared may be changed after seekTo() call
       if (seekToPosition != 0) {
         seekTo(seekToPosition);
       }
@@ -436,8 +436,9 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
 
   OnCompletionListener mCompletionListener = new OnCompletionListener() {
     public void onCompletion(TrMediaPlayer mp) {
-      mCurrentState = STATE_PLAYBACK_COMPLETED;
-      mTargetState = STATE_PLAYBACK_COMPLETED;
+      mPlayerPosition = getDuration();  // A trick to fix duration issue with current VideoView.
+      mCurrentState = STATE_ENDED;
+      mTargetState = STATE_ENDED;
       if (mController != null) {
         mController.hide();
       }
@@ -508,8 +509,6 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
 
   OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
     public void onBufferingUpdate(TrMediaPlayer mp, int percent) {
-      Log.d(TAG,
-          "onBufferingUpdate() called with: " + "mp = [" + mp + "], percent = [" + percent + "]");
       mCurrentBufferPercentage = percent;
     }
   };
@@ -566,8 +565,9 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
       boolean isValidState = (mTargetState == STATE_PLAYING);
       boolean hasValidSize = (width > 0 && height > 0);
       if (mMediaPlayer != null && isValidState && hasValidSize) {
-        if (mSeekWhenPrepared != 0) {
-          seekTo(mSeekWhenPrepared);
+        long seekPosition = mCurrentState == STATE_SEEKING ? mSeekWhenPrepared : mPlayerPosition;
+        if (seekPosition != 0) {
+          seekTo(seekPosition);
         }
         start();
       }
@@ -586,6 +586,10 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
         mSurface = null;
       }
       if (mController != null) mController.hide();
+
+      mPlayerPosition = getCurrentPosition();
+      mTargetState = mCurrentState;
+      mCurrentState = STATE_IDLE;
       release(true);
       return true;
     }
@@ -739,6 +743,8 @@ public class TextureVideoView extends TextureView implements TrMediaPlayer.IMedi
     } else {
       mSeekWhenPrepared = milliSec;
     }
+    mCurrentState = STATE_SEEKING;
+    mTargetState = STATE_PLAYING;
   }
 
   @Override public boolean isPlaying() {
