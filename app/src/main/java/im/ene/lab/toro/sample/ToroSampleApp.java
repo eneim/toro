@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
-import im.ene.lab.toro.Toro;
+import im.ene.lab.toro.ext.ToroExt;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -34,7 +34,8 @@ public class ToroSampleApp extends Application {
   @Override public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
-    Toro.init(this);
+    // Toro.init(this);
+    ToroExt.initYoutube(this);
     sApp = this;
   }
 

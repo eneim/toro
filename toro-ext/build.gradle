@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.util;
+apply plugin: 'com.android.library'
 
-import android.support.v4.util.TimeUtils;
+android {
+  compileSdkVersion 23
+  buildToolsVersion "23.0.3"
 
-/**
- * Created by eneim on 2/3/16.
- */
-public class Util {
-
-  public static String timeStamp(long position, long duration) {
-    StringBuilder posTime = new StringBuilder();
-    TimeUtils.formatDuration(position, posTime);
-    StringBuilder durationTime = new StringBuilder();
-    TimeUtils.formatDuration(duration, durationTime);
-
-    return posTime + " / " + durationTime.toString();
+  defaultConfig {
+    minSdkVersion 16
+    targetSdkVersion 23
+    versionCode 1
+    versionName "1.0"
   }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
 
+dependencies {
+  compile fileTree(include: ['*.jar'], dir: 'libs')
+  testCompile 'junit:junit:4.12'
+  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  compile project(':toro')
 }

@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.util;
+package im.ene.lab.toro.ext;
 
-import android.support.v4.util.TimeUtils;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
- * Created by eneim on 2/3/16.
+ * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
-public class Util {
-
-  public static String timeStamp(long position, long duration) {
-    StringBuilder posTime = new StringBuilder();
-    TimeUtils.formatDuration(position, posTime);
-    StringBuilder durationTime = new StringBuilder();
-    TimeUtils.formatDuration(duration, durationTime);
-
-    return posTime + " / " + durationTime.toString();
+public class ExampleUnitTest {
+  @Test public void addition_isCorrect() throws Exception {
+    assertEquals(4, 2 + 2);
   }
-
 }

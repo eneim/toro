@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.youtube;
+package im.ene.lab.toro.ext.youtube;
 
 import android.net.Uri;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.ext.util.Util;
 import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.sample.BuildConfig;
-import im.ene.lab.toro.sample.util.Util;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -43,17 +43,21 @@ import java.lang.annotation.RetentionPolicy;
  */
 public abstract class YoutubeViewHolder extends ToroViewHolder
     implements YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener,
-    YouTubePlayer.OnInitializedListener, YouTubeThumbnailLoader.OnThumbnailLoadedListener {
+    YouTubePlayer.OnInitializedListener, YouTubeThumbnailLoader.OnThumbnailLoadedListener,
+    YouTubeThumbnailView.OnInitializedListener {
 
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#CHROMELESS} to youtube player
    */
   protected static final int CHROMELESS = 0b01;
+
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#MINIMAL} to youtube player
    */
   protected static final int MINIMUM = 0b10;
-  private static final String TAG = "YoutubeViewHolder";
+
+  private static final String TAG = "YTube";
+
   /**
    * Parent Adapter which holds some important controllers
    */
@@ -66,12 +70,14 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   protected final int mFragmentId;
 
   private final YoutubeViewItemHelper mHelper;
-  protected YouTubePlayerSupportFragment mYtFragment;
+  protected YouTubePlayerSupportFragment mPlayerFragment;
+  @Nullable protected YouTubeThumbnailView mThumbnail;
   private long seekPosition = 0;
   private boolean isSeeking = false;
   private boolean isStarting = false;
+  private boolean isLaidOut = false;
 
-  public YoutubeViewHolder(View itemView, YoutubeVideosAdapter parent) {
+  public YoutubeViewHolder(final View itemView, YoutubeVideosAdapter parent) {
     super(itemView);
     this.mParent = parent;
     if (this.mParent.mFragmentManager == null) {
@@ -80,14 +86,34 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
     this.mHelper = YoutubeViewItemHelper.getInstance();
     this.mFragmentId = Util.generateViewId();
+    this.isLaidOut = false;
   }
+
+  @Nullable protected abstract YouTubeThumbnailView getThumbnailView();
 
   @Override public final boolean wantsToPlay() {
     return super.visibleAreaOffset() >= 0.99f;  // Actually Youtube wants 1.0f;
   }
 
-  public final boolean isStarting() {
-    return this.isStarting;
+  @Override public void onAttachedToParent() {
+    super.onAttachedToParent();
+    itemView.getViewTreeObserver()
+        .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override public void onGlobalLayout() {
+            isLaidOut = true;
+            itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            if ((mThumbnail = getThumbnailView()) != null) {
+              mThumbnail.initialize(Youtube.API_KEY, YoutubeViewHolder.this);
+            } else {
+              mHelper.onPrepared(YoutubeViewHolder.this, itemView, itemView.getParent(), null);
+            }
+          }
+        });
+  }
+
+  @Override public void onDetachedFromParent() {
+    super.onDetachedFromParent();
+    this.isLaidOut = false;
   }
 
   @CallSuper @Override public void onViewHolderBound() {
@@ -96,12 +122,12 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
       throw new RuntimeException("View with Id: " + mFragmentId + " must be setup");
     }
 
-    if ((mYtFragment =
+    if ((mPlayerFragment =
         (YouTubePlayerSupportFragment) mParent.mFragmentManager.findFragmentById(mFragmentId))
         == null) {
-      mYtFragment = YouTubePlayerSupportFragment.newInstance();
+      mPlayerFragment = YouTubePlayerSupportFragment.newInstance();
       // Add youtube player fragment to this ViewHolder
-      mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mYtFragment).commit();
+      mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mPlayerFragment).commit();
     }
   }
 
@@ -112,19 +138,17 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
       mParent.mYoutubePlayer.release();
     }
     // Re-setup the Player. This is annoying though.
-    if (mYtFragment != null) {
-      mYtFragment.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+    if (mPlayerFragment != null) {
+      mPlayerFragment.initialize(Youtube.API_KEY, this);
     }
   }
 
   @CallSuper @Override public void pause() {
     isStarting = false;
-    if (mParent.mYoutubePlayer != null) {
-      try {
-        mParent.mYoutubePlayer.pause();
-      } catch (IllegalStateException er) {
-        er.printStackTrace();
-      }
+    try {
+      mParent.mYoutubePlayer.pause();
+    } catch (NullPointerException | IllegalStateException er) {
+      er.printStackTrace();
     }
   }
 
@@ -167,7 +191,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   // Youtube video id for this view. This method should be used dynamically
-  public abstract String getYoutubeVideoId();
+  protected abstract String getYoutubeVideoId();
 
   @CallSuper @Override public void onLoading() {
     mHelper.onLoading();
@@ -175,7 +199,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   @CallSuper @Override public void onLoaded(String videoId) {
     mHelper.onLoaded(videoId);
-    // mHelper.onPrepared(this, itemView, itemView.getParent(), null);
   }
 
   @CallSuper @Override public void onAdStarted() {
@@ -187,6 +210,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @CallSuper @Override public final void onVideoEnded() {
+    isStarting = false;
     mHelper.onCompletion(this, null);
     mHelper.onVideoEnded(this);
   }
@@ -199,20 +223,18 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @CallSuper @Override public final void onPlaying() {
-    isStarting = false;
     mHelper.onPlaying();
-    Log.i(TAG, "onPlaying: " + getVideoId());
   }
 
-  // Paused by API's button. Should not dispatch any custom behavior.
+  // Paused by Native's button. Should not dispatch any custom behavior.
   @CallSuper @Override public final void onPaused() {
     mHelper.onPaused();
   }
 
   // The method is called once RIGHT BEFORE A VIDEO GOT LOADED (by Youtube Player API)
   // And once again after the Player completes playback.
-  @CallSuper @Override public final void onStopped() {
-    mHelper.onStopped();
+  @Deprecated @CallSuper @Override public final void onStopped() {
+
   }
 
   @CallSuper @Override public void onBuffering(boolean isBuffering) {
@@ -260,6 +282,17 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
     // TODO Handle error
+  }
+
+  @Override public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
+      YouTubeInitializationResult youTubeInitializationResult) {
+
+  }
+
+  @Override public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView,
+      YouTubeThumbnailLoader youTubeThumbnailLoader) {
+    youTubeThumbnailLoader.setOnThumbnailLoadedListener(this);
+    youTubeThumbnailLoader.setVideo(getYoutubeVideoId());
   }
 
   @Override public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView,

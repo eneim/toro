@@ -35,7 +35,7 @@ import im.ene.lab.toro.sample.fragment.SimpleToggleableListFragment;
 import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
-import im.ene.lab.toro.sample.fragment.YoutubeListFragment;
+import im.ene.lab.toro.sample.fragment.YoutubeVideosFragment;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -45,7 +45,7 @@ public class ShowCaseActivity extends AppCompatActivity {
       SimpleVideoListFragment.TAG, SingleVideoSimpleListFragment.TAG,
       MultiVideoStaggeredGridFragment.TAG, MultiVideoComplicatedGridFragment.TAG,
       DualVideoListFragment.TAG, DeadlySimpleListFragment.TAG, ViewPagerFragment.TAG,
-      SimpleToggleableListFragment.TAG, YoutubeListFragment.TAG, FbFeedFragment.TAG
+      SimpleToggleableListFragment.TAG, YoutubeVideosFragment.TAG, FbFeedFragment.TAG
   }) @Retention(RetentionPolicy.SOURCE) public @interface ShowcaseName {
   }
 
@@ -95,8 +95,8 @@ public class ShowCaseActivity extends AppCompatActivity {
       return SimpleVideoListFragment.newInstance();
     } else if (SimpleToggleableListFragment.TAG.equals(name)) {
       return SimpleToggleableListFragment.newInstance();
-    } else if (YoutubeListFragment.TAG.equals(name)) {
-      return YoutubeListFragment.newInstance();
+    } else if (YoutubeVideosFragment.TAG.equals(name)) {
+      return YoutubeVideosFragment.newInstance();
     } else if (FbFeedFragment.TAG.equals(name)) {
       return FbFeedFragment.newInstance();
     } else  {
@@ -121,7 +121,7 @@ public class ShowCaseActivity extends AppCompatActivity {
       return R.string.fragment_simple_video_list;
     } else if (SimpleToggleableListFragment.TAG.equals(name)) {
       return R.string.fragment_toggleable_list;
-    } else if (YoutubeListFragment.TAG.equals(name)) {
+    } else if (YoutubeVideosFragment.TAG.equals(name)) {
       return R.string.fragment_youtube_video_list;
     } else if (FbFeedFragment.TAG.equals(name)) {
       return R.string.facebook_feed;
