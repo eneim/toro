@@ -26,6 +26,8 @@ import android.view.View;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.android.youtube.player.YouTubeThumbnailLoader;
+import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
@@ -41,7 +43,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 public abstract class YoutubeViewHolder extends ToroViewHolder
     implements YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener,
-    YouTubePlayer.OnInitializedListener {
+    YouTubePlayer.OnInitializedListener, YouTubeThumbnailLoader.OnThumbnailLoadedListener {
 
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#CHROMELESS} to youtube player
@@ -55,7 +57,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   /**
    * Parent Adapter which holds some important controllers
    */
-  protected final YoutubeVideoAdapter mParent;
+  protected final YoutubeVideosAdapter mParent;
 
   /**
    * Id for {@link YouTubePlayerSupportFragment}, will be generated manually and must be set for
@@ -69,7 +71,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   private boolean isSeeking = false;
   private boolean isStarting = false;
 
-  public YoutubeViewHolder(View itemView, YoutubeVideoAdapter parent) {
+  public YoutubeViewHolder(View itemView, YoutubeVideosAdapter parent) {
     super(itemView);
     this.mParent = parent;
     if (this.mParent.mFragmentManager == null) {
@@ -173,7 +175,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   @CallSuper @Override public void onLoaded(String videoId) {
     mHelper.onLoaded(videoId);
-    mHelper.onPrepared(this, itemView, itemView.getParent(), null);
+    // mHelper.onPrepared(this, itemView, itemView.getParent(), null);
   }
 
   @CallSuper @Override public void onAdStarted() {
@@ -235,21 +237,21 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @CallSuper @Override
   public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer,
       boolean isRecover) {
-    mHelper.onYoutubePlayerChanged(youTubePlayer);
     // Switch youtube player
     mParent.mYoutubePlayer = youTubePlayer;
-    youTubePlayer.setPlayerStateChangeListener(YoutubeViewHolder.this);
-    youTubePlayer.setPlaybackEventListener(YoutubeViewHolder.this);
+    mHelper.onYoutubePlayerChanged(youTubePlayer);
+    mParent.mYoutubePlayer.setPlayerStateChangeListener(YoutubeViewHolder.this);
+    mParent.mYoutubePlayer.setPlaybackEventListener(YoutubeViewHolder.this);
     // Force player style
-    youTubePlayer.setPlayerStyle(
+    mParent.mYoutubePlayer.setPlayerStyle(
         getPlayerStyle() == CHROMELESS ? YouTubePlayer.PlayerStyle.CHROMELESS
             : YouTubePlayer.PlayerStyle.MINIMAL);
     if (!isRecover) {
       if (isSeeking) {
         isSeeking = false;
-        youTubePlayer.loadVideo(getYoutubeVideoId(), (int) seekPosition);
+        mParent.mYoutubePlayer.loadVideo(getYoutubeVideoId(), (int) seekPosition);
       } else {
-        youTubePlayer.loadVideo(getYoutubeVideoId());
+        mParent.mYoutubePlayer.loadVideo(getYoutubeVideoId());
       }
       seekPosition = 0;
     }
@@ -258,6 +260,15 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
     // TODO Handle error
+  }
+
+  @Override public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView,
+      YouTubeThumbnailLoader.ErrorReason errorReason) {
+
+  }
+
+  @Override public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
+    mHelper.onPrepared(this, itemView, itemView.getParent(), null);
   }
 
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {

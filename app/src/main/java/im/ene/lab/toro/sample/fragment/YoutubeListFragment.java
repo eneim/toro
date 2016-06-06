@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,10 +36,10 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.youtube.YoutubeVideoAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.util.Util;
+import im.ene.lab.toro.sample.youtube.YoutubeVideosAdapter;
 import im.ene.lab.toro.sample.youtube.YoutubeViewHolder;
 
 /**
@@ -59,12 +58,12 @@ public class YoutubeListFragment extends RecyclerViewFragment {
   }
 
   @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new Adapter(getChildFragmentManager());
+    return new MyYoutubeVideosAdapter(getChildFragmentManager());
   }
 
-  private static class Adapter extends YoutubeVideoAdapter {
+  private static class MyYoutubeVideosAdapter extends YoutubeVideosAdapter {
 
-    public Adapter(FragmentManager fragmentManager) {
+    public MyYoutubeVideosAdapter(FragmentManager fragmentManager) {
       super(fragmentManager);
     }
 
@@ -74,17 +73,16 @@ public class YoutubeListFragment extends RecyclerViewFragment {
 
     @Override public YoutubeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(parent.getContext())
-          .inflate(YoutubeListFragment.ViewHolder.LAYOUT_RES, parent, false);
-      return new YoutubeListFragment.ViewHolder(this, view);
+          .inflate(MyYoutubeViewHolder.LAYOUT_RES, parent, false);
+      return new MyYoutubeViewHolder(this, view);
     }
 
     @Override public int getItemCount() {
       return VideoSource.YOUTUBES.length * 10;
     }
-
   }
 
-  static class ViewHolder extends YoutubeViewHolder
+  static class MyYoutubeViewHolder extends YoutubeViewHolder
       implements YouTubeThumbnailView.OnInitializedListener {
 
     private static final int LAYOUT_RES = R.layout.vh_youtube_video;
@@ -92,13 +90,12 @@ public class YoutubeListFragment extends RecyclerViewFragment {
     @Bind(R.id.thumbnail) YouTubeThumbnailView mThumbnail;
     @Bind(R.id.video_id) TextView mVideoId;
     @Bind(R.id.info) TextView mInfo;
-    @Bind(R.id.container) FrameLayout mContainer; // Require a neat implementation. See below.
     @Bind(R.id.youtube_fragment) View mYtFragmentContainer;
 
     private SimpleVideoObject mItem;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public ViewHolder(Adapter adapter, View itemView) {
+    public MyYoutubeViewHolder(MyYoutubeVideosAdapter adapter, View itemView) {
       super(itemView, adapter);
       TAG = toString();
       ButterKnife.bind(this, itemView);
@@ -149,12 +146,13 @@ public class YoutubeListFragment extends RecyclerViewFragment {
 
     @Override public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView,
         YouTubeThumbnailLoader youTubeThumbnailLoader) {
+      youTubeThumbnailLoader.setOnThumbnailLoadedListener(this);
       youTubeThumbnailLoader.setVideo(getYoutubeVideoId());
     }
 
     @Override public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
         YouTubeInitializationResult youTubeInitializationResult) {
-      // TODO Handle error
+
     }
 
     private final String TAG;
@@ -207,7 +205,7 @@ public class YoutubeListFragment extends RecyclerViewFragment {
     }
 
     @Override public void setBackgroundAudioEnabled(boolean enabled) {
-
+      // Youtube Player API doesn't support this
     }
   }
 }
