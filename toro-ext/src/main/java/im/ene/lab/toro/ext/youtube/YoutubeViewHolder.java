@@ -22,6 +22,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -49,14 +50,12 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#CHROMELESS} to youtube player
    */
-  protected static final int CHROMELESS = 0b01;
+  protected static final int CHROME_LESS = 0b01;
 
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#MINIMAL} to youtube player
    */
   protected static final int MINIMUM = 0b10;
-
-  private static final String TAG = "YTube";
 
   /**
    * Parent Adapter which holds some important controllers
@@ -75,7 +74,8 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   private long seekPosition = 0;
   private boolean isSeeking = false;
   private boolean isStarting = false;
-  private boolean isLaidOut = false;
+
+  private EventLogger mLogger;
 
   public YoutubeViewHolder(final View itemView, YoutubeVideosAdapter parent) {
     super(itemView);
@@ -86,7 +86,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     }
     this.mHelper = YoutubeViewItemHelper.getInstance();
     this.mFragmentId = Util.generateViewId();
-    this.isLaidOut = false;
   }
 
   @Nullable protected abstract YouTubeThumbnailView getThumbnailView();
@@ -100,7 +99,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     itemView.getViewTreeObserver()
         .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override public void onGlobalLayout() {
-            isLaidOut = true;
             itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if ((mThumbnail = getThumbnailView()) != null) {
               mThumbnail.initialize(Youtube.API_KEY, YoutubeViewHolder.this);
@@ -111,13 +109,9 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
         });
   }
 
-  @Override public void onDetachedFromParent() {
-    super.onDetachedFromParent();
-    this.isLaidOut = false;
-  }
-
   @CallSuper @Override public void onViewHolderBound() {
     super.onViewHolderBound();
+    mLogger = new EventLogger(getYoutubeVideoId(), getAdapterPosition());
     if (itemView.findViewById(mFragmentId) == null) {
       throw new RuntimeException("View with Id: " + mFragmentId + " must be setup");
     }
@@ -132,6 +126,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @CallSuper @Override public void start() {
+    Log.e("Logger", "start: ");
     isStarting = true;
     // Release current youtube player first. Prevent resource conflict
     if (mParent.mYoutubePlayer != null) {
@@ -195,50 +190,63 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
 
   @CallSuper @Override public void onLoading() {
     mHelper.onLoading();
+    mLogger.onLoading();
   }
 
   @CallSuper @Override public void onLoaded(String videoId) {
     mHelper.onLoaded(videoId);
+    mLogger.onLoaded(videoId);
   }
 
   @CallSuper @Override public void onAdStarted() {
     mHelper.onAdStarted();
+    mLogger.onAdStarted();
   }
 
   @CallSuper @Override public final void onVideoStarted() {
     mHelper.onVideoStarted(this);
+    mLogger.onVideoStarted();
   }
 
   @CallSuper @Override public final void onVideoEnded() {
     isStarting = false;
     mHelper.onCompletion(this, null);
     mHelper.onVideoEnded(this);
+    mLogger.onVideoEnded();
   }
 
   @CallSuper @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
     PlaybackException error =
         errorReason != null ? new PlaybackException(errorReason.name(), 0, 0) : null;
+    mParent.onError(errorReason);
     mHelper.onError(this, null, error);
     mHelper.onYoutubeError(this, errorReason);
+    mLogger.onError(errorReason);
   }
 
   @CallSuper @Override public final void onPlaying() {
+    mParent.onPlaying();
     mHelper.onPlaying();
+    mLogger.onPlaying();
   }
 
   // Paused by Native's button. Should not dispatch any custom behavior.
   @CallSuper @Override public final void onPaused() {
+    mParent.onPaused();
     mHelper.onPaused();
+    mLogger.onPaused();
   }
 
   // The method is called once RIGHT BEFORE A VIDEO GOT LOADED (by Youtube Player API)
   // And once again after the Player completes playback.
+  // !IMPORTANT Ignore this.
   @Deprecated @CallSuper @Override public final void onStopped() {
-
+    mLogger.onStopped();
   }
 
   @CallSuper @Override public void onBuffering(boolean isBuffering) {
     mHelper.onBuffering(isBuffering);
+    mLogger.onBuffering(isBuffering);
   }
 
   // Called internal. Youtube's Playback event is internally called by API, so User should not
@@ -246,6 +254,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @CallSuper @Override public final void onSeekTo(int position) {
     seekPosition = position;
     isSeeking = true;
+    mLogger.onSeekTo(position);
   }
 
   /**
@@ -259,6 +268,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @CallSuper @Override
   public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer,
       boolean isRecover) {
+    mLogger.onInitializationSuccess(provider, youTubePlayer, isRecover);
     // Switch youtube player
     mParent.mYoutubePlayer = youTubePlayer;
     mHelper.onYoutubePlayerChanged(youTubePlayer);
@@ -266,7 +276,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     mParent.mYoutubePlayer.setPlaybackEventListener(YoutubeViewHolder.this);
     // Force player style
     mParent.mYoutubePlayer.setPlayerStyle(
-        getPlayerStyle() == CHROMELESS ? YouTubePlayer.PlayerStyle.CHROMELESS
+        getPlayerStyle() == CHROME_LESS ? YouTubePlayer.PlayerStyle.CHROMELESS
             : YouTubePlayer.PlayerStyle.MINIMAL);
     if (!isRecover) {
       if (isSeeking) {
@@ -282,6 +292,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
     // TODO Handle error
+    mLogger.onInitializationFailure(provider, youTubeInitializationResult);
   }
 
   @Override public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
@@ -317,7 +328,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @IntDef({
-      CHROMELESS, MINIMUM
+      CHROME_LESS, MINIMUM
   }) @Retention(RetentionPolicy.SOURCE) public @interface PlayerStyle {
   }
 }

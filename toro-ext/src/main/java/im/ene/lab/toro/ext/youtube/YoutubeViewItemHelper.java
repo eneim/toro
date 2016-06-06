@@ -17,7 +17,6 @@
 package im.ene.lab.toro.ext.youtube;
 
 import android.support.annotation.UiThread;
-import android.util.Log;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.lab.toro.RecyclerViewItemHelper;
 import im.ene.lab.toro.ToroPlayer;
@@ -39,40 +38,29 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
     return INSTANCE;
   }
 
-  private static final String TAG = "YTVHH";
-
   // Adapt from YoutubePlayer
   public void onPlaying() {
-    Log.d(TAG, "onPlaying() called with: " + "");
   }
 
   public void onPaused() {
-    Log.d(TAG, "onPaused() called with: " + "");
   }
 
-  @Deprecated
-  public void onStopped() {
-    Log.d(TAG, "onStopped() called with: " + "");
+  @Deprecated public void onStopped() {
   }
 
   public void onBuffering(boolean b) {
-    Log.d(TAG, "onBuffering() called with: " + "b = [" + b + "]");
   }
 
   public void onSeekTo(int i) {
-    Log.d(TAG, "onSeekTo() called with: " + "i = [" + i + "]");
   }
 
   public void onLoading() {
-    Log.d(TAG, "onLoading() called with: " + "");
   }
 
   public void onLoaded(String s) {
-    Log.d(TAG, "onLoaded() called with: " + "s = [" + s + "]");
   }
 
   public void onAdStarted() {
-    Log.d(TAG, "onAdStarted() called with: " + "");
   }
 
   public void onVideoStarted(ToroPlayer player) {
@@ -90,6 +78,5 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
   }
 
   public void onYoutubePlayerChanged(YouTubePlayer newPlayer) {
-    Log.e(TAG, "onYoutubePlayerChanged() called with: " + "newPlayer = [" + newPlayer + "]");
   }
 }

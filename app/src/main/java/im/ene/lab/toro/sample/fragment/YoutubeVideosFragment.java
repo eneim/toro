@@ -30,10 +30,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ext.youtube.YoutubeVideosAdapter;
 import im.ene.lab.toro.ext.youtube.YoutubeViewHolder;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -157,14 +158,6 @@ public class YoutubeVideosFragment extends RecyclerViewFragment {
       mInfo.setText("Loaded");
     }
 
-    @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
-      super.onError(errorReason);
-      if (mThumbnail != null) {
-        mThumbnail.setVisibility(View.VISIBLE);
-      }
-      mInfo.setText("Error:" + errorReason.name());
-    }
-
     @Override public void onPlaybackPaused() {
       super.onPlaybackPaused();
       if (mThumbnail != null) {
@@ -179,6 +172,14 @@ public class YoutubeVideosFragment extends RecyclerViewFragment {
         mThumbnail.setVisibility(View.VISIBLE);
       }
       mInfo.setText("Stopped");
+    }
+
+    @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
+      if (mThumbnail != null) {
+        mThumbnail.setVisibility(View.VISIBLE);
+      }
+      mInfo.setText("Error:" + error.getLocalizedMessage());
+      return super.onPlaybackError(mp, error);
     }
 
     @Override public String toString() {
