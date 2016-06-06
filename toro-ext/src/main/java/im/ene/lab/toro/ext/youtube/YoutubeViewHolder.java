@@ -22,7 +22,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -101,7 +100,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
     itemView.getViewTreeObserver()
         .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override public void onGlobalLayout() {
-            Log.d(TAG, "onGlobalLayout() called with: " + "");
             isLaidOut = true;
             itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if ((mThumbnail = getThumbnailView()) != null) {
