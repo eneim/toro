@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.youtube;
+package im.ene.lab.toro.ext.youtube;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;

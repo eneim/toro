@@ -76,14 +76,14 @@
         android:minHeight="160dp"
         />
 
-    <com.google.android.youtube.player.YouTubeThumbnailView
-        android:id="@+id/thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:minHeight="160dp"
-        android:scaleType="centerCrop"
-        />
+    <!--<com.google.android.youtube.player.YouTubeThumbnailView-->
+        <!--android:id="@+id/thumbnail"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:minHeight="160dp"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--/>-->
   </FrameLayout>
 
 </LinearLayout>

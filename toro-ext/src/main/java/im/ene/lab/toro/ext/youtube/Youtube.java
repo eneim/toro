@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.util;
+package im.ene.lab.toro.ext.youtube;
 
-import android.support.v4.util.TimeUtils;
+import android.text.TextUtils;
 
 /**
- * Created by eneim on 2/3/16.
+ * Created by eneim on 6/6/16.
  */
-public class Util {
+public final class Youtube {
 
-  public static String timeStamp(long position, long duration) {
-    StringBuilder posTime = new StringBuilder();
-    TimeUtils.formatDuration(position, posTime);
-    StringBuilder durationTime = new StringBuilder();
-    TimeUtils.formatDuration(duration, durationTime);
+  static String API_KEY = null;
 
-    return posTime + " / " + durationTime.toString();
+  public static void setApiKey(String key) {
+    if (key == null || TextUtils.isEmpty(key)) {
+      throw new IllegalArgumentException("Invalid Youtube API Key. "
+          + "Please provide a valid one through Manifest's meta-data of name: 'Youtube.API_KEY'");
+    }
+
+    API_KEY = key;
   }
-
 }

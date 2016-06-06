@@ -48,6 +48,10 @@
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
 
+    <meta-data
+        android:name="Youtube.API_KEY"
+        android:value="${youtube_api_key}"/>
+
   </application>
 
 </manifest>

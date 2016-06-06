@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.youtube;
+package im.ene.lab.toro.ext.youtube;
 
 import android.support.annotation.UiThread;
 import android.util.Log;
@@ -30,7 +30,7 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
 
   private static YoutubeViewItemHelper INSTANCE;
 
-  // Prefer to use singleton of this class. This method must be call on UIThread
+  // Prefer to use singleton of this class. This method must be call on UiThread
   @UiThread public static YoutubeViewItemHelper getInstance() {
     if (INSTANCE == null) {
       INSTANCE = new YoutubeViewItemHelper();
@@ -50,6 +50,7 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
     Log.d(TAG, "onPaused() called with: " + "");
   }
 
+  @Deprecated
   public void onStopped() {
     Log.d(TAG, "onStopped() called with: " + "");
   }

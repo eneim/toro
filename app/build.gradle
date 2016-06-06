@@ -57,8 +57,10 @@ android {
     versionName dateTimeString()
     archivesBaseName = "toro_sample"
 
-    buildConfigField "String", "YOUTUBE_API_KEY", "\"${TORO_SAMPLE_YOUTUBE_API_KEY}\""
-    manifestPlaceholders = [fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}"]
+    manifestPlaceholders = [
+        fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}",
+        youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"
+    ]
 
     vectorDrawables.useSupportLibrary = true
   }
@@ -93,7 +95,8 @@ dependencies {
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(':toro')
+  compile project(':toro-ext')
+  /* compile project(':toro') */  // un-comment if user just need toro
   // compile 'com.github.eneim:Toro:1.2.0'
 
   compile 'com.squareup.picasso:picasso:2.5.2'

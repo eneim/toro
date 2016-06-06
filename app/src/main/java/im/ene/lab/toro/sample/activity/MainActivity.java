@@ -51,7 +51,7 @@ import im.ene.lab.toro.sample.fragment.SimpleToggleableListFragment;
 import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
-import im.ene.lab.toro.sample.fragment.YoutubeListFragment;
+import im.ene.lab.toro.sample.fragment.YoutubeVideosFragment;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   @OnClick(R.id.btn_youtube_video_list) void youtubeVideoList() {
-    startActivity(ShowCaseActivity.createIntent(this, YoutubeListFragment.TAG));
+    startActivity(ShowCaseActivity.createIntent(this, YoutubeVideosFragment.TAG));
   }
 
   @OnClick(R.id.btn_view_pager) void viewPager() {
