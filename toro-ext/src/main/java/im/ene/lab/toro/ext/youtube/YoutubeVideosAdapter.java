@@ -31,11 +31,10 @@ import java.util.Map;
 /**
  * Created by eneim on 4/8/16.
  *
- * Youtube Video Manager + Video Adapter. This is the core of Youtube Support part.
+ * Youtube Video Manager + Video Adapter. This is the core of Youtube Support Extension.
  */
 public abstract class YoutubeVideosAdapter extends ToroAdapter<YoutubeViewHolder>
-    implements VideoPlayerManager //
-    /* , YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener */ {
+    implements VideoPlayerManager {
 
   final FragmentManager mFragmentManager;
   // private final VideoPlayerManager delegate;
@@ -67,7 +66,6 @@ public abstract class YoutubeVideosAdapter extends ToroAdapter<YoutubeViewHolder
   public YoutubeVideosAdapter(FragmentManager fragmentManager) {
     super();
     this.mFragmentManager = fragmentManager;
-    // this.delegate = new VideoPlayerManagerImpl();
   }
 
   /**
@@ -184,13 +182,4 @@ public abstract class YoutubeVideosAdapter extends ToroAdapter<YoutubeViewHolder
       mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
     }
   }
-
-  //public void onStopped() {
-  //}
-
-  //@Override public void onBuffering(boolean b) {
-  //}
-
-  //@Override public void onSeekTo(int i) {
-  //}
 }
