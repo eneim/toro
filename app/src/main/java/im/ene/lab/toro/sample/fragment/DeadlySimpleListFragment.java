@@ -161,11 +161,6 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView.start();
     }
 
-    @Override public void start(long position) {
-      seekTo(position);
-      start();
-    }
-
     @Override public void pause() {
       mVideoView.pause();
     }

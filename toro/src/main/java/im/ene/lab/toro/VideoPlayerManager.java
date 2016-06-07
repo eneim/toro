@@ -46,9 +46,6 @@ public interface VideoPlayerManager {
    */
   void startPlayback();
 
-  @Deprecated
-  void startPlayback(long position);
-
   /**
    * Pause current video
    */
@@ -69,7 +66,6 @@ public interface VideoPlayerManager {
    */
   void restoreVideoState(String videoId);
 
-  @Nullable
-  Long getSavedPosition(String videoId);
+  @Nullable Long getSavedPosition(String videoId);
   /* END Directly control current player */
 }

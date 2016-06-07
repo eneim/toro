@@ -186,11 +186,6 @@ public class YoutubeVideosFragment extends RecyclerViewFragment {
       return Integer.toHexString(hashCode()) + " position=" + getAdapterPosition();
     }
 
-    @Override public void start(long position) {
-      seekTo(position);
-      start();
-    }
-
     @Override public void setBackgroundAudioEnabled(boolean enabled) {
       // Youtube Player API doesn't support this
     }

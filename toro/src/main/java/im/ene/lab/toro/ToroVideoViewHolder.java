@@ -111,11 +111,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return super.onPlaybackError(mp, error);
   }
 
-  @Override public void start(long position) {
-    seekTo(position);
-    start();
-  }
-
   @Override public void stop() {
     if (mVideoView != null) {
       mVideoView.stop();

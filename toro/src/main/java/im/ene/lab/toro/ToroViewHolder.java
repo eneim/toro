@@ -57,7 +57,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     }
   }
 
-  @CallSuper @Override public void onActivityResumed() {
+  @CallSuper @Override public void onActivityInactive() {
 
   }
 
@@ -89,7 +89,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     });
   }
 
-  @CallSuper @Override public void onActivityPaused() {
+  @CallSuper @Override public void onActivityActive() {
     // Release listener to prevent memory leak
     mLongClickListener = null;
   }
@@ -181,7 +181,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
       float visibleArea = videoRect.height() * videoRect.width();
       float viewArea = getVideoView().getWidth() * getVideoView().getHeight();
-      return viewArea <= 0.f ? 1.f : visibleArea / viewArea;
+      return viewArea <= 0.f ? 1.f :  visibleArea / viewArea;
     } else {
       return 0.f;
     }
@@ -196,6 +196,10 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @Nullable protected final Rect getRecyclerViewRect() {
     if (itemView.getParent() == null) { // view is not attached to RecyclerView
+      return null;
+    }
+
+    if (!(itemView.getParent() instanceof View)) {
       return null;
     }
 

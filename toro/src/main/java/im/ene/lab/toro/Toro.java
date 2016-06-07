@@ -402,7 +402,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
       if (manager.getPlayer() != null) {
         manager.startPlayback();
-        manager.getPlayer().onActivityResumed();
+        manager.getPlayer().onActivityInactive();
       }
     }
   }
@@ -429,7 +429,7 @@ import java.util.concurrent.ConcurrentHashMap;
           manager.getPlayer().onPlaybackPaused();
         }
 
-        manager.getPlayer().onActivityPaused();
+        manager.getPlayer().onActivityActive();
       }
     }
   }
@@ -448,7 +448,7 @@ import java.util.concurrent.ConcurrentHashMap;
         if (state.player != null) {
           // Release resource if there is any
           state.player.pause();
-          state.player.onActivityPaused();
+          state.player.onActivityActive();
           // Release this player
           state.player = null;
         }

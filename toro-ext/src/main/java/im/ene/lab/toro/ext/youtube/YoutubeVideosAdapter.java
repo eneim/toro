@@ -148,12 +148,6 @@ public abstract class YoutubeVideosAdapter extends ToroAdapter<YoutubeViewHolder
     return mVideoStates.get(videoId);
   }
 
-  @Override public void startPlayback(long position) {
-    if (mPlayer != null) {
-      mPlayer.start(position);
-    }
-  }
-
   @Override public void stopPlayback() {
     if (mPlayer != null) {
       mPlayer.stop();

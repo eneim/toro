@@ -44,8 +44,6 @@ public interface TrMediaPlayer {
 
     void start();
 
-    void start(long position);
-
     void pause();
 
     void stop();
