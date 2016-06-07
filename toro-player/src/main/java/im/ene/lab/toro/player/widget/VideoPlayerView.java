@@ -131,10 +131,8 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   };
 
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare
-        && (mPlaybackState != ExoMediaPlayer.STATE_IDLE)
-        && (mPlaybackState != ExoMediaPlayer.STATE_PREPARING)
-        && (mPlaybackState != ExoMediaPlayer.STATE_ENDED);
+    return !mPlayerNeedsPrepare && (mPlaybackState != ExoMediaPlayer.STATE_IDLE) && (mPlaybackState
+        != ExoMediaPlayer.STATE_PREPARING) && (mPlaybackState != ExoMediaPlayer.STATE_ENDED);
   }
 
   private Uri mUri;
@@ -213,8 +211,6 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       if (mOnPreparedListener != null) {
         mOnPreparedListener.onPrepared(mp);
       }
-
-
     }
   };
 
@@ -376,12 +372,16 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
 
   @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
-    releasePlayer();
+    try {
+      mAudioCapabilitiesReceiver.unregister();
+      mAudioCapabilitiesReceiver = null;
+    } catch (IllegalArgumentException er) {
+      // Have no idea, it crash by this Exception sometime.
+      er.printStackTrace();
+    }
     mPlayerPosition = 0;
-    mAudioCapabilitiesReceiver.unregister();
-    mAudioCapabilitiesReceiver = null;
-
     mAudioCapabilities = null;
+    releasePlayer();
   }
 
   private void maybeNotifyAudioCapabilitiesChanged(AudioCapabilities audioCapabilities) {

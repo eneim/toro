@@ -35,7 +35,7 @@ public class ToroSampleApp extends Application {
     super.onCreate();
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     // Toro.init(this);
-    ToroExt.initYoutube(this);
+    ToroExt.with(this).youtube().init();
     sApp = this;
   }
 
