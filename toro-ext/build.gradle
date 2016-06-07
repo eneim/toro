@@ -20,12 +20,16 @@ android {
   compileSdkVersion 23
   buildToolsVersion "23.0.3"
 
+  defaultPublishConfig "release"
+  publishNonDefault true
+
   defaultConfig {
     minSdkVersion 16
     targetSdkVersion 23
     versionCode 1
     versionName "1.0"
   }
+
   buildTypes {
     release {
       minifyEnabled false

@@ -19,9 +19,12 @@ package im.ene.lab.toro.ext.youtube;
 import android.util.Log;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
+import im.ene.lab.toro.ext.BuildConfig;
 
 /**
  * Created by eneim on 6/6/16.
+ *
+ * !For debug purpose only
  */
 public class EventLogger
     implements YouTubePlayer.PlaybackEventListener, YouTubePlayer.PlayerStateChangeListener,
@@ -29,6 +32,7 @@ public class EventLogger
 
   private String TAG = "EventLogger";
   private final boolean D;
+  private final boolean DEBUG = BuildConfig.DEBUG;
 
   public EventLogger(String id, int position) {
     TAG = "Logger:" + id;
@@ -38,6 +42,7 @@ public class EventLogger
   @Override
   public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer,
       boolean b) {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onInitializationSuccess() called with: "
           + "provider = ["
@@ -61,6 +66,7 @@ public class EventLogger
 
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onInitializationFailure() called with: "
           + "provider = ["
@@ -79,6 +85,7 @@ public class EventLogger
   }
 
   @Override public void onPlaying() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onPlaying() called with: " + "");
     } else {
@@ -87,6 +94,7 @@ public class EventLogger
   }
 
   @Override public void onPaused() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onPaused() called with: " + "");
     } else {
@@ -95,6 +103,7 @@ public class EventLogger
   }
 
   @Override public void onStopped() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onStopped() called with: " + "");
     } else {
@@ -103,6 +112,7 @@ public class EventLogger
   }
 
   @Override public void onBuffering(boolean b) {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onBuffering() called with: " + "b = [" + b + "]");
     } else {
@@ -111,6 +121,7 @@ public class EventLogger
   }
 
   @Override public void onSeekTo(int i) {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onSeekTo() called with: " + "i = [" + i + "]");
     } else {
@@ -119,6 +130,7 @@ public class EventLogger
   }
 
   @Override public void onLoading() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onLoading() called with: " + "");
     } else {
@@ -127,6 +139,7 @@ public class EventLogger
   }
 
   @Override public void onLoaded(String s) {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onLoaded() called with: " + "s = [" + s + "]");
     } else {
@@ -135,6 +148,7 @@ public class EventLogger
   }
 
   @Override public void onAdStarted() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onAdStarted() called with: " + "");
     } else {
@@ -143,6 +157,7 @@ public class EventLogger
   }
 
   @Override public void onVideoStarted() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onVideoStarted() called with: " + "");
     } else {
@@ -151,6 +166,7 @@ public class EventLogger
   }
 
   @Override public void onVideoEnded() {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onVideoEnded() called with: " + "");
     } else {
@@ -159,6 +175,7 @@ public class EventLogger
   }
 
   @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
+    if (!DEBUG) return;
     if (D) {
       Log.d(TAG, "onError() called with: " + "errorReason = [" + errorReason + "]");
     } else {

@@ -72,6 +72,14 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
+    prerelease {
+      debuggable true // this value may change
+      zipAlignEnabled true
+      signingConfig signingConfigs.release
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+
     debug {
       signingConfig signingConfigs.debug
       applicationIdSuffix ".debug"
@@ -95,7 +103,10 @@ dependencies {
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(':toro-ext')
+  debugCompile project(path: ':toro-ext', configuration: 'debug')
+  releaseCompile project(path: ':toro-ext', configuration: 'release') // for releasing
+  prereleaseCompile project(path: ':toro-ext', configuration: 'release') // for releasing
+
   /* compile project(':toro') */  // un-comment if user just need toro
   // compile 'com.github.eneim:Toro:1.2.0'
 
