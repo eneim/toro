@@ -16,19 +16,16 @@
 
 package im.ene.lab.toro.sample.legacy;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.sample.legacy.betterlist.FinedGrainListFragment;
+import android.app.Application;
+import im.ene.lab.toro.Toro;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by eneim on 6/8/16.
+ */
+public class SampleApp extends Application {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    // setContentView(R.layout.activity_main);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, FinedGrainListFragment.newInstance())
-          .commit();
-    }
+  @Override public void onCreate() {
+    super.onCreate();
+    Toro.init(this);
   }
 }

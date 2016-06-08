@@ -16,19 +16,20 @@
 
 package im.ene.lab.toro.sample.legacy;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.sample.legacy.betterlist.FinedGrainListFragment;
+import android.support.v4.util.TimeUtils;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Created by eneim on 2/3/16.
+ */
+public class Util {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    // setContentView(R.layout.activity_main);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, FinedGrainListFragment.newInstance())
-          .commit();
-    }
+  public static String timeStamp(long position, long duration) {
+    StringBuilder posTime = new StringBuilder();
+    TimeUtils.formatDuration(position, posTime);
+    StringBuilder durationTime = new StringBuilder();
+    TimeUtils.formatDuration(duration, durationTime);
+
+    return posTime + " / " + durationTime.toString();
   }
+
 }
