@@ -54,7 +54,6 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   };
 
   public VideoPlayerManagerImpl() {
-    Toro.checkNotNull();
   }
 
   @Override public final ToroPlayer getPlayer() {
@@ -68,17 +67,6 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   @Override public void startPlayback() {
     if (mPlayer != null) {
       mPlayer.start();
-      if (mUiHandler != null) {
-        // Remove old callback if exist
-        mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-        mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
-      }
-    }
-  }
-
-  @Override public void startPlayback(long position) {
-    if (mPlayer != null) {
-      mPlayer.start(position);
       if (mUiHandler != null) {
         // Remove old callback if exist
         mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);

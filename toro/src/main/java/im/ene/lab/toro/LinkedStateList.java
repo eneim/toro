@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
  *
  * A linked-list with specific capacity
  */
-class LinkedStateList extends LinkedHashMap<Integer, SavedState> {
+final class LinkedStateList extends LinkedHashMap<Integer, SavedState> {
 
   private int mCapacity = 1;
 

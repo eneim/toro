@@ -32,7 +32,9 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
   // Prefer to use singleton of this class. This method must be call on UiThread
   @UiThread public static YoutubeViewItemHelper getInstance() {
     if (INSTANCE == null) {
-      INSTANCE = new YoutubeViewItemHelper();
+      synchronized (YoutubeViewItemHelper.class) {
+        INSTANCE = new YoutubeViewItemHelper();
+      }
     }
 
     return INSTANCE;

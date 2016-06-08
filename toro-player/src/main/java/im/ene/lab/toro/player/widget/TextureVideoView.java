@@ -287,19 +287,6 @@ import java.util.Map;
     invalidate();
   }
 
-  public void stopPlayback() {
-    if (mMediaPlayer != null) {
-      mMediaPlayer.stop();
-      mMediaPlayer.release();
-      mMediaPlayer = null;
-      mCurrentState = STATE_IDLE;
-      mTargetState = STATE_IDLE;
-      AudioManager am = (AudioManager) getContext().getApplicationContext()
-          .getSystemService(Context.AUDIO_SERVICE);
-      am.abandonAudioFocus(null);
-    }
-  }
-
   private void openVideo() {
     if (mUri == null || mSurface == null) {
       // not ready for playback just yet, will try again later
@@ -683,15 +670,6 @@ import java.util.Map;
 
   @Override public void start() {
     if (isInPlaybackState()) {
-      mMediaPlayer.start();
-      mCurrentState = STATE_PLAYING;
-    }
-    mTargetState = STATE_PLAYING;
-  }
-
-  @Override public void start(long position) {
-    if (isInPlaybackState()) {
-      seekTo(position);
       mMediaPlayer.start();
       mCurrentState = STATE_PLAYING;
     }

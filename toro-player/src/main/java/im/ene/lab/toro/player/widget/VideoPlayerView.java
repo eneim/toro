@@ -256,15 +256,26 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     int width = getMeasuredWidth();
     int height = getMeasuredHeight();
+
+    int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
+    int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
+
     if (mVideoWidthHeightAspectRatio != 0) {
-      float viewAspectRatio = (float) width / height;
-      float aspectDeformation = mVideoWidthHeightAspectRatio / viewAspectRatio - 1;
-      if (aspectDeformation > MAX_ASPECT_RATIO_DEFORMATION_PERCENT) {
+      if (widthSpecMode == MeasureSpec.EXACTLY) {
         height = (int) (width / mVideoWidthHeightAspectRatio);
-      } else if (aspectDeformation < -MAX_ASPECT_RATIO_DEFORMATION_PERCENT) {
+      } else if (heightSpecMode == MeasureSpec.EXACTLY) {
         width = (int) (height * mVideoWidthHeightAspectRatio);
+      } else {
+        float viewAspectRatio = (float) width / height;
+        float aspectDeformation = mVideoWidthHeightAspectRatio / viewAspectRatio - 1;
+        if (aspectDeformation > MAX_ASPECT_RATIO_DEFORMATION_PERCENT) {
+          width = (int) (height * mVideoWidthHeightAspectRatio);
+        } else if (aspectDeformation < -MAX_ASPECT_RATIO_DEFORMATION_PERCENT) {
+          height = (int) (width / mVideoWidthHeightAspectRatio);
+        }
       }
     }
+
     setMeasuredDimension(width, height);
   }
 
@@ -466,11 +477,6 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       mMediaPlayer.setBackgrounded(false);
       mMediaPlayer.setPlayWhenReady(mPlayRequested);
     }
-  }
-
-  @Override public void start(long position) {
-    seekTo(position);
-    start();
   }
 
   @Override public long getDuration() {

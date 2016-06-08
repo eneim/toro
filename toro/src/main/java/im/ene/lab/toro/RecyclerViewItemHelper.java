@@ -16,10 +16,10 @@
 
 package im.ene.lab.toro;
 
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewParent;
-import java.util.Map;
 
 /**
  * Created by eneim on 2/6/16.
@@ -31,58 +31,53 @@ import java.util.Map;
  */
 public class RecyclerViewItemHelper extends VideoViewItemHelper {
 
-  @Override public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
-    Toro.checkNotNull();
-    for (Map.Entry<Integer, RecyclerView> entry : Toro.sInstance.mViews.entrySet()) {
-      RecyclerView view = entry.getValue();
-      if (view != null && view == parent) {
-        ToroScrollListener listener = Toro.sInstance.mListeners.get(view.hashCode());
-        if (listener != null && listener.getManager().getPlayer() == null) {
-          if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
-            listener.getManager().setPlayer(player);
-            listener.getManager().restoreVideoState(player.getVideoId());
-            listener.getManager().startPlayback();
-            player.onPlaybackStarted();
-          }
-        }
+  private static RecyclerViewItemHelper INSTANCE;
+
+  public static RecyclerViewItemHelper getInstance() {
+    if (INSTANCE == null) {
+      synchronized (RecyclerViewItemHelper.class) {
+        INSTANCE = new RecyclerViewItemHelper();
+      }
+    }
+
+    return INSTANCE;
+  }
+
+  @Override public void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
+    ToroScrollListener listener =
+        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
+    if (listener != null && listener.getManager().getPlayer() == null) {
+      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+        listener.getManager().setPlayer(player);
+        listener.getManager().restoreVideoState(player.getVideoId());
+        listener.getManager().startPlayback();
+        player.onPlaybackStarted();
       }
     }
   }
 
-  @Override public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
-    Toro.checkNotNull();
-    for (Map.Entry<Integer, RecyclerView> entry : Toro.sInstance.mViews.entrySet()) {
-      RecyclerView view = entry.getValue();
-      if (view != null && view == parent) {
-        ToroScrollListener listener = Toro.sInstance.mListeners.get(view.hashCode());
-        // Manually save Video state
-        if (listener != null && player.equals(listener.getManager().getPlayer())) {
-          if (player.isPlaying()) {
-            listener.getManager()
-                .saveVideoState(player.getVideoId(), player.getCurrentPosition(),
-                    player.getDuration());
-            listener.getManager().stopPlayback();
-            player.onPlaybackPaused();
-          }
-        }
+  @Override public void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
+    ToroScrollListener listener =
+        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
+    // Manually save Video state
+    if (listener != null && player.equals(listener.getManager().getPlayer())) {
+      if (player.isPlaying()) {
+        listener.getManager()
+            .saveVideoState(player.getVideoId(), player.getCurrentPosition(), player.getDuration());
+        listener.getManager().stopPlayback();
+        player.onPlaybackPaused();
       }
     }
   }
 
-  @Override public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
-    Toro.checkNotNull();
-    RecyclerView view = null;
-    ToroScrollListener listener = null;
-    for (Map.Entry<Integer, RecyclerView> entry : Toro.sInstance.mViews.entrySet()) {
-      view = entry.getValue();
-      if (view != null && view == parent) {
-        listener = Toro.sInstance.mListeners.get(view.hashCode());
-        break;
-      }
-    }
-
+  @Override public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
+    ToroScrollListener listener =
+        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
     // Important components are missing, return
-    if (view == null || listener == null) {
+    if (listener == null) {
       return false;
     }
 
@@ -94,7 +89,8 @@ public class RecyclerViewItemHelper extends VideoViewItemHelper {
     VideoPlayerManager manager = listener.getManager();
     ToroPlayer currentPlayer = manager.getPlayer();
 
-    if (!player.equals(currentPlayer)) { // Being pressed player is a new one
+    if (!player.equals(currentPlayer)) {
+      // Being pressed player is a new one
       // All conditions to switch players has passed, process the switching
       // Manually save Video state
       // Not the current player, and new player wants to play, so switch players
@@ -127,8 +123,7 @@ public class RecyclerViewItemHelper extends VideoViewItemHelper {
         manager.startPlayback();
         currentPlayer.onPlaybackStarted();
       }
+      return true;
     }
-
-    return false;
   }
 }

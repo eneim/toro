@@ -71,11 +71,6 @@ import java.util.concurrent.ConcurrentHashMap;
   // Singleton, GOD object
   static volatile Toro sInstance;
 
-  /**
-   * Helper object, support RecyclerView's ViewHolder
-   */
-  static VideoViewItemHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
-
   // Used to swap strategies if need. It should be a strong reference.
   private static ToroStrategy cachedStrategy;
 
@@ -123,7 +118,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * Toro#attach(Activity)}
    */
   public static void detach(Activity activity) {
-    checkNotNull();
     Application application = activity.getApplication();
     if (application != null) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
@@ -140,7 +134,6 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   public static ToroStrategy getStrategy() {
-    checkNotNull();
     return sInstance.mStrategy;
   }
 
@@ -150,7 +143,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param strategy requested policy from client
    */
   public static void setStrategy(@NonNull ToroStrategy strategy) {
-    checkNotNull();
     if (sInstance.mStrategy == strategy) {
       // Nothing changes
       return;
@@ -166,7 +158,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be registered
    */
   public static void register(RecyclerView view) {
-    checkNotNull();
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
@@ -221,7 +212,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be unregistered
    */
   public static void unregister(RecyclerView view) {
-    checkNotNull();
     if (view == null) {
       throw new NullPointerException("Un-registering View must not be null");
     }
@@ -251,13 +241,6 @@ import java.util.concurrent.ConcurrentHashMap;
       }
       // Remove from cache
       sInstance.mViews.remove(view.hashCode());
-    }
-  }
-
-  static void checkNotNull() {
-    if (sInstance == null) {
-      throw new IllegalStateException(
-          "Toro has not been attached to your Activity or your Application. Please refer the wiki");
     }
   }
 
@@ -402,7 +385,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
       if (manager.getPlayer() != null) {
         manager.startPlayback();
-        manager.getPlayer().onActivityResumed();
+        manager.getPlayer().onActivityInactive();
       }
     }
   }
@@ -429,7 +412,7 @@ import java.util.concurrent.ConcurrentHashMap;
           manager.getPlayer().onPlaybackPaused();
         }
 
-        manager.getPlayer().onActivityPaused();
+        manager.getPlayer().onActivityActive();
       }
     }
   }
@@ -448,7 +431,7 @@ import java.util.concurrent.ConcurrentHashMap;
         if (state.player != null) {
           // Release resource if there is any
           state.player.pause();
-          state.player.onActivityPaused();
+          state.player.onActivityActive();
           // Release this player
           state.player = null;
         }

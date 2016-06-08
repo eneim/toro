@@ -56,10 +56,6 @@ public abstract class BaseCustomAdapter<VH extends ToroAdapter.ViewHolder> exten
     delegate.startPlayback();
   }
 
-  @Override public void startPlayback(long position) {
-    delegate.startPlayback(position);
-  }
-
   @Override public void pausePlayback() {
     delegate.pausePlayback();
   }

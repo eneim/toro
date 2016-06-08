@@ -40,7 +40,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   public ToroViewHolder(View itemView) {
     super(itemView);
-    mHelper = Toro.RECYCLER_VIEW_HELPER;
+    mHelper = RecyclerViewItemHelper.getInstance();
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
@@ -57,7 +57,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     }
   }
 
-  @CallSuper @Override public void onActivityResumed() {
+  @CallSuper @Override public void onActivityInactive() {
 
   }
 
@@ -89,7 +89,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     });
   }
 
-  @CallSuper @Override public void onActivityPaused() {
+  @CallSuper @Override public void onActivityActive() {
     // Release listener to prevent memory leak
     mLongClickListener = null;
   }
@@ -196,6 +196,10 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @Nullable protected final Rect getRecyclerViewRect() {
     if (itemView.getParent() == null) { // view is not attached to RecyclerView
+      return null;
+    }
+
+    if (!(itemView.getParent() instanceof View)) {
       return null;
     }
 

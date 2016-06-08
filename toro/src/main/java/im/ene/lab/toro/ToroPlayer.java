@@ -46,6 +46,8 @@ public interface ToroPlayer
   boolean wantsToPlay();
 
   /**
+   * {@since 2.0.0}
+   *
    * !Deprecated From 2.0.0. User will just need to tell Toro by {@link ToroPlayer#wantsToPlay()}.
    * Toro 2.0 will not listen to this Method anymore.
    *
@@ -70,12 +72,13 @@ public interface ToroPlayer
   /**
    * Support save/restore Video state (last played/paused position)
    *
-   * @return current Video's id. !IMPORTANT this ID must be unique, and avoid using Video's
-   * filename, url String or any object which depends on the Video object itself. There will be
-   * the case user uses same Video in multiple place. User of this library should better use the
-   * main object (which holds the Video as member) as key to generate this Id.
+   * !IMPORTANT this ID must be unique, and avoid using Video's filename, url String or any object
+   * that depends on the Video object itself. There will be the case user uses same Video in
+   * different places.
    * <p/>
-   * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-depended Id
+   * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-independent Id
+   *
+   * @return current Video's id.
    */
   @Nullable String getVideoId();
 
@@ -100,12 +103,12 @@ public interface ToroPlayer
   /**
    * Host Activity paused
    */
-  void onActivityPaused();
+  void onActivityActive();
 
   /**
    * Host Activity resumed
    */
-  void onActivityResumed();
+  void onActivityInactive();
 
   /* Playback lifecycle callback */
 
