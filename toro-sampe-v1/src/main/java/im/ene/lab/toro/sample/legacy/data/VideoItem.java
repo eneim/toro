@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.legacy;
+package im.ene.lab.toro.sample.legacy.data;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.sample.legacy.simplelist.SimpleListFragment;
+/**
+ * Created by eneim on 6/8/16.
+ */
+public class VideoItem {
 
-public class MainActivity extends AppCompatActivity {
+  public static final String[] VIDEOS = {
+      "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
+  };
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    // setContentView(R.layout.activity_main);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, SimpleListFragment.newInstance())
-          .commit();
-    }
+  public final String video;
+
+  public VideoItem() {
+    this.video = VIDEOS[0];
   }
 }
