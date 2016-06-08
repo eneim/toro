@@ -151,7 +151,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
 
     sInstance.mStrategy = strategy;
-    notifyStrategyChanged(strategy);
+    dispatchStrategyChanged(strategy);
   }
 
   /**
@@ -266,7 +266,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  private static void notifyStrategyChanged(ToroStrategy newStrategy) {
+  private static void dispatchStrategyChanged(ToroStrategy newStrategy) {
     for (RecyclerView view : sInstance.mViews.values()) {
       ToroScrollListener listener = sInstance.mListeners.get(view.hashCode());
       if (listener != null) { // Trigger an 'idle scroll'

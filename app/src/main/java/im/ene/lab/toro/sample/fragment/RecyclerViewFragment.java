@@ -25,7 +25,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +46,6 @@ public abstract class RecyclerViewFragment extends Fragment {
   protected RecyclerView.Adapter mAdapter;
 
   private int firstVideoPosition;
-
-  private static final String TAG = "ToroRV";
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
@@ -97,12 +94,6 @@ public abstract class RecyclerViewFragment extends Fragment {
     mAdapter = getAdapter();
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setAdapter(mAdapter);
-    mRecyclerView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-      @Override public void onFocusChange(View v, boolean hasFocus) {
-        Log.d(TAG, "onFocusChange() called with: " + "v = [" + RecyclerViewFragment.this.getClass()
-            .getSimpleName() + "], hasFocus = [" + hasFocus + "]");
-      }
-    });
 
     if (mAdapter instanceof OrderedVideoList) {
       firstVideoPosition = ((OrderedVideoList) mAdapter).firstVideoPosition();
@@ -111,8 +102,6 @@ public abstract class RecyclerViewFragment extends Fragment {
 
   @Override public void onResume() {
     super.onResume();
-    // Log.i(TAG, "onResume: " + getClass().getSimpleName() + " | requestFocus()");
-    // mRecyclerView.requestFocus();
     Toro.register(mRecyclerView);
   }
 

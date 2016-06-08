@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import im.ene.lab.toro.ToroViewPagerHelper;
 import im.ene.lab.toro.sample.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
  */
 public class ViewPagerFragment extends Fragment {
 
-  public static final String TAG = "ViewPagerFragment";
+  public static final String TAG = "ToroVP";
 
   public static ViewPagerFragment newInstance() {
     return new ViewPagerFragment();
@@ -46,6 +47,8 @@ public class ViewPagerFragment extends Fragment {
 
   @Bind(R.id.viewpager) ViewPager mViewPager;
   @Bind(R.id.tab_layout) TabLayout mTabLayout;
+
+  private ToroViewPagerHelper viewPagerHelper;
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -62,6 +65,15 @@ public class ViewPagerFragment extends Fragment {
     ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(), fragments);
     mViewPager.setAdapter(adapter);
     mTabLayout.setupWithViewPager(mViewPager);
+
+    viewPagerHelper = new ToroViewPagerHelper();
+    mViewPager.addOnPageChangeListener(viewPagerHelper);
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    viewPagerHelper.remove();
+    mViewPager.removeOnPageChangeListener(viewPagerHelper);
   }
 
   private static class ViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -79,6 +91,10 @@ public class ViewPagerFragment extends Fragment {
 
     @Override public int getCount() {
       return mItems.size();
+    }
+
+    @Override public float getPageWidth(int position) {
+      return 0.85f;
     }
 
     @Override public CharSequence getPageTitle(int position) {
