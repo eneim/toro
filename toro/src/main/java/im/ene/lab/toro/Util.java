@@ -16,7 +16,7 @@
 
 package im.ene.lab.toro;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,11 +29,7 @@ final class Util {
     throw new AssertionError("Not supported");
   }
 
-  static Integer[] asArray(int[] array) {
-    if (array == null) {
-      return null;
-    }
-
+  @NonNull static Integer[] asArray(@NonNull int[] array) {
     Integer[] result = new Integer[array.length];
     if (array.length > 0) {
       for (int i = 0; i < array.length; i++) {
@@ -44,12 +40,11 @@ final class Util {
     return result;
   }
 
-  static <T> List<T> asList(T[] array) {
+  @NonNull static <T> List<T> asList(T[] array) {
     return Arrays.asList(array);
   }
 
-  @Nullable
-  static List<Integer> asList(int[] array) {
+  @NonNull static List<Integer> asList(int[] array) {
     return asList(asArray(array));
   }
 }
