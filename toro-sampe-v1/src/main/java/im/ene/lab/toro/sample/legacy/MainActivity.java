@@ -18,7 +18,7 @@ package im.ene.lab.toro.sample.legacy;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import im.ene.lab.toro.sample.legacy.simplelist.SimpleListFragment;
+import im.ene.lab.toro.sample.legacy.betterlist.FinedGrainListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     // setContentView(R.layout.activity_main);
     if (savedInstanceState == null) {
       getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, SimpleListFragment.newInstance())
+          .replace(android.R.id.content, FinedGrainListFragment.newInstance())
           .commit();
     }
   }

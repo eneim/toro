@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.legacy.data;
+package im.ene.lab.toro.sample.legacy;
+
+import android.support.v4.util.TimeUtils;
 
 /**
- * Created by eneim on 6/8/16.
+ * Created by eneim on 2/3/16.
  */
-public class VideoItem {
+public class Util {
 
-  public static final String[] VIDEOS = {
-      "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"
-      //"http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4"
-  };
+  public static String timeStamp(long position, long duration) {
+    StringBuilder posTime = new StringBuilder();
+    TimeUtils.formatDuration(position, posTime);
+    StringBuilder durationTime = new StringBuilder();
+    TimeUtils.formatDuration(duration, durationTime);
 
-  public final String video;
-
-  public VideoItem() {
-    this.video = VIDEOS[0];
+    return posTime + " / " + durationTime.toString();
   }
+
 }

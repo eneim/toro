@@ -16,7 +16,6 @@
 
 package im.ene.lab.toro.sample.legacy.simplelist;
 
-import android.media.MediaPlayer;
 import android.support.annotation.Nullable;
 import android.view.View;
 import im.ene.lab.toro.ToroVideoViewHolder;
@@ -54,7 +53,4 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder {
     mVideoView.setVideoPath(item.video);
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
-    super.onVideoPrepared(mp);
-  }
 }
