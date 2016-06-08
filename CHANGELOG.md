@@ -1,8 +1,12 @@
 # Release note
 
-### 1.3.0 (DRAFT)
+### 2.0.0 (DRAFT/ALPHA)
 
-Maybe some breaking changes
+- Everything changes
+
+- **Migration from 1.x**
+  - One
+  - Two
 
 ### 1.2.0 (2016.04.06)
 
