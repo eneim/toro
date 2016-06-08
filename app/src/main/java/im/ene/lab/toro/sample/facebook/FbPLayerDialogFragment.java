@@ -55,13 +55,13 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
   public static final String ARGS_INIT_DURATION = "fb_player_init_duration";
   public static final String ARGS_LATEST_TIMESTAMP = "player_latest_timestamp";
 
-  public static FbPLayerDialogFragment newInstance(SimpleVideoObject initItem, int initPos,
-      int initDuration) {
+  public static FbPLayerDialogFragment newInstance(SimpleVideoObject initItem, long initPos,
+      long initDuration) {
     FbPLayerDialogFragment fragment = new FbPLayerDialogFragment();
     Bundle args = new Bundle();
     args.putParcelable(ARGS_INIT_VIDEO, initItem);
-    args.putInt(ARGS_INIT_POSITION, initPos);
-    args.putInt(ARGS_INIT_DURATION, initDuration);
+    args.putLong(ARGS_INIT_POSITION, initPos);
+    args.putLong(ARGS_INIT_DURATION, initDuration);
     fragment.setArguments(args);
     return fragment;
   }
@@ -96,16 +96,16 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
 
   @Bind(R.id.recycler_view) RecyclerView recyclerView;
   private SimpleVideoObject initItem;
-  private int initPosition;
-  private int initDuration;
+  private long initPosition;
+  private long initDuration;
   private Adapter adapter;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
       initItem = getArguments().getParcelable(ARGS_INIT_VIDEO);
-      initPosition = getArguments().getInt(ARGS_INIT_POSITION);
-      initDuration = getArguments().getInt(ARGS_INIT_DURATION);
+      initPosition = getArguments().getLong(ARGS_INIT_POSITION);
+      initDuration = getArguments().getLong(ARGS_INIT_DURATION);
     }
 
     if (initItem == null) {
@@ -153,7 +153,7 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
   }
 
   @Override public void onDismiss(DialogInterface dialog) {
-    Integer latestPosition = adapter.getSavedPosition(initItem.toString() + "-0"); // first item
+    Long latestPosition = adapter.getSavedPosition(initItem.toString() + "-0"); // first item
     if (getTargetFragment() != null && latestPosition != null) {
       Intent result = new Intent();
       result.putExtra(ARGS_LATEST_TIMESTAMP, latestPosition);
@@ -209,8 +209,12 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       delegate.pausePlayback();
     }
 
+    @Override public void stopPlayback() {
+      delegate.stopPlayback();
+    }
+
     @Override
-    public void saveVideoState(String videoId, @Nullable Integer position, long duration) {
+    public void saveVideoState(String videoId, @Nullable Long position, long duration) {
       delegate.saveVideoState(videoId, position, duration);
     }
 
@@ -218,7 +222,7 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       delegate.restoreVideoState(videoId);
     }
 
-    @Nullable @Override public Integer getSavedPosition(String videoId) {
+    @Nullable @Override public Long getSavedPosition(String videoId) {
       if (getPlayer() instanceof TrackablePlayer && videoId.equals(getPlayer().getVideoId())) {
         return ((TrackablePlayer) getPlayer()).getLatestPosition();
       }

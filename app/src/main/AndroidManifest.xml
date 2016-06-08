@@ -26,6 +26,13 @@
         android:theme="@style/AppTheme.NoActionBar">
     </activity>
 
+    <activity
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name=".activity.StandalonePlayerActivity"
+        android:theme="@style/Theme.AppCompat.NoActionBar">
+    </activity>
+
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
@@ -40,6 +47,11 @@
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
+
+    <meta-data
+        android:name="Youtube.API_KEY"
+        android:value="${youtube_api_key}"/>
+
   </application>
 
 </manifest>

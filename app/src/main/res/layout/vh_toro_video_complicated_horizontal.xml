@@ -76,13 +76,12 @@
         android:theme="@style/Theme.AppCompat"
         >
 
-      <im.ene.lab.toro.widget.ToroVideoView
+      <im.ene.lab.toro.player.widget.VideoPlayerView
           android:id="@+id/video"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
           android:layout_centerInParent="true"
           android:layout_gravity="center"
-          app:videoScaleMode="fitHeight"
           />
 
       <ImageView

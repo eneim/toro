@@ -73,13 +73,12 @@
         android:background="#20000000"
         >
 
-      <im.ene.lab.toro.widget.ToroVideoView
+      <im.ene.lab.toro.player.widget.VideoPlayerView
           android:id="@+id/video"
           android:layout_width="match_parent"
           android:layout_height="180dp"
           android:layout_centerInParent="true"
           android:layout_gravity="center"
-          app:videoScaleMode="fitWidth"
           />
 
       <ImageView

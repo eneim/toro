@@ -21,13 +21,15 @@ import android.app.Activity;
 import android.app.Application;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
+import im.ene.lab.toro.player.TrMediaPlayer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -68,11 +70,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
   // Singleton, GOD object
   static volatile Toro sInstance;
-
-  /**
-   * Helper object, support RecyclerView's ViewHolder
-   */
-  static VideoViewItemHelper RECYCLER_VIEW_HELPER = new RecyclerViewItemHelper();
 
   // Used to swap strategies if need. It should be a strong reference.
   private static ToroStrategy cachedStrategy;
@@ -121,7 +118,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * Toro#attach(Activity)}
    */
   public static void detach(Activity activity) {
-    checkNotNull();
     Application application = activity.getApplication();
     if (application != null) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
@@ -138,7 +134,6 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   public static ToroStrategy getStrategy() {
-    checkNotNull();
     return sInstance.mStrategy;
   }
 
@@ -148,7 +143,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param strategy requested policy from client
    */
   public static void setStrategy(@NonNull ToroStrategy strategy) {
-    checkNotNull();
     if (sInstance.mStrategy == strategy) {
       // Nothing changes
       return;
@@ -164,7 +158,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be registered
    */
   public static void register(RecyclerView view) {
-    checkNotNull();
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
@@ -195,11 +188,11 @@ import java.util.concurrent.ConcurrentHashMap;
     sInstance.mViews.put(view.hashCode(), view);
     sInstance.mListeners.put(view.hashCode(), listener);
 
-    final State state;
+    final SavedState state;
     if (sInstance.mStates.containsKey(view.hashCode())) {
       state = sInstance.mStates.get(view.hashCode());
     } else {
-      state = new State();
+      state = new SavedState();
       sInstance.mStates.put(view.hashCode(), state);
     }
 
@@ -219,7 +212,6 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be unregistered
    */
   public static void unregister(RecyclerView view) {
-    checkNotNull();
     if (view == null) {
       throw new NullPointerException("Un-registering View must not be null");
     }
@@ -231,11 +223,11 @@ import java.util.concurrent.ConcurrentHashMap;
       if (listener != null) {
         // Cleanup manager
         // 1. Save this state
-        final State state;
+        final SavedState state;
         if (sInstance.mStates.containsKey(view.hashCode())) {
           state = sInstance.mStates.get(view.hashCode());
         } else {
-          state = new State();
+          state = new SavedState();
           sInstance.mStates.put(view.hashCode(), state);
         }
 
@@ -249,13 +241,6 @@ import java.util.concurrent.ConcurrentHashMap;
       }
       // Remove from cache
       sInstance.mViews.remove(view.hashCode());
-    }
-  }
-
-  static void checkNotNull() {
-    if (sInstance == null) {
-      throw new IllegalStateException(
-          "Toro has not been attached to your Activity or your Application. Please refer the wiki");
     }
   }
 
@@ -285,7 +270,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  final void onCompletion(ToroPlayer player, MediaPlayer mediaPlayer) {
+  final void onCompletion(ToroPlayer player, TrMediaPlayer mediaPlayer) {
     // 1. find manager for this player
     VideoPlayerManager manager = null;
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
@@ -299,8 +284,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
     // Normally stop playback
     if (manager != null) {
-      manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
-      manager.pausePlayback();
+      manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
+      manager.stopPlayback();
       player.onPlaybackStopped();
     }
 
@@ -316,7 +301,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   final void onPrepared(ToroPlayer player, View container, ViewParent parent,
-      MediaPlayer mediaPlayer) {
+      TrMediaPlayer mediaPlayer) {
     player.onVideoPrepared(mediaPlayer);
     VideoPlayerManager manager = null;
     ToroScrollListener listener;
@@ -338,8 +323,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
     // 1. Check if current manager wrapped this player
     if (player.equals(manager.getPlayer())) {
-      if (player.wantsToPlay() && player.isAbleToPlay() // \n
-          && getStrategy().allowsToPlay(player, parent)) {
+      if (player.wantsToPlay() && getStrategy().allowsToPlay(player, parent)) {
         manager.restoreVideoState(player.getVideoId());
         manager.startPlayback();
         player.onPlaybackStarted();
@@ -348,8 +332,7 @@ import java.util.concurrent.ConcurrentHashMap;
       // There is no current player, but this guy is prepared, so let's him go ...
       if (manager.getPlayer() == null) {
         // ... if it's possible
-        if (player.wantsToPlay() && player.isAbleToPlay() // \n
-            && getStrategy().allowsToPlay(player, parent)) {
+        if (player.wantsToPlay() && getStrategy().allowsToPlay(player, parent)) {
           manager.setPlayer(player);
           manager.restoreVideoState(player.getVideoId());
           manager.startPlayback();
@@ -359,12 +342,12 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  final boolean onError(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    boolean handle = player.onPlaybackError(mp, what, extra);
+  final boolean onError(ToroPlayer player, TrMediaPlayer mp, PlaybackException error) {
+    boolean handle = player.onPlaybackError(mp, error);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
-        manager.saveVideoState(player.getVideoId(), 0, player.getDuration());
+        manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
         manager.pausePlayback();
         return true;
       }
@@ -372,13 +355,9 @@ import java.util.concurrent.ConcurrentHashMap;
     return handle;
   }
 
-  final boolean onInfo(ToroPlayer player, MediaPlayer mp, int what, int extra) {
-    player.onPlaybackInfo(mp, what, extra);
+  final boolean onInfo(ToroPlayer player, TrMediaPlayer mp, PlaybackInfo info) {
+    player.onPlaybackInfo(mp, info);
     return true;
-  }
-
-  final void onSeekComplete(ToroPlayer player, MediaPlayer mp) {
-    // Do nothing
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -394,7 +373,7 @@ import java.util.concurrent.ConcurrentHashMap;
   @Override public void onActivityResumed(Activity activity) {
     for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
       ToroScrollListener listener = entry.getValue();
-      State state = mStates.get(entry.getKey());
+      SavedState state = mStates.get(entry.getKey());
       VideoPlayerManager manager = listener.getManager();
       if (manager.getPlayer() == null) {
         if (state != null && state.player != null) {
@@ -406,7 +385,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
       if (manager.getPlayer() != null) {
         manager.startPlayback();
-        manager.getPlayer().onActivityResumed();
+        manager.getPlayer().onActivityInactive();
       }
     }
   }
@@ -414,9 +393,9 @@ import java.util.concurrent.ConcurrentHashMap;
   @Override public void onActivityPaused(Activity activity) {
     for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
       ToroScrollListener listener = entry.getValue();
-      State state = mStates.get(entry.getKey());
+      SavedState state = mStates.get(entry.getKey());
       if (state == null) {
-        state = new State();
+        state = new SavedState();
         mStates.put(entry.getKey(), state);
       }
 
@@ -433,7 +412,7 @@ import java.util.concurrent.ConcurrentHashMap;
           manager.getPlayer().onPlaybackPaused();
         }
 
-        manager.getPlayer().onActivityPaused();
+        manager.getPlayer().onActivityActive();
       }
     }
   }
@@ -448,11 +427,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
   @Override public void onActivityDestroyed(Activity activity) {
     if (mStates != null) {
-      for (State state : mStates.values()) {
+      for (SavedState state : mStates.values()) {
         if (state.player != null) {
           // Release resource if there is any
           state.player.pause();
-          state.player.onActivityPaused();
+          state.player.onActivityActive();
           // Release this player
           state.player = null;
         }

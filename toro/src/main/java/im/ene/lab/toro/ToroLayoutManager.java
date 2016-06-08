@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by eneim on 3/7/16.
  *
- * This interface will allow user to use custom {@link RecyclerView.LayoutManager}
+ * This interface will allow user to use custom {@link RecyclerView.LayoutManager} in Toro
  */
 public interface ToroLayoutManager {
 

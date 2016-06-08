@@ -18,11 +18,16 @@ package im.ene.lab.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.media.MediaPlayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
+import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.player.PlaybackInfo;
+import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.player.listener.OnCompletionListener;
+import im.ene.lab.toro.player.listener.OnErrorListener;
+import im.ene.lab.toro.player.listener.OnInfoListener;
+import im.ene.lab.toro.player.listener.OnPreparedListener;
 
 /**
  * Created by eneim on 1/31/16.
@@ -35,7 +40,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   public ToroViewHolder(View itemView) {
     super(itemView);
-    mHelper = Toro.RECYCLER_VIEW_HELPER;
+    mHelper = RecyclerViewItemHelper.getInstance();
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
@@ -52,7 +57,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     }
   }
 
-  @CallSuper @Override public void onActivityResumed() {
+  @CallSuper @Override public void onActivityInactive() {
 
   }
 
@@ -84,7 +89,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     });
   }
 
-  @CallSuper @Override public void onActivityPaused() {
+  @CallSuper @Override public void onActivityActive() {
     // Release listener to prevent memory leak
     mLongClickListener = null;
   }
@@ -100,42 +105,36 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
+   * Implement from {@link OnPreparedListener}
    */
-  @Override public final void onPrepared(MediaPlayer mp) {
+  @Override public final void onPrepared(TrMediaPlayer mp) {
     mHelper.onPrepared(this, itemView, itemView.getParent(), mp);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnCompletionListener#onCompletion(MediaPlayer)}. This method
-   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, MediaPlayer)}, Client
+   * Implement from {@link OnCompletionListener}. This method
+   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, TrMediaPlayer)}, Client
    * should use {@link ToroPlayer#onPlaybackStopped()}
    */
-  @Override public final void onCompletion(MediaPlayer mp) {
+  @Override public final void onCompletion(TrMediaPlayer mp) {
     mHelper.onCompletion(this, mp);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnErrorListener#onError(MediaPlayer, int, int)}. This method
-   * is closed and called only by {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}, Client
-   * should use {@link ToroPlayer#onPlaybackError(MediaPlayer, int, int)}
+   * Implement from {@link OnErrorListener}. This method
+   * is closed and called only by {@link Toro#onError(ToroPlayer, TrMediaPlayer,
+   * PlaybackException)}, Client should use {@link ToroPlayer#onPlaybackError(TrMediaPlayer,
+   * PlaybackException)}
    */
-  @Override public final boolean onError(MediaPlayer mp, int what, int extra) {
-    return mHelper.onError(this, mp, what, extra);
+  @Override public final boolean onError(TrMediaPlayer mp, PlaybackException error) {
+    return mHelper.onError(this, mp, error);
   }
 
   /**
-   * Implement from {@link MediaPlayer.OnInfoListener#onInfo(MediaPlayer, int, int)}
+   * Implement from {@link OnInfoListener}
    */
-  @Override public final boolean onInfo(MediaPlayer mp, int what, int extra) {
-    return mHelper.onInfo(this, mp, what, extra);
-  }
-
-  /**
-   * Implement from {@link MediaPlayer.OnSeekCompleteListener#onSeekComplete(MediaPlayer)}
-   */
-  @Override public final void onSeekComplete(MediaPlayer mp) {
-    mHelper.onSeekComplete(this, mp);
+  @Override public final boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
+    return mHelper.onInfo(this, mp, info);
   }
 
   @Override public int getPlayOrder() {
@@ -161,15 +160,15 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   }
 
-  @Override public boolean onPlaybackError(MediaPlayer mp, int what, int extra) {
+  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
     return true;  // don't want to see the annoying dialog
   }
 
-  @Override public void onPlaybackInfo(MediaPlayer mp, int what, int extra) {
+  @Override public void onPlaybackInfo(TrMediaPlayer mp, PlaybackInfo info) {
 
   }
 
-  @Override public void onPlaybackProgress(int position, int duration) {
+  @Override public void onPlaybackProgress(long position, long duration) {
 
   }
 
@@ -200,30 +199,22 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
       return null;
     }
 
+    if (!(itemView.getParent() instanceof View)) {
+      return null;
+    }
+
     Rect rect = new Rect();
     Point offset = new Point();
     ((View) itemView.getParent()).getGlobalVisibleRect(rect, offset);
     return rect;
   }
 
-  @Override public void onVideoPrepared(MediaPlayer mp) {
+  @Override public void onVideoPrepared(TrMediaPlayer mp) {
 
   }
 
   @Override public int getBufferPercentage() {
     return 0;
-  }
-
-  @Override public boolean canPause() {
-    return true;
-  }
-
-  @Override public boolean canSeekBackward() {
-    return true;
-  }
-
-  @Override public boolean canSeekForward() {
-    return true;
   }
 
   @Override public int getAudioSessionId() {

@@ -24,14 +24,13 @@
     android:padding="4dp"
     >
 
-  <im.ene.lab.toro.widget.ToroVideoView
+  <im.ene.lab.toro.player.widget.VideoPlayerView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_centerInParent="true"
       android:layout_gravity="center"
       android:minWidth="160dp"
-      app:videoScaleMode="fitHeight"
       />
 
   <ImageView

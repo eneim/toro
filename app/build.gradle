@@ -4,7 +4,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.fabric.tools:gradle:1.+'
+    classpath 'io.fabric.tools:gradle:1.21.5'
   }
 }
 apply plugin: 'com.android.application'
@@ -50,21 +50,31 @@ android {
 
   defaultConfig {
     applicationId "${TORO_SAMPLE_APP_ID}"
-    minSdkVersion 15
+    minSdkVersion 16
     targetSdkVersion 23
 
     versionCode dateTimeInt()
     versionName dateTimeString()
     archivesBaseName = "toro_sample"
 
-    buildConfigField "String", "YOUTUBE_API_KEY", "\"${TORO_SAMPLE_YOUTUBE_API_KEY}\""
-    manifestPlaceholders = [fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}"]
+    manifestPlaceholders = [
+        fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}",
+        youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"
+    ]
 
     vectorDrawables.useSupportLibrary = true
   }
 
   buildTypes {
     release {
+      signingConfig signingConfigs.release
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+
+    prerelease {
+      debuggable true // this value may change
+      zipAlignEnabled true
       signingConfig signingConfigs.release
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -87,17 +97,17 @@ android {
   }
 }
 
-ext {
-  support_version = '23.3.0'
-}
-
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
   testCompile 'junit:junit:4.12'
-  compile "com.android.support:appcompat-v7:${support_version}"
-  compile "com.android.support:design:${support_version}"
+  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(':toro')
+  debugCompile project(path: ':toro-ext', configuration: 'debug')
+  releaseCompile project(path: ':toro-ext', configuration: 'release') // for releasing
+  prereleaseCompile project(path: ':toro-ext', configuration: 'release') // for releasing
+
+  /* compile project(':toro') */  // un-comment if user just need toro
   // compile 'com.github.eneim:Toro:1.2.0'
 
   compile 'com.squareup.picasso:picasso:2.5.2'
