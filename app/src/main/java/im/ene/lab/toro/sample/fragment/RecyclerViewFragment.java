@@ -47,8 +47,6 @@ public abstract class RecyclerViewFragment extends Fragment {
 
   private int firstVideoPosition;
 
-  private static final String TAG = "RecyclerViewFragment";
-
   @Override public void onAttach(Context context) {
     super.onAttach(context);
     final ToroStrategy oldStrategy = Toro.getStrategy();
