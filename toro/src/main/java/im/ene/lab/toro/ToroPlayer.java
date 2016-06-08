@@ -46,6 +46,8 @@ public interface ToroPlayer
   boolean wantsToPlay();
 
   /**
+   * {@since 2.0.0}
+   *
    * !Deprecated From 2.0.0. User will just need to tell Toro by {@link ToroPlayer#wantsToPlay()}.
    * Toro 2.0 will not listen to this Method anymore.
    *

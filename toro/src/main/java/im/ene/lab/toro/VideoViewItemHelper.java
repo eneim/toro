@@ -17,6 +17,8 @@
 package im.ene.lab.toro;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
@@ -45,7 +47,8 @@ class VideoViewItemHelper {
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
    */
-  public void onAttachedToParent(ToroPlayer player, View itemView, ViewParent parent) {
+  public void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
 
   }
 
@@ -56,7 +59,8 @@ class VideoViewItemHelper {
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
    */
-  public void onDetachedFromParent(ToroPlayer player, View itemView, ViewParent parent) {
+  public void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
 
   }
 
@@ -68,7 +72,8 @@ class VideoViewItemHelper {
    * @param parent parent which holds current ViewHolder
    * @return boolean response to {@link View.OnLongClickListener#onLongClick(View)}
    */
-  public boolean onItemLongClick(ToroPlayer player, View itemView, ViewParent parent) {
+  public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
     return false;
   }
   /* END: Callback for View */
@@ -83,9 +88,8 @@ class VideoViewItemHelper {
    * @param parent parent which holds current ViewHolder
    * @param mediaPlayer current MediaPlayer
    */
-  @CallSuper public void onPrepared(ToroPlayer player, View itemView, ViewParent parent,
-      TrMediaPlayer mediaPlayer) {
-    Toro.checkNotNull();
+  @CallSuper public void onPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent, @Nullable TrMediaPlayer mediaPlayer) {
     Toro.sInstance.onPrepared(player, itemView, parent, mediaPlayer);
   }
 
@@ -95,8 +99,7 @@ class VideoViewItemHelper {
    * @param player current ToroPlayer instance
    * @param mp completed MediaPlayer
    */
-  @CallSuper public void onCompletion(ToroPlayer player, TrMediaPlayer mp) {
-    Toro.checkNotNull();
+  @CallSuper public void onCompletion(@NonNull ToroPlayer player, @Nullable TrMediaPlayer mp) {
     Toro.sInstance.onCompletion(player, mp);
   }
 
@@ -106,8 +109,8 @@ class VideoViewItemHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  @CallSuper public boolean onError(ToroPlayer player, TrMediaPlayer mp, PlaybackException error) {
-    Toro.checkNotNull();
+  @CallSuper public boolean onError(@NonNull ToroPlayer player, @Nullable TrMediaPlayer mp,
+      @NonNull PlaybackException error) {
     return Toro.sInstance.onError(player, mp, error);
   }
 
@@ -117,8 +120,8 @@ class VideoViewItemHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  @CallSuper public boolean onInfo(ToroPlayer player, TrMediaPlayer mp, PlaybackInfo info) {
-    Toro.checkNotNull();
+  @CallSuper public boolean onInfo(@NonNull ToroPlayer player, @Nullable TrMediaPlayer mp,
+      @NonNull PlaybackInfo info) {
     return Toro.sInstance.onInfo(player, mp, info);
   }
 

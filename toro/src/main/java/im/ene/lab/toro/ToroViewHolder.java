@@ -40,7 +40,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   public ToroViewHolder(View itemView) {
     super(itemView);
-    mHelper = Toro.RECYCLER_VIEW_HELPER;
+    mHelper = RecyclerViewItemHelper.getInstance();
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {

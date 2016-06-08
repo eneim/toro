@@ -16,15 +16,16 @@
 
 package im.ene.lab.toro;
 
+import android.support.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by eneim on 2/1/16.
  */
-final class ToroUtils {
+final class Util {
 
-  private ToroUtils() {
+  private Util() {
     throw new AssertionError("Not supported");
   }
 
@@ -47,6 +48,7 @@ final class ToroUtils {
     return Arrays.asList(array);
   }
 
+  @Nullable
   static List<Integer> asList(int[] array) {
     return asList(asArray(array));
   }

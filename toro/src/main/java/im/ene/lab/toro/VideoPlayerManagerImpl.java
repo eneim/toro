@@ -54,7 +54,6 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   };
 
   public VideoPlayerManagerImpl() {
-    Toro.checkNotNull();
   }
 
   @Override public final ToroPlayer getPlayer() {

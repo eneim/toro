@@ -260,11 +260,12 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     int widthSpecMode = MeasureSpec.getMode(widthMeasureSpec);
     int heightSpecMode = MeasureSpec.getMode(heightMeasureSpec);
 
-    if (widthSpecMode == MeasureSpec.EXACTLY && heightSpecMode == MeasureSpec.EXACTLY) {
-      // Do nothing.
-      // Leave space for scale type
-    } else {
-      if (mVideoWidthHeightAspectRatio != 0) {
+    if (mVideoWidthHeightAspectRatio != 0) {
+      if (widthSpecMode == MeasureSpec.EXACTLY) {
+        height = (int) (width / mVideoWidthHeightAspectRatio);
+      } else if (heightSpecMode == MeasureSpec.EXACTLY) {
+        width = (int) (height * mVideoWidthHeightAspectRatio);
+      } else {
         float viewAspectRatio = (float) width / height;
         float aspectDeformation = mVideoWidthHeightAspectRatio / viewAspectRatio - 1;
         if (aspectDeformation > MAX_ASPECT_RATIO_DEFORMATION_PERCENT) {
@@ -274,6 +275,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
         }
       }
     }
+
     setMeasuredDimension(width, height);
   }
 
