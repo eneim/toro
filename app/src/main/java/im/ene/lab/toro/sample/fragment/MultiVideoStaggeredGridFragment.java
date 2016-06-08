@@ -27,7 +27,7 @@ import im.ene.lab.toro.sample.adapter.MultiVideosSimpleListAdapter;
  */
 public class MultiVideoStaggeredGridFragment extends RecyclerViewFragment {
 
-  public static final String TAG = "StaggeredVideoListFragment";
+  public static final String TAG = "StaggeredList";
 
   public static MultiVideoStaggeredGridFragment newInstance() {
     return new MultiVideoStaggeredGridFragment();

@@ -26,7 +26,7 @@ import im.ene.lab.toro.sample.adapter.SingleVideoSimpleListAdapter;
  */
 public class SingleVideoSimpleListFragment extends RecyclerViewFragment {
 
-  public static final String TAG = "SingleVideoSimpleListFragment";
+  public static final String TAG = "SingleVideo";
 
   public static SingleVideoSimpleListFragment newInstance() {
     return new SingleVideoSimpleListFragment();

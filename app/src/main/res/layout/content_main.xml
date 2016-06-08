@@ -115,7 +115,7 @@
         android:id="@+id/btn_view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         app:btn_subtitle="@string/fragment_view_pager_detail"
         app:btn_title="@string/fragment_view_pager"
         style="@style/Toro.Widget.SampleItemButton"

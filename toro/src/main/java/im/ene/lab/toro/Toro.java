@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.player.PlaybackException;
@@ -49,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) public final class Toro
     implements Application.ActivityLifecycleCallbacks {
 
+  private static final String TAG = "Toro";
   private static final Object LOCK = new Object();
 
   /**
@@ -158,6 +160,7 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be registered
    */
   public static void register(RecyclerView view) {
+    Log.i(TAG, "register: " + view);
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
@@ -169,10 +172,10 @@ import java.util.concurrent.ConcurrentHashMap;
       }
     }
 
-    // 1. retrieve current TotoManager instance
+    // 1. Retrieve current VideoPlayerManager instance
     VideoPlayerManager playerManager = null;
     RecyclerView.Adapter adapter = view.getAdapter();
-    // Client of this API should implement ToroManager to her Adapter.
+    // Client of this API should implement VideoPlayerManager to its Adapter.
     if (adapter instanceof VideoPlayerManager) {
       playerManager = (VideoPlayerManager) adapter;
     }
@@ -197,12 +200,13 @@ import java.util.concurrent.ConcurrentHashMap;
     }
 
     if (state != null && state.player != null) {
-      // Cold start playManager from a saved state
+      // Cold start VideoPlayerManager from a saved state
       playerManager.setPlayer(state.player);
       playerManager.saveVideoState(state.player.getVideoId(), state.position,
           state.player.getDuration());
     }
 
+    // Done registering new View
     playerManager.onRegistered();
   }
 
@@ -212,6 +216,7 @@ import java.util.concurrent.ConcurrentHashMap;
    * @param view which will be unregistered
    */
   public static void unregister(RecyclerView view) {
+    Log.i(TAG, "unregister: " + view);
     if (view == null) {
       throw new NullPointerException("Un-registering View must not be null");
     }
