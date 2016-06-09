@@ -124,9 +124,6 @@ import java.util.Map;
 
   private OnPlayerStateChangeListener mOnPlayerStateChangeListener;
 
-  // private OnCompletionListener mOnCompletionListener;
-  // private OnPreparedListener mOnPreparedListener;
-  // private OnErrorListener mOnErrorListener;
   private OnInfoListener mOnInfoListener;
   private OnReleasedListener mOnReleaseListener;
 
@@ -312,7 +309,6 @@ import java.util.Map;
       }
 
       mMediaPlayer.setPlayerStateChangeListener(playerStateChangeListener);
-
       mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
       mMediaPlayer.setOnInfoListener(onInfoListenerDelegate);
 

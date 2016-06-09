@@ -20,6 +20,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
@@ -104,6 +105,15 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
       @State int playbackState) {
+    Log.d(TAG, "onPlayerStateChanged() called with: "
+        + "player = ["
+        + player.getClass().getSimpleName()
+        + "], playWhenReady = ["
+        + playWhenReady
+        + "], playbackState = ["
+        + playbackState
+        + "]");
+
     switch (playbackState) {
       case TrMediaPlayer.STATE_PREPARED:
         mHelper.onPrepared(this, itemView, itemView.getParent(), player);
@@ -113,6 +123,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
         break;
       // TODO
       case TrMediaPlayer.STATE_BUFFERING:
+        Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
         break;
       case TrMediaPlayer.STATE_IDLE:
         break;

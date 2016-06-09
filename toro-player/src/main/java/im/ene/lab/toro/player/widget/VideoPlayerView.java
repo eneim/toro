@@ -131,6 +131,12 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   private OnPlayerStateChangeListener stateChangeListenerDelegate = new OnPlayerStateChangeListener() {
     @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
         @State int playbackState) {
+      if (playbackState == TrMediaPlayer.STATE_ENDED) {
+        mPlayRequested = false;
+        releasePlayer();
+        mPlayerPosition = 0;
+      }
+
       if (mPlayerStateChangeListener != null) {
         mPlayerStateChangeListener.onPlayerStateChanged(player, playWhenReady, playbackState);
       }
@@ -168,13 +174,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   private boolean mBackgroundAudioEnabled = false;
 
   private OnPlayerStateChangeListener mPlayerStateChangeListener;
-
-  // Deprecated
-  // private OnPreparedListener mOnPreparedListener;
-  // private OnCompletionListener mOnCompletionListener;
-  // private OnErrorListener mOnErrorListener;
   private OnInfoListener mOnInfoListener;
-  // private OnBufferingUpdateListener mOnBufferingUpdateListener;
 
   // DEBUG
   private EventLogger mEventLogger;
@@ -318,12 +318,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       mMediaPlayer.addListener(playerListener);
 
       mMediaPlayer.setPlayerStateChangeListener(stateChangeListenerDelegate);
-
-      // mMediaPlayer.setOnPreparedListener(onPreparedListenerDelegate);
-      // mMediaPlayer.setOnCompletionListener(onCompletionListenerDelegate);
-      // mMediaPlayer.setOnErrorListener(onErrorListenerDelegate);
       mMediaPlayer.setOnInfoListener(onInfoListenerDelegate);
-      // mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListenerDelegate);
 
       mMediaPlayer.setCaptionListener(mExoMediaPlayerHelper);
       mMediaPlayer.setMetadataListener(mExoMediaPlayerHelper);
