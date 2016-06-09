@@ -102,8 +102,7 @@ public class DeadlySimpleListFragment extends Fragment {
       super(itemView);
       mVideoView = (VideoPlayerView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
-      mVideoView.setOnPreparedListener(this);
-      mVideoView.setOnCompletionListener(this);
+      mVideoView.setPlayerStateChangeListener(this);
     }
 
     @Override public void bind(@Nullable Object object) {

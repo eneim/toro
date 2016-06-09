@@ -23,11 +23,9 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
+import im.ene.lab.toro.player.State;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
 
 /**
  * Created by eneim on 1/31/16.
@@ -104,30 +102,31 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
-  /**
-   * Implement from {@link OnPreparedListener}
-   */
-  @Override public final void onPrepared(TrMediaPlayer mp) {
-    mHelper.onPrepared(this, itemView, itemView.getParent(), mp);
+  @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+      @State int playbackState) {
+    switch (playbackState) {
+      case TrMediaPlayer.STATE_PREPARED:
+        mHelper.onPrepared(this, itemView, itemView.getParent(), player);
+        break;
+      case TrMediaPlayer.STATE_ENDED:
+        mHelper.onCompletion(this, player);
+        break;
+      // TODO
+      case TrMediaPlayer.STATE_BUFFERING:
+        break;
+      case TrMediaPlayer.STATE_IDLE:
+        break;
+      case TrMediaPlayer.STATE_PREPARING:
+        break;
+      case TrMediaPlayer.STATE_READY:
+        break;
+      default:
+        break;
+    }
   }
 
-  /**
-   * Implement from {@link OnCompletionListener}. This method
-   * is closed and called only by {@link Toro#onCompletion(ToroPlayer, TrMediaPlayer)}, Client
-   * should use {@link ToroPlayer#onPlaybackStopped()}
-   */
-  @Override public final void onCompletion(TrMediaPlayer mp) {
-    mHelper.onCompletion(this, mp);
-  }
-
-  /**
-   * Implement from {@link OnErrorListener}. This method
-   * is closed and called only by {@link Toro#onError(ToroPlayer, TrMediaPlayer,
-   * PlaybackException)}, Client should use {@link ToroPlayer#onPlaybackError(TrMediaPlayer,
-   * PlaybackException)}
-   */
-  @Override public final boolean onError(TrMediaPlayer mp, PlaybackException error) {
-    return mHelper.onError(this, mp, error);
+  @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+    return mHelper.onError(this, player, error);
   }
 
   /**

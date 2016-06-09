@@ -51,12 +51,10 @@ import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.util.DebugTextViewHelper;
 import com.google.android.exoplayer.util.PlayerControl;
+import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Collections;
@@ -187,11 +185,6 @@ public class ExoMediaPlayer
   }
 
   // Constants pulled into this class for convenience.
-  public static final int STATE_IDLE = ExoPlayer.STATE_IDLE;
-  public static final int STATE_PREPARING = ExoPlayer.STATE_PREPARING;
-  public static final int STATE_BUFFERING = ExoPlayer.STATE_BUFFERING;
-  public static final int STATE_READY = ExoPlayer.STATE_READY;
-  public static final int STATE_ENDED = ExoPlayer.STATE_ENDED;
   public static final int TRACK_DISABLED = ExoPlayer.TRACK_DISABLED;
   public static final int TRACK_DEFAULT = ExoPlayer.TRACK_DEFAULT;
 
@@ -230,10 +223,11 @@ public class ExoMediaPlayer
   private InternalErrorListener internalErrorListener;
   private InfoListener infoListener;
 
-  private OnPreparedListener onPreparedListener;
-  private OnCompletionListener onCompletionListener;
+  private OnPlayerStateChangeListener onPlayerStateChangeListener;
+  // private OnPreparedListener onPreparedListener;
+  // private OnCompletionListener onCompletionListener;
   private OnVideoSizeChangedListener onVideoSizeChangedListener;
-  private OnBufferingUpdateListener onBufferingUpdateListener;
+  // private OnBufferingUpdateListener onBufferingUpdateListener;
 
   public ExoMediaPlayer(RendererBuilder rendererBuilder) {
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
@@ -242,7 +236,7 @@ public class ExoMediaPlayer
     playerControl = new PlayerControl(player);
     mainHandler = new Handler();
     listeners = new CopyOnWriteArrayList<>();
-    lastReportedPlaybackState = STATE_IDLE;
+    lastReportedPlaybackState = TrMediaPlayer.STATE_IDLE;
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     // Disable text initially.
     player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
@@ -387,6 +381,9 @@ public class ExoMediaPlayer
     for (Listener listener : listeners) {
       listener.onError(e);
     }
+    if (this.onPlayerStateChangeListener != null) {
+      this.onPlayerStateChangeListener.onPlayerError(this, new PlaybackException(e, 0, 0));
+    }
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     maybeReportPlayerState();
   }
@@ -414,16 +411,8 @@ public class ExoMediaPlayer
     return videoHeight;
   }
 
-  @Override public void setOnPreparedListener(OnPreparedListener listener) {
-    this.onPreparedListener = listener;
-  }
-
-  @Override public void setOnCompletionListener(OnCompletionListener listener) {
-    this.onCompletionListener = listener;
-  }
-
-  @Override public void setOnBufferingUpdateListener(OnBufferingUpdateListener listener) {
-    this.onBufferingUpdateListener = listener;
+  @Override public void setPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+    this.onPlayerStateChangeListener = listener;
   }
 
   @Override public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
@@ -455,13 +444,14 @@ public class ExoMediaPlayer
 
   public int getPlaybackState() {
     if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILDING) {
-      return STATE_PREPARING;
+      return TrMediaPlayer.STATE_PREPARING;
     }
     int playerState = player.getPlaybackState();
-    if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILT && playerState == STATE_IDLE) {
+    if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILT
+        && playerState == TrMediaPlayer.STATE_IDLE) {
       // This is an edge case where the renderers are built, but are still being passed to the
       // player's playback thread.
-      return STATE_PREPARING;
+      return TrMediaPlayer.STATE_PREPARING;
     }
     return playerState;
   }
@@ -482,11 +472,11 @@ public class ExoMediaPlayer
     return player.getCurrentPosition();
   }
 
-  public long getDuration() {
+  @Override public long getDuration() {
     return player.getDuration();
   }
 
-  public int getBufferedPercentage() {
+  @Override public int getBufferedPercentage() {
     return player.getBufferedPercentage();
   }
 
@@ -510,6 +500,10 @@ public class ExoMediaPlayer
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     for (Listener listener : listeners) {
       listener.onError(exception);
+    }
+
+    if (this.onPlayerStateChangeListener != null) {
+      this.onPlayerStateChangeListener.onPlayerError(this, new PlaybackException(exception, 0, 0));
     }
   }
 
@@ -673,31 +667,50 @@ public class ExoMediaPlayer
 
       // Other listener
       switch (getPlaybackState()) {
-        case STATE_BUFFERING:
+        case TrMediaPlayer.STATE_BUFFERING:
           if (!mediaPrepared) {
-            if (this.onPreparedListener != null) {
-              this.onPreparedListener.onPrepared(this);
+            if (this.onPlayerStateChangeListener != null) {
+              this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
+                  STATE_PREPARED);
             }
           }
 
           mediaPrepared = true;
-          if (this.onBufferingUpdateListener != null) {
-            this.onBufferingUpdateListener.onBufferingUpdate(this, getBufferedPercentage());
+          if (this.onPlayerStateChangeListener != null) {
+            this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
+                STATE_BUFFERING);
           }
           break;
-        case STATE_READY:
+        case TrMediaPlayer.STATE_READY:
+          if (this.onPlayerStateChangeListener != null) {
+            this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
+                STATE_READY);
+          }
           break;
-        case STATE_ENDED:
-          if (this.onCompletionListener != null) {
-            this.onCompletionListener.onCompletion(this);
+        case TrMediaPlayer.STATE_ENDED:
+          if (this.onPlayerStateChangeListener != null) {
+            this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
+                STATE_ENDED);
           }
           this.videoWidth = 0;
           this.videoHeight = 0;
           mediaPrepared = false;
           break;
-        case STATE_PREPARING:
-        case STATE_IDLE:
+        case TrMediaPlayer.STATE_PREPARING:
+          if (this.onPlayerStateChangeListener != null) {
+            this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
+                STATE_PREPARING);
+          }
+          this.videoWidth = 0;
+          this.videoHeight = 0;
+          mediaPrepared = false;
+          break;
+        case TrMediaPlayer.STATE_IDLE:
         default:
+          if (this.onPlayerStateChangeListener != null) {
+            this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
+                STATE_IDLE);
+          }
           this.videoWidth = 0;
           this.videoHeight = 0;
           mediaPrepared = false;
@@ -732,10 +745,6 @@ public class ExoMediaPlayer
   @Override public int getAudioSessionId() {
     return audioRenderer != null
         ? ((EnhancedMediaCodecAudioTrackRenderer) audioRenderer).getAudioSessionId() : 0;
-  }
-
-  @Override public void setOnErrorListener(OnErrorListener listener) {
-    // TODO FIXME
   }
 
   @Override public void setOnInfoListener(OnInfoListener listener) {

@@ -44,7 +44,7 @@ public class RendererBuilderFactory {
         return new HlsRendererBuilder(context, userAgent, uri.toString());
       case Util.TYPE_DASH:
         return new DashRendererBuilder(context, userAgent, uri.toString(),
-            new WidevineTestMediaDrmCallback(null, null));  // FIXME
+            new WidevineTestMediaDrmCallback(null, null));  // FIXME invalid sourceId and provider
       case Util.TYPE_OTHER:
         return new ExtractorRendererBuilder(context, userAgent, uri);
       default:
