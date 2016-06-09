@@ -68,6 +68,9 @@ dependencies {
 
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile project(':toro')
+
+  javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  javadocDeps project(':toro')
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

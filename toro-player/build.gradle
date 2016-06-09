@@ -67,6 +67,9 @@ dependencies {
   compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
   compile "com.google.android.exoplayer:exoplayer:r1.5.8"
+
+  javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  javadocDeps "com.google.android.exoplayer:exoplayer:r1.5.8"
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

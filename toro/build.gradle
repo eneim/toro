@@ -61,6 +61,9 @@ dependencies {
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
 
   compile project(':toro-player')
+
+  javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  javadocDeps project(':toro-player')
 }
 
 // build a jar with source files

@@ -28,6 +28,7 @@ if (project.hasProperty("android")) {
   task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator)).plus(new File(rootProject.rootDir.absolutePath + "/ref/exoplayer-r1.5.8-sources.jar"))
+    classpath += configurations.javadocDeps
   }
 } else {
   // Java libraries
