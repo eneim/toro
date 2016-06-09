@@ -41,12 +41,10 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
+import im.ene.lab.toro.player.State;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -124,9 +122,8 @@ import java.util.Map;
 
   private TrMediaPlayer.Controller mController;
 
-  private OnCompletionListener mOnCompletionListener;
-  private OnPreparedListener mOnPreparedListener;
-  private OnErrorListener mOnErrorListener;
+  private OnPlayerStateChangeListener mOnPlayerStateChangeListener;
+
   private OnInfoListener mOnInfoListener;
   private OnReleasedListener mOnReleaseListener;
 
@@ -311,12 +308,9 @@ import java.util.Map;
         mAudioSession = mMediaPlayer.getAudioSessionId();
       }
 
-      mMediaPlayer.setOnPreparedListener(mPreparedListener);
+      mMediaPlayer.setPlayerStateChangeListener(playerStateChangeListener);
       mMediaPlayer.setOnVideoSizeChangedListener(mSizeChangedListener);
-      mMediaPlayer.setOnCompletionListener(mCompletionListener);
-      mMediaPlayer.setOnErrorListener(mErrorListener);
-      mMediaPlayer.setOnInfoListener(mInfoListener);
-      mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
+      mMediaPlayer.setOnInfoListener(onInfoListenerDelegate);
 
       mCurrentBufferPercentage = 0;
       mMediaPlayer.setDataSource(getContext().getApplicationContext(), mUri, mHeaders);
@@ -335,14 +329,14 @@ import java.util.Map;
       Log.w(TAG, "Unable to open content: " + mUri, ex);
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      mErrorListener.onError(mMediaPlayer,
+      dispatchOnError(mMediaPlayer,
           new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
       return;
     } catch (IllegalArgumentException ex) {
       Log.w(TAG, "Unable to open content: " + mUri, ex);
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      mErrorListener.onError(mMediaPlayer,
+      dispatchOnError(mMediaPlayer,
           new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
       return;
     }
@@ -365,6 +359,36 @@ import java.util.Map;
     }
   }
 
+  OnPlayerStateChangeListener playerStateChangeListener = new OnPlayerStateChangeListener() {
+    @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+        @State int playbackState) {
+      switch (playbackState) {
+
+        case TrMediaPlayer.STATE_BUFFERING:
+          dispatchOnBufferingUpdate(player, mMediaPlayer.getBufferedPercentage());
+          break;
+        case TrMediaPlayer.STATE_ENDED:
+          dispatchOnCompletion(player);
+          break;
+        case TrMediaPlayer.STATE_IDLE:
+          break;
+        case TrMediaPlayer.STATE_PREPARED:
+          dispatchOnPrepared(player);
+          break;
+        case TrMediaPlayer.STATE_PREPARING:
+          break;
+        case TrMediaPlayer.STATE_READY:
+          break;
+        default:
+          break;
+      }
+    }
+
+    @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+      return dispatchOnError(player, error);
+    }
+  };
+
   OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
     public void onVideoSizeChanged(TrMediaPlayer mp, int width, int height) {
       mVideoWidth = mp.getVideoWidth();
@@ -376,66 +400,64 @@ import java.util.Map;
     }
   };
 
-  OnPreparedListener mPreparedListener = new OnPreparedListener() {
-    public void onPrepared(TrMediaPlayer mp) {
-      mCurrentState = STATE_PREPARED;
+  private void dispatchOnPrepared(TrMediaPlayer mp) {
+    mCurrentState = STATE_PREPARED;
 
-      if (mOnPreparedListener != null) {
-        mOnPreparedListener.onPrepared(mMediaPlayer);
-      }
-      if (mController != null) {
-        mController.setEnabled(true);
-      }
+    if (mOnPlayerStateChangeListener != null) {
+      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.STATE_PREPARED);
+    }
 
-      mVideoWidth = mp.getVideoWidth();
-      mVideoHeight = mp.getVideoHeight();
+    if (mController != null) {
+      mController.setEnabled(true);
+    }
 
-      long seekToPosition = (mCurrentState == STATE_SEEKING) ? mSeekWhenPrepared
-          : mPlayerPosition;  // mSeekWhenPrepared may be changed after seekTo() call
-      if (seekToPosition != 0) {
-        seekTo(seekToPosition);
-      }
-      if (mVideoWidth != 0 && mVideoHeight != 0) {
-        //Log.i("@@@@", "video size: " + mVideoWidth +"/"+ mVideoHeight);
-        getSurfaceTexture().setDefaultBufferSize(mVideoWidth, mVideoHeight);
-        // We won't get a "surface changed" callback if the surface is already the right size, so
-        // start the video here instead of in the callback.
-        if (mTargetState == STATE_PLAYING) {
-          start();
-          if (mController != null) {
-            mController.show();
-          }
-        } else if (!isPlaying() && (seekToPosition != 0 || getCurrentPosition() > 0)) {
-          if (mController != null) {
-            // Show the media controls when we're paused into a video and make 'em stick.
-            mController.show(0);
-          }
+    mVideoWidth = mp.getVideoWidth();
+    mVideoHeight = mp.getVideoHeight();
+
+    long seekToPosition = (mCurrentState == STATE_SEEKING) ? mSeekWhenPrepared
+        : mPlayerPosition;  // mSeekWhenPrepared may be changed after seekTo() call
+    if (seekToPosition != 0) {
+      seekTo(seekToPosition);
+    }
+    if (mVideoWidth != 0 && mVideoHeight != 0) {
+      //Log.i("@@@@", "video size: " + mVideoWidth +"/"+ mVideoHeight);
+      getSurfaceTexture().setDefaultBufferSize(mVideoWidth, mVideoHeight);
+      // We won't get a "surface changed" callback if the surface is already the right size, so
+      // start the video here instead of in the callback.
+      if (mTargetState == STATE_PLAYING) {
+        start();
+        if (mController != null) {
+          mController.show();
         }
-      } else {
-        // We don't know the video size yet, but should start anyway.
-        // The video size might be reported to us later.
-        if (mTargetState == STATE_PLAYING) {
-          start();
+      } else if (!isPlaying() && (seekToPosition != 0 || getCurrentPosition() > 0)) {
+        if (mController != null) {
+          // Show the media controls when we're paused into a video and make 'em stick.
+          mController.show(0);
         }
       }
-    }
-  };
-
-  OnCompletionListener mCompletionListener = new OnCompletionListener() {
-    public void onCompletion(TrMediaPlayer mp) {
-      mPlayerPosition = getDuration();  // A trick to fix duration issue with current VideoView.
-      mCurrentState = STATE_ENDED;
-      mTargetState = STATE_ENDED;
-      if (mController != null) {
-        mController.hide();
-      }
-      if (mOnCompletionListener != null) {
-        mOnCompletionListener.onCompletion(mMediaPlayer);
+    } else {
+      // We don't know the video size yet, but should start anyway.
+      // The video size might be reported to us later.
+      if (mTargetState == STATE_PLAYING) {
+        start();
       }
     }
-  };
+  }
 
-  OnInfoListener mInfoListener = new OnInfoListener() {
+  private void dispatchOnCompletion(TrMediaPlayer mp) {
+    mPlayerPosition = getDuration();  // A trick to fix duration issue with current VideoView.
+    mCurrentState = STATE_ENDED;
+    mTargetState = STATE_ENDED;
+    if (mController != null) {
+      mController.hide();
+    }
+
+    if (mOnPlayerStateChangeListener != null) {
+      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.STATE_ENDED);
+    }
+  }
+
+  OnInfoListener onInfoListenerDelegate = new OnInfoListener() {
     public boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
       if (mOnInfoListener != null) {
         mOnInfoListener.onInfo(mp, info);
@@ -444,92 +466,61 @@ import java.util.Map;
     }
   };
 
-  OnErrorListener mErrorListener = new OnErrorListener() {
-    public boolean onError(TrMediaPlayer mp, PlaybackException er) {
-      Log.d(TAG, "Error: " + er.toString());
-      mCurrentState = STATE_ERROR;
-      mTargetState = STATE_ERROR;
-      if (mController != null) {
-        mController.hide();
-      }
+  private boolean dispatchOnError(TrMediaPlayer mp, PlaybackException er) {
+    Log.d(TAG, "Error: " + er.toString());
+    mCurrentState = STATE_ERROR;
+    mTargetState = STATE_ERROR;
+    if (mController != null) {
+      mController.hide();
+    }
 
             /* If an error handler has been supplied, use it and finish. */
-      if (mOnErrorListener != null) {
-        if (mOnErrorListener.onError(mMediaPlayer, er)) {
-          return true;
-        }
+    if (mOnPlayerStateChangeListener != null) {
+      if (mOnPlayerStateChangeListener.onPlayerError(mMediaPlayer, er)) {
+        return true;
       }
+    }
 
             /* Otherwise, pop up an error dialog so the user knows that
              * something bad has happened. Only try and pop up the dialog
              * if we're attached to a window. When we're going away and no
              * longer have a window, don't bother showing the user an error.
              */
-      if (getWindowToken() != null) {
-        Resources r = getContext().getResources();
-        int messageId;
+    if (getWindowToken() != null) {
+      Resources r = getContext().getResources();
+      int messageId;
 
-        if (er.what == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
-          messageId = android.R.string.VideoView_error_text_invalid_progressive_playback;
-        } else {
-          messageId = android.R.string.VideoView_error_text_unknown;
-        }
+      if (er.what == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {
+        messageId = android.R.string.VideoView_error_text_invalid_progressive_playback;
+      } else {
+        messageId = android.R.string.VideoView_error_text_unknown;
+      }
 
-        new AlertDialog.Builder(getContext()).setMessage(messageId)
-            .setPositiveButton(android.R.string.VideoView_error_button,
-                new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int whichButton) {
+      new AlertDialog.Builder(getContext()).setMessage(messageId)
+          .setPositiveButton(android.R.string.VideoView_error_button,
+              new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
                                         /* If we get here, there is no onError listener, so
                                          * at least inform them that the video is over.
                                          */
-                    if (mOnCompletionListener != null) {
-                      mOnCompletionListener.onCompletion(mMediaPlayer);
-                    }
+                  if (mOnPlayerStateChangeListener != null) {
+                    mOnPlayerStateChangeListener.onPlayerStateChanged(mMediaPlayer, false,
+                        TrMediaPlayer.STATE_ENDED);
                   }
-                })
-            .setCancelable(false)
-            .show();
-      }
-      return true;
+                }
+              })
+          .setCancelable(false)
+          .show();
     }
-  };
-
-  OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
-    public void onBufferingUpdate(TrMediaPlayer mp, int percent) {
-      mCurrentBufferPercentage = percent;
-    }
-  };
-
-  /**
-   * Register a callback to be invoked when the media file
-   * is loaded and ready to go.
-   *
-   * @param l The callback that will be run
-   */
-  public void setOnPreparedListener(OnPreparedListener l) {
-    mOnPreparedListener = l;
+    return true;
   }
 
-  /**
-   * Register a callback to be invoked when the end of a media file
-   * has been reached during playback.
-   *
-   * @param l The callback that will be run
-   */
-  public void setOnCompletionListener(OnCompletionListener l) {
-    mOnCompletionListener = l;
+  private void dispatchOnBufferingUpdate(TrMediaPlayer mp, int percent) {
+    mCurrentBufferPercentage = percent;
   }
 
-  /**
-   * Register a callback to be invoked when an error occurs
-   * during playback or setup.  If no listener is specified,
-   * or if the listener returned false, TextureVideoView will inform
-   * the user of any errors.
-   *
-   * @param l The callback that will be run
-   */
-  public void setOnErrorListener(OnErrorListener l) {
-    mOnErrorListener = l;
+  public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+    this.mOnPlayerStateChangeListener = listener;
   }
 
   /**

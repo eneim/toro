@@ -42,10 +42,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
       throw new NullPointerException("A valid VideoPlayerView is required.");
     }
 
-    mVideoView.setOnPreparedListener(this);
-    mVideoView.setOnCompletionListener(this);
-    mVideoView.setOnErrorListener(this);
-    mVideoView.setOnInfoListener(this);
+    mVideoView.setPlayerStateChangeListener(this);
   }
 
   protected abstract VideoPlayerView findVideoView(View itemView);

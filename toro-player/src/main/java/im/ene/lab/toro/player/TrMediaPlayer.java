@@ -24,13 +24,11 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.View;
+import com.google.android.exoplayer.ExoPlayer;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.NativeMediaPlayer;
-import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -39,6 +37,16 @@ import java.util.Map;
  * Created by eneim on 6/2/16.
  */
 public interface TrMediaPlayer {
+
+  /**
+   * See {@link ExoPlayer} and {@link State}
+   */
+  int STATE_IDLE = ExoPlayer.STATE_IDLE;
+  int STATE_PREPARING = ExoPlayer.STATE_PREPARING;
+  int STATE_PREPARED = -2;  // TODO FIXME
+  int STATE_BUFFERING = ExoPlayer.STATE_BUFFERING;
+  int STATE_READY = ExoPlayer.STATE_READY;
+  int STATE_ENDED = ExoPlayer.STATE_ENDED;
 
   interface IMediaPlayer /* extends MediaController.MediaPlayerControl */ {
 
@@ -149,23 +157,17 @@ public interface TrMediaPlayer {
   /** see {@link MediaPlayer#getVideoHeight()} ()} */
   int getVideoHeight();
 
-  /** see {@link MediaPlayer#setOnPreparedListener(MediaPlayer.OnPreparedListener)} */
-  void setOnPreparedListener(OnPreparedListener listener);
+  /** see {@link ExoPlayer#getBufferedPercentage()} */
+  int getBufferedPercentage();
 
+  @Deprecated
   /** see {@link MediaPlayer#setOnVideoSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener)} */
   void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
-
-  /** see {@link MediaPlayer#setOnCompletionListener(MediaPlayer.OnCompletionListener)} */
-  void setOnCompletionListener(OnCompletionListener listener);
-
-  /** see {@link MediaPlayer#setOnErrorListener(MediaPlayer.OnErrorListener)} */
-  void setOnErrorListener(OnErrorListener listener);
 
   /** see {@link MediaPlayer#setOnInfoListener(MediaPlayer.OnInfoListener)} */
   void setOnInfoListener(OnInfoListener listener);
 
-  /** see {@link MediaPlayer#setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener)} */
-  void setOnBufferingUpdateListener(OnBufferingUpdateListener listener);
+  void setPlayerStateChangeListener(OnPlayerStateChangeListener listener);
 
   /** see {@link MediaPlayer#setDataSource(Context, Uri, Map)} */
   void setDataSource(Context context, Uri uri, Map<String, String> headers)

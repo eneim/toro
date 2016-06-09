@@ -27,17 +27,15 @@ import android.view.View;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer
-    extends TrMediaPlayer.IMediaPlayer, OnPreparedListener, OnCompletionListener, OnErrorListener,
-    OnInfoListener {
+public interface ToroPlayer extends TrMediaPlayer.IMediaPlayer,
+    // OnPreparedListener, OnCompletionListener, OnErrorListener,
+    OnInfoListener, OnPlayerStateChangeListener {
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to
@@ -137,9 +135,9 @@ public interface ToroPlayer
   /**
    * Called from {@link Toro#onError(ToroPlayer, TrMediaPlayer, PlaybackException)}
    *
-   * This method has the same signature with {@link ToroPlayer#onError(TrMediaPlayer,
-   * PlaybackException)}, but {@link ToroPlayer#onError(TrMediaPlayer, PlaybackException)} will be
-   * called explicitly by Toro, so this method will prevent infinite loop
+   * This method has the same signature with {@link OnPlayerStateChangeListener#onPlayerError(Exception)},
+   * but {@link OnPlayerStateChangeListener#onPlayerError(Exception)} will be called explicitly by
+   * Toro, so this method will prevent infinite loop
    */
   boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error);
 

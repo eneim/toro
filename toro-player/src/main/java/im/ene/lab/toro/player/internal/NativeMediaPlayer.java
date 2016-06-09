@@ -24,11 +24,8 @@ import android.view.Surface;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
@@ -38,12 +35,14 @@ import java.util.Map;
  *
  * Implementation for {@link TrMediaPlayer} backed by Android original {@link MediaPlayer}
  */
-public class NativeMediaPlayer implements TrMediaPlayer {
+public class NativeMediaPlayer implements TrMediaPlayer, MediaPlayer.OnBufferingUpdateListener {
 
   final MediaPlayer mediaPlayer;
+  int bufferedPercent = 0;
 
   public NativeMediaPlayer() {
     this.mediaPlayer = new MediaPlayer();
+    this.mediaPlayer.setOnBufferingUpdateListener(this);
   }
 
   @Override public void start() throws IllegalStateException {
@@ -98,14 +97,8 @@ public class NativeMediaPlayer implements TrMediaPlayer {
     return mediaPlayer.getVideoHeight();
   }
 
-  @Override public void setOnPreparedListener(final OnPreparedListener listener) {
-    if (listener == null) return;
-
-    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-      @Override public void onPrepared(MediaPlayer mp) {
-        listener.onPrepared(NativeMediaPlayer.this);
-      }
-    });
+  @Override public int getBufferedPercentage() {
+    return bufferedPercent;
   }
 
   @Override public void setOnVideoSizeChangedListener(final OnVideoSizeChangedListener listener) {
@@ -114,26 +107,6 @@ public class NativeMediaPlayer implements TrMediaPlayer {
     mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
       @Override public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
         listener.onVideoSizeChanged(NativeMediaPlayer.this, width, height);
-      }
-    });
-  }
-
-  @Override public void setOnCompletionListener(final OnCompletionListener listener) {
-    if (listener == null) return;
-
-    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-      @Override public void onCompletion(MediaPlayer mp) {
-        listener.onCompletion(NativeMediaPlayer.this);
-      }
-    });
-  }
-
-  @Override public void setOnErrorListener(final OnErrorListener listener) {
-    if (listener == null) return;
-
-    mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-      @Override public boolean onError(MediaPlayer mp, int what, int extra) {
-        return listener.onError(NativeMediaPlayer.this, new PlaybackException(what, extra));
       }
     });
   }
@@ -149,12 +122,33 @@ public class NativeMediaPlayer implements TrMediaPlayer {
     });
   }
 
-  @Override public void setOnBufferingUpdateListener(final OnBufferingUpdateListener listener) {
-    if (listener == null) return;
+  @Override public void setPlayerStateChangeListener(final OnPlayerStateChangeListener listener) {
+    if (listener == null) {
+      return;
+    }
+
+    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+      @Override public void onPrepared(MediaPlayer mp) {
+        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, STATE_PREPARED);
+      }
+    });
+
+    mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+      @Override public boolean onError(MediaPlayer mp, int what, int extra) {
+        return listener.onPlayerError(NativeMediaPlayer.this, new PlaybackException(what, extra));
+      }
+    });
+
+    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+      @Override public void onCompletion(MediaPlayer mp) {
+        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, STATE_ENDED);
+      }
+    });
 
     mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
       @Override public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        listener.onBufferingUpdate(NativeMediaPlayer.this, percent);
+        bufferedPercent = percent;
+        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, STATE_BUFFERING);
       }
     });
   }
@@ -182,5 +176,9 @@ public class NativeMediaPlayer implements TrMediaPlayer {
 
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
     mediaPlayer.setVolume(volume, volume);
+  }
+
+  @Override public void onBufferingUpdate(MediaPlayer mp, int percent) {
+    this.bufferedPercent = percent;
   }
 }

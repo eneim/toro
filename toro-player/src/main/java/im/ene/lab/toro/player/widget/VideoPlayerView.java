@@ -39,15 +39,13 @@ import im.ene.lab.toro.player.BuildConfig;
 import im.ene.lab.toro.player.MediaSource;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
+import im.ene.lab.toro.player.State;
 import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.internal.EventLogger;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
-import im.ene.lab.toro.player.listener.OnBufferingUpdateListener;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 import java.util.List;
 
 /**
@@ -71,7 +69,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
         }
       };
 
-  private SurfaceTextureListener mSurfaceTextureListener = new SurfaceTextureListener() {
+  private SurfaceTextureListener surfaceTextureListener = new SurfaceTextureListener() {
     @Override public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
       VideoPlayerView.this.mSurface = new Surface(surface);
       if (mMediaPlayer != null) {
@@ -112,7 +110,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     }
   };
 
-  private final ExoMediaPlayer.Listener mPlayerListener = new ExoMediaPlayer.Listener() {
+  private final ExoMediaPlayer.Listener playerListener = new ExoMediaPlayer.Listener() {
     @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
       mPlaybackState = playbackState;
       setKeepScreenOn(isInPlayableState());
@@ -130,9 +128,32 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     }
   };
 
+  private OnPlayerStateChangeListener stateChangeListenerDelegate = new OnPlayerStateChangeListener() {
+    @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+        @State int playbackState) {
+      if (playbackState == TrMediaPlayer.STATE_ENDED) {
+        mPlayRequested = false;
+        releasePlayer();
+        mPlayerPosition = 0;
+      }
+
+      if (mPlayerStateChangeListener != null) {
+        mPlayerStateChangeListener.onPlayerStateChanged(player, playWhenReady, playbackState);
+      }
+    }
+
+    @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+      if (mPlayerStateChangeListener != null) {
+        mPlayerStateChangeListener.onPlayerError(player, error);
+      }
+
+      return true;
+    }
+  };
+
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare && (mPlaybackState != ExoMediaPlayer.STATE_IDLE) && (mPlaybackState
-        != ExoMediaPlayer.STATE_PREPARING) && (mPlaybackState != ExoMediaPlayer.STATE_ENDED);
+    return !mPlayerNeedsPrepare && (mPlaybackState != TrMediaPlayer.STATE_IDLE) && (mPlaybackState
+        != TrMediaPlayer.STATE_PREPARING) && (mPlaybackState != TrMediaPlayer.STATE_ENDED);
   }
 
   private Uri mUri;
@@ -152,11 +173,8 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   private boolean mPlayRequested = false;
   private boolean mBackgroundAudioEnabled = false;
 
-  private OnPreparedListener mOnPreparedListener;
-  private OnCompletionListener mOnCompletionListener;
-  private OnErrorListener mOnErrorListener;
+  private OnPlayerStateChangeListener mPlayerStateChangeListener;
   private OnInfoListener mOnInfoListener;
-  private OnBufferingUpdateListener mOnBufferingUpdateListener;
 
   // DEBUG
   private EventLogger mEventLogger;
@@ -178,24 +196,12 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     }
   };
 
-  public void setOnPreparedListener(OnPreparedListener onPreparedListener) {
-    this.mOnPreparedListener = onPreparedListener;
-  }
-
-  public void setOnCompletionListener(OnCompletionListener onCompletionListener) {
-    this.mOnCompletionListener = onCompletionListener;
-  }
-
-  public void setOnErrorListener(OnErrorListener onErrorListener) {
-    this.mOnErrorListener = onErrorListener;
+  public void setPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+    this.mPlayerStateChangeListener = listener;
   }
 
   public void setOnInfoListener(OnInfoListener onInfoListener) {
     this.mOnInfoListener = onInfoListener;
-  }
-
-  public void setOnBufferingUpdateListener(OnBufferingUpdateListener onBufferingUpdateListener) {
-    this.mOnBufferingUpdateListener = onBufferingUpdateListener;
   }
 
   public void setCaptionListener(ExoMediaPlayer.CaptionListener listener) {
@@ -206,45 +212,11 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     this.mId3MetadataListener = listener;
   }
 
-  private OnPreparedListener onPreparedListenerDelegate = new OnPreparedListener() {
-    @Override public void onPrepared(TrMediaPlayer mp) {
-      if (mOnPreparedListener != null) {
-        mOnPreparedListener.onPrepared(mp);
-      }
-    }
-  };
-
-  private OnCompletionListener onCompletionListenerDelegate = new OnCompletionListener() {
-    @Override public void onCompletion(TrMediaPlayer mp) {
-      mPlayRequested = false;
-      releasePlayer();
-      mPlayerPosition = 0;
-      if (mOnCompletionListener != null) {
-        mOnCompletionListener.onCompletion(mp);
-      }
-    }
-  };
-
-  private OnErrorListener onErrorListenerDelegate = new OnErrorListener() {
-    @Override public boolean onError(TrMediaPlayer mp, PlaybackException exception) {
-      return mOnErrorListener != null && mOnErrorListener.onError(mp, exception);
-    }
-  };
-
   private OnInfoListener onInfoListenerDelegate = new OnInfoListener() {
     @Override public boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
       return mOnInfoListener != null && mOnInfoListener.onInfo(mp, info);
     }
   };
-
-  private OnBufferingUpdateListener onBufferingUpdateListenerDelegate =
-      new OnBufferingUpdateListener() {
-        @Override public void onBufferingUpdate(TrMediaPlayer mp, int percent) {
-          if (mOnBufferingUpdateListener != null) {
-            mOnBufferingUpdateListener.onBufferingUpdate(mp, percent);
-          }
-        }
-      };
 
   /**
    * Resize the view based on the width and height specifications.
@@ -315,19 +287,18 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   }
 
   private void initialize(Context context) {
-    // init
     setFocusable(true);
     setFocusableInTouchMode(true);
     requestFocus();
     this.mAudioCapabilities = AudioCapabilities.getCapabilities(context);
-    setSurfaceTextureListener(mSurfaceTextureListener);
+    setSurfaceTextureListener(surfaceTextureListener);
   }
 
   private void releasePlayer() {
     if (mMediaPlayer != null) {
       mPlayerPosition = mMediaPlayer.getCurrentPosition();
       mMediaPlayer.removeListener(mEventLogger);
-      mMediaPlayer.removeListener(mPlayerListener);
+      mMediaPlayer.removeListener(playerListener);
       mMediaPlayer.release();
       mMediaPlayer = null;
       mEventLogger.endSession();
@@ -344,12 +315,10 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     if (mMediaPlayer == null) {
       mMediaPlayer = (ExoMediaPlayer) TrMediaPlayer.Factory.createExoPlayer(
           RendererBuilderFactory.createRendererBuilder(getContext(), mUri));
-      mMediaPlayer.addListener(mPlayerListener);
-      mMediaPlayer.setOnPreparedListener(onPreparedListenerDelegate);
-      mMediaPlayer.setOnCompletionListener(onCompletionListenerDelegate);
-      mMediaPlayer.setOnErrorListener(onErrorListenerDelegate);
+      mMediaPlayer.addListener(playerListener);
+
+      mMediaPlayer.setPlayerStateChangeListener(stateChangeListenerDelegate);
       mMediaPlayer.setOnInfoListener(onInfoListenerDelegate);
-      mMediaPlayer.setOnBufferingUpdateListener(onBufferingUpdateListenerDelegate);
 
       mMediaPlayer.setCaptionListener(mExoMediaPlayerHelper);
       mMediaPlayer.setMetadataListener(mExoMediaPlayerHelper);

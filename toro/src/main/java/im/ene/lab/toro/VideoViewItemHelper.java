@@ -25,10 +25,8 @@ import android.view.ViewParent;
 import im.ene.lab.toro.player.PlaybackException;
 import im.ene.lab.toro.player.PlaybackInfo;
 import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnCompletionListener;
-import im.ene.lab.toro.player.listener.OnErrorListener;
 import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPreparedListener;
+import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 
 /**
  * Created by eneim on 2/1/16.
@@ -81,7 +79,7 @@ class VideoViewItemHelper {
   /* BEGIN: Callback for MediaPlayer */
 
   /**
-   * Callback from {@link OnPreparedListener}
+   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#STATE_PREPARED}
    *
    * @param player current ToroPlayer instance
    * @param itemView main View of current ViewHolder
@@ -94,7 +92,7 @@ class VideoViewItemHelper {
   }
 
   /**
-   * Callback from {@link OnCompletionListener}
+   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#STATE_ENDED}
    *
    * @param player current ToroPlayer instance
    * @param mp completed MediaPlayer
@@ -104,7 +102,8 @@ class VideoViewItemHelper {
   }
 
   /**
-   * Callback from {@link OnErrorListener}
+   * Callback from {@link OnPlayerStateChangeListener#onPlayerError(TrMediaPlayer,
+   * PlaybackException)}
    *
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
