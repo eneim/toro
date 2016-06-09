@@ -42,10 +42,13 @@ import java.lang.annotation.RetentionPolicy;
  *
  * A library-level Abstract ViewHolder for Youtube
  */
-public abstract class YoutubeViewHolder extends ToroViewHolder
-    implements YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener,
-    YouTubePlayer.OnInitializedListener, YouTubeThumbnailLoader.OnThumbnailLoadedListener,
-    YouTubeThumbnailView.OnInitializedListener {
+public abstract class YoutubeViewHolder extends ToroViewHolder implements
+    // 0. IMPORTANT: required for requesting Youtube API
+    YouTubePlayer.OnInitializedListener,
+    // 1. Normal playback state
+    YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener,
+    // 2. Optional: use Thumbnail classes
+    YouTubeThumbnailLoader.OnThumbnailLoadedListener, YouTubeThumbnailView.OnInitializedListener {
 
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#CHROMELESS} to youtube player
@@ -156,8 +159,13 @@ public abstract class YoutubeViewHolder extends ToroViewHolder
   }
 
   @Override public void stop() {
-    // FIXME
-    pause();
+    isStarting = false;
+    try {
+      mParent.mYoutubePlayer.pause();
+      mParent.mYoutubePlayer.release();
+    } catch (NullPointerException | IllegalStateException er) {
+      er.printStackTrace();
+    }
   }
 
   @Override public final long getDuration() {

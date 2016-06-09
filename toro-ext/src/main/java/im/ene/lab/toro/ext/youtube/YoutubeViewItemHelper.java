@@ -47,9 +47,6 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
   public void onPaused() {
   }
 
-  @Deprecated public void onStopped() {
-  }
-
   public void onBuffering(boolean b) {
   }
 

@@ -59,8 +59,10 @@ public class ViewPagerFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     ButterKnife.bind(this, view);
     List<Fragment> fragments = new ArrayList<>();
-    fragments.add(MultiVideoStaggeredGridFragment.newInstance());
     fragments.add(SingleVideoSimpleListFragment.newInstance());
+    fragments.add(SimpleVideoListFragment.newInstance());
+    fragments.add(YoutubeVideosFragment.newInstance());
+    fragments.add(MultiVideoStaggeredGridFragment.newInstance());
 
     ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(), fragments);
     mViewPager.setAdapter(adapter);
