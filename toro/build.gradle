@@ -60,34 +60,11 @@ dependencies {
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(':toro-player')
+  compile project(':toro-media')
 
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
   javadocDeps project(':toro-player')
 }
-
-// build a jar with source files
-//task sourcesJar(type: Jar) {
-//  from android.sourceSets.main.java.srcDirs
-//  classifier = 'sources'
-//}
-//
-//task javadoc(type: Javadoc) {
-//  failOnError false
-//  source = android.sourceSets.main.java.sourceFiles
-//  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//}
-//
-//// build a jar with javadoc
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//  classifier = 'javadoc'
-//  from javadoc.getDestinationDir()
-//}
-//
-//artifacts {
-//  archives sourcesJar
-//  archives javadocJar
-//}
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
 // > gradlew install

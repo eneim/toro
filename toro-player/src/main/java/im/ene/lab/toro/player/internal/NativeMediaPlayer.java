@@ -21,12 +21,12 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.FloatRange;
 import android.view.Surface;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
-import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.OnVideoSizeChangedListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.lab.toro.media.TrMediaPlayer;
 import java.io.IOException;
 import java.util.Map;
 
@@ -129,7 +129,7 @@ public class NativeMediaPlayer implements TrMediaPlayer, MediaPlayer.OnBuffering
 
     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
       @Override public void onPrepared(MediaPlayer mp) {
-        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, STATE_PREPARED);
+        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, PLAYER_PREPARED);
       }
     });
 
@@ -141,14 +141,14 @@ public class NativeMediaPlayer implements TrMediaPlayer, MediaPlayer.OnBuffering
 
     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
       @Override public void onCompletion(MediaPlayer mp) {
-        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, STATE_ENDED);
+        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, PLAYER_ENDED);
       }
     });
 
     mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
       @Override public void onBufferingUpdate(MediaPlayer mp, int percent) {
         bufferedPercent = percent;
-        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, STATE_BUFFERING);
+        listener.onPlayerStateChanged(NativeMediaPlayer.this, false, PLAYER_BUFFERING);
       }
     });
   }

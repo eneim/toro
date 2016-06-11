@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.listener;
-
-import im.ene.lab.toro.player.TrMediaPlayer;
+package im.ene.lab.toro.media;
 
 /**
  * Created by eneim on 6/2/16.
  */
-public interface OnVideoSizeChangedListener /* extends MediaPlayer.OnVideoSizeChangedListener */ {
+public interface OnInfoListener /* extends MediaPlayer.OnInfoListener */ {
 
   /**
-   * Called to indicate the video size
+   * Called to indicate an info or a warning.
    *
-   * The video size (width and height) could be 0 if there was no video,
-   * no display surface was set, or the value was not determined yet.
-   *
-   * @param mp        the MediaPlayer associated with this callback
-   * @param width     the width of the video
-   * @param height    the height of the video
+   * @return True if the method handled the info, false if it didn't.
+   * Returning false, or not having an OnErrorListener at all, will
+   * cause the info to be discarded.
    */
-  void onVideoSizeChanged(TrMediaPlayer mp, int width, int height);
+  boolean onInfo(TrMediaPlayer mp, PlaybackInfo info);
 }

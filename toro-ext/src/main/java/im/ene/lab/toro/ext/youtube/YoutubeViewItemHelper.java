@@ -20,7 +20,7 @@ import android.support.annotation.UiThread;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.lab.toro.RecyclerViewItemHelper;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.player.PlaybackException;
+import im.ene.lab.toro.media.PlaybackException;
 
 /**
  * Created by eneim on 4/8/16.

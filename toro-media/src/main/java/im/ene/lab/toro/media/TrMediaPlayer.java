@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
+package im.ene.lab.toro.media;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -24,12 +24,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.View;
-import com.google.android.exoplayer.ExoPlayer;
-import im.ene.lab.toro.player.internal.ExoMediaPlayer;
-import im.ene.lab.toro.player.internal.NativeMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
-import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 import java.io.IOException;
 import java.util.Map;
 
@@ -39,14 +33,14 @@ import java.util.Map;
 public interface TrMediaPlayer {
 
   /**
-   * See {@link ExoPlayer} and {@link State}
+   * See {@link State}
    */
-  int STATE_IDLE = ExoPlayer.STATE_IDLE;
-  int STATE_PREPARING = ExoPlayer.STATE_PREPARING;
-  int STATE_PREPARED = -2;  // TODO FIXME
-  int STATE_BUFFERING = ExoPlayer.STATE_BUFFERING;
-  int STATE_READY = ExoPlayer.STATE_READY;
-  int STATE_ENDED = ExoPlayer.STATE_ENDED;
+  int PLAYER_IDLE = 0;
+  int PLAYER_PREPARING = 1;
+  int PLAYER_PREPARED = 2;
+  int PLAYER_BUFFERING = 3;
+  int PLAYER_READY = 4;
+  int PLAYER_ENDED = 5;
 
   interface IMediaPlayer /* extends MediaController.MediaPlayerControl */ {
 
@@ -105,17 +99,6 @@ public interface TrMediaPlayer {
 
     /** see {@link android.widget.MediaController#isShowing()} */
     boolean isShowing();
-  }
-
-  class Factory {
-
-    public static TrMediaPlayer createNativePlayer() {
-      return new NativeMediaPlayer();
-    }
-
-    public static TrMediaPlayer createExoPlayer(ExoMediaPlayer.RendererBuilder builder) {
-      return new ExoMediaPlayer(builder);
-    }
   }
 
   /** see {@link MediaPlayer#start()} */

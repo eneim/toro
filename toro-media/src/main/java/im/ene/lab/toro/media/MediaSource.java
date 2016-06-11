@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
+package im.ene.lab.toro.media;
+
+import android.net.Uri;
 
 /**
- * Created by eneim on 6/2/16.
+ * Created by eneim on 6/3/16.
  */
-public class PlaybackInfo {
+public class MediaSource {
 
-  private final String info;
+  public final Uri mediaUri;
 
-  public PlaybackInfo(String info) {
-    this.info = info;
-  }
-
-  public String getInfo() {
-    return info;
+  public MediaSource(Uri mediaUri) {
+    this.mediaUri = mediaUri;
   }
 }

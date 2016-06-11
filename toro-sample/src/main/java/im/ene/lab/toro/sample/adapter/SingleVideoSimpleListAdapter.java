@@ -19,6 +19,8 @@ package im.ene.lab.toro.sample.adapter;
 import android.support.annotation.Nullable;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.lab.toro.sample.util.Util;
+import java.io.FileNotFoundException;
 
 /**
  * Created by eneim on 2/3/16.
@@ -30,9 +32,18 @@ public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
   }
 
   @Nullable @Override protected Object getItem(int position) {
+    String mkvFile = null;
+    try {
+      mkvFile = Util.loadMovieFolder()[0].getPath();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+
     if (position == 1) {
       return new SimpleVideoObject(
-          "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd");
+          mkvFile != null ? mkvFile :
+          "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd"
+      );
     }
     return new SimpleObject();
   }

@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.listener;
+package im.ene.lab.toro.media;
 
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.TrMediaPlayer;
+import android.app.Application;
+import android.test.ApplicationTestCase;
 
 /**
- * Created by eneim on 6/2/16.
+ * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public interface OnInfoListener /* extends MediaPlayer.OnInfoListener */ {
-
-  /**
-   * Called to indicate an info or a warning.
-   *
-   * @return True if the method handled the info, false if it didn't.
-   * Returning false, or not having an OnErrorListener at all, will
-   * cause the info to be discarded.
-   */
-  boolean onInfo(TrMediaPlayer mp, PlaybackInfo info);
+public class ApplicationTest extends ApplicationTestCase<Application> {
+  public ApplicationTest() {
+    super(Application.class);
+  }
 }

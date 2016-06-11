@@ -16,7 +16,11 @@
 
 package im.ene.lab.toro.sample.util;
 
+import android.os.Environment;
 import android.support.v4.util.TimeUtils;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 
 /**
  * Created by eneim on 2/3/16.
@@ -32,4 +36,12 @@ public class Util {
     return posTime + " / " + durationTime.toString();
   }
 
+  public static File[] loadMovieFolder() throws FileNotFoundException {
+    return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+        .listFiles(new FilenameFilter() {
+          @Override public boolean accept(File dir, String filename) {
+            return filename.endsWith(".mp4");
+          }
+        });
+  }
 }

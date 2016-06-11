@@ -96,7 +96,7 @@ public class ViewPagerFragment extends Fragment {
     }
 
     @Override public float getPageWidth(int position) {
-      return 0.85f;
+      return position == 2 ? 1.f : 0.85f;
     }
 
     @Override public CharSequence getPageTitle(int position) {

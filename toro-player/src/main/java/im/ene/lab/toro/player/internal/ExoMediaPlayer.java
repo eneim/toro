@@ -51,16 +51,22 @@ import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.util.DebugTextViewHelper;
 import com.google.android.exoplayer.util.PlayerControl;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
-import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.OnVideoSizeChangedListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.TrMediaPlayer;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+//import im.ene.lab.toro.player.PlaybackException;
+//import im.ene.lab.toro.player.TrMediaPlayer;
+//import im.ene.lab.toro.player.listener.OnInfoListener;
+//import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
+//import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 
 /**
  * A wrapper around {@link ExoPlayer} that provides a higher level interface. It can be prepared
@@ -185,6 +191,12 @@ public class ExoMediaPlayer
   }
 
   // Constants pulled into this class for convenience.
+  static final int EXO_STATE_IDLE = ExoPlayer.STATE_IDLE;
+  static final int EXO_STATE_PREPARING = ExoPlayer.STATE_PREPARING;
+  static final int EXO_STATE_BUFFERING = ExoPlayer.STATE_BUFFERING;
+  static final int EXO_STATE_READY = ExoPlayer.STATE_READY;
+  static final int EXO_STATE_ENDED = ExoPlayer.STATE_ENDED;
+
   public static final int TRACK_DISABLED = ExoPlayer.TRACK_DISABLED;
   public static final int TRACK_DEFAULT = ExoPlayer.TRACK_DEFAULT;
 
@@ -236,7 +248,7 @@ public class ExoMediaPlayer
     playerControl = new PlayerControl(player);
     mainHandler = new Handler();
     listeners = new CopyOnWriteArrayList<>();
-    lastReportedPlaybackState = TrMediaPlayer.STATE_IDLE;
+    lastReportedPlaybackState = TrMediaPlayer.PLAYER_IDLE;
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     // Disable text initially.
     player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
@@ -444,14 +456,14 @@ public class ExoMediaPlayer
 
   public int getPlaybackState() {
     if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILDING) {
-      return TrMediaPlayer.STATE_PREPARING;
+      return TrMediaPlayer.PLAYER_PREPARING;
     }
     int playerState = player.getPlaybackState();
     if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILT
-        && playerState == TrMediaPlayer.STATE_IDLE) {
+        && playerState == TrMediaPlayer.PLAYER_IDLE) {
       // This is an edge case where the renderers are built, but are still being passed to the
       // player's playback thread.
-      return TrMediaPlayer.STATE_PREPARING;
+      return TrMediaPlayer.PLAYER_PREPARING;
     }
     return playerState;
   }
@@ -667,49 +679,49 @@ public class ExoMediaPlayer
 
       // Other listener
       switch (getPlaybackState()) {
-        case TrMediaPlayer.STATE_BUFFERING:
+        case EXO_STATE_BUFFERING:
           if (!mediaPrepared) {
             if (this.onPlayerStateChangeListener != null) {
               this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
-                  STATE_PREPARED);
+                  PLAYER_PREPARED);
             }
           }
 
           mediaPrepared = true;
           if (this.onPlayerStateChangeListener != null) {
             this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
-                STATE_BUFFERING);
+                PLAYER_BUFFERING);
           }
           break;
-        case TrMediaPlayer.STATE_READY:
+        case EXO_STATE_READY:
           if (this.onPlayerStateChangeListener != null) {
             this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
-                STATE_READY);
+                PLAYER_READY);
           }
           break;
-        case TrMediaPlayer.STATE_ENDED:
+        case EXO_STATE_ENDED:
           if (this.onPlayerStateChangeListener != null) {
             this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
-                STATE_ENDED);
+                PLAYER_ENDED);
           }
           this.videoWidth = 0;
           this.videoHeight = 0;
           mediaPrepared = false;
           break;
-        case TrMediaPlayer.STATE_PREPARING:
+        case EXO_STATE_PREPARING:
           if (this.onPlayerStateChangeListener != null) {
             this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
-                STATE_PREPARING);
+                PLAYER_PREPARING);
           }
           this.videoWidth = 0;
           this.videoHeight = 0;
           mediaPrepared = false;
           break;
-        case TrMediaPlayer.STATE_IDLE:
+        case EXO_STATE_IDLE:
         default:
           if (this.onPlayerStateChangeListener != null) {
             this.onPlayerStateChangeListener.onPlayerStateChanged(this, lastReportedPlayWhenReady,
-                STATE_IDLE);
+                PLAYER_IDLE);
           }
           this.videoWidth = 0;
           this.videoHeight = 0;

@@ -24,21 +24,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.toro.ToroVideoViewHolder;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.ext.ToroVideoViewHolder;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.TrMediaPlayer;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
-import im.ene.lab.toro.player.widget.TextureVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.facebook.TrackablePlayer;
-import im.ene.lab.toro.sample.util.Util;
 
 /**
  * Created by eneim on 1/30/16.
  */
 public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
-    implements TrackablePlayer, TextureVideoView.OnReleasedListener {
+    implements TrackablePlayer /*, TextureVideoView.OnReleasedListener */ {
 
   private final String TAG = getClass().getSimpleName();
 
@@ -109,7 +107,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
 
   @Override public void onPlaybackProgress(long position, long duration) {
     super.onPlaybackProgress(position, duration);
-    mInfo.setText(Util.timeStamp(position, duration));
+    // mInfo.setText(Util.timeStamp(position, duration));
   }
 
   @Override public void onPlaybackPaused() {
@@ -164,9 +162,9 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     return !isReleased ? getDuration() : duration;
   }
 
-  @Override public void onReleased(@Nullable Uri video, long position, long duration) {
-    this.isReleased = true;
-    this.latestPosition = position;
-    this.duration = duration;
-  }
+  //@Override public void onReleased(@Nullable Uri video, long position, long duration) {
+  //  this.isReleased = true;
+  //  this.latestPosition = position;
+  //  this.duration = duration;
+  //}
 }

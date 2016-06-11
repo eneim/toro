@@ -14,18 +14,28 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
+apply plugin: 'com.android.library'
 
-import android.net.Uri;
+android {
+  compileSdkVersion 23
+  buildToolsVersion "23.0.3"
 
-/**
- * Created by eneim on 6/3/16.
- */
-public class MediaSource {
-
-  public final Uri mediaUri;
-
-  public MediaSource(Uri mediaUri) {
-    this.mediaUri = mediaUri;
+  defaultConfig {
+    minSdkVersion 16
+    targetSdkVersion 23
+    versionCode 1
+    versionName "1.0"
   }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
+
+dependencies {
+  compile fileTree(dir: 'libs', include: ['*.jar'])
+  testCompile 'junit:junit:4.12'
+  compile 'com.android.support:appcompat-v7:23.4.0'
 }
