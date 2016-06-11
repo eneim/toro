@@ -191,11 +191,11 @@ public class ExoMediaPlayer
   }
 
   // Constants pulled into this class for convenience.
-  static final int EXO_STATE_IDLE = ExoPlayer.STATE_IDLE;
-  static final int EXO_STATE_PREPARING = ExoPlayer.STATE_PREPARING;
-  static final int EXO_STATE_BUFFERING = ExoPlayer.STATE_BUFFERING;
-  static final int EXO_STATE_READY = ExoPlayer.STATE_READY;
-  static final int EXO_STATE_ENDED = ExoPlayer.STATE_ENDED;
+  private static final int EXO_STATE_IDLE = ExoPlayer.STATE_IDLE;
+  private static final int EXO_STATE_PREPARING = ExoPlayer.STATE_PREPARING;
+  private static final int EXO_STATE_BUFFERING = ExoPlayer.STATE_BUFFERING;
+  private static final int EXO_STATE_READY = ExoPlayer.STATE_READY;
+  private static final int EXO_STATE_ENDED = ExoPlayer.STATE_ENDED;
 
   public static final int TRACK_DISABLED = ExoPlayer.TRACK_DISABLED;
   public static final int TRACK_DEFAULT = ExoPlayer.TRACK_DEFAULT;
@@ -248,7 +248,7 @@ public class ExoMediaPlayer
     playerControl = new PlayerControl(player);
     mainHandler = new Handler();
     listeners = new CopyOnWriteArrayList<>();
-    lastReportedPlaybackState = TrMediaPlayer.PLAYER_IDLE;
+    lastReportedPlaybackState = EXO_STATE_IDLE;
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     // Disable text initially.
     player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
@@ -456,14 +456,14 @@ public class ExoMediaPlayer
 
   public int getPlaybackState() {
     if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILDING) {
-      return TrMediaPlayer.PLAYER_PREPARING;
+      return EXO_STATE_PREPARING;
     }
     int playerState = player.getPlaybackState();
     if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILT
-        && playerState == TrMediaPlayer.PLAYER_IDLE) {
+        && playerState == EXO_STATE_IDLE) {
       // This is an edge case where the renderers are built, but are still being passed to the
       // player's playback thread.
-      return TrMediaPlayer.PLAYER_PREPARING;
+      return EXO_STATE_PREPARING;
     }
     return playerState;
   }
