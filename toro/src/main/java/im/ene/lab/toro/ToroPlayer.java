@@ -24,11 +24,11 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.lab.toro.media.TrMediaPlayer;
 
 /**
  * Created by eneim on 1/29/16.

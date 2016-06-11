@@ -16,10 +16,14 @@
 
 package im.ene.lab.toro.sample.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
@@ -52,7 +56,10 @@ import im.ene.lab.toro.sample.fragment.SimpleVideoListFragment;
 import im.ene.lab.toro.sample.fragment.SingleVideoSimpleListFragment;
 import im.ene.lab.toro.sample.fragment.ViewPagerFragment;
 import im.ene.lab.toro.sample.fragment.YoutubeVideosFragment;
+import im.ene.lab.toro.sample.util.Util;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -186,6 +193,37 @@ public class MainActivity extends AppCompatActivity
         })
         .create()
         .show();
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+          == PackageManager.PERMISSION_DENIED) {
+        requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, 1000);
+      } else {
+        try {
+          Log.e(TAG, "onResume: " + Arrays.toString(Util.loadMovieFolder()));
+        } catch (FileNotFoundException e) {
+          Log.e(TAG, "onResume: " + e.getLocalizedMessage());
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+
+  @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+      @NonNull int[] grantResults) {
+    if (requestCode != 1000) {
+      super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      try {
+        Log.e(TAG, "onResume: " + Arrays.toString(Util.loadMovieFolder()));
+      } catch (FileNotFoundException e) {
+        Log.e(TAG, "onResume: " + e.getLocalizedMessage());
+        e.printStackTrace();
+      }
+    }
   }
 
   private static class StrategyAdapter extends ArrayAdapter<ToroStrategy> {

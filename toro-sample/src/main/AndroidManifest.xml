@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="im.ene.lab.toro.sample">
 
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <!-- Play video from internet -->
   <uses-permission android:name="android.permission.INTERNET"/>
 

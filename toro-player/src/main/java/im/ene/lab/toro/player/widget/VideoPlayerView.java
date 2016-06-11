@@ -35,17 +35,17 @@ import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.metadata.id3.Id3Frame;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
+import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.lab.toro.media.State;
+import im.ene.lab.toro.media.TrMediaPlayer;
 import im.ene.lab.toro.player.BuildConfig;
-import im.ene.lab.toro.player.MediaSource;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.State;
-import im.ene.lab.toro.player.TrMediaPlayer;
 import im.ene.lab.toro.player.internal.EventLogger;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
 import java.util.List;
 
 /**
@@ -128,32 +128,33 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     }
   };
 
-  private OnPlayerStateChangeListener stateChangeListenerDelegate = new OnPlayerStateChangeListener() {
-    @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
-        @State int playbackState) {
-      if (playbackState == TrMediaPlayer.STATE_ENDED) {
-        mPlayRequested = false;
-        releasePlayer();
-        mPlayerPosition = 0;
-      }
+  private OnPlayerStateChangeListener stateChangeListenerDelegate =
+      new OnPlayerStateChangeListener() {
+        @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+            @State int playbackState) {
+          if (playbackState == TrMediaPlayer.PLAYER_ENDED) {
+            mPlayRequested = false;
+            releasePlayer();
+            mPlayerPosition = 0;
+          }
 
-      if (mPlayerStateChangeListener != null) {
-        mPlayerStateChangeListener.onPlayerStateChanged(player, playWhenReady, playbackState);
-      }
-    }
+          if (mPlayerStateChangeListener != null) {
+            mPlayerStateChangeListener.onPlayerStateChanged(player, playWhenReady, playbackState);
+          }
+        }
 
-    @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
-      if (mPlayerStateChangeListener != null) {
-        mPlayerStateChangeListener.onPlayerError(player, error);
-      }
+        @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+          if (mPlayerStateChangeListener != null) {
+            mPlayerStateChangeListener.onPlayerError(player, error);
+          }
 
-      return true;
-    }
-  };
+          return true;
+        }
+      };
 
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare && (mPlaybackState != TrMediaPlayer.STATE_IDLE) && (mPlaybackState
-        != TrMediaPlayer.STATE_PREPARING) && (mPlaybackState != TrMediaPlayer.STATE_ENDED);
+    return !mPlayerNeedsPrepare && (mPlaybackState != TrMediaPlayer.PLAYER_IDLE) && (mPlaybackState
+        != TrMediaPlayer.PLAYER_PREPARING) && (mPlaybackState != TrMediaPlayer.PLAYER_ENDED);
   }
 
   private Uri mUri;
@@ -313,8 +314,8 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
     }
 
     if (mMediaPlayer == null) {
-      mMediaPlayer = (ExoMediaPlayer) TrMediaPlayer.Factory.createExoPlayer(
-          RendererBuilderFactory.createRendererBuilder(getContext(), mUri));
+      mMediaPlayer =
+          new ExoMediaPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mUri));
       mMediaPlayer.addListener(playerListener);
 
       mMediaPlayer.setPlayerStateChangeListener(stateChangeListenerDelegate);

@@ -38,14 +38,15 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import im.ene.lab.toro.player.MediaSource;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.State;
-import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
-import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
+import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.OnVideoSizeChangedListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.lab.toro.media.State;
+import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.player.internal.NativeMediaPlayer;
 import java.io.IOException;
 import java.util.Map;
 
@@ -300,7 +301,7 @@ import java.util.Map;
     }
 
     try {
-      mMediaPlayer = TrMediaPlayer.Factory.createNativePlayer();
+      mMediaPlayer = new NativeMediaPlayer();
 
       if (mAudioSession != 0) {
         mMediaPlayer.setAudioSessionId(mAudioSession);
@@ -364,20 +365,20 @@ import java.util.Map;
         @State int playbackState) {
       switch (playbackState) {
 
-        case TrMediaPlayer.STATE_BUFFERING:
+        case TrMediaPlayer.PLAYER_BUFFERING:
           dispatchOnBufferingUpdate(player, mMediaPlayer.getBufferedPercentage());
           break;
-        case TrMediaPlayer.STATE_ENDED:
+        case TrMediaPlayer.PLAYER_ENDED:
           dispatchOnCompletion(player);
           break;
-        case TrMediaPlayer.STATE_IDLE:
+        case TrMediaPlayer.PLAYER_IDLE:
           break;
-        case TrMediaPlayer.STATE_PREPARED:
+        case TrMediaPlayer.PLAYER_PREPARED:
           dispatchOnPrepared(player);
           break;
-        case TrMediaPlayer.STATE_PREPARING:
+        case TrMediaPlayer.PLAYER_PREPARING:
           break;
-        case TrMediaPlayer.STATE_READY:
+        case TrMediaPlayer.PLAYER_READY:
           break;
         default:
           break;
@@ -404,7 +405,7 @@ import java.util.Map;
     mCurrentState = STATE_PREPARED;
 
     if (mOnPlayerStateChangeListener != null) {
-      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.STATE_PREPARED);
+      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.PLAYER_PREPARED);
     }
 
     if (mController != null) {
@@ -453,7 +454,7 @@ import java.util.Map;
     }
 
     if (mOnPlayerStateChangeListener != null) {
-      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.STATE_ENDED);
+      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.PLAYER_ENDED);
     }
   }
 
@@ -505,7 +506,7 @@ import java.util.Map;
                                          */
                   if (mOnPlayerStateChangeListener != null) {
                     mOnPlayerStateChangeListener.onPlayerStateChanged(mMediaPlayer, false,
-                        TrMediaPlayer.STATE_ENDED);
+                        TrMediaPlayer.PLAYER_ENDED);
                   }
                 }
               })

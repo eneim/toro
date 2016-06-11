@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.ext;
 
 import android.net.Uri;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.player.MediaSource;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.TrMediaPlayer;
+import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.TrMediaPlayer;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 
 /**
- * Created by eneim on 1/31/16.
+ * Created by eneim on 6/11/16.
  */
 public abstract class ToroVideoViewHolder extends ToroViewHolder {
 

@@ -22,11 +22,10 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.State;
-import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.lab.toro.media.State;
+import im.ene.lab.toro.media.TrMediaPlayer;
 
 /**
  * Created by eneim on 1/31/16.
@@ -115,21 +114,21 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
         + "]");
 
     switch (playbackState) {
-      case TrMediaPlayer.STATE_PREPARED:
+      case TrMediaPlayer.PLAYER_PREPARED:
         mHelper.onPrepared(this, itemView, itemView.getParent(), player);
         break;
-      case TrMediaPlayer.STATE_ENDED:
+      case TrMediaPlayer.PLAYER_ENDED:
         mHelper.onCompletion(this, player);
         break;
       // TODO
-      case TrMediaPlayer.STATE_BUFFERING:
+      case TrMediaPlayer.PLAYER_BUFFERING:
         Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
         break;
-      case TrMediaPlayer.STATE_IDLE:
+      case TrMediaPlayer.PLAYER_IDLE:
         break;
-      case TrMediaPlayer.STATE_PREPARING:
+      case TrMediaPlayer.PLAYER_PREPARING:
         break;
-      case TrMediaPlayer.STATE_READY:
+      case TrMediaPlayer.PLAYER_READY:
         break;
       default:
         break;

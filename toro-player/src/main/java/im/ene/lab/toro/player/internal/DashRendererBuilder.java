@@ -58,7 +58,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final String TAG = "DashRendererBuilder";
 
-  private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+  private static final int BUFFER_SEGMENT_SIZE = 64 * 1024; // 64 kilobytes?
   private static final int VIDEO_BUFFER_SEGMENTS = 200;
   private static final int AUDIO_BUFFER_SEGMENTS = 54;
   private static final int TEXT_BUFFER_SEGMENTS = 2;

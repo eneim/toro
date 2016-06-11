@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
+package im.ene.lab.toro.media;
 
-import android.net.Uri;
+import android.app.Application;
+import android.test.ApplicationTestCase;
 
 /**
- * Created by eneim on 6/3/16.
+ * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-public class MediaSource {
-
-  public final Uri mediaUri;
-
-  public MediaSource(Uri mediaUri) {
-    this.mediaUri = mediaUri;
+public class ApplicationTest extends ApplicationTestCase<Application> {
+  public ApplicationTest() {
+    super(Application.class);
   }
 }

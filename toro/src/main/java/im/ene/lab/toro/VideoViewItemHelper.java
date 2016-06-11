@@ -22,11 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
-import im.ene.lab.toro.player.PlaybackException;
-import im.ene.lab.toro.player.PlaybackInfo;
-import im.ene.lab.toro.player.TrMediaPlayer;
-import im.ene.lab.toro.player.listener.OnInfoListener;
-import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.lab.toro.media.TrMediaPlayer;
 
 /**
  * Created by eneim on 2/1/16.
@@ -79,7 +77,7 @@ class VideoViewItemHelper {
   /* BEGIN: Callback for MediaPlayer */
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#STATE_PREPARED}
+   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#PLAYER_PREPARED}
    *
    * @param player current ToroPlayer instance
    * @param itemView main View of current ViewHolder
@@ -92,7 +90,7 @@ class VideoViewItemHelper {
   }
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#STATE_ENDED}
+   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#PLAYER_ENDED}
    *
    * @param player current ToroPlayer instance
    * @param mp completed MediaPlayer
