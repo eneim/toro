@@ -16,6 +16,30 @@
 
 apply plugin: 'com.android.library'
 
+ext {
+  bintrayRepo = 'maven'
+  bintrayName = 'ToroMedia'
+
+  publishedGroupId = 'im.ene.lab'
+  libraryName = 'ToroMedia'
+  artifact = 'toro-media'
+
+  libraryDescription = 'Core components for Toro media Framework'
+
+  siteUrl = 'https://github.com/eneim/Toro'
+  gitUrl = 'https://github.com/eneim/Toro.git'
+
+  libraryVersion = rootProject.ext.libraryVersion
+
+  developerId = 'eneim'
+  developerName = 'Nam Nguyen'
+  developerEmail = 'nam@ene.im'
+
+  licenseName = 'The Apache Software License, Version 2.0'
+  licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  allLicenses = ["Apache-2.0"]
+}
+
 android {
   compileSdkVersion 23
   buildToolsVersion "23.0.3"
@@ -26,6 +50,7 @@ android {
     versionCode 1
     versionName "1.0"
   }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -38,4 +63,11 @@ dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
   compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
 }
+
+// REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
+// > gradlew install
+// > gradlew bintrayUpload
+apply from: 'https://raw.githubusercontent.com/eneim/eneim.github.io/resources/publish/jcenter/installv1.gradle'
+apply from: '../ref/bintrayv1.gradle'
