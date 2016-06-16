@@ -32,13 +32,13 @@
         android:launchMode="singleTop"
         android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
         android:name=".activity.StandalonePlayerActivity"
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        android:theme="@style/ToroTheme">
     </activity>
 
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name="im.ene.lab.toro.ext.develop.com.google.android.exoplayer.demo.SampleChooserActivity"
+        android:name="develop.com.google.android.exoplayer.demo.SampleChooserActivity"
         android:theme="@style/Theme.AppCompat.NoActionBar">
     </activity>
 

@@ -23,8 +23,7 @@
 
   <path
       android:fillColor="?attr/colorToroMediaButton"
-      android:pathData="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-
+      android:pathData="M8 5v14l11-7z"/>
   <path
       android:pathData="M0 0h24v24H0z"/>
 </vector>

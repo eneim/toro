@@ -530,7 +530,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
       container.setLayoutParams(originalContainerLayoutParams);
 
-      fullscreenButton.setImageResource(R.drawable.ic_action_full_screen);
+      fullscreenButton.setImageResource(R.drawable.toro_ext_ic_fullscreen_enter);
 
       isFullscreen = false;
     } else {
@@ -563,7 +563,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
           Util.getLayoutParamsBasedOnParent(container, ViewGroup.LayoutParams.MATCH_PARENT,
               ViewGroup.LayoutParams.MATCH_PARENT));
 
-      fullscreenButton.setImageResource(R.drawable.ic_action_return_from_full_screen);
+      fullscreenButton.setImageResource(R.drawable.toro_ext_ic_fullscreen_exit);
 
       isFullscreen = true;
     }
@@ -1055,9 +1055,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
 
     if (playerControl.isPlaying()) {
-      pausePlayButton.setImageResource(R.drawable.ic_action_pause_large);
+      pausePlayButton.setImageResource(R.drawable.toro_ext_ic_pause);
     } else {
-      pausePlayButton.setImageResource(R.drawable.ic_action_play_large);
+      pausePlayButton.setImageResource(R.drawable.toro_ext_ic_play_arrow);
     }
   }
 

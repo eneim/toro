@@ -31,6 +31,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.util.MimeTypes;
+import im.ene.lab.toro.ext.layeredvideo.PlaybackControlLayer;
 import im.ene.lab.toro.ext.layeredvideo.SimpleVideoPlayer;
 import im.ene.lab.toro.ext.layeredvideo.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
@@ -121,6 +122,15 @@ public class StandalonePlayerActivity extends AppCompatActivity {
       e.printStackTrace();
     }
 
+    videoPlayer.setFullscreenCallback(new PlaybackControlLayer.FullscreenCallback() {
+      @Override public void onGoToFullscreen() {
+
+      }
+
+      @Override public void onReturnFromFullscreen() {
+
+      }
+    });
     videoPlayer.enableSeeking();
   }
 
