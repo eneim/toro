@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.layeredvideo;
+package im.ene.lab.toro.ext.layeredvideo;
 
 /**
  * Represents a video that can be played by Exoplayer.

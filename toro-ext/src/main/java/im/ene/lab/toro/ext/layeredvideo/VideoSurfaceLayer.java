@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.layeredvideo;
+package im.ene.lab.toro.ext.layeredvideo;
 
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
-import im.ene.lab.toro.player.R;
+import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 
 /**
@@ -102,7 +102,8 @@ public class VideoSurfaceLayer implements Layer {
     this.autoPlay = autoPlay;
   }
 
-  @Override public FrameLayout createView(LayerManager layerManager) {
+  @Override public FrameLayout createView(
+      LayerManager layerManager) {
     this.layerManager = layerManager;
 
     view = (FrameLayout) LayoutInflater.from(layerManager.getContainer().getContext())

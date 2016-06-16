@@ -66,7 +66,7 @@ import develop.com.google.android.exoplayer.demo.player.DemoPlayer;
 import develop.com.google.android.exoplayer.demo.player.ExtractorRendererBuilder;
 import develop.com.google.android.exoplayer.demo.player.HlsRendererBuilder;
 import develop.com.google.android.exoplayer.demo.player.SmoothStreamingRendererBuilder;
-import im.ene.lab.toro.player.R;
+import im.ene.lab.toro.ext.R;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;

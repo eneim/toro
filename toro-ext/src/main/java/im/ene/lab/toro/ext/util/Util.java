@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.ext.util;
 
+import android.support.v7.widget.AppCompatSeekBar;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

@@ -45,7 +45,7 @@ android {
   compileSdkVersion rootProject.ext.androidVersion
   buildToolsVersion rootProject.ext.buildToolVersion
 
-  resourcePrefix 'tr_ext_'
+  // resourcePrefix 'tr_ext_'
   // defaultPublishConfig "release"
 
   defaultConfig {

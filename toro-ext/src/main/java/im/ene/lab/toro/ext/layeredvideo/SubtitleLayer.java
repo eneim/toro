@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.layeredvideo;
+package im.ene.lab.toro.ext.layeredvideo;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -24,7 +24,7 @@ import android.widget.FrameLayout;
 import com.google.android.exoplayer.text.CaptionStyleCompat;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.text.SubtitleLayout;
-import im.ene.lab.toro.player.R;
+import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.util.List;
 

@@ -27,7 +27,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.TextView;
-import im.ene.lab.toro.player.R;
+import im.ene.lab.toro.ext.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

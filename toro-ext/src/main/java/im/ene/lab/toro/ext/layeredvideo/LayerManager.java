@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.layeredvideo;
+package im.ene.lab.toro.ext.layeredvideo;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -43,7 +43,8 @@ public class LayerManager {
   private Activity activity;
 
   /**
-   * All the views created by the {@link Layer} objects will be overlaid on this container.
+   * All the views created by the {@link Layer} objects will be
+   * overlaid on this container.
    */
   private FrameLayout container;
 
@@ -60,15 +61,13 @@ public class LayerManager {
 
   /**
    * Given a container, create the video layers and add them to the container.
+   *
    * @param activity The activity which will display the video player.
    * @param container The frame layout which will contain the views.
    * @param video the video that will be played by this LayerManager.
    * @param layers The layers which should be displayed on top of the container.
    */
-  public LayerManager(Activity activity,
-                      FrameLayout container,
-                      Video video,
-                      List<Layer> layers) {
+  public LayerManager(Activity activity, FrameLayout container, Video video, List<Layer> layers) {
     this.activity = activity;
     this.container = container;
     container.setBackgroundColor(Color.BLACK);

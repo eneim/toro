@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.layeredvideo;
+package im.ene.lab.toro.ext.layeredvideo;
 
 import android.animation.Animator;
 import android.app.Activity;
@@ -38,7 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.google.android.exoplayer.util.PlayerControl;
-import im.ene.lab.toro.player.R;
+import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -46,9 +46,9 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
-
 /**
- * A {@link Layer} that creates a customizable view for controlling video playback.
+ * A {@link Layer} that creates a customizable view for controlling
+ * video playback.
  *
  * <p>The view consists of:
  *
@@ -76,7 +76,8 @@ import java.util.Locale;
  * <p> 5) Setting the title of the video displayed in the left of the top chrome
  * (and to the right of the logo).
  *
- * <p> 6) Adding an action button by providing an image, a content description, and a click handler. If
+ * <p> 6) Adding an action button by providing an image, a content description, and a click handler.
+ * If
  * there is enough room, the action buttons will be displayed on the right of the top chrome. If
  * there is NOT enough room, an overflow button will be displayed. When the overflow button is
  * clicked, a dialog box listing the content descriptions for the action buttons is displayed. The
@@ -87,7 +88,8 @@ import java.util.Locale;
 public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
-   * In order to imbue the {@link PlaybackControlLayer} with the ability make the player fullscreen,
+   * In order to imbue the {@link PlaybackControlLayer} with the ability make the player
+   * fullscreen,
    * a {@link FullscreenCallback} must be assigned to it. The
    * {@link FullscreenCallback} implementation is responsible for
    * hiding/showing the other views on the screen when the player enters/leaves fullscreen
@@ -137,11 +139,11 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
      * Receives either a {@link PlaybackControlLayer#FADE_OUT} message (which hides the playback
      * control layer) or a {@link PlaybackControlLayer#SHOW_PROGRESS} message (which updates the
      * seek bar to reflect the progress in the video).
+     *
      * @param msg Either a {@link PlaybackControlLayer#FADE_OUT} or
      * {@link PlaybackControlLayer#SHOW_PROGRESS} message.
      */
-    @Override
-    public void handleMessage(Message msg) {
+    @Override public void handleMessage(Message msg) {
       PlaybackControlLayer layer = playbackControlLayer.get();
       if (layer == null || layer.getLayerManager().getControl() == null) {
         return;
@@ -153,9 +155,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
           break;
         case SHOW_PROGRESS:
           pos = layer.updateProgress();
-          if (!layer.isSeekbarDragging
-              && layer.isVisible
-              && layer.getLayerManager().getControl().isPlaying()) {
+          if (!layer.isSeekbarDragging && layer.isVisible && layer.getLayerManager()
+              .getControl()
+              .isPlaying()) {
             msg = obtainMessage(SHOW_PROGRESS);
             sendMessageDelayed(msg, 1000 - (pos % 1000));
           }
@@ -279,7 +281,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   private PlayCallback playCallback;
   /**
    * The message handler which deals with displaying progress and fading out the media controls
-   * We use it so that we can make the view fade out after a timeout (by sending a delayed message).
+   * We use it so that we can make the view fade out after a timeout (by sending a delayed
+   * message).
    */
   private Handler handler = new MessageHandler(this);
 
@@ -294,7 +297,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   private boolean isSeekbarDragging;
 
   /**
-   * The {@link LayerManager} which is responsible for adding this layer to the container and
+   * The {@link LayerManager} which is responsible for adding this
+   * layer to the container and
    * displaying it on top of the video player.
    */
   private LayerManager layerManager;
@@ -334,7 +338,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   /**
    * Whether the play button has been pressed and the video should be playing.
    * We include this variable because the video may pause when buffering must occur. Although
-   * the video will usually resume automatically when the buffering is complete, there are instances
+   * the video will usually resume automatically when the buffering is complete, there are
+   * instances
    * (i.e. ad playback), where it will not resume automatically. So, if we detect that the video is
    * paused after buffering and should be playing, we can resume it programmatically.
    */
@@ -402,28 +407,26 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Creates a button to put in the set of action buttons at the right of the top chrome.
+   *
    * @param activity The activity that contains the video player.
    * @param icon The image of the action (ex. trash can).
    * @param contentDescription The text description this action. This is used in case the
-   *                           action buttons do not fit in the video player. If so, an overflow
-   *                           button will appear and, when clicked, it will display a list of the
-   *                           content descriptions for each action.
+   * action buttons do not fit in the video player. If so, an overflow
+   * button will appear and, when clicked, it will display a list of the
+   * content descriptions for each action.
    * @param onClickListener The handler for when the action is triggered.
    */
-  public void addActionButton(Activity activity,
-                              Drawable icon,
-                              String contentDescription,
-                              View.OnClickListener onClickListener) {
+  public void addActionButton(Activity activity, Drawable icon, String contentDescription,
+      View.OnClickListener onClickListener) {
     ImageButton button = new ImageButton(activity);
 
     button.setContentDescription(contentDescription);
     button.setImageDrawable(icon);
     button.setOnClickListener(onClickListener);
 
-    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT,
-        ViewGroup.LayoutParams.WRAP_CONTENT
-    );
+    FrameLayout.LayoutParams layoutParams =
+        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
 
     int margin = activity.getResources().getDisplayMetrics().densityDpi * 5;
     layoutParams.setMargins(margin, 0, margin, 0);
@@ -441,8 +444,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
   }
 
-  @Override
-  public FrameLayout createView(LayerManager layerManager) {
+  @Override public FrameLayout createView(LayerManager layerManager) {
     this.layerManager = layerManager;
 
     LayoutInflater inflater = layerManager.getActivity().getLayoutInflater();
@@ -450,9 +452,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     view = (FrameLayout) inflater.inflate(R.layout.tr_player_playback_control_layer, null);
     setupView();
 
-    originalContainerLayoutParams = layerManager
-        .getContainer()
-        .getLayoutParams();
+    originalContainerLayoutParams = layerManager.getContainer().getLayoutParams();
 
     layerManager.getControl().addCallback(this);
 
@@ -470,8 +470,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
 
     getLayerManager().getContainer().setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         if (isVisible) {
           hide();
         } else {
@@ -539,15 +538,17 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
       savedOrientation = activity.getResources().getConfiguration().orientation;
       activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-      activity.getWindow().getDecorView().setSystemUiVisibility(
-          View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
+      activity.getWindow()
+          .getDecorView()
+          .setSystemUiVisibility(
+              View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
       // Whenever the status bar and navigation bar appear, we want the playback controls to
       // appear as well.
-      activity.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(
-          new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int i) {
+      activity.getWindow()
+          .getDecorView()
+          .setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override public void onSystemUiVisibilityChange(int i) {
               // By doing a logical AND, we check if the fullscreen option is triggered (i.e. the
               // status bar is hidden). If the result of the logical AND is 0, that means that the
               // fullscreen flag is NOT triggered. This means that the status bar is showing. If
@@ -556,12 +557,11 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
                 show();
               }
             }
-          }
-      );
+          });
 
-      container.setLayoutParams(Util.getLayoutParamsBasedOnParent(container,
-          ViewGroup.LayoutParams.MATCH_PARENT,
-          ViewGroup.LayoutParams.MATCH_PARENT));
+      container.setLayoutParams(
+          Util.getLayoutParamsBasedOnParent(container, ViewGroup.LayoutParams.MATCH_PARENT,
+              ViewGroup.LayoutParams.MATCH_PARENT));
 
       fullscreenButton.setImageResource(R.drawable.ic_action_return_from_full_screen);
 
@@ -581,14 +581,16 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   }
 
   /**
-   * Returns the {@link LayerManager} which is responsible for displaying this layer's view.
+   * Returns the {@link LayerManager} which is responsible for
+   * displaying this layer's view.
    */
   public LayerManager getLayerManager() {
     return layerManager;
   }
 
   /**
-   * Fades the playback control layer out and then removes it from the {@link LayerManager}'s
+   * Fades the playback control layer out and then removes it from the {@link
+   * LayerManager}'s
    * container.
    */
   public void hide() {
@@ -606,11 +608,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
           .alpha(0.0f)
           .setDuration(FADE_OUT_DURATION_MS)
           .setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {}
+            @Override public void onAnimationStart(Animator animation) {
+            }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
+            @Override public void onAnimationEnd(Animator animation) {
               isFadingOut = false;
               playbackControlRootView.setVisibility(View.INVISIBLE);
               container.removeView(view);
@@ -618,18 +619,21 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
               // Make sure that the status bar and navigation bar are hidden when the playback
               // controls are hidden.
               if (isFullscreen) {
-                getLayerManager().getActivity().getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                getLayerManager().getActivity()
+                    .getWindow()
+                    .getDecorView()
+                    .setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
               }
               handler.removeMessages(SHOW_PROGRESS);
               isVisible = false;
             }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {}
+            @Override public void onAnimationCancel(Animator animation) {
+            }
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {}
+            @Override public void onAnimationRepeat(Animator animation) {
+            }
           });
     }
   }
@@ -637,8 +641,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   /**
    * Add the playback control layer back to the container.
    * The playback controls disappear after timeout milliseconds.
+   *
    * @param timeout Hide the view after timeout milliseconds. If timeout == 0, then the playback
-   *                controls will not disappear unless their container is tapped again.
+   * controls will not disappear unless their container is tapped again.
    */
   public void show(int timeout) {
     if (!isVisible && getLayerManager().getContainer() != null) {
@@ -649,11 +654,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
       updateProgress();
 
       // Add the view to the container again.
-      FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-          ViewGroup.LayoutParams.MATCH_PARENT,
-          ViewGroup.LayoutParams.MATCH_PARENT,
-          Gravity.CENTER
-      );
+      FrameLayout.LayoutParams layoutParams =
+          new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+              ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER);
       getLayerManager().getContainer().removeView(view);
       getLayerManager().getContainer().addView(view, layoutParams);
       setupView();
@@ -703,8 +706,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Make the player enter or leave fullscreen mode.
-   * @param shouldBeFullscreen If true, the player is put into fullscreen mode. If false, the player
-   *                           leaves fullscreen mode.
+   *
+   * @param shouldBeFullscreen If true, the player is put into fullscreen mode. If false, the
+   * player
+   * leaves fullscreen mode.
    */
   public void setFullscreen(boolean shouldBeFullscreen) {
     if (shouldBeFullscreen != isFullscreen) {
@@ -712,22 +717,20 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
   }
 
-  @Override
-  public void onLayerDisplayed(LayerManager layerManager) {}
+  @Override public void onLayerDisplayed(LayerManager layerManager) {
+  }
 
   /**
    * Updates the play/pause button to the play icon.
    */
-  @Override
-  public void onPause() {
+  @Override public void onPause() {
     updatePlayPauseButton();
   }
 
   /**
    * Updates the play/pause button to the pause icon.
    */
-  @Override
-  public void onPlay() {
+  @Override public void onPlay() {
     updatePlayPauseButton();
     if (playCallback != null) {
       playCallback.onPlay();
@@ -736,6 +739,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Sets the color of the top chrome, bottom chrome, and background.
+   *
    * @param color a color derived from the @{link Color} class (ex. {@link Color#RED}).
    */
   public void setChromeColor(int color) {
@@ -747,6 +751,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Sets the color of the buttons and seek bar.
+   *
    * @param color a color derived from the @{link Color} class (ex. {@link Color#RED}).
    */
   public void setControlColor(int color) {
@@ -759,6 +764,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Sets the color of the seekbar.
+   *
    * @param color a color derived from the @{link Color} class (ex. {@link Color#RED}).
    */
   public void setSeekbarColor(int color) {
@@ -770,6 +776,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Sets the color of the text views
+   *
    * @param color a color derived from the @{link Color} class (ex. {@link Color#RED}).
    */
   public void setTextColor(int color) {
@@ -781,9 +788,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Set the callback which will be called when the player enters and leaves fullscreen mode.
+   *
    * @param fullscreenCallback The callback should hide other views in the activity when the player
-   *                           enters fullscreen mode and show other views when the player leaves
-   *                           fullscreen mode.
+   * enters fullscreen mode and show other views when the player leaves
+   * fullscreen mode.
    */
   public void setFullscreenCallback(FullscreenCallback fullscreenCallback) {
     this.fullscreenCallback = fullscreenCallback;
@@ -796,6 +804,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Set the logo with appears in the left of the top chrome.
+   *
    * @param logo The drawable which will be the logo.
    */
   public void setLogoImageView(Drawable logo) {
@@ -807,6 +816,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Play or pause the player.
+   *
    * @param shouldPlay If true, then the player starts playing. If false, the player pauses.
    */
   public void setPlayPause(boolean shouldPlay) {
@@ -826,6 +836,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   /**
    * Set the title of the video in the left of the top chrome (to the right of the logo).
+   *
    * @param title The video title. If it is too long, it will be ellipsized.
    */
   public void setVideoTitle(String title) {
@@ -854,8 +865,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
     // The play button should toggle play/pause when the play/pause button is clicked.
     pausePlayButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         togglePlayPause();
         show(DEFAULT_TIMEOUT_MS);
       }
@@ -866,8 +876,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
     // Go into fullscreen when the fullscreen button is clicked.
     fullscreenButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
+      @Override public void onClick(View view) {
         doToggleFullscreen();
         show(DEFAULT_TIMEOUT_MS);
         updateActionButtons();
@@ -878,8 +887,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     seekBar.setMax(1000);
 
     seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
+      @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromuser) {
         if (!fromuser || !canSeek) {
           // Ignore programmatic changes to seek bar position.
           // Ignore changes to seek bar position is seeking is not enabled.
@@ -895,15 +903,13 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
         }
       }
 
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
+      @Override public void onStartTrackingTouch(SeekBar seekBar) {
         show(0);
         isSeekbarDragging = true;
         handler.removeMessages(SHOW_PROGRESS);
       }
 
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
+      @Override public void onStopTrackingTouch(SeekBar seekBar) {
         isSeekbarDragging = false;
         updateProgress();
         updatePlayPauseButton();
@@ -917,7 +923,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
     timeFormat = new StringBuilder();
     timeFormatter = new Formatter(timeFormat, Locale.getDefault());
-
   }
 
   /**
@@ -958,7 +963,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   /**
    * The action buttons are displayed in the top right of the video player. If the player is in
    * portrait mode, then display an overflow button which displays a dialog window containing the
-   * possible actions. If the player is in landscape, then display the images for the actions in the
+   * possible actions. If the player is in landscape, then display the images for the actions in
+   * the
    * top right of the video player.
    */
   public void updateActionButtons() {
@@ -970,11 +976,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
       }
     } else {
       ImageButton overflowButton = new ImageButton(getLayerManager().getActivity());
-      overflowButton.setContentDescription(getLayerManager()
-          .getActivity()
-          .getString(R.string.overflow));
-      overflowButton.setImageDrawable(getLayerManager()
-          .getActivity()
+      overflowButton.setContentDescription(
+          getLayerManager().getActivity().getString(R.string.overflow));
+      overflowButton.setImageDrawable(getLayerManager().getActivity()
           .getResources()
           .getDrawable(R.drawable.ic_action_overflow));
 
@@ -985,8 +989,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
         actions[i] = actionButtons.get(i).getContentDescription();
       }
       builder.setItems(actions, new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
+        @Override public void onClick(DialogInterface dialogInterface, int i) {
           actionButtons.get(i).performClick();
         }
       });
@@ -994,21 +997,16 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
       final AlertDialog alertDialog = builder.create();
 
       overflowButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+        @Override public void onClick(View view) {
           alertDialog.show();
         }
       });
 
-      FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-          ViewGroup.LayoutParams.WRAP_CONTENT,
-          ViewGroup.LayoutParams.WRAP_CONTENT
-      );
-      int margin = 5 * getLayerManager()
-          .getActivity()
-          .getResources()
-          .getDisplayMetrics()
-          .densityDpi;
+      FrameLayout.LayoutParams layoutParams =
+          new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+              ViewGroup.LayoutParams.WRAP_CONTENT);
+      int margin =
+          5 * getLayerManager().getActivity().getResources().getDisplayMetrics().densityDpi;
       layoutParams.setMargins(margin, 0, margin, 0);
 
       overflowButton.setBackgroundColor(Color.TRANSPARENT);
