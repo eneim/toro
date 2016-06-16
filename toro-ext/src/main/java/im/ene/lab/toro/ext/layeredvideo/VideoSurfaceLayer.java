@@ -63,7 +63,7 @@ public class VideoSurfaceLayer implements Layer {
    */
   private SurfaceHolder.Callback surfaceHolderCallback = new SurfaceHolder.Callback() {
     @Override public void surfaceCreated(SurfaceHolder surfaceHolder) {
-      ExoMediaPlayer wrapper = layerManager.getExoplayerWrapper();
+      ExoMediaPlayer wrapper = layerManager.getExoPlayer();
       if (wrapper != null) {
         wrapper.setSurface(surfaceHolder.getSurface());
         if (wrapper.getSurface().isValid()
@@ -79,8 +79,8 @@ public class VideoSurfaceLayer implements Layer {
     }
 
     @Override public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-      if (layerManager.getExoplayerWrapper() != null) {
-        layerManager.getExoplayerWrapper().blockingClearSurface();
+      if (layerManager.getExoPlayer() != null) {
+        layerManager.getExoPlayer().blockingClearSurface();
       }
     }
   };
@@ -109,7 +109,7 @@ public class VideoSurfaceLayer implements Layer {
     view = (FrameLayout) LayoutInflater.from(layerManager.getContainer().getContext())
         .inflate(R.layout.tr_player_video_surface_layer, layerManager.getContainer(), false);
 
-    layerManager.getExoplayerWrapper().addListener(playbackListener);
+    layerManager.getExoPlayer().addListener(playbackListener);
 
     surfaceView = (VideoSurfaceView) view.findViewById(R.id.surface_view);
     if (surfaceView != null) {
@@ -156,7 +156,7 @@ public class VideoSurfaceLayer implements Layer {
    * When you are finished using this object, call this method.
    */
   public void release() {
-    ExoMediaPlayer wrapper = layerManager.getExoplayerWrapper();
+    ExoMediaPlayer wrapper = layerManager.getExoPlayer();
     if (wrapper != null) {
       wrapper.removeListener(playbackListener);
     }

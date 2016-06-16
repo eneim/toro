@@ -26,7 +26,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Gravity;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +76,8 @@ import java.util.Locale;
  * <p> 5) Setting the title of the video displayed in the left of the top chrome
  * (and to the right of the logo).
  *
- * <p> 6) Adding an action button by providing an image, a content description, and a click handler.
+ * <p> 6) Adding an action button by providing an image, a content description, and a click
+ * handler.
  * If
  * there is enough room, the action buttons will be displayed on the right of the top chrome. If
  * there is NOT enough room, an overflow button will be displayed. When the overflow button is
@@ -132,7 +133,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
      * @param playbackControlLayer The {@link PlaybackControlLayer} we should handle messages for.
      */
     private MessageHandler(PlaybackControlLayer playbackControlLayer) {
-      this.playbackControlLayer = new WeakReference<PlaybackControlLayer>(playbackControlLayer);
+      this.playbackControlLayer = new WeakReference<>(playbackControlLayer);
     }
 
     /**
@@ -155,9 +156,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
           break;
         case SHOW_PROGRESS:
           pos = layer.updateProgress();
-          if (!layer.isSeekbarDragging && layer.isVisible && layer.getLayerManager()
-              .getControl()
-              .isPlaying()) {
+          if (!layer.isSeekBarDragging && layer.isVisible  //
+              && layer.getLayerManager().getControl().isPlaying()) {
             msg = obtainMessage(SHOW_PROGRESS);
             sendMessageDelayed(msg, 1000 - (pos % 1000));
           }
@@ -255,7 +255,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * Derived from the {@link Color} class (ex {@link Color#RED}), this is the color of the seekbar
    * track and thumb.
    */
-  private int seekbarColor;
+  private int seekBarColor;
 
   /**
    * Displays the elapsed time into video.
@@ -292,9 +292,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   private boolean isFullscreen;
 
   /**
-   * Whether the seekbar is currently being dragged.
+   * Whether the seekBar is currently being dragged.
    */
-  private boolean isSeekbarDragging;
+  private boolean isSeekBarDragging;
 
   /**
    * The {@link LayerManager} which is responsible for adding this
@@ -402,7 +402,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     this.canSeek = true;
     this.fullscreenCallback = fullscreenCallback;
     this.shouldBePlaying = false;
-    actionButtons = new ArrayList<ImageButton>();
+    this.actionButtons = new ArrayList<>();
   }
 
   /**
@@ -446,10 +446,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
   @Override public FrameLayout createView(LayerManager layerManager) {
     this.layerManager = layerManager;
-
-    LayoutInflater inflater = layerManager.getActivity().getLayoutInflater();
-
-    view = (FrameLayout) inflater.inflate(R.layout.tr_player_playback_control_layer, null);
+    view = (FrameLayout) LayoutInflater.from(layerManager.getContainer().getContext())
+        .inflate(R.layout.tr_player_playback_control_layer, layerManager.getContainer(), false);
     setupView();
 
     originalContainerLayoutParams = layerManager.getContainer().getLayoutParams();
@@ -461,15 +459,15 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     textColor = DEFAULT_TEXT_COLOR;
     chromeColor = DEFAULT_CHROME_COLOR;
     controlColor = DEFAULT_CONTROL_TINT_COLOR;
-    // Since the seek bar doens't use image assets, we can't use TRANSPARENT as the default tint
+    // Since the seek bar doesn't use image assets, we can't use TRANSPARENT as the default tint
     // because that would make it invisible, so instead we use the default text tint (White).
-    seekbarColor = DEFAULT_TEXT_COLOR;
+    seekBarColor = DEFAULT_TEXT_COLOR;
 
     if (logoDrawable != null) {
       logoImageView.setImageDrawable(logoDrawable);
     }
 
-    getLayerManager().getContainer().setOnClickListener(new View.OnClickListener() {
+    layerManager.getContainer().setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         if (isVisible) {
           hide();
@@ -508,18 +506,18 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * hidden (or made visible) when this method is called.
    */
   public void doToggleFullscreen() {
-
     // If there is no callback for handling fullscreen, don't do anything.
     if (fullscreenCallback == null) {
       return;
     }
-    PlayerControl playerControl = getLayerManager().getControl();
+
+    PlayerControl playerControl = layerManager.getControl();
     if (playerControl == null) {
       return;
     }
 
-    Activity activity = getLayerManager().getActivity();
-    FrameLayout container = getLayerManager().getContainer();
+    Activity activity = layerManager.getActivity();
+    FrameLayout container = layerManager.getContainer();
 
     if (isFullscreen) {
       fullscreenCallback.onReturnFromFullscreen();
@@ -540,8 +538,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
       activity.getWindow()
           .getDecorView()
-          .setSystemUiVisibility(
-              View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
+          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+              | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
       // Whenever the status bar and navigation bar appear, we want the playback controls to
       // appear as well.
@@ -564,7 +564,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
               ViewGroup.LayoutParams.MATCH_PARENT));
 
       fullscreenButton.setImageResource(R.drawable.toro_ext_ic_fullscreen_exit);
-
       isFullscreen = true;
     }
   }
@@ -597,7 +596,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     if (isFadingOut) {
       return;
     }
-    final FrameLayout container = getLayerManager().getContainer();
+    final FrameLayout container = layerManager.getContainer();
     if (container == null) {
       return;
     }
@@ -619,7 +618,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
               // Make sure that the status bar and navigation bar are hidden when the playback
               // controls are hidden.
               if (isFullscreen) {
-                getLayerManager().getActivity()
+                layerManager.getActivity()
                     .getWindow()
                     .getDecorView()
                     .setSystemUiVisibility(
@@ -646,7 +645,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * controls will not disappear unless their container is tapped again.
    */
   public void show(int timeout) {
-    if (!isVisible && getLayerManager().getContainer() != null) {
+    if (!isVisible && layerManager.getContainer() != null) {
       playbackControlRootView.setAlpha(1.0f);
       // Make the view visible.
       playbackControlRootView.setVisibility(View.VISIBLE);
@@ -654,14 +653,16 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
       updateProgress();
 
       // Add the view to the container again.
-      FrameLayout.LayoutParams layoutParams =
-          new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-              ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-      getLayerManager().getContainer().removeView(view);
-      getLayerManager().getContainer().addView(view, layoutParams);
+      // 1. Get old params
+      FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) view.getLayoutParams();
+      // 2. Remove from container
+      layerManager.getContainer().removeView(view);
+      // 3. Re-add
+      layerManager.getContainer().addView(view, layoutParams);
       setupView();
       isVisible = true;
     }
+
     updatePlayPauseButton();
 
     handler.sendEmptyMessage(SHOW_PROGRESS);
@@ -767,8 +768,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    *
    * @param color a color derived from the @{link Color} class (ex. {@link Color#RED}).
    */
-  public void setSeekbarColor(int color) {
-    this.seekbarColor = color;
+  public void setSeekBarColor(int color) {
+    this.seekBarColor = color;
     if (playbackControlRootView != null) {
       updateColors();
     }
@@ -820,7 +821,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * @param shouldPlay If true, then the player starts playing. If false, the player pauses.
    */
   public void setPlayPause(boolean shouldPlay) {
-    PlayerControl playerControl = getLayerManager().getControl();
+    PlayerControl playerControl = layerManager.getControl();
     if (playerControl == null) {
       return;
     }
@@ -894,23 +895,23 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
           return;
         }
 
-        PlayerControl playerControl = getLayerManager().getControl();
+        PlayerControl playerControl = layerManager.getControl();
         long duration = playerControl.getDuration();
-        long newposition = (duration * progress) / 1000L;
-        playerControl.seekTo((int) newposition);
+        long newPosition = (duration * progress) / 1000L;
+        playerControl.seekTo((int) newPosition);
         if (currentTime != null) {
-          currentTime.setText(stringForTime((int) newposition));
+          currentTime.setText(stringForTime((int) newPosition));
         }
       }
 
       @Override public void onStartTrackingTouch(SeekBar seekBar) {
         show(0);
-        isSeekbarDragging = true;
+        isSeekBarDragging = true;
         handler.removeMessages(SHOW_PROGRESS);
       }
 
       @Override public void onStopTrackingTouch(SeekBar seekBar) {
-        isSeekbarDragging = false;
+        isSeekBarDragging = false;
         updateProgress();
         updatePlayPauseButton();
         show(DEFAULT_TIMEOUT_MS);
@@ -956,7 +957,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * If the player is paused, play it and if the player is playing, pause it.
    */
   public void togglePlayPause() {
-    this.shouldBePlaying = !getLayerManager().getControl().isPlaying();
+    this.shouldBePlaying = !layerManager.getControl().isPlaying();
     setPlayPause(shouldBePlaying);
   }
 
@@ -975,15 +976,14 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
         actionButtonsContainer.addView(imageButton);
       }
     } else {
-      ImageButton overflowButton = new ImageButton(getLayerManager().getActivity());
-      overflowButton.setContentDescription(
-          getLayerManager().getActivity().getString(R.string.overflow));
-      overflowButton.setImageDrawable(getLayerManager().getActivity()
-          .getResources()
-          .getDrawable(R.drawable.ic_action_overflow));
+      ImageButton overflowButton = new ImageButton(layerManager.getContainer().getContext());
+      overflowButton.setContentDescription(layerManager.getActivity().getString(R.string.overflow));
+      overflowButton.setImageDrawable(
+          ContextCompat.getDrawable(layerManager.getContainer().getContext(),
+              R.drawable.ic_action_overflow));
 
-      AlertDialog.Builder builder = new AlertDialog.Builder(getLayerManager().getActivity());
-      builder.setTitle(getLayerManager().getActivity().getString(R.string.select_an_action));
+      AlertDialog.Builder builder = new AlertDialog.Builder(layerManager.getActivity());
+      builder.setTitle(layerManager.getActivity().getString(R.string.select_an_action));
       final CharSequence[] actions = new CharSequence[actionButtons.size()];
       for (int i = 0; i < actionButtons.size(); i++) {
         actions[i] = actionButtons.get(i).getContentDescription();
@@ -1005,8 +1005,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
       FrameLayout.LayoutParams layoutParams =
           new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
               ViewGroup.LayoutParams.WRAP_CONTENT);
-      int margin =
-          5 * getLayerManager().getActivity().getResources().getDisplayMetrics().densityDpi;
+      // 5dp
+      int margin = 5 * layerManager.getActivity().getResources().getDisplayMetrics().densityDpi;
       layoutParams.setMargins(margin, 0, margin, 0);
 
       overflowButton.setBackgroundColor(Color.TRANSPARENT);
@@ -1026,8 +1026,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
 
     fullscreenButton.setColorFilter(controlColor);
     pausePlayButton.setColorFilter(controlColor);
-    seekBar.getProgressDrawable().setColorFilter(seekbarColor, PorterDuff.Mode.SRC_ATOP);
-    seekBar.getThumb().setColorFilter(seekbarColor, PorterDuff.Mode.SRC_ATOP);
+    seekBar.getProgressDrawable().setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
+    seekBar.getThumb().setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
 
     // Hide the thumb drawable if the SeekBar is disabled
     if (canSeek) {
@@ -1049,7 +1049,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * video player.
    */
   public void updatePlayPauseButton() {
-    PlayerControl playerControl = getLayerManager().getControl();
+    PlayerControl playerControl = layerManager.getControl();
     if (view == null || pausePlayButton == null || playerControl == null) {
       return;
     }
@@ -1065,8 +1065,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * Adjust the position of the action bar to reflect the progress of the video.
    */
   public int updateProgress() {
-    PlayerControl playerControl = getLayerManager().getControl();
-    if (playerControl == null || isSeekbarDragging) {
+    PlayerControl playerControl = layerManager.getControl();
+    if (playerControl == null || isSeekBarDragging) {
       return 0;
     }
 

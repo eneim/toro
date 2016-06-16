@@ -44,15 +44,12 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
   private FrameLayout view;
 
   @Override public FrameLayout createView(LayerManager manager) {
-    LayoutInflater inflater = manager.getActivity().getLayoutInflater();
-
-    view = (FrameLayout) inflater.inflate(R.layout.tr_player_subtitle_layer, manager.getContainer(),
-        false);
+    view = (FrameLayout) LayoutInflater.from(manager.getContainer().getContext())
+        .inflate(R.layout.tr_player_subtitle_layer, manager.getContainer(), false);
     subtitles = (SubtitleLayout) view.findViewById(R.id.subtitles);
     // subtitles.setApplyEmbeddedStyles(true);
     configureSubtitleView();
-
-    manager.getExoplayerWrapper().setCaptionListener(this);
+    manager.getExoPlayer().setCaptionListener(this);
     return view;
   }
 
@@ -94,15 +91,13 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
     subtitles.setFractionalTextSize(SubtitleLayout.DEFAULT_TEXT_SIZE_FRACTION * fontScale);
   }
 
-  @TargetApi(19)
-  private float getUserCaptionFontScaleV19() {
+  @TargetApi(19) private float getUserCaptionFontScaleV19() {
     CaptioningManager captioningManager =
         (CaptioningManager) subtitles.getContext().getSystemService(Context.CAPTIONING_SERVICE);
     return captioningManager.getFontScale();
   }
 
-  @TargetApi(19)
-  private CaptionStyleCompat getUserCaptionStyleV19() {
+  @TargetApi(19) private CaptionStyleCompat getUserCaptionStyleV19() {
     CaptioningManager captioningManager =
         (CaptioningManager) subtitles.getContext().getSystemService(Context.CAPTIONING_SERVICE);
     return CaptionStyleCompat.createFromCaptionStyle(captioningManager.getUserStyle());

@@ -57,7 +57,7 @@ public class LayerManager {
   /**
    * Wrapper around ExoPlayer, which is the underlying video player.
    */
-  private ExoMediaPlayer exoplayerWrapper;
+  private ExoMediaPlayer exoPlayer;
 
   /**
    * Given a container, create the video layers and add them to the container.
@@ -75,10 +75,10 @@ public class LayerManager {
     ExoMediaPlayer.RendererBuilder rendererBuilder =
         RendererBuilderFactory.createRendererBuilder(activity, Uri.parse(video.getUrl()));
 
-    exoplayerWrapper = new ExoMediaPlayer(rendererBuilder);
-    exoplayerWrapper.prepare();
+    exoPlayer = new ExoMediaPlayer(rendererBuilder);
+    exoPlayer.prepare();
 
-    this.control = new ObservablePlayerControl(exoplayerWrapper);
+    this.control = new ObservablePlayerControl(exoPlayer);
 
     // Put the layers into the container.
     container.removeAllViews();
@@ -115,8 +115,8 @@ public class LayerManager {
    * Returns the wrapper which ties the video player to
    * {@link com.google.android.exoplayer.ExoPlayer}.
    */
-  public ExoMediaPlayer getExoplayerWrapper() {
-    return exoplayerWrapper;
+  public ExoMediaPlayer getExoPlayer() {
+    return exoPlayer;
   }
 
   /**
@@ -124,9 +124,9 @@ public class LayerManager {
    */
   public void release() {
     container.removeAllViews();
-    if (exoplayerWrapper != null) {
-      exoplayerWrapper.release();
-      exoplayerWrapper = null;
+    if (exoPlayer != null) {
+      exoPlayer.release();
+      exoPlayer = null;
     }
   }
 }

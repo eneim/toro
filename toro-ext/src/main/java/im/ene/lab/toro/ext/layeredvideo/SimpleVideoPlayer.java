@@ -101,10 +101,10 @@ public class SimpleVideoPlayer {
 
     layerManager = new LayerManager(activity, container, video, layers);
 
-    layerManager.getExoplayerWrapper().setCaptionListener(subtitleLayer);
+    layerManager.getExoPlayer().setCaptionListener(subtitleLayer);
 
     if (startPositionMs > 0) {
-      layerManager.getExoplayerWrapper().seekTo(startPositionMs);
+      layerManager.getExoPlayer().seekTo(startPositionMs);
     }
   }
 
@@ -129,7 +129,7 @@ public class SimpleVideoPlayer {
    * @param listener Listens to playback events.
    */
   public void addPlaybackListener(ExoMediaPlayer.Listener listener) {
-    layerManager.getExoplayerWrapper().addListener(listener);
+    layerManager.getExoPlayer().addListener(listener);
   }
 
   /**
@@ -293,7 +293,7 @@ public class SimpleVideoPlayer {
    * (ex. {@link android.graphics.Color#RED}).
    */
   public void setSeekbarColor(int color) {
-    playbackControlLayer.setSeekbarColor(color);
+    playbackControlLayer.setSeekBarColor(color);
   }
 
   /**
@@ -349,6 +349,6 @@ public class SimpleVideoPlayer {
   }
 
   public ExoMediaPlayer getPlayer() {
-    return layerManager.getExoplayerWrapper();
+    return layerManager.getExoPlayer();
   }
 }
