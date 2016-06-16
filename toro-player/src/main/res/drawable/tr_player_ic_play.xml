@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright 2016 eneim@Eneim Labs, nam@ene.im
   ~
@@ -14,16 +14,15 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
 
-  <ExpandableListView
-      android:id="@+id/sample_list"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      />
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="36dp"
+    android:viewportHeight="24.0"
+    android:viewportWidth="24.0"
+    android:width="36dp">
 
-</LinearLayout>
+  <path
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M8,5v14l11,-7z"/>
+
+</vector>

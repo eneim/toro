@@ -17,102 +17,113 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/middle_section"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <RelativeLayout
-        android:id="@+id/top_chrome"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_gravity="top"
-        android:background="@color/transparent_black_hex_8"
-        android:orientation="horizontal">
+  <RelativeLayout
+      android:id="@+id/top_chrome"
+      android:layout_width="match_parent"
+      android:layout_height="35dp"
+      android:layout_gravity="top"
+      android:background="@color/transparent_black_hex_8"
+      android:orientation="horizontal"
+      >
 
-        <ImageView
-            android:contentDescription="@string/logo_image"
-            android:id="@+id/logo_image"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            tools:ignore="RtlHardcoded" />
+    <ImageView
+        android:id="@+id/logo_image"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:contentDescription="@string/logo_image"
+        tools:ignore="RtlHardcoded"
+        />
 
-        <TextView
-            android:id="@+id/video_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:layout_toLeftOf="@+id/actions_container"
-            android:layout_toRightOf="@id/logo_image"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            tools:ignore="RtlHardcoded" />
-
-        <LinearLayout
-            android:id="@id/actions_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"
-            android:orientation="horizontal"
-            tools:ignore="RtlHardcoded" />
-
-    </RelativeLayout>
-
-    <ImageButton
-        android:contentDescription="@string/pause"
-        android:id="@+id/pause"
+    <TextView
+        android:id="@+id/video_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_action_pause_large" />
+        android:layout_marginTop="3dp"
+        android:layout_toLeftOf="@+id/actions_container"
+        android:layout_toRightOf="@id/logo_image"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        tools:ignore="RtlHardcoded"
+        />
 
     <LinearLayout
-        android:id="@+id/bottom_chrome"
-        android:layout_width="match_parent"
+        android:id="@id/actions_container"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal"
+        tools:ignore="RtlHardcoded"
+        />
 
-        android:background="@color/transparent_black_hex_8"
-        android:orientation="horizontal">
+  </RelativeLayout>
 
-        <TextView
-            android:contentDescription="@string/time_current"
-            android:id="@+id/time_current"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:paddingTop="5dp"
-            android:textColor="@android:color/white"
-            tools:ignore="RtlHardcoded" />
+  <ImageButton
+      android:id="@+id/pause"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:background="@android:color/transparent"
+      android:contentDescription="@string/pause"
+      android:src="@drawable/ic_action_pause_large"
+      />
 
-        <SeekBar
-            android:contentDescription="@string/seekbar"
-            android:id="@+id/mediacontroller_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+  <LinearLayout
+      android:id="@+id/bottom_chrome"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom"
 
-        <TextView
-            android:contentDescription="@string/time_duration"
-            android:id="@+id/time_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:paddingTop="5dp"
-            android:textColor="@android:color/white" />
+      android:background="@color/transparent_black_hex_8"
+      android:orientation="horizontal"
+      >
 
-        <ImageButton
-            android:contentDescription="@string/fullscreen_button"
-            android:id="@+id/fullscreen"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:layout_weight="0"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_action_full_screen"
-            tools:ignore="RtlHardcoded" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/time_current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:contentDescription="@string/time_current"
+        android:paddingTop="5dp"
+        android:textColor="@android:color/white"
+        tools:ignore="RtlHardcoded"
+        />
+
+    <SeekBar
+        android:id="@+id/mediacontroller_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/seekbar"
+        />
+
+    <TextView
+        android:id="@+id/time_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:contentDescription="@string/time_duration"
+        android:paddingTop="5dp"
+        android:textColor="@android:color/white"
+        />
+
+    <ImageButton
+        android:id="@+id/fullscreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="4dp"
+        android:layout_weight="0"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/fullscreen_button"
+        android:src="@drawable/ic_action_full_screen"
+        tools:ignore="RtlHardcoded"
+        />
+  </LinearLayout>
 </FrameLayout>
