@@ -17,13 +17,13 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.3"
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.lab.toro.sample.legacy"
-    minSdkVersion 16
-    targetSdkVersion 23
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
   }

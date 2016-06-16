@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2016 eneim@Eneim Labs, nam@ene.im
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,14 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <string name="app_name">Toro Extended</string>
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <im.ene.lab.toro.player.layeredvideo.VideoSurfaceView
+        android:id="@+id/surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:clickable="false" />
+</FrameLayout>

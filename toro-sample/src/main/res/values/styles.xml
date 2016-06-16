@@ -39,4 +39,5 @@
     <item name="android:background">?attr/selectableItemBackground</item>
     <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
   </style>
+
 </resources>

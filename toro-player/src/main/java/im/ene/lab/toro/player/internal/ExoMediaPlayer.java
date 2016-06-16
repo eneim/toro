@@ -50,7 +50,6 @@ import com.google.android.exoplayer.text.TextRenderer;
 import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.util.DebugTextViewHelper;
-import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
@@ -61,12 +60,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-//import im.ene.lab.toro.player.PlaybackException;
-//import im.ene.lab.toro.player.TrMediaPlayer;
-//import im.ene.lab.toro.player.listener.OnInfoListener;
-//import im.ene.lab.toro.player.listener.OnPlayerStateChangeListener;
-//import im.ene.lab.toro.player.listener.OnVideoSizeChangedListener;
 
 /**
  * A wrapper around {@link ExoPlayer} that provides a higher level interface. It can be prepared
@@ -183,6 +176,18 @@ public class ExoMediaPlayer
   }
 
   /**
+   * A listener for receiving notifications of timed text.
+   */
+  public interface TextListener {
+
+    /**
+     * Respond to text arriving (ex subtitles, captions).
+     * @param text The received text.
+     */
+    void onText(String text);
+  }
+
+  /**
    * A listener for receiving ID3 metadata parsed from the media stream.
    */
   public interface Id3MetadataListener {
@@ -211,8 +216,8 @@ public class ExoMediaPlayer
   private static final int RENDERER_BUILDING_STATE_BUILT = 3;
 
   private final RendererBuilder rendererBuilder;
-  private final ExoPlayer player;
-  private final PlayerControl playerControl;
+  final ExoPlayer player;
+  // private final ObservablePlayerControl playerControl;
   private final Handler mainHandler;
   private final CopyOnWriteArrayList<Listener> listeners;
 
@@ -230,6 +235,14 @@ public class ExoMediaPlayer
   private BandwidthMeter bandwidthMeter;
   private boolean backgrounded;
 
+  /**
+   * The names of the available tracks, indexed by ExoplayerWrapper INDEX_* constants.
+   * May be null if the track names are unknown. An individual element may be null if the track
+   * names are unknown for the corresponding type.
+   */
+  private String[][] trackNames;
+
+  private TextListener textListener;
   private CaptionListener captionListener;
   private Id3MetadataListener id3MetadataListener;
   private InternalErrorListener internalErrorListener;
@@ -245,7 +258,7 @@ public class ExoMediaPlayer
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
     player.addListener(this);
     this.rendererBuilder = rendererBuilder;
-    playerControl = new PlayerControl(player);
+    // playerControl = new ObservablePlayerControl(player);
     mainHandler = new Handler();
     listeners = new CopyOnWriteArrayList<>();
     lastReportedPlaybackState = EXO_STATE_IDLE;
@@ -254,9 +267,9 @@ public class ExoMediaPlayer
     player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
   }
 
-  public PlayerControl getPlayerControl() {
-    return playerControl;
-  }
+  //public ObservablePlayerControl getPlayerControl() {
+  //  return playerControl;
+  //}
 
   public void addListener(Listener listener) {
     listeners.add(listener);
@@ -272,6 +285,15 @@ public class ExoMediaPlayer
 
   public void setInfoListener(InfoListener listener) {
     infoListener = listener;
+  }
+
+  /**
+   * Set the listener which responds to incoming text (ex subtitles or captions).
+   *
+   * @param listener The listener which can respond to text like subtitles and captions.
+   */
+  public void setTextListener(TextListener listener) {
+    textListener = listener;
   }
 
   public void setCaptionListener(CaptionListener listener) {
@@ -299,6 +321,14 @@ public class ExoMediaPlayer
   public void blockingClearSurface() {
     surface = null;
     pushSurface(true);
+  }
+
+  /**
+   * Returns the name of the track at the given index.
+   * @param type The index indicating the type of video (ex {@link #TYPE_VIDEO})
+   */
+  public String[] getTracks(int type) {
+    return trackNames == null ? null : trackNames[type];
   }
 
   public int getTrackCount(int type) {
@@ -360,6 +390,11 @@ public class ExoMediaPlayer
    * @param bandwidthMeter Provides an estimate of the currently available bandwidth. May be null.
    */
   /* package */ void onRenderers(TrackRenderer[] renderers, BandwidthMeter bandwidthMeter) {
+    // Normalize the results.
+    if (trackNames == null) {
+      trackNames = new String[RENDERER_COUNT][];
+    }
+
     for (int i = 0; i < RENDERER_COUNT; i++) {
       if (renderers[i] == null) {
         // Convert a null renderer to a dummy renderer.
@@ -409,7 +444,7 @@ public class ExoMediaPlayer
   }
 
   @Override public boolean isPlaying() {
-    return playerControl.isPlaying();
+    return player.getPlayWhenReady();
   }
 
   private int videoWidth;
@@ -616,6 +651,10 @@ public class ExoMediaPlayer
     if (captionListener != null && getSelectedTrack(TYPE_TEXT) != TRACK_DISABLED) {
       captionListener.onCues(cues);
     }
+
+    //if (cues != null && cues.size() > 0) {
+    //  processText(cues.get(0).text.toString());
+    //}
   }
 
   @Override public void onMetadata(List<Id3Frame> id3Frames) {
@@ -775,4 +814,11 @@ public class ExoMediaPlayer
   @Override public void setScreenOnWhilePlaying(boolean screenOnWhilePlaying) {
     // left blank
   }
+
+  ///* package */ void processText(String text) {
+  //  if (textListener == null || getSelectedTrack(TYPE_TEXT) == TRACK_DISABLED) {
+  //    return;
+  //  }
+  //  textListener.onText(text);
+  //}
 }
