@@ -46,7 +46,7 @@ public class LayerManager {
    * All the views created by the {@link Layer} objects will be
    * overlaid on this container.
    */
-  private FrameLayout container;
+  private final FrameLayout container;
 
   /**
    * Allows controlling video playback, reading video state, and registering callbacks for state
@@ -75,8 +75,8 @@ public class LayerManager {
     ExoMediaPlayer.RendererBuilder rendererBuilder =
         RendererBuilderFactory.createRendererBuilder(activity, Uri.parse(video.getUrl()));
 
-    exoPlayer = new ExoMediaPlayer(rendererBuilder);
-    exoPlayer.prepare();
+    this.exoPlayer = new ExoMediaPlayer(rendererBuilder);
+    this.exoPlayer.prepare();
 
     this.control = new ObservablePlayerControl(exoPlayer);
 

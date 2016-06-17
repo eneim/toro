@@ -216,8 +216,8 @@ public class ExoMediaPlayer
   private static final int RENDERER_BUILDING_STATE_BUILT = 3;
 
   private final RendererBuilder rendererBuilder;
-  final ExoPlayer player;
-  // private final ObservablePlayerControl playerControl;
+  /* package */final ExoPlayer player;
+
   private final Handler mainHandler;
   private final CopyOnWriteArrayList<Listener> listeners;
 
@@ -258,7 +258,6 @@ public class ExoMediaPlayer
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
     player.addListener(this);
     this.rendererBuilder = rendererBuilder;
-    // playerControl = new ObservablePlayerControl(player);
     mainHandler = new Handler();
     listeners = new CopyOnWriteArrayList<>();
     lastReportedPlaybackState = EXO_STATE_IDLE;
@@ -266,10 +265,6 @@ public class ExoMediaPlayer
     // Disable text initially.
     player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
   }
-
-  //public ObservablePlayerControl getPlayerControl() {
-  //  return playerControl;
-  //}
 
   public void addListener(Listener listener) {
     listeners.add(listener);
