@@ -70,14 +70,4 @@
 
   </LinearLayout>
 
-  <Button
-      android:id="@+id/btn_play_pause"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom"
-      android:layout_margin="8dp"
-      android:padding="8dp"
-      android:text="Pause"
-      style="?attr/buttonBarButtonStyle"
-      />
 </FrameLayout>

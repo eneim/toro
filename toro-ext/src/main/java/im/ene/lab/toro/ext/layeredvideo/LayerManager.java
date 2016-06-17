@@ -17,7 +17,6 @@
 package im.ene.lab.toro.ext.layeredvideo;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.net.Uri;
 import android.widget.FrameLayout;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
@@ -70,7 +69,6 @@ public class LayerManager {
   public LayerManager(Activity activity, FrameLayout container, Video video, List<Layer> layers) {
     this.activity = activity;
     this.container = container;
-    container.setBackgroundColor(Color.BLACK);
 
     ExoMediaPlayer.RendererBuilder rendererBuilder =
         RendererBuilderFactory.createRendererBuilder(activity, Uri.parse(video.getUrl()));

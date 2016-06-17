@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import com.google.android.exoplayer.text.CaptionStyleCompat;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.text.SubtitleLayout;
+import com.google.android.exoplayer.util.Util;
 import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.util.List;
@@ -80,7 +81,7 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
   private void configureSubtitleView() {
     CaptionStyleCompat style;
     float fontScale;
-    if (com.google.android.exoplayer.util.Util.SDK_INT >= 19) {
+    if (Util.SDK_INT >= 19) {
       style = getUserCaptionStyleV19();
       fontScale = getUserCaptionFontScaleV19();
     } else {

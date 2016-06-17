@@ -26,21 +26,20 @@ import android.widget.RelativeLayout;
 /**
  * Contains utility functions which are used by a number of other classes.
  */
-public class Util {
+public class PlayerUtil {
 
   /**
    * Create a LayoutParams object for the given view which enforces a given width and height.
    *
    * <p>This method is a bit complicated because the TYPE of the LayoutParams that a view must
    * receive (ex. LinearLayout.LayoutParams, RelativeLayout.LayoutParams) depends on the type of
-   * its
-   * PARENT view.
+   * its PARENT view.
    *
    * <p>Thus, in this method, we look at the parent view of the given view, determine its type,
    * and create the appropriate LayoutParams for that type.
    *
    * <p>This method only supports views which are nested inside a FrameLayout, LinearLayout, or
-   * GridLayout.
+   * RelativeLayout.
    */
   public static ViewGroup.LayoutParams getLayoutParamsBasedOnParent(View container, int width,
       int height) throws IllegalArgumentException {

@@ -100,9 +100,7 @@ public class SimpleVideoPlayer {
     layers.add(subtitleLayer);
 
     layerManager = new LayerManager(activity, container, video, layers);
-
     layerManager.getExoPlayer().setCaptionListener(subtitleLayer);
-
     if (startPositionMs > 0) {
       layerManager.getExoPlayer().seekTo(startPositionMs);
     }

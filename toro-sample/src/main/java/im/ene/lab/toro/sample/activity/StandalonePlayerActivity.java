@@ -106,12 +106,6 @@ public class StandalonePlayerActivity extends AppCompatActivity {
     setContentView(R.layout.sample_videoplayer);
     playerContainer = (FrameLayout) findViewById(R.id.player_container);
 
-    //try {
-    //  playerContainer.setMediaUri(Uri.fromFile(Util.loadMovieFolder()[0]));
-    //} catch (FileNotFoundException e) {
-    //  e.printStackTrace();
-    //}
-
     try {
       File[] local = Util.loadMovieFolder();
       videoPlayer = new SimpleVideoPlayer(this, playerContainer, new Video(
@@ -131,6 +125,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
       }
     });
+
     videoPlayer.enableSeeking();
   }
 
@@ -146,15 +141,15 @@ public class StandalonePlayerActivity extends AppCompatActivity {
       // targetShowUI = true;
       // uiShowHideHandler.sendEmptyMessage(MSG_UI_SHOW_HIDE);
       // TODO fix this for API 16 ~ 18
-      getWindow().getDecorView()
-          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-              | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-              // hide nav bar
-              | View.SYSTEM_UI_FLAG_FULLSCREEN
-              // hide status bar
-              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+      //getWindow().getDecorView()
+      //    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+      //        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+      //        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+      //        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+      //        // hide nav bar
+      //        | View.SYSTEM_UI_FLAG_FULLSCREEN
+      //        // hide status bar
+      //        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
   }
 

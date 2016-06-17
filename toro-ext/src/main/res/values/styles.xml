@@ -19,7 +19,7 @@
 
   <attr format="color" name="colorToroMediaButton"/>
 
-  <style name="ToroTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+  <style name="ToroTheme" parent="Theme.AppCompat.NoActionBar">
     <item name="colorToroMediaButton">?attr/colorControlNormal</item>
   </style>
 
