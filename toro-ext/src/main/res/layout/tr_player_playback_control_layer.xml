@@ -29,6 +29,7 @@
       android:layout_gravity="top"
       android:background="@color/transparent_black_hex_8"
       android:orientation="horizontal"
+      android:visibility="invisible"
       >
 
     <ImageView
@@ -81,7 +82,9 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom"
-      android:background="@color/transparent_black_hex_8"
+      android:background="@drawable/transparent_gradient_black"
+      android:gravity="center_vertical"
+      android:minHeight="40dp"
       android:orientation="horizontal"
       >
 
@@ -89,17 +92,23 @@
         android:id="@+id/time_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
         android:contentDescription="@string/time_current"
-        android:paddingTop="5dp"
-        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="4dp"
+        android:textColor="?attr/colorToroMediaButton"
+        android:textSize="12dp"
         tools:ignore="RtlHardcoded"
         />
 
     <SeekBar
-        android:id="@+id/mediacontroller_progress"
+        android:id="@+id/media_controller_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:contentDescription="@string/seekbar"
         />
@@ -108,23 +117,28 @@
         android:id="@+id/time_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
         android:contentDescription="@string/time_duration"
-        android:paddingTop="5dp"
-        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingEnd="8dp"
+        android:paddingRight="8dp"
+        android:textColor="?attr/colorToroMediaButton"
+        android:textSize="12dp"
         />
 
     <ImageButton
         android:id="@+id/fullscreen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="4dp"
-        android:layout_weight="0"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         android:contentDescription="@string/fullscreen_button"
+        android:scaleType="center"
         android:src="@drawable/toro_ext_ic_fullscreen_enter"
         tools:ignore="RtlHardcoded"
         />
   </LinearLayout>
+
+  <include layout="@layout/playback_controller_toolbar"/>
+
 </FrameLayout>

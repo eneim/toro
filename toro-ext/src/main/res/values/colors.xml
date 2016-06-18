@@ -16,5 +16,5 @@ limitations under the License.
 -->
 
 <resources>
-    <color name="transparent_black_hex_8">#88000000</color>
+  <color name="transparent_black_hex_8">#88000000</color>
 </resources>

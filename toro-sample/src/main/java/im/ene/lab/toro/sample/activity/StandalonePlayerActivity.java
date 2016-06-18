@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro.sample.activity;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -112,6 +113,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
           local != null && local.length > 0 ? Uri.fromFile(Util.loadMovieFolder()[0]).toString()
               : "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", Video.VideoType.MP4,
           "Garden of Words"), "Garden of Words", true);
+      videoPlayer.setVideoTitle("Garden of Words");
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -280,5 +282,11 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
   private static String buildTrackIdString(MediaFormat format) {
     return format.trackId == null ? "" : " (" + format.trackId + ")";
+  }
+
+  // Internal/Develop/Experiment API
+
+  @Override public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
   }
 }

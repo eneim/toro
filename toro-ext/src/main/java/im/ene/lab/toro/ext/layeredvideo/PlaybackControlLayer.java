@@ -21,13 +21,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -37,6 +40,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
@@ -86,7 +90,7 @@ import java.util.Locale;
  *
  * <p>The view is defined in the layout file: res/layout/playback_control_layer.xml.
  */
-public class PlaybackControlLayer implements Layer, PlayerControlCallback {
+public class PlaybackControlLayer implements Layer, PlayerControlCallback, Configurable {
 
   /**
    * In order to imbue the {@link PlaybackControlLayer} with the ability make the player
@@ -170,7 +174,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    * The chrome (the top chrome, bottom chrome, and background) is by default a slightly
    * transparent black.
    */
-  public static final int DEFAULT_CHROME_COLOR = Color.argb(140, 0, 0, 0);
+  public static final int DEFAULT_CHROME_COLOR = Color.argb(128, 0, 0, 0);
 
   /**
    * By default, there is no tint to the controls.
@@ -297,8 +301,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   private boolean isSeekBarDragging;
 
   /**
-   * The {@link LayerManager} which is responsible for adding this
-   * layer to the container and
+   * The {@link LayerManager} which is responsible for adding this layer to the container and
    * displaying it on top of the video player.
    */
   private LayerManager layerManager;
@@ -320,6 +323,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
    */
   private ViewGroup.LayoutParams originalContainerLayoutParams;
 
+  /**
+   * {@link Toolbar} contains action buttons and title.
+   */
+  private Toolbar actionToolbar;
   /**
    * Contains the actions buttons (displayed in right of the top chrome).
    */
@@ -849,16 +856,31 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     if (videoTitleView != null) {
       videoTitleView.setText(title);
     }
+
+    if (actionToolbar != null) {
+      actionToolbar.setTitle(title);
+      actionToolbar.setSubtitle(title); // TODO FIXME
+    }
   }
 
   /**
    * Perform binding to UI, setup of event handlers and initialization of values.
    */
   private void setupView() {
+    if (actionToolbar == null) {
+      actionToolbar = (Toolbar) view.findViewById(R.id.playback_toolbar);
+      actionToolbar.inflateMenu(R.menu.playback_actions);
+      actionToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        @Override public boolean onMenuItemClick(MenuItem item) {
+          Toast.makeText(layerManager.getActivity(), item.getTitle(), Toast.LENGTH_SHORT).show();
+          return true;
+        }
+      });
+    }
     // Bind fields to UI elements.
     pausePlayButton = (ImageButton) view.findViewById(R.id.pause);
     fullscreenButton = (ImageButton) view.findViewById((R.id.fullscreen));
-    seekBar = (SeekBar) view.findViewById(R.id.mediacontroller_progress);
+    seekBar = (SeekBar) view.findViewById(R.id.media_controller_progress);
     videoTitleView = (TextView) view.findViewById(R.id.video_title);
     endTime = (TextView) view.findViewById(R.id.time_duration);
     currentTime = (TextView) view.findViewById(R.id.time_current);
@@ -904,7 +926,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
         long newPosition = (duration * progress) / 1000L;
         playerControl.seekTo((int) newPosition);
         if (currentTime != null) {
-          currentTime.setText(stringForTime((int) newPosition));
+          currentTime.setText(formatTimeString((int) newPosition));
         }
       }
 
@@ -942,7 +964,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
   /**
    * Format the milliseconds to HH:MM:SS or MM:SS format.
    */
-  public String stringForTime(int timeMs) {
+  public String formatTimeString(int timeMs) {
     int totalSeconds = timeMs / 1000;
 
     int seconds = totalSeconds % 60;
@@ -1045,7 +1067,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
 
     topChrome.setBackgroundColor(chromeColor);
-    bottomChrome.setBackgroundColor(chromeColor);
+    // bottomChrome.setBackgroundColor(chromeColor);
   }
 
   /**
@@ -1088,13 +1110,17 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback {
     }
 
     if (endTime != null) {
-      endTime.setText(stringForTime(duration));
+      endTime.setText(formatTimeString(duration));
     }
     if (currentTime != null) {
-      currentTime.setText(stringForTime(position));
+      currentTime.setText(formatTimeString(position));
     }
 
     return position;
+  }
+
+  @Override public void onConfigurationChanged(Configuration newConfig) {
+
   }
 
   /**

@@ -18,9 +18,11 @@
 <resources>
 
   <attr format="color" name="colorToroMediaButton"/>
+  <attr format="dimension" name="controllerToolbarHeight"/>
 
   <style name="ToroTheme" parent="Theme.AppCompat.NoActionBar">
     <item name="colorToroMediaButton">?attr/colorControlNormal</item>
+    <item name="controllerToolbarHeight">?attr/actionBarSize</item>
   </style>
 
   <style name="RootTheme" parent="android:Theme.Holo">
