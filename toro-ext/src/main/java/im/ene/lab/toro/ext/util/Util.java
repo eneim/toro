@@ -16,7 +16,7 @@
 
 package im.ene.lab.toro.ext.util;
 
-import android.support.v7.widget.AppCompatSeekBar;
+import android.app.Activity;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -44,5 +44,18 @@ public class Util {
         return result;
       }
     }
+  }
+
+  public static boolean isLargeScreen(Activity activity) {
+    return !isMediumScreen(activity) && !isSmallScreen(activity);
+  }
+
+  public static boolean isMediumScreen(Activity activity) {
+    return !isSmallScreen(activity)
+        && activity.getResources().getConfiguration().smallestScreenWidthDp < 600;
+  }
+
+  public static boolean isSmallScreen(Activity activity) {
+    return activity.getResources().getConfiguration().smallestScreenWidthDp < 410;
   }
 }

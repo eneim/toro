@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.ext.R;
+import im.ene.lab.toro.ext.util.Util;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -889,6 +890,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     topChrome = (RelativeLayout) view.findViewById(R.id.top_chrome);
     bottomChrome = (LinearLayout) view.findViewById(R.id.bottom_chrome);
     actionButtonsContainer = (LinearLayout) view.findViewById(R.id.actions_container);
+
+    if (Util.isSmallScreen(layerManager.getActivity())) {
+
+    }
 
     // The play button should toggle play/pause when the play/pause button is clicked.
     pausePlayButton.setOnClickListener(new View.OnClickListener() {
