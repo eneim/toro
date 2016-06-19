@@ -16,58 +16,8 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/player_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    >
-
-  <FrameLayout
-      android:id="@+id/player_container"
-      android:layout_width="match_parent"
-      android:layout_height="320dp"
-      android:layout_gravity="center"
-      />
-
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="top"
-      android:orientation="horizontal"
-      >
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:onClick="showVideoPopup"
-        android:padding="8dp"
-        android:text="Video"
-        style="?attr/buttonBarButtonStyle"
-        />
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:onClick="showAudioPopup"
-        android:padding="8dp"
-        android:text="Audio"
-        style="?attr/buttonBarButtonStyle"
-        />
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        android:onClick="showTextPopup"
-        android:padding="8dp"
-        android:text="Text"
-        style="?attr/buttonBarButtonStyle"
-        />
-
-  </LinearLayout>
-
-</FrameLayout>
+    />

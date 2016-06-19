@@ -28,10 +28,11 @@
     </activity>
 
     <activity
+        android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
         android:name=".activity.StandalonePlayerActivity"
+        android:screenOrientation="portrait"
         android:theme="@style/ToroTheme">
     </activity>
 

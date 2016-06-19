@@ -17,6 +17,7 @@
 package im.ene.lab.toro.ext.layeredvideo;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -348,5 +349,17 @@ public class SimpleVideoPlayer {
 
   public ExoMediaPlayer getPlayer() {
     return layerManager.getExoPlayer();
+  }
+
+  public void onConfigurationChanged(Configuration newConfig) {
+    if (playbackControlLayer != null) {
+      playbackControlLayer.onConfigurationChanged(newConfig);
+    }
+  }
+
+  public void notifyWindowFocusChanged(boolean hasFocus) {
+    if (playbackControlLayer != null) {
+      playbackControlLayer.onWindowFocusChanged(hasFocus);
+    }
   }
 }

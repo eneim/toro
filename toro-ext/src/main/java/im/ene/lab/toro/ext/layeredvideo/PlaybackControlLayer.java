@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,7 +92,7 @@ import java.util.Locale;
  *
  * <p>The view is defined in the layout file: res/layout/playback_control_layer.xml.
  */
-public class PlaybackControlLayer implements Layer, PlayerControlCallback, Configurable {
+public class PlaybackControlLayer implements Layer, PlayerControlCallback, Configurable, Focusable {
 
   /**
    * In order to imbue the {@link PlaybackControlLayer} with the ability make the player
@@ -528,35 +529,28 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     FrameLayout container = layerManager.getContainer();
 
     if (isFullscreen) {
-      fullscreenCallback.onReturnFromFullscreen();
       activity.setRequestedOrientation(savedOrientation);
 
       // Make the status bar and navigation bar visible again.
-      activity.getWindow().getDecorView().setSystemUiVisibility(0);
+      //activity.getWindow()
+      //    .getDecorView()
+      //    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+      //        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+      //        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
       container.setLayoutParams(originalContainerLayoutParams);
 
       fullscreenButton.setImageResource(R.drawable.toro_ext_ic_fullscreen_enter);
 
+      fullscreenCallback.onReturnFromFullscreen();
       isFullscreen = false;
     } else {
-      fullscreenCallback.onGoToFullscreen();
       savedOrientation = activity.getResources().getConfiguration().orientation;
       activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-      activity.getWindow()
-          .getDecorView()
-          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-              | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-              // hide nav bar
-              | View.SYSTEM_UI_FLAG_FULLSCREEN
-              // hide status bar
-              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-      // Whenever the status bar and navigation bar appear, we want the playback controls to
-      // appear as well.
+      // TODO Won't use this now
+      //// Whenever the status bar and navigation bar appear, we want the playback controls to
+      //// appear as well.
       activity.getWindow()
           .getDecorView()
           .setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
@@ -565,17 +559,19 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
               // status bar is hidden). If the result of the logical AND is 0, that means that the
               // fullscreen flag is NOT triggered. This means that the status bar is showing. If
               // this is the case, then we show the playback controls as well (by calling show()).
-              //if ((i & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-              //  show();
-              //}
+              if ((i & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                show();
+              }
+              Log.d(TAG, "onSystemUiVisibilityChange() called with: " + "i = [" + i + "]");
             }
           });
 
       container.setLayoutParams(
           PlayerUtil.getLayoutParamsBasedOnParent(container, ViewGroup.LayoutParams.MATCH_PARENT,
-              ViewGroup.LayoutParams.WRAP_CONTENT));
+              ViewGroup.LayoutParams.MATCH_PARENT));
 
       fullscreenButton.setImageResource(R.drawable.toro_ext_ic_fullscreen_exit);
+      fullscreenCallback.onGoToFullscreen();
       isFullscreen = true;
     }
   }
@@ -627,15 +623,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
               playbackControlRootView.setVisibility(View.INVISIBLE);
               container.removeView(view);
 
-              // Make sure that the status bar and navigation bar are hidden when the playback
-              // controls are hidden.
-              if (isFullscreen) {
-                layerManager.getActivity()
-                    .getWindow()
-                    .getDecorView()
-                    .setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
-              }
               handler.removeMessages(SHOW_PROGRESS);
               isVisible = false;
             }
@@ -1124,8 +1111,38 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     return position;
   }
 
-  @Override public void onConfigurationChanged(Configuration newConfig) {
+  private static final String TAG = "PlayerControlLayer";
 
+  @Override public void onConfigurationChanged(Configuration newConfig) {
+    Log.d(TAG, "onConfigurationChanged() called with: " + "newConfig = [" + newConfig + "]");
+    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+      layerManager.getActivity()
+          .getWindow()
+          .getDecorView()
+          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+      layerManager.getActivity().getWindow().getDecorView().setSystemUiVisibility(0);
+    }
+  }
+
+  @Override public void onWindowFocusChanged(boolean hasFocus) {
+    if (hasFocus && isFullscreen) {
+      // TODO fix this for API 16 ~ 18
+      layerManager.getActivity()
+          .getWindow()
+          .getDecorView()
+          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+    }
   }
 
   /**

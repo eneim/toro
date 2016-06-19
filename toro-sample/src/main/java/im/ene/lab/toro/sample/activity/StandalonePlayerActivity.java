@@ -19,13 +19,10 @@ package im.ene.lab.toro.sample.activity;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,37 +66,6 @@ public class StandalonePlayerActivity extends AppCompatActivity {
   private static final int MSG_UI_SHOW_HIDE = -2;
   private static final int UI_SHOW_HIDE_DELAY_MS = 1500;
 
-  private final Handler uiShowHideHandler = new Handler(new Handler.Callback() {
-    @Override public boolean handleMessage(Message message) {
-      if (message.what == MSG_UI_SHOW_HIDE) {
-        Log.i(TAG, "handleMessage: " + targetShowUI);
-        if (targetShowUI) {
-          // 1. Show UI
-          getWindow().getDecorView()
-              .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-          // 2. Hide UI after a short delay
-          targetShowUI = !targetShowUI;
-          uiShowHideHandler.sendEmptyMessageDelayed(MSG_UI_SHOW_HIDE, UI_SHOW_HIDE_DELAY_MS);
-        } else {
-          getWindow().getDecorView()
-              .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                  | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                  | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                  | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                  // hide nav bar
-                  | View.SYSTEM_UI_FLAG_FULLSCREEN
-                  // hide status bar
-                  | View.SYSTEM_UI_FLAG_IMMERSIVE);
-        }
-
-        return true;
-      }
-      return false;
-    }
-  });
-
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     // If the Android version is lower than Jellybean, use this call to hide
@@ -139,20 +105,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
   @Override public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
-    if (hasFocus) {
-      // targetShowUI = true;
-      // uiShowHideHandler.sendEmptyMessage(MSG_UI_SHOW_HIDE);
-      // TODO fix this for API 16 ~ 18
-      //getWindow().getDecorView()
-      //    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-      //        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-      //        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-      //        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-      //        // hide nav bar
-      //        | View.SYSTEM_UI_FLAG_FULLSCREEN
-      //        // hide status bar
-      //        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-    }
+    videoPlayer.notifyWindowFocusChanged(hasFocus);
   }
 
   @Override protected void onPause() {
@@ -288,5 +241,8 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
   @Override public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
+    if (videoPlayer != null) {
+      videoPlayer.onConfigurationChanged(newConfig);
+    }
   }
 }
