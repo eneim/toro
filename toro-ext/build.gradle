@@ -42,16 +42,19 @@ ext {
 }
 
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.3"
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
 
+  // resourcePrefix 'tr_ext_'
   // defaultPublishConfig "release"
 
   defaultConfig {
-    minSdkVersion 16
-    targetSdkVersion 23
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
+
+    vectorDrawables.useSupportLibrary = true
   }
 
   buildTypes {

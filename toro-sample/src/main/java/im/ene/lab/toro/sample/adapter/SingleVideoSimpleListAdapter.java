@@ -40,10 +40,8 @@ public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
     }
 
     if (position == 1) {
-      return new SimpleVideoObject(
-          mkvFile != null ? mkvFile :
-          "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd"
-      );
+      return new SimpleVideoObject(mkvFile != null ? mkvFile
+          : "https://storage.googleapis.com/wvmedia/clear/h264/tears/tears.mpd");
     }
     return new SimpleObject();
   }

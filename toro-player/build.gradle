@@ -41,14 +41,15 @@ ext {
 }
 
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.3"
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
 
+  resourcePrefix 'tr_player_'
   // defaultPublishConfig "release"
 
   defaultConfig {
-    minSdkVersion 16
-    targetSdkVersion 23
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
   }
@@ -66,12 +67,12 @@ dependencies {
   testCompile 'junit:junit:4.12'
   compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
-  compile "com.google.android.exoplayer:exoplayer:r1.5.8"
+  compile "com.google.android.exoplayer:exoplayer:r1.5.9"
 
   compile project(':toro-media')
 
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
-  javadocDeps "com.google.android.exoplayer:exoplayer:r1.5.8"
+  javadocDeps "com.google.android.exoplayer:exoplayer:r1.5.9"
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

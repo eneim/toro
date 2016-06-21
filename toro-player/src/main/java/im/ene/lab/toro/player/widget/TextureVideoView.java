@@ -687,6 +687,10 @@ import java.util.Map;
     release(false);
   }
 
+  public void release() {
+    release(true);
+  }
+
   public void resume() {
     openVideo();
   }

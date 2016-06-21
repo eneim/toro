@@ -16,25 +16,8 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/player_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    >
-
-  <im.ene.lab.toro.player.widget.TextureVideoView
-      android:id="@+id/player_view"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      />
-
-  <Button
-      android:id="@+id/btn_play_pause"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom"
-      android:layout_margin="8dp"
-      android:padding="8dp"
-      android:text="Pause"
-      />
-</FrameLayout>
+    />
