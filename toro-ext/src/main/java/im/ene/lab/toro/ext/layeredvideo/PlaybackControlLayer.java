@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -29,7 +28,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,10 +39,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.ext.R;
-import im.ene.lab.toro.ext.util.Util;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -92,7 +88,7 @@ import java.util.Locale;
  *
  * <p>The view is defined in the layout file: res/layout/playback_control_layer.xml.
  */
-public class PlaybackControlLayer implements Layer, PlayerControlCallback, Configurable, Focusable {
+public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focusable {
 
   /**
    * In order to imbue the {@link PlaybackControlLayer} with the ability make the player
@@ -123,6 +119,11 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
   public interface PlayCallback {
 
     void onPlay();
+  }
+
+  public interface SettingsCallback {
+
+    void onSettings();
   }
 
   /**
@@ -230,7 +231,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
 
   /**
    * <p> Derived from the Color class (ex. {@link Color#RED}), the chrome consists of three
-   * views, which are are tinted with the the chrome color.
+   * views, which are tinted with the chrome color.
    *
    * <p> The views are:
    *
@@ -274,7 +275,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
   private TextView endTime;
 
   /**
-   * Makes player  enter or leave fullscreen. This button is not displayed unless there is a
+   * Makes player enter or leave fullscreen. This button is not displayed unless there is a
    * {@link FullscreenCallback} associated with this object.
    */
   private ImageButton fullscreenButton;
@@ -285,6 +286,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
   private FullscreenCallback fullscreenCallback;
 
   private PlayCallback playCallback;
+
+  private SettingsCallback settingsCallback;
+
   /**
    * The message handler which deals with displaying progress and fading out the media controls
    * We use it so that we can make the view fade out after a timeout (by sending a delayed
@@ -383,14 +387,14 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
   private LinearLayout bottomChrome;
 
   /**
-   * The title displayed in the {@link PlaybackControlLayer#videoTitleView}.
+   * The title displayed in the {@link PlaybackControlLayer#actionToolbar}.
    */
   private String videoTitle;
 
-  /**
-   * Video title displayed in the left of the top chrome.
-   */
-  private TextView videoTitleView;
+  ///**
+  // * Video title displayed in the left of the top chrome.
+  // */
+  //private TextView videoTitleView;
 
   /**
    * The view created by this {@link PlaybackControlLayer}
@@ -532,11 +536,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
       activity.setRequestedOrientation(savedOrientation);
 
       // Make the status bar and navigation bar visible again.
-      //activity.getWindow()
-      //    .getDecorView()
-      //    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-      //        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-      //        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+      activity.getWindow().getDecorView().setSystemUiVisibility(0);
 
       container.setLayoutParams(originalContainerLayoutParams);
 
@@ -548,23 +548,14 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
       savedOrientation = activity.getResources().getConfiguration().orientation;
       activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-      // TODO Won't use this now
-      //// Whenever the status bar and navigation bar appear, we want the playback controls to
-      //// appear as well.
       activity.getWindow()
           .getDecorView()
-          .setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override public void onSystemUiVisibilityChange(int i) {
-              // By doing a logical AND, we check if the fullscreen option is triggered (i.e. the
-              // status bar is hidden). If the result of the logical AND is 0, that means that the
-              // fullscreen flag is NOT triggered. This means that the status bar is showing. If
-              // this is the case, then we show the playback controls as well (by calling show()).
-              if ((i & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                show();
-              }
-              Log.d(TAG, "onSystemUiVisibilityChange() called with: " + "i = [" + i + "]");
-            }
-          });
+          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+              | View.SYSTEM_UI_FLAG_FULLSCREEN
+              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
       container.setLayoutParams(
           PlayerUtil.getLayoutParamsBasedOnParent(container, ViewGroup.LayoutParams.MATCH_PARENT,
@@ -841,13 +832,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
    */
   public void setVideoTitle(String title) {
     videoTitle = title;
-    if (videoTitleView != null) {
-      videoTitleView.setText(title);
-    }
 
     if (actionToolbar != null) {
       actionToolbar.setTitle(title);
-      actionToolbar.setSubtitle(title); // TODO FIXME
     }
   }
 
@@ -860,8 +847,12 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
       actionToolbar.inflateMenu(R.menu.playback_actions);
       actionToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
         @Override public boolean onMenuItemClick(MenuItem item) {
-          Toast.makeText(layerManager.getActivity(), item.getTitle(), Toast.LENGTH_SHORT).show();
-          return true;
+          if (settingsCallback != null) {
+            settingsCallback.onSettings();
+            return true;
+          }
+
+          return false;
         }
       });
     }
@@ -869,7 +860,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     pausePlayButton = (ImageButton) view.findViewById(R.id.pause);
     fullscreenButton = (ImageButton) view.findViewById((R.id.fullscreen));
     seekBar = (SeekBar) view.findViewById(R.id.media_controller_progress);
-    videoTitleView = (TextView) view.findViewById(R.id.video_title);
     endTime = (TextView) view.findViewById(R.id.time_duration);
     currentTime = (TextView) view.findViewById(R.id.time_current);
     logoImageView = (ImageView) view.findViewById(R.id.logo_image);
@@ -877,10 +867,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     topChrome = (RelativeLayout) view.findViewById(R.id.top_chrome);
     bottomChrome = (LinearLayout) view.findViewById(R.id.bottom_chrome);
     actionButtonsContainer = (LinearLayout) view.findViewById(R.id.actions_container);
-
-    if (Util.isSmallScreen(layerManager.getActivity())) {
-
-    }
 
     // The play button should toggle play/pause when the play/pause button is clicked.
     pausePlayButton.setOnClickListener(new View.OnClickListener() {
@@ -938,7 +924,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
       }
     });
 
-    videoTitleView.setText(videoTitle);
+    actionToolbar.setTitle(videoTitle);
 
     timeFormat = new StringBuilder();
     timeFormatter = new Formatter(timeFormat, Locale.getDefault());
@@ -1040,7 +1026,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
   public void updateColors() {
     currentTime.setTextColor(textColor);
     endTime.setTextColor(textColor);
-    videoTitleView.setTextColor(textColor);
+    actionToolbar.setTitleTextColor(textColor);
 
     fullscreenButton.setColorFilter(controlColor);
     pausePlayButton.setColorFilter(controlColor);
@@ -1059,7 +1045,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     }
 
     topChrome.setBackgroundColor(chromeColor);
-    // bottomChrome.setBackgroundColor(chromeColor);
   }
 
   /**
@@ -1082,7 +1067,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
   /**
    * Adjust the position of the action bar to reflect the progress of the video.
    */
-  public int updateProgress() {
+  private int updateProgress() {
     PlayerControl playerControl = layerManager.getControl();
     if (playerControl == null || isSeekBarDragging) {
       return 0;
@@ -1104,30 +1089,12 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
     if (endTime != null) {
       endTime.setText(formatTimeString(duration));
     }
+
     if (currentTime != null) {
       currentTime.setText(formatTimeString(position));
     }
 
     return position;
-  }
-
-  private static final String TAG = "PlayerControlLayer";
-
-  @Override public void onConfigurationChanged(Configuration newConfig) {
-    Log.d(TAG, "onConfigurationChanged() called with: " + "newConfig = [" + newConfig + "]");
-    if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      layerManager.getActivity()
-          .getWindow()
-          .getDecorView()
-          .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-              | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-              | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-              | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-              | View.SYSTEM_UI_FLAG_FULLSCREEN
-              | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-    } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-      layerManager.getActivity().getWindow().getDecorView().setSystemUiVisibility(0);
-    }
   }
 
   @Override public void onWindowFocusChanged(boolean hasFocus) {
@@ -1150,5 +1117,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Confi
    */
   public void setPlayCallback(PlayCallback playCallback) {
     this.playCallback = playCallback;
+  }
+
+  public void setSettingsCallback(SettingsCallback callback) {
+    this.settingsCallback = callback;
   }
 }

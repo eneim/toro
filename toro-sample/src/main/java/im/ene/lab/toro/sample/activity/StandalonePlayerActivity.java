@@ -16,7 +16,6 @@
 
 package im.ene.lab.toro.sample.activity;
 
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -239,10 +238,4 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
   // Internal/Develop/Experiment API
 
-  @Override public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    if (videoPlayer != null) {
-      videoPlayer.onConfigurationChanged(newConfig);
-    }
-  }
 }
