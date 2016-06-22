@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.layeredvideo;
+package im.ene.lab.toro.player.util;
 
+import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import com.google.android.exoplayer.util.Util;
+import im.ene.lab.toro.player.Video;
 
 /**
  * Contains utility functions which are used by a number of other classes.
@@ -66,5 +69,20 @@ public class PlayerUtil {
 
     // If the parent is not one of the supported types, throw our exception.
     throw exception;
+  }
+
+  public static Video.Type inferVideoType(Uri uri) {
+    int type = Util.inferContentType(uri.getLastPathSegment());
+    switch (type) {
+      case Util.TYPE_DASH:
+        return Video.Type.DASH;
+      case Util.TYPE_HLS:
+        return Video.Type.HLS;
+      case Util.TYPE_SS:
+        return Video.Type.SS;
+      case Util.TYPE_OTHER:
+      default:
+        return Video.Type.OTHER;
+    }
   }
 }

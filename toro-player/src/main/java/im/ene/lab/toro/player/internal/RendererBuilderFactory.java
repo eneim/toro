@@ -20,33 +20,39 @@ import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import com.google.android.exoplayer.util.Util;
+import im.ene.lab.toro.media.Media;
+import im.ene.lab.toro.player.Video;
 
 /**
  * Generate a renderer builder appropriate for rendering a video.
  */
-public class RendererBuilderFactory {
+public final class RendererBuilderFactory {
 
   /**
    * Create a renderer builder which can build the given video.
    *
-   * @param context The context (ex {@link android.app.Activity} in whicb the video has been
+   * @param context The context (ex {@link android.app.Activity} in which the video has been
    * created.
-   * @param video The video which will be played.
+   * @param uri The video uri which will be played.
    */
-  public static ExoMediaPlayer.RendererBuilder createRendererBuilder(Context context, Uri uri) {
+  public static ExoMediaPlayer.RendererBuilder createRendererBuilder(Context context, Media media) {
     final String userAgent = Util.getUserAgent(context, "Toro");
-    int contentType = inferContentType(uri, "");
+    int contentType = inferContentType(media.getMediaUri(), "");
     switch (contentType) {
       case Util.TYPE_SS:
-        return new SmoothStreamingRendererBuilder(context, userAgent, uri.toString(),
-            new SmoothStreamingTestMediaDrmCallback());
+        return new SmoothStreamingRendererBuilder(context, userAgent,
+            media.getMediaUri().toString(), new SmoothStreamingTestMediaDrmCallback());
       case Util.TYPE_HLS:
-        return new HlsRendererBuilder(context, userAgent, uri.toString());
+        return new HlsRendererBuilder(context, userAgent, media.getMediaUri().toString());
       case Util.TYPE_DASH:
-        return new DashRendererBuilder(context, userAgent, uri.toString(),
-            new WidevineTestMediaDrmCallback(null, null));  // FIXME invalid sourceId and provider
+        WidevineTestMediaDrmCallback callback =
+            media instanceof Video ? new WidevineTestMediaDrmCallback(
+                ((Video) media).getContentId(), ((Video) media).getProvider())
+                : new WidevineTestMediaDrmCallback(null, null);
+        return new DashRendererBuilder(context, userAgent, media.getMediaUri().toString(),
+            callback);
       case Util.TYPE_OTHER:
-        return new ExtractorRendererBuilder(context, userAgent, uri);
+        return new ExtractorRendererBuilder(context, userAgent, media.getMediaUri());
       default:
         throw new IllegalStateException("Unsupported type: " + contentType);
     }

@@ -24,18 +24,16 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.TrMediaPlayer;
 
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer extends TrMediaPlayer.IMediaPlayer,
-    // OnPreparedListener, OnCompletionListener, OnErrorListener,
-    OnInfoListener, OnPlayerStateChangeListener {
+public interface ToroPlayer extends Cineer.Player, OnInfoListener, OnPlayerStateChangeListener {
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to
@@ -115,7 +113,7 @@ public interface ToroPlayer extends TrMediaPlayer.IMediaPlayer,
    *
    * @param mp media player which is prepared
    */
-  void onVideoPrepared(TrMediaPlayer mp);
+  void onVideoPrepared(Cineer mp);
 
   /**
    * Callback after this player starts playing
@@ -133,22 +131,23 @@ public interface ToroPlayer extends TrMediaPlayer.IMediaPlayer,
   void onPlaybackStopped();
 
   /**
-   * Called from {@link Toro#onError(ToroPlayer, TrMediaPlayer, PlaybackException)}
+   * Called from {@link Toro#onError(ToroPlayer, Cineer, PlaybackException)}
    *
-   * This method has the same signature with {@link OnPlayerStateChangeListener#onPlayerError(Exception)},
-   * but {@link OnPlayerStateChangeListener#onPlayerError(Exception)} will be called explicitly by
-   * Toro, so this method will prevent infinite loop
+   * This method has the same signature with {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
+   * PlaybackException)}, but {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
+   * PlaybackException)} will be called explicitly by Toro, so this method will prevent infinite
+   * loop
    */
-  boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error);
+  boolean onPlaybackError(Cineer mp, PlaybackException error);
 
   /**
-   * Called from {@link Toro#onInfo(ToroPlayer, TrMediaPlayer, PlaybackInfo)}
+   * Called from {@link Toro#onInfo(ToroPlayer, Cineer, PlaybackInfo)}
    *
-   * This method has the same signature with {@link ToroPlayer#onInfo(TrMediaPlayer, PlaybackInfo)}
-   * , but {@link ToroPlayer##onInfo(TrMediaPlayer, PlaybackInfo)} will be called explicitly by
+   * This method has the same signature with {@link ToroPlayer#onInfo(Cineer, PlaybackInfo)}
+   * , but {@link ToroPlayer##onInfo(Cineer, PlaybackInfo)} will be called explicitly by
    * Toro, so this method will prevent infinite loop
    */
-  void onPlaybackInfo(TrMediaPlayer mp, PlaybackInfo info);
+  void onPlaybackInfo(Cineer mp, PlaybackInfo info);
 
   /**
    * Callback from playback progress update. This method is called from main thread (UIThread)

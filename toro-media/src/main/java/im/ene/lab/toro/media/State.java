@@ -27,28 +27,27 @@ import java.lang.annotation.RetentionPolicy;
     /**
      * The player is neither prepared or being prepared.
      */
-    TrMediaPlayer.PLAYER_IDLE,
+    Cineer.PLAYER_IDLE,
     /**
      * The player is being prepared.
      */
-    TrMediaPlayer.PLAYER_PREPARING,
+    Cineer.PLAYER_PREPARING,
 
-    // TODO FIXME
-    TrMediaPlayer.PLAYER_PREPARED,
+    Cineer.PLAYER_PREPARED,
     /**
      * The player is prepared but not able to immediately play from the current position. The cause
      * is {@link TrackRenderer} specific, but this state typically occurs when more data needs
      * to be buffered for playback to start.
      */
-    TrMediaPlayer.PLAYER_BUFFERING,
+    Cineer.PLAYER_BUFFERING,
     /**
      * The player is prepared and able to immediately play from the current position. The player will
      * be playing if {@link #getPlayWhenReady()} returns true, and paused otherwise.
      */
-    TrMediaPlayer.PLAYER_READY,
+    Cineer.PLAYER_READY,
     /**
      * The player has finished playing the media.
      */
-    TrMediaPlayer.PLAYER_ENDED
+    Cineer.PLAYER_ENDED
 }) @Retention(RetentionPolicy.SOURCE) public @interface State {
 }

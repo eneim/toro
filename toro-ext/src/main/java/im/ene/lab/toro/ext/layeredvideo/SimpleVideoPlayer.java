@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.FrameLayout;
+import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +197,7 @@ public class SimpleVideoPlayer {
   }
 
   /**
-   * When mutliple surface layers are used (ex. in the case of ad playback), one layer must be
+   * When multiple surface layers are used (ex. in the case of ad playback), one layer must be
    * overlaid on top of another. This method sends this player's surface layer to the background
    * so that other surface layers can be overlaid on top of it.
    */
@@ -205,7 +206,7 @@ public class SimpleVideoPlayer {
   }
 
   /**
-   * When mutliple surface layers are used (ex. in the case of ad playback), one layer must be
+   * When multiple surface layers are used (ex. in the case of ad playback), one layer must be
    * overlaid on top of another. This method sends this player's surface layer to the foreground
    * so that it is overlaid on top of all layers which are in the background.
    */

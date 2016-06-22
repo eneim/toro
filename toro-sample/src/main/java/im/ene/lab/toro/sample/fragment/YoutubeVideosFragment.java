@@ -34,7 +34,7 @@ import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ext.youtube.YoutubeVideosAdapter;
 import im.ene.lab.toro.ext.youtube.YoutubeViewHolder;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -174,7 +174,7 @@ public class YoutubeVideosFragment extends RecyclerViewFragment {
       mInfo.setText("Stopped");
     }
 
-    @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
+    @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
       if (mThumbnail != null) {
         mThumbnail.setVisibility(View.VISIBLE);
       }

@@ -33,7 +33,7 @@ public class VideoSurfaceLayer implements Layer {
   private boolean autoPlay;
 
   /**
-   * The {@link LayerManager} whcih is responsible for creating this layer's view and adding it to
+   * The {@link LayerManager} which is responsible for creating this layer's view and adding it to
    * the video player.
    */
   private LayerManager layerManager;
@@ -102,8 +102,7 @@ public class VideoSurfaceLayer implements Layer {
     this.autoPlay = autoPlay;
   }
 
-  @Override public FrameLayout createView(
-      LayerManager layerManager) {
+  @Override public FrameLayout createView(LayerManager layerManager) {
     this.layerManager = layerManager;
 
     view = (FrameLayout) LayoutInflater.from(layerManager.getContainer().getContext())
@@ -121,11 +120,11 @@ public class VideoSurfaceLayer implements Layer {
   }
 
   @Override public void onLayerDisplayed(LayerManager layerManager) {
-
+    // do nothing
   }
 
   /**
-   * When mutliple surface layers are used (ex. in the case of ad playback), one layer must be
+   * When multiple surface layers are used (ex. in the case of ad playback), one layer must be
    * overlaid on top of another. This method sends this player's surface layer to the background
    * so that other surface layers can be overlaid on top of it.
    */
@@ -134,7 +133,7 @@ public class VideoSurfaceLayer implements Layer {
   }
 
   /**
-   * When mutliple surface layers are used (ex. in the case of ad playback), one layer must be
+   * When multiple surface layers are used (ex. in the case of ad playback), one layer must be
    * overlaid on top of another. This method sends this player's surface layer to the foreground
    * so that it is overlaid on top of all layers which are in the background.
    */

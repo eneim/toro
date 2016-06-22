@@ -35,13 +35,13 @@ import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.metadata.id3.Id3Frame;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
-import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.media.TrMediaPlayer;
 import im.ene.lab.toro.player.BuildConfig;
 import im.ene.lab.toro.player.internal.EventLogger;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
@@ -51,7 +51,7 @@ import java.util.List;
 /**
  * Created by eneim on 6/4/16.
  */
-public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMediaPlayer {
+public class VideoPlayerView extends TextureView implements Cineer.Player {
 
   private static final String TAG = "MediaPlayerView";
 
@@ -130,9 +130,9 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
 
   private OnPlayerStateChangeListener stateChangeListenerDelegate =
       new OnPlayerStateChangeListener() {
-        @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+        @Override public void onPlayerStateChanged(Cineer player, boolean playWhenReady,
             @State int playbackState) {
-          if (playbackState == TrMediaPlayer.PLAYER_ENDED) {
+          if (playbackState == Cineer.PLAYER_ENDED) {
             mPlayRequested = false;
             releasePlayer();
             mPlayerPosition = 0;
@@ -143,7 +143,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
           }
         }
 
-        @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+        @Override public boolean onPlayerError(Cineer player, PlaybackException error) {
           if (mPlayerStateChangeListener != null) {
             mPlayerStateChangeListener.onPlayerError(player, error);
           }
@@ -153,11 +153,11 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
       };
 
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare && (mPlaybackState != TrMediaPlayer.PLAYER_IDLE) && (mPlaybackState
-        != TrMediaPlayer.PLAYER_PREPARING) && (mPlaybackState != TrMediaPlayer.PLAYER_ENDED);
+    return !mPlayerNeedsPrepare && (mPlaybackState != Cineer.PLAYER_IDLE) && (mPlaybackState
+        != Cineer.PLAYER_PREPARING) && (mPlaybackState != Cineer.PLAYER_ENDED);
   }
 
-  private Uri mUri;
+  private Media mMedia;
   private AudioCapabilitiesReceiver mAudioCapabilitiesReceiver;
   private AudioCapabilities mAudioCapabilities;
   private ExoMediaPlayer mMediaPlayer;
@@ -214,7 +214,7 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   }
 
   private OnInfoListener onInfoListenerDelegate = new OnInfoListener() {
-    @Override public boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
+    @Override public boolean onInfo(Cineer mp, PlaybackInfo info) {
       return mOnInfoListener != null && mOnInfoListener.onInfo(mp, info);
     }
   };
@@ -309,13 +309,13 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
   }
 
   private void preparePlayer(boolean playWhenReady) {
-    if (mUri == null || mSurface == null) {
+    if (mMedia == null || mSurface == null) {
       return;
     }
 
     if (mMediaPlayer == null) {
       mMediaPlayer =
-          new ExoMediaPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mUri));
+          new ExoMediaPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mMedia));
       mMediaPlayer.addListener(playerListener);
 
       mMediaPlayer.setPlayerStateChangeListener(stateChangeListenerDelegate);
@@ -413,28 +413,28 @@ public class VideoPlayerView extends TextureView implements TrMediaPlayer.IMedia
         Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
   }
 
-  @Override public void setMediaSource(@NonNull MediaSource source) {
-    setMediaUri(source.mediaUri);
-  }
-
-  @Override public void setMediaUri(Uri uri) {
-    if (uri == null) {
+  @Override public void setMedia(@NonNull Media media) {
+    if (media == null) {
       throw new IllegalArgumentException("MediaSource must not be null");
     }
 
-    if (requiresPermission(uri)) {
+    if (requiresPermission(media.getMediaUri())) {
       throw new RuntimeException("Permission to read this URI is not granted. "
           + "Consider to request READ_EXTERNAL_STORAGE permission.");
     }
 
-    if (this.mUri == uri) {
+    if (this.mMedia == media) {
       return;
     }
 
     this.mPlayerPosition = 0;
-    this.mUri = uri;
+    this.mMedia = media;
     mPlayRequested = false;
     releasePlayer();
+  }
+
+  @Override public void setMedia(Uri uri) {
+    setMedia(new Media(uri));
   }
 
   // IMediaPlayer

@@ -31,5 +31,5 @@ public interface OnVideoSizeChangedListener /* extends MediaPlayer.OnVideoSizeCh
    * @param width     the width of the video
    * @param height    the height of the video
    */
-  void onVideoSizeChanged(TrMediaPlayer mp, int width, int height);
+  void onVideoSizeChanged(Cineer mp, int width, int height);
 }

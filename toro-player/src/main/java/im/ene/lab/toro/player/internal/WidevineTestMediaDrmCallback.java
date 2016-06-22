@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * A {@link MediaDrmCallback} for Widevine test content.
  */
-@TargetApi(18) public class WidevineTestMediaDrmCallback implements MediaDrmCallback {
+@TargetApi(18) class WidevineTestMediaDrmCallback implements MediaDrmCallback {
 
   private static final String WIDEVINE_GTS_DEFAULT_BASE_URI =
       "https://proxy.uat.widevine.com/proxy";
