@@ -16,10 +16,14 @@
 
 package im.ene.lab.toro.media;
 
+import android.media.MediaPlayer;
+
 /**
  * Created by eneim on 6/2/16.
+ *
+ * See {@link MediaPlayer.OnVideoSizeChangedListener}
  */
-public interface OnVideoSizeChangedListener /* extends MediaPlayer.OnVideoSizeChangedListener */ {
+public interface OnVideoSizeChangedListener {
 
   /**
    * Called to indicate the video size
@@ -27,9 +31,9 @@ public interface OnVideoSizeChangedListener /* extends MediaPlayer.OnVideoSizeCh
    * The video size (width and height) could be 0 if there was no video,
    * no display surface was set, or the value was not determined yet.
    *
-   * @param mp        the MediaPlayer associated with this callback
-   * @param width     the width of the video
-   * @param height    the height of the video
+   * @param mp the MediaPlayer associated with this callback
+   * @param width the width of the video
+   * @param height the height of the video
    */
   void onVideoSizeChanged(Cineer mp, int width, int height);
 }

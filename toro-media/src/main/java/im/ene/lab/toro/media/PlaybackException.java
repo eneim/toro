@@ -16,14 +16,18 @@
 
 package im.ene.lab.toro.media;
 
+import android.media.MediaPlayer;
+
 /**
  * Created by eneim on 6/2/16.
+ *
+ * See {@link MediaPlayer.OnErrorListener}
  */
 public class PlaybackException extends Exception {
 
-  public int what;
+  public final int what;
 
-  public int extra;
+  public final int extra;
 
   public PlaybackException(int what, int extra) {
     this.what = what;

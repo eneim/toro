@@ -16,10 +16,14 @@
 
 package im.ene.lab.toro.media;
 
+import android.media.MediaPlayer;
+
 /**
  * Created by eneim on 6/2/16.
+ *
+ * See {@link MediaPlayer.OnInfoListener}
  */
-public interface OnInfoListener /* extends MediaPlayer.OnInfoListener */ {
+public interface OnInfoListener {
 
   /**
    * Called to indicate an info or a warning.
