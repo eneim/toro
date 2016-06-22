@@ -16,8 +16,10 @@
 
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import com.google.android.exoplayer.util.Util;
 import im.ene.lab.toro.media.Media;
@@ -26,6 +28,7 @@ import im.ene.lab.toro.player.Video;
 /**
  * Generate a renderer builder appropriate for rendering a video.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public final class RendererBuilderFactory {
 
   /**

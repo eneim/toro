@@ -51,7 +51,7 @@ public interface ToroPlayer extends Cineer.Player, OnInfoListener, OnPlayerState
    * this player wants to play that much, is It able to play (Video is correctly set or there is no
    * Error)
    */
-  @Deprecated boolean isAbleToPlay();
+  // @Deprecated boolean isAbleToPlay();
 
   /**
    * Indicate that this Player is able to replay right after it stops (loop-able) or not.

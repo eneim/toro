@@ -15,9 +15,11 @@
  */
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import com.google.android.exoplayer.DefaultLoadControl;
@@ -54,6 +56,7 @@ import java.io.IOException;
 /**
  * A {@link RendererBuilder} for DASH.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final String TAG = "DashRendererBuilder";

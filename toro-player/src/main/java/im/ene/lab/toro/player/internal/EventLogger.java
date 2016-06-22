@@ -15,7 +15,9 @@
  */
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.media.MediaCodec.CryptoException;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 import com.google.android.exoplayer.ExoPlayer;
@@ -32,6 +34,7 @@ import java.util.Locale;
 /**
  * Logs player events using {@link Log}.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class EventLogger implements ExoMediaPlayer.Listener, ExoMediaPlayer.InfoListener,
     ExoMediaPlayer.InternalErrorListener {
 

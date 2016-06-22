@@ -16,6 +16,8 @@
 
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
@@ -26,6 +28,7 @@ import com.google.android.exoplayer.drm.DrmSessionManager;
 /**
  * Created by eneim on 6/2/16.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class EnhancedMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRenderer {
 
   private int audioSessionId = 0;

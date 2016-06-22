@@ -15,9 +15,11 @@
  */
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.MediaCodec.CryptoException;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.FloatRange;
@@ -66,6 +68,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * with one of a number of {@link RendererBuilder} classes to suit different use cases (e.g. DASH,
  * SmoothStreaming and so on).
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class ExoMediaPlayer
     implements Cineer, ExoPlayer.Listener, ChunkSampleSource.EventListener,
     HlsSampleSource.EventListener, ExtractorSampleSource.EventListener,

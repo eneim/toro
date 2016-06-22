@@ -17,19 +17,25 @@
 package im.ene.lab.toro.ext.util;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.SeekBar;
+import im.ene.lab.toro.ext.internal.SeekBarICS;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by eneim on 2/3/16.
  */
-public class Util {
+public class ViewUtil {
 
   private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
   // Copy from AOSP
 
   /**
-   * Generate a value suitable for use in {@link #setId(int)}.
+   * Generate a value suitable for use in {@link View#setId(int)}.
    * This value will not collide with ID values generated at build time by aapt for R.id.
    *
    * @return a generated ID value
@@ -57,5 +63,30 @@ public class Util {
 
   public static boolean isSmallScreen(Activity activity) {
     return activity.getResources().getConfiguration().smallestScreenWidthDp < 410;
+  }
+
+  public static Drawable getThumb(SeekBar seekBar) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      return seekBar.getThumb();
+    } else if (seekBar instanceof SeekBarICS) {
+      return ((SeekBarICS) seekBar).getThumbV15();
+    } else {
+      throw new IllegalArgumentException(
+          "Android version 15 and below must use SeekBarICS instead.");
+    }
+  }
+
+  @SuppressWarnings("deprecation")
+  public static void removeOnGlobalLayoutListener(ViewTreeObserver viewTreeObserver,
+      ViewTreeObserver.OnGlobalLayoutListener listener) {
+    if (viewTreeObserver == null) {
+      return;
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+      viewTreeObserver.removeOnGlobalLayoutListener(listener);
+    } else {
+      viewTreeObserver.removeGlobalOnLayoutListener(listener);
+    }
   }
 }

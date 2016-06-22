@@ -15,9 +15,11 @@
  */
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
+import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
@@ -51,6 +53,7 @@ import java.util.List;
 /**
  * A {@link RendererBuilder} for HLS.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;

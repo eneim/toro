@@ -41,8 +41,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.ext.R;
-import im.ene.lab.toro.player.util.PlayerUtil;
+import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
+import im.ene.lab.toro.player.util.PlayerUtil;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -461,7 +462,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
   @Override public FrameLayout createView(LayerManager layerManager) {
     this.layerManager = layerManager;
     view = (FrameLayout) LayoutInflater.from(layerManager.getContainer().getContext())
-        .inflate(R.layout.tr_player_playback_control_layer, layerManager.getContainer(), false);
+        .inflate(R.layout.tr_ext_playback_control_layer, layerManager.getContainer(), false);
     setupView();
 
     originalContainerLayoutParams = layerManager.getContainer().getLayoutParams();
@@ -1024,6 +1025,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
   /**
    * Ensure that the chrome, control, and text colors displayed on the screen are correct.
    */
+  /**
+   * @hide
+   */
   public void updateColors() {
     currentTime.setTextColor(textColor);
     endTime.setTextColor(textColor);
@@ -1032,13 +1036,13 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
     fullscreenButton.setColorFilter(controlColor);
     pausePlayButton.setColorFilter(controlColor);
     seekBar.getProgressDrawable().setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
-    seekBar.getThumb().setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
+    ViewUtil.getThumb(seekBar).setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
 
     // Hide the thumb drawable if the SeekBar is disabled
     if (canSeek) {
-      seekBar.getThumb().mutate().setAlpha(255);
+      ViewUtil.getThumb(seekBar).mutate().setAlpha(255);
     } else {
-      seekBar.getThumb().mutate().setAlpha(0);
+      ViewUtil.getThumb(seekBar).mutate().setAlpha(0);
     }
 
     for (ImageButton imageButton : actionButtons) {

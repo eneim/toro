@@ -15,10 +15,12 @@
  */
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
@@ -37,6 +39,7 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 /**
  * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;

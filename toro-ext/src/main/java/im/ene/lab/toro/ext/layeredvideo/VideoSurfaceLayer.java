@@ -106,7 +106,7 @@ public class VideoSurfaceLayer implements Layer {
     this.layerManager = layerManager;
 
     view = (FrameLayout) LayoutInflater.from(layerManager.getContainer().getContext())
-        .inflate(R.layout.tr_player_video_surface_layer, layerManager.getContainer(), false);
+        .inflate(R.layout.tr_ext_video_surface_layer, layerManager.getContainer(), false);
 
     layerManager.getExoPlayer().addListener(playbackListener);
 
