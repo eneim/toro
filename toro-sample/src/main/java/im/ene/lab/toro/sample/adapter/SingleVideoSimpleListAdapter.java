@@ -35,7 +35,7 @@ public class SingleVideoSimpleListAdapter extends BaseSampleAdapter {
     String mkvFile = null;
     try {
       mkvFile = Util.loadMovieFolder()[0].getPath();
-    } catch (FileNotFoundException e) {
+    } catch (FileNotFoundException | ArrayIndexOutOfBoundsException e) {
       e.printStackTrace();
     }
 

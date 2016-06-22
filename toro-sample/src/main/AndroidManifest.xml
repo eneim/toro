@@ -35,17 +35,17 @@
         android:theme="@style/ToroTheme">
     </activity>
 
-    <activity
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name="develop.com.google.android.exoplayer.demo.SampleChooserActivity"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
-    </activity>
+    <!--<activity-->
+        <!--android:label="@string/app_name"-->
+        <!--android:launchMode="singleTop"-->
+        <!--android:name="develop.com.google.android.exoplayer.demo.SampleChooserActivity"-->
+        <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
+    <!--</activity>-->
 
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".activity.StandalonePlayerActivity">
+        android:targetActivity=".activity.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
