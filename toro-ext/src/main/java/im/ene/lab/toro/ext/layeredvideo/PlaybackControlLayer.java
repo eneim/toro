@@ -41,6 +41,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.ext.R;
+import im.ene.lab.toro.player.util.PlayerUtil;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

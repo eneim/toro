@@ -17,6 +17,7 @@
 package im.ene.lab.toro.media;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 /**
  * Created by eneim on 6/3/16.
@@ -27,7 +28,7 @@ public class Media {
 
   private final Uri mediaUri;
 
-  public Media(Uri mediaUri) {
+  public Media(@NonNull Uri mediaUri) {
     this.mediaUri = mediaUri;
   }
 

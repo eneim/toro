@@ -18,6 +18,7 @@ package im.ene.lab.toro.ext.layeredvideo;
 
 import android.app.Activity;
 import android.widget.FrameLayout;
+import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.ObservablePlayerControl;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
@@ -70,7 +71,7 @@ public class LayerManager {
     this.container = container;
 
     ExoMediaPlayer.RendererBuilder rendererBuilder =
-        RendererBuilderFactory.createRendererBuilder(activity, video.getMediaUri());
+        RendererBuilderFactory.createRendererBuilder(activity, video);
 
     this.exoPlayer = new ExoMediaPlayer(rendererBuilder);
     this.exoPlayer.prepare();

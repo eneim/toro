@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.layeredvideo;
+package im.ene.lab.toro.player;
 
 import android.net.Uri;
 import com.google.android.exoplayer.util.Util;
 import im.ene.lab.toro.media.Media;
+import im.ene.lab.toro.player.util.PlayerUtil;
 
 /**
  * Represents a video that can be played by ExoPlayer.

@@ -35,13 +35,13 @@ import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.metadata.id3.Id3Frame;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.BuildConfig;
 import im.ene.lab.toro.player.internal.EventLogger;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
@@ -157,7 +157,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
         != Cineer.PLAYER_PREPARING) && (mPlaybackState != Cineer.PLAYER_ENDED);
   }
 
-  private Uri mUri;
+  private Media mMedia;
   private AudioCapabilitiesReceiver mAudioCapabilitiesReceiver;
   private AudioCapabilities mAudioCapabilities;
   private ExoMediaPlayer mMediaPlayer;
@@ -309,13 +309,13 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
   }
 
   private void preparePlayer(boolean playWhenReady) {
-    if (mUri == null || mSurface == null) {
+    if (mMedia == null || mSurface == null) {
       return;
     }
 
     if (mMediaPlayer == null) {
       mMediaPlayer =
-          new ExoMediaPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mUri));
+          new ExoMediaPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mMedia));
       mMediaPlayer.addListener(playerListener);
 
       mMediaPlayer.setPlayerStateChangeListener(stateChangeListenerDelegate);
@@ -413,28 +413,28 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
         Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
   }
 
-  @Override public void setMedia(@NonNull Media source) {
-    setMedia(source.getMediaUri());
-  }
-
-  @Override public void setMedia(Uri uri) {
-    if (uri == null) {
+  @Override public void setMedia(@NonNull Media media) {
+    if (media == null) {
       throw new IllegalArgumentException("MediaSource must not be null");
     }
 
-    if (requiresPermission(uri)) {
+    if (requiresPermission(media.getMediaUri())) {
       throw new RuntimeException("Permission to read this URI is not granted. "
           + "Consider to request READ_EXTERNAL_STORAGE permission.");
     }
 
-    if (this.mUri == uri) {
+    if (this.mMedia == media) {
       return;
     }
 
     this.mPlayerPosition = 0;
-    this.mUri = uri;
+    this.mMedia = media;
     mPlayRequested = false;
     releasePlayer();
+  }
+
+  @Override public void setMedia(Uri uri) {
+    setMedia(new Media(uri));
   }
 
   // IMediaPlayer

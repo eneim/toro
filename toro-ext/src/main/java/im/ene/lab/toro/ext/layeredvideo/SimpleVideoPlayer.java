@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.FrameLayout;
+import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.util.ArrayList;
 import java.util.List;

@@ -30,7 +30,7 @@ import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.util.MimeTypes;
 import im.ene.lab.toro.ext.layeredvideo.PlaybackControlLayer;
 import im.ene.lab.toro.ext.layeredvideo.SimpleVideoPlayer;
-import im.ene.lab.toro.ext.layeredvideo.Video;
+import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.util.Util;
