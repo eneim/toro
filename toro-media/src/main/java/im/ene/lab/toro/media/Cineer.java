@@ -18,19 +18,21 @@ package im.ene.lab.toro.media;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.widget.MediaController;
 import android.net.Uri;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.View;
+import android.widget.VideoView;
 import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by eneim on 6/2/16.
  */
-public interface TrMediaPlayer {
+public interface Cineer {
 
   /**
    * See {@link State}
@@ -42,27 +44,66 @@ public interface TrMediaPlayer {
   int PLAYER_READY = 4;
   int PLAYER_ENDED = 5;
 
-  interface IMediaPlayer /* extends MediaController.MediaPlayerControl */ {
+  /**
+   * Shared API for any Med
+   */
+  interface Player {
 
+    /**
+     * See {@link VideoView#start()}
+     */
     void start();
 
+    /**
+     * See {@link VideoView#pause()}
+     */
     void pause();
 
+    /**
+     * See {@link VideoView#stopPlayback()}
+     */
     void stop();
 
-    /* int */ long getDuration();
+    /**
+     * See {@link VideoView#getDuration()}
+     *
+     * @return media's duration.
+     */
+    long getDuration();
 
-    /* int */ long getCurrentPosition();
+    /**
+     * See {@link VideoView#getCurrentPosition()}
+     *
+     * @return current playback position.
+     */
+    long getCurrentPosition();
 
-    void seekTo(/* int */ long pos);
+    /**
+     * See {@link VideoView#seekTo(int)}
+     *
+     * @param pos seek to specific position.
+     */
+    void seekTo(long pos);
 
+    /**
+     * See {@link VideoView#isPlaying()}
+     *
+     * @return {@code true} if the media is being played, {@code false} otherwise.
+     */
     boolean isPlaying();
 
+    /**
+     * See {@link VideoView#getBufferPercentage()}
+     *
+     * @return current buffered percentage.
+     */
     @IntRange(from = 0, to = 100) int getBufferPercentage();
 
     /**
      * Get the audio session id for the player used by this VideoView. This can be used to
      * apply audio effects to the audio track of a video.
+     *
+     * See {@link VideoView#getAudioSessionId()}
      *
      * @return The audio session, or 0 if there was an error.
      */
@@ -70,34 +111,39 @@ public interface TrMediaPlayer {
 
     void setBackgroundAudioEnabled(boolean enabled);
 
-    void setMediaSource(@NonNull MediaSource source);
+    void setMediaSource(@NonNull Media source);
 
     void setMediaUri(Uri uri);
 
+    /**
+     * See {@link MediaPlayer#setVolume(float, float)}
+     *
+     * @param volume volume level.
+     */
     void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
   }
 
   interface Controller {
 
-    /** see {@link android.widget.MediaController#hide()} */
+    /** see {@link MediaController#hide()} */
     void hide();
 
-    /** see {@link android.widget.MediaController#show()} */
+    /** see {@link MediaController#show()} */
     void show();
 
-    /** see {@link android.widget.MediaController#show(int)} */
+    /** see {@link MediaController#show(int)} */
     void show(int timeout);
 
-    /** see {@link android.widget.MediaController#setMediaPlayer(android.widget.MediaController.MediaPlayerControl)} */
-    void setMediaPlayer(IMediaPlayer player);
+    /** see {@link MediaController#setMediaPlayer(MediaController.MediaPlayerControl)} */
+    void setMediaPlayer(Player player);
 
-    /** see {@link android.widget.MediaController#setAnchorView(View)} */
+    /** see {@link MediaController#setAnchorView(View)} */
     void setAnchorView(View anchorView);
 
-    /** see {@link android.widget.MediaController#setEnabled(boolean)} */
+    /** see {@link MediaController#setEnabled(boolean)} */
     void setEnabled(boolean enabled);
 
-    /** see {@link android.widget.MediaController#isShowing()} */
+    /** see {@link MediaController#isShowing()} */
     boolean isShowing();
   }
 

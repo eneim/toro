@@ -18,6 +18,7 @@ package im.ene.lab.toro.ext.layeredvideo;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.accessibility.CaptioningManager;
 import android.widget.FrameLayout;
@@ -48,14 +49,13 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
     view = (FrameLayout) LayoutInflater.from(manager.getContainer().getContext())
         .inflate(R.layout.tr_player_subtitle_layer, manager.getContainer(), false);
     subtitles = (SubtitleLayout) view.findViewById(R.id.subtitles);
-    // subtitles.setApplyEmbeddedStyles(true);
     configureSubtitleView();
     manager.getExoPlayer().setCaptionListener(this);
     return view;
   }
 
   @Override public void onLayerDisplayed(LayerManager layerManager) {
-
+    // Do nothing.
   }
 
   /**
@@ -77,11 +77,10 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
     this.subtitles.setCues(cues);
   }
 
-  // Private
   private void configureSubtitleView() {
     CaptionStyleCompat style;
     float fontScale;
-    if (Util.SDK_INT >= 19) {
+    if (Util.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       style = getUserCaptionStyleV19();
       fontScale = getUserCaptionFontScaleV19();
     } else {
@@ -92,13 +91,15 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
     subtitles.setFractionalTextSize(SubtitleLayout.DEFAULT_TEXT_SIZE_FRACTION * fontScale);
   }
 
-  @TargetApi(19) private float getUserCaptionFontScaleV19() {
+  // Target API 19
+  @TargetApi(Build.VERSION_CODES.KITKAT) private float getUserCaptionFontScaleV19() {
     CaptioningManager captioningManager =
         (CaptioningManager) subtitles.getContext().getSystemService(Context.CAPTIONING_SERVICE);
     return captioningManager.getFontScale();
   }
 
-  @TargetApi(19) private CaptionStyleCompat getUserCaptionStyleV19() {
+  // Target API 19
+  @TargetApi(Build.VERSION_CODES.KITKAT) private CaptionStyleCompat getUserCaptionStyleV19() {
     CaptioningManager captioningManager =
         (CaptioningManager) subtitles.getContext().getSystemService(Context.CAPTIONING_SERVICE);
     return CaptionStyleCompat.createFromCaptionStyle(captioningManager.getUserStyle());

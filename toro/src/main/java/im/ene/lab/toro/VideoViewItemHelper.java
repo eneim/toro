@@ -24,12 +24,12 @@ import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 
 /**
  * Created by eneim on 2/1/16.
  *
- * A helper class to support Video's callbacks from {@link TrMediaPlayer} as well as {@link
+ * A helper class to support Video's callbacks from {@link Cineer} as well as {@link
  * RecyclerView.Adapter}
  */
 class VideoViewItemHelper {
@@ -77,7 +77,7 @@ class VideoViewItemHelper {
   /* BEGIN: Callback for MediaPlayer */
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#PLAYER_PREPARED}
+   * Callback from {@link OnPlayerStateChangeListener} with {@link Cineer#PLAYER_PREPARED}
    *
    * @param player current ToroPlayer instance
    * @param itemView main View of current ViewHolder
@@ -85,28 +85,28 @@ class VideoViewItemHelper {
    * @param mediaPlayer current MediaPlayer
    */
   @CallSuper public void onPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent, @Nullable TrMediaPlayer mediaPlayer) {
+      @Nullable ViewParent parent, @Nullable Cineer mediaPlayer) {
     Toro.sInstance.onPrepared(player, itemView, parent, mediaPlayer);
   }
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener} with {@link TrMediaPlayer#PLAYER_ENDED}
+   * Callback from {@link OnPlayerStateChangeListener} with {@link Cineer#PLAYER_ENDED}
    *
    * @param player current ToroPlayer instance
    * @param mp completed MediaPlayer
    */
-  @CallSuper public void onCompletion(@NonNull ToroPlayer player, @Nullable TrMediaPlayer mp) {
+  @CallSuper public void onCompletion(@NonNull ToroPlayer player, @Nullable Cineer mp) {
     Toro.sInstance.onCompletion(player, mp);
   }
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener#onPlayerError(TrMediaPlayer,
+   * Callback from {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
    * PlaybackException)}
    *
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  @CallSuper public boolean onError(@NonNull ToroPlayer player, @Nullable TrMediaPlayer mp,
+  @CallSuper public boolean onError(@NonNull ToroPlayer player, @Nullable Cineer mp,
       @NonNull PlaybackException error) {
     return Toro.sInstance.onError(player, mp, error);
   }
@@ -117,7 +117,7 @@ class VideoViewItemHelper {
    * @param player current ToroPlayer instance
    * @param mp current MediaPlayer
    */
-  @CallSuper public boolean onInfo(@NonNull ToroPlayer player, @Nullable TrMediaPlayer mp,
+  @CallSuper public boolean onInfo(@NonNull ToroPlayer player, @Nullable Cineer mp,
       @NonNull PlaybackInfo info) {
     return Toro.sInstance.onInfo(player, mp, info);
   }

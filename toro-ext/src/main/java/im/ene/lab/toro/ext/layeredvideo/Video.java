@@ -16,30 +16,41 @@
 
 package im.ene.lab.toro.ext.layeredvideo;
 
+import android.net.Uri;
+import com.google.android.exoplayer.util.Util;
+import im.ene.lab.toro.media.Media;
+
 /**
- * Represents a video that can be played by Exoplayer.
+ * Represents a video that can be played by ExoPlayer.
  */
-public class Video {
+public class Video extends Media {
 
   /**
-   * A list of available video formats which Exoplayer can play.
+   * A list of available video formats which ExoPlayer can play.
    */
-  public enum VideoType {
+  public enum Type {
+    /**
+     * See {@link Util#TYPE_DASH}
+     */
     DASH,
-    MP4,
+    /**
+     * See {@link Util#TYPE_SS}
+     */
+    SS,
+    /**
+     * See {@link Util#TYPE_HLS}
+     */
     HLS,
+    /**
+     * See {@link Util#TYPE_OTHER}
+     */
     OTHER
   }
 
   /**
-   * The URL pointing to the video.
-   */
-  private final String url;
-
-  /**
    * The video format of the video.
    */
-  private final VideoType videoType;
+  private final Type videoType;
 
   /**
    * ID of content (for DASH).
@@ -47,22 +58,36 @@ public class Video {
   private final String contentId;
 
   /**
-   * @param url The URL pointing to the video.
-   * @param videoType The video format of the video.
+   * Provider (for DASH).
    */
-  public Video(String url, VideoType videoType) {
-    this(url, videoType, null);
+  private final String provider;
+
+  public Video(Uri mediaUri) {
+    this(mediaUri, PlayerUtil.inferVideoType(mediaUri), null, null);
   }
 
   /**
-   * @param url The URL pointing to the video.
+   * @param uri The URL pointing to the video.
+   * @param videoType The video format of the video.
+   */
+  public Video(Uri uri, Type videoType) {
+    this(uri, videoType, null);
+  }
+
+  /**
+   * @param uri The URL pointing to the video.
    * @param videoType The video format of the video.
    * @param contentId ID of content (for DASH).
    */
-  public Video(String url, VideoType videoType, String contentId) {
-    this.url = url;
+  public Video(Uri uri, Type videoType, String contentId) {
+    this(uri, videoType, contentId, null);
+  }
+
+  public Video(Uri uri, Type videoType, String contentId, String provider) {
+    super(uri);
     this.videoType = videoType;
     this.contentId = contentId;
+    this.provider = provider;
   }
 
   /**
@@ -73,16 +98,13 @@ public class Video {
   }
 
   /**
-   * Returns the URL pointing to the video.
-   */
-  public String getUrl() {
-    return url;
-  }
-
-  /**
    * Returns the video format of the video.
    */
-  public VideoType getVideoType() {
+  public Type getVideoType() {
     return videoType;
+  }
+
+  public String getProvider() {
+    return provider;
   }
 }

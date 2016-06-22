@@ -36,7 +36,6 @@ public class ObservablePlayerControl extends PlayerControl {
    */
   public ObservablePlayerControl(ExoPlayer exoPlayer) {
     super(exoPlayer);
-    callbacks = new ArrayList<>();
   }
 
   /**
@@ -44,8 +43,7 @@ public class ObservablePlayerControl extends PlayerControl {
    * control.
    */
   public ObservablePlayerControl(ExoMediaPlayer exoMediaPlayer) {
-    super(exoMediaPlayer.player);
-    callbacks = new ArrayList<>();
+    this(exoMediaPlayer.player);
   }
 
   /**
@@ -54,6 +52,9 @@ public class ObservablePlayerControl extends PlayerControl {
    * @param callback Responds when the player is paused or played.
    */
   public void addCallback(PlayerControlCallback callback) {
+    if (callbacks == null) {
+      callbacks = new ArrayList<>();
+    }
     callbacks.add(callback);
   }
 

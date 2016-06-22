@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ext.ToroVideoViewHolder;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -80,7 +80,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     return mItem.toString() + "-" + getAdapterPosition();
   }
 
-  @Override public void onVideoPrepared(TrMediaPlayer mp) {
+  @Override public void onVideoPrepared(Cineer mp) {
     super.onVideoPrepared(mp);
     mInfo.setText("Prepared");
   }
@@ -128,7 +128,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     mInfo.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
         SimpleToroVideoViewHolder.super.onPlaybackStopped();

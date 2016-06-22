@@ -38,14 +38,14 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.internal.NativeMediaPlayer;
 import java.io.IOException;
 import java.util.Map;
@@ -74,7 +74,7 @@ import java.util.Map;
  * </ol>
  */
 @Deprecated public class TextureVideoView extends TextureView
-    implements TrMediaPlayer.IMediaPlayer {
+    implements Cineer.Player {
 
   public interface OnReleasedListener {
 
@@ -114,14 +114,14 @@ import java.util.Map;
 
   // All the stuff we need for playing and showing a video
   private Surface mSurface = null;
-  private TrMediaPlayer mMediaPlayer = null;
+  private Cineer mMediaPlayer = null;
   private int mAudioSession;
   private int mVideoWidth;
   private int mVideoHeight;
 
   private boolean mBackgroundAudioEnabled = false;
 
-  private TrMediaPlayer.Controller mController;
+  private Cineer.Controller mController;
 
   private OnPlayerStateChangeListener mOnPlayerStateChangeListener;
 
@@ -343,7 +343,7 @@ import java.util.Map;
     }
   }
 
-  public void setMediaController(TrMediaPlayer.Controller controller) {
+  public void setMediaController(Cineer.Controller controller) {
     if (mController != null) {
       mController.hide();
     }
@@ -361,37 +361,37 @@ import java.util.Map;
   }
 
   OnPlayerStateChangeListener playerStateChangeListener = new OnPlayerStateChangeListener() {
-    @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+    @Override public void onPlayerStateChanged(Cineer player, boolean playWhenReady,
         @State int playbackState) {
       switch (playbackState) {
 
-        case TrMediaPlayer.PLAYER_BUFFERING:
+        case Cineer.PLAYER_BUFFERING:
           dispatchOnBufferingUpdate(player, mMediaPlayer.getBufferedPercentage());
           break;
-        case TrMediaPlayer.PLAYER_ENDED:
+        case Cineer.PLAYER_ENDED:
           dispatchOnCompletion(player);
           break;
-        case TrMediaPlayer.PLAYER_IDLE:
+        case Cineer.PLAYER_IDLE:
           break;
-        case TrMediaPlayer.PLAYER_PREPARED:
+        case Cineer.PLAYER_PREPARED:
           dispatchOnPrepared(player);
           break;
-        case TrMediaPlayer.PLAYER_PREPARING:
+        case Cineer.PLAYER_PREPARING:
           break;
-        case TrMediaPlayer.PLAYER_READY:
+        case Cineer.PLAYER_READY:
           break;
         default:
           break;
       }
     }
 
-    @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+    @Override public boolean onPlayerError(Cineer player, PlaybackException error) {
       return dispatchOnError(player, error);
     }
   };
 
   OnVideoSizeChangedListener mSizeChangedListener = new OnVideoSizeChangedListener() {
-    public void onVideoSizeChanged(TrMediaPlayer mp, int width, int height) {
+    public void onVideoSizeChanged(Cineer mp, int width, int height) {
       mVideoWidth = mp.getVideoWidth();
       mVideoHeight = mp.getVideoHeight();
       if (mVideoWidth != 0 && mVideoHeight != 0) {
@@ -401,11 +401,11 @@ import java.util.Map;
     }
   };
 
-  private void dispatchOnPrepared(TrMediaPlayer mp) {
+  private void dispatchOnPrepared(Cineer mp) {
     mCurrentState = STATE_PREPARED;
 
     if (mOnPlayerStateChangeListener != null) {
-      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.PLAYER_PREPARED);
+      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, Cineer.PLAYER_PREPARED);
     }
 
     if (mController != null) {
@@ -445,7 +445,7 @@ import java.util.Map;
     }
   }
 
-  private void dispatchOnCompletion(TrMediaPlayer mp) {
+  private void dispatchOnCompletion(Cineer mp) {
     mPlayerPosition = getDuration();  // A trick to fix duration issue with current VideoView.
     mCurrentState = STATE_ENDED;
     mTargetState = STATE_ENDED;
@@ -454,12 +454,12 @@ import java.util.Map;
     }
 
     if (mOnPlayerStateChangeListener != null) {
-      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, TrMediaPlayer.PLAYER_ENDED);
+      mOnPlayerStateChangeListener.onPlayerStateChanged(mp, false, Cineer.PLAYER_ENDED);
     }
   }
 
   OnInfoListener onInfoListenerDelegate = new OnInfoListener() {
-    public boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
+    public boolean onInfo(Cineer mp, PlaybackInfo info) {
       if (mOnInfoListener != null) {
         mOnInfoListener.onInfo(mp, info);
       }
@@ -467,7 +467,7 @@ import java.util.Map;
     }
   };
 
-  private boolean dispatchOnError(TrMediaPlayer mp, PlaybackException er) {
+  private boolean dispatchOnError(Cineer mp, PlaybackException er) {
     Log.d(TAG, "Error: " + er.toString());
     mCurrentState = STATE_ERROR;
     mTargetState = STATE_ERROR;
@@ -506,7 +506,7 @@ import java.util.Map;
                                          */
                   if (mOnPlayerStateChangeListener != null) {
                     mOnPlayerStateChangeListener.onPlayerStateChanged(mMediaPlayer, false,
-                        TrMediaPlayer.PLAYER_ENDED);
+                        Cineer.PLAYER_ENDED);
                   }
                 }
               })
@@ -516,7 +516,7 @@ import java.util.Map;
     return true;
   }
 
-  private void dispatchOnBufferingUpdate(TrMediaPlayer mp, int percent) {
+  private void dispatchOnBufferingUpdate(Cineer mp, int percent) {
     mCurrentBufferPercentage = percent;
   }
 
@@ -752,7 +752,7 @@ import java.util.Map;
     mBackgroundAudioEnabled = enabled;
   }
 
-  @Override public void setMediaSource(@NonNull MediaSource source) {
+  @Override public void setMediaSource(@NonNull Media source) {
     setMediaUri(source.mediaUri);
   }
 }

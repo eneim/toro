@@ -54,7 +54,7 @@ import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +67,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * SmoothStreaming and so on).
  */
 public class ExoMediaPlayer
-    implements TrMediaPlayer, ExoPlayer.Listener, ChunkSampleSource.EventListener,
+    implements Cineer, ExoPlayer.Listener, ChunkSampleSource.EventListener,
     HlsSampleSource.EventListener, ExtractorSampleSource.EventListener,
     SingleSampleSource.EventListener, DefaultBandwidthMeter.EventListener,
     MediaCodecVideoTrackRenderer.EventListener, MediaCodecAudioTrackRenderer.EventListener,
@@ -176,18 +176,6 @@ public class ExoMediaPlayer
   }
 
   /**
-   * A listener for receiving notifications of timed text.
-   */
-  public interface TextListener {
-
-    /**
-     * Respond to text arriving (ex subtitles, captions).
-     * @param text The received text.
-     */
-    void onText(String text);
-  }
-
-  /**
    * A listener for receiving ID3 metadata parsed from the media stream.
    */
   public interface Id3MetadataListener {
@@ -242,7 +230,6 @@ public class ExoMediaPlayer
    */
   private String[][] trackNames;
 
-  private TextListener textListener;
   private CaptionListener captionListener;
   private Id3MetadataListener id3MetadataListener;
   private InternalErrorListener internalErrorListener;
@@ -280,15 +267,6 @@ public class ExoMediaPlayer
 
   public void setInfoListener(InfoListener listener) {
     infoListener = listener;
-  }
-
-  /**
-   * Set the listener which responds to incoming text (ex subtitles or captions).
-   *
-   * @param listener The listener which can respond to text like subtitles and captions.
-   */
-  public void setTextListener(TextListener listener) {
-    textListener = listener;
   }
 
   public void setCaptionListener(CaptionListener listener) {
@@ -646,10 +624,6 @@ public class ExoMediaPlayer
     if (captionListener != null && getSelectedTrack(TYPE_TEXT) != TRACK_DISABLED) {
       captionListener.onCues(cues);
     }
-
-    //if (cues != null && cues.size() > 0) {
-    //  processText(cues.get(0).text.toString());
-    //}
   }
 
   @Override public void onMetadata(List<Id3Frame> id3Frames) {

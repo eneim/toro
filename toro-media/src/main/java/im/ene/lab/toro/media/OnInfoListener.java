@@ -28,5 +28,5 @@ public interface OnInfoListener /* extends MediaPlayer.OnInfoListener */ {
    * Returning false, or not having an OnErrorListener at all, will
    * cause the info to be discarded.
    */
-  boolean onInfo(TrMediaPlayer mp, PlaybackInfo info);
+  boolean onInfo(Cineer mp, PlaybackInfo info);
 }

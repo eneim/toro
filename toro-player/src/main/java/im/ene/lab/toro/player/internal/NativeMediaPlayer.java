@@ -26,16 +26,16 @@ import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by eneim on 6/2/16.
  *
- * Implementation for {@link TrMediaPlayer} backed by Android original {@link MediaPlayer}
+ * Implementation for {@link Cineer} backed by Android original {@link MediaPlayer}
  */
-public class NativeMediaPlayer implements TrMediaPlayer, MediaPlayer.OnBufferingUpdateListener {
+public final class NativeMediaPlayer implements Cineer, MediaPlayer.OnBufferingUpdateListener {
 
   final MediaPlayer mediaPlayer;
   int bufferedPercent = 0;

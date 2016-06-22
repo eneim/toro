@@ -33,9 +33,9 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -123,11 +123,11 @@ public class DeadlySimpleListFragment extends Fragment {
       // Do nothing
     }
 
-    @Override public void onVideoPrepared(TrMediaPlayer mp) {
+    @Override public void onVideoPrepared(Cineer mp) {
       mPlayable = true;
     }
 
-    @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
+    @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
       mPlayable = false;
       return super.onPlaybackError(mp, error);
     }
@@ -188,7 +188,7 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView.setBackgroundAudioEnabled(enabled);
     }
 
-    @Override public void setMediaSource(@NonNull MediaSource source) {
+    @Override public void setMediaSource(@NonNull Media source) {
       mVideoView.setMediaSource(source);
     }
 

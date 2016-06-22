@@ -24,14 +24,14 @@ import com.google.android.exoplayer.util.Util;
 /**
  * Generate a renderer builder appropriate for rendering a video.
  */
-public class RendererBuilderFactory {
+public final class RendererBuilderFactory {
 
   /**
    * Create a renderer builder which can build the given video.
    *
-   * @param context The context (ex {@link android.app.Activity} in whicb the video has been
+   * @param context The context (ex {@link android.app.Activity} in which the video has been
    * created.
-   * @param video The video which will be played.
+   * @param uri The video uri which will be played.
    */
   public static ExoMediaPlayer.RendererBuilder createRendererBuilder(Context context, Uri uri) {
     final String userAgent = Util.getUserAgent(context, "Toro");

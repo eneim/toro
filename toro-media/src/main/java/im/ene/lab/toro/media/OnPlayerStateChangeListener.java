@@ -23,19 +23,19 @@ public interface OnPlayerStateChangeListener {
 
   /**
    * @param playWhenReady Whether playback will proceed when ready.
-   * @param playbackState One of the {@link State} constants defined in the {@link TrMediaPlayer}
+   * @param playbackState One of the {@link State} constants defined in the {@link Cineer}
    * interface.
    */
-  void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady, @State int playbackState);
+  void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState);
 
   /**
    * Invoked when an error occurs. The playback state will transition to
-   * {@link TrMediaPlayer#PLAYER_IDLE} immediately after this method is invoked. The player instance
-   * can still be used, and {@link TrMediaPlayer#release()} must still be called on the player
+   * {@link Cineer#PLAYER_IDLE} immediately after this method is invoked. The player instance
+   * can still be used, and {@link Cineer#release()} must still be called on the player
    * should
    * it no longer be required.
    *
    * @param error The error.
    */
-  boolean onPlayerError(TrMediaPlayer player, PlaybackException error);
+  boolean onPlayerError(Cineer player, PlaybackException error);
 }

@@ -29,7 +29,7 @@ import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -272,7 +272,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  final void onCompletion(ToroPlayer player, TrMediaPlayer mediaPlayer) {
+  final void onCompletion(ToroPlayer player, Cineer mediaPlayer) {
     // 1. find manager for this player
     VideoPlayerManager manager = null;
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
@@ -303,7 +303,7 @@ import java.util.concurrent.ConcurrentHashMap;
   }
 
   final void onPrepared(ToroPlayer player, View container, ViewParent parent,
-      TrMediaPlayer mediaPlayer) {
+      Cineer mediaPlayer) {
     player.onVideoPrepared(mediaPlayer);
     VideoPlayerManager manager = null;
     ToroScrollListener listener;
@@ -344,7 +344,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  final boolean onError(ToroPlayer player, TrMediaPlayer mp, PlaybackException error) {
+  final boolean onError(ToroPlayer player, Cineer mp, PlaybackException error) {
     boolean handle = player.onPlaybackError(mp, error);
     for (ToroScrollListener listener : sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
@@ -357,7 +357,7 @@ import java.util.concurrent.ConcurrentHashMap;
     return handle;
   }
 
-  final boolean onInfo(ToroPlayer player, TrMediaPlayer mp, PlaybackInfo info) {
+  final boolean onInfo(ToroPlayer player, Cineer mp, PlaybackInfo info) {
     player.onPlaybackInfo(mp, info);
     return true;
   }

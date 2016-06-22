@@ -22,9 +22,9 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.MediaSource;
+import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 
 /**
@@ -100,11 +100,11 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return visibleAreaOffset() >= 0.75 && mPlayable;
   }
 
-  @CallSuper @Override public void onVideoPrepared(TrMediaPlayer mp) {
+  @CallSuper @Override public void onVideoPrepared(Cineer mp) {
     mPlayable = true;
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
     mPlayable = false;
     return super.onPlaybackError(mp, error);
   }
@@ -127,7 +127,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setVolume(volume);
   }
 
-  @Override public void setMediaSource(@NonNull MediaSource source) {
+  @Override public void setMediaSource(@NonNull Media source) {
     mVideoView.setMediaSource(source);
   }
 

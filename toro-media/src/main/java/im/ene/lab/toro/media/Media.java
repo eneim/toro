@@ -20,12 +20,18 @@ import android.net.Uri;
 
 /**
  * Created by eneim on 6/3/16.
+ *
+ * Naive media item definition. Application <b>MUST</b> extends this for custom usage.
  */
-public class MediaSource {
+public class Media {
 
   public final Uri mediaUri;
 
-  public MediaSource(Uri mediaUri) {
+  public Media(Uri mediaUri) {
     this.mediaUri = mediaUri;
+  }
+
+  public Uri getMediaUri() {
+    return mediaUri;
   }
 }

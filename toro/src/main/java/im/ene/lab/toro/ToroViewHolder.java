@@ -25,7 +25,7 @@ import android.view.View;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.media.TrMediaPlayer;
+import im.ene.lab.toro.media.Cineer;
 
 /**
  * Created by eneim on 1/31/16.
@@ -102,7 +102,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
-  @Override public void onPlayerStateChanged(TrMediaPlayer player, boolean playWhenReady,
+  @Override public void onPlayerStateChanged(Cineer player, boolean playWhenReady,
       @State int playbackState) {
     Log.d(TAG, "onPlayerStateChanged() called with: "
         + "player = ["
@@ -114,35 +114,35 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
         + "]");
 
     switch (playbackState) {
-      case TrMediaPlayer.PLAYER_PREPARED:
+      case Cineer.PLAYER_PREPARED:
         mHelper.onPrepared(this, itemView, itemView.getParent(), player);
         break;
-      case TrMediaPlayer.PLAYER_ENDED:
+      case Cineer.PLAYER_ENDED:
         mHelper.onCompletion(this, player);
         break;
       // TODO
-      case TrMediaPlayer.PLAYER_BUFFERING:
+      case Cineer.PLAYER_BUFFERING:
         Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
         break;
-      case TrMediaPlayer.PLAYER_IDLE:
+      case Cineer.PLAYER_IDLE:
         break;
-      case TrMediaPlayer.PLAYER_PREPARING:
+      case Cineer.PLAYER_PREPARING:
         break;
-      case TrMediaPlayer.PLAYER_READY:
+      case Cineer.PLAYER_READY:
         break;
       default:
         break;
     }
   }
 
-  @Override public boolean onPlayerError(TrMediaPlayer player, PlaybackException error) {
+  @Override public boolean onPlayerError(Cineer player, PlaybackException error) {
     return mHelper.onError(this, player, error);
   }
 
   /**
    * Implement from {@link OnInfoListener}
    */
-  @Override public final boolean onInfo(TrMediaPlayer mp, PlaybackInfo info) {
+  @Override public final boolean onInfo(Cineer mp, PlaybackInfo info) {
     return mHelper.onInfo(this, mp, info);
   }
 
@@ -169,11 +169,11 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   }
 
-  @Override public boolean onPlaybackError(TrMediaPlayer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
     return true;  // don't want to see the annoying dialog
   }
 
-  @Override public void onPlaybackInfo(TrMediaPlayer mp, PlaybackInfo info) {
+  @Override public void onPlaybackInfo(Cineer mp, PlaybackInfo info) {
 
   }
 
@@ -218,7 +218,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     return rect;
   }
 
-  @Override public void onVideoPrepared(TrMediaPlayer mp) {
+  @Override public void onVideoPrepared(Cineer mp) {
 
   }
 

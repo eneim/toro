@@ -19,7 +19,7 @@ package im.ene.lab.toro.media;
 /**
  * Created by eneim on 6/2/16.
  */
-public final class PlaybackException extends Exception {
+public class PlaybackException extends Exception {
 
   public int what;
 

@@ -21,7 +21,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceView;
 
 /**
- * A SurfaceView implementation that resizes itself according to a specified aspect ratio.
+ * A SurfaceView implementation that re-sizes itself according to a specified aspect ratio.
  */
 public class VideoSurfaceView extends SurfaceView {
 
@@ -54,11 +54,11 @@ public class VideoSurfaceView extends SurfaceView {
 
   /**
    * Resize the view based on the width and height specifications.
+   *
    * @param widthMeasureSpec The specified width.
    * @param heightMeasureSpec The specified height.
    */
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+  @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     int width = getMeasuredWidth();
     int height = getMeasuredHeight();
@@ -85,5 +85,4 @@ public class VideoSurfaceView extends SurfaceView {
       requestLayout();
     }
   }
-
 }
