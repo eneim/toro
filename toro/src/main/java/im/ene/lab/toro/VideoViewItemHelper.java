@@ -22,9 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.Cineer;
 
 /**
  * Created by eneim on 2/1/16.
@@ -32,7 +32,7 @@ import im.ene.lab.toro.media.Cineer;
  * A helper class to support Video's callbacks from {@link Cineer} as well as {@link
  * RecyclerView.Adapter}
  */
-class VideoViewItemHelper {
+public abstract class VideoViewItemHelper {
 
   /* BEGIN: Callback for View */
 
@@ -43,10 +43,8 @@ class VideoViewItemHelper {
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
    */
-  public void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent) {
-
-  }
+  public abstract void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent);
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
@@ -55,10 +53,8 @@ class VideoViewItemHelper {
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
    */
-  public void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent) {
-
-  }
+  public abstract void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent);
 
   /**
    * Support long press on Video, called by {@link View.OnLongClickListener#onLongClick(View)}

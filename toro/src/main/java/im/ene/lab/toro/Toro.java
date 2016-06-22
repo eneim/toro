@@ -19,17 +19,17 @@ package im.ene.lab.toro;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.Cineer;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -291,7 +291,7 @@ import java.util.concurrent.ConcurrentHashMap;
       player.onPlaybackStopped();
     }
 
-    // if (sConfig.loopAble) { // It's loop-able, so restart it immediately
+    // It's loop-able, so restart it immediately
     if (player.isLoopAble()) {
       if (manager != null) {
         // immediately repeat
@@ -302,8 +302,7 @@ import java.util.concurrent.ConcurrentHashMap;
     }
   }
 
-  final void onPrepared(ToroPlayer player, View container, ViewParent parent,
-      Cineer mediaPlayer) {
+  final void onPrepared(ToroPlayer player, View container, ViewParent parent, Cineer mediaPlayer) {
     player.onVideoPrepared(mediaPlayer);
     VideoPlayerManager manager = null;
     ToroScrollListener listener;
@@ -386,8 +385,8 @@ import java.util.concurrent.ConcurrentHashMap;
       }
 
       if (manager.getPlayer() != null) {
+        manager.getPlayer().onActivityActive();
         manager.startPlayback();
-        manager.getPlayer().onActivityInactive();
       }
     }
   }
@@ -414,7 +413,7 @@ import java.util.concurrent.ConcurrentHashMap;
           manager.getPlayer().onPlaybackPaused();
         }
 
-        manager.getPlayer().onActivityActive();
+        manager.getPlayer().onActivityInactive();
       }
     }
   }
@@ -433,7 +432,7 @@ import java.util.concurrent.ConcurrentHashMap;
         if (state.player != null) {
           // Release resource if there is any
           state.player.pause();
-          state.player.onActivityActive();
+          state.player.onActivityInactive();
           // Release this player
           state.player = null;
         }
@@ -457,7 +456,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "Most visible item, top - down";
       }
 
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      @Nullable @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -495,7 +494,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "Most visible item, top - down. Keep last playing item.";
       }
 
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      @Nullable @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -523,7 +522,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "First playable item, top - down";
       }
 
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      @Nullable @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -553,7 +552,7 @@ import java.util.concurrent.ConcurrentHashMap;
         return "First playable item, top - down. Keep last playing item.";
       }
 
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      @Nullable @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
         if (candidates == null || candidates.size() < 1) {
           return null;
         }
@@ -577,7 +576,7 @@ import java.util.concurrent.ConcurrentHashMap;
       // 1. Get Window's vision from parent
       ((View) parent).getWindowVisibleDisplayFrame(windowRect);
       // 2. Get parent's global rect
-      ((View) parent).getGlobalVisibleRect(parentRect, new Point());
+      ((View) parent).getGlobalVisibleRect(parentRect, null);
     }
     // 3. Get player global rect
     View videoView = player.getVideoView();

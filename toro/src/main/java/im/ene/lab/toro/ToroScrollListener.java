@@ -51,10 +51,10 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     // clear current playback candidates
     candidates.clear();
     // Check current playing position
-    final ToroPlayer currentVideo = playerManager.getPlayer();
-    if (currentVideo != null && currentVideo.getPlayOrder() != RecyclerView.NO_POSITION) {
-      if (currentVideo.wantsToPlay() && Toro.getStrategy().allowsToPlay(currentVideo, parent)) {
-        candidates.add(currentVideo);
+    final ToroPlayer currentPlayer = playerManager.getPlayer();
+    if (currentPlayer != null && currentPlayer.getPlayOrder() != RecyclerView.NO_POSITION) {
+      if (currentPlayer.wantsToPlay() && Toro.getStrategy().allowsToPlay(currentPlayer, parent)) {
+        candidates.add(currentPlayer);
       }
     }
 
@@ -62,7 +62,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     int firstPosition = RecyclerView.NO_POSITION;
     int lastPosition = RecyclerView.NO_POSITION;
 
-    // Find visible positions bound
+    // Find visible positions range
     if (parent.getLayoutManager() instanceof LinearLayoutManager) {
       LinearLayoutManager layoutManager = (LinearLayoutManager) parent.getLayoutManager();
       firstPosition = layoutManager.findFirstVisibleItemPosition();
@@ -75,8 +75,8 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       int[] firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null);
       int[] lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null);
 
-      List<Integer> firstVisiblePositions = Util.asList(firstVisibleItemPositions);
-      List<Integer> lastVisiblePositions = Util.asList(lastVisibleItemPositions);
+      List<Integer> firstVisiblePositions = ToroUtil.asList(firstVisibleItemPositions);
+      List<Integer> lastVisiblePositions = ToroUtil.asList(lastVisibleItemPositions);
 
       firstPosition = Collections.min(firstVisiblePositions);
       lastPosition = Collections.max(lastVisiblePositions);
@@ -86,16 +86,16 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       lastPosition = layoutManager.getLastVisibleItemPosition();
     }
 
-    if (firstPosition <= lastPosition &&  // don't screw up the 'for' loop
+    if (firstPosition <= lastPosition /* don't screw up the 'for' loop */ &&  //
         (firstPosition != RecyclerView.NO_POSITION || lastPosition != RecyclerView.NO_POSITION)) {
       for (int i = firstPosition; i <= lastPosition; i++) {
         // Detected a view holder for video player
         RecyclerView.ViewHolder viewHolder = parent.findViewHolderForAdapterPosition(i);
         if (viewHolder != null && viewHolder instanceof ToroPlayer) {
           candidate = (ToroPlayer) viewHolder;
-          // check that view position
+          // check candidate's view position
           if (candidate.wantsToPlay() && Toro.getStrategy().allowsToPlay(candidate, parent)) {
-            // Have a new candidate who wants to play
+            // Have a new candidate who can play
             if (!candidates.contains(candidate)) {
               candidates.add(candidate);
             }
@@ -107,30 +107,30 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     // Ask strategy to elect one
     final ToroPlayer electedPlayer = Toro.getStrategy().findBestPlayer(candidates);
 
-    if (electedPlayer == currentVideo) {
+    if (electedPlayer == currentPlayer) {
       // No thing changes, no new President.
-      if (currentVideo != null && !currentVideo.isPlaying()) {
-        playerManager.restoreVideoState(currentVideo.getVideoId());
+      if (currentPlayer != null && !currentPlayer.isPlaying()) {
+        playerManager.restoreVideoState(currentPlayer.getVideoId());
         playerManager.startPlayback();
-        currentVideo.onPlaybackStarted();
+        currentPlayer.onPlaybackStarted();
       }
       return;
     }
 
     // Current player is not elected anymore, pause it.
-    if (currentVideo != null) {
-      playerManager.saveVideoState(currentVideo.getVideoId(), currentVideo.getCurrentPosition(),
-          currentVideo.getDuration());
+    if (currentPlayer != null) {
+      playerManager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+          currentPlayer.getDuration());
       playerManager.pausePlayback();
-      currentVideo.onPlaybackPaused();
+      currentPlayer.onPlaybackPaused();
     }
 
     if (electedPlayer == null) {
-      // There is no new President, we are screw up, get out of here.
+      // Old president resigned, there is no new one, we are screwed up, get out of here.
       return;
     }
 
-    // Well...!
+    // Well... let's the BlackHouse starts new cycle with the new President!
     playerManager.setPlayer(electedPlayer);
     playerManager.restoreVideoState(electedPlayer.getVideoId());
     playerManager.startPlayback();

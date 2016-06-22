@@ -42,7 +42,7 @@ public interface ToroPlayer extends Cineer.Player, OnInfoListener, OnPlayerState
   boolean wantsToPlay();
 
   /**
-   * {@since 2.0.0}
+   * {@since 2.0.0} Will not get called anymore.
    *
    * !Deprecated From 2.0.0. User will just need to tell Toro by {@link ToroPlayer#wantsToPlay()}.
    * Toro 2.0 will not listen to this Method anymore.
@@ -51,7 +51,7 @@ public interface ToroPlayer extends Cineer.Player, OnInfoListener, OnPlayerState
    * this player wants to play that much, is It able to play (Video is correctly set or there is no
    * Error)
    */
-  // @Deprecated boolean isAbleToPlay();
+  @Deprecated boolean isAbleToPlay();
 
   /**
    * Indicate that this Player is able to replay right after it stops (loop-able) or not.
@@ -97,12 +97,14 @@ public interface ToroPlayer extends Cineer.Player, OnInfoListener, OnPlayerState
   /* Host activity lifecycle callback */
 
   /**
-   * Host Activity paused
+   * Host Activity becomes active.
+   * Note that Activity behaviour is different from API 24+ to API 23-.
    */
   void onActivityActive();
 
   /**
-   * Host Activity resumed
+   * Host Activity becomes inactive.
+   * Note that Activity behaviour is different from API 24+ to API 23-.
    */
   void onActivityInactive();
 

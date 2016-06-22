@@ -16,6 +16,7 @@
 
 package im.ene.lab.toro;
 
+import android.support.annotation.Nullable;
 import android.view.ViewParent;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public interface ToroStrategy {
    * Each item of candidates returns true for {@link ToroPlayer#wantsToPlay()}. A
    * Strategy gives the best fit Player to start playing
    */
-  ToroPlayer findBestPlayer(List<ToroPlayer> candidates);
+  @Nullable ToroPlayer findBestPlayer(List<ToroPlayer> candidates);
 
   /**
    * Called after {@link ToroPlayer#wantsToPlay()} to verify that current player is
@@ -42,5 +43,4 @@ public interface ToroStrategy {
    * @param player ToroPlayer object which wants to play, and wait for permission
    */
   boolean allowsToPlay(ToroPlayer player, ViewParent parent);
-
 }

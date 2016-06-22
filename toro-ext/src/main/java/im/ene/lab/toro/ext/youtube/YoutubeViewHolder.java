@@ -128,14 +128,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
     }
   }
 
-  @Override public void onActivityActive() {
-    super.onActivityActive();
-  }
-
-  @Override public void onActivityInactive() {
-    super.onActivityInactive();
-  }
-
   @CallSuper @Override public void start() {
     Log.e("Logger", "start: ");
     isStarting = true;

@@ -23,9 +23,9 @@ import java.util.List;
 /**
  * Created by eneim on 2/1/16.
  */
-final class Util {
+final class ToroUtil {
 
-  private Util() {
+  private ToroUtil() {
     throw new AssertionError("Not supported");
   }
 

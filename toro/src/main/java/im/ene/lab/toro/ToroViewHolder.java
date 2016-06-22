@@ -22,13 +22,15 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.media.Cineer;
 
 /**
  * Created by eneim on 1/31/16.
+ *
+ * Abstract implementation of {@link ToroPlayer}.
  */
 public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
@@ -49,13 +51,13 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
         };
       }
 
-      itemView.setOnLongClickListener(mLongClickListener);
+      super.setOnItemLongClickListener(mLongClickListener);
     } else {
       mLongClickListener = null;
     }
   }
 
-  @CallSuper @Override public void onActivityInactive() {
+  @CallSuper @Override public void onActivityActive() {
 
   }
 
@@ -77,17 +79,18 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
     super.setOnItemLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
-        boolean longClicked = false;
+        boolean longClickHandled = false;
 
         if (mLongClickListener != null) {
-          longClicked = mLongClickListener.onLongClick(v);  // we can ignore this boolean result
+          longClickHandled = mLongClickListener.onLongClick(v); // we can ignore this boolean result
         }
-        return listener.onLongClick(v) && longClicked;
+
+        return listener.onLongClick(v) && longClickHandled;
       }
     });
   }
 
-  @CallSuper @Override public void onActivityActive() {
+  @CallSuper @Override public void onActivityInactive() {
     // Release listener to prevent memory leak
     mLongClickListener = null;
   }
@@ -102,17 +105,8 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
     mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
   }
 
-  @Override public void onPlayerStateChanged(Cineer player, boolean playWhenReady,
-      @State int playbackState) {
-    Log.d(TAG, "onPlayerStateChanged() called with: "
-        + "player = ["
-        + player.getClass().getSimpleName()
-        + "], playWhenReady = ["
-        + playWhenReady
-        + "], playbackState = ["
-        + playbackState
-        + "]");
-
+  @Override
+  public void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState) {
     switch (playbackState) {
       case Cineer.PLAYER_PREPARED:
         mHelper.onPrepared(this, itemView, itemView.getParent(), player);
@@ -120,7 +114,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
       case Cineer.PLAYER_ENDED:
         mHelper.onCompletion(this, player);
         break;
-      // TODO
+      // TODO Support buffering update.
       case Cineer.PLAYER_BUFFERING:
         Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
         break;
@@ -151,7 +145,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   /**
-   * Allow long press to play support or not. False by default
+   * Allow long press to play support or not. {@code false} by default
    */
   protected boolean allowLongPressSupport() {
     return false;
