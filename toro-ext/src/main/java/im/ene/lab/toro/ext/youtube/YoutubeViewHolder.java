@@ -335,11 +335,11 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
 
   }
 
-  @Override public void setMediaUri(Uri uri) {
+  @Override public void setMedia(Uri uri) {
 
   }
 
-  @Override public void setMediaSource(@NonNull Media source) {
+  @Override public void setMedia(@NonNull Media source) {
 
   }
 

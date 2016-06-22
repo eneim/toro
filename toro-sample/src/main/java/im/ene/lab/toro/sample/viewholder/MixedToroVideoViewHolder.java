@@ -62,7 +62,7 @@ public class MixedToroVideoViewHolder extends ToroVideoViewHolder {
     }
 
     mItem = (SimpleVideoObject) item;
-    mVideoView.setMediaUri(Uri.parse(mItem.video));
+    mVideoView.setMedia(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {

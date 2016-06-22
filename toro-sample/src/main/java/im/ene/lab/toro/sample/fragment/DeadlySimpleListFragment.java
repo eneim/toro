@@ -111,7 +111,7 @@ public class DeadlySimpleListFragment extends Fragment {
       }
 
       mItem = (SimpleVideoObject) object;
-      mVideoView.setMediaUri(Uri.parse((mItem.video)));
+      mVideoView.setMedia(Uri.parse((mItem.video)));
       Picasso.with(itemView.getContext())
           .load(R.drawable.toro_place_holder)
           .fit()
@@ -188,12 +188,12 @@ public class DeadlySimpleListFragment extends Fragment {
       mVideoView.setBackgroundAudioEnabled(enabled);
     }
 
-    @Override public void setMediaSource(@NonNull Media source) {
-      mVideoView.setMediaSource(source);
+    @Override public void setMedia(@NonNull Media source) {
+      mVideoView.setMedia(source);
     }
 
-    @Override public void setMediaUri(Uri uri) {
-      mVideoView.setMediaUri(uri);
+    @Override public void setMedia(Uri uri) {
+      mVideoView.setMedia(uri);
     }
 
     @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {

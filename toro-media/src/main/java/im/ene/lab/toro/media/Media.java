@@ -25,7 +25,7 @@ import android.net.Uri;
  */
 public class Media {
 
-  public final Uri mediaUri;
+  private final Uri mediaUri;
 
   public Media(Uri mediaUri) {
     this.mediaUri = mediaUri;

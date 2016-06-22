@@ -247,7 +247,7 @@ import java.util.Map;
    * @param path the path of the video.
    */
   public void setMediaPath(String path) {
-    setMediaUri(Uri.parse(path));
+    setMedia(Uri.parse(path));
   }
 
   /**
@@ -255,7 +255,7 @@ import java.util.Map;
    *
    * @param uri the URI of the video.
    */
-  public void setMediaUri(Uri uri) {
+  public void setMedia(Uri uri) {
     setMediaUri(uri, null);
   }
 
@@ -752,7 +752,7 @@ import java.util.Map;
     mBackgroundAudioEnabled = enabled;
   }
 
-  @Override public void setMediaSource(@NonNull Media source) {
-    setMediaUri(source.mediaUri);
+  @Override public void setMedia(@NonNull Media source) {
+    setMedia(source.getMediaUri());
   }
 }

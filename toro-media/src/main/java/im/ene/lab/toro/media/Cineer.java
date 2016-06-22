@@ -111,9 +111,9 @@ public interface Cineer {
 
     void setBackgroundAudioEnabled(boolean enabled);
 
-    void setMediaSource(@NonNull Media source);
+    void setMedia(@NonNull Media source);
 
-    void setMediaUri(Uri uri);
+    void setMedia(Uri uri);
 
     /**
      * See {@link MediaPlayer#setVolume(float, float)}

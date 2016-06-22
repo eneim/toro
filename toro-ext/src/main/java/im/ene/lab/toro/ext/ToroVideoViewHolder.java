@@ -127,11 +127,11 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     mVideoView.setVolume(volume);
   }
 
-  @Override public void setMediaSource(@NonNull Media source) {
-    mVideoView.setMediaSource(source);
+  @Override public void setMedia(@NonNull Media source) {
+    mVideoView.setMedia(source);
   }
 
-  @Override public void setMediaUri(Uri uri) {
-    mVideoView.setMediaUri(uri);
+  @Override public void setMedia(Uri uri) {
+    mVideoView.setMedia(uri);
   }
 }

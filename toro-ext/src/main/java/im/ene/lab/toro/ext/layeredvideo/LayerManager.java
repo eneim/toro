@@ -70,7 +70,7 @@ public class LayerManager {
     this.container = container;
 
     ExoMediaPlayer.RendererBuilder rendererBuilder =
-        RendererBuilderFactory.createRendererBuilder(activity, video.mediaUri);
+        RendererBuilderFactory.createRendererBuilder(activity, video.getMediaUri());
 
     this.exoPlayer = new ExoMediaPlayer(rendererBuilder);
     this.exoPlayer.prepare();
