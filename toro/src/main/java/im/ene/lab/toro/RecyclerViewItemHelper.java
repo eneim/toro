@@ -28,10 +28,12 @@ import android.view.ViewParent;
  * ViewHolder's transaction to trigger the expected behavior. Client is not recommended to override
  * this, but in case it wants to provide custom behaviors, it is recommended to call super method
  * from this Helper.
+ *
+ * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public class RecyclerViewItemHelper extends VideoViewItemHelper {
+public final class RecyclerViewItemHelper extends VideoViewItemHelper {
 
-  private static RecyclerViewItemHelper INSTANCE;
+  private static volatile RecyclerViewItemHelper INSTANCE;
 
   public static RecyclerViewItemHelper getInstance() {
     if (INSTANCE == null) {

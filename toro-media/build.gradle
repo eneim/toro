@@ -47,7 +47,7 @@ android {
   resourcePrefix 'tr_media_'
 
   defaultConfig {
-    minSdkVersion rootProject.ext.minSupportSDKVersion
+    minSdkVersion 10
     targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"

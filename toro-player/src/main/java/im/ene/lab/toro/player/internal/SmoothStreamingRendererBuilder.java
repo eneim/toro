@@ -15,9 +15,11 @@
  */
 package im.ene.lab.toro.player.internal;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
+import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
@@ -49,6 +51,7 @@ import java.io.IOException;
 /**
  * A {@link ExoMediaPlayer.RendererBuilder} for SmoothStreaming.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;

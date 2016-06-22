@@ -24,6 +24,9 @@ import android.os.Build;
 /**
  * Created by eneim on 6/16/16.
  */
+/**
+ * {@hide} TODO Un-hide when done.
+ */
 public final class UIUtil {
 
   private static final IScreenHelper IMPL;

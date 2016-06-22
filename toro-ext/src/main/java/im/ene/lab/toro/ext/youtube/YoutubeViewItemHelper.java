@@ -16,18 +16,29 @@
 
 package im.ene.lab.toro.ext.youtube;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.view.View;
+import android.view.ViewParent;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.lab.toro.RecyclerViewItemHelper;
 import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.VideoViewItemHelper;
 import im.ene.lab.toro.media.PlaybackException;
 
 /**
  * Created by eneim on 4/8/16.
  */
-public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
+public class YoutubeViewItemHelper extends VideoViewItemHelper {
 
-  private static YoutubeViewItemHelper INSTANCE;
+  private static volatile YoutubeViewItemHelper INSTANCE;
+  private final RecyclerViewItemHelper delegate;
+
+  public YoutubeViewItemHelper() {
+    super();
+    delegate = RecyclerViewItemHelper.getInstance();
+  }
 
   // Prefer to use singleton of this class. This method must be call on UiThread
   @UiThread public static YoutubeViewItemHelper getInstance() {
@@ -77,5 +88,23 @@ public class YoutubeViewItemHelper extends RecyclerViewItemHelper {
   }
 
   public void onYoutubePlayerChanged(YouTubePlayer newPlayer) {
+    // Do I need to do anything?
+  }
+
+  // Adapt from RecyclerViewItemHelper
+
+  @Override public void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
+    delegate.onAttachedToParent(player, itemView, parent);
+  }
+
+  @Override public void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
+    delegate.onDetachedFromParent(player, itemView, parent);
+  }
+
+  @Override public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent) {
+    return delegate.onItemLongClick(player, itemView, parent);
   }
 }

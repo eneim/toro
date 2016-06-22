@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Created by eneim on 1/31/16.
  *
- * Internal API
+ * Extension/Implementation of {@link VideoPlayerManager} can use this implementation as delegate.
  */
 public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 

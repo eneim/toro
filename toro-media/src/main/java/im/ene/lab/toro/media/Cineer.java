@@ -186,7 +186,7 @@ public interface Cineer {
   /** see {@link MediaPlayer#getVideoHeight()} ()} */
   int getVideoHeight();
 
-  /** see {@link ExoPlayer#getBufferedPercentage()} */
+  /** see ExoPlayer#getBufferedPercentage() */
   int getBufferedPercentage();
 
   @Deprecated

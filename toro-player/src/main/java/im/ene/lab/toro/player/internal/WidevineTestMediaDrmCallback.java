@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import com.google.android.exoplayer.drm.MediaDrmCallback;
 import com.google.android.exoplayer.util.Util;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**
@@ -41,7 +42,8 @@ import java.util.UUID;
 
   @Override public byte[] executeProvisionRequest(UUID uuid, ProvisionRequest request)
       throws IOException {
-    String url = request.getDefaultUrl() + "&signedRequest=" + new String(request.getData());
+    String url = request.getDefaultUrl() + "&signedRequest=" + new String(request.getData(),
+        Charset.defaultCharset());
     return Util.executePost(url, null, null);
   }
 

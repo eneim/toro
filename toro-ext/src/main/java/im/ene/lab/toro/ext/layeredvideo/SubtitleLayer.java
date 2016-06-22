@@ -47,7 +47,7 @@ public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
 
   @Override public FrameLayout createView(LayerManager manager) {
     view = (FrameLayout) LayoutInflater.from(manager.getContainer().getContext())
-        .inflate(R.layout.tr_player_subtitle_layer, manager.getContainer(), false);
+        .inflate(R.layout.tr_ext_subtitle_layer, manager.getContainer(), false);
     subtitles = (SubtitleLayout) view.findViewById(R.id.subtitles);
     configureSubtitleView();
     manager.getExoPlayer().setCaptionListener(this);

@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.graphics.SurfaceTexture;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -38,6 +37,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
@@ -45,7 +45,6 @@ import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.internal.NativeMediaPlayer;
 import java.io.IOException;
 import java.util.Map;
@@ -488,7 +487,7 @@ import java.util.Map;
              * longer have a window, don't bother showing the user an error.
              */
     if (getWindowToken() != null) {
-      Resources r = getContext().getResources();
+      // Resources r = getContext().getResources();
       int messageId;
 
       if (er.what == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK) {

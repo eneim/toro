@@ -106,7 +106,7 @@
 
     <SeekBar
         android:id="@+id/media_controller_progress"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
@@ -139,6 +139,6 @@
         />
   </LinearLayout>
 
-  <include layout="@layout/playback_controller_toolbar"/>
+  <include layout="@layout/tr_ext_playback_controller_toolbar"/>
 
 </FrameLayout>

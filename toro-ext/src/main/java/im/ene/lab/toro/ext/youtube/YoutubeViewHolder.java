@@ -31,7 +31,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.ext.util.Util;
+import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.PlaybackException;
 import java.lang.annotation.Retention;
@@ -88,7 +88,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
           "This View requires a YoutubeListAdapter parent which holds a non-null FragmentManager");
     }
     this.mHelper = YoutubeViewItemHelper.getInstance();
-    this.mFragmentId = Util.generateViewId();
+    this.mFragmentId = ViewUtil.generateViewId();
   }
 
   @Nullable protected abstract YouTubeThumbnailView getThumbnailView();
@@ -102,7 +102,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
     itemView.getViewTreeObserver()
         .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override public void onGlobalLayout() {
-            itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            ViewUtil.removeOnGlobalLayoutListener(itemView.getViewTreeObserver(), this);
             if ((mThumbnail = getThumbnailView()) != null) {
               mThumbnail.initialize(Youtube.API_KEY, YoutubeViewHolder.this);
             } else {
@@ -126,14 +126,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
       // Add youtube player fragment to this ViewHolder
       mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mPlayerFragment).commit();
     }
-  }
-
-  @Override public void onActivityActive() {
-    super.onActivityActive();
-  }
-
-  @Override public void onActivityInactive() {
-    super.onActivityInactive();
   }
 
   @CallSuper @Override public void start() {
