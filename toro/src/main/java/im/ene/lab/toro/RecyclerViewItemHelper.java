@@ -33,7 +33,7 @@ import android.view.ViewParent;
  */
 public final class RecyclerViewItemHelper extends VideoViewItemHelper {
 
-  private static RecyclerViewItemHelper INSTANCE;
+  private static volatile RecyclerViewItemHelper INSTANCE;
 
   public static RecyclerViewItemHelper getInstance() {
     if (INSTANCE == null) {

@@ -32,7 +32,7 @@ import im.ene.lab.toro.media.PlaybackException;
  */
 public class YoutubeViewItemHelper extends VideoViewItemHelper {
 
-  private static YoutubeViewItemHelper INSTANCE;
+  private static volatile YoutubeViewItemHelper INSTANCE;
   private final RecyclerViewItemHelper delegate;
 
   public YoutubeViewItemHelper() {

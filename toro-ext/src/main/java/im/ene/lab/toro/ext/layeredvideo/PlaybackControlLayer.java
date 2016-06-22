@@ -171,6 +171,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
             sendMessageDelayed(msg, 1000 - (pos % 1000));
           }
           break;
+        default:
+          break;
       }
     }
   }

@@ -73,7 +73,7 @@ import java.util.concurrent.ConcurrentHashMap;
   static volatile Toro sInstance;
 
   // Used to swap strategies if need. It should be a strong reference.
-  private static ToroStrategy cachedStrategy;
+  private static volatile ToroStrategy cachedStrategy;
 
   // It requires client to detach Activity/unregister View to prevent Memory leak
   // Use RecyclerView#hashCode() to sync between maps
