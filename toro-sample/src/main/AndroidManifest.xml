@@ -45,7 +45,7 @@
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".activity.MainActivity">
+        android:targetActivity=".activity.StandalonePlayerActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

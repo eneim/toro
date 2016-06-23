@@ -16,8 +16,10 @@
 
 package im.ene.lab.toro.ext.layeredvideo;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 import android.widget.FrameLayout;
 import im.ene.lab.toro.player.Video;
@@ -31,6 +33,7 @@ import java.util.List;
  * <p>NOTE: If you want to get a video player up and running with minimal effort, just instantiate
  * this class and call play();
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class SimpleVideoPlayer {
 
   /**

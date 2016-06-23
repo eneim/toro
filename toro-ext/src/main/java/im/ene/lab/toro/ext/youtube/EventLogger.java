@@ -31,7 +31,7 @@ public class EventLogger
     YouTubePlayer.OnInitializedListener {
 
   private String TAG = "EventLogger";
-  private final boolean D;
+  private final boolean D;  // D or I, just to separate log colors.
   private final boolean DEBUG = BuildConfig.DEBUG;
 
   public EventLogger(String id, int position) {

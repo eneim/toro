@@ -16,6 +16,8 @@
 
 package im.ene.lab.toro.ext.layeredvideo;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
@@ -25,6 +27,7 @@ import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 /**
  * Creates a view which can render video.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class VideoSurfaceLayer implements Layer {
 
   /**

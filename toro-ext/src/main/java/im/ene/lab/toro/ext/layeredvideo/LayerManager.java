@@ -16,12 +16,14 @@
 
 package im.ene.lab.toro.ext.layeredvideo;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.widget.FrameLayout;
 import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
-import im.ene.lab.toro.player.internal.ObservablePlayerControl;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
+import im.ene.lab.toro.player.widget.ObservablePlayerControl;
 import java.util.List;
 
 /**
@@ -34,6 +36,7 @@ import java.util.List;
  *
  * <p>Look at {@link SimpleVideoPlayer} to see {@link LayerManager} in action.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class LayerManager {
 
   /**

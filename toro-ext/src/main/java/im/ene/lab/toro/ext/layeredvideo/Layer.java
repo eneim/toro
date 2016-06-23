@@ -16,6 +16,8 @@
 
 package im.ene.lab.toro.ext.layeredvideo;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.widget.FrameLayout;
 
 /**
@@ -27,6 +29,7 @@ import android.widget.FrameLayout;
  * <p>See {@link SubtitleLayer}, {@link VideoSurfaceLayer}, and {@link PlaybackControlLayer}
  * for examples.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public interface Layer {
 
   /**

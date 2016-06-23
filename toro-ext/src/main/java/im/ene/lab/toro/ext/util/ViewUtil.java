@@ -17,12 +17,9 @@
 package im.ene.lab.toro.ext.util;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.SeekBar;
-import im.ene.lab.toro.ext.internal.SeekBarICS;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -63,17 +60,6 @@ public class ViewUtil {
 
   public static boolean isSmallScreen(Activity activity) {
     return activity.getResources().getConfiguration().smallestScreenWidthDp < 410;
-  }
-
-  public static Drawable getThumb(SeekBar seekBar) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      return seekBar.getThumb();
-    } else if (seekBar instanceof SeekBarICS) {
-      return ((SeekBarICS) seekBar).getThumbV15();
-    } else {
-      throw new IllegalArgumentException(
-          "Android version 15 and below must use SeekBarICS instead.");
-    }
   }
 
   @SuppressWarnings("deprecation")

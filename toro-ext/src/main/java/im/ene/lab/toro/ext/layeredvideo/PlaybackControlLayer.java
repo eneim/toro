@@ -17,6 +17,7 @@
 package im.ene.lab.toro.ext.layeredvideo;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -24,6 +25,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
@@ -39,11 +41,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import com.google.android.exoplayer.util.PlayerControl;
 import im.ene.lab.toro.ext.R;
-import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.player.internal.PlayerControlCallback;
 import im.ene.lab.toro.player.util.PlayerUtil;
+import im.ene.lab.toro.player.widget.ObservablePlayerControl;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -90,6 +91,7 @@ import java.util.Locale;
  *
  * <p>The view is defined in the layout file: res/layout/playback_control_layer.xml.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focusable {
 
   /**
@@ -528,7 +530,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
       return;
     }
 
-    PlayerControl playerControl = layerManager.getControl();
+    ObservablePlayerControl playerControl = layerManager.getControl();
     if (playerControl == null) {
       return;
     }
@@ -815,7 +817,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * @param shouldPlay If true, then the player starts playing. If false, the player pauses.
    */
   public void setPlayPause(boolean shouldPlay) {
-    PlayerControl playerControl = layerManager.getControl();
+    ObservablePlayerControl playerControl = layerManager.getControl();
     if (playerControl == null) {
       return;
     }
@@ -903,7 +905,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
           return;
         }
 
-        PlayerControl playerControl = layerManager.getControl();
+        ObservablePlayerControl playerControl = layerManager.getControl();
         long duration = playerControl.getDuration();
         long newPosition = (duration * progress) / 1000L;
         playerControl.seekTo((int) newPosition);
@@ -1038,13 +1040,13 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
     fullscreenButton.setColorFilter(controlColor);
     pausePlayButton.setColorFilter(controlColor);
     seekBar.getProgressDrawable().setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
-    ViewUtil.getThumb(seekBar).setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
+    seekBar.getThumb().setColorFilter(seekBarColor, PorterDuff.Mode.SRC_ATOP);
 
     // Hide the thumb drawable if the SeekBar is disabled
     if (canSeek) {
-      ViewUtil.getThumb(seekBar).mutate().setAlpha(255);
+      seekBar.getThumb().mutate().setAlpha(255);
     } else {
-      ViewUtil.getThumb(seekBar).mutate().setAlpha(0);
+      seekBar.getThumb().mutate().setAlpha(0);
     }
 
     for (ImageButton imageButton : actionButtons) {
@@ -1059,7 +1061,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * video player.
    */
   public void updatePlayPauseButton() {
-    PlayerControl playerControl = layerManager.getControl();
+    ObservablePlayerControl playerControl = layerManager.getControl();
     if (view == null || pausePlayButton == null || playerControl == null) {
       return;
     }
@@ -1075,7 +1077,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * Adjust the position of the action bar to reflect the progress of the video.
    */
   private int updateProgress() {
-    PlayerControl playerControl = layerManager.getControl();
+    ObservablePlayerControl playerControl = layerManager.getControl();
     if (playerControl == null || isSeekBarDragging) {
       return 0;
     }

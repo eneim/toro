@@ -33,6 +33,7 @@ import java.util.List;
 /**
  * Creates a view which displays subtitles.
  */
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class SubtitleLayer implements Layer, ExoMediaPlayer.CaptionListener {
 
   /**
