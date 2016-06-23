@@ -8,10 +8,15 @@
 Meanwhile, I keep a small effort to support legacy MediaPlayer API for older Application. 
 Read ExoPlayer documentation for more information about its limitation and requirement.
 
-- **Separated modules, more flexibility**: Toro v2 comes with 4 sub modules which can be used as independent libraries: ```toro-media``` - base definition of higher API layers;
- ```toro-player``` - core implementation of Playback API. Heavily adapted from ExoPlayer's demo and well tailored for normal usage;
- ```toro``` - the Toro as you know, but has been simplified to contain only most important implementation;
- ```toro-ext``` - extension of Toro, contains higher level of APIs, more specific implementation of Toro's components, provides extra support for Youtube and other mainstream playback APIs.
+- **Separated modules, more flexibility**: Toro v2 comes with 4 sub modules which can be used as independent libraries: 
+
+```toro-media``` - base definition of higher API layers;
+
+```toro-player``` - core implementation of Playback API. Heavily adapted from ExoPlayer's demo and well tailored for normal usage;
+
+```toro``` - the Toro as you know, but has been simplified to contain only most important implementation;
+
+```toro-ext``` - extension of Toro, contains higher level of APIs, more specific implementation of Toro's components, provides extra support for Youtube and other mainstream playback APIs.
  
  By separating those module, and clarify the depending relationship, I hope Toro v2 could give you more power to custom your current components to match Toro mindset. 
  You don't have to follow the old way of extending Toro's built-in widgets anymore, but they are still their for you, more friendly.
