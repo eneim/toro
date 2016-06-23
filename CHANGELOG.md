@@ -34,17 +34,17 @@ repositories {
 }
 
 ext {
-  toro-version = '2.0.0-RC3'  // one version for all modules
+  toro_version = '2.0.0-RC3'  // one version for all modules
 }
 
 dependencies {
-  compile "im.ene.lab:toro-media:${toro-version}"
+  compile "im.ene.lab:toro-media:${toro_version}"
   
-  compile "im.ene.lab:toro-player:${toro-version}"
+  compile "im.ene.lab:toro-player:${toro_version}"
   
-  compile "im.ene.lab:toro:${toro-version}"
+  compile "im.ene.lab:toro:${toro_version}"
   
-  compile "im.ene.lab:toro-ext:${toro-version}"
+  compile "im.ene.lab:toro-ext:${toro_version}"
 }
 
 ```
