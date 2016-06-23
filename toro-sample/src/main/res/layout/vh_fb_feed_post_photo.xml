@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016 eneim@Eneim Labs, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/activity_vertical_margin"
+      android:background="#e5e5e5"
+      />
+
+  <include layout="@layout/vh_fb_feed_user"/>
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="#f5f5f5"
+      android:lineSpacingMultiplier="1.2"
+      android:padding="8dp"
+      android:text="@string/sample"
+      android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+      />
+
+  <android.support.v7.widget.AppCompatImageView
+      android:layout_width="match_parent"
+      android:layout_height="240dp"
+      android:scaleType="centerCrop"
+      android:src="@drawable/google_io"
+      />
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="0.5dp"
+      android:layout_marginLeft="24dp"
+      android:layout_marginRight="24dp"
+      android:background="#e5e5e5"
+      />
+
+  <include layout="@layout/vh_fb_feed_bottom"/>
+</LinearLayout>

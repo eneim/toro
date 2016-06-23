@@ -4,16 +4,45 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'im.ene.lab'
 
+ext {
+  bintrayRepo = 'maven'
+  bintrayName = 'Toro'
+
+  publishedGroupId = 'im.ene.lab'
+  libraryName = 'Toro'
+  artifact = 'toro'
+
+  libraryDescription =
+      'Toro core service, backed by Toro Player, provide easy to implement Auto Video playback to Android.'
+
+  siteUrl = 'https://github.com/eneim/Toro'
+  gitUrl = 'https://github.com/eneim/Toro.git'
+
+  libraryVersion = rootProject.ext.libraryVersion
+
+  developerId = 'eneim'
+  developerName = 'Nam Nguyen'
+  developerEmail = 'nam@ene.im'
+
+  licenseName = 'The Apache Software License, Version 2.0'
+  licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  allLicenses = ["Apache-2.0"]
+}
+
 android {
-  compileSdkVersion 23
-  buildToolsVersion "23.0.3"
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
+
+  resourcePrefix 'tr_core_'
+  // defaultPublishConfig "release"
 
   defaultConfig {
-    minSdkVersion 15
-    targetSdkVersion 23
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
   }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -29,29 +58,17 @@ android {
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
-  compile 'com.android.support:appcompat-v7:23.2.1'
-  compile 'com.android.support:recyclerview-v7:23.2.1'
+  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
+
+  compile project(':toro-media')
+
+  javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  javadocDeps project(':toro-player')
 }
 
-// build a jar with source files
-task sourcesJar(type: Jar) {
-  from android.sourceSets.main.java.srcDirs
-  classifier = 'sources'
-}
-
-task javadoc(type: Javadoc) {
-  failOnError false
-  source = android.sourceSets.main.java.sourceFiles
-  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-// build a jar with javadoc
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
-  from javadoc.getDestinationDir()
-}
-
-artifacts {
-  archives sourcesJar
-  archives javadocJar
-}
+// REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
+// > gradlew install
+// > gradlew bintrayUpload
+apply from: 'https://raw.githubusercontent.com/eneim/eneim.github.io/resources/publish/jcenter/installv1.gradle'
+apply from: '../ref/bintrayv1.gradle'

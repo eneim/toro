@@ -16,22 +16,30 @@
 
 package im.ene.lab.toro;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /**
  * Created by eneim on 3/7/16.
  *
- * This interface will allow user to use custom {@link RecyclerView.LayoutManager}
+ * This interface will allow user to use custom {@link RecyclerView.LayoutManager} in Toro
  */
 public interface ToroLayoutManager {
 
   /**
    * @return adapter position of first visible item in RecyclerView
+   *
+   * See {@link LinearLayoutManager#findFirstVisibleItemPosition()} or {@link
+   * StaggeredGridLayoutManager#findFirstVisibleItemPositions(int[])}
    */
   int getFirstVisibleItemPosition();
 
   /**
    * @return adapter position of last visible item in RecyclerView
+   *
+   * See {@link LinearLayoutManager#findLastVisibleItemPosition()} ()} or {@link
+   * StaggeredGridLayoutManager#findLastVisibleItemPositions(int[])}
    */
   int getLastVisibleItemPosition();
 }

@@ -24,15 +24,77 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.MediaController;
+import android.widget.VideoView;
+import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.PlaybackInfo;
 
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer
-    extends MediaController.MediaPlayerControl, MediaPlayer.OnPreparedListener,
-    MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener,
-    MediaPlayer.OnSeekCompleteListener {
+public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener {
+
+  // Playback method
+  /**
+   * See {@link VideoView#start()}
+   */
+  void start();
+
+  /**
+   * See {@link VideoView#pause()}
+   */
+  void pause();
+
+  /**
+   * See {@link VideoView#stopPlayback()}
+   */
+  void stop();
+
+  /**
+   * See {@link VideoView#getDuration()}
+   *
+   * @return media's duration.
+   */
+  long getDuration();
+
+  /**
+   * See {@link VideoView#getCurrentPosition()}
+   *
+   * @return current playback position.
+   */
+  long getCurrentPosition();
+
+  /**
+   * See {@link VideoView#seekTo(int)}
+   *
+   * @param pos seek to specific position.
+   */
+  void seekTo(long pos);
+
+  /**
+   * See {@link VideoView#isPlaying()}
+   *
+   * @return {@code true} if the media is being played, {@code false} otherwise.
+   */
+  boolean isPlaying();
+
+  /**
+   * See {@link VideoView#getBufferPercentage()}
+   *
+   * @return current buffered percentage.
+   */
+  @IntRange(from = 0, to = 100) int getBufferPercentage();
+
+  /**
+   * See {@link MediaPlayer#setVolume(float, float)}
+   *
+   * @param volume volume level.
+   */
+  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
+
+  // Custom method to add Toro abilities
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to
@@ -41,16 +103,21 @@ public interface ToroPlayer
   boolean wantsToPlay();
 
   /**
+   * {@since 2.0.0} Will not get called anymore.
+   *
+   * !Deprecated From 2.0.0. User will just need to tell Toro by {@link ToroPlayer#wantsToPlay()}.
+   * Toro 2.0 will not listen to this Method anymore.
+   *
    * Called after {@link ToroPlayer#wantsToPlay()} returning <b>true</b>, indicate that even if
    * this player wants to play that much, is It able to play (Video is correctly set or there is no
    * Error)
    */
-  boolean isAbleToPlay();
+  // @Deprecated boolean isAbleToPlay();
 
   /**
    * Indicate that this Player is able to replay right after it stops (loop-able) or not.
    *
-   * @return true if this Player is loopable, false otherwise
+   * @return true if this Player is loop-able, false otherwise
    */
   boolean isLoopAble();
 
@@ -62,12 +129,13 @@ public interface ToroPlayer
   /**
    * Support save/restore Video state (last played/paused position)
    *
-   * @return current Video's id. !IMPORTANT this ID must be unique, and avoid using Video's
-   * filename, url String or any object which depends on the Video object itself. There will be
-   * the case user uses same Video in multiple place. User of this library should better use the
-   * main object (which holds the Video as member) as key to generate this Id.
+   * !IMPORTANT this ID must be unique, and avoid using Video's filename, url String or any object
+   * that depends on the Video object itself. There will be the case user uses same Video in
+   * different places.
    * <p/>
-   * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-depended Id
+   * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-independent Id
+   *
+   * @return current Video's id.
    */
   @Nullable String getVideoId();
 
@@ -90,14 +158,16 @@ public interface ToroPlayer
   /* Host activity lifecycle callback */
 
   /**
-   * Host Activity paused
+   * Host Activity becomes active.
+   * Note that Activity behaviour is different from API 24+ to API 23-.
    */
-  void onActivityPaused();
+  void onActivityActive();
 
   /**
-   * Host Activity resumed
+   * Host Activity becomes inactive.
+   * Note that Activity behaviour is different from API 24+ to API 23-.
    */
-  void onActivityResumed();
+  void onActivityInactive();
 
   /* Playback lifecycle callback */
 
@@ -106,7 +176,7 @@ public interface ToroPlayer
    *
    * @param mp media player which is prepared
    */
-  void onVideoPrepared(MediaPlayer mp);
+  void onVideoPrepared(Cineer mp);
 
   /**
    * Callback after this player starts playing
@@ -124,22 +194,23 @@ public interface ToroPlayer
   void onPlaybackStopped();
 
   /**
-   * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
+   * Called from {@link Toro#onError(ToroPlayer, Cineer, PlaybackException)}
    *
-   * This method has the same signature with {@link ToroPlayer#onError(MediaPlayer, int, int)}, but
-   * {@link ToroPlayer#onError(MediaPlayer, int, int)} will be called explicitly by Toro, so this
-   * method will prevent infinite loop
+   * This method has the same signature with {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
+   * PlaybackException)}, but {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
+   * PlaybackException)} will be called explicitly by Toro, so this method will prevent infinite
+   * loop
    */
-  boolean onPlaybackError(MediaPlayer mp, int what, int extra);
+  boolean onPlaybackError(Cineer mp, PlaybackException error);
 
   /**
-   * Called from {@link Toro#onError(ToroPlayer, MediaPlayer, int, int)}
+   * Called from {@link Toro#onInfo(ToroPlayer, Cineer, PlaybackInfo)}
    *
-   * This method has the same signature with {@link ToroPlayer#onInfo(MediaPlayer, int, int)} , but
-   * {@link ToroPlayer#onInfo(MediaPlayer, int, int)} will be called explicitly by Toro, so this
-   * method will prevent infinite loop
+   * This method has the same signature with {@link ToroPlayer#onInfo(Cineer, PlaybackInfo)}
+   * , but {@link ToroPlayer##onInfo(Cineer, PlaybackInfo)} will be called explicitly by
+   * Toro, so this method will prevent infinite loop
    */
-  void onPlaybackInfo(MediaPlayer mp, int what, int extra);
+  void onPlaybackInfo(Cineer mp, PlaybackInfo info);
 
   /**
    * Callback from playback progress update. This method is called from main thread (UIThread)
@@ -147,5 +218,5 @@ public interface ToroPlayer
    * @param position current playing position
    * @param duration total duration of current video
    */
-  @UiThread void onPlaybackProgress(int position, int duration);
+  @UiThread void onPlaybackProgress(long position, long duration);
 }

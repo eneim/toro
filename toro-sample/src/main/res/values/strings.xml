@@ -1,0 +1,98 @@
+<resources>
+  <string name="app_name">Toro v2</string>
+  <string name="activity_show_case">Toro Showcase</string>
+
+  <string name="sample">
+    GitHub Wikis is a simple way to let others contribute content. Any GitHub user can create and
+    edit pages to use for documentation, examples, support, or anything you wish.
+  </string>
+
+  <string name="fragment_simple_video_list">
+    Simple Video List
+  </string>
+
+  <string name="fragment_simple_video_list_detail">
+    Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video.
+  </string>
+
+  <string name="fragment_single_video_simple_list">
+    Single Video Simple List
+  </string>
+
+  <string name="fragment_single_video_simple_list_detail">
+    Simple RecyclerView with Vertical LinearLayoutManager. Contains only one Video at a specific position.
+  </string>
+
+  <string name="fragment_multi_video_staggered_grid">
+    Multi Video Staggered Grid
+  </string>
+
+  <string name="fragment_multi_video_staggered_grid_detail">
+    Simple RecyclerView with Vertical StaggeredGridLayoutManager. All items are Videos.
+  </string>
+
+  <string name="fragment_multi_video_complicated_grid">
+    Multi Video Complicated Grid
+  </string>
+
+  <string name="fragment_multi_video_complicated_grid_detail">
+    RecyclerView with Vertical GridLayoutManager, custom span size. Items are mixed between Text only, Video only and both Text and Video.
+  </string>
+
+  <string name="fragment_multi_video_dual_list">
+    Multi Video Dual Lists
+  </string>
+
+  <string name="fragment_multi_video_dual_list_detail">
+    2 Separated RecyclerViews in same layout:
+    \n\n    - Top RecyclerView with Horizontal LinearLayoutManager. Items are mixed from Video-only and Video-Text items.
+    \n\n    - Bottom RecyclerView with Vertical StaggeredGridLayoutManager.Items are all Videos.
+  </string>
+
+  <string name="fragment_deadly_simple_list">
+    Deadly Simple Video List
+  </string>
+
+  <string name="fragment_deadly_simple_list_detail">
+    Very simple implementation for a Video List. a RecyclerView with Vertical LinearLayoutManager, simple Video list.
+  </string>
+
+  <string name="fragment_youtube_video_list">
+    Youtube Videos (Alpha)
+  </string>
+
+  <string name="fragment_youtube_video_list_detail">
+    A test with Youtube Videos, using Youtube Player API. Still unstable and need more improvement.
+  </string>
+
+  <string name="fragment_view_pager">
+    ViewPager
+  </string>
+
+  <string name="fragment_view_pager_detail">
+    ViewPager, contains 2 fragments. Each fragment is a single RecyclerView.
+  </string>
+
+  <string name="fragment_toggleable_list">
+    Simple Toggleable Video List
+  </string>
+
+  <string name="fragment_toggleable_list_detail">
+    Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video. Auto-playback is toggle-able by Toggle button.
+  </string>
+
+  <string name="facebook_feed">
+    Simple Facebook alike timeline
+  </string>
+
+  <string name="facebook_feed_detail">
+    Simple timeline feed which mimics Facebook\'s behaviour.
+  </string>
+
+  <string name="title_activity_main">MainActivity</string>
+
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
+
+  <string name="action_settings">Settings</string>
+</resources>

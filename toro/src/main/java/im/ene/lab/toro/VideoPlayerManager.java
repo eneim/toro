@@ -52,14 +52,20 @@ public interface VideoPlayerManager {
   void pausePlayback();
 
   /**
+   * Stop current video. Used when the Video is detached from its parent.
+   */
+  void stopPlayback();
+
+  /**
    * Save current video state
    */
-  void saveVideoState(String videoId, @Nullable Integer position, long duration);
+  void saveVideoState(String videoId, @Nullable Long position, long duration);
 
   /**
    * Restore and setup state of a Video to current video player
    */
   void restoreVideoState(String videoId);
 
+  @Nullable Long getSavedPosition(String videoId);
   /* END Directly control current player */
 }

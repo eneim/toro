@@ -1,0 +1,126 @@
+buildscript {
+  repositories {
+    maven { url 'https://maven.fabric.io/public' }
+  }
+
+  dependencies {
+    classpath 'io.fabric.tools:gradle:1.21.5'
+  }
+}
+apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+apply plugin: 'com.getkeepsafe.dexcount'
+
+repositories {
+  maven { url 'https://maven.fabric.io/public' }
+}
+
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+def dateTimeInt() {
+  DateFormat df = new SimpleDateFormat("yyyyMMdd");
+  return Integer.parseInt(df.format(new Date()));
+}
+
+def dateTimeString() {
+  DateFormat df = new SimpleDateFormat("yyyy.MM.dd");
+  return df.format(new Date());
+}
+
+android {
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
+
+  signingConfigs {
+    release {
+      keyAlias toro_prodKeyAlias
+      keyPassword toro_prodKeyPassword
+      storeFile file(toro_prodStoreFile)
+      storePassword toro_prodStorePassword
+    }
+
+    debug {
+      keyAlias "debug"
+      keyPassword "android"
+      storeFile file("debug.jks")
+      storePassword "android"
+    }
+  }
+
+  defaultConfig {
+    applicationId "${TORO_SAMPLE_APP_ID}"
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
+
+    versionCode dateTimeInt()
+    versionName dateTimeString()
+    archivesBaseName = "toro_sample"
+
+    manifestPlaceholders = [
+        fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}",
+        youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"
+    ]
+
+    vectorDrawables.useSupportLibrary = true
+  }
+
+  buildTypes {
+    release {
+      signingConfig signingConfigs.release
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+
+    prerelease {
+      debuggable true // this value may change
+      zipAlignEnabled true
+      signingConfig signingConfigs.release
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+
+    debug {
+      signingConfig signingConfigs.debug
+      applicationIdSuffix ".debug"
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  packagingOptions {
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+
+  lintOptions {
+    disable 'InvalidPackage'
+  }
+}
+
+dependencies {
+  compile fileTree(include: ['*.jar'], dir: 'libs')
+  testCompile 'junit:junit:4.12'
+  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
+
+  compile project(path: ':toro-ext')
+  // compile 'im.ene.lab:toro-ext:2.0.0-beta1'
+
+  /* compile project(':toro') */  // un-comment if user just need toro
+  // compile 'com.github.eneim:Toro:1.2.0'
+
+  compile 'com.squareup.picasso:picasso:2.5.2'
+  compile 'com.jakewharton:butterknife:7.0.1'
+  compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    transitive = true;
+  }
+  compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
+    transitive = true;
+  }
+}
+
+crashlytics {
+  enableNdk true
+  androidNdkOut 'src/main/obj'
+  androidNdkLibsOut 'src/main/libs'
+}

@@ -1,4 +1,4 @@
-/gradle.properties
+!/gradle.properties
 /Toro.iml
 /app/app.iml
 /app/build
@@ -19,3 +19,4 @@
 .DS_Store
 /build
 /captures
+/toro-sampe-v1/build/
