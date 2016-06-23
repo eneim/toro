@@ -516,7 +516,7 @@ public class TextureVideoView extends TextureView implements Cineer.Player {
     mCurrentBufferPercentage = percent;
   }
 
-  public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+  @Override public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
     this.mOnPlayerStateChangeListener = listener;
   }
 

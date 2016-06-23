@@ -198,7 +198,8 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
     }
   };
 
-  public void setPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+  @Override
+  public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
     this.mPlayerStateChangeListener = listener;
   }
 

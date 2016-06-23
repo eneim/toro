@@ -16,13 +16,11 @@
 
 package im.ene.lab.toro;
 
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.support.annotation.CallSuper;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
@@ -178,38 +176,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   private static final String TAG = "ToroViewHolder";
 
   @Override public float visibleAreaOffset() {
-    Rect videoRect = getVideoRect();
-    Rect parentRect = getRecyclerViewRect();
-
-    if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
-      float visibleArea = videoRect.height() * videoRect.width();
-      float viewArea = getVideoView().getWidth() * getVideoView().getHeight();
-      return viewArea <= 0.f ? 1.f : visibleArea / viewArea;
-    } else {
-      return 0.f;
-    }
-  }
-
-  protected final Rect getVideoRect() {
-    Rect rect = new Rect();
-    Point offset = new Point();
-    getVideoView().getGlobalVisibleRect(rect, offset);
-    return rect;
-  }
-
-  @Nullable protected final Rect getRecyclerViewRect() {
-    if (itemView.getParent() == null) { // view is not attached to RecyclerView
-      return null;
-    }
-
-    if (!(itemView.getParent() instanceof View)) {
-      return null;
-    }
-
-    Rect rect = new Rect();
-    Point offset = new Point();
-    ((View) itemView.getParent()).getGlobalVisibleRect(rect, offset);
-    return rect;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
 
   @Override public void onVideoPrepared(Cineer mp) {
@@ -217,10 +184,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   @Override public int getBufferPercentage() {
-    return 0;
-  }
-
-  @Override public int getAudioSessionId() {
     return 0;
   }
 

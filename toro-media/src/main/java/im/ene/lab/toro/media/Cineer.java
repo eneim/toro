@@ -121,6 +121,8 @@ public interface Cineer {
      * @param volume volume level.
      */
     void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
+
+    void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener);
   }
 
   interface Controller {

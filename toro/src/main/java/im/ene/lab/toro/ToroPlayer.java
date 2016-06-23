@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.VideoView;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
@@ -33,7 +34,67 @@ import im.ene.lab.toro.media.PlaybackInfo;
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer extends Cineer.Player, OnInfoListener, OnPlayerStateChangeListener {
+public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener {
+
+  // Playback method
+  /**
+   * See {@link VideoView#start()}
+   */
+  void start();
+
+  /**
+   * See {@link VideoView#pause()}
+   */
+  void pause();
+
+  /**
+   * See {@link VideoView#stopPlayback()}
+   */
+  void stop();
+
+  /**
+   * See {@link VideoView#getDuration()}
+   *
+   * @return media's duration.
+   */
+  long getDuration();
+
+  /**
+   * See {@link VideoView#getCurrentPosition()}
+   *
+   * @return current playback position.
+   */
+  long getCurrentPosition();
+
+  /**
+   * See {@link VideoView#seekTo(int)}
+   *
+   * @param pos seek to specific position.
+   */
+  void seekTo(long pos);
+
+  /**
+   * See {@link VideoView#isPlaying()}
+   *
+   * @return {@code true} if the media is being played, {@code false} otherwise.
+   */
+  boolean isPlaying();
+
+  /**
+   * See {@link VideoView#getBufferPercentage()}
+   *
+   * @return current buffered percentage.
+   */
+  @IntRange(from = 0, to = 100) int getBufferPercentage();
+
+  /**
+   * See {@link MediaPlayer#setVolume(float, float)}
+   *
+   * @param volume volume level.
+   */
+  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
+
+  // Custom method to add Toro abilities
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to

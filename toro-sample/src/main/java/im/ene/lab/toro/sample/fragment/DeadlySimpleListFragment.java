@@ -33,9 +33,8 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.Media;
-import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -102,7 +101,7 @@ public class DeadlySimpleListFragment extends Fragment {
       super(itemView);
       mVideoView = (VideoPlayerView) itemView.findViewById(R.id.video);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
-      mVideoView.setPlayerStateChangeListener(this);
+      mVideoView.setOnPlayerStateChangeListener(this);
     }
 
     @Override public void bind(@Nullable Object object) {
@@ -182,18 +181,6 @@ public class DeadlySimpleListFragment extends Fragment {
 
     @Override public boolean isPlaying() {
       return mVideoView.isPlaying();
-    }
-
-    @Override public void setBackgroundAudioEnabled(boolean enabled) {
-      mVideoView.setBackgroundAudioEnabled(enabled);
-    }
-
-    @Override public void setMedia(@NonNull Media source) {
-      mVideoView.setMedia(source);
-    }
-
-    @Override public void setMedia(Uri uri) {
-      mVideoView.setMedia(uri);
     }
 
     @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {

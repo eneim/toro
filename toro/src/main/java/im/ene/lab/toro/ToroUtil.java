@@ -16,14 +16,19 @@
 
 package im.ene.lab.toro;
 
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.View;
+import android.view.ViewParent;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by eneim on 2/1/16.
  */
-final class ToroUtil {
+public final class ToroUtil {
 
   private ToroUtil() {
     throw new AssertionError("Not supported");
@@ -46,5 +51,44 @@ final class ToroUtil {
 
   @NonNull static List<Integer> asList(int[] array) {
     return asList(asArray(array));
+  }
+
+  private static Rect getVideoRect(ToroPlayer player) {
+    Rect rect = new Rect();
+    Point offset = new Point();
+    player.getVideoView().getGlobalVisibleRect(rect, offset);
+    return rect;
+  }
+
+  @Nullable private static Rect getRecyclerViewRect(ViewParent parent) {
+    if (parent == null) { // view is not attached to RecyclerView
+      return null;
+    }
+
+    if (!(parent instanceof View)) {
+      return null;
+    }
+
+    Rect rect = new Rect();
+    Point offset = new Point();
+    ((View) parent).getGlobalVisibleRect(rect, offset);
+    return rect;
+  }
+
+  @SuppressWarnings("ConstantConditions")
+  public static float visibleAreaOffset(ToroPlayer player, ViewParent parent) {
+    if (player.getVideoView() == null) {
+      throw new IllegalArgumentException("Player must have a VideoView.");
+    }
+    Rect videoRect = getVideoRect(player);
+    Rect parentRect = getRecyclerViewRect(parent);
+
+    if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
+      float visibleArea = videoRect.height() * videoRect.width();
+      float viewArea = player.getVideoView().getWidth() * player.getVideoView().getHeight();
+      return viewArea <= 0.f ? 1.f : visibleArea / viewArea;
+    } else {
+      return 0.f;
+    }
   }
 }

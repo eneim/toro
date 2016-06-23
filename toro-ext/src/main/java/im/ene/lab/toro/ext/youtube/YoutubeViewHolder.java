@@ -16,11 +16,9 @@
 
 package im.ene.lab.toro.ext.youtube;
 
-import android.net.Uri;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +30,6 @@ import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.ext.util.ViewUtil;
-import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.PlaybackException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -324,14 +321,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
   }
 
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-
-  }
-
-  @Override public void setMedia(Uri uri) {
-
-  }
-
-  @Override public void setMedia(@NonNull Media source) {
 
   }
 

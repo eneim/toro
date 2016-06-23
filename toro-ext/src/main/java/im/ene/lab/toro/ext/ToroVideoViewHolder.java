@@ -16,15 +16,13 @@
 
 package im.ene.lab.toro.ext;
 
-import android.net.Uri;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.Media;
-import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 
 /**
@@ -43,7 +41,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
       throw new NullPointerException("A valid VideoPlayerView is required.");
     }
 
-    mVideoView.setPlayerStateChangeListener(this);
+    mVideoView.setOnPlayerStateChangeListener(this);
   }
 
   protected abstract VideoPlayerView findVideoView(View itemView);
@@ -87,14 +85,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return 0;
   }
 
-  @Override public int getAudioSessionId() {
-    if (mVideoView != null) {
-      return mVideoView.getAudioSessionId();
-    }
-
-    return 0;
-  }
-
   @Override public boolean wantsToPlay() {
     // Default implementation
     return visibleAreaOffset() >= 0.75 && mPlayable;
@@ -119,19 +109,7 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return mVideoView;
   }
 
-  @Override public void setBackgroundAudioEnabled(boolean enabled) {
-    mVideoView.setBackgroundAudioEnabled(enabled);
-  }
-
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
     mVideoView.setVolume(volume);
-  }
-
-  @Override public void setMedia(@NonNull Media source) {
-    mVideoView.setMedia(source);
-  }
-
-  @Override public void setMedia(Uri uri) {
-    mVideoView.setMedia(uri);
   }
 }
