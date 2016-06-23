@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.lab.toro.Toro;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.viewholder.MixedToroVideoViewHolder;

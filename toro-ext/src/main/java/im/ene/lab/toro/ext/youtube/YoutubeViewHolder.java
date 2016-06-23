@@ -28,7 +28,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
-import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.ext.ToroViewHolder;
 import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.media.PlaybackException;
 import java.lang.annotation.Retention;

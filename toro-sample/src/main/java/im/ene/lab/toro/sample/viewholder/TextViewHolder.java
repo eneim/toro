@@ -18,7 +18,7 @@ package im.ene.lab.toro.sample.viewholder;
 
 import android.view.View;
 import android.widget.TextView;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleObject;
 

@@ -22,7 +22,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import com.google.android.youtube.player.YouTubePlayer;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
 import java.util.HashMap;

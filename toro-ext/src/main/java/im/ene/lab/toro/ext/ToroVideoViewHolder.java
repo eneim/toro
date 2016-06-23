@@ -20,7 +20,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.widget.VideoPlayerView;

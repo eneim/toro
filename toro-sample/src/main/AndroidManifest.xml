@@ -50,7 +50,7 @@
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".custom.MyToroActivity">
+        android:targetActivity=".activity.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

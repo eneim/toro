@@ -20,7 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.sample.adapter.BaseCustomAdapter;
 import im.ene.lab.toro.sample.adapter.OrderedVideoList;
 import im.ene.lab.toro.sample.data.SimpleObject;

@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.ext;
 
 import android.support.annotation.CallSuper;
 import android.util.Log;
 import android.view.View;
+import im.ene.lab.toro.RecyclerViewItemHelper;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.ToroUtil;
+import im.ene.lab.toro.VideoViewItemHelper;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.PlaybackException;

@@ -22,7 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import im.ene.lab.toro.RecyclerViewItemHelper;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.VideoViewItemHelper;
