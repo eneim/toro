@@ -56,8 +56,8 @@ import java.io.IOException;
 /**
  * A {@link RendererBuilder} for DASH.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class DashRendererBuilder
+    implements ExoMediaPlayer.RendererBuilder {
 
   private static final String TAG = "DashRendererBuilder";
 
@@ -86,14 +86,12 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
     this.drmCallback = drmCallback;
   }
 
-  @Override
-  public void buildRenderers(ExoMediaPlayer player) {
+  @Override public void buildRenderers(ExoMediaPlayer player) {
     currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, drmCallback, player);
     currentAsyncBuilder.init();
   }
 
-  @Override
-  public void cancel() {
+  @Override public void cancel() {
     if (currentAsyncBuilder != null) {
       currentAsyncBuilder.cancel();
       currentAsyncBuilder = null;
@@ -133,8 +131,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
       canceled = true;
     }
 
-    @Override
-    public void onSingleManifest(MediaPresentationDescription manifest) {
+    @Override public void onSingleManifest(MediaPresentationDescription manifest) {
       if (canceled) {
         return;
       }
@@ -148,8 +145,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
       }
     }
 
-    @Override
-    public void onSingleManifestError(IOException e) {
+    @Override public void onSingleManifestError(IOException e) {
       if (canceled) {
         return;
       }
@@ -167,8 +163,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
       buildRenderers();
     }
 
-    @Override
-    public void onTimestampError(UtcTimingElement utcTiming, IOException e) {
+    @Override public void onTimestampError(UtcTimingElement utcTiming, IOException e) {
       if (canceled) {
         return;
       }
@@ -202,8 +197,9 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
           return;
         }
         try {
-          drmSessionManager = StreamingDrmSessionManager.newWidevineInstance(
-              player.getPlaybackLooper(), drmCallback, null, player.getMainHandler(), player);
+          drmSessionManager =
+              StreamingDrmSessionManager.newWidevineInstance(player.getPlaybackLooper(),
+                  drmCallback, null, player.getMainHandler(), player);
           filterHdContent = getWidevineSecurityLevel(drmSessionManager) != SECURITY_LEVEL_1;
         } catch (UnsupportedDrmException e) {
           player.onRenderersError(e);
@@ -220,32 +216,36 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
       ChunkSampleSource videoSampleSource = new ChunkSampleSource(videoChunkSource, loadControl,
           VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_VIDEO);
-      TrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context, videoSampleSource,
-          MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
-          drmSessionManager, true, mainHandler, player, 50);
+      TrackRenderer videoRenderer =
+          new MediaCodecVideoTrackRenderer(context, videoSampleSource, MediaCodecSelector.DEFAULT,
+              MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, drmSessionManager, true,
+              mainHandler, player, 50);
 
       // Build the audio renderer.
       DataSource audioDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
-      ChunkSource audioChunkSource = new DashChunkSource(manifestFetcher,
-          DefaultDashTrackSelector.newAudioInstance(), audioDataSource, null, LIVE_EDGE_LATENCY_MS,
-          elapsedRealtimeOffset, mainHandler, player, ExoMediaPlayer.TYPE_AUDIO);
+      ChunkSource audioChunkSource =
+          new DashChunkSource(manifestFetcher, DefaultDashTrackSelector.newAudioInstance(),
+              audioDataSource, null, LIVE_EDGE_LATENCY_MS, elapsedRealtimeOffset, mainHandler,
+              player, ExoMediaPlayer.TYPE_AUDIO);
       ChunkSampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource, loadControl,
           AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_AUDIO);
-      TrackRenderer audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource,
-          MediaCodecSelector.DEFAULT, drmSessionManager, true, mainHandler, player,
-          AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
+      EnhancedMediaCodecAudioTrackRenderer audioRenderer =
+          new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource, MediaCodecSelector.DEFAULT,
+              drmSessionManager, true, mainHandler, player,
+              AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
 
       // Build the text renderer.
       DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
-      ChunkSource textChunkSource = new DashChunkSource(manifestFetcher,
-          DefaultDashTrackSelector.newTextInstance(), textDataSource, null, LIVE_EDGE_LATENCY_MS,
-          elapsedRealtimeOffset, mainHandler, player, ExoMediaPlayer.TYPE_TEXT);
+      ChunkSource textChunkSource =
+          new DashChunkSource(manifestFetcher, DefaultDashTrackSelector.newTextInstance(),
+              textDataSource, null, LIVE_EDGE_LATENCY_MS, elapsedRealtimeOffset, mainHandler,
+              player, ExoMediaPlayer.TYPE_TEXT);
       ChunkSampleSource textSampleSource = new ChunkSampleSource(textChunkSource, loadControl,
           TEXT_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_TEXT);
-      TrackRenderer textRenderer = new TextTrackRenderer(textSampleSource, player,
-          mainHandler.getLooper());
+      TrackRenderer textRenderer =
+          new TextTrackRenderer(textSampleSource, player, mainHandler.getLooper());
 
       // Invoke the callback.
       TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
@@ -257,10 +257,8 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
     private static int getWidevineSecurityLevel(StreamingDrmSessionManager sessionManager) {
       String securityLevelProperty = sessionManager.getPropertyString("securityLevel");
-      return securityLevelProperty.equals("L1") ? SECURITY_LEVEL_1 : securityLevelProperty
-          .equals("L3") ? SECURITY_LEVEL_3 : SECURITY_LEVEL_UNKNOWN;
+      return securityLevelProperty.equals("L1") ? SECURITY_LEVEL_1
+          : securityLevelProperty.equals("L3") ? SECURITY_LEVEL_3 : SECURITY_LEVEL_UNKNOWN;
     }
-
   }
-
 }
