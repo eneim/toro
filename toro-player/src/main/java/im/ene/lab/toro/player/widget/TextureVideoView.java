@@ -72,8 +72,7 @@ import java.util.Map;
  * <li>removes code that uses hidden APIs and thus is not available (e.g. subtitle support)</li>
  * </ol>
  */
-@Deprecated public class TextureVideoView extends TextureView
-    implements Cineer.Player {
+public class TextureVideoView extends TextureView implements Cineer.Player {
 
   public interface OnReleasedListener {
 
@@ -329,15 +328,13 @@ import java.util.Map;
       Log.w(TAG, "Unable to open content: " + mUri, ex);
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      dispatchOnError(mMediaPlayer,
-          new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
+      dispatchOnError(mMediaPlayer, new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
       return;
     } catch (IllegalArgumentException ex) {
       Log.w(TAG, "Unable to open content: " + mUri, ex);
       mCurrentState = STATE_ERROR;
       mTargetState = STATE_ERROR;
-      dispatchOnError(mMediaPlayer,
-          new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
+      dispatchOnError(mMediaPlayer, new PlaybackException(MediaPlayer.MEDIA_ERROR_UNKNOWN, 0));
       return;
     }
   }
