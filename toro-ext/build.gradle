@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'com.android.library'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 ext {
   bintrayRepo = 'maven'
