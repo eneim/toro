@@ -51,8 +51,8 @@ import java.io.IOException;
 /**
  * A {@link ExoMediaPlayer.RendererBuilder} for SmoothStreaming.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class SmoothStreamingRendererBuilder
+    implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int VIDEO_BUFFER_SEGMENTS = 200;
@@ -75,14 +75,12 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
     this.drmCallback = drmCallback;
   }
 
-  @Override
-  public void buildRenderers(ExoMediaPlayer player) {
+  @Override public void buildRenderers(ExoMediaPlayer player) {
     currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, drmCallback, player);
     currentAsyncBuilder.init();
   }
 
-  @Override
-  public void cancel() {
+  @Override public void cancel() {
     if (currentAsyncBuilder != null) {
       currentAsyncBuilder.cancel();
       currentAsyncBuilder = null;
@@ -107,8 +105,8 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       this.drmCallback = drmCallback;
       this.player = player;
       SmoothStreamingManifestParser parser = new SmoothStreamingManifestParser();
-      manifestFetcher = new ManifestFetcher<>(url, new DefaultHttpDataSource(userAgent, null),
-          parser);
+      manifestFetcher =
+          new ManifestFetcher<>(url, new DefaultHttpDataSource(userAgent, null), parser);
     }
 
     public void init() {
@@ -119,8 +117,7 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       canceled = true;
     }
 
-    @Override
-    public void onSingleManifestError(IOException exception) {
+    @Override public void onSingleManifestError(IOException exception) {
       if (canceled) {
         return;
       }
@@ -128,8 +125,7 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       player.onRenderersError(exception);
     }
 
-    @Override
-    public void onSingleManifest(SmoothStreamingManifest manifest) {
+    @Override public void onSingleManifest(SmoothStreamingManifest manifest) {
       if (canceled) {
         return;
       }
@@ -163,32 +159,34 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       ChunkSampleSource videoSampleSource = new ChunkSampleSource(videoChunkSource, loadControl,
           VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_VIDEO);
-      TrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context, videoSampleSource,
-          MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000,
-          drmSessionManager, true, mainHandler, player, 50);
+      TrackRenderer videoRenderer =
+          new MediaCodecVideoTrackRenderer(context, videoSampleSource, MediaCodecSelector.DEFAULT,
+              MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, drmSessionManager, true,
+              mainHandler, player, 50);
 
       // Build the audio renderer.
       DataSource audioDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
       ChunkSource audioChunkSource = new SmoothStreamingChunkSource(manifestFetcher,
-          DefaultSmoothStreamingTrackSelector.newAudioInstance(),
-          audioDataSource, null, LIVE_EDGE_LATENCY_MS);
+          DefaultSmoothStreamingTrackSelector.newAudioInstance(), audioDataSource, null,
+          LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource, loadControl,
           AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_AUDIO);
-      TrackRenderer audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource,
-          MediaCodecSelector.DEFAULT, drmSessionManager, true, mainHandler, player,
-          AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
+      EnhancedMediaCodecAudioTrackRenderer audioRenderer =
+          new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource, MediaCodecSelector.DEFAULT,
+              drmSessionManager, true, mainHandler, player,
+              AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
 
       // Build the text renderer.
       DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
       ChunkSource textChunkSource = new SmoothStreamingChunkSource(manifestFetcher,
-          DefaultSmoothStreamingTrackSelector.newTextInstance(),
-          textDataSource, null, LIVE_EDGE_LATENCY_MS);
+          DefaultSmoothStreamingTrackSelector.newTextInstance(), textDataSource, null,
+          LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource textSampleSource = new ChunkSampleSource(textChunkSource, loadControl,
           TEXT_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
           ExoMediaPlayer.TYPE_TEXT);
-      TrackRenderer textRenderer = new TextTrackRenderer(textSampleSource, player,
-          mainHandler.getLooper());
+      TrackRenderer textRenderer =
+          new TextTrackRenderer(textSampleSource, player, mainHandler.getLooper());
 
       // Invoke the callback.
       TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
@@ -197,7 +195,5 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       renderers[ExoMediaPlayer.TYPE_TEXT] = textRenderer;
       player.onRenderers(renderers, bandwidthMeter);
     }
-
   }
-
 }

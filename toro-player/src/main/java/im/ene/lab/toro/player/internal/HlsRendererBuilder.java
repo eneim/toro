@@ -23,7 +23,6 @@ import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.SampleSource;
@@ -51,7 +50,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A {@link RendererBuilder} for HLS.
+ * A {@link ExoMediaPlayer.RendererBuilder} for HLS.
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
@@ -155,7 +154,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
           sampleSource, new Id3Parser(), player, mainHandler.getLooper());
 
       // Build the audio renderer.
-      MediaCodecAudioTrackRenderer audioRenderer;
+      EnhancedMediaCodecAudioTrackRenderer audioRenderer;
       if (haveAudios) {
         DataSource audioDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
         HlsChunkSource audioChunkSource = new HlsChunkSource(false /* isMaster */, audioDataSource,
@@ -169,7 +168,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
             true, player.getMainHandler(), player, AudioCapabilities.getCapabilities(context),
             AudioManager.STREAM_MUSIC);
       } else {
-        audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
+        audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(sampleSource,
             MediaCodecSelector.DEFAULT, null, true, player.getMainHandler(), player,
             AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
       }
