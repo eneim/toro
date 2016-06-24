@@ -18,13 +18,13 @@ package im.ene.lab.toro.media;
 
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.widget.MediaController;
 import android.net.Uri;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.view.Surface;
 import android.view.View;
+import android.widget.MediaController;
 import android.widget.VideoView;
 import java.io.IOException;
 import java.util.Map;
@@ -125,6 +125,15 @@ public interface Cineer {
     void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener);
   }
 
+  interface VideoPlayer extends Player {
+
+    int getVideoWidth();
+
+    int getVideoHeight();
+
+    void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
+  }
+
   interface Controller {
 
     /** see {@link MediaController#hide()} */
@@ -191,7 +200,6 @@ public interface Cineer {
   /** see ExoPlayer#getBufferedPercentage() */
   int getBufferedPercentage();
 
-  @Deprecated
   /** see {@link MediaPlayer#setOnVideoSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener)} */
   void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
 
