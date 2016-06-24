@@ -1,6 +1,6 @@
 # Release note
 
-### 2.0.0-RC3 (2016.06.23)
+### 2.0.0-RC4 (2016.06.23)
 
 **Toro has been re-designed from ground up**
 
@@ -32,9 +32,13 @@ repositories {
     jcenter()
     mavenCentral()  // Toro is available on Maven too, optional beside jcenter.
 }
+```
 
+<a href='https://bintray.com/eneim/maven/Toro/_latestVersion'><img src='https://api.bintray.com/packages/eneim/maven/Toro/images/download.svg'></a>
+
+```groovy
 ext {
-  toro_version = '2.0.0-RC3'  // one version for all modules
+  toro_version = '<hint: check the badge number>'  // one version for all modules
 }
 
 dependencies {
