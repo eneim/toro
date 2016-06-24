@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import im.ene.lab.toro.player.Video;
@@ -352,6 +353,10 @@ public class SimpleVideoPlayer {
 
   public ExoMediaPlayer getPlayer() {
     return layerManager.getExoPlayer();
+  }
+
+  public Toolbar getActionToolbar() {
+    return playbackControlLayer.getActionToolbar();
   }
 
   public void notifyWindowFocusChanged(boolean hasFocus) {

@@ -29,6 +29,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.Space;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -285,6 +286,9 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * {@link FullscreenCallback} associated with this object.
    */
   private ImageButton fullscreenButton;
+
+  // Make the view beautiful by correct keylines.
+  private Space emptySpace;
 
   /**
    * This callback is triggered when going to fullscreen and returning from fullscreen.
@@ -794,8 +798,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
     this.fullscreenCallback = fullscreenCallback;
     if (fullscreenButton != null && fullscreenCallback != null) {
       fullscreenButton.setVisibility(View.VISIBLE);
-    } else if (fullscreenButton != null && fullscreenCallback == null) {
-      fullscreenButton.setVisibility(View.INVISIBLE);
+      emptySpace.setVisibility(View.GONE);
+    } else if (fullscreenButton != null) {
+      fullscreenButton.setVisibility(View.GONE);
+      emptySpace.setVisibility(View.VISIBLE);
     }
   }
 
@@ -873,6 +879,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
     topChrome = (RelativeLayout) view.findViewById(R.id.top_chrome);
     bottomChrome = (LinearLayout) view.findViewById(R.id.bottom_chrome);
     actionButtonsContainer = (LinearLayout) view.findViewById(R.id.actions_container);
+    emptySpace = (Space) view.findViewById(R.id.empty_space);
 
     // The play button should toggle play/pause when the play/pause button is clicked.
     pausePlayButton.setOnClickListener(new View.OnClickListener() {
@@ -883,7 +890,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
     });
 
     if (fullscreenCallback == null) {
-      fullscreenButton.setVisibility(View.INVISIBLE);
+      fullscreenButton.setVisibility(View.GONE);
+      emptySpace.setVisibility(View.VISIBLE);
     }
     // Go into fullscreen when the fullscreen button is clicked.
     fullscreenButton.setOnClickListener(new View.OnClickListener() {
@@ -943,6 +951,10 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    */
   public boolean shouldBePlaying() {
     return shouldBePlaying;
+  }
+
+  public Toolbar getActionToolbar() {
+    return actionToolbar;
   }
 
   /**
@@ -1130,5 +1142,8 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
 
   public void setSettingsCallback(SettingsCallback callback) {
     this.settingsCallback = callback;
+    if (callback == null) {
+      actionToolbar.getMenu().close();
+    }
   }
 }

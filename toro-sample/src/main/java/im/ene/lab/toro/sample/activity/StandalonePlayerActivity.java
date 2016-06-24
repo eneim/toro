@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +29,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.util.MimeTypes;
-import im.ene.lab.toro.ext.layeredvideo.PlaybackControlLayer;
 import im.ene.lab.toro.ext.layeredvideo.SimpleVideoPlayer;
 import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
@@ -83,17 +83,15 @@ public class StandalonePlayerActivity extends AppCompatActivity {
       e.printStackTrace();
     }
 
-    videoPlayer.setFullscreenCallback(new PlaybackControlLayer.FullscreenCallback() {
-      @Override public void onGoToFullscreen() {
-
-      }
-
-      @Override public void onReturnFromFullscreen() {
-
-      }
-    });
-
+    videoPlayer.setFullscreenCallback(null);
     videoPlayer.enableSeeking();
+
+    Toolbar toolbar = videoPlayer.getActionToolbar();
+    if (toolbar != null) {
+      setSupportActionBar(videoPlayer.getActionToolbar());
+      getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+      getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
   }
 
   @Override protected void onResume() {

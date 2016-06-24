@@ -137,6 +137,14 @@
         android:src="@drawable/toro_ext_ic_fullscreen_enter"
         tools:ignore="RtlHardcoded"
         />
+
+    <android.support.v4.widget.Space
+        android:id="@+id/empty_space"
+        android:layout_width="8dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        />
   </LinearLayout>
 
   <include layout="@layout/tr_ext_playback_controller_toolbar"/>
