@@ -26,15 +26,16 @@ import com.google.android.exoplayer.TimeRange;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.chunk.Format;
 import com.google.android.exoplayer.util.VerboseLogUtil;
-import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
  * Logs player events using {@link Log}.
+ *
+ * {@hide}
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class EventLogger implements ExoMediaPlayer.Listener, ExoMediaPlayer.InfoListener,
     ExoMediaPlayer.InternalErrorListener {
 

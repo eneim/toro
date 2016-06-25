@@ -43,7 +43,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import im.ene.lab.toro.ext.R;
-import im.ene.lab.toro.player.internal.PlayerControlCallback;
+import im.ene.lab.toro.media.PlayerControlCallback;
 import im.ene.lab.toro.player.util.PlayerUtil;
 import im.ene.lab.toro.player.widget.ObservablePlayerControl;
 import java.lang.ref.WeakReference;

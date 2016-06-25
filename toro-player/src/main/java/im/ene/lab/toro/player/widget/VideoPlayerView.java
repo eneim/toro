@@ -54,8 +54,6 @@ import java.util.List;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class VideoPlayerView extends TextureView implements Cineer.Player {
 
-  private static final String TAG = "MediaPlayerView";
-
   /**
    * The surface view will not resize itself if the fractional difference
    * between its default aspect ratio and the aspect ratio of the video falls

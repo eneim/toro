@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.internal;
+package im.ene.lab.toro.media;
 
 /**
  * Created by eneim on 6/12/16.
