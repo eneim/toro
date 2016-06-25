@@ -32,7 +32,9 @@ import java.lang.annotation.RetentionPolicy;
      * The player is being prepared.
      */
     Cineer.PLAYER_PREPARING,
-
+    /**
+     * The player finished prepared, but not really ready to play.
+     */
     Cineer.PLAYER_PREPARED,
     /**
      * The player is prepared but not able to immediately play from the current position. The cause

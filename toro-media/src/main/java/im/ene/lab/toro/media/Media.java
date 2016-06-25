@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 /**
  * Created by eneim on 6/3/16.
  *
- * Naive media item definition. Application <b>MUST</b> extends this for custom usage.
+ * Simple media item definition. Application <b>MUST</b> extends this for custom usage.
  */
 public class Media {
 
