@@ -110,7 +110,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
   };
 
   private final ExoMediaPlayer.Listener playerListener = new ExoMediaPlayer.Listener() {
-    @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
+    @Override public void onStateChanged(Cineer player, boolean playWhenReady, int playbackState) {
       mPlaybackState = playbackState;
       setKeepScreenOn(isInPlayableState());
     }

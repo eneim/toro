@@ -99,7 +99,7 @@ public class SimpleVideoPlayer {
     videoSurfaceLayer = new VideoSurfaceLayer(autoPlay);
     this.autoPlay = autoPlay;
 
-    List<Layer> layers = new ArrayList<Layer>();
+    List<Layer> layers = new ArrayList<>();
     layers.add(videoSurfaceLayer);
     layers.add(playbackControlLayer);
     layers.add(subtitleLayer);
