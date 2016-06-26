@@ -68,15 +68,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * with one of a number of {@link RendererBuilder} classes to suit different use cases (e.g. DASH,
  * SmoothStreaming and so on).
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class ExoMediaPlayer
-    implements Cineer, ExoPlayer.Listener, ChunkSampleSource.EventListener,
-    HlsSampleSource.EventListener, ExtractorSampleSource.EventListener,
-    SingleSampleSource.EventListener, DefaultBandwidthMeter.EventListener,
-    MediaCodecVideoTrackRenderer.EventListener, MediaCodecAudioTrackRenderer.EventListener,
-    StreamingDrmSessionManager.EventListener, DashChunkSource.EventListener, TextRenderer,
-    MetadataRenderer<List<Id3Frame>>, DebugTextViewHelper.Provider,
-    AudioCapabilitiesReceiver.Listener {
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)      //
+public class ExoMediaPlayer                     //
+    implements Cineer, ExoPlayer.Listener,      //
+    ChunkSampleSource.EventListener,            //
+    HlsSampleSource.EventListener,              //
+    ExtractorSampleSource.EventListener,        //
+    SingleSampleSource.EventListener,           //
+    DefaultBandwidthMeter.EventListener,        //
+    MediaCodecVideoTrackRenderer.EventListener, //
+    MediaCodecAudioTrackRenderer.EventListener, //
+    StreamingDrmSessionManager.EventListener,   //
+    DashChunkSource.EventListener,              //
+    TextRenderer,                               //
+    MetadataRenderer<List<Id3Frame>>,           //
+    DebugTextViewHelper.Provider,               //
+    AudioCapabilitiesReceiver.Listener {        //
 
   @Override public void onAudioCapabilitiesChanged(AudioCapabilities audioCapabilities) {
 
@@ -110,7 +117,7 @@ public class ExoMediaPlayer
    */
   public interface Listener {
 
-    void onStateChanged(boolean playWhenReady, int playbackState);
+    void onStateChanged(Cineer player, boolean playWhenReady, int playbackState);
 
     void onError(Exception e);
 
@@ -226,13 +233,6 @@ public class ExoMediaPlayer
   private BandwidthMeter bandwidthMeter;
   private boolean backgrounded;
 
-  /**
-   * The names of the available tracks, indexed by ExoplayerWrapper INDEX_* constants.
-   * May be null if the track names are unknown. An individual element may be null if the track
-   * names are unknown for the corresponding type.
-   */
-  private String[][] trackNames;
-
   private CaptionListener captionListener;
   private Id3MetadataListener id3MetadataListener;
   private InternalErrorListener internalErrorListener;
@@ -299,14 +299,6 @@ public class ExoMediaPlayer
     pushSurface(true);
   }
 
-  /**
-   * Returns the name of the track at the given index.
-   * @param type The index indicating the type of video (ex {@link #TYPE_VIDEO})
-   */
-  public String[] getTracks(int type) {
-    return trackNames == null ? null : trackNames[type];
-  }
-
   public int getTrackCount(int type) {
     return player.getTrackCount(type);
   }
@@ -366,11 +358,6 @@ public class ExoMediaPlayer
    * @param bandwidthMeter Provides an estimate of the currently available bandwidth. May be null.
    */
   /* package */ void onRenderers(TrackRenderer[] renderers, BandwidthMeter bandwidthMeter) {
-    // Normalize the results.
-    if (trackNames == null) {
-      trackNames = new String[RENDERER_COUNT][];
-    }
-
     for (int i = 0; i < RENDERER_COUNT; i++) {
       if (renderers[i] == null) {
         // Convert a null renderer to a dummy renderer.
@@ -381,7 +368,7 @@ public class ExoMediaPlayer
     this.videoRenderer = renderers[TYPE_VIDEO];
     this.audioRenderer = renderers[TYPE_AUDIO];
     if (!(this.audioRenderer instanceof EnhancedMediaCodecAudioTrackRenderer)) {
-      throw new RuntimeException("Audio Renderer must be a TrMediaCodecAudioTrackRenderer");
+      throw new RuntimeException("Audio Renderer must be an EnhancedMediaCodecAudioTrackRenderer");
     }
     this.codecCounters = videoRenderer instanceof MediaCodecTrackRenderer
         ? ((MediaCodecTrackRenderer) videoRenderer).codecCounters
@@ -683,7 +670,7 @@ public class ExoMediaPlayer
     int playbackState = getPlaybackState();
     if (lastReportedPlayWhenReady != playWhenReady || lastReportedPlaybackState != playbackState) {
       for (Listener listener : listeners) {
-        listener.onStateChanged(playWhenReady, playbackState);
+        listener.onStateChanged(this, playWhenReady, playbackState);
       }
       lastReportedPlayWhenReady = playWhenReady;
       lastReportedPlaybackState = playbackState;
