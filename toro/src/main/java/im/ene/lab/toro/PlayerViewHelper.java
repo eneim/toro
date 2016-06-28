@@ -23,8 +23,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.OnInfoListener;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
+import java.util.Map;
 
 /**
  * Created by eneim on 2/1/16.
@@ -32,7 +35,7 @@ import im.ene.lab.toro.media.PlaybackInfo;
  * A helper class to support Video's callbacks from {@link Cineer} as well as {@link
  * RecyclerView.Adapter}
  */
-public abstract class VideoViewItemHelper {
+public abstract class PlayerViewHelper {
 
   /* BEGIN: Callback for View */
 
@@ -82,7 +85,44 @@ public abstract class VideoViewItemHelper {
    */
   @CallSuper public void onPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent, @Nullable Cineer mediaPlayer) {
-    Toro.sInstance.onPrepared(player, itemView, parent, mediaPlayer);
+    player.onVideoPrepared(mediaPlayer);
+    VideoPlayerManager manager = null;
+    ToroScrollListener listener;
+    RecyclerView view;
+    // Find correct Player manager for this player
+    for (Map.Entry<Integer, ToroScrollListener> entry : Toro.sInstance.mListeners.entrySet()) {
+      Integer key = entry.getKey();
+      view = Toro.sInstance.mViews.get(key);
+      if (view != null && view == parent) { // Found the parent view in our cache
+        listener = entry.getValue();
+        manager = listener.getManager();
+        break;
+      }
+    }
+
+    if (manager == null) {
+      return;
+    }
+
+    // 1. Check if current manager wrapped this player
+    if (player.equals(manager.getPlayer())) {
+      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+        manager.restoreVideoState(player.getVideoId());
+        manager.startPlayback();
+        player.onPlaybackStarted();
+      }
+    } else {
+      // There is no current player, but this guy is prepared, so let's him go ...
+      if (manager.getPlayer() == null) {
+        // ... if it's possible
+        if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+          manager.setPlayer(player);
+          manager.restoreVideoState(player.getVideoId());
+          manager.startPlayback();
+          player.onPlaybackStarted();
+        }
+      }
+    }
   }
 
   /**
@@ -92,7 +132,33 @@ public abstract class VideoViewItemHelper {
    * @param mp completed MediaPlayer
    */
   @CallSuper public void onCompletion(@NonNull ToroPlayer player, @Nullable Cineer mp) {
-    Toro.sInstance.onCompletion(player, mp);
+    // 1. find manager for this player
+    VideoPlayerManager manager = null;
+    for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
+      manager = listener.getManager();
+      if (player.equals(manager.getPlayer())) {
+        break;
+      } else {
+        manager = null;
+      }
+    }
+
+    // Normally stop playback
+    if (manager != null) {
+      manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
+      manager.stopPlayback();
+      player.onPlaybackStopped();
+    }
+
+    // It's loop-able, so restart it immediately
+    if (player.isLoopAble()) {
+      if (manager != null) {
+        // immediately repeat
+        manager.restoreVideoState(player.getVideoId());
+        manager.startPlayback();
+        player.onPlaybackStarted();
+      }
+    }
   }
 
   /**
@@ -104,7 +170,16 @@ public abstract class VideoViewItemHelper {
    */
   @CallSuper public boolean onError(@NonNull ToroPlayer player, @Nullable Cineer mp,
       @NonNull PlaybackException error) {
-    return Toro.sInstance.onError(player, mp, error);
+    boolean handle = player.onPlaybackError(mp, error);
+    for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
+      VideoPlayerManager manager = listener.getManager();
+      if (player.equals(manager.getPlayer())) {
+        manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
+        manager.pausePlayback();
+        return true;
+      }
+    }
+    return handle;
   }
 
   /**
@@ -115,7 +190,7 @@ public abstract class VideoViewItemHelper {
    */
   @CallSuper public boolean onInfo(@NonNull ToroPlayer player, @Nullable Cineer mp,
       @NonNull PlaybackInfo info) {
-    return Toro.sInstance.onInfo(player, mp, info);
+    return true;
   }
 
   /* END: Callback for MediaPlayer */

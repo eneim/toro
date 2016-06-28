@@ -27,9 +27,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.PlaybackInfo;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -272,95 +269,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  final void onCompletion(ToroPlayer player, Cineer mediaPlayer) {
-    // 1. find manager for this player
-    VideoPlayerManager manager = null;
-    for (ToroScrollListener listener : sInstance.mListeners.values()) {
-      manager = listener.getManager();
-      if (player.equals(manager.getPlayer())) {
-        break;
-      } else {
-        manager = null;
-      }
-    }
-
-    // Normally stop playback
-    if (manager != null) {
-      manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
-      manager.stopPlayback();
-      player.onPlaybackStopped();
-    }
-
-    // It's loop-able, so restart it immediately
-    if (player.isLoopAble()) {
-      if (manager != null) {
-        // immediately repeat
-        manager.restoreVideoState(player.getVideoId());
-        manager.startPlayback();
-        player.onPlaybackStarted();
-      }
-    }
-  }
-
-  final void onPrepared(ToroPlayer player, View container, ViewParent parent, Cineer mediaPlayer) {
-    player.onVideoPrepared(mediaPlayer);
-    VideoPlayerManager manager = null;
-    ToroScrollListener listener;
-    RecyclerView view;
-    // Find correct Player manager for this player
-    for (Map.Entry<Integer, ToroScrollListener> entry : sInstance.mListeners.entrySet()) {
-      Integer key = entry.getKey();
-      view = sInstance.mViews.get(key);
-      if (view != null && view == parent) { // Found the parent view in our cache
-        listener = entry.getValue();
-        manager = listener.getManager();
-        break;
-      }
-    }
-
-    if (manager == null) {
-      return;
-    }
-
-    // 1. Check if current manager wrapped this player
-    if (player.equals(manager.getPlayer())) {
-      if (player.wantsToPlay() && getStrategy().allowsToPlay(player, parent)) {
-        manager.restoreVideoState(player.getVideoId());
-        manager.startPlayback();
-        player.onPlaybackStarted();
-      }
-    } else {
-      // There is no current player, but this guy is prepared, so let's him go ...
-      if (manager.getPlayer() == null) {
-        // ... if it's possible
-        if (player.wantsToPlay() && getStrategy().allowsToPlay(player, parent)) {
-          manager.setPlayer(player);
-          manager.restoreVideoState(player.getVideoId());
-          manager.startPlayback();
-          player.onPlaybackStarted();
-        }
-      }
-    }
-  }
-
-  final boolean onError(ToroPlayer player, Cineer mp, PlaybackException error) {
-    boolean handle = player.onPlaybackError(mp, error);
-    for (ToroScrollListener listener : sInstance.mListeners.values()) {
-      VideoPlayerManager manager = listener.getManager();
-      if (player.equals(manager.getPlayer())) {
-        manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
-        manager.pausePlayback();
-        return true;
-      }
-    }
-    return handle;
-  }
-
-  final boolean onInfo(ToroPlayer player, Cineer mp, PlaybackInfo info) {
-    player.onPlaybackInfo(mp, info);
-    return true;
-  }
-
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
     if (mStates == null) {
       mStates = new LinkedStateList(3);
@@ -368,7 +276,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityStarted(Activity activity) {
-
   }
 
   @Override public void onActivityResumed(Activity activity) {
@@ -419,11 +326,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityStopped(Activity activity) {
-
   }
 
   @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
   }
 
   @Override public void onActivityDestroyed(Activity activity) {

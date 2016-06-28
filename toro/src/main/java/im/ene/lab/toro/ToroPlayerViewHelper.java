@@ -31,14 +31,14 @@ import android.view.ViewParent;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class RecyclerViewItemHelper extends VideoViewItemHelper {
+public final class ToroPlayerViewHelper extends PlayerViewHelper {
 
-  private static volatile RecyclerViewItemHelper INSTANCE;
+  private static volatile ToroPlayerViewHelper INSTANCE;
 
-  public static RecyclerViewItemHelper getInstance() {
+  public static ToroPlayerViewHelper getInstance() {
     if (INSTANCE == null) {
-      synchronized (RecyclerViewItemHelper.class) {
-        INSTANCE = new RecyclerViewItemHelper();
+      synchronized (ToroPlayerViewHelper.class) {
+        INSTANCE = new ToroPlayerViewHelper();
       }
     }
 

@@ -22,29 +22,29 @@ import android.support.annotation.UiThread;
 import android.view.View;
 import android.view.ViewParent;
 import com.google.android.youtube.player.YouTubePlayer;
-import im.ene.lab.toro.RecyclerViewItemHelper;
+import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.VideoViewItemHelper;
+import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.media.PlaybackException;
 
 /**
  * Created by eneim on 4/8/16.
  */
-public class YoutubeViewItemHelper extends VideoViewItemHelper {
+public class YoutubePlayerViewHelper extends PlayerViewHelper {
 
-  private static volatile YoutubeViewItemHelper INSTANCE;
-  private final RecyclerViewItemHelper delegate;
+  private static volatile YoutubePlayerViewHelper INSTANCE;
+  private final ToroPlayerViewHelper delegate;
 
-  public YoutubeViewItemHelper() {
+  public YoutubePlayerViewHelper() {
     super();
-    delegate = RecyclerViewItemHelper.getInstance();
+    delegate = ToroPlayerViewHelper.getInstance();
   }
 
   // Prefer to use singleton of this class. This method must be call on UiThread
-  @UiThread public static YoutubeViewItemHelper getInstance() {
+  @UiThread public static YoutubePlayerViewHelper getInstance() {
     if (INSTANCE == null) {
-      synchronized (YoutubeViewItemHelper.class) {
-        INSTANCE = new YoutubeViewItemHelper();
+      synchronized (YoutubePlayerViewHelper.class) {
+        INSTANCE = new YoutubePlayerViewHelper();
       }
     }
 

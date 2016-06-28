@@ -19,10 +19,10 @@ package im.ene.lab.toro.ext;
 import android.support.annotation.CallSuper;
 import android.util.Log;
 import android.view.View;
-import im.ene.lab.toro.RecyclerViewItemHelper;
+import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
-import im.ene.lab.toro.VideoViewItemHelper;
+import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.PlaybackException;
@@ -36,13 +36,13 @@ import im.ene.lab.toro.media.State;
  */
 public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
-  private final VideoViewItemHelper mHelper;
+  private final PlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
   public ToroViewHolder(View itemView) {
     super(itemView);
-    mHelper = RecyclerViewItemHelper.getInstance();
+    mHelper = ToroPlayerViewHelper.getInstance();
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
