@@ -22,10 +22,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import im.ene.lab.toro.RecyclerViewItemHelper;
-import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.VideoViewItemHelper;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.PlaybackException;
@@ -61,7 +61,6 @@ public abstract class AbsVideoViewHolder extends RecyclerView.ViewHolder impleme
     } else {
       throw new IllegalArgumentException("Un-supported Player View.");
     }
-
     player.setOnPlayerStateChangeListener(this);
     itemHelper = RecyclerViewItemHelper.getInstance();
   }

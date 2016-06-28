@@ -401,11 +401,6 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    */
   private String videoTitle;
 
-  ///**
-  // * Video title displayed in the left of the top chrome.
-  // */
-  //private TextView videoTitleView;
-
   /**
    * The view created by this {@link PlaybackControlLayer}
    */

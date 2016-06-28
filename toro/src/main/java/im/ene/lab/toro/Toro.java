@@ -46,8 +46,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * </code>
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH) public final class Toro
-    implements Application.ActivityLifecycleCallbacks {
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)  //
+public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   private static final String TAG = "Toro";
   private static final Object LOCK = new Object();

@@ -76,7 +76,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
       File[] local = Util.loadMovieFolder();
       videoPlayer = new SimpleVideoPlayer(this, playerContainer, new Video(
           local != null && local.length > 0 ? Uri.fromFile(Util.loadMovieFolder()[0])
-              : Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")),  //
+              : Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"), "Garden of Words"),
           "Garden of Words", true);
       videoPlayer.setVideoTitle("Garden of Words");
     } catch (FileNotFoundException e) {

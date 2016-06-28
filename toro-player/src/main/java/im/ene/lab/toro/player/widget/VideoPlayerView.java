@@ -413,7 +413,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
         Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
   }
 
-  @Override public void setMedia(@NonNull Media media) {
+  @SuppressWarnings("ConstantConditions") @Override public void setMedia(@NonNull Media media) {
     if (media == null) {
       throw new IllegalArgumentException("MediaSource must not be null");
     }

@@ -40,6 +40,14 @@
         android:launchMode="singleTop"
         android:name=".custom.MyToroActivity"/>
 
+    <activity
+        android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+        android:label="@string/app_name"
+        android:launchMode="singleTop"
+        android:name=".custom.MultiLayerVideoActivity"
+        android:theme="@style/ToroTheme">
+    </activity>
+
     <!--<activity-->
     <!--android:label="@string/app_name"-->
     <!--android:launchMode="singleTop"-->
@@ -50,7 +58,7 @@
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".activity.StandalonePlayerActivity">
+        android:targetActivity=".custom.MyToroActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
