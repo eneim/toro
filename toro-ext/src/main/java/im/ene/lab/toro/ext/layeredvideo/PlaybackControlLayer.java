@@ -43,8 +43,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import im.ene.lab.toro.ext.R;
+import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.media.PlayerControlCallback;
-import im.ene.lab.toro.player.util.PlayerUtil;
 import im.ene.lab.toro.player.widget.ObservablePlayerControl;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -568,7 +568,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
               | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
       container.setLayoutParams(
-          PlayerUtil.getLayoutParamsBasedOnParent(container, ViewGroup.LayoutParams.MATCH_PARENT,
+          ViewUtil.getLayoutParamsBasedOnParent(container, ViewGroup.LayoutParams.MATCH_PARENT,
               ViewGroup.LayoutParams.MATCH_PARENT));
 
       fullscreenButton.setImageResource(R.drawable.toro_ext_ic_fullscreen_exit);

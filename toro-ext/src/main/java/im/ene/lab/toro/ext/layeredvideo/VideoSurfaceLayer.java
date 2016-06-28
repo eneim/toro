@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
 import im.ene.lab.toro.ext.R;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 
 /**
@@ -45,7 +46,7 @@ public class VideoSurfaceLayer implements Layer {
    * When a size change occurs, change the size of the surface view.
    */
   private ExoMediaPlayer.Listener playbackListener = new ExoMediaPlayer.Listener() {
-    @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
+    @Override public void onStateChanged(Cineer player, boolean playWhenReady, int playbackState) {
       // Do nothing. VideoSurfaceLayer doesn't care about state changes.
     }
 

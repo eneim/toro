@@ -16,13 +16,11 @@
 
 package im.ene.lab.toro.player.util;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.res.Configuration;
 import android.net.Uri;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewParent;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.os.Build;
 import com.google.android.exoplayer.util.Util;
 import im.ene.lab.toro.player.Video;
 
@@ -30,46 +28,6 @@ import im.ene.lab.toro.player.Video;
  * Contains utility functions which are used by a number of other classes.
  */
 public class PlayerUtil {
-
-  /**
-   * Create a LayoutParams object for the given view which enforces a given width and height.
-   *
-   * <p>This method is a bit complicated because the TYPE of the LayoutParams that a view must
-   * receive (ex. LinearLayout.LayoutParams, RelativeLayout.LayoutParams) depends on the type of
-   * its PARENT view.
-   *
-   * <p>Thus, in this method, we look at the parent view of the given view, determine its type,
-   * and create the appropriate LayoutParams for that type.
-   *
-   * <p>This method only supports views which are nested inside a FrameLayout, LinearLayout, or
-   * RelativeLayout.
-   */
-  public static ViewGroup.LayoutParams getLayoutParamsBasedOnParent(View container, int width,
-      int height) throws IllegalArgumentException {
-
-    // Get the parent of the given view.
-    ViewParent parent = container.getParent();
-
-    // Determine what is the parent's type and return the appropriate type of LayoutParams.
-    if (parent instanceof FrameLayout) {
-      return new FrameLayout.LayoutParams(width, height);
-    }
-    if (parent instanceof RelativeLayout) {
-      return new RelativeLayout.LayoutParams(width, height);
-    }
-    if (parent instanceof LinearLayout) {
-      return new LinearLayout.LayoutParams(width, height);
-    }
-
-    // Throw this exception if the parent is not the correct type.
-    IllegalArgumentException exception = new IllegalArgumentException("The PARENT of a " +
-        "FrameLayout container used by the GoogleMediaFramework must be a LinearLayout, " +
-        "FrameLayout, or RelativeLayout. Please ensure that the container is inside one of these " +
-        "three supported view groups.");
-
-    // If the parent is not one of the supported types, throw our exception.
-    throw exception;
-  }
 
   public static Video.Type inferVideoType(Uri uri) {
     int type = Util.inferContentType(uri.getLastPathSegment());
@@ -84,5 +42,61 @@ public class PlayerUtil {
       default:
         return Video.Type.OTHER;
     }
+  }
+
+  private static final IScreenHelper IMPL;
+
+  static {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN
+        && Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+      IMPL = new ScreenHelperV16();
+    } else if (Build.VERSION.SDK_INT >= 19 && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      IMPL = new ScreenHelperV19();
+    } else {
+      IMPL = new ScreenHelperV23();
+    }
+  }
+
+  private interface IScreenHelper {
+
+    /**
+     * Setup full screen for current Activity. Helpful for Video Player, when User changes from
+     * Portrait to Landscape and vice versa. Should be called in {@link
+     * Activity#onConfigurationChanged(Configuration)}
+     *
+     * NOTE: Activity must use {@code android:configChanges="orientation|screenSize|keyboardHidden"}
+     * in Manifest.
+     */
+    void setFullScreen(Activity activity, boolean isFullScreen);
+  }
+
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN) private static class ScreenHelperV16
+      implements IScreenHelper {
+
+    @Override public void setFullScreen(Activity activity, boolean isFullScreen) {
+      // TODO Implement this
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.KITKAT) private static class ScreenHelperV19
+      extends ScreenHelperV16 {
+
+    @Override public void setFullScreen(Activity activity, boolean isFullScreen) {
+      super.setFullScreen(activity, isFullScreen);
+      // TODO Implement this
+    }
+  }
+
+  @TargetApi(Build.VERSION_CODES.KITKAT) private static class ScreenHelperV23
+      extends ScreenHelperV19 {
+
+    @Override public void setFullScreen(Activity activity, boolean isFullScreen) {
+      super.setFullScreen(activity, isFullScreen);
+      // TODO Implement this
+    }
+  }
+
+  public static void setFullScreen(Activity activity, boolean isFullScreen) {
+    IMPL.setFullScreen(activity, isFullScreen);
   }
 }

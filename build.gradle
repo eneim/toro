@@ -21,7 +21,7 @@ ext {
   buildToolVersion = '24.0.0'
   supportLibraryVersion = '24.0.0'
 
-  minSupportSDKVersion = 15
+  minSupportSDKVersion = 16
 }
 
 allprojects {

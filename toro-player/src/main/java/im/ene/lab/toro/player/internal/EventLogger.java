@@ -26,6 +26,7 @@ import com.google.android.exoplayer.TimeRange;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.chunk.Format;
 import com.google.android.exoplayer.util.VerboseLogUtil;
+import im.ene.lab.toro.media.Cineer;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -67,7 +68,7 @@ public class EventLogger implements ExoMediaPlayer.Listener, ExoMediaPlayer.Info
 
   // DemoPlayer.Listener
 
-  @Override public void onStateChanged(boolean playWhenReady, int state) {
+  @Override public void onStateChanged(Cineer player, boolean playWhenReady, int state) {
     Log.d(TAG, "state ["
         + getSessionTimeString()
         + ", "
