@@ -22,7 +22,7 @@ import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.ToroUtil;
-import im.ene.lab.toro.ViewHolderCallback;
+import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
 
@@ -31,22 +31,22 @@ import im.ene.lab.toro.media.PlaybackException;
  *
  * Abstract implementation of {@link ToroPlayer}.
  */
-public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
-    implements ToroPlayer, ViewHolderCallback {
+public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
+    implements ToroPlayer, ToroViewHolder {
 
   protected final PlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
-  public ToroViewHolder(View itemView) {
+  public BasePlayerViewHolder(View itemView) {
     super(itemView);
     mHelper = new ToroPlayerViewHelper(this, itemView);
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(ToroViewHolder.this, ToroViewHolder.this.itemView,
-                ToroViewHolder.this.itemView.getParent());
+            return mHelper.onItemLongClick(BasePlayerViewHolder.this, BasePlayerViewHolder.this.itemView,
+                BasePlayerViewHolder.this.itemView.getParent());
           }
         };
       }
@@ -69,7 +69,7 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(ToroViewHolder.this, itemView, itemView.getParent());
+            return mHelper.onItemLongClick(BasePlayerViewHolder.this, itemView, itemView.getParent());
           }
         };
       }
@@ -114,6 +114,14 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     return false;
   }
 
+  @Override public void onVideoPreparing() {
+
+  }
+
+  @Override public void onVideoPrepared(Cineer mp) {
+
+  }
+
   @Override public void onPlaybackStarted() {
 
   }
@@ -134,10 +142,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
 
   @Override public float visibleAreaOffset() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
-  }
-
-  @Override public void onVideoPrepared(Cineer mp) {
-
   }
 
   /**

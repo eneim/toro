@@ -37,38 +37,6 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper {
     super(player, itemView);
   }
 
-  @Override public void onAttachedToParent() {
-    ToroScrollListener listener = itemView.getParent() != null ?  //
-        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
-    if (listener != null && listener.getManager().getPlayer() == null) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
-        listener.getManager().setPlayer(player);
-        listener.getManager().restoreVideoState(player.getVideoId());
-        listener.getManager().startPlayback();
-      } else {
-        // Prepare
-        player.preparePlayer(false);
-      }
-    }
-  }
-
-  @Override public void onDetachedFromParent() {
-    ToroScrollListener listener = itemView.getParent() != null ?  //
-        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
-    // Manually save Video state
-    if (listener != null && player.equals(listener.getManager().getPlayer())) {
-      if (player.isPlaying()) {
-        listener.getManager().saveVideoState( //
-            player.getVideoId(), player.getCurrentPosition(), player.getDuration());
-        listener.getManager().pausePlayback();
-      }
-      // Release player.
-      player.releasePlayer();
-      // Detach current Player
-      listener.getManager().setPlayer(null);
-    }
-  }
-
   @Override public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
     ToroScrollListener listener =

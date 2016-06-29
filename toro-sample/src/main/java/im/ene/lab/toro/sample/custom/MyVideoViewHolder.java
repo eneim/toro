@@ -77,6 +77,11 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     return mItem.toString() + "@" + getAdapterPosition();
   }
 
+  @Override public void onVideoPreparing() {
+    super.onVideoPreparing();
+    mInfo.setText("Preparing");
+  }
+
   @Override public void onVideoPrepared(Cineer mp) {
     super.onVideoPrepared(mp);
     mInfo.setText("Prepared");

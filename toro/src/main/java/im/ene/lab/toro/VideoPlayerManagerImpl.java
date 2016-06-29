@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Created by eneim on 1/31/16.
  *
- * Extension/Implementation of {@link VideoPlayerManager} can use this implementation as delegate.
+ * Extension/Implementation of {@link VideoPlayerManager}. Can be used as a delegation.
  */
 public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
@@ -44,7 +44,6 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   @Override public void startPlayback() {
     if (mPlayer != null) {
-      Log.i(TAG, "play   : " + mPlayer.getVideoId());
       mPlayer.start();
     }
   }

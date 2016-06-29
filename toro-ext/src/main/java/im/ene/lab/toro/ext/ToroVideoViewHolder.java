@@ -26,7 +26,7 @@ import im.ene.lab.toro.player.widget.VideoPlayerView;
 /**
  * Created by eneim on 6/11/16.
  */
-public abstract class ToroVideoViewHolder extends ToroViewHolder {
+public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
 
   protected final VideoPlayerView mVideoView;
   private boolean mPlayable = true; // normally true
@@ -94,6 +94,10 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
 
   @CallSuper @Override public void onVideoPrepared(Cineer mp) {
     mPlayable = true;
+  }
+
+  @Override public void onVideoPreparing() {
+
   }
 
   @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {

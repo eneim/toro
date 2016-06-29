@@ -52,11 +52,19 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   private static final Object LOCK = new Object();
 
   /**
+   * Like {@link android.os.Build.VERSION#SDK_INT}, but in a place where it can be conveniently
+   * overridden for local testing.
+   */
+  static final int SDK_INT =
+      (Build.VERSION.SDK_INT == 23 && Build.VERSION.CODENAME.charAt(0) == 'N') ? 24
+          : Build.VERSION.SDK_INT;
+
+  /**
    * Stop playback strategy
    */
   private static final ToroStrategy REST = new ToroStrategy() {
     @Override public String getDescription() {
-      return "Rest";
+      return "'Do nothing' Strategy";
     }
 
     @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
@@ -170,21 +178,18 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
 
     // 1. Retrieve current VideoPlayerManager instance
-    VideoPlayerManager playerManager = null;
+    final VideoPlayerManager playerManager;
     RecyclerView.Adapter adapter = view.getAdapter();
     // Client of this API should implement VideoPlayerManager to its Adapter.
     if (adapter instanceof VideoPlayerManager) {
       playerManager = (VideoPlayerManager) adapter;
-    }
-
-    // If no manager found, fallback to Built-in Manager
-    if (playerManager == null) {
+    } else {
       playerManager = new VideoPlayerManagerImpl();
     }
 
-    ToroScrollListener listener = new ToroScrollListener(playerManager);
+    final ToroScrollListener listener = new ToroScrollListener(playerManager);
     view.addOnScrollListener(listener);
-    // Cache
+    // Save to Cache
     sInstance.mViews.put(view.hashCode(), view);
     sInstance.mListeners.put(view.hashCode(), listener);
 
@@ -196,7 +201,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       sInstance.mStates.put(view.hashCode(), state);
     }
 
-    if (state != null && state.player != null) {
+    if (state.player != null) {
       // Cold start VideoPlayerManager from a saved state
       playerManager.setPlayer(state.player);
       playerManager.saveVideoState(state.player.getVideoId(), state.position,
@@ -223,16 +228,15 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // Process related View
       if (listener != null) {
         // Cleanup manager
-        // 1. Save this state
-        final SavedState state;
-        if (sInstance.mStates.containsKey(view.hashCode())) {
-          state = sInstance.mStates.get(view.hashCode());
-        } else {
-          state = new SavedState();
-          sInstance.mStates.put(view.hashCode(), state);
-        }
-
         if (listener.getManager().getPlayer() != null) {
+          // 1. Save current state
+          final SavedState state;
+          if (sInstance.mStates.containsKey(view.hashCode())) {
+            state = sInstance.mStates.get(view.hashCode());
+          } else {
+            state = new SavedState();
+            sInstance.mStates.put(view.hashCode(), state);
+          }
           state.player = listener.getManager().getPlayer();
           state.position = listener.getManager().getPlayer().getCurrentPosition();
         }
@@ -240,7 +244,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         listener.getManager().onUnregistered();
         view.removeOnScrollListener(listener);
       }
-      // Remove from cache
+      // Remove View from cache
       sInstance.mViews.remove(view.hashCode());
     }
   }
@@ -278,58 +282,31 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityStarted(Activity activity) {
+    if (SDK_INT > 23) {
+      dispatchOnActivityActive(activity);
+    }
   }
 
   @Override public void onActivityResumed(Activity activity) {
-    for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
-      ToroScrollListener listener = entry.getValue();
-      SavedState state = mStates.get(entry.getKey());
-      VideoPlayerManager manager = listener.getManager();
-      if (manager.getPlayer() == null) {
-        if (state != null && state.player != null) {
-          manager.setPlayer(state.player);
-          manager.saveVideoState(state.player.getVideoId(), state.position,
-              state.player.getDuration());
-        }
-      }
-
-      if (manager.getPlayer() != null) {
-        manager.getPlayer().onActivityActive();
-        manager.startPlayback();
-      }
+    if (SDK_INT <= 23) {
+      dispatchOnActivityActive(activity);
     }
   }
 
   @Override public void onActivityPaused(Activity activity) {
-    for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
-      ToroScrollListener listener = entry.getValue();
-      SavedState state = mStates.get(entry.getKey());
-      if (state == null) {
-        state = new SavedState();
-        mStates.put(entry.getKey(), state);
-      }
-
-      VideoPlayerManager manager = listener.getManager();
-      if (manager.getPlayer() != null) {
-        // Save state
-        state.player = manager.getPlayer();
-        state.position = manager.getPlayer().getCurrentPosition();
-
-        if (manager.getPlayer().isPlaying()) {
-          manager.saveVideoState(manager.getPlayer().getVideoId(),
-              manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
-          manager.pausePlayback();
-        }
-
-        manager.getPlayer().onActivityInactive();
-      }
+    if (SDK_INT <= 23) {
+      dispatchOnActivityInactive(activity);
     }
   }
 
   @Override public void onActivityStopped(Activity activity) {
+    if (SDK_INT > 23) {
+      dispatchOnActivityInactive(activity);
+    }
   }
 
   @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
@@ -576,5 +553,53 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
     }
     return true;
+  }
+
+  // Update to correctly support API 24+
+  private void dispatchOnActivityInactive(Activity activity) {
+    for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
+      ToroScrollListener listener = entry.getValue();
+      SavedState state = mStates.get(entry.getKey());
+      if (state == null) {
+        state = new SavedState();
+        mStates.put(entry.getKey(), state);
+      }
+
+      VideoPlayerManager manager = listener.getManager();
+      if (manager.getPlayer() != null) {
+        // Save state
+        state.player = manager.getPlayer();
+        state.position = manager.getPlayer().getCurrentPosition();
+
+        if (manager.getPlayer().isPlaying()) {
+          manager.saveVideoState(manager.getPlayer().getVideoId(),
+              manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
+          manager.pausePlayback();
+        }
+
+        manager.getPlayer().onActivityInactive();
+      }
+    }
+  }
+
+  private void dispatchOnActivityActive(Activity activity) {
+    for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
+      ToroScrollListener listener = entry.getValue();
+      SavedState state = mStates.get(entry.getKey());
+      VideoPlayerManager manager = listener.getManager();
+      if (manager.getPlayer() == null) {
+        if (state != null && state.player != null) {
+          manager.setPlayer(state.player);
+          manager.saveVideoState(state.player.getVideoId(), state.position,
+              state.player.getDuration());
+        }
+      }
+
+      if (manager.getPlayer() != null) {
+        manager.getPlayer().onActivityActive();
+        manager.restoreVideoState(manager.getPlayer().getVideoId());
+        manager.startPlayback();
+      }
+    }
   }
 }

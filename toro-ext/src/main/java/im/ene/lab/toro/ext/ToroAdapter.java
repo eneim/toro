@@ -20,12 +20,14 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import im.ene.lab.toro.ViewHolderCallback;
+import im.ene.lab.toro.ToroViewHolder;
 
 /**
  * Created by eneim on 1/30/16.
+ *
+ * Basic implementation/extension of {@link RecyclerView.Adapter} to have support from Toro.
  */
-public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ViewHolderCallback>
+public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ToroViewHolder>
     extends RecyclerView.Adapter<VH> {
 
   @CallSuper @Override public void onViewRecycled(VH holder) {
@@ -58,7 +60,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ViewHolder
    *
    */
   public abstract static class ViewHolder extends RecyclerView.ViewHolder
-      implements ViewHolderCallback {
+      implements ToroViewHolder {
 
     public ViewHolder(View itemView) {
       super(itemView);
