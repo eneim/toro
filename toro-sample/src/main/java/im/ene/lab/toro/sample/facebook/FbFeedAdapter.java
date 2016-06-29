@@ -20,10 +20,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.ext.ToroAdapter;
-import im.ene.lab.toro.sample.adapter.BaseCustomAdapter;
-import im.ene.lab.toro.sample.adapter.OrderedVideoList;
-import im.ene.lab.toro.sample.data.SimpleObject;
+import im.ene.lab.toro.sample.base.BaseCustomAdapter;
+import im.ene.lab.toro.sample.base.OrderedVideoList;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import java.util.ArrayList;
@@ -32,7 +30,7 @@ import java.util.List;
 /**
  * Created by eneim on 5/13/16.
  */
-public class FbFeedAdapter extends BaseCustomAdapter<ToroAdapter.ViewHolder>
+public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
     implements OrderedVideoList {
 
   private OnItemClickListener clickListener;
@@ -50,8 +48,13 @@ public class FbFeedAdapter extends BaseCustomAdapter<ToroAdapter.ViewHolder>
     }
   }
 
-  @Nullable @Override protected Object getItem(int position) {
-    return position % 3 == 1 ? mVideos.get((position - 1) % mVideos.size()) : new SimpleObject();
+  @Nullable protected Object getItem(int position) {
+    // return position % 3 == 1 ? mVideos.get((position - 1) % mVideos.size()) : new SimpleObject();
+    return mVideos.get(position % mVideos.size());
+  }
+
+  @Override public long getItemId(int position) {
+    return position;
   }
 
   @Override public int getItemViewType(int position) {
@@ -59,11 +62,11 @@ public class FbFeedAdapter extends BaseCustomAdapter<ToroAdapter.ViewHolder>
         : (position % 5 == 2 ? FbItemViewHolder.POST_TYPE_TEXT : FbItemViewHolder.POST_TYPE_PHOTO);
   }
 
-  @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, @FbItemViewHolder.PostType int viewType) {
-    final ViewHolder viewHolder = FbItemViewHolder.createViewHolder(parent, viewType);
+  @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
+      @FbItemViewHolder.PostType int viewType) {
+    final RecyclerView.ViewHolder viewHolder = FbItemViewHolder.createViewHolder(parent, viewType);
     if (viewHolder instanceof FbItemViewHolder.VideoPost) {
-      viewHolder.setOnItemClickListener(new View.OnClickListener() {
+      ((FbItemViewHolder.VideoPost) viewHolder).setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
           int pos = viewHolder.getAdapterPosition();
           if (pos == RecyclerView.NO_POSITION || clickListener == null) {
@@ -78,12 +81,19 @@ public class FbFeedAdapter extends BaseCustomAdapter<ToroAdapter.ViewHolder>
     return viewHolder;
   }
 
+  @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    if (holder instanceof FbItemViewHolder) {
+      ((FbItemViewHolder) holder).bind(getItem(position));
+    } else if (holder instanceof FbItemViewHolder.VideoPost) {
+      ((FbItemViewHolder.VideoPost) holder).bind(getItem(position));
+    }
+  }
+
   @Override public int getItemCount() {
     return 512; // magic number
   }
 
   @Override public int firstVideoPosition() {
-    return 1;
+    return 0;
   }
-
 }

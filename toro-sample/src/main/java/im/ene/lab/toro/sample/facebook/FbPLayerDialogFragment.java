@@ -37,7 +37,7 @@ import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.VideoPlayerManagerImpl;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.adapter.SimpleVideoListAdapter;
+import im.ene.lab.toro.sample.base.BaseSampleAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 import im.ene.lab.toro.sample.widget.LargeDialogFragment;
@@ -163,7 +163,7 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     super.onDismiss(dialog);
   }
 
-  private static class Adapter extends SimpleVideoListAdapter implements VideoPlayerManager {
+  private static class Adapter extends BaseSampleAdapter implements VideoPlayerManager {
 
     private final SimpleVideoObject initItem;
     private final VideoPlayerManager delegate;
@@ -174,11 +174,11 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     }
 
     @Nullable @Override protected Object getItem(int position) {
-      if (position == 0) {
-        return initItem;
-      }
+      return mVideos.get(position % mVideos.size());
+    }
 
-      return super.getItem(position - 1);
+    @Override public int getItemViewType(int position) {
+      return VIEW_TYPE_VIDEO;
     }
 
     @Override public int getItemCount() {

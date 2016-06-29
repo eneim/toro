@@ -51,10 +51,8 @@ import java.util.List;
 /**
  * Created by eneim on 6/4/16.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class VideoPlayerView extends TextureView implements Cineer.Player {
-
-  private static final String TAG = "MediaPlayerView";
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class VideoPlayerView extends TextureView
+    implements Cineer.Player {
 
   /**
    * The surface view will not resize itself if the fractional difference
@@ -112,7 +110,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
   };
 
   private final ExoMediaPlayer.Listener playerListener = new ExoMediaPlayer.Listener() {
-    @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
+    @Override public void onStateChanged(Cineer player, boolean playWhenReady, int playbackState) {
       mPlaybackState = playbackState;
       setKeepScreenOn(isInPlayableState());
     }
@@ -198,8 +196,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
     }
   };
 
-  @Override
-  public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+  @Override public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
     this.mPlayerStateChangeListener = listener;
   }
 
@@ -297,7 +294,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
     setSurfaceTextureListener(surfaceTextureListener);
   }
 
-  private void releasePlayer() {
+  @Override public void releasePlayer() {
     if (mMediaPlayer != null) {
       mPlayerPosition = mMediaPlayer.getCurrentPosition();
       mMediaPlayer.removeListener(mEventLogger);
@@ -310,7 +307,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
     }
   }
 
-  private void preparePlayer(boolean playWhenReady) {
+  @Override public void preparePlayer(boolean playWhenReady) {
     if (mMedia == null || mSurface == null) {
       return;
     }
@@ -415,7 +412,7 @@ public class VideoPlayerView extends TextureView implements Cineer.Player {
         Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
   }
 
-  @Override public void setMedia(@NonNull Media media) {
+  @SuppressWarnings("ConstantConditions") @Override public void setMedia(@NonNull Media media) {
     if (media == null) {
       throw new IllegalArgumentException("MediaSource must not be null");
     }

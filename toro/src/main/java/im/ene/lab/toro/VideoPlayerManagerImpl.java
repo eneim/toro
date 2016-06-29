@@ -16,10 +16,8 @@
 
 package im.ene.lab.toro;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,31 +28,11 @@ import java.util.Map;
  */
 public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
-  private static final int MESSAGE_PLAYBACK_PROGRESS = 1;
+  private static final String TAG = "VideoPlayerManager";
 
   private final Map<String, Long> mVideoStates = new HashMap<>();
 
   private ToroPlayer mPlayer;
-  // This Handler will send Message to Main Thread
-  private Handler mUiHandler;
-  private Handler.Callback mCallback = new Handler.Callback() {
-    @Override public boolean handleMessage(Message msg) {
-      switch (msg.what) {
-        case MESSAGE_PLAYBACK_PROGRESS:
-          if (mPlayer != null) {
-            mPlayer.onPlaybackProgress(mPlayer.getCurrentPosition(), mPlayer.getDuration());
-          }
-          mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-          mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
-          return true;
-        default:
-          return false;
-      }
-    }
-  };
-
-  public VideoPlayerManagerImpl() {
-  }
 
   @Override public final ToroPlayer getPlayer() {
     return mPlayer;
@@ -66,30 +44,18 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
 
   @Override public void startPlayback() {
     if (mPlayer != null) {
+      Log.i(TAG, "play   : " + mPlayer.getVideoId());
       mPlayer.start();
-      if (mUiHandler != null) {
-        // Remove old callback if exist
-        mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-        mUiHandler.sendEmptyMessageDelayed(MESSAGE_PLAYBACK_PROGRESS, 250);
-      }
     }
   }
 
   @Override public void pausePlayback() {
-    if (mUiHandler != null) {
-      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-    }
-
     if (mPlayer != null) {
       mPlayer.pause();
     }
   }
 
   @Override public void stopPlayback() {
-    if (mUiHandler != null) {
-      mUiHandler.removeMessages(MESSAGE_PLAYBACK_PROGRESS);
-    }
-
     if (mPlayer != null) {
       mPlayer.stop();
     }
@@ -111,7 +77,7 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
       position = 0L;
     }
 
-    // See {@link android.media.MediaPlayer#seekTo(int)}
+    Log.i(TAG, "restore: " + videoId + " | " + position);
     try {
       mPlayer.seekTo(position);
     } catch (IllegalStateException er) {
@@ -127,11 +93,10 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   }
 
   @Override public void onRegistered() {
-    mUiHandler = new Handler(Looper.getMainLooper(), mCallback);
+
   }
 
   @Override public void onUnregistered() {
-    mUiHandler.removeCallbacksAndMessages(null);
-    mUiHandler = null;
+
   }
 }

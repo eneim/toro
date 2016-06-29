@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
-
-import java.util.LinkedHashMap;
+package im.ene.lab.toro.media;
 
 /**
- * Created by eneim on 3/14/16.
- *
- * A linked-list with specific capacity
+ * Created by eneim on 6/12/16.
  */
-final class LinkedStateList extends LinkedHashMap<Integer, SavedState> {
 
-  private int mCapacity = 1;
+/**
+ * Callback for handling the play or pause of a player control.
+ */
+public interface PlayerControlCallback {
 
-  LinkedStateList(int initialCapacity) {
-    super(initialCapacity);
-    mCapacity = initialCapacity;
-  }
+  /**
+   * Respond when the player has just been paused.
+   */
+  void onPause();
 
-  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
-    return size() > mCapacity;
-  }
+  /**
+   * Respond when the player just started playing.
+   */
+  void onPlay();
 }

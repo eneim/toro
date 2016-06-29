@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
+package im.ene.lab.toro;
 
-import android.support.annotation.Nullable;
+import java.util.LinkedHashMap;
 
 /**
- * Created by eneim on 1/30/16.
+ * Created by eneim on 3/14/16.
+ *
+ * A linked-list with specific capacity
  */
-public class MultiVideosSimpleListAdapter extends BaseSampleAdapter {
+final class StateLinkedList extends LinkedHashMap<Integer, SavedState> {
 
-  public MultiVideosSimpleListAdapter() {
-    super();
+  private int mCapacity = 1;
+
+  StateLinkedList(int initialCapacity) {
+    super(initialCapacity);
+    mCapacity = initialCapacity;
   }
 
-  @Nullable @Override protected Object getItem(int position) {
-    return mVideos.get(position % mVideos.size());
+  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
+    return size() > mCapacity;
   }
 }

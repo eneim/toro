@@ -21,22 +21,25 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
 import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.PlaybackInfo;
 
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener {
+public interface ToroPlayer {
 
   // Playback method
+
+  /**
+   * Prepare video
+   */
+  void preparePlayer(boolean playWhenReady);
+
   /**
    * See {@link VideoView#start()}
    */
@@ -51,6 +54,11 @@ public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener 
    * See {@link VideoView#stopPlayback()}
    */
   void stop();
+
+  /**
+   *
+   */
+  void releasePlayer();
 
   /**
    * See {@link VideoView#getDuration()}
@@ -79,20 +87,6 @@ public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener 
    * @return {@code true} if the media is being played, {@code false} otherwise.
    */
   boolean isPlaying();
-
-  /**
-   * See {@link VideoView#getBufferPercentage()}
-   *
-   * @return current buffered percentage.
-   */
-  @IntRange(from = 0, to = 100) int getBufferPercentage();
-
-  /**
-   * See {@link MediaPlayer#setVolume(float, float)}
-   *
-   * @param volume volume level.
-   */
-  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
 
   // Custom method to add Toro abilities
 
@@ -191,10 +185,10 @@ public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener 
   /**
    * Callback after this player stops playing
    */
-  void onPlaybackStopped();
+  void onPlaybackCompleted();
 
   /**
-   * Called from {@link Toro#onError(ToroPlayer, Cineer, PlaybackException)}
+   * Called from {@link Toro#onPlaybackError(ToroPlayer, Cineer, PlaybackException)}
    *
    * This method has the same signature with {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
    * PlaybackException)}, but {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
@@ -202,21 +196,4 @@ public interface ToroPlayer extends OnInfoListener, OnPlayerStateChangeListener 
    * loop
    */
   boolean onPlaybackError(Cineer mp, PlaybackException error);
-
-  /**
-   * Called from {@link Toro#onInfo(ToroPlayer, Cineer, PlaybackInfo)}
-   *
-   * This method has the same signature with {@link ToroPlayer#onInfo(Cineer, PlaybackInfo)}
-   * , but {@link ToroPlayer##onInfo(Cineer, PlaybackInfo)} will be called explicitly by
-   * Toro, so this method will prevent infinite loop
-   */
-  void onPlaybackInfo(Cineer mp, PlaybackInfo info);
-
-  /**
-   * Callback from playback progress update. This method is called from main thread (UIThread)
-   *
-   * @param position current playing position
-   * @param duration total duration of current video
-   */
-  @UiThread void onPlaybackProgress(long position, long duration);
 }

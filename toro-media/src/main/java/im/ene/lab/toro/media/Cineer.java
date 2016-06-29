@@ -50,6 +50,13 @@ public interface Cineer {
   interface Player {
 
     /**
+     * See {@link MediaPlayer#prepareAsync()}
+     *
+     * @param playWhenReady Immediately start playback when Ready.
+     */
+    void preparePlayer(boolean playWhenReady);
+
+    /**
      * See {@link VideoView#start()}
      */
     void start();
@@ -63,6 +70,11 @@ public interface Cineer {
      * See {@link VideoView#stopPlayback()}
      */
     void stop();
+
+    /**
+     * Release player's resource.
+     */
+    void releasePlayer();
 
     /**
      * See {@link VideoView#getDuration()}

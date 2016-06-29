@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
@@ -35,7 +36,7 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
  */
 public class MyVideoViewHolder extends AbsVideoViewHolder {
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_multi;
 
   private ImageView mThumbnail;
   private TextView mInfo;
@@ -48,6 +49,10 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     mInfo = (TextView) itemView.findViewById(R.id.info);
   }
 
+  public void setOnClickListener(View.OnClickListener listener) {
+    videoView.setOnClickListener(listener);
+  }
+
   @Override protected View findVideoView() {
     return itemView.findViewById(R.id.video);
   }
@@ -58,7 +63,7 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     }
 
     mItem = (SimpleVideoObject) item;
-    player.setMedia(Uri.parse(mItem.video));
+    player.setMedia(new Video(Uri.parse(mItem.video), mItem.name));
 
     Picasso.with(itemView.getContext())
         .load(R.drawable.toro_place_holder)
@@ -87,11 +92,6 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     // isReleased = false;
   }
 
-  @Override public void onPlaybackProgress(long position, long duration) {
-    super.onPlaybackProgress(position, duration);
-    // mInfo.setText(Util.timeStamp(position, duration));
-  }
-
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
@@ -101,10 +101,10 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     mInfo.setText("Paused");
   }
 
-  @Override public void onPlaybackStopped() {
+  @Override public void onPlaybackCompleted() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MyVideoViewHolder.super.onPlaybackStopped();
+        MyVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Completed");
@@ -113,7 +113,7 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
   @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MyVideoViewHolder.super.onPlaybackStopped();
+        MyVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());

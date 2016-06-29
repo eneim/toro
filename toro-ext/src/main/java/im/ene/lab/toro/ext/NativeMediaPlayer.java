@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.internal;
+package im.ene.lab.toro.ext;
 
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.FloatRange;
 import android.view.Surface;
+import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.Cineer;
 import java.io.IOException;
 import java.util.Map;
 

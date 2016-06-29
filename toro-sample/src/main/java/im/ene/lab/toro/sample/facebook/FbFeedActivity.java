@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player.internal;
+package im.ene.lab.toro.sample.facebook;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by eneim on 6/12/16.
+ * Created by eneim on 6/29/16.
  */
+public class FbFeedActivity extends AppCompatActivity {
 
-/**
- * Callback for handling the play or pause of a player control.
- */
-public interface PlayerControlCallback {
-
-  /**
-   * Respond when the player has just been paused.
-   */
-  void onPause();
-
-  /**
-   * Respond when the player just started playing.
-   */
-  void onPlay();
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (savedInstanceState == null) {
+      getSupportFragmentManager().beginTransaction()
+          .replace(android.R.id.content, FbFeedFragment.newInstance())
+          .commit();
+    }
+  }
 }

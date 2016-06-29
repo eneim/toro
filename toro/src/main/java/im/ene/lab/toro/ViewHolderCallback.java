@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
+package im.ene.lab.toro;
 
 /**
- * Created by eneim on 5/14/16.
+ * Created by eneim on 6/29/16.
  */
-public interface OrderedVideoList {
+public interface ViewHolderCallback {
 
-  int firstVideoPosition();
+  void onAttachedToParent();
+
+  void onDetachedFromParent();
 }

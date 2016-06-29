@@ -18,37 +18,24 @@ package im.ene.lab.toro.ext.youtube;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.view.View;
 import android.view.ViewParent;
 import com.google.android.youtube.player.YouTubePlayer;
-import im.ene.lab.toro.RecyclerViewItemHelper;
+import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.VideoViewItemHelper;
+import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.media.PlaybackException;
 
 /**
  * Created by eneim on 4/8/16.
  */
-public class YoutubeViewItemHelper extends VideoViewItemHelper {
+public class YoutubePlayerViewHelper extends PlayerViewHelper {
 
-  private static volatile YoutubeViewItemHelper INSTANCE;
-  private final RecyclerViewItemHelper delegate;
+  private final ToroPlayerViewHelper delegate;
 
-  public YoutubeViewItemHelper() {
-    super();
-    delegate = RecyclerViewItemHelper.getInstance();
-  }
-
-  // Prefer to use singleton of this class. This method must be call on UiThread
-  @UiThread public static YoutubeViewItemHelper getInstance() {
-    if (INSTANCE == null) {
-      synchronized (YoutubeViewItemHelper.class) {
-        INSTANCE = new YoutubeViewItemHelper();
-      }
-    }
-
-    return INSTANCE;
+  public YoutubePlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+    super(player, itemView);
+    delegate = new ToroPlayerViewHelper(player, itemView);
   }
 
   // Adapt from YoutubePlayer
@@ -78,7 +65,7 @@ public class YoutubeViewItemHelper extends VideoViewItemHelper {
   }
 
   public void onVideoEnded(ToroPlayer player) {
-    player.onPlaybackStopped();
+    player.onPlaybackCompleted();
   }
 
   public void onYoutubeError(ToroPlayer player, YouTubePlayer.ErrorReason errorReason) {
@@ -93,18 +80,17 @@ public class YoutubeViewItemHelper extends VideoViewItemHelper {
 
   // Adapt from RecyclerViewItemHelper
 
-  @Override public void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent) {
-    delegate.onAttachedToParent(player, itemView, parent);
+  @Override public void onAttachedToParent() {
+    delegate.onAttachedToParent();
   }
 
-  @Override public void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent) {
-    delegate.onDetachedFromParent(player, itemView, parent);
+  @Override public void onDetachedFromParent() {
+    delegate.onDetachedFromParent();
   }
 
   @Override public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
     return delegate.onItemLongClick(player, itemView, parent);
   }
+
 }

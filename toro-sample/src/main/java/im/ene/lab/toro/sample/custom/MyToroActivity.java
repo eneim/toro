@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,10 +75,18 @@ public class MyToroActivity extends AppCompatActivity {
       }
     }
 
+    private static final String TAG = "Adapter";
+
     @Override public MyVideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(parent.getContext())
           .inflate(MyVideoViewHolder.LAYOUT_RES, parent, false);
-      return new MyVideoViewHolder(view);
+      final MyVideoViewHolder viewHolder = new MyVideoViewHolder(view);
+      viewHolder.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          Log.d(TAG, "onClick() called with: " + "view = [" + view + "]");
+        }
+      });
+      return viewHolder;
     }
 
     @Override public void onBindViewHolder(MyVideoViewHolder holder, int position) {

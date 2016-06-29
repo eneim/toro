@@ -54,6 +54,11 @@ public class Video extends Media {
   private final Type videoType;
 
   /**
+   * Title of Video.
+   */
+  private final String videoTitle;
+
+  /**
    * ID of content (for DASH).
    */
   private final String contentId;
@@ -63,16 +68,16 @@ public class Video extends Media {
    */
   private final String provider;
 
-  public Video(Uri mediaUri) {
-    this(mediaUri, PlayerUtil.inferVideoType(mediaUri), null, null);
+  public Video(Uri mediaUri, String title) {
+    this(mediaUri, title, PlayerUtil.inferVideoType(mediaUri), null, null);
   }
 
   /**
    * @param uri The URL pointing to the video.
    * @param videoType The video format of the video.
    */
-  public Video(Uri uri, Type videoType) {
-    this(uri, videoType, null);
+  public Video(Uri uri, String title, Type videoType) {
+    this(uri, title, videoType, null);
   }
 
   /**
@@ -80,12 +85,13 @@ public class Video extends Media {
    * @param videoType The video format of the video.
    * @param contentId ID of content (for DASH).
    */
-  public Video(Uri uri, Type videoType, String contentId) {
-    this(uri, videoType, contentId, null);
+  public Video(Uri uri, String title, Type videoType, String contentId) {
+    this(uri, title, videoType, contentId, null);
   }
 
-  public Video(Uri uri, Type videoType, String contentId, String provider) {
+  public Video(Uri uri, String title, Type videoType, String contentId, String provider) {
     super(uri);
+    this.videoTitle = title;
     this.videoType = videoType;
     this.contentId = contentId;
     this.provider = provider;
@@ -107,5 +113,9 @@ public class Video extends Media {
 
   public String getProvider() {
     return provider;
+  }
+
+  public String getVideoTitle() {
+    return videoTitle;
   }
 }

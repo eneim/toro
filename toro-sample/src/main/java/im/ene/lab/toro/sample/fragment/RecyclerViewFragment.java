@@ -33,7 +33,7 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.adapter.OrderedVideoList;
+import im.ene.lab.toro.sample.base.OrderedVideoList;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 import java.util.List;
 

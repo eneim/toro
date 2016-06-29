@@ -33,12 +33,11 @@ import butterknife.ButterKnife;
 import com.google.android.youtube.player.YouTubeThumbnailView;
 import im.ene.lab.toro.ext.youtube.YoutubeVideosAdapter;
 import im.ene.lab.toro.ext.youtube.YoutubeViewHolder;
-import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
-import im.ene.lab.toro.sample.util.Util;
 
 /**
  * Created by eneim on 4/8/16.
@@ -137,11 +136,6 @@ public class YoutubeVideosFragment extends RecyclerViewFragment {
       mInfo.setText("Bound");
     }
 
-    @Override public void onPlaybackProgress(long position, long duration) {
-      super.onPlaybackProgress(position, duration);
-      mInfo.setText(Util.timeStamp(position, duration));
-    }
-
     private final String TAG;
 
     @Override public void onLoading() {
@@ -166,8 +160,8 @@ public class YoutubeVideosFragment extends RecyclerViewFragment {
       mInfo.setText("Paused");
     }
 
-    @Override public void onPlaybackStopped() {
-      super.onPlaybackStopped();
+    @Override public void onPlaybackCompleted() {
+      super.onPlaybackCompleted();
       if (mThumbnail != null) {
         mThumbnail.setVisibility(View.VISIBLE);
       }

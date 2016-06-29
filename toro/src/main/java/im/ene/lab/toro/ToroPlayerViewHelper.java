@@ -31,46 +31,41 @@ import android.view.ViewParent;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class RecyclerViewItemHelper extends VideoViewItemHelper {
+public final class ToroPlayerViewHelper extends PlayerViewHelper {
 
-  private static volatile RecyclerViewItemHelper INSTANCE;
-
-  public static RecyclerViewItemHelper getInstance() {
-    if (INSTANCE == null) {
-      synchronized (RecyclerViewItemHelper.class) {
-        INSTANCE = new RecyclerViewItemHelper();
-      }
-    }
-
-    return INSTANCE;
+  public ToroPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+    super(player, itemView);
   }
 
-  @Override public void onAttachedToParent(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent) {
-    ToroScrollListener listener =
-        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
+  @Override public void onAttachedToParent() {
+    ToroScrollListener listener = itemView.getParent() != null ?  //
+        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
     if (listener != null && listener.getManager().getPlayer() == null) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
         listener.getManager().setPlayer(player);
         listener.getManager().restoreVideoState(player.getVideoId());
         listener.getManager().startPlayback();
-        player.onPlaybackStarted();
+      } else {
+        // Prepare
+        player.preparePlayer(false);
       }
     }
   }
 
-  @Override public void onDetachedFromParent(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent) {
-    ToroScrollListener listener =
-        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
+  @Override public void onDetachedFromParent() {
+    ToroScrollListener listener = itemView.getParent() != null ?  //
+        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
     // Manually save Video state
     if (listener != null && player.equals(listener.getManager().getPlayer())) {
       if (player.isPlaying()) {
-        listener.getManager()
-            .saveVideoState(player.getVideoId(), player.getCurrentPosition(), player.getDuration());
-        listener.getManager().stopPlayback();
-        player.onPlaybackPaused();
+        listener.getManager().saveVideoState( //
+            player.getVideoId(), player.getCurrentPosition(), player.getDuration());
+        listener.getManager().pausePlayback();
       }
+      // Release player.
+      player.releasePlayer();
+      // Detach current Player
+      listener.getManager().setPlayer(null);
     }
   }
 
@@ -103,14 +98,12 @@ public final class RecyclerViewItemHelper extends VideoViewItemHelper {
         }
         // Force pause
         manager.pausePlayback();
-        currentPlayer.onPlaybackPaused();
       }
 
       // Trigger new player
       manager.setPlayer(player);
       manager.restoreVideoState(player.getVideoId());
       manager.startPlayback();
-      player.onPlaybackStarted();
       return true;
     } else {
       // Pressing current player, pause it if it is playing
@@ -118,12 +111,10 @@ public final class RecyclerViewItemHelper extends VideoViewItemHelper {
         manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
             currentPlayer.getDuration());
         manager.pausePlayback();
-        currentPlayer.onPlaybackPaused();
       } else {
         // It's paused, so we resume it
         manager.restoreVideoState(currentPlayer.getVideoId());
         manager.startPlayback();
-        currentPlayer.onPlaybackStarted();
       }
       return true;
     }

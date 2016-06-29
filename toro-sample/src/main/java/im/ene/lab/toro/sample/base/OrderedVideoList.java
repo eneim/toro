@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
-
-import android.support.annotation.Nullable;
+package im.ene.lab.toro.sample.base;
 
 /**
- * Created by eneim on 2/3/16.
+ * Created by eneim on 5/14/16.
  */
-public class SimpleVideoListAdapter extends BaseSampleAdapter {
+public interface OrderedVideoList {
 
-  public SimpleVideoListAdapter() {
-    super();
-  }
-
-  @Nullable @Override protected Object getItem(int position) {
-    return mVideos.get(position % mVideos.size());
-  }
-
-  @Override public int getItemViewType(int position) {
-    return VIEW_TYPE_VIDEO;
-  }
+  int firstVideoPosition();
 }

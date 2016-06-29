@@ -17,12 +17,10 @@
 package im.ene.lab.toro.ext.youtube;
 
 import android.support.annotation.CallSuper;
-import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -68,7 +66,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
    */
   protected final int mFragmentId;
 
-  private final YoutubeViewItemHelper mHelper;
+  private final YoutubePlayerViewHelper mHelper;
   protected YouTubePlayerSupportFragment mPlayerFragment;
   @Nullable protected YouTubeThumbnailView mThumbnail;
   private long seekPosition = 0;
@@ -84,7 +82,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
       throw new IllegalArgumentException(
           "This View requires a YoutubeListAdapter parent which holds a non-null FragmentManager");
     }
-    this.mHelper = YoutubeViewItemHelper.getInstance();
+    this.mHelper = new YoutubePlayerViewHelper(this, itemView);
     this.mFragmentId = ViewUtil.generateViewId();
   }
 
@@ -96,17 +94,6 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
 
   @Override public void onAttachedToParent() {
     super.onAttachedToParent();
-    itemView.getViewTreeObserver()
-        .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override public void onGlobalLayout() {
-            ViewUtil.removeOnGlobalLayoutListener(itemView.getViewTreeObserver(), this);
-            if ((mThumbnail = getThumbnailView()) != null) {
-              mThumbnail.initialize(Youtube.API_KEY, YoutubeViewHolder.this);
-            } else {
-              mHelper.onPrepared(YoutubeViewHolder.this, itemView, itemView.getParent(), null);
-            }
-          }
-        });
   }
 
   @CallSuper @Override public void onViewHolderBound() {
@@ -122,6 +109,21 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
       mPlayerFragment = YouTubePlayerSupportFragment.newInstance();
       // Add youtube player fragment to this ViewHolder
       mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mPlayerFragment).commit();
+    }
+  }
+
+  @Override public void preparePlayer(boolean playWhenReady) {
+    if ((mThumbnail = getThumbnailView()) != null) {
+      mThumbnail.initialize(Youtube.API_KEY, YoutubeViewHolder.this);
+    } else {
+      mHelper.onPrepared(itemView, itemView.getParent(), null);
+    }
+  }
+
+  @Override public void releasePlayer() {
+    // Release current youtube player first. Prevent resource conflict
+    if (mParent.mYoutubePlayer != null) {
+      mParent.mYoutubePlayer.release();
     }
   }
 
@@ -215,7 +217,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
 
   @CallSuper @Override public final void onVideoEnded() {
     isStarting = false;
-    mHelper.onCompletion(this, null);
+    mHelper.onCompletion(null);
     mHelper.onVideoEnded(this);
     mLogger.onVideoEnded();
   }
@@ -224,7 +226,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
     PlaybackException error =
         errorReason != null ? new PlaybackException(errorReason.name(), 0, 0) : null;
     mParent.onError(errorReason);
-    mHelper.onError(this, null, error);
+    mHelper.onPlayerError(null, error);
     mHelper.onYoutubeError(this, errorReason);
     mLogger.onError(errorReason);
   }
@@ -317,11 +319,7 @@ public abstract class YoutubeViewHolder extends ToroViewHolder implements
   }
 
   @Override public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-    mHelper.onPrepared(this, itemView, itemView.getParent(), null);
-  }
-
-  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-
+    mHelper.onPrepared(itemView, itemView.getParent(), null);
   }
 
   @IntDef({

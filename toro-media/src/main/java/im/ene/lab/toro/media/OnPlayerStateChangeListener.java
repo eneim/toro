@@ -29,11 +29,9 @@ public interface OnPlayerStateChangeListener {
   void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState);
 
   /**
-   * Invoked when an error occurs. The playback state will transition to
-   * {@link Cineer#PLAYER_IDLE} immediately after this method is invoked. The player instance
-   * can still be used, and {@link Cineer#release()} must still be called on the player
-   * should
-   * it no longer be required.
+   * Invoked when an error occurs. The playback state will transition to {@link Cineer#PLAYER_IDLE}
+   * immediately after this method is invoked. The player instance can still be used, and {@link
+   * Cineer#release()} must still be called on the player should it no longer be required.
    *
    * @param error The error.
    */
