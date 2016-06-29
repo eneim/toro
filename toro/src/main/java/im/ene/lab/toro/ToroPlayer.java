@@ -166,6 +166,11 @@ public interface ToroPlayer {
   /* Playback lifecycle callback */
 
   /**
+   * Preparing resources;
+   */
+  void onVideoPreparing();
+
+  /**
    * Replace {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
    *
    * @param mp media player which is prepared

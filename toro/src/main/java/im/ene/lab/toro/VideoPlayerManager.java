@@ -8,12 +8,12 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface VideoPlayerManager {
 
-  /* BEGIN Setup current unique Player */
+  /* BEGIN Setup current Player */
 
   /**
    * @return latest Video Player
    */
-  ToroPlayer getPlayer();
+  @Nullable ToroPlayer getPlayer();
 
   /**
    * Set current video player. There would be at most one Video player at a time.

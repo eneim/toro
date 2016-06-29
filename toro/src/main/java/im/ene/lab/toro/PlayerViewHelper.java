@@ -20,6 +20,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.media.Cineer;
@@ -57,12 +58,40 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
-  public abstract void onAttachedToParent();
+  @CallSuper public void onAttachedToParent() {
+    ToroScrollListener listener = itemView.getParent() != null ?  //
+        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
+    if (listener != null && listener.getManager().getPlayer() == null) {
+      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
+        listener.getManager().setPlayer(player);
+        listener.getManager().restoreVideoState(player.getVideoId());
+        listener.getManager().startPlayback();
+      } else {
+        // Prepare
+        player.preparePlayer(false);
+      }
+    }
+  }
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
-  public abstract void onDetachedFromParent();
+  @CallSuper public void onDetachedFromParent() {
+    ToroScrollListener listener = itemView.getParent() != null ?  //
+        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
+    // Manually save Video state
+    if (listener != null && player.equals(listener.getManager().getPlayer())) {
+      if (player.isPlaying()) {
+        listener.getManager().saveVideoState( //
+            player.getVideoId(), player.getCurrentPosition(), player.getDuration());
+        listener.getManager().pausePlayback();
+      }
+      // Release player.
+      player.releasePlayer();
+      // Detach current Player
+      listener.getManager().setPlayer(null);
+    }
+  }
 
   /**
    * Support long press on Video, called by {@link View.OnLongClickListener#onLongClick(View)}
@@ -108,6 +137,14 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
    */
   @Override public final void onPlayerStateChanged(Cineer player, boolean playWhenReady,
       @State int playbackState) {
+    Log.d(TAG, "onPlayerStateChanged() called with: "
+        + "player = ["
+        + this.player.getPlayOrder()
+        + "], playWhenReady = ["
+        + playWhenReady
+        + "], playbackState = ["
+        + playbackState
+        + "]");
     switch (playbackState) {
       case Cineer.PLAYER_PREPARED:
         this.player.onVideoPrepared(player);
@@ -122,6 +159,7 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
       case Cineer.PLAYER_IDLE:
         break;
       case Cineer.PLAYER_PREPARING:
+        this.player.onVideoPreparing();
         break;
       case Cineer.PLAYER_READY:
         if (playWhenReady) {

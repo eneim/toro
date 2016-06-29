@@ -19,9 +19,9 @@ package im.ene.lab.toro.sample.base;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.VideoPlayerManagerImpl;
-import im.ene.lab.toro.ViewHolderCallback;
 
 /**
  * Created by eneim on 5/20/16.
@@ -78,14 +78,14 @@ public abstract class BaseCustomAdapter<VH extends RecyclerView.ViewHolder>
   }
 
   @Override public void onViewAttachedToWindow(VH holder) {
-    if (holder instanceof ViewHolderCallback) {
-      ((ViewHolderCallback) holder).onAttachedToParent();
+    if (holder instanceof ToroViewHolder) {
+      ((ToroViewHolder) holder).onAttachedToParent();
     }
   }
 
   @Override public void onViewDetachedFromWindow(VH holder) {
-    if (holder instanceof ViewHolderCallback) {
-      ((ViewHolderCallback) holder).onDetachedFromParent();
+    if (holder instanceof ToroViewHolder) {
+      ((ToroViewHolder) holder).onDetachedFromParent();
     }
   }
 }

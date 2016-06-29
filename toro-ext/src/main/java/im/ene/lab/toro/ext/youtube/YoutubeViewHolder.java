@@ -26,7 +26,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
-import im.ene.lab.toro.ext.ToroViewHolder;
+import im.ene.lab.toro.ext.BasePlayerViewHolder;
 import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.media.PlaybackException;
 import java.lang.annotation.Retention;
@@ -37,7 +37,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  * A library-level Abstract ViewHolder for Youtube
  */
-public abstract class YoutubeViewHolder extends ToroViewHolder implements
+public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
     // 0. IMPORTANT: required for requesting Youtube API
     YouTubePlayer.OnInitializedListener,
     // 1. Normal playback state

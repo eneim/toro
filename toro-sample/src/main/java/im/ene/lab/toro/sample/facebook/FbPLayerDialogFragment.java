@@ -213,8 +213,7 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       delegate.stopPlayback();
     }
 
-    @Override
-    public void saveVideoState(String videoId, @Nullable Long position, long duration) {
+    @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
       delegate.saveVideoState(videoId, position, duration);
     }
 
@@ -223,9 +222,6 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     }
 
     @Nullable @Override public Long getSavedPosition(String videoId) {
-      if (getPlayer() instanceof TrackablePlayer && videoId.equals(getPlayer().getVideoId())) {
-        return ((TrackablePlayer) getPlayer()).getLatestPosition();
-      }
       return delegate.getSavedPosition(videoId);
     }
   }

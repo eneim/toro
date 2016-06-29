@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.legacy;
+package im.ene.lab.toro;
 
-import android.app.Application;
-import im.ene.lab.toro.Toro;
+import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by eneim on 6/8/16.
+ * Created by eneim on 6/29/16.
  */
-public class SampleApp extends Application {
+public interface ToroViewHolder {
 
-  @Override public void onCreate() {
-    super.onCreate();
-    Toro.init(this);
-  }
+  /**
+   * Required for {@link PlayerViewHelper#onAttachedToParent()}. See {@link
+   * RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
+   */
+  void onAttachedToParent();
+
+  /**
+   * Required for {@link PlayerViewHelper#onDetachedFromParent()}. See {@link
+   * RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
+   */
+  void onDetachedFromParent();
 }

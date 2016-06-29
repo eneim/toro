@@ -136,6 +136,10 @@ public abstract class AbsVideoViewHolder extends RecyclerView.ViewHolder impleme
 
   }
 
+  @Override public void onVideoPreparing() {
+
+  }
+
   @Override public void onVideoPrepared(Cineer mp) {
     playable = true;
   }
