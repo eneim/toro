@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.adapter;
+package im.ene.lab.toro.sample.base;
 
 import android.support.annotation.Nullable;
-import im.ene.lab.toro.ext.ToroAdapter;
+import android.support.v7.widget.RecyclerView;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.VideoPlayerManagerImpl;
+import im.ene.lab.toro.ViewHolderCallback;
 
 /**
  * Created by eneim on 5/20/16.
  */
-public abstract class BaseCustomAdapter<VH extends ToroAdapter.ViewHolder> extends ToroAdapter<VH>
-    implements VideoPlayerManager {
+public abstract class BaseCustomAdapter<VH extends RecyclerView.ViewHolder>
+    extends RecyclerView.Adapter<VH> implements VideoPlayerManager {
 
   protected final VideoPlayerManager delegate;
 
@@ -74,5 +75,17 @@ public abstract class BaseCustomAdapter<VH extends ToroAdapter.ViewHolder> exten
 
   @Nullable @Override public Long getSavedPosition(String videoId) {
     return delegate.getSavedPosition(videoId);
+  }
+
+  @Override public void onViewAttachedToWindow(VH holder) {
+    if (holder instanceof ViewHolderCallback) {
+      ((ViewHolderCallback) holder).onAttachedToParent();
+    }
+  }
+
+  @Override public void onViewDetachedFromWindow(VH holder) {
+    if (holder instanceof ViewHolderCallback) {
+      ((ViewHolderCallback) holder).onDetachedFromParent();
+    }
   }
 }

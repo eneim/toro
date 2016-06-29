@@ -18,10 +18,11 @@ package im.ene.lab.toro.sample.facebook;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.viewholder.SimpleToroVideoViewHolder;
 import java.lang.annotation.Retention;
@@ -32,7 +33,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  * Original base facebook feed item ViewHolder
  */
-public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
+public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
 
   public static final int POST_TYPE_TEXT = 1001;
 
@@ -45,9 +46,7 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
   }) @Retention(RetentionPolicy.SOURCE) public @interface PostType {
   }
 
-  @Override public void bind(@Nullable Object object) {
-
-  }
+  public abstract void bind(@Nullable Object object);
 
   private static LayoutInflater inflater;
 
@@ -55,12 +54,12 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     super(itemView);
   }
 
-  public static ToroAdapter.ViewHolder createViewHolder(ViewGroup parent, @PostType int type) {
+  public static RecyclerView.ViewHolder createViewHolder(ViewGroup parent, @PostType int type) {
     if (inflater == null) {
       inflater = LayoutInflater.from(parent.getContext());
     }
 
-    final ToroAdapter.ViewHolder viewHolder;
+    final RecyclerView.ViewHolder viewHolder;
     final View view;
     switch (type) {
       case POST_TYPE_TEXT:
@@ -89,6 +88,10 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     public TextPost(View itemView) {
       super(itemView);
     }
+
+    @Override public void bind(@Nullable Object object) {
+
+    }
   }
 
   static class PhotoPost extends FbItemViewHolder {
@@ -97,6 +100,10 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
 
     public PhotoPost(View itemView) {
       super(itemView);
+    }
+
+    @Override public void bind(@Nullable Object object) {
+
     }
   }
 
@@ -111,5 +118,11 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     @Override protected boolean allowLongPressSupport() {
       return true;
     }
+
+    @Override public void bind(Object item) {
+      super.bind(item);
+      Log.d("VideoPlayerManager@VH", "pos = " + getAdapterPosition() + " | item = [" + item + "]");
+    }
+
   }
 }

@@ -75,13 +75,14 @@ public class MultiLayerVideoPlayerView extends FrameLayout implements Cineer.Vid
     }
   };
 
-  private OnVideoSizeChangedListener videoSizeChangedListenerDelegate = new OnVideoSizeChangedListener() {
-    @Override public void onVideoSizeChanged(Cineer mp, int width, int height) {
-      if (mOnVideoSizeChangedListener != null) {
-        mOnVideoSizeChangedListener.onVideoSizeChanged(mp, width, height);
-      }
-    }
-  };
+  private OnVideoSizeChangedListener videoSizeChangedListenerDelegate =
+      new OnVideoSizeChangedListener() {
+        @Override public void onVideoSizeChanged(Cineer mp, int width, int height) {
+          if (mOnVideoSizeChangedListener != null) {
+            mOnVideoSizeChangedListener.onVideoSizeChanged(mp, width, height);
+          }
+        }
+      };
 
   private OnPlayerStateChangeListener stateChangeListenerDelegate =
       new OnPlayerStateChangeListener() {
@@ -207,7 +208,7 @@ public class MultiLayerVideoPlayerView extends FrameLayout implements Cineer.Vid
         "This View doesn't support naive Media Uri. Use a Video instead.");
   }
 
-  private void releasePlayer() {
+  @Override public void releasePlayer() {
     if (mMediaPlayer != null) {
       mPlayerPosition = mMediaPlayer.getCurrentPosition();
       mMediaPlayer.getPlayer().removeListener(playerListenerDelegate);
@@ -216,7 +217,7 @@ public class MultiLayerVideoPlayerView extends FrameLayout implements Cineer.Vid
     }
   }
 
-  private void preparePlayer(boolean playWhenReady) {
+  @Override public void preparePlayer(boolean playWhenReady) {
     if (mMedia == null) {
       return;
     }

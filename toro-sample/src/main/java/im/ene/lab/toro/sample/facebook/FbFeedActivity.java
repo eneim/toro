@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.sample.facebook;
 
-import java.util.LinkedHashMap;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by eneim on 3/14/16.
- *
- * A linked-list with specific capacity
+ * Created by eneim on 6/29/16.
  */
-final class LinkedStateList extends LinkedHashMap<Integer, SavedState> {
+public class FbFeedActivity extends AppCompatActivity {
 
-  private int mCapacity = 1;
-
-  LinkedStateList(int initialCapacity) {
-    super(initialCapacity);
-    mCapacity = initialCapacity;
-  }
-
-  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
-    return size() > mCapacity;
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (savedInstanceState == null) {
+      getSupportFragmentManager().beginTransaction()
+          .replace(android.R.id.content, FbFeedFragment.newInstance())
+          .commit();
+    }
   }
 }

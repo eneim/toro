@@ -38,12 +38,11 @@ import im.ene.lab.toro.sample.facebook.TrackablePlayer;
 public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     implements TrackablePlayer /*, TextureVideoView.OnReleasedListener */ {
 
-  private final String TAG = getClass().getSimpleName();
-
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
   private ImageView mThumbnail;
   private TextView mInfo;
+  private boolean isPlayable = false;
 
   public SimpleToroVideoViewHolder(View itemView) {
     super(itemView);
@@ -73,15 +72,16 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
   }
 
   @Override public boolean wantsToPlay() {
-    return visibleAreaOffset() >= 0.75;
+    return isPlayable && visibleAreaOffset() >= 0.75;
   }
 
   @Nullable @Override public String getVideoId() {
-    return mItem.toString() + "-" + getAdapterPosition();
+    return mItem.toString() + "@" + getAdapterPosition();
   }
 
   @Override public void onVideoPrepared(Cineer mp) {
     super.onVideoPrepared(mp);
+    isPlayable = true;
     mInfo.setText("Prepared");
   }
 
@@ -105,11 +105,6 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     isReleased = false;
   }
 
-  @Override public void onPlaybackProgress(long position, long duration) {
-    super.onPlaybackProgress(position, duration);
-    // mInfo.setText(Util.timeStamp(position, duration));
-  }
-
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
@@ -119,19 +114,21 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder
     mInfo.setText("Paused");
   }
 
-  @Override public void onPlaybackStopped() {
+  @Override public void onPlaybackCompleted() {
+    isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackStopped();
+        SimpleToroVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Completed");
   }
 
   @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+    isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackStopped();
+        SimpleToroVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());

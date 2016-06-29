@@ -17,7 +17,6 @@
 package im.ene.lab.toro.ext;
 
 import android.support.annotation.CallSuper;
-import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.lab.toro.media.Cineer;
@@ -40,10 +39,22 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
       throw new NullPointerException("A valid VideoPlayerView is required.");
     }
 
-    mVideoView.setOnPlayerStateChangeListener(this);
+    mVideoView.setOnPlayerStateChangeListener(mHelper);
   }
 
   protected abstract VideoPlayerView findVideoView(View itemView);
+
+  @Override public void preparePlayer(boolean playWhenReady) {
+    if (mVideoView != null) {
+      mVideoView.preparePlayer(playWhenReady);
+    }
+  }
+
+  @Override public void releasePlayer() {
+    if (mVideoView != null) {
+      mVideoView.releasePlayer();
+    }
+  }
 
   // Client could override this method for better practice
   @Override public void start() {
@@ -76,14 +87,6 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return mVideoView != null && mVideoView.isPlaying();
   }
 
-  @Override public int getBufferPercentage() {
-    if (mVideoView != null) {
-      return mVideoView.getBufferPercentage();
-    }
-
-    return 0;
-  }
-
   @Override public boolean wantsToPlay() {
     // Default implementation
     return visibleAreaOffset() >= 0.75 && mPlayable;
@@ -108,7 +111,4 @@ public abstract class ToroVideoViewHolder extends ToroViewHolder {
     return mVideoView;
   }
 
-  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-    mVideoView.setVolume(volume);
-  }
 }

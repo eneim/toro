@@ -78,7 +78,7 @@ public final class ToroUtil {
   @SuppressWarnings("ConstantConditions")
   public static float visibleAreaOffset(ToroPlayer player, ViewParent parent) {
     if (player.getVideoView() == null) {
-      throw new IllegalArgumentException("Player must have a VideoView.");
+      throw new IllegalArgumentException("Player must have a valid VideoView.");
     }
     Rect videoRect = getVideoRect(player);
     Rect parentRect = getRecyclerViewRect(parent);

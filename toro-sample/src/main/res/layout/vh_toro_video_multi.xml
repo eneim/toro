@@ -23,7 +23,7 @@
     android:padding="4dp"
     >
 
-  <im.ene.lab.toro.ext.layeredvideo.MultiLayerVideoPlayerView
+  <im.ene.lab.toro.player.widget.VideoPlayerView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="180dp"

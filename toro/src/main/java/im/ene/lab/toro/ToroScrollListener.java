@@ -112,7 +112,6 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       if (currentPlayer != null && !currentPlayer.isPlaying()) {
         playerManager.restoreVideoState(currentPlayer.getVideoId());
         playerManager.startPlayback();
-        currentPlayer.onPlaybackStarted();
       }
       return;
     }
@@ -122,7 +121,6 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       playerManager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
           currentPlayer.getDuration());
       playerManager.pausePlayback();
-      currentPlayer.onPlaybackPaused();
     }
 
     if (electedPlayer == null) {
@@ -134,6 +132,5 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     playerManager.setPlayer(electedPlayer);
     playerManager.restoreVideoState(electedPlayer.getVideoId());
     playerManager.startPlayback();
-    electedPlayer.onPlaybackStarted();
   }
 }

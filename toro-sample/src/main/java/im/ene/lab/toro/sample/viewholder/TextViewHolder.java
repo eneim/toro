@@ -50,4 +50,12 @@ public class TextViewHolder extends ToroAdapter.ViewHolder {
   @Override public String toString() {
     return "Normal " + getAdapterPosition();
   }
+
+  @Override public void onAttachedToParent() {
+    // Do nothing
+  }
+
+  @Override public void onDetachedFromParent() {
+    // Do nothing
+  }
 }

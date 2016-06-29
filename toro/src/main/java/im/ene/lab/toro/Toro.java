@@ -27,6 +27,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.PlaybackException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -78,7 +80,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
 
   // !IMPORTANT: I limit this Map capacity to 3
-  private LinkedStateList mStates;
+  private StateLinkedList mStates;
 
   // Default strategy
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;
@@ -92,7 +94,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
     if (sInstance.mStates == null) {
-      sInstance.mStates = new LinkedStateList(3);
+      sInstance.mStates = new StateLinkedList(3);
     }
   }
 
@@ -271,7 +273,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
     if (mStates == null) {
-      mStates = new LinkedStateList(3);
+      mStates = new StateLinkedList(3);
     }
   }
 
@@ -317,7 +319,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
           manager.saveVideoState(manager.getPlayer().getVideoId(),
               manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
           manager.pausePlayback();
-          manager.getPlayer().onPlaybackPaused();
         }
 
         manager.getPlayer().onActivityInactive();
@@ -474,7 +475,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   /**
    * @hide
    */
-  static boolean doAllowsToPlay(ToroPlayer player, ViewParent parent) {
+  private static boolean doAllowsToPlay(ToroPlayer player, ViewParent parent) {
     Rect windowRect = new Rect();
     Rect parentRect = new Rect();
     if (parent instanceof View) {
@@ -497,5 +498,83 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     // Condition: window contains parent, and parent contains Video or parent intersects Video
     return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
         || parentRect.intersect(videoRect));
+  }
+
+  // Centralize Video state callbacks
+
+  void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
+      @Nullable ViewParent parent, @Nullable Cineer mediaPlayer) {
+    VideoPlayerManager manager = null;
+    ToroScrollListener listener;
+    RecyclerView view;
+    // Find correct Player manager for this player
+    for (Map.Entry<Integer, ToroScrollListener> entry : Toro.sInstance.mListeners.entrySet()) {
+      Integer key = entry.getKey();
+      view = Toro.sInstance.mViews.get(key);
+      if (view != null && view == parent) { // Found the parent view in our cache
+        listener = entry.getValue();
+        manager = listener.getManager();
+        break;
+      }
+    }
+
+    if (manager == null) {
+      return;
+    }
+
+    // 1. Check if current manager wrapped this player
+    if (player.equals(manager.getPlayer())) {
+      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+        manager.restoreVideoState(player.getVideoId());
+        manager.startPlayback();
+      }
+    } else {
+      // There is no current player, but this guy is prepared, so let's him go ...
+      if (manager.getPlayer() == null) {
+        // ... if it's possible
+        if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+          manager.setPlayer(player);
+          manager.restoreVideoState(player.getVideoId());
+          manager.startPlayback();
+        }
+      }
+    }
+  }
+
+  void onPlaybackCompletion(@NonNull ToroPlayer player, @Nullable Cineer mp) {
+    // 1. Internal jobs
+    VideoPlayerManager manager = null;
+    for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
+      manager = listener.getManager();
+      if (player == manager.getPlayer()) {
+        break;
+      } else {
+        manager = null;
+      }
+    }
+
+    // Normally stop playback
+    if (manager != null) {
+      manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
+      manager.stopPlayback();
+      // It's loop-able, so restart it immediately
+      if (player.isLoopAble()) {
+        // immediately repeat
+        manager.restoreVideoState(player.getVideoId());
+        manager.startPlayback();
+      }
+    }
+  }
+
+  boolean onPlaybackError(@NonNull ToroPlayer player, @Nullable Cineer mp,
+      @NonNull PlaybackException error) {
+    for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
+      VideoPlayerManager manager = listener.getManager();
+      if (player.equals(manager.getPlayer())) {
+        manager.saveVideoState(player.getVideoId(), 0L, player.getDuration());
+        manager.pausePlayback();
+      }
+    }
+    return true;
   }
 }

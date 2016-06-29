@@ -92,11 +92,6 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     // isReleased = false;
   }
 
-  @Override public void onPlaybackProgress(long position, long duration) {
-    super.onPlaybackProgress(position, duration);
-    // mInfo.setText(Util.timeStamp(position, duration));
-  }
-
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
@@ -106,10 +101,10 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
     mInfo.setText("Paused");
   }
 
-  @Override public void onPlaybackStopped() {
+  @Override public void onPlaybackCompleted() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MyVideoViewHolder.super.onPlaybackStopped();
+        MyVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Completed");
@@ -118,7 +113,7 @@ public class MyVideoViewHolder extends AbsVideoViewHolder {
   @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        MyVideoViewHolder.super.onPlaybackStopped();
+        MyVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());

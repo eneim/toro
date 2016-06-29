@@ -15,23 +15,10 @@
       android:theme="@style/AppTheme">
 
     <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".activity.ShowCaseActivity"
-        android:parentActivityName=".activity.MainActivity"/>
-
-    <activity
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name=".activity.MainActivity"
-        android:theme="@style/AppTheme.NoActionBar">
-    </activity>
-
-    <activity
         android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name=".activity.StandalonePlayerActivity"
+        android:name=".standalone.StandalonePlayerActivity"
         android:theme="@style/ToroTheme">
     </activity>
 
@@ -39,6 +26,11 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".custom.MyToroActivity"/>
+
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".facebook.FbFeedActivity"/>
 
     <activity
         android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
@@ -58,7 +50,7 @@
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".custom.MyToroActivity">
+        android:targetActivity=".facebook.FbFeedActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

@@ -17,32 +17,30 @@
 package im.ene.lab.toro.ext;
 
 import android.support.annotation.CallSuper;
-import android.util.Log;
 import android.view.View;
-import im.ene.lab.toro.ToroPlayerViewHelper;
-import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.PlayerViewHelper;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.ToroPlayerViewHelper;
+import im.ene.lab.toro.ToroUtil;
+import im.ene.lab.toro.ViewHolderCallback;
 import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.PlaybackInfo;
-import im.ene.lab.toro.media.State;
 
 /**
  * Created by eneim on 1/31/16.
  *
  * Abstract implementation of {@link ToroPlayer}.
  */
-public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
+public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
+    implements ToroPlayer, ViewHolderCallback {
 
-  private final PlayerViewHelper mHelper;
+  protected final PlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
   public ToroViewHolder(View itemView) {
     super(itemView);
-    mHelper = ToroPlayerViewHelper.getInstance();
+    mHelper = new ToroPlayerViewHelper(this, itemView);
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
@@ -98,49 +96,40 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
   }
 
   @CallSuper @Override public void onAttachedToParent() {
-    super.onAttachedToParent();
-    mHelper.onAttachedToParent(this, itemView, itemView.getParent());
+    mHelper.onAttachedToParent();
   }
 
   @CallSuper @Override public void onDetachedFromParent() {
-    super.onDetachedFromParent();
-    mHelper.onDetachedFromParent(this, itemView, itemView.getParent());
+    mHelper.onDetachedFromParent();
   }
 
-  @Override
-  public void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState) {
-    switch (playbackState) {
-      case Cineer.PLAYER_PREPARED:
-        mHelper.onPrepared(this, itemView, itemView.getParent(), player);
-        break;
-      case Cineer.PLAYER_ENDED:
-        mHelper.onCompletion(this, player);
-        break;
-      // TODO Support buffering update.
-      case Cineer.PLAYER_BUFFERING:
-        Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
-        break;
-      case Cineer.PLAYER_IDLE:
-        break;
-      case Cineer.PLAYER_PREPARING:
-        break;
-      case Cineer.PLAYER_READY:
-        break;
-      default:
-        break;
-    }
-  }
-
-  @Override public boolean onPlayerError(Cineer player, PlaybackException error) {
-    return mHelper.onError(this, player, error);
-  }
-
-  /**
-   * Implement from {@link OnInfoListener}
-   */
-  @Override public final boolean onInfo(Cineer mp, PlaybackInfo info) {
-    return mHelper.onInfo(this, mp, info);
-  }
+  //@Override
+  //public void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState) {
+  //  switch (playbackState) {
+  //    case Cineer.PLAYER_PREPARED:
+  //      mHelper.onPrepared(itemView, itemView.getParent(), player);
+  //      break;
+  //    case Cineer.PLAYER_ENDED:
+  //      mHelper.onCompletion(player);
+  //      break;
+  //    // TODO Support buffering update.
+  //    case Cineer.PLAYER_BUFFERING:
+  //      Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
+  //      break;
+  //    case Cineer.PLAYER_IDLE:
+  //      break;
+  //    case Cineer.PLAYER_PREPARING:
+  //      break;
+  //    case Cineer.PLAYER_READY:
+  //      break;
+  //    default:
+  //      break;
+  //  }
+  //}
+  //
+  //@Override public boolean onPlayerError(Cineer player, PlaybackException error) {
+  //  return mHelper.onError(player, error);
+  //}
 
   @Override public int getPlayOrder() {
     return getAdapterPosition();
@@ -161,20 +150,12 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   }
 
-  @Override public void onPlaybackStopped() {
+  @Override public void onPlaybackCompleted() {
 
   }
 
   @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
     return true;  // don't want to see the annoying dialog
-  }
-
-  @Override public void onPlaybackInfo(Cineer mp, PlaybackInfo info) {
-
-  }
-
-  @Override public void onPlaybackProgress(long position, long duration) {
-
   }
 
   private static final String TAG = "ToroViewHolder";
@@ -185,10 +166,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder implements T
 
   @Override public void onVideoPrepared(Cineer mp) {
 
-  }
-
-  @Override public int getBufferPercentage() {
-    return 0;
   }
 
   /**
