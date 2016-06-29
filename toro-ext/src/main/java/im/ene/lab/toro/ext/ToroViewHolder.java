@@ -103,34 +103,6 @@ public abstract class ToroViewHolder extends ToroAdapter.ViewHolder
     mHelper.onDetachedFromParent();
   }
 
-  //@Override
-  //public void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState) {
-  //  switch (playbackState) {
-  //    case Cineer.PLAYER_PREPARED:
-  //      mHelper.onPrepared(itemView, itemView.getParent(), player);
-  //      break;
-  //    case Cineer.PLAYER_ENDED:
-  //      mHelper.onCompletion(player);
-  //      break;
-  //    // TODO Support buffering update.
-  //    case Cineer.PLAYER_BUFFERING:
-  //      Log.i(TAG, "onPlayerStateChanged: " + player.getBufferedPercentage());
-  //      break;
-  //    case Cineer.PLAYER_IDLE:
-  //      break;
-  //    case Cineer.PLAYER_PREPARING:
-  //      break;
-  //    case Cineer.PLAYER_READY:
-  //      break;
-  //    default:
-  //      break;
-  //  }
-  //}
-  //
-  //@Override public boolean onPlayerError(Cineer player, PlaybackException error) {
-  //  return mHelper.onError(player, error);
-  //}
-
   @Override public int getPlayOrder() {
     return getAdapterPosition();
   }
