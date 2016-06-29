@@ -20,7 +20,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.media.Cineer;
@@ -137,14 +136,6 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
    */
   @Override public final void onPlayerStateChanged(Cineer player, boolean playWhenReady,
       @State int playbackState) {
-    Log.d(TAG, "onPlayerStateChanged() called with: "
-        + "player = ["
-        + this.player.getPlayOrder()
-        + "], playWhenReady = ["
-        + playWhenReady
-        + "], playbackState = ["
-        + playbackState
-        + "]");
     switch (playbackState) {
       case Cineer.PLAYER_PREPARED:
         this.player.onVideoPrepared(player);
