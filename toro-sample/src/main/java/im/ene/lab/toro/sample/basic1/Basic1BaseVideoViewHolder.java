@@ -89,7 +89,7 @@ public abstract class Basic1BaseVideoViewHolder extends Basic1ViewHolder
   }
 
   @Override public boolean wantsToPlay() {
-    return isPlayable;
+    return isPlayable && visibleAreaOffset() >= 0.85;
   }
 
   @Override public float visibleAreaOffset() {

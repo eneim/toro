@@ -39,7 +39,7 @@ import im.ene.lab.toro.sample.legacy.sample1.LegacySample1Activity;
  */
 public class Basic1VideoViewHolder extends Basic1BaseVideoViewHolder {
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_multi;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_basic;
 
   private SimpleVideoObject video;
   private final Cineer.Player videoPlayer;
