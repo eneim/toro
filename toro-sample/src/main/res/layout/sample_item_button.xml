@@ -29,14 +29,33 @@
       tools:text="@string/basic_sample_1"
       />
 
-  <android.support.v7.widget.AppCompatTextView
-      android:id="@+id/subtitle"
+  <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_margin="4dp"
-      android:textColor="#6f6f6f"
-      tools:text="@string/basic_sample_1_description"
-      style="@style/TextAppearance.AppCompat.Body1"
-      />
+      android:orientation="horizontal"
+      >
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:textColor="#6f6f6f"
+        tools:text="@string/basic_sample_1_description"
+        style="@style/TextAppearance.AppCompat.Body1"
+        />
+
+    <ImageView
+        android:id="@+id/sample_gif"
+        android:layout_width="108dp"
+        android:layout_height="192dp"
+        android:adjustViewBounds="true"
+        android:layout_margin="4dp"
+        android:scaleType="fitCenter"
+        android:background="#e5e5e5"
+        />
+
+  </LinearLayout>
 
 </merge>
