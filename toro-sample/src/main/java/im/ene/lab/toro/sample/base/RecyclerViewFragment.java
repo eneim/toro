@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.fragment;
+package im.ene.lab.toro.sample.base;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -33,7 +33,6 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.base.OrderedVideoList;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 import java.util.List;
 

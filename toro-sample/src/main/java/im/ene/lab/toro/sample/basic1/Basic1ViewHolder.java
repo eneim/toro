@@ -22,7 +22,7 @@ import android.view.View;
 /**
  * Created by eneim on 6/29/16.
  *
- * Sample 1 {@link RecyclerView.ViewHolder} skeleton.
+ * A sample {@link RecyclerView.ViewHolder} skeleton.
  */
 public abstract class Basic1ViewHolder extends RecyclerView.ViewHolder {
 

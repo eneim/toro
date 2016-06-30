@@ -79,7 +79,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
 
       viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
         @Override public boolean onLongClick(View view) {
-          Snackbar.make(parent, R.string.activity_show_case, Snackbar.LENGTH_LONG).show();
+          Snackbar.make(parent, "Long pressed to VIDEO", Snackbar.LENGTH_LONG).show();
           return true;
         }
       });

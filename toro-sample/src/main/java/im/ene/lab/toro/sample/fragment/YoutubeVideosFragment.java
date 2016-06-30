@@ -36,6 +36,7 @@ import im.ene.lab.toro.ext.youtube.YoutubeViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.sample.R;
+import im.ene.lab.toro.sample.base.RecyclerViewFragment;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 

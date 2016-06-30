@@ -28,7 +28,7 @@ import im.ene.lab.toro.media.PlaybackException;
 /**
  * Created by eneim on 6/29/16.
  *
- * Sample 1 ViewHolder which holds a Video, and request support from Toro via ToroPlayer.
+ * Sample ViewHolder which holds a Video, and request support from Toro via ToroPlayer.
  *
  * It is required to implement {@link ToroPlayer} and {@link ToroViewHolder}, as well as a member
  * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ToroPlayerViewHelper}.

@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic2;
-
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import im.ene.lab.toro.sample.R;
+package im.ene.lab.toro.sample.legacy.sample1;
 
 /**
- * Created by eneim on 6/29/16.
- *
- * Sample ViewHolder which holds no Video. Or it doesn't request support from Toro.
+ * Created by eneim on 6/30/16.
  */
-public class Basic2NormalViewHolder extends Basic2ViewHolder {
+public class LegacySample1Activity {
 
-  public static final int LAYOUT_RES = R.layout.vh_normal_view;
-
-  public Basic2NormalViewHolder(View itemView) {
-    super(itemView);
-  }
-
-  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
-
-  }
 }

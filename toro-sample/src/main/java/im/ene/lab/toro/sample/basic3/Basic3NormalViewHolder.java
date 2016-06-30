@@ -23,7 +23,7 @@ import im.ene.lab.toro.sample.R;
 /**
  * Created by eneim on 6/29/16.
  *
- * Sample 1 ViewHolder which holds no Video. Or it doesn't request support from Toro.
+ * Sample ViewHolder which holds no Video. Or it doesn't request support from Toro.
  */
 public class Basic3NormalViewHolder extends Basic3ViewHolder {
 

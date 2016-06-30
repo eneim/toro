@@ -104,11 +104,8 @@ dependencies {
   compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
   compile project(path: ':toro-ext')
-  // compile 'im.ene.lab:toro-ext:2.0.0-beta1'
 
-  /* compile project(':toro') */  // un-comment if user just need toro
-  // compile 'com.github.eneim:Toro:1.2.0'
-
+  compile 'com.azoft.carousellayoutmanager:carousel:1.1.3'
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
   compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {

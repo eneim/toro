@@ -24,9 +24,9 @@
       android:layout_height="wrap_content"
       android:layout_margin="4dp"
       android:ellipsize="end"
-      android:maxLines="1"
+      android:maxLines="2"
       android:textAppearance="@style/TextAppearance.AppCompat.Button"
-      tools:text="@string/fragment_single_video_simple_list"
+      tools:text="@string/basic_sample_1"
       />
 
   <android.support.v7.widget.AppCompatTextView
@@ -34,8 +34,9 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_margin="4dp"
-      tools:text="@string/fragment_single_video_simple_list_detail"
-      style="@style/TextAppearance.AppCompat.Caption"
+      android:textColor="#6f6f6f"
+      tools:text="@string/basic_sample_1_description"
+      style="@style/TextAppearance.AppCompat.Body1"
       />
 
 </merge>

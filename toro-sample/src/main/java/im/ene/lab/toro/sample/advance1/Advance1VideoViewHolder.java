@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic3;
+package im.ene.lab.toro.sample.advance1;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.VideoView;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -38,20 +39,18 @@ import im.ene.lab.toro.sample.legacy.sample1.LegacySample1Activity;
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacySample1Activity}
  * implementations.
  */
-public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
+public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
 
-  // vh_toro_video_basic_3 is the updated version for vh_toro_video_basic, which has an extra
-  // TextView to show the selective click event handling.
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_basic_3;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_average_1;
 
   private SimpleVideoObject video;
   private final Cineer.Player videoPlayer;
-  /* package */ final View videoView; // package private so Adapter can judge the clicked View.
-  final TextView dummyView;
+  private final View videoView;
+  private final TextView stateView;
 
-  public Basic3VideoViewHolder(View itemView) {
+  public Advance1VideoViewHolder(View itemView) {
     super(itemView);
-    dummyView = (TextView) itemView.findViewById(R.id.text);
+    stateView = (TextView) itemView.findViewById(R.id.state);
     videoView = itemView.findViewById(R.id.video);
     if (getVideoView() instanceof Cineer.Player) {
       videoPlayer = (Cineer.Player) getVideoView();
@@ -117,27 +116,32 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
     return this.videoView;
   }
 
-  @Override public boolean isLoopAble() {
-    return true;
+  @Override public void onVideoPreparing() {
+    stateView.setText("Preparing");
   }
+
+  @Override public void onVideoPrepared(Cineer mp) {
+    super.onVideoPrepared(mp);
+    stateView.setText("Prepared");
+  }
+
+  @Override public void onPlaybackStarted() {
+    stateView.setText("Started");
+  }
+
+  @Override public void onPlaybackPaused() {
+    stateView.setText("Paused");
+  }
+
+  @Override public void onPlaybackCompleted() {
+    super.onPlaybackCompleted();
+    stateView.setText("Completed");
+  }
+
+  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+    stateView.setText(error != null ? "Error: " + error.getLocalizedMessage() : "Error!");
+    return super.onPlaybackError(mp, error);
+  }
+
   /* END: ToroPlayer callbacks (partly) */
-
-  // Interaction setup
-  @Override public void setOnItemClickListener(View.OnClickListener listener) {
-    super.setOnItemClickListener(listener);
-    videoView.setOnClickListener(listener);
-    // HINT: Un-comment this to enable click event on this TextView.
-    // dummyView.setOnClickListener(listener);
-  }
-
-  @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
-    super.setOnItemLongClickListener(listener);
-    // Additional support for long-press on Video.
-    videoView.setOnLongClickListener(new View.OnLongClickListener() {
-      @Override public boolean onLongClick(View view) {
-        return listener.onLongClick(view) &&  //
-            helper.onItemLongClick(Basic3VideoViewHolder.this, itemView, itemView.getParent());
-      }
-    });
-  }
 }

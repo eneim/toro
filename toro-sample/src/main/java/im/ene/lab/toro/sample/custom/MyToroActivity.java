@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
-import im.ene.lab.toro.sample.fragment.RecyclerViewFragment;
+import im.ene.lab.toro.sample.base.RecyclerViewFragment;
 import java.util.ArrayList;
 import java.util.List;
 

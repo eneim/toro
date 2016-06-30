@@ -26,7 +26,7 @@ import android.view.View;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.sample.fragment.RecyclerViewFragment;
+import im.ene.lab.toro.sample.base.RecyclerViewFragment;
 
 /**
  * Created by eneim on 5/12/16.

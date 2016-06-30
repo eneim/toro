@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic3;
+package im.ene.lab.toro.sample.average1;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -24,31 +24,15 @@ import android.view.View;
  *
  * A sample {@link RecyclerView.ViewHolder} skeleton.
  */
-public abstract class Basic3ViewHolder extends RecyclerView.ViewHolder {
+public abstract class Average1ViewHolder extends RecyclerView.ViewHolder {
 
   static int TYPE_VIDEO = 1;
 
   static int TYPE_NORMAL = 2;
 
-  public Basic3ViewHolder(View itemView) {
+  public Average1ViewHolder(View itemView) {
     super(itemView);
   }
 
   public abstract void bind(RecyclerView.Adapter adapter, Object item);
-
-  /**
-   * Setup click listener to current ViewHolder. {@link RecyclerView.ViewHolder#itemView} will
-   * catch the event by default. Override this to setup proper Views to receive the click event.
-   */
-  public void setOnItemClickListener(View.OnClickListener listener) {
-    this.itemView.setOnClickListener(listener);
-  }
-
-  /**
-   * Setup long click listener to current ViewHolder. {@link RecyclerView.ViewHolder#itemView} will
-   * catch the event by default. Override this to setup proper Views to receive the click event.
-   */
-  public void setOnItemLongClickListener(View.OnLongClickListener listener) {
-    this.itemView.setOnLongClickListener(listener);
-  }
 }

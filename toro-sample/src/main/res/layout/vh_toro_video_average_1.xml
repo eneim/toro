@@ -18,7 +18,7 @@
 <!--
 android:descendantFocusability="blocksDescendants" is added to pass click event down to children
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.exoplayer.AspectRatioFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
@@ -26,30 +26,6 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
     android:orientation="vertical"
     android:padding="4dp"
     >
-
-  <!--
-
-  Use android:background="?attr/selectableItemBackground" to show click-event indicator. So that
-  you can see event if we are able to click to this Text, if we don't handle it, nothing happens.
-
-  Normally, developer/designer may want to have the following behaviour: if widgets could not be
-  clicked, show no indicator/touch feedback. Otherwise we have a fancy/good looking touch feedback
-  to make users happy. This View, instead, show the touch feedback in EVERY CASES, so don't rely
-  on this in Production. Simply remove the background if you don't want user to click on it.
-
-  -->
-  <TextView
-      android:id="@+id/text"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="?attr/selectableItemBackground"
-      android:gravity="center_vertical"
-      android:maxLines="4"
-      android:padding="4dp"
-      android:text="@string/sample"
-      android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-      />
-
   <!--
 
   Generally VideoView is not visible if its height is set to wrap_content, so consider to give it a
@@ -64,6 +40,22 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="192dp"
+      android:layout_gravity="center"
       />
 
-</LinearLayout>
+  <TextView
+      android:id="@+id/state"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|right|end"
+      android:layout_margin="4dp"
+      android:background="#80ffffff"
+      android:paddingBottom="4dp"
+      android:paddingEnd="8dp"
+      android:paddingLeft="8dp"
+      android:paddingRight="8dp"
+      android:paddingStart="8dp"
+      android:paddingTop="4dp"
+      android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+      />
+</com.google.android.exoplayer.AspectRatioFrameLayout>
