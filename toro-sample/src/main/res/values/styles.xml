@@ -33,6 +33,11 @@
     <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
   </style>
 
+  <style name="Toro.Dialog.Fullscreen.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
+
   <style name="Facebook.Button.Feed" parent="android:Widget">
     <item name="android:gravity">center</item>
     <item name="android:clickable">true</item>

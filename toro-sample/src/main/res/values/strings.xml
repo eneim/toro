@@ -58,6 +58,16 @@
     (here I use CarouselLayoutManager) and implement ToroLayoutManager to get native support from Toro.
   </string>
 
+  <string name="custom_sample_1">
+    Custom Sample 1: Facebook + DialogFragment
+  </string>
+
+  <string name="custom_sample_1_description">
+    \tThis example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
+    A click event to a Video will bring a \'Video list\' where requested Video is played as well as
+    many suggested Videos.
+  </string>
+
   <string name="title_activity_main">MainActivity</string>
 
   <string name="navigation_drawer_open">Open navigation drawer</string>
