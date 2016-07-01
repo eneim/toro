@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.viewholder;
+package im.ene.lab.toro.sample.develop.viewholder;
 
 import android.view.View;
 import android.widget.TextView;
