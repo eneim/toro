@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.average1;
+package im.ene.lab.toro.sample.presentation.average1;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by eneim on 6/29/16.
- *
- * A sample {@link RecyclerView.ViewHolder} skeleton.
+ * Created by eneim on 6/30/16.
  */
-public abstract class Average1ViewHolder extends RecyclerView.ViewHolder {
+public class Average1Activity extends AppCompatActivity {
 
-  static int TYPE_VIDEO = 1;
-
-  static int TYPE_NORMAL = 2;
-
-  public Average1ViewHolder(View itemView) {
-    super(itemView);
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (savedInstanceState == null) {
+      getSupportFragmentManager().beginTransaction()
+          .replace(android.R.id.content, Average1ListFragment.newInstance())
+          .commit();
+    }
   }
-
-  public abstract void bind(RecyclerView.Adapter adapter, Object item);
 }
