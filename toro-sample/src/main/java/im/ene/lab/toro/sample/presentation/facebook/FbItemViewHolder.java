@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.facebook;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
@@ -24,7 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.viewholder.SimpleToroVideoViewHolder;
+import im.ene.lab.toro.sample.develop.viewholder.SimpleToroVideoViewHolder;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

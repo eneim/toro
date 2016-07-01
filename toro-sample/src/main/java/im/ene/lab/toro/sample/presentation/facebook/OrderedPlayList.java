@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.facebook;
-
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 /**
  * Created by eneim on 5/14/16.
  */
-public interface OnItemClickListener {
+public interface OrderedPlayList {
 
-  void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,
-      int adapterPosition, long itemId);
+  int firstVideoPosition();
 }

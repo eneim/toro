@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic2;
+package im.ene.lab.toro.sample.presentation.basic2;
 
 /**
  * Created by eneim on 6/30/16.
