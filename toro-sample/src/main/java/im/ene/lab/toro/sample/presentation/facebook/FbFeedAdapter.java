@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.facebook;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.lab.toro.sample.base.BaseCustomAdapter;
-import im.ene.lab.toro.sample.base.OrderedVideoList;
+import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.List;
  * Created by eneim on 5/13/16.
  */
 public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
-    implements OrderedVideoList {
+    implements OrderedPlayList {
 
   private OnItemClickListener clickListener;
 
@@ -49,8 +49,7 @@ public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
   }
 
   @Nullable protected Object getItem(int position) {
-    // return position % 3 == 1 ? mVideos.get((position - 1) % mVideos.size()) : new SimpleObject();
-    return mVideos.get(position % mVideos.size());
+    return position % 3 == 1 ? mVideos.get((position - 1) % mVideos.size()) : new SimpleObject();
   }
 
   @Override public long getItemId(int position) {
@@ -94,6 +93,6 @@ public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
   }
 
   @Override public int firstVideoPosition() {
-    return 0;
+    return 1;
   }
 }

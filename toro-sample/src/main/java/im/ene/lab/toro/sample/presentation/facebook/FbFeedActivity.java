@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.facebook;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
