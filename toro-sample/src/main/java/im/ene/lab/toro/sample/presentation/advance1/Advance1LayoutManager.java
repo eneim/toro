@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.advance1;
+package im.ene.lab.toro.sample.presentation.advance1;
 
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import im.ene.lab.toro.ToroLayoutManager;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.advance1;
+package im.ene.lab.toro.sample.presentation.advance1;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -29,7 +29,7 @@ import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.sample.legacy.sample1.LegacySample1Activity;
+import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;
 
 /**
  * Created by eneim on 6/29/16.
