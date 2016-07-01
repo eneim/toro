@@ -24,11 +24,12 @@ import android.support.v7.widget.Toolbar;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import im.ene.lab.toro.sample.advance1.Advance1Activity;
-import im.ene.lab.toro.sample.average1.Average1Activity;
-import im.ene.lab.toro.sample.basic1.Basic1Activity;
-import im.ene.lab.toro.sample.basic2.Basic2Activity;
-import im.ene.lab.toro.sample.basic3.Basic3Activity;
+import im.ene.lab.toro.sample.presentation.advance1.Advance1Activity;
+import im.ene.lab.toro.sample.presentation.average1.Average1Activity;
+import im.ene.lab.toro.sample.presentation.basic1.Basic1Activity;
+import im.ene.lab.toro.sample.presentation.basic2.Basic2Activity;
+import im.ene.lab.toro.sample.presentation.basic3.Basic3Activity;
+import im.ene.lab.toro.sample.presentation.facebook.FbFeedActivity;
 
 /**
  * Created by eneim on 6/30/16.
@@ -62,5 +63,9 @@ public class HomeActivity extends AppCompatActivity {
 
   @OnClick(R.id.advance_sample_1) void openAdvanceSample1() {
     startActivity(new Intent(this, Advance1Activity.class));
+  }
+
+  @OnClick(R.id.custom_sample_1) void openCustomSample1() {
+    startActivity(new Intent(this, FbFeedActivity.class));
   }
 }

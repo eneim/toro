@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.custom;
+package im.ene.lab.toro.sample.develop.custom;
 
 import android.net.Uri;
 import android.os.Bundle;

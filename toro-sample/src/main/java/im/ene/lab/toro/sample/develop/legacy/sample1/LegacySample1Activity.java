@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.legacy.sample1;
+package im.ene.lab.toro.sample.develop.legacy.sample1;
 
 /**
  * Created by eneim on 6/30/16.
