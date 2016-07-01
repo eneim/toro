@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic3;
+package im.ene.lab.toro.sample.presentation.basic3;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

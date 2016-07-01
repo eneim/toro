@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic1;
+package im.ene.lab.toro.sample.presentation.basic2;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,13 +23,13 @@ import android.support.v7.app.AppCompatActivity;
 /**
  * Created by eneim on 6/30/16.
  */
-public class Basic1Activity extends AppCompatActivity {
+public class Basic2Activity extends AppCompatActivity {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (savedInstanceState == null) {
       getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, Basic1ListFragment.newInstance())
+          .replace(android.R.id.content, Basic2ListFragment.newInstance())
           .commit();
     }
   }

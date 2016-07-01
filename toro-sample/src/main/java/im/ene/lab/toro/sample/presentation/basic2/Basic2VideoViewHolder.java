@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic1;
+package im.ene.lab.toro.sample.presentation.basic2;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -27,7 +27,7 @@ import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.player.Video;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.sample.legacy.sample1.LegacySample1Activity;
+import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;
 
 /**
  * Created by eneim on 6/29/16.
@@ -37,7 +37,7 @@ import im.ene.lab.toro.sample.legacy.sample1.LegacySample1Activity;
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacySample1Activity}
  * implementations.
  */
-public class Basic1VideoViewHolder extends Basic1BaseVideoViewHolder {
+public class Basic2VideoViewHolder extends Basic2BaseVideoViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_basic;
 
@@ -45,7 +45,7 @@ public class Basic1VideoViewHolder extends Basic1BaseVideoViewHolder {
   private final Cineer.Player videoPlayer;
   private final View videoView;
 
-  public Basic1VideoViewHolder(View itemView) {
+  public Basic2VideoViewHolder(View itemView) {
     super(itemView);
     videoView = itemView.findViewById(R.id.video);
     if (getVideoView() instanceof Cineer.Player) {

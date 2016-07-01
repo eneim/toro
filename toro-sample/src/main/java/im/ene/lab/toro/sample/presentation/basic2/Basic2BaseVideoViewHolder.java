@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic3;
+package im.ene.lab.toro.sample.presentation.basic2;
 
 import android.view.View;
 import im.ene.lab.toro.PlayerViewHelper;
@@ -33,13 +33,13 @@ import im.ene.lab.toro.media.PlaybackException;
  * It is required to implement {@link ToroPlayer} and {@link ToroViewHolder}, as well as a member
  * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ToroPlayerViewHelper}.
  */
-public abstract class Basic3BaseVideoViewHolder extends Basic3ViewHolder
+public abstract class Basic2BaseVideoViewHolder extends Basic2ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
   protected final ToroPlayerViewHelper helper;
   protected boolean isPlayable = false;
 
-  public Basic3BaseVideoViewHolder(View itemView) {
+  public Basic2BaseVideoViewHolder(View itemView) {
     super(itemView);
     helper = new ToroPlayerViewHelper(this, itemView);
   }

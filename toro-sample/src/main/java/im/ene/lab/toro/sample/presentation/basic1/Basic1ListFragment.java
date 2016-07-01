@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.basic1;
+package im.ene.lab.toro.sample.presentation.basic1;
 
 import android.annotation.TargetApi;
 import android.os.Build;
