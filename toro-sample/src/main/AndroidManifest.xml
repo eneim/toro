@@ -18,7 +18,7 @@
         android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name=".standalone.StandalonePlayerActivity"
+        android:name=".develop.standalone.StandalonePlayerActivity"
         android:theme="@style/ToroTheme">
     </activity>
 
@@ -31,43 +31,38 @@
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".basic1.Basic1Activity"/>
+        android:name=".presentation.basic1.Basic1Activity"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".basic2.Basic2Activity"/>
+        android:name=".presentation.basic2.Basic2Activity"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".basic3.Basic3Activity"/>
+        android:name=".presentation.basic3.Basic3Activity"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".average1.Average1Activity"/>
+        android:name=".presentation.average1.Average1Activity"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".advance1.Advance1Activity"/>
+        android:name=".presentation.advance1.Advance1Activity"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".custom.MyToroActivity"/>
-
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".facebook.FbFeedActivity"/>
+        android:name=".presentation.facebook.FbFeedActivity"/>
 
     <activity
         android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name=".custom.MultiLayerVideoActivity"
+        android:name=".develop.custom.MultiLayerVideoActivity"
         android:theme="@style/ToroTheme">
     </activity>
 
