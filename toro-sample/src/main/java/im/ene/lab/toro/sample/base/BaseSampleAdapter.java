@@ -26,8 +26,9 @@ import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
-import im.ene.lab.toro.sample.viewholder.SimpleToroVideoViewHolder;
-import im.ene.lab.toro.sample.viewholder.TextViewHolder;
+import im.ene.lab.toro.sample.develop.viewholder.SimpleToroVideoViewHolder;
+import im.ene.lab.toro.sample.develop.viewholder.TextViewHolder;
+import im.ene.lab.toro.sample.presentation.facebook.OrderedPlayList;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import java.util.List;
  * Created by eneim on 2/6/16.
  */
 public abstract class BaseSampleAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements OrderedVideoList {
+    implements OrderedPlayList {
 
   public static final int VIEW_TYPE_NO_VIDEO = 1;
 
