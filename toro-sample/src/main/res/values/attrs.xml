@@ -19,5 +19,6 @@
   <declare-styleable name="SampleItemButton">
     <attr format="string" name="btn_title"/>
     <attr format="string" name="btn_subtitle"/>
+    <attr format="reference" name="btn_image"/>
   </declare-styleable>
 </resources>

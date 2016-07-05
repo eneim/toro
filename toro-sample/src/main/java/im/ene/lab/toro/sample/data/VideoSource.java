@@ -16,24 +16,12 @@
 
 package im.ene.lab.toro.sample.data;
 
-import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.ToroSampleApp;
-
 /**
  * Created by eneim on 1/30/16.
  */
 public class VideoSource {
 
   private static final String MP4 = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-
-  private static final String HORIZONTAL =
-      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.horizontal;
-
-  private static final String SQUARE =
-      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.square;
-
-  private static final String VERTICAL =
-      "android.resource://" + ToroSampleApp.packageName() + "/" + R.raw.vertical;
 
   public static final String[] SOURCES = {
       MP4,

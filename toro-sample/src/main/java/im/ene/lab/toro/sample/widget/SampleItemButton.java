@@ -22,9 +22,12 @@ import android.support.design.internal.ForegroundLinearLayout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import im.ene.lab.toro.sample.R;
 
 /**
@@ -42,6 +45,7 @@ public class SampleItemButton extends ForegroundLinearLayout {
 
   @Bind(R.id.title) TextView mTitle;
   @Bind(R.id.subtitle) TextView mSubtitle;
+  @Bind(R.id.sample_gif) ImageView mImage;
 
   public SampleItemButton(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -51,6 +55,9 @@ public class SampleItemButton extends ForegroundLinearLayout {
     TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SampleItemButton, defStyle, 0);
     String title = a.getString(R.styleable.SampleItemButton_btn_title);
     String subTitle = a.getString(R.styleable.SampleItemButton_btn_subtitle);
+
+    final int imageResource = a.getResourceId(R.styleable.SampleItemButton_btn_image, 0);
+
     a.recycle();
 
     if (title == null || TextUtils.isEmpty(title)) {
@@ -64,6 +71,14 @@ public class SampleItemButton extends ForegroundLinearLayout {
     } else {
       mSubtitle.setVisibility(VISIBLE);
       mSubtitle.setText(subTitle);
+    }
+
+    if (imageResource != 0) {
+      mImage.setVisibility(VISIBLE);
+      GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(mImage);
+      Glide.with(context).load(imageResource).crossFade().into(imageViewTarget);
+    } else {
+      mImage.setVisibility(GONE);
     }
   }
 }

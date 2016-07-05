@@ -17,7 +17,6 @@
 package im.ene.lab.toro;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +75,6 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
       position = 0L;
     }
 
-    Log.i(TAG, "restore: " + videoId + " | " + position);
     try {
       mPlayer.seekTo(position);
     } catch (IllegalStateException er) {
@@ -85,9 +83,6 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   }
 
   @Nullable @Override public Long getSavedPosition(String videoId) {
-    if (getPlayer() != null && videoId.equals(getPlayer().getVideoId())) {
-      return getPlayer().getCurrentPosition();
-    }
     return mVideoStates.get(videoId);
   }
 

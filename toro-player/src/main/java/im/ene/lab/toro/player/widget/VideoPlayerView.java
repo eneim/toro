@@ -36,6 +36,7 @@ import com.google.android.exoplayer.metadata.id3.Id3Frame;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.LastMomentCallback;
 import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
@@ -175,6 +176,7 @@ import java.util.List;
 
   private OnPlayerStateChangeListener mPlayerStateChangeListener;
   private OnInfoListener mOnInfoListener;
+  private LastMomentCallback lastMomentCallback;
 
   // DEBUG
   private EventLogger mEventLogger;
@@ -210,6 +212,10 @@ import java.util.List;
 
   public void setId3MetadataListener(ExoMediaPlayer.Id3MetadataListener listener) {
     this.mId3MetadataListener = listener;
+  }
+
+  public void setLastMomentCallback(LastMomentCallback lastMomentCallback) {
+    this.lastMomentCallback = lastMomentCallback;
   }
 
   private OnInfoListener onInfoListenerDelegate = new OnInfoListener() {
@@ -296,6 +302,10 @@ import java.util.List;
 
   @Override public void releasePlayer() {
     if (mMediaPlayer != null) {
+      if (lastMomentCallback != null) {
+        lastMomentCallback.onLastMoment(mMediaPlayer);
+      }
+
       mPlayerPosition = mMediaPlayer.getCurrentPosition();
       mMediaPlayer.removeListener(mEventLogger);
       mMediaPlayer.removeListener(playerListener);
