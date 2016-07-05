@@ -20,7 +20,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.sample.base.BaseCustomAdapter;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.ToroViewHolder;
+import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.lab.toro.VideoPlayerManagerImpl;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
@@ -30,10 +33,11 @@ import java.util.List;
 /**
  * Created by eneim on 5/13/16.
  */
-public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
-    implements OrderedPlayList {
+public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+    implements OrderedPlayList, VideoPlayerManager {
 
   private OnItemClickListener clickListener;
+  protected final VideoPlayerManager delegate;
 
   public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
     this.clickListener = onItemClickListener;
@@ -43,6 +47,8 @@ public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
 
   public FbFeedAdapter() {
     super();
+    delegate = new VideoPlayerManagerImpl();
+    setHasStableIds(true);
     for (String item : VideoSource.SOURCES) {
       this.mVideos.add(new SimpleVideoObject(item));
     }
@@ -94,5 +100,57 @@ public class FbFeedAdapter extends BaseCustomAdapter<RecyclerView.ViewHolder>
 
   @Override public int firstVideoPosition() {
     return 1;
+  }
+
+  @Override public ToroPlayer getPlayer() {
+    return delegate.getPlayer();
+  }
+
+  @Override public void setPlayer(ToroPlayer player) {
+    delegate.setPlayer(player);
+  }
+
+  @Override public void onRegistered() {
+    delegate.onRegistered();
+  }
+
+  @Override public void onUnregistered() {
+    delegate.onUnregistered();
+  }
+
+  @Override public void startPlayback() {
+    delegate.startPlayback();
+  }
+
+  @Override public void pausePlayback() {
+    delegate.pausePlayback();
+  }
+
+  @Override public void stopPlayback() {
+    delegate.stopPlayback();
+  }
+
+  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
+    delegate.saveVideoState(videoId, position, duration);
+  }
+
+  @Override public void restoreVideoState(String videoId) {
+    delegate.restoreVideoState(videoId);
+  }
+
+  @Nullable @Override public Long getSavedPosition(String videoId) {
+    return delegate.getSavedPosition(videoId);
+  }
+
+  @Override public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+    if (holder instanceof ToroViewHolder) {
+      ((ToroViewHolder) holder).onAttachedToParent();
+    }
+  }
+
+  @Override public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
+    if (holder instanceof ToroViewHolder) {
+      ((ToroViewHolder) holder).onDetachedFromParent();
+    }
   }
 }

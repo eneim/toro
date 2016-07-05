@@ -222,28 +222,33 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       throw new NullPointerException("Un-registering View must not be null");
     }
 
-    if (sInstance.mViews.containsKey(view.hashCode())) {
+    if (sInstance.mListeners.containsKey(view.hashCode())) {
       // Obtain listener which will be removed
       ToroScrollListener listener = sInstance.mListeners.remove(view.hashCode());
       // Process related View
-      if (listener != null) {
-        // Cleanup manager
-        if (listener.getManager().getPlayer() != null) {
-          // 1. Save current state
-          final SavedState state;
-          if (sInstance.mStates.containsKey(view.hashCode())) {
-            state = sInstance.mStates.get(view.hashCode());
-          } else {
-            state = new SavedState();
-            sInstance.mStates.put(view.hashCode(), state);
-          }
-          state.player = listener.getManager().getPlayer();
-          state.position = listener.getManager().getPlayer().getCurrentPosition();
+      // Cleanup manager
+      if (listener.getManager().getPlayer() != null) {
+        final ToroPlayer player = listener.getManager().getPlayer();
+        // 1. Save current state
+        final SavedState state;
+        if (sInstance.mStates.containsKey(view.hashCode())) {
+          state = sInstance.mStates.get(view.hashCode());
+        } else {
+          state = new SavedState();
+          sInstance.mStates.put(view.hashCode(), state);
         }
+        state.player = player;
+        state.position = player.getCurrentPosition();
 
-        listener.getManager().onUnregistered();
-        view.removeOnScrollListener(listener);
+        listener.getManager()
+            .saveVideoState(player.getVideoId(), player.getCurrentPosition(), player.getDuration());
+        if (player.isPlaying()) {
+          listener.getManager().pausePlayback();
+        }
       }
+
+      listener.getManager().onUnregistered();
+      view.removeOnScrollListener(listener);
       // Remove View from cache
       sInstance.mViews.remove(view.hashCode());
     }

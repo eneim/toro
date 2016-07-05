@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.viewholder;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -26,6 +26,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ext.ToroVideoViewHolder;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.LastMomentCallback;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.widget.VideoPlayerView;
 import im.ene.lab.toro.sample.R;
@@ -34,18 +35,21 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
+public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMomentCallback {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
   private ImageView mThumbnail;
   private TextView mInfo;
   private boolean isPlayable = false;
+  private boolean isReleased = false;
+  private long latestPosition = 0;
 
-  public SimpleToroVideoViewHolder(View itemView) {
+  public SimpleVideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
+    mVideoView.setLastMomentCallback(this);
   }
 
   @Override protected VideoPlayerView findVideoView(View itemView) {
@@ -85,6 +89,8 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     super.onVideoPrepared(mp);
     isPlayable = true;
     mInfo.setText("Prepared");
+    latestPosition = 0;
+    isReleased = false;
   }
 
   @Override public void onViewHolderBound() {
@@ -100,7 +106,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackStarted();
+        SimpleVideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -109,7 +115,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackPaused();
+        SimpleVideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
@@ -119,7 +125,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackCompleted();
+        SimpleVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Completed");
@@ -129,7 +135,7 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleToroVideoViewHolder.super.onPlaybackCompleted();
+        SimpleVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Error: videoId = " + getVideoId());
@@ -148,4 +154,16 @@ public class SimpleToroVideoViewHolder extends ToroVideoViewHolder {
     return "Video: " + getVideoId();
   }
 
+  @Override public long getCurrentPosition() {
+    if (!isReleased) {
+      latestPosition = super.getCurrentPosition();
+    }
+
+    return latestPosition;
+  }
+
+  @Override public void onLastMoment(Cineer player) {
+    isReleased = true;
+    latestPosition = player.getCurrentPosition();
+  }
 }

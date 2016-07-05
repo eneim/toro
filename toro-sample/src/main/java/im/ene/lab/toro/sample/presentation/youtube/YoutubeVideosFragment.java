@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.develop.fragment;
+package im.ene.lab.toro.sample.presentation.youtube;
 
 import android.annotation.TargetApi;
 import android.os.Build;

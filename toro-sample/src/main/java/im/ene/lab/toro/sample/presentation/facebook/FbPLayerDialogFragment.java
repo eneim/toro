@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.facebook;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,12 +37,16 @@ import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.VideoPlayerManagerImpl;
+import im.ene.lab.toro.ext.ToroAdapter;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.base.BaseSampleAdapter;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 import im.ene.lab.toro.sample.widget.LargeDialogFragment;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +54,7 @@ import java.util.List;
  */
 public class FbPLayerDialogFragment extends LargeDialogFragment {
 
-  public static final String TAG = "FbPLayer";
+  public static final String TAG = "FbPLayer:Dialog";
 
   public static final String ARGS_INIT_VIDEO = "fb_player_init_video";
   public static final String ARGS_INIT_POSITION = "fb_player_init_position";
@@ -66,9 +72,11 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     return fragment;
   }
 
+  private ToroStrategy strategyToRestore;
+
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    final ToroStrategy oldStrategy = Toro.getStrategy();
+    strategyToRestore = Toro.getStrategy();
 
     Toro.setStrategy(new ToroStrategy() {
       boolean isFirstPlayerDone = false;
@@ -78,12 +86,12 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return oldStrategy.findBestPlayer(candidates);
+        return strategyToRestore.findBestPlayer(candidates);
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == 0)  //
-            && oldStrategy.allowsToPlay(player, parent);
+            && strategyToRestore.allowsToPlay(player, parent);
 
         // A work-around to keep track of first video on top.
         if (player.getPlayOrder() == 0) {
@@ -92,6 +100,11 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
         return allowToPlay;
       }
     });
+  }
+
+  @Override public void onDetach() {
+    super.onDetach();
+    Toro.setStrategy(strategyToRestore);
   }
 
   @Bind(R.id.recycler_view) RecyclerView recyclerView;
@@ -144,16 +157,16 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
   @Override public void onResume() {
     super.onResume();
     Toro.register(recyclerView);
-    adapter.saveVideoState(initItem.toString() + "-0", initPosition, initDuration);
+    adapter.saveVideoState(initItem.toString() + "@0", initPosition, initDuration);
   }
 
   @Override public void onPause() {
     super.onPause();
-    Toro.unregister(recyclerView);
   }
 
   @Override public void onDismiss(DialogInterface dialog) {
-    Long latestPosition = adapter.getSavedPosition(initItem.toString() + "-0"); // first item
+    Toro.unregister(recyclerView);
+    Long latestPosition = adapter.getSavedPosition(initItem.toString() + "@0"); // first item
     if (getTargetFragment() != null && latestPosition != null) {
       Intent result = new Intent();
       result.putExtra(ARGS_LATEST_TIMESTAMP, latestPosition);
@@ -163,26 +176,81 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     super.onDismiss(dialog);
   }
 
-  private static class Adapter extends BaseSampleAdapter implements VideoPlayerManager {
+  private static class Adapter extends ToroAdapter<ToroAdapter.ViewHolder> implements VideoPlayerManager, OrderedPlayList {
+
+    public static final int VIEW_TYPE_NO_VIDEO = 1;
+
+    public static final int VIEW_TYPE_VIDEO = 1 << 1;
+
+    // public static final int VIEW_TYPE_VIDEO_MIXED = 1 << 2;
+
+    protected List<SimpleVideoObject> mVideos = new ArrayList<>();
+
+    @IntDef({
+        VIEW_TYPE_NO_VIDEO, VIEW_TYPE_VIDEO /*, VIEW_TYPE_VIDEO_MIXED */
+    }) @Retention(RetentionPolicy.SOURCE) public @interface Type {
+    }
 
     private final SimpleVideoObject initItem;
     private final VideoPlayerManager delegate;
 
     public Adapter(SimpleVideoObject initItem) {
+      super();
+      setHasStableIds(true);
+      for (String item : VideoSource.SOURCES) {
+        mVideos.add(new SimpleVideoObject(item));
+      }
+
       this.initItem = initItem;
       this.delegate = new VideoPlayerManagerImpl();
     }
 
-    @Nullable @Override protected Object getItem(int position) {
-      return mVideos.get(position % mVideos.size());
+    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      final ToroAdapter.ViewHolder viewHolder;
+      final View view = LayoutInflater.from(parent.getContext())
+          .inflate(SimpleVideoViewHolder.LAYOUT_RES, parent, false);
+      viewHolder = new SimpleVideoViewHolder(view);
+
+      viewHolder.setOnItemClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Toro.rest(true);
+          new AlertDialog.Builder(v.getContext()).setTitle("Sample Action")
+              .setMessage("Sample Content")
+              .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override public void onDismiss(DialogInterface dialog) {
+                  Toro.rest(false);
+                }
+              })
+              .create()
+              .show();
+        }
+      });
+      return viewHolder;
     }
 
-    @Override public int getItemViewType(int position) {
+    @Type @Override public int getItemViewType(int position) {
       return VIEW_TYPE_VIDEO;
     }
 
+    @Override public long getItemId(int position) {
+      Object item = getItem(position);
+      if (item != null) {
+        return item.hashCode();
+      } else {
+        return 0;
+      }
+    }
+
     @Override public int getItemCount() {
-      return super.getItemCount() + 1;
+      return 512; // Magic number :trollface:
+    }
+
+    @Override public int firstVideoPosition() {
+      return 0;
+    }
+
+    @Nullable @Override protected Object getItem(int position) {
+      return mVideos.get(position % mVideos.size());
     }
 
     @Override public ToroPlayer getPlayer() {

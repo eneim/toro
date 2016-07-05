@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.base;
+package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,15 +33,33 @@ import android.view.ViewParent;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroStrategy;
+import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.presentation.facebook.OrderedPlayList;
+import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 import java.util.List;
 
 /**
- * Created by eneim on 2/1/16.
+ * Created by eneim on 5/12/16.
+ *
+ * This is the normal Facebook feed list, which is different to 'Video playlist' which contains
+ * only Video.
  */
-public abstract class RecyclerViewFragment extends Fragment {
+public class FbFeedFragment extends Fragment {
+
+  public static final String TAG = "FbPlayer:Fragment";
+
+  public static FbFeedFragment newInstance() {
+    return new FbFeedFragment();
+  }
+
+  @NonNull protected RecyclerView.LayoutManager getLayoutManager() {
+    return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+  }
+
+  @NonNull protected RecyclerView.Adapter getAdapter() {
+    return new FbFeedAdapter();
+  }
 
   protected RecyclerView mRecyclerView;
   protected RecyclerView.Adapter mAdapter;
@@ -110,7 +129,57 @@ public abstract class RecyclerViewFragment extends Fragment {
     Toro.unregister(mRecyclerView);
   }
 
-  @NonNull protected abstract RecyclerView.LayoutManager getLayoutManager();
+  @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    if (mAdapter instanceof FbFeedAdapter) {
+      ((FbFeedAdapter) mAdapter).setOnItemClickListener(listener);
+    }
+  }
 
-  @NonNull protected abstract RecyclerView.Adapter getAdapter();
+  public static final int RESUME_REQUEST_CODE = 1024;
+
+  private OnItemClickListener listener = new OnItemClickListener() {
+    @Override
+    public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder,
+        View view, int adapterPosition, long itemId) {
+      SimpleVideoObject initItem = null;
+      long initPosition = 0;
+      long initDuration = 0;
+      final ToroPlayer player;
+      if (adapter instanceof FbFeedAdapter) {
+        player = ((FbFeedAdapter) adapter).getPlayer();
+        initItem = (SimpleVideoObject) ((FbFeedAdapter) adapter).getItem(adapterPosition);
+        if (player != null) {
+          initPosition = player.getCurrentPosition();
+          initDuration = player.getDuration();
+        }
+      }
+
+      if (initItem != null) {
+        Bundle extras = new Bundle();
+        extras.putLong(FbPLayerDialogFragment.ARGS_INIT_DURATION, initDuration);
+        extras.putLong(FbPLayerDialogFragment.ARGS_INIT_POSITION, initPosition);
+        extras.putParcelable(FbPLayerDialogFragment.ARGS_INIT_VIDEO, initItem);
+
+        FbPLayerDialogFragment playlist =
+            FbPLayerDialogFragment.newInstance(initItem, initPosition, initDuration);
+        playlist.setTargetFragment(FbFeedFragment.this, RESUME_REQUEST_CODE);
+        playlist.show(getChildFragmentManager(), FbPLayerDialogFragment.TAG);
+      }
+    }
+  };
+
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == RESUME_REQUEST_CODE) {
+      Toro.rest(true);
+      VideoPlayerManager manager = ((VideoPlayerManager) mAdapter);
+      if (manager.getPlayer() != null) {
+        long latestPosition = data.getLongExtra(FbPLayerDialogFragment.ARGS_LATEST_TIMESTAMP, 0);
+        manager.saveVideoState(manager.getPlayer().getVideoId(), latestPosition,
+            manager.getPlayer().getDuration());
+      }
+      Toro.rest(false);
+    }
+  }
 }
