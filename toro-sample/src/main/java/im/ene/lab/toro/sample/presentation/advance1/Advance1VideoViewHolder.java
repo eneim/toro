@@ -26,7 +26,7 @@ import android.widget.TextView;
 import android.widget.VideoView;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;
@@ -52,8 +52,8 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
     super(itemView);
     stateView = (TextView) itemView.findViewById(R.id.state);
     videoView = itemView.findViewById(R.id.video);
-    if (getVideoView() instanceof Cineer.Player) {
-      videoPlayer = (Cineer.Player) getVideoView();
+    if (getPlayerView() instanceof Cineer.Player) {
+      videoPlayer = (Cineer.Player) getPlayerView();
     } else {
       throw new IllegalArgumentException("Illegal Video player widget. Requires a Cineer.Player");
     }
@@ -67,7 +67,7 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
     }
 
     this.video = (SimpleVideoObject) item;
-    this.videoPlayer.setMedia(new Video(Uri.parse(this.video.video), this.video.name));
+    this.videoPlayer.setMedia(new ExoVideo(Uri.parse(this.video.video), this.video.name));
   }
 
   /* BEGIN: ToroPlayer callbacks (partly) */
@@ -108,11 +108,11 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
   }
 
   // MEMO: Unique or null
-  @Nullable @Override public String getVideoId() {
+  @Nullable @Override public String getMediaId() {
     return this.video != null ? this.video.video + "@" + getAdapterPosition() : null;
   }
 
-  @NonNull @Override public View getVideoView() {
+  @NonNull @Override public View getPlayerView() {
     return this.videoView;
   }
 

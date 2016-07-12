@@ -30,7 +30,7 @@ import android.widget.FrameLayout;
 import com.google.android.exoplayer.MediaFormat;
 import com.google.android.exoplayer.util.MimeTypes;
 import im.ene.lab.toro.ext.layeredvideo.SimpleVideoPlayer;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.util.Util;
@@ -74,7 +74,7 @@ public class StandalonePlayerActivity extends AppCompatActivity {
 
     try {
       File[] local = Util.loadMovieFolder();
-      videoPlayer = new SimpleVideoPlayer(this, playerContainer, new Video(
+      videoPlayer = new SimpleVideoPlayer(this, playerContainer, new ExoVideo(
           local != null && local.length > 0 ? Uri.fromFile(Util.loadMovieFolder()[0])
               : Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"), "Garden of Words"),
           "Garden of Words", true);

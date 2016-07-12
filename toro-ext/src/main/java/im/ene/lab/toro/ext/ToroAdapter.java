@@ -47,7 +47,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ToroViewHo
   }
 
   @CallSuper @Override public void onBindViewHolder(VH holder, int position) {
-    holder.bind(getItem(position));
+    holder.bind(this, getItem(position));
     holder.onViewHolderBound();
   }
 
@@ -84,7 +84,6 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ToroViewHo
      * Called by {@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}
      */
     public void onRecycled() {
-
     }
 
     /**
@@ -99,13 +98,12 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ToroViewHo
      * int)}
      */
     public void onViewHolderBound() {
-
     }
 
     /**
      * Accept null object, but client must acknowledge this, and try to supply valid object to
      * ViewHolder
      */
-    public abstract void bind(@Nullable Object object);
+    public abstract void bind(RecyclerView.Adapter adapter, @Nullable Object object);
   }
 }

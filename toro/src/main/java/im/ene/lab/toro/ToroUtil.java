@@ -56,7 +56,7 @@ public final class ToroUtil {
   private static Rect getVideoRect(ToroPlayer player) {
     Rect rect = new Rect();
     Point offset = new Point();
-    player.getVideoView().getGlobalVisibleRect(rect, offset);
+    player.getPlayerView().getGlobalVisibleRect(rect, offset);
     return rect;
   }
 
@@ -77,7 +77,7 @@ public final class ToroUtil {
 
   @SuppressWarnings("ConstantConditions")
   public static float visibleAreaOffset(ToroPlayer player, ViewParent parent) {
-    if (player.getVideoView() == null) {
+    if (player.getPlayerView() == null) {
       throw new IllegalArgumentException("Player must have a valid VideoView.");
     }
     Rect videoRect = getVideoRect(player);
@@ -85,7 +85,7 @@ public final class ToroUtil {
 
     if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
       float visibleArea = videoRect.height() * videoRect.width();
-      float viewArea = player.getVideoView().getWidth() * player.getVideoView().getHeight();
+      float viewArea = player.getPlayerView().getWidth() * player.getPlayerView().getHeight();
       return viewArea <= 0.f ? 1.f : visibleArea / viewArea;
     } else {
       return 0.f;

@@ -23,7 +23,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import com.google.android.exoplayer.util.Util;
 import im.ene.lab.toro.media.Media;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 
 /**
  * Generate a renderer builder appropriate for rendering a video.
@@ -49,8 +49,8 @@ public final class RendererBuilderFactory {
         return new HlsRendererBuilder(context, userAgent, media.getMediaUri().toString());
       case Util.TYPE_DASH:
         WidevineTestMediaDrmCallback callback =
-            media instanceof Video ? new WidevineTestMediaDrmCallback(
-                ((Video) media).getContentId(), ((Video) media).getProvider())
+            media instanceof ExoVideo ? new WidevineTestMediaDrmCallback(
+                ((ExoVideo) media).getContentId(), ((ExoVideo) media).getProvider())
                 : new WidevineTestMediaDrmCallback(null, null);
         return new DashRendererBuilder(context, userAgent, media.getMediaUri().toString(),
             callback);

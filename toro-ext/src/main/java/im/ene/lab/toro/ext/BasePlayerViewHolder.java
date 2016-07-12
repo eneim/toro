@@ -29,7 +29,7 @@ import im.ene.lab.toro.media.PlaybackException;
 /**
  * Created by eneim on 1/31/16.
  *
- * Abstract implementation of {@link ToroPlayer}.
+ * Abstract implementation of {@link ToroPlayer} and {@link ToroViewHolder}.
  */
 public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
@@ -45,8 +45,8 @@ public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(BasePlayerViewHolder.this, BasePlayerViewHolder.this.itemView,
-                BasePlayerViewHolder.this.itemView.getParent());
+            return mHelper.onItemLongClick(BasePlayerViewHolder.this,
+                BasePlayerViewHolder.this.itemView, BasePlayerViewHolder.this.itemView.getParent());
           }
         };
       }
@@ -69,7 +69,8 @@ public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(BasePlayerViewHolder.this, itemView, itemView.getParent());
+            return mHelper.onItemLongClick(BasePlayerViewHolder.this, itemView,
+                itemView.getParent());
           }
         };
       }

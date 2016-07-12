@@ -36,10 +36,10 @@ import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 
 /**
- * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
+ * A {@link ExoMediaPlayer.RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class ExtractorRendererBuilder
-    implements ExoMediaPlayer.RendererBuilder {
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
+public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int BUFFER_SEGMENT_COUNT = 256;

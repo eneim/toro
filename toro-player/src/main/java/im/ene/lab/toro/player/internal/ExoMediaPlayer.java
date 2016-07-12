@@ -214,7 +214,7 @@ public class ExoMediaPlayer                     //
   private static final int RENDERER_BUILDING_STATE_BUILT = 3;
 
   private final RendererBuilder rendererBuilder;
-  /* package */final ExoPlayer player;
+  /* package */ final ExoPlayer player;
 
   private final Handler mainHandler;
   private final CopyOnWriteArrayList<Listener> listeners;
@@ -239,10 +239,7 @@ public class ExoMediaPlayer                     //
   private InfoListener infoListener;
 
   private OnPlayerStateChangeListener onPlayerStateChangeListener;
-  // private OnPreparedListener onPreparedListener;
-  // private OnCompletionListener onCompletionListener;
   private OnVideoSizeChangedListener onVideoSizeChangedListener;
-  // private OnBufferingUpdateListener onBufferingUpdateListener;
 
   public ExoMediaPlayer(RendererBuilder rendererBuilder) {
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);

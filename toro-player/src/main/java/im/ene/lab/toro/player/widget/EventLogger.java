@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package im.ene.lab.toro.player.internal;
+package im.ene.lab.toro.player.widget;
 
 import android.annotation.TargetApi;
 import android.media.MediaCodec.CryptoException;
@@ -27,6 +27,7 @@ import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.chunk.Format;
 import com.google.android.exoplayer.util.VerboseLogUtil;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -37,7 +38,7 @@ import java.util.Locale;
  * {@hide}
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
-public class EventLogger implements ExoMediaPlayer.Listener, ExoMediaPlayer.InfoListener,
+/* package */ class EventLogger implements ExoMediaPlayer.Listener, ExoMediaPlayer.InfoListener,
     ExoMediaPlayer.InternalErrorListener {
 
   private static final String TAG = "EventLogger";

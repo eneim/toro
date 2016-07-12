@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ import im.ene.lab.toro.ext.ToroVideoViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.LastMomentCallback;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.widget.VideoPlayerView;
+import im.ene.lab.toro.player.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
@@ -52,8 +53,8 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     mVideoView.setLastMomentCallback(this);
   }
 
-  @Override protected VideoPlayerView findVideoView(View itemView) {
-    return (VideoPlayerView) itemView.findViewById(R.id.video);
+  @Override protected ToroVideoView findVideoView(View itemView) {
+    return (ToroVideoView) itemView.findViewById(R.id.video);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -63,7 +64,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
 
   private SimpleVideoObject mItem;
 
-  @Override public void bind(Object item) {
+  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
     if (!(item instanceof SimpleVideoObject)) {
       throw new IllegalStateException("Unexpected object: " + item.toString());
     }
@@ -76,7 +77,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     return isPlayable && visibleAreaOffset() >= 0.75;
   }
 
-  @Nullable @Override public String getVideoId() {
+  @Nullable @Override public String getMediaId() {
     return mItem.toString() + "@" + getAdapterPosition();
   }
 
@@ -138,7 +139,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
         SimpleVideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
-    mInfo.setText("Error: videoId = " + getVideoId());
+    mInfo.setText("Error: videoId = " + getMediaId());
     return super.onPlaybackError(mp, error);
   }
 
@@ -151,7 +152,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
   }
 
   @Override public String toString() {
-    return "Video: " + getVideoId();
+    return "Video: " + getMediaId();
   }
 
   @Override public long getCurrentPosition() {

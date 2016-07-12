@@ -27,10 +27,6 @@ public interface OnInfoListener {
 
   /**
    * Called to indicate an info or a warning.
-   *
-   * @return True if the method handled the info, false if it didn't.
-   * Returning false, or not having an OnErrorListener at all, will
-   * cause the info to be discarded.
    */
   boolean onInfo(Cineer mp, PlaybackInfo info);
 }

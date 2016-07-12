@@ -24,7 +24,7 @@ import im.ene.lab.toro.player.util.PlayerUtil;
 /**
  * Represents a video that can be played by ExoPlayer.
  */
-public class Video extends Media {
+public class ExoVideo extends Media {
 
   /**
    * A list of available video formats which ExoPlayer can play.
@@ -68,7 +68,7 @@ public class Video extends Media {
    */
   private final String provider;
 
-  public Video(Uri mediaUri, String title) {
+  public ExoVideo(Uri mediaUri, String title) {
     this(mediaUri, title, PlayerUtil.inferVideoType(mediaUri), null, null);
   }
 
@@ -76,7 +76,7 @@ public class Video extends Media {
    * @param uri The URL pointing to the video.
    * @param videoType The video format of the video.
    */
-  public Video(Uri uri, String title, Type videoType) {
+  public ExoVideo(Uri uri, String title, Type videoType) {
     this(uri, title, videoType, null);
   }
 
@@ -85,11 +85,11 @@ public class Video extends Media {
    * @param videoType The video format of the video.
    * @param contentId ID of content (for DASH).
    */
-  public Video(Uri uri, String title, Type videoType, String contentId) {
+  public ExoVideo(Uri uri, String title, Type videoType, String contentId) {
     this(uri, title, videoType, contentId, null);
   }
 
-  public Video(Uri uri, String title, Type videoType, String contentId, String provider) {
+  public ExoVideo(Uri uri, String title, Type videoType, String contentId, String provider) {
     super(uri);
     this.videoTitle = title;
     this.videoType = videoType;

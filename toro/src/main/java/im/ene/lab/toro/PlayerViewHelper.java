@@ -63,7 +63,7 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
     if (listener != null && listener.getManager().getPlayer() == null) {
       if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
         listener.getManager().setPlayer(player);
-        listener.getManager().restoreVideoState(player.getVideoId());
+        listener.getManager().restoreVideoState(player.getMediaId());
         listener.getManager().startPlayback();
       } else {
         // Prepare
@@ -82,7 +82,7 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
     if (listener != null && player.equals(listener.getManager().getPlayer())) {
       if (player.isPlaying()) {
         listener.getManager().saveVideoState( //
-            player.getVideoId(), player.getCurrentPosition(), player.getDuration());
+            player.getMediaId(), player.getCurrentPosition(), player.getDuration());
         listener.getManager().pausePlayback();
       }
       // Release player.

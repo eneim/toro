@@ -44,8 +44,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.ext.util.ViewUtil;
-import im.ene.lab.toro.media.PlayerControlCallback;
-import im.ene.lab.toro.player.widget.ObservablePlayerControl;
+import im.ene.lab.toro.player.widget.PlayerControlCallback;
+import im.ene.lab.toro.player.widget.MediaPlayerController;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -529,7 +529,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
       return;
     }
 
-    ObservablePlayerControl playerControl = layerManager.getControl();
+    MediaPlayerController playerControl = layerManager.getControl();
     if (playerControl == null) {
       return;
     }
@@ -818,7 +818,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * @param shouldPlay If true, then the player starts playing. If false, the player pauses.
    */
   public void setPlayPause(boolean shouldPlay) {
-    ObservablePlayerControl playerControl = layerManager.getControl();
+    MediaPlayerController playerControl = layerManager.getControl();
     if (playerControl == null) {
       return;
     }
@@ -908,7 +908,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
           return;
         }
 
-        ObservablePlayerControl playerControl = layerManager.getControl();
+        MediaPlayerController playerControl = layerManager.getControl();
         long duration = playerControl.getDuration();
         long newPosition = (duration * progress) / 1000L;
         playerControl.seekTo((int) newPosition);
@@ -1068,7 +1068,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * video player.
    */
   public void updatePlayPauseButton() {
-    ObservablePlayerControl playerControl = layerManager.getControl();
+    MediaPlayerController playerControl = layerManager.getControl();
     if (view == null || pausePlayButton == null || playerControl == null) {
       return;
     }
@@ -1084,7 +1084,7 @@ public class PlaybackControlLayer implements Layer, PlayerControlCallback, Focus
    * Adjust the position of the action bar to reflect the progress of the video.
    */
   private int updateProgress() {
-    ObservablePlayerControl playerControl = layerManager.getControl();
+    MediaPlayerController playerControl = layerManager.getControl();
     if (playerControl == null || isSeekBarDragging) {
       return 0;
     }
