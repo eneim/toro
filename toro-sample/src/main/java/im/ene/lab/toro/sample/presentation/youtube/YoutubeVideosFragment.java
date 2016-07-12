@@ -16,170 +16,259 @@
 
 package im.ene.lab.toro.sample.presentation.youtube;
 
+import android.accounts.AccountManager;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import com.google.android.youtube.player.YouTubeThumbnailView;
-import im.ene.lab.toro.ext.youtube.YoutubeVideosAdapter;
-import im.ene.lab.toro.ext.youtube.YoutubeViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
+import android.view.ViewParent;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTubeScopes;
+import com.google.api.services.youtube.model.PlaylistItemListResponse;
+import im.ene.lab.toro.Toro;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.ToroStrategy;
 import im.ene.lab.toro.sample.R;
-import im.ene.lab.toro.sample.base.RecyclerViewFragment;
-import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.sample.data.VideoSource;
+import im.ene.lab.toro.sample.ToroApp;
+import im.ene.lab.toro.sample.presentation.facebook.OrderedPlayList;
+import im.ene.lab.toro.sample.widget.DividerItemDecoration;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by eneim on 4/8/16.
  */
-public class YoutubeVideosFragment extends RecyclerViewFragment {
+public class YouTubeVideosFragment extends Fragment {
 
-  public static final String TAG = "YoutubeListFragment";
+  private static final String TAG = "Toro:Youtube";
 
-  public static YoutubeVideosFragment newInstance() {
-    return new YoutubeVideosFragment();
+  public static YouTubeVideosFragment newInstance() {
+    return new YouTubeVideosFragment();
   }
 
-  @NonNull @Override protected RecyclerView.LayoutManager getLayoutManager() {
+  protected RecyclerView mRecyclerView;
+  protected RecyclerView.Adapter mAdapter;
+
+  private int firstVideoPosition;
+  ToroStrategy strategyToRestore;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    strategyToRestore = Toro.getStrategy();
+
+    Toro.setStrategy(new ToroStrategy() {
+      boolean isFirstPlayerDone = false;
+
+      @Override public String getDescription() {
+        return "First video plays first";
+      }
+
+      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+        return strategyToRestore.findBestPlayer(candidates);
+      }
+
+      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+        boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == firstVideoPosition)  //
+            && strategyToRestore.allowsToPlay(player, parent);
+
+        // A work-around to keep track of first video on top.
+        if (player.getPlayOrder() == firstVideoPosition) {
+          isFirstPlayerDone = true;
+        }
+        return allowToPlay;
+      }
+    });
+  }
+
+  @Override public void onDetach() {
+    super.onDetach();
+    Toro.setStrategy(strategyToRestore);
+  }
+
+  @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    ytAccountCredential = GoogleAccountCredential.usingOAuth2(getContext(),
+        Collections.singleton(YouTubeScopes.YOUTUBE));
+    ytAccountCredential.setSelectedAccountName(
+        ToroApp.pref().getString(ToroApp.PREF_ACCOUNT_NAME, null));
+  }
+
+  @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.generic_recycler_view, container, false);
+  }
+
+  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+    RecyclerView.LayoutManager layoutManager = getLayoutManager();
+    mRecyclerView.setLayoutManager(layoutManager);
+    if (layoutManager instanceof LinearLayoutManager) {
+      mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+          ((LinearLayoutManager) layoutManager).getOrientation()));
+    }
+
+    mAdapter = getAdapter();
+    mRecyclerView.setHasFixedSize(false);
+    mRecyclerView.setAdapter(mAdapter);
+
+    if (mAdapter instanceof OrderedPlayList) {
+      firstVideoPosition = ((OrderedPlayList) mAdapter).firstVideoPosition();
+    }
+  }
+
+  @Override public void onResume() {
+    super.onResume();
+    Toro.register(mRecyclerView);
+    if (checkGooglePlayServicesAvailable()) {
+      haveGooglePlayServices();
+    }
+  }
+
+  @Override public void onPause() {
+    super.onPause();
+    Toro.unregister(mRecyclerView);
+  }
+
+  @NonNull protected RecyclerView.LayoutManager getLayoutManager() {
     return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
   }
 
-  @NonNull @Override protected RecyclerView.Adapter getAdapter() {
-    return new MyYoutubeVideosAdapter(getChildFragmentManager());
+  @NonNull protected RecyclerView.Adapter getAdapter() {
+    return new MyYouTubeVideosAdapter(getChildFragmentManager(), null);
   }
 
-  private static class MyYoutubeVideosAdapter extends YoutubeVideosAdapter {
+  // Youtube Api AUTH Stuff
+  static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
 
-    public MyYoutubeVideosAdapter(FragmentManager fragmentManager) {
-      super(fragmentManager);
+  static final int REQUEST_AUTHORIZATION = 1;
+
+  static final int REQUEST_ACCOUNT_PICKER = 2;
+
+  GoogleAccountCredential ytAccountCredential;
+
+  /** Check that Google Play services APK is installed and up to date. */
+  private boolean checkGooglePlayServicesAvailable() {
+    // GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+    final int connectionStatusCode =
+        GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
+
+    if (GoogleApiAvailability.getInstance().isUserResolvableError(connectionStatusCode)) {
+      getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          GoogleApiAvailability.getInstance()
+              .showErrorDialogFragment(getActivity(), connectionStatusCode,
+                  REQUEST_GOOGLE_PLAY_SERVICES, null);
+        }
+      });
+      return false;
     }
 
-    @Nullable @Override protected Object getItem(int position) {
-      return new SimpleVideoObject(VideoSource.YOUTUBES[position % VideoSource.YOUTUBES.length]);
-    }
+    return true;
+  }
 
-    @Override public YoutubeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      View view = LayoutInflater.from(parent.getContext())
-          .inflate(MyYoutubeViewHolder.LAYOUT_RES, parent, false);
-      return new MyYoutubeViewHolder(this, view);
-    }
-
-    @Override public int getItemCount() {
-      return VideoSource.YOUTUBES.length * 10;
+  private void haveGooglePlayServices() {
+    // check if there is already an account selected
+    if (ytAccountCredential.getSelectedAccountName() == null) {
+      // ask user to choose account
+      chooseAccount();
+    } else {
+      // load calendars
+      // AsyncLoadTasks.run(this);
+      loadYoutubeData();
     }
   }
 
-  static class MyYoutubeViewHolder extends YoutubeViewHolder {
+  private void chooseAccount() {
+    startActivityForResult(ytAccountCredential.newChooseAccountIntent(), REQUEST_ACCOUNT_PICKER);
+  }
 
-    private static final int LAYOUT_RES = R.layout.vh_youtube_video;
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    switch (requestCode) {
+      case REQUEST_GOOGLE_PLAY_SERVICES:
+        if (resultCode == Activity.RESULT_OK) {
+          haveGooglePlayServices();
+        } else {
+          checkGooglePlayServicesAvailable();
+        }
+        break;
+      case REQUEST_AUTHORIZATION:
+        if (resultCode == Activity.RESULT_OK) {
+          loadYoutubeData();
+        } else {
+          chooseAccount();
+        }
+        break;
+      case REQUEST_ACCOUNT_PICKER:
+        if (resultCode == Activity.RESULT_OK && data != null && data.getExtras() != null) {
+          String accountName = data.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
+          if (accountName != null) {
+            ytAccountCredential.setSelectedAccountName(accountName);
+            ToroApp.pref().edit().putString(ToroApp.PREF_ACCOUNT_NAME, accountName).apply();
+            loadYoutubeData();
+          }
+        }
+        break;
+    }
+  }
 
-    @Bind(R.id.video_id) TextView mVideoId;
-    @Bind(R.id.info) TextView mInfo;
-    @Bind(R.id.youtube_fragment) View mYtFragmentContainer;
+  // Data loading
+  private void loadYoutubeData() {
+    final YouTube youtube = new YouTube.Builder(YouTubeDataHelper.HTTP_TRANSPORT, YouTubeDataHelper.JSON_FACTORY,
+        ytAccountCredential).setApplicationName("ToroApp/2.0").build();
 
-    private SimpleVideoObject mItem;
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public MyYoutubeViewHolder(MyYoutubeVideosAdapter adapter, View itemView) {
-      super(itemView, adapter);
-      TAG = toString();
-      ButterKnife.bind(this, itemView);
-      // Dynamically change this View's id to prevent conflict between ViewHolder's fragments
-      if (mYtFragmentContainer != null) {
-        mYtFragmentContainer.setId(mFragmentId); // this ID is generated by super class
+    Observable.create(new Observable.OnSubscribe<PlaylistItemListResponse>() {
+      @Override public void call(Subscriber<? super PlaylistItemListResponse> subscriber) {
+        try {
+          subscriber.onNext(youtube.playlistItems()
+              .list("snippet")
+              .setPlaylistId(YouTubeDataHelper.LIST_GOOGLE_IO_ANDROID)
+              .setMaxResults(50L)
+              .execute());
+          subscriber.onCompleted();
+        } catch (IOException e) {
+          e.printStackTrace();
+          subscriber.onError(e);
+        }
       }
-    }
-
-    @Nullable @Override public String getVideoId() {
-      return mItem.video + " - " + getAdapterPosition();  // holds uniqueness in Adapter
-    }
-
-    @NonNull @Override public View getVideoView() {
-      View view = mPlayerFragment == null ? mYtFragmentContainer : mPlayerFragment.getView();
-      return view != null ? view : mYtFragmentContainer;
-    }
-
-    @Override public void onPlaybackStarted() {
-      super.onPlaybackStarted();
-      mInfo.setText("Started");
-    }
-
-    @Override public String getYoutubeVideoId() {
-      return mItem != null ? mItem.video : null;
-    }
-
-    @Override public void bind(@Nullable Object object) {
-      if (object == null || !(object instanceof SimpleVideoObject)) {
-        throw new IllegalArgumentException("Illegal");
-      }
-
-      mItem = (SimpleVideoObject) object;
-      mVideoId.setText(mItem.video + " | Loop: " + isLoopAble());
-    }
-
-    @Nullable @Override protected YouTubeThumbnailView getThumbnailView() {
-      return /* (YouTubeThumbnailView) itemView.findViewById(R.id.thumbnail) */ null;
-    }
-
-    @Override public void onViewHolderBound() {
-      super.onViewHolderBound();
-      mInfo.setText("Bound");
-    }
-
-    private final String TAG;
-
-    @Override public void onLoading() {
-      super.onLoading();
-      Log.d(TAG, "onLoading() called with: " + "");
-      mInfo.setText("Loading");
-    }
-
-    @Override public void onLoaded(String s) {
-      super.onLoaded(s);
-      if (mThumbnail != null) {
-        mThumbnail.setVisibility(View.INVISIBLE);
-      }
-      mInfo.setText("Loaded");
-    }
-
-    @Override public void onPlaybackPaused() {
-      super.onPlaybackPaused();
-      if (mThumbnail != null) {
-        mThumbnail.setVisibility(View.VISIBLE);
-      }
-      mInfo.setText("Paused");
-    }
-
-    @Override public void onPlaybackCompleted() {
-      super.onPlaybackCompleted();
-      if (mThumbnail != null) {
-        mThumbnail.setVisibility(View.VISIBLE);
-      }
-      mInfo.setText("Stopped");
-    }
-
-    @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
-      if (mThumbnail != null) {
-        mThumbnail.setVisibility(View.VISIBLE);
-      }
-      mInfo.setText("Error:" + error.getLocalizedMessage());
-      return super.onPlaybackError(mp, error);
-    }
-
-    @Override public String toString() {
-      return Integer.toHexString(hashCode()) + " position=" + getAdapterPosition();
-    }
-
+    })
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Action1<PlaylistItemListResponse>() {
+          @Override public void call(PlaylistItemListResponse response) {
+            mRecyclerView.setAdapter(
+                new MyYouTubeVideosAdapter(getChildFragmentManager(), response));
+          }
+        }, new Action1<Throwable>() {
+          @Override public void call(Throwable throwable) {
+            Log.e(TAG, "call() called with: " + "throwable = [" + throwable + "]");
+            if (throwable instanceof UserRecoverableAuthIOException) {
+              startActivityForResult(((UserRecoverableAuthIOException) throwable).getIntent(),
+                  REQUEST_AUTHORIZATION);
+            }
+          }
+        });
   }
 }

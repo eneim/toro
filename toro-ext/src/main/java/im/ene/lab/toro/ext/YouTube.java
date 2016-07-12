@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.youtube;
+package im.ene.lab.toro.ext;
 
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
 
 /**
  * Created by eneim on 6/6/16.
  */
-public final class Youtube {
+/* package */ final class YouTube {
 
-  static String API_KEY = null;
+  final String apiKey;
 
-  public static void setApiKey(String key) {
-    if (key == null || TextUtils.isEmpty(key)) {
-      throw new IllegalArgumentException("Invalid Youtube API Key. "
-          + "Please provide a valid one through Manifest's meta-data of name: 'Youtube.API_KEY'");
-    }
-
-    API_KEY = key;
+  YouTube(@NonNull String apiKey) {
+    this.apiKey = apiKey;
   }
 }

@@ -27,9 +27,9 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by eneim on 2/1/16.
  */
-public class ToroSampleApp extends Application {
+public class ToroApp extends Application {
 
-  private static ToroSampleApp sApp;
+  private static ToroApp sApp;
 
   @Override public void onCreate() {
     super.onCreate();
@@ -46,4 +46,7 @@ public class ToroSampleApp extends Application {
   public static String packageName() {
     return sApp.getPackageName();
   }
+
+  /* Preference Keys */
+  public static final String PREF_ACCOUNT_NAME = "toro_pref_account_name";
 }

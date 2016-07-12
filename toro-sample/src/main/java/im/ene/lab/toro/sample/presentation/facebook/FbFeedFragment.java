@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class FbFeedFragment extends Fragment {
 
-  public static final String TAG = "FbPlayer:Fragment";
+  public static final String TAG = "Toro:Facebook";
 
   public static FbFeedFragment newInstance() {
     return new FbFeedFragment();

@@ -88,5 +88,14 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/custom_sample_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/custom_sample_2_description"
+        app:btn_title="@string/custom_sample_2"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
   </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
