@@ -20,18 +20,18 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.widget.FrameLayout;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
-import im.ene.lab.toro.player.widget.ObservablePlayerControl;
+import im.ene.lab.toro.player.widget.MediaPlayerController;
 import java.util.List;
 
 /**
  * This is the basis for building a layered video player
  * (i.e. a video player with views overlaid on top of it).
  *
- * <p>Given a {@link FrameLayout}, a {@link Video}, and a set of {@link Layer} objects, the
- * {@link LayerManager} will create an {@link ExoMediaPlayer} for the {@link Video} object and
+ * <p>Given a {@link FrameLayout}, a {@link ExoVideo}, and a set of {@link Layer} objects, the
+ * {@link LayerManager} will create an {@link ExoMediaPlayer} for the {@link ExoVideo} object and
  * create each {@link Layer} object's view and overlay it on the {@link FrameLayout} object.
  *
  * <p>Look at {@link SimpleVideoPlayer} to see {@link LayerManager} in action.
@@ -54,7 +54,7 @@ public class LayerManager {
    * Allows controlling video playback, reading video state, and registering callbacks for state
    * changes.
    */
-  private ObservablePlayerControl control;
+  private MediaPlayerController control;
 
   /**
    * Wrapper around ExoPlayer, which is the underlying video player.
@@ -69,7 +69,7 @@ public class LayerManager {
    * @param video the video that will be played by this LayerManager.
    * @param layers The layers which should be displayed on top of the container.
    */
-  public LayerManager(Activity activity, FrameLayout container, Video video, List<Layer> layers) {
+  public LayerManager(Activity activity, FrameLayout container, ExoVideo video, List<Layer> layers) {
     this.activity = activity;
     this.container = container;
 
@@ -79,7 +79,7 @@ public class LayerManager {
     this.exoPlayer = new ExoMediaPlayer(rendererBuilder);
     this.exoPlayer.prepare();
 
-    this.control = new ObservablePlayerControl(exoPlayer);
+    this.control = new MediaPlayerController(exoPlayer);
 
     // Put the layers into the container.
     container.removeAllViews();
@@ -105,10 +105,10 @@ public class LayerManager {
   }
 
   /**
-   * Returns the {@link ObservablePlayerControl} which can be used to control the video playback
+   * Returns the {@link MediaPlayerController} which can be used to control the video playback
    * (ex. pause, play, seek).
    */
-  public ObservablePlayerControl getControl() {
+  public MediaPlayerController getControl() {
     return control;
   }
 

@@ -75,6 +75,7 @@ dependencies {
   testCompile 'junit:junit:4.12'
 
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+
   compile project(':toro')
   compile project(':toro-player')
 

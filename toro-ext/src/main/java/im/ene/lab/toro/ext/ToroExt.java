@@ -26,7 +26,7 @@ import im.ene.lab.toro.Toro;
  *
  * {@since 2.0} Main class for Toro's extensions.
  */
-public final class ToroExt {
+/* public */ final class ToroExt {
 
   volatile static ToroExt sInstance;
 

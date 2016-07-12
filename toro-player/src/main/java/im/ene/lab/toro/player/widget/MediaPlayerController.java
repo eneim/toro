@@ -19,24 +19,24 @@ package im.ene.lab.toro.player.widget;
 import android.widget.MediaController;
 import com.google.android.exoplayer.ExoPlayer;
 import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlayerControlCallback;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by eneim on 6/23/16.
  */
-public class ObservablePlayerControl implements MediaController.MediaPlayerControl {
+public class MediaPlayerController implements MediaController.MediaPlayerControl {
 
   private final Cineer player;
 
   /**
    * Callbacks which will react to the player pausing or playing.
    */
-  List<PlayerControlCallback> callbacks;
+  final List<PlayerControlCallback> callbacks;
 
-  public ObservablePlayerControl(Cineer player) {
+  public MediaPlayerController(Cineer player) {
     this.player = player;
+    this.callbacks = new ArrayList<>();
   }
 
   @Override public boolean canPause() {
@@ -108,9 +108,6 @@ public class ObservablePlayerControl implements MediaController.MediaPlayerContr
    * @param callback Responds when the player is paused or played.
    */
   public void addCallback(PlayerControlCallback callback) {
-    if (callbacks == null) {
-      callbacks = new ArrayList<>();
-    }
     callbacks.add(callback);
   }
 
@@ -121,8 +118,6 @@ public class ObservablePlayerControl implements MediaController.MediaPlayerContr
    * @param callback Responds when the player is paused or played.
    */
   public void removeCallback(PlayerControlCallback callback) {
-    if (callbacks != null) {
-      callbacks.remove(callback);
-    }
+    callbacks.remove(callback);
   }
 }

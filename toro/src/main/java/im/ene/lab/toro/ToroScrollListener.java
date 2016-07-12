@@ -110,7 +110,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     if (electedPlayer == currentPlayer) {
       // No thing changes, no new President.
       if (currentPlayer != null && !currentPlayer.isPlaying()) {
-        playerManager.restoreVideoState(currentPlayer.getVideoId());
+        playerManager.restoreVideoState(currentPlayer.getMediaId());
         playerManager.startPlayback();
       }
       return;
@@ -118,7 +118,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
     // Current player is not elected anymore, pause it.
     if (currentPlayer != null) {
-      playerManager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+      playerManager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
           currentPlayer.getDuration());
       playerManager.pausePlayback();
     }
@@ -130,7 +130,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
     // Well... let's the BlackHouse starts new cycle with the new President!
     playerManager.setPlayer(electedPlayer);
-    playerManager.restoreVideoState(electedPlayer.getVideoId());
+    playerManager.restoreVideoState(electedPlayer.getMediaId());
     playerManager.startPlayback();
   }
 }

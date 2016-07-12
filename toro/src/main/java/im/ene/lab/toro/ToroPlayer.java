@@ -97,18 +97,6 @@ public interface ToroPlayer {
   boolean wantsToPlay();
 
   /**
-   * {@since 2.0.0} Will not get called anymore.
-   *
-   * !Deprecated From 2.0.0. User will just need to tell Toro by {@link ToroPlayer#wantsToPlay()}.
-   * Toro 2.0 will not listen to this Method anymore.
-   *
-   * Called after {@link ToroPlayer#wantsToPlay()} returning <b>true</b>, indicate that even if
-   * this player wants to play that much, is It able to play (Video is correctly set or there is no
-   * Error)
-   */
-  // @Deprecated boolean isAbleToPlay();
-
-  /**
    * Indicate that this Player is able to replay right after it stops (loop-able) or not.
    *
    * @return true if this Player is loop-able, false otherwise
@@ -116,22 +104,22 @@ public interface ToroPlayer {
   boolean isLoopAble();
 
   /**
-   * @return value from 0.0 ~ 1.0 the visible offset of current Video
+   * @return value from 0.0 ~ 1.0 the visible Area offset of current Video
    */
   @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();
 
   /**
-   * Support save/restore Video state (last played/paused position)
+   * Support save/restore Media state (last played/paused position)
    *
-   * !IMPORTANT this ID must be unique, and avoid using Video's filename, url String or any object
-   * that depends on the Video object itself. There will be the case user uses same Video in
-   * different places.
+   * !IMPORTANT this ID must be unique, and avoid using Media's filename, url String or any object
+   * that depends <b>only</b> on the Media object itself. There will be the case user uses same
+   * Media in different places.
    * <p/>
    * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-independent Id
    *
-   * @return current Video's id.
+   * @return current Media source's id.
    */
-  @Nullable String getVideoId();
+  @Nullable String getMediaId();
 
   /**
    * In case there is a list of Players who want to play, Toro wants to know their orders, then
@@ -147,7 +135,7 @@ public interface ToroPlayer {
    *
    * @return attached video view
    */
-  @NonNull View getVideoView();
+  @NonNull View getPlayerView();
 
   /* Host activity lifecycle callback */
 

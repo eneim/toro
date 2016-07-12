@@ -21,5 +21,5 @@ package im.ene.lab.toro.ext;
  */
 final class Extensions {
 
-  static final int YOUTUBE = 0x1; // when apply, sFlag's number 0 bit change from 0 to 1;
+  static final int YOUTUBE = 0x1; // when apply, flag's 1st bit changes from 0 to 1;
 }

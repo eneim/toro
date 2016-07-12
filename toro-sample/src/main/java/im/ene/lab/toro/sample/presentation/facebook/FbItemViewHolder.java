@@ -32,7 +32,7 @@ import im.ene.lab.toro.ext.ToroVideoViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.LastMomentCallback;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.widget.VideoPlayerView;
+import im.ene.lab.toro.player.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import java.lang.annotation.Retention;
@@ -134,8 +134,8 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       mVideoView.setLastMomentCallback(this);
     }
 
-    @Override protected VideoPlayerView findVideoView(View itemView) {
-      return (VideoPlayerView) itemView.findViewById(R.id.video);
+    @Override protected ToroVideoView findVideoView(View itemView) {
+      return (ToroVideoView) itemView.findViewById(R.id.video);
     }
 
     @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -145,7 +145,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
 
     private SimpleVideoObject mItem;
 
-    @Override public void bind(Object item) {
+    @Override public void bind(RecyclerView.Adapter adapter, Object item) {
       if (!(item instanceof SimpleVideoObject)) {
         throw new IllegalStateException("Unexpected object: " + item.toString());
       }
@@ -158,7 +158,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       return isPlayable && visibleAreaOffset() >= 0.75;
     }
 
-    @Nullable @Override public String getVideoId() {
+    @Nullable @Override public String getMediaId() {
       return mItem.toString() + "@" + getAdapterPosition();
     }
 
@@ -220,7 +220,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
           VideoPost.super.onPlaybackCompleted();
         }
       }).start();
-      mInfo.setText("Error: videoId = " + getVideoId());
+      mInfo.setText("Error: videoId = " + getMediaId());
       return super.onPlaybackError(mp, error);
     }
 
@@ -229,7 +229,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     @Override public String toString() {
-      return "Video: " + getVideoId();
+      return "Video: " + getMediaId();
     }
 
     @Override public long getCurrentPosition() {

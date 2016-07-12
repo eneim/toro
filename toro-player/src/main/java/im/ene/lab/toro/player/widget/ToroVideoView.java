@@ -40,11 +40,11 @@ import im.ene.lab.toro.media.LastMomentCallback;
 import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.PlaybackInfo;
 import im.ene.lab.toro.media.State;
 import im.ene.lab.toro.player.BuildConfig;
-import im.ene.lab.toro.player.internal.EventLogger;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import im.ene.lab.toro.player.internal.RendererBuilderFactory;
 import java.util.List;
@@ -52,8 +52,8 @@ import java.util.List;
 /**
  * Created by eneim on 6/4/16.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class VideoPlayerView extends TextureView
-    implements Cineer.Player {
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
+public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
 
   /**
    * The surface view will not resize itself if the fractional difference
@@ -71,9 +71,9 @@ import java.util.List;
 
   private SurfaceTextureListener surfaceTextureListener = new SurfaceTextureListener() {
     @Override public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-      VideoPlayerView.this.mSurface = new Surface(surface);
+      ToroVideoView.this.mSurface = new Surface(surface);
       if (mMediaPlayer != null) {
-        mMediaPlayer.setSurface(VideoPlayerView.this.mSurface);
+        mMediaPlayer.setSurface(ToroVideoView.this.mSurface);
         if (!mPlayerNeedsPrepare) {
           mMediaPlayer.seekTo(mPlayerPosition);
           mMediaPlayer.setPlayWhenReady(mPlayRequested);
@@ -101,7 +101,7 @@ import java.util.List;
         mMediaPlayer.blockingClearSurface();
       }
       mPlayerNeedsPrepare = true;
-      VideoPlayerView.this.mSurface = null;
+      ToroVideoView.this.mSurface = null;
       return true;
     }
 
@@ -122,8 +122,14 @@ import java.util.List;
 
     @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
         float pixelWidthHeightRatio) {
+      videoWidth = width;
+      videoHeight = height;
       if (getSurfaceTexture() != null) {
         setVideoWidthHeightRatio(height == 0 ? 1 : (width * pixelWidthHeightRatio) / height);
+      }
+
+      if (onVideoSizeChangedListener != null) {
+        onVideoSizeChangedListener.onVideoSizeChanged(mMediaPlayer, width, height);
       }
     }
   };
@@ -169,12 +175,16 @@ import java.util.List;
   private float mVideoWidthHeightAspectRatio;
   private long mPlayerPosition;
 
+  private int videoWidth;
+  private int videoHeight;
+
   private int mPlaybackState;
   private boolean mPlayerNeedsPrepare;
   private boolean mPlayRequested = false;
   private boolean mBackgroundAudioEnabled = false;
 
   private OnPlayerStateChangeListener mPlayerStateChangeListener;
+  private OnVideoSizeChangedListener onVideoSizeChangedListener;
   private OnInfoListener mOnInfoListener;
   private LastMomentCallback lastMomentCallback;
 
@@ -258,7 +268,7 @@ import java.util.List;
   }
 
   /**
-   * Set the aspect ratio that this {@link VideoPlayerView} should satisfy.
+   * Set the aspect ratio that this {@link ToroVideoView} should satisfy.
    *
    * {@code Deprecated}, we gonna support ScaleType
    *
@@ -271,23 +281,23 @@ import java.util.List;
     }
   }
 
-  public VideoPlayerView(Context context) {
+  public ToroVideoView(Context context) {
     super(context);
     initialize(context);
   }
 
-  public VideoPlayerView(Context context, AttributeSet attrs) {
+  public ToroVideoView(Context context, AttributeSet attrs) {
     super(context, attrs);
     initialize(context);
   }
 
-  public VideoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public ToroVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     initialize(context);
   }
 
   @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public VideoPlayerView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+  public ToroVideoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     initialize(context);
   }
@@ -480,6 +490,18 @@ import java.util.List;
 
   @Override public void setBackgroundAudioEnabled(boolean enabled) {
     mBackgroundAudioEnabled = enabled;
+  }
+
+  @Override public int getVideoWidth() {
+    return this.videoWidth;
+  }
+
+  @Override public int getVideoHeight() {
+    return this.videoHeight;
+  }
+
+  @Override public void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener) {
+    this.onVideoSizeChangedListener = listener;
   }
 
   private abstract class ExoMediaPlayerHelper

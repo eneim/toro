@@ -21,7 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.ext.layeredvideo.MultiLayerVideoPlayerView;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.sample.util.Util;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +43,7 @@ public class MultiLayerVideoActivity extends AppCompatActivity {
     super.onResume();
     try {
       File[] local = Util.loadMovieFolder();
-      Video video = new Video(
+      ExoVideo video = new ExoVideo(
           local != null && local.length > 0 ? Uri.fromFile(Util.loadMovieFolder()[0])
               : Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"), "Garden of Words");
 

@@ -30,7 +30,11 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by eneim on 6/2/16.
+ * Cineer is the base interface for any MediaPlayer. It is named by the combination of 'Cine' and
+ * '-er' suffix.
+ *
+ * @author eneim (nam@ene.im)
+ * @version 2.0
  */
 public interface Cineer {
 
@@ -44,8 +48,81 @@ public interface Cineer {
   int PLAYER_READY = 4;
   int PLAYER_ENDED = 5;
 
+  /** See {@link MediaPlayer#start()} */
+  void start() throws IllegalStateException;
+
+  /** See {@link MediaPlayer#pause()} */
+  void pause();
+
+  /** See {@link MediaPlayer#stop()} */
+  void stop();
+
+  /** See {@link MediaPlayer#release()} */
+  void release();
+
+  /** See {@link MediaPlayer#reset()} */
+  void reset();
+
+  /** See {@link MediaPlayer#getDuration()} */
+  long getDuration();
+
+  /** See {@link MediaPlayer#getCurrentPosition()} */
+  long getCurrentPosition();
+
+  /** See {@link MediaPlayer#seekTo(int)} */
+  void seekTo(long milliSec);
+
+  /** See {@link MediaPlayer#isPlaying()} */
+  boolean isPlaying();
+
+  /** See {@link MediaPlayer#getAudioSessionId()} */
+  int getAudioSessionId();
+
+  /** See {@link MediaPlayer#setAudioSessionId(int)} */
+  void setAudioSessionId(int audioSessionId);
+
+  /** See {@link MediaPlayer#getVideoWidth()} */
+  int getVideoWidth();
+
+  /** See {@link MediaPlayer#getVideoHeight()} ()} */
+  int getVideoHeight();
+
+  /** See ExoPlayer#getBufferedPercentage() */
+  int getBufferedPercentage();
+
+  /** See {@link MediaPlayer#setOnVideoSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener)} */
+  void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
+
+  /** See {@link MediaPlayer#setOnInfoListener(MediaPlayer.OnInfoListener)} */
+  void setOnInfoListener(OnInfoListener listener);
+
+  /** Combined with {@link State}. Used to setup MediaPlayer for custom Player widget. */
+  void setPlayerStateChangeListener(OnPlayerStateChangeListener listener);
+
   /**
-   * Shared API for any Med
+   * See {@link MediaPlayer#setDataSource(Context, Uri, Map)}
+   */
+  void setDataSource(Context context, Uri uri, Map<String, String> headers)
+      throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
+
+  /** See {@link MediaPlayer#setSurface(Surface)} */
+  void setSurface(Surface surface);
+
+  /** See {@link MediaPlayer#setAudioStreamType(int)} */
+  void setAudioStreamType(int audioStreamType);
+
+  /** See {@link MediaPlayer#setScreenOnWhilePlaying(boolean)} */
+  void setScreenOnWhilePlaying(boolean screenOnWhilePlaying);
+
+  /** See {@link MediaPlayer#prepareAsync()} */
+  void prepareAsync() throws IllegalStateException;
+
+  /** See {@link MediaPlayer#setVolume(float, float)} */
+  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
+
+  /**
+   * Common API for Media player widget. A custom VideoView should implement this interface to get
+   * support from this library.
    */
   interface Player {
 
@@ -67,7 +144,7 @@ public interface Cineer {
     void pause();
 
     /**
-     * See {@link VideoView#stopPlayback()}
+     * See {@link VideoView#stopPlayback()} VideoView#stopPlayback()
      */
     void stop();
 
@@ -123,9 +200,19 @@ public interface Cineer {
 
     void setBackgroundAudioEnabled(boolean enabled);
 
+    /**
+     * Set a media source for current Player.
+     *
+     * @param source the Media source to be played.
+     */
     void setMedia(@NonNull Media source);
 
-    void setMedia(Uri uri);
+    /**
+     * Simple version of {@link #setMedia(Media)}.
+     *
+     * @param uri Media source's Uri.
+     */
+    void setMedia(@NonNull Uri uri);
 
     /**
      * See {@link MediaPlayer#setVolume(float, float)}
@@ -137,15 +224,30 @@ public interface Cineer {
     void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener);
   }
 
+  /**
+   * Specified interface for Video Player widgets.
+   */
   interface VideoPlayer extends Player {
 
+    /**
+     * @return current Video width, or 0 if there isn't any.
+     */
     int getVideoWidth();
 
+    /**
+     * @return current Video height, or 0 if there isn't any.
+     */
     int getVideoHeight();
 
+    /**
+     * Setup Video size change listener.
+     */
     void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
   }
 
+  /**
+   * Common API for a Media Player Controller.
+   */
   interface Controller {
 
     /** see {@link MediaController#hide()} */
@@ -169,73 +271,4 @@ public interface Cineer {
     /** see {@link MediaController#isShowing()} */
     boolean isShowing();
   }
-
-  /** see {@link MediaPlayer#start()} */
-  void start() throws IllegalStateException;
-
-  /** see {@link MediaPlayer#pause()} */
-  void pause();
-
-  /** see {@link MediaPlayer#stop()} */
-  void stop();
-
-  /** see {@link MediaPlayer#release()} */
-  void release();
-
-  /** see {@link MediaPlayer#reset()} */
-  void reset();
-
-  /** see {@link MediaPlayer#getDuration()} */
-  long getDuration();
-
-  /** see {@link MediaPlayer#getCurrentPosition()} */
-  long getCurrentPosition();
-
-  /** see {@link MediaPlayer#seekTo(int)} */
-  void seekTo(long milliSec);
-
-  /** see {@link MediaPlayer#isPlaying()} */
-  boolean isPlaying();
-
-  /** see {@link MediaPlayer#setAudioSessionId(int)} */
-  void setAudioSessionId(int audioSessionId);
-
-  /** see {@link MediaPlayer#getAudioSessionId()} */
-  int getAudioSessionId();
-
-  /** see {@link MediaPlayer#getVideoWidth()} */
-  int getVideoWidth();
-
-  /** see {@link MediaPlayer#getVideoHeight()} ()} */
-  int getVideoHeight();
-
-  /** see ExoPlayer#getBufferedPercentage() */
-  int getBufferedPercentage();
-
-  /** see {@link MediaPlayer#setOnVideoSizeChangedListener(MediaPlayer.OnVideoSizeChangedListener)} */
-  void setOnVideoSizeChangedListener(OnVideoSizeChangedListener listener);
-
-  /** see {@link MediaPlayer#setOnInfoListener(MediaPlayer.OnInfoListener)} */
-  void setOnInfoListener(OnInfoListener listener);
-
-  void setPlayerStateChangeListener(OnPlayerStateChangeListener listener);
-
-  /** see {@link MediaPlayer#setDataSource(Context, Uri, Map)} */
-  void setDataSource(Context context, Uri uri, Map<String, String> headers)
-      throws IOException, IllegalArgumentException, SecurityException, IllegalStateException;
-
-  /** see {@link MediaPlayer#setSurface(Surface)} */
-  void setSurface(Surface surface);
-
-  /** see {@link MediaPlayer#setAudioStreamType(int)} */
-  void setAudioStreamType(int audioStreamType);
-
-  /** see {@link MediaPlayer#setScreenOnWhilePlaying(boolean)} */
-  void setScreenOnWhilePlaying(boolean screenOnWhilePlaying);
-
-  /** see {@link MediaPlayer#prepareAsync()} */
-  void prepareAsync() throws IllegalStateException;
-
-  /** see {@link MediaPlayer#setVolume(float, float)} */
-  void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
 }

@@ -37,7 +37,7 @@ import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.media.State;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 
 /**
@@ -47,7 +47,7 @@ import im.ene.lab.toro.player.internal.ExoMediaPlayer;
  */
 public class MultiLayerVideoPlayerView extends FrameLayout implements Cineer.VideoPlayer {
 
-  private Video mMedia;
+  private ExoVideo mMedia;
   private AudioCapabilitiesReceiver mAudioCapabilitiesReceiver;
   private AudioCapabilities mAudioCapabilities;
   private SimpleVideoPlayer mMediaPlayer;
@@ -183,7 +183,7 @@ public class MultiLayerVideoPlayerView extends FrameLayout implements Cineer.Vid
   }
 
   @SuppressWarnings("ConstantConditions") @Override public void setMedia(@NonNull Media media) {
-    if (media == null || !(media instanceof Video)) {
+    if (media == null || !(media instanceof ExoVideo)) {
       throw new IllegalArgumentException("Media source must be a valid Video");
     }
 
@@ -197,7 +197,7 @@ public class MultiLayerVideoPlayerView extends FrameLayout implements Cineer.Vid
     }
 
     this.mPlayerPosition = 0;
-    this.mMedia = (Video) media;
+    this.mMedia = (ExoVideo) media;
     mPlayRequested = false;
     releasePlayer();
     preparePlayer(mPlayRequested);

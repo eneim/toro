@@ -19,7 +19,7 @@ package im.ene.lab.toro.media;
 /**
  * Created by eneim on 7/1/16.
  *
- * Callback which will be triggered right before Media player got released.
+ * Callback which will be triggered right before releasing the Media player.
  */
 public interface LastMomentCallback {
 

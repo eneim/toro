@@ -21,28 +21,27 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.widget.VideoPlayerView;
+import im.ene.lab.toro.player.widget.ToroVideoView;
 
 /**
  * Created by eneim on 6/11/16.
  */
 public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
 
-  protected final VideoPlayerView mVideoView;
+  protected final ToroVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public ToroVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = findVideoView(itemView);
-
     if (mVideoView == null) {
-      throw new NullPointerException("A valid VideoPlayerView is required.");
+      throw new NullPointerException("A valid ToroVideoView is required.");
     }
 
     mVideoView.setOnPlayerStateChangeListener(mHelper);
   }
 
-  protected abstract VideoPlayerView findVideoView(View itemView);
+  protected abstract ToroVideoView findVideoView(View itemView);
 
   @Override public void preparePlayer(boolean playWhenReady) {
     if (mVideoView != null) {
@@ -111,7 +110,7 @@ public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
     }
   }
 
-  @NonNull @Override public View getVideoView() {
+  @NonNull @Override public View getPlayerView() {
     return mVideoView;
   }
 

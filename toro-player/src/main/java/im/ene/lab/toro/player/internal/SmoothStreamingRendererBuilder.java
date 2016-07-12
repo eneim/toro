@@ -51,8 +51,8 @@ import java.io.IOException;
 /**
  * A {@link ExoMediaPlayer.RendererBuilder} for SmoothStreaming.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class SmoothStreamingRendererBuilder
-    implements ExoMediaPlayer.RendererBuilder {
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
+public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int VIDEO_BUFFER_SEGMENTS = 200;

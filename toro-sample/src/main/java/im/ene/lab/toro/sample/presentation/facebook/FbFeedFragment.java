@@ -176,7 +176,7 @@ public class FbFeedFragment extends Fragment {
       VideoPlayerManager manager = ((VideoPlayerManager) mAdapter);
       if (manager.getPlayer() != null) {
         long latestPosition = data.getLongExtra(FbPLayerDialogFragment.ARGS_LATEST_TIMESTAMP, 0);
-        manager.saveVideoState(manager.getPlayer().getVideoId(), latestPosition,
+        manager.saveVideoState(manager.getPlayer().getMediaId(), latestPosition,
             manager.getPlayer().getDuration());
       }
       Toro.rest(false);

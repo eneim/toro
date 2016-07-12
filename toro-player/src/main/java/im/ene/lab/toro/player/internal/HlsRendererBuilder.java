@@ -52,7 +52,7 @@ import java.util.List;
 /**
  * A {@link ExoMediaPlayer.RendererBuilder} for HLS.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;

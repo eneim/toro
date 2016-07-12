@@ -23,7 +23,7 @@ import android.os.Build;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
-import im.ene.lab.toro.player.Video;
+import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.player.internal.ExoMediaPlayer;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class SimpleVideoPlayer {
    * @param videoTitle The title of the video (displayed on the left of the top chrome).
    * @param autoPlay Whether the video should start playing immediately.
    */
-  public SimpleVideoPlayer(Activity activity, FrameLayout container, Video video, String videoTitle,
+  public SimpleVideoPlayer(Activity activity, FrameLayout container, ExoVideo video, String videoTitle,
       boolean autoPlay) {
     this(activity, container, video, videoTitle, autoPlay, 0, null);
   }
@@ -89,7 +89,7 @@ public class SimpleVideoPlayer {
    * @param fullscreenCallback The callback which gets triggered when the player enters or leaves
    * fullscreen mode.
    */
-  public SimpleVideoPlayer(Activity activity, FrameLayout container, Video video, String videoTitle,
+  public SimpleVideoPlayer(Activity activity, FrameLayout container, ExoVideo video, String videoTitle,
       boolean autoPlay, int startPositionMs,
       PlaybackControlLayer.FullscreenCallback fullscreenCallback) {
     this.activity = activity;

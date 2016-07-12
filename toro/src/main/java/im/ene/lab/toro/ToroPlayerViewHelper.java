@@ -61,7 +61,7 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper {
       // Not the current player, and new player wants to play, so switch players
       if (currentPlayer != null) {
         if (currentPlayer.isPlaying()) {
-          manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+          manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
               currentPlayer.getDuration());
         }
         // Force pause
@@ -70,18 +70,18 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper {
 
       // Trigger new player
       manager.setPlayer(player);
-      manager.restoreVideoState(player.getVideoId());
+      manager.restoreVideoState(player.getMediaId());
       manager.startPlayback();
       return true;
     } else {
       // Pressing current player, pause it if it is playing
       if (currentPlayer.isPlaying()) {
-        manager.saveVideoState(currentPlayer.getVideoId(), currentPlayer.getCurrentPosition(),
+        manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
             currentPlayer.getDuration());
         manager.pausePlayback();
       } else {
         // It's paused, so we resume it
-        manager.restoreVideoState(currentPlayer.getVideoId());
+        manager.restoreVideoState(currentPlayer.getMediaId());
         manager.startPlayback();
       }
       return true;
