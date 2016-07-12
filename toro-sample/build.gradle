@@ -57,18 +57,17 @@ android {
     versionName dateTimeString()
     archivesBaseName = "toro_sample"
 
-    manifestPlaceholders = [
-        fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}",
-        youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"
-    ]
+    manifestPlaceholders = [fabric_api_key : "${TORO_SAMPLE_FABRIC_API_KEY}",
+                            youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"]
 
     vectorDrawables.useSupportLibrary = true
+    multiDexEnabled true
   }
 
   buildTypes {
     release {
       signingConfig signingConfigs.release
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
@@ -109,9 +108,35 @@ dependencies {
   compile 'com.github.bumptech.glide:glide:3.7.0'
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
+
+  compile 'io.reactivex:rxandroid:1.2.1'
+  // Because RxAndroid releases are few and far between, it is recommended you also
+  // explicitly depend on RxJava's latest version for bug fixes and new features.
+  compile 'io.reactivex:rxjava:1.1.6'
+
+  compile('com.google.api-client:google-api-client:1.22.0') {
+    exclude group: 'com.google.api-client', module: 'google-api-client-jackson2'
+    exclude module: 'httpclient'
+  }
+
+  compile('com.google.api-client:google-api-client-android:1.22.0') {
+    exclude module: 'httpclient'
+  }
+
+  compile ('com.google.api-client:google-api-client-gson:1.22.0') {
+    exclude module: 'httpclient'
+  }
+
+  compile ('com.google.apis:google-api-services-youtube:v3-rev176-1.22.0') {
+    exclude module: 'httpclient'
+  }
+
+  compile 'com.google.android.gms:play-services-auth:9.2.0'
+
   compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
     transitive = true;
   }
+
   compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
     transitive = true;
   }
@@ -122,3 +147,5 @@ crashlytics {
   androidNdkOut 'src/main/obj'
   androidNdkLibsOut 'src/main/libs'
 }
+
+apply plugin: 'com.google.gms.google-services'

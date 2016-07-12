@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.youtube;
+package im.ene.lab.toro.ext;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,11 +29,11 @@ import im.ene.lab.toro.media.PlaybackException;
 /**
  * Created by eneim on 4/8/16.
  */
-public class YoutubePlayerViewHelper extends PlayerViewHelper {
+public class YouTubePlayerViewHelper extends PlayerViewHelper {
 
   private final ToroPlayerViewHelper delegate;
 
-  public YoutubePlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+  public YouTubePlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
     delegate = new ToroPlayerViewHelper(player, itemView);
   }

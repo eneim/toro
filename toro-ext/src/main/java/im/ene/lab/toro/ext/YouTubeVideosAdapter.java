@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.youtube;
+package im.ene.lab.toro.ext;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -22,24 +22,25 @@ import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.VideoPlayerManagerImpl;
-import im.ene.lab.toro.ext.ToroAdapter;
 
 /**
  * Created by eneim on 4/8/16.
  *
  * Youtube Video Manager + Video Adapter. This is the core of Youtube Support Extension.
  */
-public abstract class YoutubeVideosAdapter extends ToroAdapter<YoutubeViewHolder>
+/* public */ abstract class YouTubeVideosAdapter<VH extends YouTubeItemViewHolder> extends ToroAdapter<VH>
     implements VideoPlayerManager {
 
-  final FragmentManager mFragmentManager;
+  final FragmentManager fragmentManager;
   private final VideoPlayerManager delegate;
-  YouTubePlayer mYoutubePlayer;
+  YouTubePlayer youTubePlayer;
+  /* package */ int lastPlayerPosition;
 
-  public YoutubeVideosAdapter(FragmentManager fragmentManager) {
+  public YouTubeVideosAdapter(FragmentManager fragmentManager) {
     super();
-    this.mFragmentManager = fragmentManager;
+    this.fragmentManager = fragmentManager;
     this.delegate = new VideoPlayerManagerImpl();
+    this.lastPlayerPosition = -1;
   }
 
   /**
@@ -106,13 +107,14 @@ public abstract class YoutubeVideosAdapter extends ToroAdapter<YoutubeViewHolder
 
   public void onPlaying() {
     // video starts playing
+    // Do nothing on parent though
   }
 
   public void onPaused() {
-
+    // Do nothing on parent though
   }
 
   public void onError(YouTubePlayer.ErrorReason errorReason) {
-
+    // Do nothing on parent though
   }
 }

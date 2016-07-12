@@ -68,4 +68,5 @@ public class HomeActivity extends AppCompatActivity {
   @OnClick(R.id.custom_sample_1) void openCustomSample1() {
     startActivity(new Intent(this, FbFeedActivity.class));
   }
+
 }

@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.youtube;
+package im.ene.lab.toro.ext;
 
 import android.util.Log;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
-import im.ene.lab.toro.ext.BuildConfig;
 
 /**
  * Created by eneim on 6/6/16.
  *
  * !For debug purpose only
+ * {@hide}
  */
-public class EventLogger
+/* public */ class YouTubeEventLogger
     implements YouTubePlayer.PlaybackEventListener, YouTubePlayer.PlayerStateChangeListener,
     YouTubePlayer.OnInitializedListener {
 
@@ -34,7 +34,7 @@ public class EventLogger
   private final boolean D;  // D or I, just to separate log colors.
   private final boolean DEBUG = BuildConfig.DEBUG;
 
-  public EventLogger(String id, int position) {
+  public YouTubeEventLogger(String id, int position) {
     TAG = "Logger:" + id;
     D = position % 2 == 0;
   }

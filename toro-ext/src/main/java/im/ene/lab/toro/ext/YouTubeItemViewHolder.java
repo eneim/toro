@@ -14,36 +14,41 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext.youtube;
+package im.ene.lab.toro.ext;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.android.youtube.player.YouTubeThumbnailLoader;
 import com.google.android.youtube.player.YouTubeThumbnailView;
-import im.ene.lab.toro.ext.BasePlayerViewHolder;
 import im.ene.lab.toro.ext.util.ViewUtil;
 import im.ene.lab.toro.media.PlaybackException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import static im.ene.lab.toro.ext.ToroExt.sInstance;
 
 /**
  * Created by eneim on 4/8/16.
  *
  * A library-level Abstract ViewHolder for Youtube
  */
-public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
+/* public */ abstract class YouTubeItemViewHolder extends BasePlayerViewHolder implements
     // 0. IMPORTANT: required for requesting Youtube API
     YouTubePlayer.OnInitializedListener,
     // 1. Normal playback state
     YouTubePlayer.PlayerStateChangeListener, YouTubePlayer.PlaybackEventListener,
     // 2. Optional: use Thumbnail classes
     YouTubeThumbnailLoader.OnThumbnailLoadedListener, YouTubeThumbnailView.OnInitializedListener {
+
+  private static final String TAG = "ViewHolder:YouTube";
 
   /**
    * This setup will offer {@link YouTubePlayer.PlayerStyle#CHROMELESS} to youtube player
@@ -58,92 +63,131 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
   /**
    * Parent Adapter which holds some important controllers
    */
-  protected final YoutubeVideosAdapter mParent;
+  protected final YouTubeVideosAdapter parent;
 
   /**
    * Id for {@link YouTubePlayerSupportFragment}, will be generated manually and must be set for
    * proper view
    */
-  protected final int mFragmentId;
+  protected final int fragmentId;
 
-  private final YoutubePlayerViewHelper mHelper;
-  protected YouTubePlayerSupportFragment mPlayerFragment;
-  @Nullable protected YouTubeThumbnailView mThumbnail;
+  private final YouTubePlayerViewHelper helper;
+  protected YouTubePlayerSupportFragment playerFragment;
+  @Nullable protected YouTubeThumbnailView thumbnail;
   private long seekPosition = 0;
   private boolean isSeeking = false;
   private boolean isStarting = false;
+  private boolean playerReleased = false;
+  private boolean wantsToPlay;
 
-  private EventLogger mLogger;
+  private YouTubeEventLogger logger;
 
-  public YoutubeViewHolder(final View itemView, YoutubeVideosAdapter parent) {
+  public YouTubeItemViewHolder(final View itemView, YouTubeVideosAdapter parent) {
     super(itemView);
-    this.mParent = parent;
-    if (this.mParent.mFragmentManager == null) {
+    this.parent = parent;
+    if (this.parent.fragmentManager == null) {
       throw new IllegalArgumentException(
           "This View requires a YoutubeListAdapter parent which holds a non-null FragmentManager");
     }
-    this.mHelper = new YoutubePlayerViewHelper(this, itemView);
-    this.mFragmentId = ViewUtil.generateViewId();
+    this.helper = new YouTubePlayerViewHelper(this, itemView);
+    this.fragmentId = ViewUtil.generateViewId();
+    this.thumbnail = getThumbnailView();
   }
 
   @Nullable protected abstract YouTubeThumbnailView getThumbnailView();
 
   @Override public final boolean wantsToPlay() {
-    return super.visibleAreaOffset() >= 0.99f;  // Actually Youtube wants 1.0f;
+    return super.visibleAreaOffset() >= 0.99f && wantsToPlay;  // Actually Youtube wants 1.0f;
   }
 
-  @Override public void onAttachedToParent() {
-    super.onAttachedToParent();
+  // With YouTube, we need to wait for its visibility.
+  @SuppressLint("MissingSuperCall") @Override public void onAttachedToParent() {
+    wantsToPlay = (thumbnail == null);
+    itemView.getViewTreeObserver()
+        .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override public void onGlobalLayout() {
+            ViewUtil.removeOnGlobalLayoutListener(itemView.getViewTreeObserver(), this);
+            YouTubeItemViewHolder.super.onAttachedToParent();
+            Log.i(TAG, "Attached:Wants to play: " + wantsToPlay);
+          }
+        });
+  }
+
+  @Override public void onDetachedFromParent() {
+    super.onDetachedFromParent();
   }
 
   @CallSuper @Override public void onViewHolderBound() {
     super.onViewHolderBound();
-    mLogger = new EventLogger(getYoutubeVideoId(), getAdapterPosition());
-    if (itemView.findViewById(mFragmentId) == null) {
-      throw new RuntimeException("View with Id: " + mFragmentId + " must be setup");
+    logger = new YouTubeEventLogger(getYoutubeVideoId(), getAdapterPosition());
+    if (itemView.findViewById(fragmentId) == null) {
+      throw new RuntimeException("View with Id: " + fragmentId + " must be setup");
     }
 
-    if ((mPlayerFragment =
-        (YouTubePlayerSupportFragment) mParent.mFragmentManager.findFragmentById(mFragmentId))
+    if ((playerFragment =
+        (YouTubePlayerSupportFragment) parent.fragmentManager.findFragmentById(fragmentId))
         == null) {
-      mPlayerFragment = YouTubePlayerSupportFragment.newInstance();
+      playerFragment = YouTubePlayerSupportFragment.newInstance();
       // Add youtube player fragment to this ViewHolder
-      mParent.mFragmentManager.beginTransaction().replace(mFragmentId, mPlayerFragment).commit();
+      parent.fragmentManager.beginTransaction().replace(fragmentId, playerFragment).commit();
     }
   }
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    if ((mThumbnail = getThumbnailView()) != null) {
-      mThumbnail.initialize(Youtube.API_KEY, YoutubeViewHolder.this);
+    if (thumbnail != null) {
+      thumbnail.setVisibility(View.VISIBLE);
+      thumbnail.initialize(sInstance.youTube.apiKey /* nullable */, YouTubeItemViewHolder.this);
     } else {
-      mHelper.onPrepared(itemView, itemView.getParent(), null);
+      helper.onPrepared(itemView, itemView.getParent(), null);
     }
   }
 
   @Override public void releasePlayer() {
     // Release current youtube player first. Prevent resource conflict
-    if (mParent.mYoutubePlayer != null) {
-      mParent.mYoutubePlayer.release();
+    if (parent.youTubePlayer != null) {
+      parent.youTubePlayer.release();
+      playerReleased = true;
     }
   }
 
   @CallSuper @Override public void start() {
     Log.e("Logger", "start: ");
     isStarting = true;
-    // Release current youtube player first. Prevent resource conflict
-    if (mParent.mYoutubePlayer != null) {
-      mParent.mYoutubePlayer.release();
+    if (thumbnail != null) {
+      thumbnail.setVisibility(View.GONE);
     }
-    // Re-setup the Player. This is annoying though.
-    if (mPlayerFragment != null) {
-      mPlayerFragment.initialize(Youtube.API_KEY, this);
+
+    boolean requireInitialization = true;
+    if (parent.lastPlayerPosition == getAdapterPosition()) {
+      if (parent.youTubePlayer != null) {
+        requireInitialization = false;
+      }
     }
+
+    if (!requireInitialization && !playerReleased) {
+      parent.youTubePlayer.play();
+    } else {
+      if (parent.youTubePlayer != null) {
+        parent.youTubePlayer.release();
+        playerReleased = true;
+      }
+
+      // Re-setup the Player. This is annoying though.
+      if (playerFragment != null) {
+        playerFragment.initialize(sInstance.youTube.apiKey, this);
+      }
+    }
+
+    parent.lastPlayerPosition = getAdapterPosition();
   }
 
   @CallSuper @Override public void pause() {
     isStarting = false;
+    if (thumbnail != null) {
+      thumbnail.setVisibility(View.VISIBLE);
+    }
     try {
-      mParent.mYoutubePlayer.pause();
+      parent.youTubePlayer.pause();
     } catch (NullPointerException | IllegalStateException er) {
       er.printStackTrace();
     }
@@ -151,9 +195,13 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
 
   @Override public void stop() {
     isStarting = false;
+    if (thumbnail != null) {
+      thumbnail.setVisibility(View.VISIBLE);
+    }
     try {
-      mParent.mYoutubePlayer.pause();
-      mParent.mYoutubePlayer.release();
+      parent.youTubePlayer.pause();
+      parent.youTubePlayer.release();
+      playerReleased = true;
     } catch (NullPointerException | IllegalStateException er) {
       er.printStackTrace();
     }
@@ -161,7 +209,7 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
 
   @Override public final long getDuration() {
     try {
-      return mParent.mYoutubePlayer != null ? mParent.mYoutubePlayer.getDurationMillis() : -1;
+      return parent.youTubePlayer != null ? parent.youTubePlayer.getDurationMillis() : -1;
     } catch (IllegalStateException er) {
       er.printStackTrace();
       return -1;
@@ -170,7 +218,7 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
 
   @Override public final long getCurrentPosition() {
     try {
-      return mParent.mYoutubePlayer != null ? mParent.mYoutubePlayer.getCurrentTimeMillis() : 0;
+      return parent.youTubePlayer != null ? parent.youTubePlayer.getCurrentTimeMillis() : 0;
     } catch (IllegalStateException er) {
       er.printStackTrace();
       return 0;
@@ -185,7 +233,7 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
   @Override public final boolean isPlaying() {
     try {
       // is loading the video or playing it
-      return isStarting || (mParent.mYoutubePlayer != null && mParent.mYoutubePlayer.isPlaying());
+      return isStarting || (parent.youTubePlayer != null && parent.youTubePlayer.isPlaying());
     } catch (IllegalStateException er) {
       er.printStackTrace();
       return isStarting;
@@ -196,64 +244,64 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
   protected abstract String getYoutubeVideoId();
 
   @CallSuper @Override public void onLoading() {
-    mHelper.onLoading();
-    mLogger.onLoading();
+    helper.onLoading();
+    logger.onLoading();
   }
 
   @CallSuper @Override public void onLoaded(String videoId) {
-    mHelper.onLoaded(videoId);
-    mLogger.onLoaded(videoId);
+    helper.onLoaded(videoId);
+    logger.onLoaded(videoId);
   }
 
   @CallSuper @Override public void onAdStarted() {
-    mHelper.onAdStarted();
-    mLogger.onAdStarted();
+    helper.onAdStarted();
+    logger.onAdStarted();
   }
 
   @CallSuper @Override public final void onVideoStarted() {
-    mHelper.onVideoStarted(this);
-    mLogger.onVideoStarted();
+    helper.onVideoStarted(this);
+    logger.onVideoStarted();
   }
 
   @CallSuper @Override public final void onVideoEnded() {
     isStarting = false;
-    mHelper.onCompletion(null);
-    mHelper.onVideoEnded(this);
-    mLogger.onVideoEnded();
+    helper.onCompletion(null);
+    helper.onVideoEnded(this);
+    logger.onVideoEnded();
   }
 
   @CallSuper @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
     PlaybackException error =
         errorReason != null ? new PlaybackException(errorReason.name(), 0, 0) : null;
-    mParent.onError(errorReason);
-    mHelper.onPlayerError(null, error);
-    mHelper.onYoutubeError(this, errorReason);
-    mLogger.onError(errorReason);
+    parent.onError(errorReason);
+    helper.onPlayerError(null, error);
+    helper.onYoutubeError(this, errorReason);
+    logger.onError(errorReason);
   }
 
   @CallSuper @Override public final void onPlaying() {
-    mParent.onPlaying();
-    mHelper.onPlaying();
-    mLogger.onPlaying();
+    parent.onPlaying();
+    helper.onPlaying();
+    logger.onPlaying();
   }
 
   // Paused by Native's button. Should not dispatch any custom behavior.
   @CallSuper @Override public final void onPaused() {
-    mParent.onPaused();
-    mHelper.onPaused();
-    mLogger.onPaused();
+    parent.onPaused();
+    helper.onPaused();
+    logger.onPaused();
   }
 
   // The method is called once RIGHT BEFORE A VIDEO GOT LOADED (by Youtube Player API)
   // And once again after the Player completes playback.
   // !IMPORTANT Ignore this.
   @Deprecated @CallSuper @Override public final void onStopped() {
-    mLogger.onStopped();
+    logger.onStopped();
   }
 
   @CallSuper @Override public void onBuffering(boolean isBuffering) {
-    mHelper.onBuffering(isBuffering);
-    mLogger.onBuffering(isBuffering);
+    helper.onBuffering(isBuffering);
+    logger.onBuffering(isBuffering);
   }
 
   // Called internal. Youtube's Playback event is internally called by API, so User should not
@@ -261,7 +309,7 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
   @CallSuper @Override public final void onSeekTo(int position) {
     seekPosition = position;
     isSeeking = true;
-    mLogger.onSeekTo(position);
+    logger.onSeekTo(position);
   }
 
   /**
@@ -275,22 +323,22 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
   @CallSuper @Override
   public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer,
       boolean isRecover) {
-    mLogger.onInitializationSuccess(provider, youTubePlayer, isRecover);
+    logger.onInitializationSuccess(provider, youTubePlayer, isRecover);
     // Switch youtube player
-    mParent.mYoutubePlayer = youTubePlayer;
-    mHelper.onYoutubePlayerChanged(youTubePlayer);
-    mParent.mYoutubePlayer.setPlayerStateChangeListener(YoutubeViewHolder.this);
-    mParent.mYoutubePlayer.setPlaybackEventListener(YoutubeViewHolder.this);
+    parent.youTubePlayer = youTubePlayer;
+    helper.onYoutubePlayerChanged(youTubePlayer);
+    parent.youTubePlayer.setPlayerStateChangeListener(YouTubeItemViewHolder.this);
+    parent.youTubePlayer.setPlaybackEventListener(YouTubeItemViewHolder.this);
     // Force player style
-    mParent.mYoutubePlayer.setPlayerStyle(
+    parent.youTubePlayer.setPlayerStyle(
         getPlayerStyle() == CHROME_LESS ? YouTubePlayer.PlayerStyle.CHROMELESS
             : YouTubePlayer.PlayerStyle.MINIMAL);
     if (!isRecover) {
       if (isSeeking) {
         isSeeking = false;
-        mParent.mYoutubePlayer.loadVideo(getYoutubeVideoId(), (int) seekPosition);
+        parent.youTubePlayer.loadVideo(getYoutubeVideoId(), (int) seekPosition);
       } else {
-        mParent.mYoutubePlayer.loadVideo(getYoutubeVideoId());
+        parent.youTubePlayer.loadVideo(getYoutubeVideoId());
       }
       seekPosition = 0;
     }
@@ -299,27 +347,36 @@ public abstract class YoutubeViewHolder extends BasePlayerViewHolder implements
   @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
       YouTubeInitializationResult youTubeInitializationResult) {
     // TODO Handle error
-    mLogger.onInitializationFailure(provider, youTubeInitializationResult);
+    logger.onInitializationFailure(provider, youTubeInitializationResult);
   }
 
   @Override public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView,
       YouTubeInitializationResult youTubeInitializationResult) {
-
+    Log.d(TAG, "onInitializationFailure() called with: "
+        + "youTubeInitializationResult = ["
+        + youTubeInitializationResult
+        + "]");
   }
 
   @Override public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView,
       YouTubeThumbnailLoader youTubeThumbnailLoader) {
     youTubeThumbnailLoader.setOnThumbnailLoadedListener(this);
     youTubeThumbnailLoader.setVideo(getYoutubeVideoId());
+    Log.d(TAG, "onInitializationSuccess() called with: "
+        + "youTubeThumbnailLoader = ["
+        + youTubeThumbnailLoader
+        + "]");
   }
 
   @Override public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView,
       YouTubeThumbnailLoader.ErrorReason errorReason) {
-
+    Log.d(TAG, "onThumbnailError() called with: " + "errorReason = [" + errorReason + "]");
   }
 
   @Override public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-    mHelper.onPrepared(itemView, itemView.getParent(), null);
+    wantsToPlay = true;
+    helper.onPrepared(itemView, itemView.getParent(), null);
+    Log.i(TAG, "Thumbnail:Wants to play: " + wantsToPlay);
   }
 
   @IntDef({
