@@ -40,7 +40,7 @@ import static im.ene.lab.toro.ext.ToroExt.sInstance;
  *
  * A library-level Abstract ViewHolder for Youtube
  */
-public abstract class YouTubeItemViewHolder extends BasePlayerViewHolder implements
+/* public */ abstract class YouTubeItemViewHolder extends BasePlayerViewHolder implements
     // 0. IMPORTANT: required for requesting Youtube API
     YouTubePlayer.OnInitializedListener,
     // 1. Normal playback state

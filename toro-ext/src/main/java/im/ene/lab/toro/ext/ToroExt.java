@@ -57,7 +57,7 @@ public final class ToroExt {
    *
    * @return current {@link ToroExt} instance.
    */
-  public final ToroExt youtube() {
+  /* package */ final ToroExt youtube() {
     // 0. Do not allow initializing YouTube twice
     if ((this.flags & Extensions.YOUTUBE) == Extensions.YOUTUBE) {
       throw new IllegalStateException(

@@ -68,14 +68,6 @@
     many suggested Videos.
   </string>
 
-  <string name="custom_sample_2">
-    Custom Sample 2: YouTube video list
-  </string>
-
-  <string name="custom_sample_2_description">
-    \tThis example introduce a sample of using YouTube Data API to get a playlist, and automatically play its Videos.
-  </string>
-
   <string name="title_activity_main">MainActivity</string>
 
   <string name="navigation_drawer_open">Open navigation drawer</string>

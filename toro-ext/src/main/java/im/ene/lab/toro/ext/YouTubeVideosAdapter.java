@@ -28,7 +28,7 @@ import im.ene.lab.toro.VideoPlayerManagerImpl;
  *
  * Youtube Video Manager + Video Adapter. This is the core of Youtube Support Extension.
  */
-public abstract class YouTubeVideosAdapter<VH extends YouTubeItemViewHolder> extends ToroAdapter<VH>
+/* public */ abstract class YouTubeVideosAdapter<VH extends YouTubeItemViewHolder> extends ToroAdapter<VH>
     implements VideoPlayerManager {
 
   final FragmentManager fragmentManager;

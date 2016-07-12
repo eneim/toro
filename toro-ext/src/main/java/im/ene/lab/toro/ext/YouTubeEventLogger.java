@@ -26,7 +26,7 @@ import com.google.android.youtube.player.YouTubePlayer;
  * !For debug purpose only
  * {@hide}
  */
-public class YouTubeEventLogger
+/* public */ class YouTubeEventLogger
     implements YouTubePlayer.PlaybackEventListener, YouTubePlayer.PlayerStateChangeListener,
     YouTubePlayer.OnInitializedListener {
 
