@@ -75,6 +75,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       int[] firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null);
       int[] lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null);
 
+      // TODO Consider to use Arrays#sort() instead?
       List<Integer> firstVisiblePositions = ToroUtil.asList(firstVisibleItemPositions);
       List<Integer> lastVisiblePositions = ToroUtil.asList(lastVisibleItemPositions);
 
@@ -86,7 +87,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       lastPosition = layoutManager.getLastVisibleItemPosition();
     }
 
-    if (firstPosition <= lastPosition /* don't screw up the 'for' loop */ &&  //
+    if (firstPosition <= lastPosition /* protect the 'for' loop */ &&  //
         (firstPosition != RecyclerView.NO_POSITION || lastPosition != RecyclerView.NO_POSITION)) {
       for (int i = firstPosition; i <= lastPosition; i++) {
         // Detected a view holder for video player
@@ -108,7 +109,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     final ToroPlayer electedPlayer = Toro.getStrategy().findBestPlayer(candidates);
 
     if (electedPlayer == currentPlayer) {
-      // No thing changes, no new President.
+      // No thing changes, no new President. Let it go
       if (currentPlayer != null && !currentPlayer.isPlaying()) {
         playerManager.restoreVideoState(currentPlayer.getMediaId());
         playerManager.startPlayback();
@@ -124,7 +125,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     }
 
     if (electedPlayer == null) {
-      // Old president resigned, there is no new one, we are screwed up, get out of here.
+      // Old president resigned, there is no new ones, we are screwed up, get out of here.
       return;
     }
 

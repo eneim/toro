@@ -311,7 +311,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
+    // TODO: deal with orientation changes
   }
 
   @Override public void onActivityDestroyed(Activity activity) {

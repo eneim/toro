@@ -19,6 +19,7 @@ package im.ene.lab.toro.player.widget;
 import android.widget.MediaController;
 import com.google.android.exoplayer.ExoPlayer;
 import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.player.PlayerControlCallback;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -44,7 +44,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import im.ene.lab.toro.ext.R;
 import im.ene.lab.toro.ext.util.ViewUtil;
-import im.ene.lab.toro.player.widget.PlayerControlCallback;
+import im.ene.lab.toro.player.PlayerControlCallback;
 import im.ene.lab.toro.player.widget.MediaPlayerController;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

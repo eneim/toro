@@ -129,4 +129,4 @@ crashlytics {
   androidNdkLibsOut 'src/main/libs'
 }
 
-apply plugin: 'com.google.gms.google-services'
+// apply plugin: 'com.google.gms.google-services'

@@ -72,12 +72,12 @@ dependencies {
   testCompile 'junit:junit:4.12'
   compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
-  compile "com.google.android.exoplayer:exoplayer:r1.5.9"
+  compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}@aar"
 
   compile project(':toro-media')
 
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
-  javadocDeps "com.google.android.exoplayer:exoplayer:r1.5.9"
+  javadocDeps "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}"
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

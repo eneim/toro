@@ -56,9 +56,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ToroViewHo
    */
   @Nullable protected abstract Object getItem(int position);
 
-  /**
-   *
-   */
+
   public abstract static class ViewHolder extends RecyclerView.ViewHolder
       implements ToroViewHolder {
 

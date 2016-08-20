@@ -35,7 +35,7 @@ import im.ene.lab.toro.media.State;
  */
 public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
 
-  public static final String TAG = "PlayerViewHelper";
+  static final String TAG = "PlayerViewHelper";
 
   protected final ToroPlayer player;
   protected final View itemView;
@@ -46,9 +46,9 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
   }
 
   /**
-   * {@hide}
+   * @hide
    */
-  @NonNull public ToroPlayer getPlayer() {
+  @NonNull protected final ToroPlayer getPlayer() {
     return player;
   }
 

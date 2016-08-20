@@ -21,5 +21,6 @@ package im.ene.lab.toro.ext;
  */
 final class Extensions {
 
+  // FIXME: Un-supported for now
   static final int YOUTUBE = 0x1; // when apply, flag's 1st bit changes from 0 to 1;
 }

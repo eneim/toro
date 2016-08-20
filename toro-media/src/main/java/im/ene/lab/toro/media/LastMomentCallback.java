@@ -24,7 +24,7 @@ package im.ene.lab.toro.media;
 public interface LastMomentCallback {
 
   /**
-   * Call right before {@code player} is released. Not that it will be null after this moment.
+   * Call right before {@code player} is released. Note that it will be null after this moment.
    *
    * @param player the Player which is being released.
    */
