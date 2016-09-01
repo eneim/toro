@@ -16,9 +16,8 @@
 package im.ene.lab.toro.player.internal;
 
 import android.annotation.TargetApi;
-import android.media.MediaDrm.KeyRequest;
-import android.media.MediaDrm.ProvisionRequest;
 import android.text.TextUtils;
+import com.google.android.exoplayer.drm.ExoMediaDrm;
 import com.google.android.exoplayer.drm.MediaDrmCallback;
 import com.google.android.exoplayer.util.Util;
 import java.io.IOException;
@@ -40,14 +39,15 @@ import java.util.UUID;
     defaultUri = WIDEVINE_GTS_DEFAULT_BASE_URI + params;
   }
 
-  @Override public byte[] executeProvisionRequest(UUID uuid, ProvisionRequest request)
+  @Override public byte[] executeProvisionRequest(UUID uuid, ExoMediaDrm.ProvisionRequest request)
       throws IOException {
     String url = request.getDefaultUrl() + "&signedRequest=" + new String(request.getData(),
         Charset.defaultCharset());
     return Util.executePost(url, null, null);
   }
 
-  @Override public byte[] executeKeyRequest(UUID uuid, KeyRequest request) throws IOException {
+  @Override public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request)
+      throws IOException {
     String url = request.getDefaultUrl();
     if (TextUtils.isEmpty(url)) {
       url = defaultUri;

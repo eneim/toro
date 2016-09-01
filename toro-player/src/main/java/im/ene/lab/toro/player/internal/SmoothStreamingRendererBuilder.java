@@ -31,6 +31,7 @@ import com.google.android.exoplayer.chunk.ChunkSampleSource;
 import com.google.android.exoplayer.chunk.ChunkSource;
 import com.google.android.exoplayer.chunk.FormatEvaluator.AdaptiveEvaluator;
 import com.google.android.exoplayer.drm.DrmSessionManager;
+import com.google.android.exoplayer.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer.drm.MediaDrmCallback;
 import com.google.android.exoplayer.drm.StreamingDrmSessionManager;
 import com.google.android.exoplayer.drm.UnsupportedDrmException;
@@ -135,7 +136,7 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
       DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(mainHandler, player);
 
       // Check drm support if necessary.
-      DrmSessionManager drmSessionManager = null;
+      DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       if (manifest.protectionElement != null) {
         if (Util.SDK_INT < 18) {
           player.onRenderersError(
@@ -143,7 +144,8 @@ public class SmoothStreamingRendererBuilder implements ExoMediaPlayer.RendererBu
           return;
         }
         try {
-          drmSessionManager = new StreamingDrmSessionManager(manifest.protectionElement.uuid,
+          drmSessionManager = //
+              StreamingDrmSessionManager.newFrameworkInstance(manifest.protectionElement.uuid,
               player.getPlaybackLooper(), drmCallback, null, player.getMainHandler(), player);
         } catch (UnsupportedDrmException e) {
           player.onRenderersError(e);
