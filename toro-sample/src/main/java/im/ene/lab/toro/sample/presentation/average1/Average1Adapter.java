@@ -54,7 +54,7 @@ public class Average1Adapter extends RecyclerView.Adapter<Average1ViewHolder> {
   }
 
   Object getItem(int position) {
-    if (position % 3 == 0) {
+    if (position % 3 == 1) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {
       return new SimpleObject();
@@ -62,7 +62,7 @@ public class Average1Adapter extends RecyclerView.Adapter<Average1ViewHolder> {
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? Average1ViewHolder.TYPE_VIDEO : Average1ViewHolder.TYPE_NORMAL;
+    return position % 3 == 1 ? Average1ViewHolder.TYPE_VIDEO : Average1ViewHolder.TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {
