@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 /**
  * Created by eneim on 1/31/16.
  * <p/>
@@ -48,16 +50,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)  //
 public final class Toro implements Application.ActivityLifecycleCallbacks {
 
-  private static final String TAG = "Toro";
+  private static final String TAG = "LOG:TORO";
   private static final Object LOCK = new Object();
-
-  /**
-   * Like {@link android.os.Build.VERSION#SDK_INT}, but in a place where it can be conveniently
-   * overridden for local testing.
-   */
-  static final int SDK_INT =
-      (Build.VERSION.SDK_INT == 23 && Build.VERSION.CODENAME.charAt(0) == 'N') ? 24
-          : Build.VERSION.SDK_INT;
 
   /**
    * Stop playback strategy
@@ -562,48 +556,60 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   // Update to correctly support API 24+
   private void dispatchOnActivityInactive(Activity activity) {
-    for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
-      ToroScrollListener listener = entry.getValue();
-      SavedState state = mStates.get(entry.getKey());
-      if (state == null) {
-        state = new SavedState();
-        mStates.put(entry.getKey(), state);
-      }
-
-      VideoPlayerManager manager = listener.getManager();
-      if (manager.getPlayer() != null) {
-        // Save state
-        state.player = manager.getPlayer();
-        state.position = manager.getPlayer().getCurrentPosition();
-
-        if (manager.getPlayer().isPlaying()) {
-          manager.saveVideoState(manager.getPlayer().getMediaId(),
-              manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
-          manager.pausePlayback();
+    for (Map.Entry<Integer, RecyclerView> viewEntry : mViews.entrySet()) {
+      if (viewEntry.getValue().getContext() == activity) {
+        ToroScrollListener listener = mListeners.get(viewEntry.getKey());
+        if (listener == null) { // This should not happen generally
+          continue;
         }
 
-        manager.getPlayer().onActivityInactive();
+        SavedState state = mStates.get(viewEntry.getKey());
+        if (state == null) {
+          state = new SavedState();
+          mStates.put(viewEntry.getKey(), state);
+        }
+
+        VideoPlayerManager manager = listener.getManager();
+        if (manager.getPlayer() != null) {
+          // Save state
+          state.player = manager.getPlayer();
+          state.position = manager.getPlayer().getCurrentPosition();
+
+          if (manager.getPlayer().isPlaying()) {
+            manager.saveVideoState(manager.getPlayer().getMediaId(),
+                manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
+            manager.pausePlayback();
+          }
+
+          manager.getPlayer().onActivityInactive();
+        }
       }
     }
   }
 
   private void dispatchOnActivityActive(Activity activity) {
-    for (Map.Entry<Integer, ToroScrollListener> entry : mListeners.entrySet()) {
-      ToroScrollListener listener = entry.getValue();
-      SavedState state = mStates.get(entry.getKey());
-      VideoPlayerManager manager = listener.getManager();
-      if (manager.getPlayer() == null) {
-        if (state != null && state.player != null) {
-          manager.setPlayer(state.player);
-          manager.saveVideoState(state.player.getMediaId(), state.position,
-              state.player.getDuration());
+    for (Map.Entry<Integer, RecyclerView> viewEntry : mViews.entrySet()) {
+      if (viewEntry.getValue().getContext() == activity) {
+        ToroScrollListener listener = mListeners.get(viewEntry.getKey());
+        if (listener == null) { // This should not happen generally
+          continue;
         }
-      }
 
-      if (manager.getPlayer() != null) {
-        manager.getPlayer().onActivityActive();
-        manager.restoreVideoState(manager.getPlayer().getMediaId());
-        manager.startPlayback();
+        SavedState state = mStates.get(viewEntry.getKey());
+        VideoPlayerManager manager = listener.getManager();
+        if (manager.getPlayer() == null) {
+          if (state != null && state.player != null) {
+            manager.setPlayer(state.player);
+            manager.saveVideoState(state.player.getMediaId(), state.position,
+                state.player.getDuration());
+          }
+        }
+
+        if (manager.getPlayer() != null) {
+          manager.getPlayer().onActivityActive();
+          manager.restoreVideoState(manager.getPlayer().getMediaId());
+          manager.startPlayback();
+        }
       }
     }
   }
