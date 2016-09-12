@@ -70,5 +70,5 @@ dependencies {
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
 // > gradlew install
 // > gradlew bintrayUpload
-apply from: '../ref/installv1.gradle'
-apply from: '../ref/bintrayv1.gradle'
+apply from: '../.scripts/installv1.gradle'
+apply from: '../.scripts/bintrayv1.gradle'
