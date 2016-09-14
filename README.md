@@ -12,6 +12,36 @@
 
 > ***Video list auto playback made simple, specially built for RecyclerView***
 
+## 0. Version 2.0.0
+
+- Currently next update is under development with many improvement.
+
+- SNAPSHOT is available, the usage is as follow:
+
+  - Add the following line to your ```build.gradle```
+  
+  ```groovy
+  repositories {
+    // Other repositories
+    // ...
+    // Snapshot repo
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+  }
+  ```
+
+  - Include SNAPSHOT to dependencies
+  
+  ```groovy
+  // Choose the suitable one
+  compile "im.ene.lab:toro:2.0.0-SNAPSHOT"
+  compile "im.ene.lab:toro-player:2.0.0-SNAPSHOT"
+  compile "im.ene.lab:toro-ext:2.0.0-SNAPSHOT"
+  ```
+  
+  For more usage, please refer to ```toro-sample``` code base. Documentation will be available at release.
+  
 ## 1. Main features:
 
 - Auto start/pause/resume video by scrolling your RecyclerView, support all Official built-in LayoutManagers. 
