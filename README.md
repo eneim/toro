@@ -14,6 +14,9 @@
 
 ## 0. Version 2.0.0
 
+[ ![Download](https://api.bintray.com/packages/eneim/maven/Toro/images/download.svg) ](https://bintray.com/eneim/maven/Toro/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro/badge.svg)](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro)
+
 - Currently next update is under development with many improvement.
 
 - SNAPSHOT is available, the usage is as follow:
