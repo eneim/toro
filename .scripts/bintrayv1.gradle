@@ -14,9 +14,92 @@
  * limitations under the License.
  */
 
+apply plugin: 'maven'
+apply plugin: 'signing'
 apply plugin: 'com.jfrog.bintray'
 
 version = libraryVersion
+version = libraryVersion
+group = publishedGroupId
+
+def isReleaseBuild() {
+  return libraryVersion.contains("SNAPSHOT") == false
+}
+
+def getReleaseRepositoryUrl() {
+  return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL :
+      "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+}
+
+def getSnapshotRepositoryUrl() {
+  return hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL :
+      "https://oss.sonatype.org/content/repositories/snapshots/"
+}
+
+def getRepositoryUsername() {
+  return hasProperty('SONATYPE_NEXUS_USERNAME') ? SONATYPE_NEXUS_USERNAME : ""
+}
+
+def getRepositoryPassword() {
+  return hasProperty('SONATYPE_NEXUS_PASSWORD') ? SONATYPE_NEXUS_PASSWORD : ""
+}
+
+afterEvaluate { project ->
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        pom.groupId = publishedGroupId
+        pom.artifactId = artifact
+        pom.version = libraryVersion
+
+        repository(url: getReleaseRepositoryUrl()) {
+          authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+        }
+        snapshotRepository(url: getSnapshotRepositoryUrl()) {
+          authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+        }
+
+        pom.project {
+          packaging 'aar'
+          groupId publishedGroupId
+          artifactId artifact
+
+          // Add your description here
+          name libraryName
+          description libraryDescription
+          url siteUrl
+
+          // Set your license
+          licenses {
+            license {
+              name licenseName
+              url licenseUrl
+            }
+          }
+          developers {
+            developer {
+              id developerId
+              name developerName
+              email developerEmail
+            }
+          }
+          scm {
+            connection gitUrl
+            developerConnection gitUrl
+            url siteUrl
+          }
+        }
+      }
+    }
+  }
+
+  signing {
+    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+  }
+}
 
 if (project.hasProperty("android")) {
   // Android libraries
@@ -45,7 +128,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
-  archives javadocJar
+  // archives javadocJar
   archives sourcesJar
 }
 

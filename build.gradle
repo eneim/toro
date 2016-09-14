@@ -18,7 +18,7 @@ buildscript {
 }
 
 ext {
-  libraryVersion = '2.0.0'
+  libraryVersion = '2.0.0-SNAPSHOT'
   androidVersion = 24
   buildToolVersion = '24.0.2'
   supportLibraryVersion = '24.2.0'
@@ -31,6 +31,9 @@ allprojects {
     jcenter()
 
     maven { url "https://jitpack.io" }
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
   }
 
   tasks.withType(Javadoc) {

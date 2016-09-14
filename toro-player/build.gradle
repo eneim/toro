@@ -72,7 +72,7 @@ dependencies {
   testCompile 'junit:junit:4.12'
   compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:support-v4:${rootProject.ext.supportLibraryVersion}"
-  compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}@aar"
+  compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}"
 
   compile project(':toro-media')
 
