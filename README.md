@@ -35,8 +35,11 @@
   
   ```groovy
   // Choose the suitable one
+  // 1. Only use Toro
   compile "im.ene.lab:toro:2.0.0-SNAPSHOT"
+  // 2. Or use custom player widgets, backed by ExoPlayer
   compile "im.ene.lab:toro-player:2.0.0-SNAPSHOT"
+  // 3. Or even want to try some customized extensions for ease
   compile "im.ene.lab:toro-ext:2.0.0-SNAPSHOT"
   ```
   
