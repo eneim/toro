@@ -5,7 +5,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.2.0-rc2'
+    classpath 'com.android.tools.build:gradle:2.2.0'
 
     classpath 'com.google.gms:google-services:3.0.0'
 
@@ -21,7 +21,7 @@ ext {
   libraryVersion = '2.0.0-SNAPSHOT'
   androidVersion = 24
   buildToolVersion = '24.0.2'
-  supportLibraryVersion = '24.2.0'
+  supportLibraryVersion = '24.2.1'
   exoPlayerVersion = 'r1.5.10'
   minSupportSDKVersion = 16
 }

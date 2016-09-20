@@ -144,4 +144,8 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
   }
 
   /* END: ToroPlayer callbacks (partly) */
+
+  @Override public boolean isLoopAble() {
+    return true;
+  }
 }
