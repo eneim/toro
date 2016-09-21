@@ -45,12 +45,12 @@ public abstract class Basic1BaseVideoViewHolder extends Basic1ViewHolder
   }
 
   /* BEGIN: ToroViewHolder callbacks */
-  @Override public void onAttachedToParent() {
-    helper.onAttachedToParent();
+  @Override public void onAttachedToWindow() {
+    helper.onAttachedToWindow();
   }
 
-  @Override public void onDetachedFromParent() {
-    helper.onDetachedFromParent();
+  @Override public void onDetachedFromWindow() {
+    helper.onDetachedFromWindow();
   }
   /* END: ToroViewHolder callbacks */
 

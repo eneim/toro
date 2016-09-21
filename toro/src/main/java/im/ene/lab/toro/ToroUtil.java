@@ -61,7 +61,7 @@ public final class ToroUtil {
   }
 
   @Nullable private static Rect getRecyclerViewRect(ViewParent parent) {
-    if (parent == null) { // view is not attached to RecyclerView
+    if (parent == null) { // view is not attached to RecyclerView parent
       return null;
     }
 
@@ -80,6 +80,7 @@ public final class ToroUtil {
     if (player.getPlayerView() == null) {
       throw new IllegalArgumentException("Player must have a valid VideoView.");
     }
+
     Rect videoRect = getVideoRect(player);
     Rect parentRect = getRecyclerViewRect(parent);
 

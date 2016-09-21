@@ -57,7 +57,7 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
-  @CallSuper public void onAttachedToParent() {
+  @CallSuper public void onAttachedToWindow() {
     ToroScrollListener listener = itemView.getParent() != null ?  //
         Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
     if (listener != null && listener.getManager().getPlayer() == null) {
@@ -75,7 +75,7 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
-  @CallSuper public void onDetachedFromParent() {
+  @CallSuper public void onDetachedFromWindow() {
     ToroScrollListener listener = itemView.getParent() != null ?  //
         Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
     // Manually save Video state

@@ -144,13 +144,13 @@ public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
   @Override public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
     if (holder instanceof ToroViewHolder) {
-      ((ToroViewHolder) holder).onAttachedToParent();
+      ((ToroViewHolder) holder).onAttachedToWindow();
     }
   }
 
   @Override public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
     if (holder instanceof ToroViewHolder) {
-      ((ToroViewHolder) holder).onDetachedFromParent();
+      ((ToroViewHolder) holder).onDetachedFromWindow();
     }
   }
 }

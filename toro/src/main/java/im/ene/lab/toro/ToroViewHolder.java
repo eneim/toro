@@ -24,14 +24,14 @@ import android.support.v7.widget.RecyclerView;
 public interface ToroViewHolder {
 
   /**
-   * Required for {@link PlayerViewHelper#onAttachedToParent()}. See {@link
+   * Required for {@link PlayerViewHelper#onAttachedToWindow()}. See {@link
    * RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
-  void onAttachedToParent();
+  void onAttachedToWindow();
 
   /**
-   * Required for {@link PlayerViewHelper#onDetachedFromParent()}. See {@link
+   * Required for {@link PlayerViewHelper#onDetachedFromWindow()}. See {@link
    * RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
-  void onDetachedFromParent();
+  void onDetachedFromWindow();
 }

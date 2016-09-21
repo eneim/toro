@@ -39,11 +39,11 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder & ToroViewHo
   }
 
   @CallSuper @Override public void onViewAttachedToWindow(VH holder) {
-    holder.onAttachedToParent();
+    holder.onAttachedToWindow();
   }
 
   @CallSuper @Override public void onViewDetachedFromWindow(VH holder) {
-    holder.onDetachedFromParent();
+    holder.onDetachedFromWindow();
   }
 
   @CallSuper @Override public void onBindViewHolder(VH holder, int position) {

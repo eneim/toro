@@ -96,12 +96,12 @@ public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
     mLongClickListener = null;
   }
 
-  @CallSuper @Override public void onAttachedToParent() {
-    mHelper.onAttachedToParent();
+  @CallSuper @Override public void onAttachedToWindow() {
+    mHelper.onAttachedToWindow();
   }
 
-  @CallSuper @Override public void onDetachedFromParent() {
-    mHelper.onDetachedFromParent();
+  @CallSuper @Override public void onDetachedFromWindow() {
+    mHelper.onDetachedFromWindow();
   }
 
   @Override public int getPlayOrder() {
