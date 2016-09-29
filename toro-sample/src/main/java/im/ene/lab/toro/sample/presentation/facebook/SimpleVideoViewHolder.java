@@ -28,7 +28,6 @@ import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ext.ToroVideoViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.LastMomentCallback;
-import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -86,8 +85,8 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     mInfo.setText("Preparing");
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
-    super.onVideoPrepared(mp);
+  @Override public void onVideoPrepared() {
+    super.onVideoPrepared();
     isPlayable = true;
     mInfo.setText("Prepared");
     latestPosition = 0;
@@ -132,7 +131,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     mInfo.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
@@ -140,7 +139,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
       }
     }).start();
     mInfo.setText("Error: videoId = " + getMediaId());
-    return super.onPlaybackError(mp, error);
+    return super.onPlaybackError(error);
   }
 
   @Override protected boolean allowLongPressSupport() {

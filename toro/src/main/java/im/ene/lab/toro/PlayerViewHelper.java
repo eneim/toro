@@ -22,18 +22,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.OnPlayerStateChangeListener;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.State;
 
 /**
  * Created by eneim on 2/1/16.
  *
- * A helper class to support Video's callbacks from {@link Cineer} as well as {@link
- * RecyclerView.Adapter}
+ * A helper class to support Video's callbacks from {@link RecyclerView.Adapter}
  */
-public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
+public abstract class PlayerViewHelper {
 
   static final String TAG = "PlayerViewHelper";
 
@@ -109,63 +104,28 @@ public abstract class PlayerViewHelper implements OnPlayerStateChangeListener {
   /* BEGIN: Callback for MediaPlayer */
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener} with {@link Cineer#PLAYER_PREPARED}
-   *
    * @param itemView main View of current ViewHolder
    * @param parent parent which holds current ViewHolder
-   * @param mediaPlayer current MediaPlayer
    */
-  @CallSuper public void onPrepared(@NonNull View itemView, @Nullable ViewParent parent,
-      @Nullable Cineer mediaPlayer) {
-    Toro.sInstance.onVideoPrepared(this.player, itemView, parent, mediaPlayer);
+  @CallSuper protected void onPrepared(@NonNull View itemView, @Nullable ViewParent parent) {
+    Toro.sInstance.onVideoPrepared(this.player, itemView, parent);
+  }
+
+  @Nullable protected final VideoPlayerManager getPlayerManager(ViewParent parent) {
+    ToroScrollListener listener =
+        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
+    return listener == null ? null : listener.getManager();
   }
 
   /**
-   * Callback from {@link OnPlayerStateChangeListener} with {@link Cineer#PLAYER_ENDED}
-   *
-   * @param mp completed MediaPlayer
+   * Complete the playback
    */
-  @CallSuper public void onCompletion(@Nullable Cineer mp) {
-    Toro.sInstance.onPlaybackCompletion(this.player, mp);
+  @CallSuper protected void onCompletion() {
+    Toro.sInstance.onPlaybackCompletion(this.player);
   }
 
-  /* END: Callback for MediaPlayer */
-
-  /**
-   * Implement {@link OnPlayerStateChangeListener}
-   */
-  @Override public final void onPlayerStateChanged(Cineer player, boolean playWhenReady,
-      @State int playbackState) {
-    switch (playbackState) {
-      case Cineer.PLAYER_PREPARED:
-        this.player.onVideoPrepared(player);
-        this.onPrepared(this.itemView, this.itemView.getParent(), player);
-        break;
-      case Cineer.PLAYER_ENDED:
-        this.player.onPlaybackCompleted();
-        this.onCompletion(player);
-        break;
-      case Cineer.PLAYER_BUFFERING:
-        break;
-      case Cineer.PLAYER_IDLE:
-        break;
-      case Cineer.PLAYER_PREPARING:
-        this.player.onVideoPreparing();
-        break;
-      case Cineer.PLAYER_READY:
-        if (playWhenReady) {
-          this.player.onPlaybackStarted();
-        } else {
-          this.player.onPlaybackPaused();
-        }
-        break;
-      default:
-        break;
-    }
-  }
-
-  @Override public final boolean onPlayerError(Cineer player, PlaybackException error) {
-    return this.player.onPlaybackError(player, error) &&  //
-        Toro.sInstance.onPlaybackError(this.player, player, error);
+  protected final boolean onPlaybackError(Exception error) {
+    return this.player.onPlaybackError(error) &&  //
+        Toro.sInstance.onPlaybackError(this.player, error);
   }
 }

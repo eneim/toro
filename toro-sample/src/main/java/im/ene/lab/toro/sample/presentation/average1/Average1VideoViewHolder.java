@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.VideoView;
 import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -120,8 +119,8 @@ public class Average1VideoViewHolder extends Average1BaseVideoViewHolder {
     stateView.setText("Preparing");
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
-    super.onVideoPrepared(mp);
+  @Override public void onVideoPrepared() {
+    super.onVideoPrepared();
     stateView.setText("Prepared");
   }
 
@@ -138,9 +137,9 @@ public class Average1VideoViewHolder extends Average1BaseVideoViewHolder {
     stateView.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     stateView.setText(error != null ? "Error: " + error.getLocalizedMessage() : "Error!");
-    return super.onPlaybackError(mp, error);
+    return super.onPlaybackError(error);
   }
 
   /* END: ToroPlayer callbacks (partly) */

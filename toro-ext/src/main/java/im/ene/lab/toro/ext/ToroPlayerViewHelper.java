@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.lab.toro.ext;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewParent;
+import im.ene.lab.toro.PlayerViewHelper;
+import im.ene.lab.toro.Toro;
+import im.ene.lab.toro.ToroPlayer;
+import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.OnPlayerStateChangeListener;
+import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.media.State;
 
 /**
  * Created by eneim on 2/6/16.
@@ -31,7 +39,8 @@ import android.view.ViewParent;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class ToroPlayerViewHelper extends PlayerViewHelper {
+public final class ToroPlayerViewHelper extends PlayerViewHelper implements
+    OnPlayerStateChangeListener {
 
   public ToroPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
@@ -39,10 +48,9 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper {
 
   @Override public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
-    ToroScrollListener listener =
-        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
+    VideoPlayerManager manager = super.getPlayerManager(parent);
     // Important components are missing, return
-    if (listener == null) {
+    if (manager == null) {
       return false;
     }
 
@@ -51,9 +59,7 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper {
       return false;
     }
 
-    VideoPlayerManager manager = listener.getManager();
     ToroPlayer currentPlayer = manager.getPlayer();
-
     if (!player.equals(currentPlayer)) {
       // Being pressed player is a new one
       // All conditions to switch players has passed, process the switching
@@ -86,5 +92,42 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper {
       }
       return true;
     }
+  }
+
+  /**
+   * Implement {@link OnPlayerStateChangeListener}
+   */
+  @Override public final void onPlayerStateChanged(Cineer player, boolean playWhenReady,
+      @State int playbackState) {
+    switch (playbackState) {
+      case Cineer.PLAYER_PREPARED:
+        this.player.onVideoPrepared();
+        this.onPrepared(this.itemView, this.itemView.getParent());
+        break;
+      case Cineer.PLAYER_ENDED:
+        this.player.onPlaybackCompleted();
+        this.onCompletion();
+        break;
+      case Cineer.PLAYER_BUFFERING:
+        break;
+      case Cineer.PLAYER_IDLE:
+        break;
+      case Cineer.PLAYER_PREPARING:
+        this.player.onVideoPreparing();
+        break;
+      case Cineer.PLAYER_READY:
+        if (playWhenReady) {
+          this.player.onPlaybackStarted();
+        } else {
+          this.player.onPlaybackPaused();
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  @Override public final boolean onPlayerError(Cineer player, PlaybackException error) {
+    return super.onPlaybackError(error);
   }
 }

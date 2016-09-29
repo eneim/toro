@@ -18,13 +18,9 @@ package im.ene.lab.toro.ext;
 
 import android.support.annotation.CallSuper;
 import android.view.View;
-import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
 
 /**
  * Created by eneim on 1/31/16.
@@ -34,7 +30,7 @@ import im.ene.lab.toro.media.PlaybackException;
 public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final PlayerViewHelper mHelper;
+  protected final ToroPlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
@@ -119,7 +115,7 @@ public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
 
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
+  @Override public void onVideoPrepared() {
 
   }
 
@@ -135,7 +131,7 @@ public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
 
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     return true;  // don't want to see the annoying dialog
   }
 

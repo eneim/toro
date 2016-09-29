@@ -19,8 +19,6 @@ package im.ene.lab.toro.ext;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
 import im.ene.lab.toro.player.widget.ToroVideoView;
 
 /**
@@ -91,7 +89,7 @@ public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
     return visibleAreaOffset() >= 0.75 && mPlayable;
   }
 
-  @CallSuper @Override public void onVideoPrepared(Cineer mp) {
+  @CallSuper @Override public void onVideoPrepared() {
     mPlayable = true;
   }
 
@@ -99,9 +97,9 @@ public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
 
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     mPlayable = false;
-    return super.onPlaybackError(mp, error);
+    return super.onPlaybackError(error);
   }
 
   @Override public void stop() {

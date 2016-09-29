@@ -19,11 +19,9 @@ package im.ene.lab.toro.sample.presentation.basic3;
 import android.view.View;
 import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
+import im.ene.lab.toro.ext.ToroPlayerViewHelper;
 
 /**
  * Created by eneim on 6/29/16.
@@ -67,7 +65,7 @@ public abstract class Basic3BaseVideoViewHolder extends Basic3ViewHolder
 
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
+  @Override public void onVideoPrepared() {
     this.isPlayable = true;
   }
 
@@ -83,7 +81,7 @@ public abstract class Basic3BaseVideoViewHolder extends Basic3ViewHolder
     this.isPlayable = false;
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     this.isPlayable = false;
     return true;
   }
