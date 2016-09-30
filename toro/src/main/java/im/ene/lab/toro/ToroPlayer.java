@@ -85,6 +85,8 @@ public interface ToroPlayer {
    */
   boolean isPlaying();
 
+  void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+
   // Custom method to add Toro abilities
 
   /**

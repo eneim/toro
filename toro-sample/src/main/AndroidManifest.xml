@@ -60,10 +60,15 @@
         android:launchMode="singleTop"
         android:name=".presentation.facebook.FbFeedActivity"/>
 
+    <!--<activity-->
+        <!--android:label="@string/activity_show_case"-->
+        <!--android:launchMode="singleTop"-->
+        <!--android:name=".presentation.youtube.YouTubeVideosActivity"/>-->
+
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.youtube.YouTubeVideosActivity"/>
+        android:name=".presentation.legacy.LegacyActivity"/>
 
     <activity
         android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"

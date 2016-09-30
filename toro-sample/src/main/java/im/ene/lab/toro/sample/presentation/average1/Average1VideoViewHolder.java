@@ -18,6 +18,7 @@ package im.ene.lab.toro.sample.presentation.average1;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -104,6 +105,10 @@ public class Average1VideoViewHolder extends Average1BaseVideoViewHolder {
 
   @Override public boolean isPlaying() {
     return this.videoPlayer.isPlaying();
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+    this.videoPlayer.setVolume(volume);
   }
 
   // MEMO: Unique or null

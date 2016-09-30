@@ -19,6 +19,7 @@ package im.ene.lab.toro.sample.presentation.facebook;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -237,6 +238,10 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       }
 
       return latestPosition;
+    }
+
+    @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+      this.mVideoView.setVolume(volume);
     }
 
     @Override public void onLastMoment(Cineer player) {

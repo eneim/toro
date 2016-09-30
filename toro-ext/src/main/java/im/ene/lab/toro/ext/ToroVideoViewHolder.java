@@ -26,6 +26,7 @@ import im.ene.lab.toro.player.widget.ToroVideoView;
  */
 public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
 
+  @NonNull
   protected final ToroVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 

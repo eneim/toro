@@ -3,7 +3,7 @@
   <string name="activity_show_case">Toro v2 Showcase</string>
 
   <string name="sample">
-    GitHub Wikis is a simple way to let others contribute content. Any GitHub user can create and
+    GitHub Wiki is a simple way to let others contribute content. Any GitHub user can create and
     edit pages to use for documentation, examples, support, or anything you wish.
   </string>
 
@@ -13,7 +13,7 @@
 
   <string name="basic_sample_1_description">
     \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
-    addToro support into the App.\n\n
+    add Toro support into the App.\n\n
     \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
     (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
     we could reduce a lot of time on Video.
@@ -66,6 +66,19 @@
     \tThis example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
     A click event to a Video will bring a \'Video list\' where requested Video is played as well as
     many suggested Videos.
+  </string>
+
+  <string name="legacy_sample_1">
+    Basic Sample 1: Minimal, Legacy
+  </string>
+
+  <string name="legacy_sample_1_description">
+    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    add Toro support into the App.\n\n
+    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
+    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
+    we could reduce a lot of time on Video.\n\n
+    \tThis sample use the legacy VideoView.
   </string>
 
   <string name="title_activity_main">MainActivity</string>
