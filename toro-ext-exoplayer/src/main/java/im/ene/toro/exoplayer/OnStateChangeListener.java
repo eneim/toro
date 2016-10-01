@@ -19,14 +19,14 @@ package im.ene.toro.exoplayer;
 /**
  * Created by eneim on 6/9/16.
  */
-public interface OnPlayerStateChangeListener {
+public interface OnStateChangeListener {
 
   /**
    * @param playWhenReady Whether playback will proceed when ready.
    * @param playbackState One of the {@link State} constants defined in the {@link ToroExoPlayer}
    * interface.
    */
-  void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady, @State int playbackState);
+  void onPlayerStateChanged(boolean playWhenReady, @State int playbackState);
 
   /**
    * Invoked when an error occurs. The playback state will transition to {@link ToroExoPlayer#PLAYER_IDLE}
@@ -35,5 +35,5 @@ public interface OnPlayerStateChangeListener {
    *
    * @param error The error.
    */
-  boolean onPlayerError(ToroExoPlayer player, PlaybackException error);
+  boolean onPlayerError(Exception error);
 }

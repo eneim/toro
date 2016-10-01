@@ -97,7 +97,7 @@ public interface ToroExoPlayer {
   void setOnInfoListener(OnInfoListener listener);
 
   /** Combined with {@link State}. Used to setup MediaPlayer for custom Player widget. */
-  void setPlayerStateChangeListener(OnPlayerStateChangeListener listener);
+  void setPlayerStateChangeListener(OnStateChangeListener listener);
 
   /**
    * See {@link MediaPlayer#setDataSource(Context, Uri, Map)}
@@ -221,7 +221,7 @@ public interface ToroExoPlayer {
      */
     void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume);
 
-    void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener);
+    void setOnPlayerStateChangeListener(OnStateChangeListener listener);
   }
 
   /**

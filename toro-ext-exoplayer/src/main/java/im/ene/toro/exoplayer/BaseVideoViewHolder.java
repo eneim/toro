@@ -31,13 +31,13 @@ import im.ene.lab.toro.ToroViewHolder;
 public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final ExpPlayerViewHelper mHelper;
+  protected final ExoPlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
   public BaseVideoViewHolder(View itemView) {
     super(itemView);
-    mHelper = new ExpPlayerViewHelper(this, itemView);
+    mHelper = new ExoPlayerViewHelper(this, itemView);
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {

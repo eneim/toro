@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package im.ene.toro.exoplayer.internal;
+package im.ene.toro.exoplayer.develop;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -50,12 +50,14 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.upstream.UriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.Util;
+import im.ene.toro.exoplayer.internal.EnhancedMediaCodecAudioTrackRenderer;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 import java.io.IOException;
 
 /**
- * A {@link RendererBuilder} for DASH.
+ * A {@link DemoPlayer.RendererBuilder} for DASH.
  */
-public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class DashRendererBuilder implements DemoPlayer.RendererBuilder {
 
   private static final String TAG = "DashRendererBuilder";
 
@@ -84,7 +86,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
     this.drmCallback = drmCallback;
   }
 
-  @Override public void buildRenderers(ExoMediaPlayer player) {
+  @Override public void buildRenderers(DemoPlayer player) {
     currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, drmCallback, player);
     currentAsyncBuilder.init();
   }
@@ -102,7 +104,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
     private final Context context;
     private final String userAgent;
     private final MediaDrmCallback drmCallback;
-    private final ExoMediaPlayer player;
+    private final DemoPlayer player;
     private final ManifestFetcher<MediaPresentationDescription> manifestFetcher;
     private final UriDataSource manifestDataSource;
 
@@ -111,7 +113,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
     private long elapsedRealTimeOffset;
 
     public AsyncRendererBuilder(Context context, String userAgent, String url,
-        MediaDrmCallback drmCallback, ExoMediaPlayer player) {
+        MediaDrmCallback drmCallback, DemoPlayer player) {
       this.context = context;
       this.userAgent = userAgent;
       this.drmCallback = drmCallback;

@@ -17,16 +17,12 @@
 package im.ene.toro.exoplayer;
 
 /**
- * Created by eneim on 7/1/16.
- *
- * Callback which will be triggered right before releasing the Media player.
+ * Created by eneim on 10/1/16.
  */
-public interface LastMomentCallback {
 
-  /**
-   * Call right before {@code player} is released. Note that it will be null after this moment.
-   *
-   * @param player the Player which is being released.
-   */
-  void onLastMoment(ToroExoPlayer player);
+public interface SimpleMediaPlayer {
+
+  long getDuration();
+
+  long getCurrentPosition();
 }

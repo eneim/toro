@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package im.ene.toro.exoplayer.internal;
+package im.ene.toro.exoplayer.develop;
 
 import android.annotation.TargetApi;
 import android.text.TextUtils;
@@ -23,7 +23,7 @@ import com.google.android.exoplayer.drm.MediaDrmCallback;
 import com.google.android.exoplayer.drm.StreamingDrmSessionManager;
 import com.google.android.exoplayer.util.Util;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,6 +35,8 @@ import java.util.UUID;
 
   private static final String PLAY_READY_TEST_DEFAULT_URI =
       "http://playready.directtaps.net/pr/svc/rightsmanager.asmx";
+  private static final Map<String, String> PROVISIONING_REQUEST_PROPERTIES =
+      Collections.singletonMap("Content-Type", "application/octet-stream");
   private static final Map<String, String> KEY_REQUEST_PROPERTIES;
 
   static {
@@ -47,9 +49,8 @@ import java.util.UUID;
 
   @Override public byte[] executeProvisionRequest(UUID uuid, ProvisionRequest request)
       throws IOException {
-    String url = request.getDefaultUrl() + "&signedRequest=" + new String(request.getData(),
-        Charset.defaultCharset());
-    return Util.executePost(url, null, null);
+    String url = request.getDefaultUrl() + "&signedRequest=" + new String(request.getData());
+    return Util.executePost(url, null, PROVISIONING_REQUEST_PROPERTIES);
   }
 
   @Override public byte[] executeKeyRequest(UUID uuid, KeyRequest request)

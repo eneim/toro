@@ -35,16 +35,16 @@ import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.metadata.id3.Id3Frame;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
-import im.ene.toro.exoplayer.ToroExoPlayer;
-import im.ene.toro.exoplayer.LastMomentCallback;
+import im.ene.toro.exoplayer.BuildConfig;
 import im.ene.toro.exoplayer.Media;
 import im.ene.toro.exoplayer.OnInfoListener;
-import im.ene.toro.exoplayer.OnPlayerStateChangeListener;
+import im.ene.toro.exoplayer.OnReleaseCallback;
+import im.ene.toro.exoplayer.OnStateChangeListener;
 import im.ene.toro.exoplayer.OnVideoSizeChangedListener;
-import im.ene.toro.exoplayer.PlaybackException;
 import im.ene.toro.exoplayer.PlaybackInfo;
+import im.ene.toro.exoplayer.SimpleMediaPlayer;
 import im.ene.toro.exoplayer.State;
-import im.ene.toro.exoplayer.BuildConfig;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 import im.ene.toro.exoplayer.internal.RendererBuilderFactory;
 import java.util.List;
@@ -129,14 +129,14 @@ public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPla
       }
 
       if (onVideoSizeChangedListener != null) {
-        onVideoSizeChangedListener.onVideoSizeChanged(mMediaPlayer, width, height);
+        onVideoSizeChangedListener.onVideoSizeChanged(width, height);
       }
     }
   };
 
-  private OnPlayerStateChangeListener stateChangeListenerDelegate =
-      new OnPlayerStateChangeListener() {
-        @Override public void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady,
+  private OnStateChangeListener stateChangeListenerDelegate =
+      new OnStateChangeListener() {
+        @Override public void onPlayerStateChanged(boolean playWhenReady,
             @State int playbackState) {
           if (playbackState == ToroExoPlayer.PLAYER_ENDED) {
             mPlayRequested = false;
@@ -145,13 +145,13 @@ public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPla
           }
 
           if (mPlayerStateChangeListener != null) {
-            mPlayerStateChangeListener.onPlayerStateChanged(player, playWhenReady, playbackState);
+            mPlayerStateChangeListener.onPlayerStateChanged(playWhenReady, playbackState);
           }
         }
 
-        @Override public boolean onPlayerError(ToroExoPlayer player, PlaybackException error) {
+        @Override public boolean onPlayerError(Exception error) {
           if (mPlayerStateChangeListener != null) {
-            mPlayerStateChangeListener.onPlayerError(player, error);
+            mPlayerStateChangeListener.onPlayerError(error);
           }
 
           return true;
@@ -183,10 +183,10 @@ public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPla
   private boolean mPlayRequested = false;
   private boolean mBackgroundAudioEnabled = false;
 
-  private OnPlayerStateChangeListener mPlayerStateChangeListener;
+  private OnStateChangeListener mPlayerStateChangeListener;
   private OnVideoSizeChangedListener onVideoSizeChangedListener;
   private OnInfoListener mOnInfoListener;
-  private LastMomentCallback lastMomentCallback;
+  private OnReleaseCallback lastMomentCallback;
 
   // DEBUG
   private EventLogger mEventLogger;
@@ -208,7 +208,7 @@ public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPla
     }
   };
 
-  @Override public void setOnPlayerStateChangeListener(OnPlayerStateChangeListener listener) {
+  @Override public void setOnPlayerStateChangeListener(OnStateChangeListener listener) {
     this.mPlayerStateChangeListener = listener;
   }
 
@@ -224,7 +224,7 @@ public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPla
     this.mId3MetadataListener = listener;
   }
 
-  public void setLastMomentCallback(LastMomentCallback lastMomentCallback) {
+  public void setLastMomentCallback(OnReleaseCallback lastMomentCallback) {
     this.lastMomentCallback = lastMomentCallback;
   }
 
@@ -313,7 +313,15 @@ public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPla
   @Override public void releasePlayer() {
     if (mMediaPlayer != null) {
       if (lastMomentCallback != null) {
-        lastMomentCallback.onLastMoment(mMediaPlayer);
+        lastMomentCallback.onRelease(new SimpleMediaPlayer() {
+          @Override public long getDuration() {
+            return mMediaPlayer.getDuration();
+          }
+
+          @Override public long getCurrentPosition() {
+            return mMediaPlayer.getCurrentPosition();
+          }
+        });
       }
 
       mPlayerPosition = mMediaPlayer.getCurrentPosition();

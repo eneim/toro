@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package im.ene.toro.exoplayer.internal;
+package im.ene.toro.exoplayer.develop;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -32,11 +32,14 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import im.ene.toro.exoplayer.develop.DemoPlayer.RendererBuilder;
+import im.ene.toro.exoplayer.internal.EnhancedMediaCodecAudioTrackRenderer;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 
 /**
- * A {@link ExoMediaPlayer.RendererBuilder} for streams that can be read using an {@link Extractor}.
+ * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
-public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class ExtractorRendererBuilder implements RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -51,7 +54,7 @@ public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder 
     this.uri = uri;
   }
 
-  @Override public void buildRenderers(ExoMediaPlayer player) {
+  @Override public void buildRenderers(DemoPlayer player) {
     Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
     Handler mainHandler = player.getMainHandler();
 
@@ -81,4 +84,5 @@ public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder 
   @Override public void cancel() {
     // Do nothing.
   }
+
 }

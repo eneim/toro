@@ -35,10 +35,9 @@ import im.ene.lab.toro.VideoPlayerManager;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class ExpPlayerViewHelper extends PlayerViewHelper implements
-    OnPlayerStateChangeListener {
+public final class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChangeListener {
 
-  public ExpPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
@@ -91,11 +90,10 @@ public final class ExpPlayerViewHelper extends PlayerViewHelper implements
   }
 
   /**
-   * Implement {@link OnPlayerStateChangeListener}
+   * Implement {@link OnStateChangeListener}
    */
-  @Override public final void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady,
-      @State int playbackState) {
-    switch (playbackState) {
+  @Override public final void onPlayerStateChanged(boolean playWhenReady, @State int state) {
+    switch (state) {
       case ToroExoPlayer.PLAYER_PREPARED:
         this.player.onVideoPrepared();
         this.onPrepared(this.itemView, this.itemView.getParent());
@@ -123,7 +121,7 @@ public final class ExpPlayerViewHelper extends PlayerViewHelper implements
     }
   }
 
-  @Override public final boolean onPlayerError(ToroExoPlayer player, PlaybackException error) {
+  @Override public final boolean onPlayerError(Exception error) {
     return super.onPlaybackError(error);
   }
 }

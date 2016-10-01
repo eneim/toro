@@ -35,5 +35,5 @@ public interface OnVideoSizeChangedListener {
    * @param width the width of the video
    * @param height the height of the video
    */
-  void onVideoSizeChanged(ToroExoPlayer mp, int width, int height);
+  void onVideoSizeChanged(int width, int height);
 }

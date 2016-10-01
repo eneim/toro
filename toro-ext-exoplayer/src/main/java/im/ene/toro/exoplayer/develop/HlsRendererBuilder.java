@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package im.ene.toro.exoplayer.internal;
+package im.ene.toro.exoplayer.develop;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -44,13 +44,16 @@ import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
+import im.ene.toro.exoplayer.develop.DemoPlayer.RendererBuilder;
+import im.ene.toro.exoplayer.internal.EnhancedMediaCodecAudioTrackRenderer;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 import java.io.IOException;
 import java.util.List;
 
 /**
- * A {@link ExoMediaPlayer.RendererBuilder} for HLS.
+ * A {@link RendererBuilder} for HLS.
  */
-public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class HlsRendererBuilder implements RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int MAIN_BUFFER_SEGMENTS = 254;
@@ -70,7 +73,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
   }
 
   @Override
-  public void buildRenderers(ExoMediaPlayer player) {
+  public void buildRenderers(DemoPlayer player) {
     currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, player);
     currentAsyncBuilder.init();
   }
@@ -87,12 +90,12 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
     private final Context context;
     private final String userAgent;
-    private final ExoMediaPlayer player;
+    private final DemoPlayer player;
     private final ManifestFetcher<HlsPlaylist> playlistFetcher;
 
     private boolean canceled;
 
-    public AsyncRendererBuilder(Context context, String userAgent, String url, ExoMediaPlayer player) {
+    public AsyncRendererBuilder(Context context, String userAgent, String url, DemoPlayer player) {
       this.context = context;
       this.userAgent = userAgent;
       this.player = player;

@@ -16,23 +16,17 @@
 
 package im.ene.toro.exoplayer;
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
-
 /**
- * Created by eneim on 6/3/16.
+ * Created by eneim on 7/1/16.
  *
- * Simple media item definition. Application <b>MUST</b> extends this for custom usage.
+ * Callback which will be triggered right before releasing the Media player.
  */
-public class Media {
+public interface OnReleaseCallback {
 
-  private final Uri mediaUri;
-
-  public Media(@NonNull Uri mediaUri) {
-    this.mediaUri = mediaUri;
-  }
-
-  public final Uri getMediaUri() {
-    return mediaUri;
-  }
+  /**
+   * Call right before {@code player} is released. Note that it will be null after this moment.
+   *
+   * @param player the Player which is being released.
+   */
+  void onRelease(SimpleMediaPlayer player);
 }

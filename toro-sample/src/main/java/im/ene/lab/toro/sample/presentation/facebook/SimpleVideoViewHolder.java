@@ -26,17 +26,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
-import im.ene.toro.exoplayer.ToroExoPlayer;
-import im.ene.toro.exoplayer.LastMomentCallback;
-import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.exoplayer.OnReleaseCallback;
+import im.ene.toro.exoplayer.SimpleMediaPlayer;
+import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
+import im.ene.toro.exoplayer.widget.ToroVideoView;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements LastMomentCallback {
+public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements OnReleaseCallback {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
@@ -167,7 +167,7 @@ public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements Las
     this.mVideoView.setVolume(volume);
   }
 
-  @Override public void onLastMoment(ToroExoPlayer player) {
+  @Override public void onRelease(SimpleMediaPlayer player) {
     isReleased = true;
     latestPosition = player.getCurrentPosition();
   }
