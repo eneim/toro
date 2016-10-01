@@ -17,14 +17,6 @@
       android:theme="@style/AppTheme">
 
     <activity
-        android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name=".develop.standalone.StandalonePlayerActivity"
-        android:theme="@style/ToroTheme">
-    </activity>
-
-    <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:name=".HomeActivity"
@@ -69,14 +61,6 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.legacy.LegacyActivity"/>
-
-    <activity
-        android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name=".develop.custom.MultiLayerVideoActivity"
-        android:theme="@style/ToroTheme">
-    </activity>
 
     <activity-alias
         android:label="@string/app_name"

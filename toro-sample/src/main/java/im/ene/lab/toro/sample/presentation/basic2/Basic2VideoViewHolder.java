@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
 import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.player.ExoVideo;
+import im.ene.toro.exoplayer.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;

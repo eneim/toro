@@ -32,7 +32,7 @@ import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.ext.ToroVideoViewHolder;
 import im.ene.lab.toro.media.Cineer;
 import im.ene.lab.toro.media.LastMomentCallback;
-import im.ene.lab.toro.player.widget.ToroVideoView;
+import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import java.lang.annotation.Retention;

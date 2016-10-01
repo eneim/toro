@@ -19,7 +19,7 @@ package im.ene.lab.toro.ext;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.player.widget.ToroVideoView;
+import im.ene.toro.exoplayer.widget.ToroVideoView;
 
 /**
  * Created by eneim on 6/11/16.
