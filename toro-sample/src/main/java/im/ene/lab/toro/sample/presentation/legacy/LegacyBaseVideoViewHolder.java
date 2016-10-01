@@ -20,6 +20,7 @@ import android.view.View;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
+import im.ene.toro.mediaplayer.LegacyVideoViewHelper;
 
 /**
  * Created by eneim on 9/29/16.

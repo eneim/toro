@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.presentation.legacy;
+package im.ene.toro.mediaplayer;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import im.ene.lab.toro.ToroAdapter;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
- * Created by eneim on 6/29/16.
+ * Example local unit test, which will execute on the development machine (host).
  *
- * A sample {@link RecyclerView.ViewHolder} skeleton.
+ * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public abstract class LegacyViewHolder extends ToroAdapter.ViewHolder {
-
-  static int TYPE_VIDEO = 1;
-
-  static int TYPE_NORMAL = 2;
-
-  public LegacyViewHolder(View itemView) {
-    super(itemView);
+public class ExampleUnitTest {
+  @Test public void addition_isCorrect() throws Exception {
+    assertEquals(4, 2 + 2);
   }
-
-  public abstract void bind(RecyclerView.Adapter adapter, Object item);
 }

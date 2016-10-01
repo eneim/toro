@@ -16,8 +16,6 @@
 
 package im.ene.lab.toro.sample.presentation.legacy;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -47,8 +45,7 @@ public class LegacyListFragment extends Fragment {
     return inflater.inflate(R.layout.generic_recycler_view, container, false);
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
     RecyclerView.LayoutManager layoutManager = getLayoutManager();

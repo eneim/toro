@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.presentation.legacy;
+package im.ene.toro.mediaplayer;
 
 import android.media.MediaPlayer;
 import android.support.annotation.FloatRange;
@@ -56,19 +56,6 @@ public class LegacyVideoViewHelper extends PlayerViewHelper
   @Override public void onCompletion(MediaPlayer mp) {
     this.player.onPlaybackCompleted();
     super.onCompletion();
-  }
-
-  public final void preparePlayer() {
-    if (this.mediaPlayer != null) {
-      this.mediaPlayer.prepareAsync();
-    }
-  }
-
-  public final void releasePlayer() {
-    if (this.mediaPlayer != null) {
-      this.mediaPlayer.release();
-      this.mediaPlayer = null;
-    }
   }
 
   public final void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {

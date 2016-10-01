@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer;
+package im.ene.toro.mediaplayer;
 
 /**
- * Created by eneim on 6/12/16.
+ * Created by eneim on 10/1/16.
  */
 
-/**
- * Callback for handling the play or pause of a player control.
- */
-public interface PlayerControlCallback {
-
-  /**
-   * Respond when the player has just been paused.
-   */
-  void onPause();
-
-  /**
-   * Respond when the player just started playing.
-   */
-  void onPlay();
+public class LegacyMediaPlayer {
 }
