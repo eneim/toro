@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,10 +24,10 @@ import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.OnPlayerStateChangeListener;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.State;
+import im.ene.toro.exoplayer.dev.ToroExoPlayer;
+import im.ene.toro.exoplayer.dev.OnPlayerStateChangeListener;
+import im.ene.toro.exoplayer.dev.PlaybackException;
+import im.ene.toro.exoplayer.dev.State;
 
 /**
  * Created by eneim on 2/6/16.
@@ -39,10 +39,10 @@ import im.ene.lab.toro.media.State;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class ToroPlayerViewHelper extends PlayerViewHelper implements
+public final class ExpPlayerViewHelper extends PlayerViewHelper implements
     OnPlayerStateChangeListener {
 
-  public ToroPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+  public ExpPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
@@ -97,25 +97,25 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper implements
   /**
    * Implement {@link OnPlayerStateChangeListener}
    */
-  @Override public final void onPlayerStateChanged(Cineer player, boolean playWhenReady,
+  @Override public final void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady,
       @State int playbackState) {
     switch (playbackState) {
-      case Cineer.PLAYER_PREPARED:
+      case ToroExoPlayer.PLAYER_PREPARED:
         this.player.onVideoPrepared();
         this.onPrepared(this.itemView, this.itemView.getParent());
         break;
-      case Cineer.PLAYER_ENDED:
+      case ToroExoPlayer.PLAYER_ENDED:
         this.player.onPlaybackCompleted();
         this.onCompletion();
         break;
-      case Cineer.PLAYER_BUFFERING:
+      case ToroExoPlayer.PLAYER_BUFFERING:
         break;
-      case Cineer.PLAYER_IDLE:
+      case ToroExoPlayer.PLAYER_IDLE:
         break;
-      case Cineer.PLAYER_PREPARING:
+      case ToroExoPlayer.PLAYER_PREPARING:
         this.player.onVideoPreparing();
         break;
-      case Cineer.PLAYER_READY:
+      case ToroExoPlayer.PLAYER_READY:
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {
@@ -127,7 +127,7 @@ public final class ToroPlayerViewHelper extends PlayerViewHelper implements
     }
   }
 
-  @Override public final boolean onPlayerError(Cineer player, PlaybackException error) {
+  @Override public final boolean onPlayerError(ToroExoPlayer player, PlaybackException error) {
     return super.onPlaybackError(error);
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
 
 /**
  * Created by eneim on 6/9/16.
@@ -23,17 +23,17 @@ public interface OnPlayerStateChangeListener {
 
   /**
    * @param playWhenReady Whether playback will proceed when ready.
-   * @param playbackState One of the {@link State} constants defined in the {@link Cineer}
+   * @param playbackState One of the {@link State} constants defined in the {@link ToroExoPlayer}
    * interface.
    */
-  void onPlayerStateChanged(Cineer player, boolean playWhenReady, @State int playbackState);
+  void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady, @State int playbackState);
 
   /**
-   * Invoked when an error occurs. The playback state will transition to {@link Cineer#PLAYER_IDLE}
+   * Invoked when an error occurs. The playback state will transition to {@link ToroExoPlayer#PLAYER_IDLE}
    * immediately after this method is invoked. The player instance can still be used, and {@link
-   * Cineer#release()} must still be called on the player should it no longer be required.
+   * ToroExoPlayer#release()} must still be called on the player should it no longer be required.
    *
    * @param error The error.
    */
-  boolean onPlayerError(Cineer player, PlaybackException error);
+  boolean onPlayerError(ToroExoPlayer player, PlaybackException error);
 }

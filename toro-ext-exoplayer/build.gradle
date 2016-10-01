@@ -52,6 +52,5 @@ dependencies {
 
   // Non default dependencies
   compile project(':toro')
-  compile project(':toro-media')
   compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}"
 }

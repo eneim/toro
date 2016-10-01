@@ -102,7 +102,7 @@ dependencies {
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(path: ':toro-ext')
+  compile project(path: ':toro-ext-exoplayer')
   // compile "im.ene.lab:toro-ext:2.0.0-SNAPSHOT"
 
   compile 'com.azoft.carousellayoutmanager:carousel:1.1.3'

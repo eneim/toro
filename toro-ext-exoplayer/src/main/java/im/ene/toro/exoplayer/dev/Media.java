@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
 
-import android.media.MediaPlayer;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 
 /**
- * Created by eneim on 6/2/16.
+ * Created by eneim on 6/3/16.
  *
- * See {@link MediaPlayer.OnVideoSizeChangedListener}
+ * Simple media item definition. Application <b>MUST</b> extends this for custom usage.
  */
-public interface OnVideoSizeChangedListener {
+public class Media {
 
-  /**
-   * Called to indicate the video size
-   *
-   * The video size (width and height) could be 0 if there was no video,
-   * no display surface was set, or the value was not determined yet.
-   *
-   * @param mp the MediaPlayer associated with this callback
-   * @param width the width of the video
-   * @param height the height of the video
-   */
-  void onVideoSizeChanged(Cineer mp, int width, int height);
+  private final Uri mediaUri;
+
+  public Media(@NonNull Uri mediaUri) {
+    this.mediaUri = mediaUri;
+  }
+
+  public Uri getMediaUri() {
+    return mediaUri;
+  }
 }

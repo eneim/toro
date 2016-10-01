@@ -21,21 +21,21 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.FloatRange;
 import android.view.Surface;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.OnInfoListener;
-import im.ene.lab.toro.media.OnPlayerStateChangeListener;
-import im.ene.lab.toro.media.OnVideoSizeChangedListener;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.PlaybackInfo;
+import im.ene.toro.exoplayer.dev.ToroExoPlayer;
+import im.ene.toro.exoplayer.dev.OnInfoListener;
+import im.ene.toro.exoplayer.dev.OnPlayerStateChangeListener;
+import im.ene.toro.exoplayer.dev.OnVideoSizeChangedListener;
+import im.ene.toro.exoplayer.dev.PlaybackException;
+import im.ene.toro.exoplayer.dev.PlaybackInfo;
 import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by eneim on 6/2/16.
  *
- * Implementation for {@link Cineer} backed by Android original {@link MediaPlayer}
+ * Implementation for {@link ToroExoPlayer} backed by Android original {@link MediaPlayer}
  */
-public final class NativeMediaPlayer implements Cineer, MediaPlayer.OnBufferingUpdateListener {
+public final class NativeMediaPlayer implements ToroExoPlayer, MediaPlayer.OnBufferingUpdateListener {
 
   final MediaPlayer mediaPlayer;
   int bufferedPercent = 0;

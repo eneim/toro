@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
 
 import android.media.MediaPlayer;
 

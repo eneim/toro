@@ -22,7 +22,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 import com.google.android.exoplayer.util.Util;
-import im.ene.lab.toro.media.Media;
+import im.ene.toro.exoplayer.dev.Media;
 import im.ene.toro.exoplayer.ExoVideo;
 
 /**

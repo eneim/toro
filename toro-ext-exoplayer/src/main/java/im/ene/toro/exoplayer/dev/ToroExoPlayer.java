@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -30,13 +30,13 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Cineer is the base interface for any MediaPlayer. It is named by the combination of 'Cine' and
+ * ToroExoPlayer is the base interface for any MediaPlayer. It is named by the combination of 'Cine' and
  * '-er' suffix.
  *
  * @author eneim (nam@ene.im)
  * @version 2.0
  */
-public interface Cineer {
+public interface ToroExoPlayer {
 
   /**
    * See {@link State}

@@ -56,7 +56,7 @@ import im.ene.lab.toro.media.OnInfoListener;
 import im.ene.lab.toro.media.OnPlayerStateChangeListener;
 import im.ene.lab.toro.media.OnVideoSizeChangedListener;
 import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.ToroExoPlayer;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +70,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)      //
 public class ExoMediaPlayer                     //
-    implements Cineer, ExoPlayer.Listener,      //
+    implements ToroExoPlayer, ExoPlayer.Listener,      //
     ChunkSampleSource.EventListener,            //
     HlsSampleSource.EventListener,              //
     ExtractorSampleSource.EventListener,        //
@@ -117,7 +117,7 @@ public class ExoMediaPlayer                     //
    */
   public interface Listener {
 
-    void onStateChanged(Cineer player, boolean playWhenReady, int playbackState);
+    void onStateChanged(ToroExoPlayer player, boolean playWhenReady, int playbackState);
 
     void onError(Exception e);
 

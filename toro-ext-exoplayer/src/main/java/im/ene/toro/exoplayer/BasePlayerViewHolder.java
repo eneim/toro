@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.ext;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.CallSuper;
 import android.view.View;
@@ -31,13 +31,13 @@ import im.ene.lab.toro.ToroViewHolder;
 public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final ToroPlayerViewHelper mHelper;
+  protected final ExpPlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
   public BasePlayerViewHolder(View itemView) {
     super(itemView);
-    mHelper = new ToroPlayerViewHelper(this, itemView);
+    mHelper = new ExpPlayerViewHelper(this, itemView);
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {

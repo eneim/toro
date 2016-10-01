@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
-import im.ene.lab.toro.media.Cineer;
+import im.ene.toro.exoplayer.dev.ToroExoPlayer;
 import im.ene.toro.exoplayer.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -33,7 +33,7 @@ import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link Cineer.Player} API to play medias. So by default, Video ViewHolder
+ * This sample use {@link ToroExoPlayer.Player} API to play medias. So by default, Video ViewHolder
  * requires an implemented Component of that interface. For samples those use legacy API such as
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacySample1Activity}
  * implementations.
@@ -43,16 +43,16 @@ public class Basic2VideoViewHolder extends Basic2BaseVideoViewHolder {
   public static final int LAYOUT_RES = R.layout.vh_toro_video_basic;
 
   private SimpleVideoObject video;
-  private final Cineer.Player videoPlayer;
+  private final ToroExoPlayer.Player videoPlayer;
   private final View videoView;
 
   public Basic2VideoViewHolder(View itemView) {
     super(itemView);
     videoView = itemView.findViewById(R.id.video);
-    if (getPlayerView() instanceof Cineer.Player) {
-      videoPlayer = (Cineer.Player) getPlayerView();
+    if (getPlayerView() instanceof ToroExoPlayer.Player) {
+      videoPlayer = (ToroExoPlayer.Player) getPlayerView();
     } else {
-      throw new IllegalArgumentException("Illegal Video player widget. Requires a Cineer.Player");
+      throw new IllegalArgumentException("Illegal Video player widget. Requires a ToroExoPlayer.Player");
     }
     // !IMPORTANT: Helper is helpful, don't forget it.
     videoPlayer.setOnPlayerStateChangeListener(helper);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
 
 import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
@@ -27,29 +27,29 @@ import java.lang.annotation.RetentionPolicy;
     /**
      * The player is neither prepared or being prepared.
      */
-    Cineer.PLAYER_IDLE,
+    ToroExoPlayer.PLAYER_IDLE,
     /**
      * The player is being prepared.
      */
-    Cineer.PLAYER_PREPARING,
+    ToroExoPlayer.PLAYER_PREPARING,
     /**
      * The player finished prepared, but not really ready to play.
      */
-    Cineer.PLAYER_PREPARED,
+    ToroExoPlayer.PLAYER_PREPARED,
     /**
      * The player is prepared but not able to immediately play from the current position. The cause
      * is {@link TrackRenderer} specific, but this state typically occurs when more data needs
      * to be buffered for playback to start.
      */
-    Cineer.PLAYER_BUFFERING,
+    ToroExoPlayer.PLAYER_BUFFERING,
     /**
      * The player is prepared and able to immediately play from the current position. The player will
      * be playing if {@link #getPlayWhenReady()} returns true, and paused otherwise.
      */
-    Cineer.PLAYER_READY,
+    ToroExoPlayer.PLAYER_READY,
     /**
      * The player has finished playing the media.
      */
-    Cineer.PLAYER_ENDED
+    ToroExoPlayer.PLAYER_ENDED
 }) @Retention(RetentionPolicy.SOURCE) public @interface State {
 }

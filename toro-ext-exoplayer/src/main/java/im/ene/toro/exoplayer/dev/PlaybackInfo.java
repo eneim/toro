@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
+
+import android.media.MediaPlayer;
 
 /**
- * Created by eneim on 7/1/16.
+ * Created by eneim on 6/2/16.
  *
- * Callback which will be triggered right before releasing the Media player.
+ * See {@link MediaPlayer.OnInfoListener}
  */
-public interface LastMomentCallback {
+public class PlaybackInfo {
 
-  /**
-   * Call right before {@code player} is released. Note that it will be null after this moment.
-   *
-   * @param player the Player which is being released.
-   */
-  void onLastMoment(Cineer player);
+  private final String info;
+
+  public PlaybackInfo(String info) {
+    this.info = info;
+  }
+
+  public String getInfo() {
+    return info;
+  }
 }

@@ -18,7 +18,7 @@ package im.ene.toro.exoplayer.widget;
 
 import android.widget.MediaController;
 import com.google.android.exoplayer.ExoPlayer;
-import im.ene.lab.toro.media.Cineer;
+import im.ene.toro.exoplayer.dev.ToroExoPlayer;
 import im.ene.toro.exoplayer.PlayerControlCallback;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +28,14 @@ import java.util.List;
  */
 public class MediaPlayerController implements MediaController.MediaPlayerControl {
 
-  private final Cineer player;
+  private final ToroExoPlayer player;
 
   /**
    * Callbacks which will react to the player pausing or playing.
    */
   final List<PlayerControlCallback> callbacks;
 
-  public MediaPlayerController(Cineer player) {
+  public MediaPlayerController(ToroExoPlayer player) {
     this.player = player;
     this.callbacks = new ArrayList<>();
   }

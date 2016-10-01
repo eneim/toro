@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.exoplayer.dev;
 
 import android.media.MediaPlayer;
 
@@ -23,15 +23,10 @@ import android.media.MediaPlayer;
  *
  * See {@link MediaPlayer.OnInfoListener}
  */
-public class PlaybackInfo {
+public interface OnInfoListener {
 
-  private final String info;
-
-  public PlaybackInfo(String info) {
-    this.info = info;
-  }
-
-  public String getInfo() {
-    return info;
-  }
+  /**
+   * Called to indicate an info or a warning.
+   */
+  boolean onInfo(ToroExoPlayer mp, PlaybackInfo info);
 }

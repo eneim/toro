@@ -29,9 +29,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.toro.ext.ToroVideoViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.LastMomentCallback;
+import im.ene.toro.exoplayer.ToroVideoViewHolder;
+import im.ene.toro.exoplayer.dev.ToroExoPlayer;
+import im.ene.toro.exoplayer.dev.LastMomentCallback;
 import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -244,7 +244,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       this.mVideoView.setVolume(volume);
     }
 
-    @Override public void onLastMoment(Cineer player) {
+    @Override public void onLastMoment(ToroExoPlayer player) {
       isReleased = true;
       latestPosition = player.getCurrentPosition();
     }

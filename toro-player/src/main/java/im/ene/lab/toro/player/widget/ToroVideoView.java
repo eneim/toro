@@ -35,7 +35,7 @@ import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.metadata.id3.Id3Frame;
 import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.util.Util;
-import im.ene.lab.toro.media.Cineer;
+import im.ene.lab.toro.media.ToroExoPlayer;
 import im.ene.lab.toro.media.LastMomentCallback;
 import im.ene.lab.toro.media.Media;
 import im.ene.lab.toro.media.OnInfoListener;
@@ -53,7 +53,7 @@ import java.util.List;
  * Created by eneim on 6/4/16.
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
-public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
+public class ToroVideoView extends TextureView implements ToroExoPlayer.VideoPlayer {
 
   /**
    * The surface view will not resize itself if the fractional difference
@@ -111,7 +111,7 @@ public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
   };
 
   private final ExoMediaPlayer.Listener playerListener = new ExoMediaPlayer.Listener() {
-    @Override public void onStateChanged(Cineer player, boolean playWhenReady, int playbackState) {
+    @Override public void onStateChanged(ToroExoPlayer player, boolean playWhenReady, int playbackState) {
       mPlaybackState = playbackState;
       setKeepScreenOn(isInPlayableState());
     }
@@ -136,9 +136,9 @@ public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
 
   private OnPlayerStateChangeListener stateChangeListenerDelegate =
       new OnPlayerStateChangeListener() {
-        @Override public void onPlayerStateChanged(Cineer player, boolean playWhenReady,
+        @Override public void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady,
             @State int playbackState) {
-          if (playbackState == Cineer.PLAYER_ENDED) {
+          if (playbackState == ToroExoPlayer.PLAYER_ENDED) {
             mPlayRequested = false;
             releasePlayer();
             mPlayerPosition = 0;
@@ -149,7 +149,7 @@ public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
           }
         }
 
-        @Override public boolean onPlayerError(Cineer player, PlaybackException error) {
+        @Override public boolean onPlayerError(ToroExoPlayer player, PlaybackException error) {
           if (mPlayerStateChangeListener != null) {
             mPlayerStateChangeListener.onPlayerError(player, error);
           }
@@ -159,8 +159,8 @@ public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
       };
 
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare && (mPlaybackState != Cineer.PLAYER_IDLE) && (mPlaybackState
-        != Cineer.PLAYER_PREPARING) && (mPlaybackState != Cineer.PLAYER_ENDED);
+    return !mPlayerNeedsPrepare && (mPlaybackState != ToroExoPlayer.PLAYER_IDLE) && (mPlaybackState
+        != ToroExoPlayer.PLAYER_PREPARING) && (mPlaybackState != ToroExoPlayer.PLAYER_ENDED);
   }
 
   private Media mMedia;
@@ -229,7 +229,7 @@ public class ToroVideoView extends TextureView implements Cineer.VideoPlayer {
   }
 
   private OnInfoListener onInfoListenerDelegate = new OnInfoListener() {
-    @Override public boolean onInfo(Cineer mp, PlaybackInfo info) {
+    @Override public boolean onInfo(ToroExoPlayer mp, PlaybackInfo info) {
       return mOnInfoListener != null && mOnInfoListener.onInfo(mp, info);
     }
   };
