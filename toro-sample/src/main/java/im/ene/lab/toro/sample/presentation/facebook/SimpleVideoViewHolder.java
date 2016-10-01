@@ -19,24 +19,24 @@ package im.ene.lab.toro.sample.presentation.facebook;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.toro.ext.ToroVideoViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.LastMomentCallback;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.widget.ToroVideoView;
+import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
+import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.exoplayer.LastMomentCallback;
+import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMomentCallback {
+public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements LastMomentCallback {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
@@ -86,8 +86,8 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     mInfo.setText("Preparing");
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
-    super.onVideoPrepared(mp);
+  @Override public void onVideoPrepared() {
+    super.onVideoPrepared();
     isPlayable = true;
     mInfo.setText("Prepared");
     latestPosition = 0;
@@ -132,7 +132,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     mInfo.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
@@ -140,7 +140,7 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
       }
     }).start();
     mInfo.setText("Error: videoId = " + getMediaId());
-    return super.onPlaybackError(mp, error);
+    return super.onPlaybackError(error);
   }
 
   @Override protected boolean allowLongPressSupport() {
@@ -163,7 +163,11 @@ public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMo
     return latestPosition;
   }
 
-  @Override public void onLastMoment(Cineer player) {
+  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+    this.mVideoView.setVolume(volume);
+  }
+
+  @Override public void onLastMoment(ToroExoPlayer player) {
     isReleased = true;
     latestPosition = player.getCurrentPosition();
   }

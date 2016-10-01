@@ -27,8 +27,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -479,7 +477,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   // Centralize Video state callbacks
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
-      @Nullable ViewParent parent, @Nullable Cineer mediaPlayer) {
+      @Nullable ViewParent parent) {
     VideoPlayerManager manager = null;
     ToroScrollListener listener;
     RecyclerView view;
@@ -517,7 +515,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  void onPlaybackCompletion(@NonNull ToroPlayer player, @Nullable Cineer mp) {
+  void onPlaybackCompletion(@NonNull ToroPlayer player) {
     // 1. Internal jobs
     VideoPlayerManager manager = null;
     for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
@@ -542,8 +540,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  boolean onPlaybackError(@NonNull ToroPlayer player, @Nullable Cineer mp,
-      @NonNull PlaybackException error) {
+  boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {
     for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
       VideoPlayerManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {

@@ -24,9 +24,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.OnPlayerStateChangeListener;
-import im.ene.lab.toro.media.PlaybackException;
 
 /**
  * Created by eneim on 1/29/16.
@@ -87,6 +84,8 @@ public interface ToroPlayer {
    * @return {@code true} if the media is being played, {@code false} otherwise.
    */
   boolean isPlaying();
+
+  void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
   // Custom method to add Toro abilities
 
@@ -163,7 +162,7 @@ public interface ToroPlayer {
    *
    * @param mp media player which is prepared
    */
-  void onVideoPrepared(Cineer mp);
+  void onVideoPrepared();
 
   /**
    * Callback after this player starts playing
@@ -180,13 +179,5 @@ public interface ToroPlayer {
    */
   void onPlaybackCompleted();
 
-  /**
-   * Called from {@link Toro#onPlaybackError(ToroPlayer, Cineer, PlaybackException)}
-   *
-   * This method has the same signature with {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
-   * PlaybackException)}, but {@link OnPlayerStateChangeListener#onPlayerError(Cineer,
-   * PlaybackException)} will be called explicitly by Toro, so this method will prevent infinite
-   * loop
-   */
-  boolean onPlaybackError(Cineer mp, PlaybackException error);
+  boolean onPlaybackError(Exception error);
 }

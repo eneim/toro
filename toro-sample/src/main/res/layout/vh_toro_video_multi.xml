@@ -23,7 +23,7 @@
     android:padding="4dp"
     >
 
-  <im.ene.lab.toro.player.widget.ToroVideoView
+  <im.ene.toro.exoplayer.widget.ToroVideoView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="180dp"
@@ -62,7 +62,7 @@
       android:paddingEnd="8dp"
       android:paddingStart="8dp"
       android:paddingTop="4dp"
-      android:singleLine="true"
+      android:maxLines="1"
       android:textAppearance="@style/TextAppearance.AppCompat.Small"
       android:textColor="@android:color/white"
       />

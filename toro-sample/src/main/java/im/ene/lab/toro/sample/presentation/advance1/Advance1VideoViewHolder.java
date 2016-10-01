@@ -18,25 +18,25 @@ package im.ene.lab.toro.sample.presentation.advance1;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.VideoView;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;
+import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
+import im.ene.toro.exoplayer.ExoVideo;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link Cineer.Player} API to play medias. So by default, Video ViewHolder
+ * This sample use {@link ToroExoPlayer.Player} API to play medias. So by default, Video ViewHolder
  * requires an implemented Component of that interface. For samples those use legacy API such as
- * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacySample1Activity}
+ * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacyActivity}
  * implementations.
  */
 public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
@@ -44,7 +44,7 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
   public static final int LAYOUT_RES = R.layout.vh_toro_video_average_1;
 
   private SimpleVideoObject video;
-  private final Cineer.Player videoPlayer;
+  private final ToroExoPlayer.Player videoPlayer;
   private final View videoView;
   private final TextView stateView;
 
@@ -52,10 +52,10 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
     super(itemView);
     stateView = (TextView) itemView.findViewById(R.id.state);
     videoView = itemView.findViewById(R.id.video);
-    if (getPlayerView() instanceof Cineer.Player) {
-      videoPlayer = (Cineer.Player) getPlayerView();
+    if (getPlayerView() instanceof ToroExoPlayer.Player) {
+      videoPlayer = (ToroExoPlayer.Player) getPlayerView();
     } else {
-      throw new IllegalArgumentException("Illegal Video player widget. Requires a Cineer.Player");
+      throw new IllegalArgumentException("Illegal Video player widget. Requires a ToroExoPlayer.Player");
     }
     // !IMPORTANT: Helper is helpful, don't forget it.
     videoPlayer.setOnPlayerStateChangeListener(helper);
@@ -107,6 +107,10 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
     return this.videoPlayer.isPlaying();
   }
 
+  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+    this.videoPlayer.setVolume(volume);
+  }
+
   // MEMO: Unique or null
   @Nullable @Override public String getMediaId() {
     return this.video != null ? this.video.video + "@" + getAdapterPosition() : null;
@@ -120,8 +124,8 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
     stateView.setText("Preparing");
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
-    super.onVideoPrepared(mp);
+  @Override public void onVideoPrepared() {
+    super.onVideoPrepared();
     stateView.setText("Prepared");
   }
 
@@ -138,9 +142,9 @@ public class Advance1VideoViewHolder extends Advance1BaseVideoViewHolder {
     stateView.setText("Completed");
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     stateView.setText(error != null ? "Error: " + error.getLocalizedMessage() : "Error!");
-    return super.onPlaybackError(mp, error);
+    return super.onPlaybackError(error);
   }
 
   /* END: ToroPlayer callbacks (partly) */

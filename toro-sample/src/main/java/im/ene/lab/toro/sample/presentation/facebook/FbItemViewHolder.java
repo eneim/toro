@@ -19,6 +19,7 @@ package im.ene.lab.toro.sample.presentation.facebook;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
+import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -28,11 +29,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.lab.toro.ext.ToroVideoViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.LastMomentCallback;
-import im.ene.lab.toro.media.PlaybackException;
-import im.ene.lab.toro.player.widget.ToroVideoView;
+import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
+import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.exoplayer.LastMomentCallback;
+import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import java.lang.annotation.Retention;
@@ -56,7 +56,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
   }) @Retention(RetentionPolicy.SOURCE) public @interface PostType {
   }
 
-  public abstract void bind(@Nullable Object object);
+  public abstract void bind(RecyclerView.Adapter parent, @Nullable Object object);
 
   private static LayoutInflater inflater;
 
@@ -99,7 +99,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       super(itemView);
     }
 
-    @Override public void bind(@Nullable Object object) {
+    @Override public void bind(RecyclerView.Adapter parent, @Nullable Object object) {
 
     }
   }
@@ -112,12 +112,12 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       super(itemView);
     }
 
-    @Override public void bind(@Nullable Object object) {
+    @Override public void bind(RecyclerView.Adapter parent, @Nullable Object object) {
 
     }
   }
 
-  static class VideoPost extends ToroVideoViewHolder implements LastMomentCallback {
+  static class VideoPost extends ToroExoVideoViewHolder implements LastMomentCallback {
 
     static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 
@@ -167,8 +167,8 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       mInfo.setText("Preparing");
     }
 
-    @Override public void onVideoPrepared(Cineer mp) {
-      super.onVideoPrepared(mp);
+    @Override public void onVideoPrepared() {
+      super.onVideoPrepared();
       isPlayable = true;
       mInfo.setText("Prepared");
       latestPosition = 0;
@@ -213,7 +213,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       mInfo.setText("Completed");
     }
 
-    @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+    @Override public boolean onPlaybackError(Exception error) {
       isPlayable = false;
       mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
         @Override public void onAnimationEnd(Animator animation) {
@@ -221,7 +221,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
         }
       }).start();
       mInfo.setText("Error: videoId = " + getMediaId());
-      return super.onPlaybackError(mp, error);
+      return super.onPlaybackError(error);
     }
 
     @Override public boolean isLoopAble() {
@@ -240,7 +240,11 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       return latestPosition;
     }
 
-    @Override public void onLastMoment(Cineer player) {
+    @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+      this.mVideoView.setVolume(volume);
+    }
+
+    @Override public void onLastMoment(ToroExoPlayer player) {
       isReleased = true;
       latestPosition = player.getCurrentPosition();
     }

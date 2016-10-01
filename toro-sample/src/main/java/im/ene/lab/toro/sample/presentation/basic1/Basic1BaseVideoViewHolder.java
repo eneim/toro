@@ -19,11 +19,9 @@ package im.ene.lab.toro.sample.presentation.basic1;
 import android.view.View;
 import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.ToroPlayerViewHelper;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.lab.toro.media.Cineer;
-import im.ene.lab.toro.media.PlaybackException;
+import im.ene.toro.exoplayer.ExpPlayerViewHelper;
 
 /**
  * Created by eneim on 6/29/16.
@@ -31,17 +29,17 @@ import im.ene.lab.toro.media.PlaybackException;
  * Sample ViewHolder which holds a Video, and request support from Toro via ToroPlayer.
  *
  * It is required to implement {@link ToroPlayer} and {@link ToroViewHolder}, as well as a member
- * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ToroPlayerViewHelper}.
+ * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ExpPlayerViewHelper}.
  */
 public abstract class Basic1BaseVideoViewHolder extends Basic1ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final ToroPlayerViewHelper helper;
+  protected final ExpPlayerViewHelper helper;
   protected boolean isPlayable = false;
 
   public Basic1BaseVideoViewHolder(View itemView) {
     super(itemView);
-    helper = new ToroPlayerViewHelper(this, itemView);
+    helper = new ExpPlayerViewHelper(this, itemView);
   }
 
   /* BEGIN: ToroViewHolder callbacks */
@@ -67,7 +65,7 @@ public abstract class Basic1BaseVideoViewHolder extends Basic1ViewHolder
 
   }
 
-  @Override public void onVideoPrepared(Cineer mp) {
+  @Override public void onVideoPrepared() {
     this.isPlayable = true;
   }
 
@@ -83,7 +81,7 @@ public abstract class Basic1BaseVideoViewHolder extends Basic1ViewHolder
     this.isPlayable = false;
   }
 
-  @Override public boolean onPlaybackError(Cineer mp, PlaybackException error) {
+  @Override public boolean onPlaybackError(Exception error) {
     this.isPlayable = false;
     return true;
   }

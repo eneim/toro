@@ -30,6 +30,7 @@ import im.ene.lab.toro.sample.presentation.basic1.Basic1Activity;
 import im.ene.lab.toro.sample.presentation.basic2.Basic2Activity;
 import im.ene.lab.toro.sample.presentation.basic3.Basic3Activity;
 import im.ene.lab.toro.sample.presentation.facebook.FbFeedActivity;
+import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
 
 /**
  * Created by eneim on 6/30/16.
@@ -67,6 +68,10 @@ public class HomeActivity extends AppCompatActivity {
 
   @OnClick(R.id.custom_sample_1) void openCustomSample1() {
     startActivity(new Intent(this, FbFeedActivity.class));
+  }
+
+  @OnClick(R.id.legacy_sample_1) void openLegacySample1() {
+    startActivity(new Intent(this, LegacyActivity.class));
   }
 
 }
