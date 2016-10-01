@@ -88,7 +88,7 @@ public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
   @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     if (holder instanceof FbItemViewHolder) {
-      ((FbItemViewHolder) holder).bind(getItem(position));
+      ((FbItemViewHolder) holder).bind(this, getItem(position));
     } else if (holder instanceof FbItemViewHolder.VideoPost) {
       ((FbItemViewHolder.VideoPost) holder).bind(this, getItem(position));
     }

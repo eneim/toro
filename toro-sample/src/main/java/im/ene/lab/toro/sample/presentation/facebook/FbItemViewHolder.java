@@ -56,7 +56,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
   }) @Retention(RetentionPolicy.SOURCE) public @interface PostType {
   }
 
-  public abstract void bind(@Nullable Object object);
+  public abstract void bind(RecyclerView.Adapter parent, @Nullable Object object);
 
   private static LayoutInflater inflater;
 
@@ -99,7 +99,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       super(itemView);
     }
 
-    @Override public void bind(@Nullable Object object) {
+    @Override public void bind(RecyclerView.Adapter parent, @Nullable Object object) {
 
     }
   }
@@ -112,7 +112,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       super(itemView);
     }
 
-    @Override public void bind(@Nullable Object object) {
+    @Override public void bind(RecyclerView.Adapter parent, @Nullable Object object) {
 
     }
   }

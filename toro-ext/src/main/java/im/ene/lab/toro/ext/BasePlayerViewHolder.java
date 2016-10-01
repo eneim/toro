@@ -18,6 +18,7 @@ package im.ene.lab.toro.ext;
 
 import android.support.annotation.CallSuper;
 import android.view.View;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
