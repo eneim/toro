@@ -24,18 +24,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
-import im.ene.toro.exoplayer.ToroExoPlayer;
-import im.ene.toro.exoplayer.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.lab.toro.sample.develop.legacy.sample1.LegacySample1Activity;
+import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
+import im.ene.toro.exoplayer.ExoVideo;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 
 /**
  * Created by eneim on 6/29/16.
  *
  * This sample use {@link ToroExoPlayer.Player} API to play medias. So by default, Video ViewHolder
  * requires an implemented Component of that interface. For samples those use legacy API such as
- * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacySample1Activity}
+ * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacyActivity}
  * implementations.
  */
 public class Basic2VideoViewHolder extends Basic2BaseVideoViewHolder {
