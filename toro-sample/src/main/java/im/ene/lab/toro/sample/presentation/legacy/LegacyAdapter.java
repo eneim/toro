@@ -16,21 +16,26 @@
 
 package im.ene.lab.toro.sample.presentation.legacy;
 
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
 /**
- * Created by eneim on 6/29/16.
+ * Created by eneim on 10/1/16.
  */
-public class LegacyAdapter extends RecyclerView.Adapter<LegacyViewHolder> {
 
-  public LegacyAdapter() {
-    super();
-    setHasStableIds(true);  // MUST have this.
+public class LegacyAdapter extends ToroAdapter<LegacyViewHolder> {
+
+  @Nullable @Override protected Object getItem(int position) {
+    if (position % 3 == 0) {
+      return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+    } else {
+      return new SimpleObject();
+    }
   }
 
   @Override public LegacyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -49,28 +54,11 @@ public class LegacyAdapter extends RecyclerView.Adapter<LegacyViewHolder> {
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(LegacyViewHolder holder, int position) {
-    holder.bind(this, getItem(position));
-  }
-
-  Object getItem(int position) {
-    if (position % 3 == 0) {
-      return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
-    } else {
-      return new SimpleObject();
-    }
-  }
-
   @Override public int getItemViewType(int position) {
     return position % 3 == 0 ? LegacyViewHolder.TYPE_VIDEO : LegacyViewHolder.TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {
     return 512;
-  }
-
-  // Toro requires this method to return item's unique Id.
-  @Override public long getItemId(int position) {
-    return position;
   }
 }

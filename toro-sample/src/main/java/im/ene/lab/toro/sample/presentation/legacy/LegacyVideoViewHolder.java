@@ -45,7 +45,6 @@ public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
 
   @Override public void preparePlayer(boolean playWhenReady) {
     helper.setPlayWhenReady(playWhenReady);
-    helper.preparePlayer();
   }
 
   @Override public void start() {
@@ -61,7 +60,7 @@ public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
   }
 
   @Override public void releasePlayer() {
-    helper.releasePlayer();
+    // Do nothing here
   }
 
   @Override public long getDuration() {

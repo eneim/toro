@@ -36,4 +36,12 @@ public class LegacyNormalViewHolder extends LegacyViewHolder {
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
 
   }
+
+  @Override public void onAttachedToWindow() {
+
+  }
+
+  @Override public void onDetachedFromWindow() {
+
+  }
 }
