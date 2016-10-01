@@ -28,22 +28,22 @@ import im.ene.lab.toro.ToroViewHolder;
  *
  * Abstract implementation of {@link ToroPlayer} and {@link ToroViewHolder}.
  */
-public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
+public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
   protected final ExpPlayerViewHelper mHelper;
 
   private View.OnLongClickListener mLongClickListener;
 
-  public BasePlayerViewHolder(View itemView) {
+  public BaseVideoViewHolder(View itemView) {
     super(itemView);
     mHelper = new ExpPlayerViewHelper(this, itemView);
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(BasePlayerViewHolder.this,
-                BasePlayerViewHolder.this.itemView, BasePlayerViewHolder.this.itemView.getParent());
+            return mHelper.onItemLongClick(BaseVideoViewHolder.this,
+                BaseVideoViewHolder.this.itemView, BaseVideoViewHolder.this.itemView.getParent());
           }
         };
       }
@@ -66,7 +66,7 @@ public abstract class BasePlayerViewHolder extends ToroAdapter.ViewHolder
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(BasePlayerViewHolder.this, itemView,
+            return mHelper.onItemLongClick(BaseVideoViewHolder.this, itemView,
                 itemView.getParent());
           }
         };

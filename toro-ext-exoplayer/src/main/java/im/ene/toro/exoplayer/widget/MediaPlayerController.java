@@ -18,7 +18,7 @@ package im.ene.toro.exoplayer.widget;
 
 import android.widget.MediaController;
 import com.google.android.exoplayer.ExoPlayer;
-import im.ene.toro.exoplayer.dev.ToroExoPlayer;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.exoplayer.PlayerControlCallback;
 import java.util.ArrayList;
 import java.util.List;

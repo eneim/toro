@@ -29,9 +29,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.toro.exoplayer.ToroVideoViewHolder;
-import im.ene.toro.exoplayer.dev.ToroExoPlayer;
-import im.ene.toro.exoplayer.dev.LastMomentCallback;
+import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
+import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.exoplayer.LastMomentCallback;
 import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -117,7 +117,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     }
   }
 
-  static class VideoPost extends ToroVideoViewHolder implements LastMomentCallback {
+  static class VideoPost extends ToroExoVideoViewHolder implements LastMomentCallback {
 
     static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 

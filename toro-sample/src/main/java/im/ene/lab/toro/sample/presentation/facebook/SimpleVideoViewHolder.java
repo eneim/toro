@@ -26,9 +26,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.toro.exoplayer.ToroVideoViewHolder;
-import im.ene.toro.exoplayer.dev.ToroExoPlayer;
-import im.ene.toro.exoplayer.dev.LastMomentCallback;
+import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
+import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.exoplayer.LastMomentCallback;
 import im.ene.toro.exoplayer.widget.ToroVideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -36,7 +36,7 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends ToroVideoViewHolder implements LastMomentCallback {
+public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements LastMomentCallback {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 

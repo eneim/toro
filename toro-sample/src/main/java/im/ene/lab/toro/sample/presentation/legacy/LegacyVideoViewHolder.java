@@ -16,14 +16,12 @@
 
 package im.ene.lab.toro.sample.presentation.legacy;
 
-import android.net.Uri;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
-import im.ene.toro.exoplayer.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
@@ -101,7 +99,6 @@ public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
       throw new IllegalArgumentException("Item must be a SimpleVideoObject");
     }
 
-    ExoVideo video = new ExoVideo(Uri.parse(this.video.video), this.video.name);
     helper.setPlayWhenReady(false);
     videoView.setVideoPath(this.video.video);
   }

@@ -26,7 +26,7 @@ import com.google.android.exoplayer.TimeRange;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.chunk.Format;
 import com.google.android.exoplayer.util.VerboseLogUtil;
-import im.ene.toro.exoplayer.dev.ToroExoPlayer;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 import java.io.IOException;
 import java.text.NumberFormat;

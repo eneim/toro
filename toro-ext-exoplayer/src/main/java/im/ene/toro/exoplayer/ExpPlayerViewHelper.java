@@ -24,10 +24,6 @@ import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.toro.exoplayer.dev.ToroExoPlayer;
-import im.ene.toro.exoplayer.dev.OnPlayerStateChangeListener;
-import im.ene.toro.exoplayer.dev.PlaybackException;
-import im.ene.toro.exoplayer.dev.State;
 
 /**
  * Created by eneim on 2/6/16.

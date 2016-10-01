@@ -24,7 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
-import im.ene.toro.exoplayer.dev.ToroExoPlayer;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.exoplayer.ExoVideo;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;

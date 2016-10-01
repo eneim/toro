@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer.dev;
+package im.ene.toro.exoplayer;
 
-import android.media.MediaPlayer;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 
 /**
- * Created by eneim on 6/2/16.
+ * Created by eneim on 6/3/16.
  *
- * See {@link MediaPlayer.OnInfoListener}
+ * Simple media item definition. Application <b>MUST</b> extends this for custom usage.
  */
-public class PlaybackInfo {
+public class Media {
 
-  private final String info;
+  private final Uri mediaUri;
 
-  public PlaybackInfo(String info) {
-    this.info = info;
+  public Media(@NonNull Uri mediaUri) {
+    this.mediaUri = mediaUri;
   }
 
-  public String getInfo() {
-    return info;
+  public Uri getMediaUri() {
+    return mediaUri;
   }
 }

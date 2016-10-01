@@ -24,13 +24,13 @@ import im.ene.toro.exoplayer.widget.ToroVideoView;
 /**
  * Created by eneim on 6/11/16.
  */
-public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
+public abstract class ToroExoVideoViewHolder extends BaseVideoViewHolder {
 
   @NonNull
   protected final ToroVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
-  public ToroVideoViewHolder(View itemView) {
+  public ToroExoVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = findVideoView(itemView);
     if (mVideoView == null) {
@@ -43,46 +43,36 @@ public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
   protected abstract ToroVideoView findVideoView(View itemView);
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    if (mVideoView != null) {
-      mVideoView.preparePlayer(playWhenReady);
-    }
+    mVideoView.preparePlayer(playWhenReady);
   }
 
   @Override public void releasePlayer() {
-    if (mVideoView != null) {
-      mVideoView.releasePlayer();
-    }
+    mVideoView.releasePlayer();
   }
 
   // Client could override this method for better practice
   @Override public void start() {
-    if (mVideoView != null) {
-      mVideoView.start();
-    }
+    mVideoView.start();
   }
 
   @Override public void pause() {
-    if (mVideoView != null) {
-      mVideoView.pause();
-    }
+    mVideoView.pause();
   }
 
   @Override public long getDuration() {
-    return mVideoView != null ? mVideoView.getDuration() : -1;
+    return mVideoView.getDuration();
   }
 
   @Override public long getCurrentPosition() {
-    return mVideoView != null ? mVideoView.getCurrentPosition() : 0;
+    return mVideoView.getCurrentPosition();
   }
 
   @Override public void seekTo(long pos) {
-    if (mVideoView != null) {
-      mVideoView.seekTo(pos);
-    }
+    mVideoView.seekTo(pos);
   }
 
   @Override public boolean isPlaying() {
-    return mVideoView != null && mVideoView.isPlaying();
+    return mVideoView.isPlaying();
   }
 
   @Override public boolean wantsToPlay() {
@@ -104,9 +94,7 @@ public abstract class ToroVideoViewHolder extends BasePlayerViewHolder {
   }
 
   @Override public void stop() {
-    if (mVideoView != null) {
-      mVideoView.stop();
-    }
+    mVideoView.stop();
   }
 
   @NonNull @Override public View getPlayerView() {
