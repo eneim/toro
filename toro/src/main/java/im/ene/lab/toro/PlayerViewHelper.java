@@ -30,7 +30,7 @@ import android.view.ViewParent;
  */
 public abstract class PlayerViewHelper {
 
-  static final String TAG = "PlayerViewHelper";
+  @SuppressWarnings("unused") static final String TAG = "PlayerViewHelper";
 
   protected final ToroPlayer player;
   protected final View itemView;
@@ -38,13 +38,6 @@ public abstract class PlayerViewHelper {
   public PlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     this.player = player;
     this.itemView = itemView;
-  }
-
-  /**
-   * @hide
-   */
-  @NonNull protected final ToroPlayer getPlayer() {
-    return player;
   }
 
   /* BEGIN: Callback for View */
