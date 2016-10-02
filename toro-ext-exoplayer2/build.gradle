@@ -28,22 +28,16 @@ android {
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
-
   buildTypes {
     release {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
-
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_7
-    targetCompatibility JavaVersion.VERSION_1_7
-  }
 }
 
 dependencies {
-  compile fileTree(include: ['*.jar'], dir: 'libs')
+  compile fileTree(dir: 'libs', include: ['*.jar'])
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
@@ -54,5 +48,5 @@ dependencies {
 
   // Non default dependencies
   compile project(':toro')
-  compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}"
+  compile "com.google.android.exoplayer:exoplayer:r2.0.1"
 }
