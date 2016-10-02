@@ -32,11 +32,12 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import im.ene.toro.exoplayer.internal.DemoPlayer.RendererBuilder;
 
 /**
- * A {@link ExoMediaPlayer.RendererBuilder} for streams that can be read using an {@link Extractor}.
+ * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
-public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class ExtractorRendererBuilder implements RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -51,7 +52,7 @@ public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder 
     this.uri = uri;
   }
 
-  @Override public void buildRenderers(ExoMediaPlayer player) {
+  @Override public void buildRenderers(DemoPlayer player) {
     Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
     Handler mainHandler = player.getMainHandler();
 
@@ -71,14 +72,15 @@ public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder 
         new TextTrackRenderer(sampleSource, player, mainHandler.getLooper());
 
     // Invoke the callback.
-    TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
-    renderers[ExoMediaPlayer.TYPE_VIDEO] = videoRenderer;
-    renderers[ExoMediaPlayer.TYPE_AUDIO] = audioRenderer;
-    renderers[ExoMediaPlayer.TYPE_TEXT] = textRenderer;
+    TrackRenderer[] renderers = new TrackRenderer[DemoPlayer.RENDERER_COUNT];
+    renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
+    renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
+    renderers[DemoPlayer.TYPE_TEXT] = textRenderer;
     player.onRenderers(renderers, bandwidthMeter);
   }
 
   @Override public void cancel() {
     // Do nothing.
   }
+
 }

@@ -16,19 +16,16 @@
 
 package im.ene.toro.exoplayer.internal;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 import com.google.android.exoplayer.util.Util;
-import im.ene.toro.exoplayer.Media;
 import im.ene.toro.exoplayer.ExoVideo;
+import im.ene.toro.exoplayer.Media;
 
 /**
  * Generate a renderer builder appropriate for rendering a video.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public final class RendererBuilderFactory {
 
   /**
@@ -38,7 +35,7 @@ public final class RendererBuilderFactory {
    * created.
    * @param uri The video uri which will be played.
    */
-  public static ExoMediaPlayer.RendererBuilder createRendererBuilder(Context context, Media media) {
+  public static DemoPlayer.RendererBuilder createRendererBuilder(Context context, Media media) {
     final String userAgent = Util.getUserAgent(context, "Toro");
     int contentType = inferContentType(media.getMediaUri(), "");
     switch (contentType) {

@@ -91,6 +91,10 @@ public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
     return videoView;
   }
 
+  @Override public int getBufferPercentage() {
+    return videoView.getBufferPercentage();
+  }
+
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
     if (item instanceof SimpleVideoObject) {
       this.video = (SimpleVideoObject) item;

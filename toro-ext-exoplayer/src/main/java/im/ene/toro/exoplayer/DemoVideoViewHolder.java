@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer.develop;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.toro.exoplayer.BaseVideoViewHolder;
 
 /**
  * Created by eneim on 6/11/16.
@@ -27,7 +26,7 @@ import im.ene.toro.exoplayer.BaseVideoViewHolder;
 public abstract class DemoVideoViewHolder extends BaseVideoViewHolder {
 
   @NonNull
-  protected final DemoVideoView mVideoView;
+  protected final ExoVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
   public DemoVideoViewHolder(View itemView) {
@@ -37,10 +36,10 @@ public abstract class DemoVideoViewHolder extends BaseVideoViewHolder {
       throw new NullPointerException("A valid DemoVideoView is required.");
     }
 
-    // mVideoView.setOnPlayerStateChangeListener(mHelper);
+    mVideoView.setOnStateChangeListener(mHelper);
   }
 
-  protected abstract DemoVideoView findVideoView(View itemView);
+  protected abstract ExoVideoView findVideoView(View itemView);
 
   @Override public void preparePlayer(boolean playWhenReady) {
     mVideoView.preparePlayer(playWhenReady);
@@ -86,6 +85,10 @@ public abstract class DemoVideoViewHolder extends BaseVideoViewHolder {
 
   @Override public void onVideoPreparing() {
 
+  }
+
+  @Override public int getBufferPercentage() {
+    return mVideoView.getBufferPercentage();
   }
 
   @Override public boolean onPlaybackError(Exception error) {

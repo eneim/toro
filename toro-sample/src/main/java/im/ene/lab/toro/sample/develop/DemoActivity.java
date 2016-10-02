@@ -22,17 +22,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import im.ene.lab.toro.sample.R;
 import im.ene.toro.exoplayer.ExoVideo;
-import im.ene.toro.exoplayer.develop.DemoVideoView;
+import im.ene.toro.exoplayer.ExoVideoView;
 
 public class DemoActivity extends AppCompatActivity {
 
-  DemoVideoView videoView;
+  ExoVideoView videoView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_demo);
 
-    videoView = (DemoVideoView) findViewById(R.id.demo_video_view);
+    videoView = (ExoVideoView) findViewById(R.id.demo_video_view);
     ExoVideo video =
         new ExoVideo(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"), "Demo Video");
     videoView.setMedia(video);

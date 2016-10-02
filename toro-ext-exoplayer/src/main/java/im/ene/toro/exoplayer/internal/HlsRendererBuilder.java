@@ -44,13 +44,14 @@ import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
+import im.ene.toro.exoplayer.internal.DemoPlayer.RendererBuilder;
 import java.io.IOException;
 import java.util.List;
 
 /**
- * A {@link ExoMediaPlayer.RendererBuilder} for HLS.
+ * A {@link RendererBuilder} for HLS.
  */
-public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class HlsRendererBuilder implements RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int MAIN_BUFFER_SEGMENTS = 254;
@@ -70,7 +71,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
   }
 
   @Override
-  public void buildRenderers(ExoMediaPlayer player) {
+  public void buildRenderers(DemoPlayer player) {
     currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, player);
     currentAsyncBuilder.init();
   }
@@ -87,12 +88,12 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
     private final Context context;
     private final String userAgent;
-    private final ExoMediaPlayer player;
+    private final DemoPlayer player;
     private final ManifestFetcher<HlsPlaylist> playlistFetcher;
 
     private boolean canceled;
 
-    public AsyncRendererBuilder(Context context, String userAgent, String url, ExoMediaPlayer player) {
+    public AsyncRendererBuilder(Context context, String userAgent, String url, DemoPlayer player) {
       this.context = context;
       this.userAgent = userAgent;
       this.player = player;
@@ -143,7 +144,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
           DefaultHlsTrackSelector.newDefaultInstance(context), bandwidthMeter,
           timestampAdjusterProvider);
       HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, loadControl,
-          MAIN_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player, ExoMediaPlayer.TYPE_VIDEO);
+          MAIN_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player, DemoPlayer.TYPE_VIDEO);
       MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
           sampleSource, MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT,
           5000, mainHandler, player, 50);
@@ -159,7 +160,7 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
             timestampAdjusterProvider);
         HlsSampleSource audioSampleSource = new HlsSampleSource(audioChunkSource, loadControl,
             AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
-            ExoMediaPlayer.TYPE_AUDIO);
+            DemoPlayer.TYPE_AUDIO);
         audioRenderer = new EnhancedMediaCodecAudioTrackRenderer(
             new SampleSource[] {sampleSource, audioSampleSource}, MediaCodecSelector.DEFAULT, null,
             true, player.getMainHandler(), player, AudioCapabilities.getCapabilities(context),
@@ -178,17 +179,17 @@ public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
             manifest, DefaultHlsTrackSelector.newSubtitleInstance(), bandwidthMeter,
             timestampAdjusterProvider);
         HlsSampleSource textSampleSource = new HlsSampleSource(textChunkSource, loadControl,
-            TEXT_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player, ExoMediaPlayer.TYPE_TEXT);
+            TEXT_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player, DemoPlayer.TYPE_TEXT);
         textRenderer = new TextTrackRenderer(textSampleSource, player, mainHandler.getLooper());
       } else {
         textRenderer = new Eia608TrackRenderer(sampleSource, player, mainHandler.getLooper());
       }
 
-      TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
-      renderers[ExoMediaPlayer.TYPE_VIDEO] = videoRenderer;
-      renderers[ExoMediaPlayer.TYPE_AUDIO] = audioRenderer;
-      renderers[ExoMediaPlayer.TYPE_METADATA] = id3Renderer;
-      renderers[ExoMediaPlayer.TYPE_TEXT] = textRenderer;
+      TrackRenderer[] renderers = new TrackRenderer[DemoPlayer.RENDERER_COUNT];
+      renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
+      renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
+      renderers[DemoPlayer.TYPE_METADATA] = id3Renderer;
+      renderers[DemoPlayer.TYPE_TEXT] = textRenderer;
       player.onRenderers(renderers, bandwidthMeter);
     }
 

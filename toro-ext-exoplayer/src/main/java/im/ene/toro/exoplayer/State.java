@@ -17,6 +17,7 @@
 package im.ene.toro.exoplayer;
 
 import android.support.annotation.IntDef;
+import im.ene.toro.exoplayer.internal.DemoPlayer;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -27,29 +28,25 @@ import java.lang.annotation.RetentionPolicy;
     /**
      * The player is neither prepared or being prepared.
      */
-    ToroExoPlayer.PLAYER_IDLE,
+    DemoPlayer.STATE_IDLE,
     /**
      * The player is being prepared.
      */
-    ToroExoPlayer.PLAYER_PREPARING,
-    /**
-     * The player finished prepared, but not really ready to play.
-     */
-    ToroExoPlayer.PLAYER_PREPARED,
+    DemoPlayer.STATE_PREPARING,
     /**
      * The player is prepared but not able to immediately play from the current position. The cause
      * is {@link TrackRenderer} specific, but this state typically occurs when more data needs
      * to be buffered for playback to start.
      */
-    ToroExoPlayer.PLAYER_BUFFERING,
+    DemoPlayer.STATE_BUFFERING,
     /**
      * The player is prepared and able to immediately play from the current position. The player will
      * be playing if {@link #getPlayWhenReady()} returns true, and paused otherwise.
      */
-    ToroExoPlayer.PLAYER_READY,
+    DemoPlayer.STATE_READY,
     /**
      * The player has finished playing the media.
      */
-    ToroExoPlayer.PLAYER_ENDED
+    DemoPlayer.STATE_ENDED
 }) @Retention(RetentionPolicy.SOURCE) public @interface State {
 }

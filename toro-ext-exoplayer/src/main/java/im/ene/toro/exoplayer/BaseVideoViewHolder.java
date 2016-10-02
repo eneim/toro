@@ -136,8 +136,6 @@ public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
     return true;  // don't want to see the annoying dialog
   }
 
-  private static final String TAG = "ToroViewHolder";
-
   @Override public float visibleAreaOffset() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }

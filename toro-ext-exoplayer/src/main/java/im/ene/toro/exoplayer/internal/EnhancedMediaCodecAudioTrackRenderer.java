@@ -33,27 +33,28 @@ public class EnhancedMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRe
 
   private int audioSessionId = 0;
 
-  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source,
-      MediaCodecSelector mediaCodecSelector) {
-    super(source, mediaCodecSelector);
-  }
-
-  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
-      DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys) {
-    super(source, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys);
-  }
-
-  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
-      Handler eventHandler, EventListener eventListener) {
-    super(source, mediaCodecSelector, eventHandler, eventListener);
-  }
-
-  public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
-      DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys,
-      Handler eventHandler, EventListener eventListener) {
-    super(source, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler,
-        eventListener);
-  }
+  // FIXME Comment out. Un-comment if necessary
+  //public EnhancedMediaCodecAudioTrackRenderer(SampleSource source,
+  //    MediaCodecSelector mediaCodecSelector) {
+  //  super(source, mediaCodecSelector);
+  //}
+  //
+  //public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  //    DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys) {
+  //  super(source, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys);
+  //}
+  //
+  //public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  //    Handler eventHandler, EventListener eventListener) {
+  //  super(source, mediaCodecSelector, eventHandler, eventListener);
+  //}
+  //
+  //public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
+  //    DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys,
+  //    Handler eventHandler, EventListener eventListener) {
+  //  super(source, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler,
+  //      eventListener);
+  //}
 
   public EnhancedMediaCodecAudioTrackRenderer(SampleSource source, MediaCodecSelector mediaCodecSelector,
       DrmSessionManager drmSessionManager, boolean playClearSamplesWithoutKeys,
@@ -75,7 +76,7 @@ public class EnhancedMediaCodecAudioTrackRenderer extends MediaCodecAudioTrackRe
     this.audioSessionId = audioSessionId;
   }
 
-  public int getAudioSessionId() {
+  /* package */ final int getAudioSessionId() {
     return this.audioSessionId;
   }
 }

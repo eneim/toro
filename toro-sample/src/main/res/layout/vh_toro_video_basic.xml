@@ -33,7 +33,7 @@
   This size will be automatically updated by the View.
 
   -->
-  <im.ene.toro.exoplayer.widget.ToroVideoView
+  <im.ene.toro.exoplayer.ExoVideoView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="192dp"

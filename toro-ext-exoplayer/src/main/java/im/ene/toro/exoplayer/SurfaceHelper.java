@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer.develop;
+package im.ene.toro.exoplayer;
 
 import android.graphics.SurfaceTexture;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -27,7 +28,7 @@ import android.view.View;
  * Created by eneim on 10/1/16.
  */
 
-abstract class SurfaceTextureHelper
+abstract class SurfaceHelper
     implements TextureView.SurfaceTextureListener, SurfaceHolder.Callback {
 
   // Place Holders
@@ -70,12 +71,22 @@ abstract class SurfaceTextureHelper
 
   static class Factory {
 
-    static SurfaceTextureHelper getInstance(final DemoVideoView parent, View view) {
-      return view instanceof TextureView ? new SurfaceTextureHelper() {
+    static SurfaceHelper getInstance(final ExoVideoView parent, View view) {
+      return view instanceof TextureView ? new SurfaceHelper() {
 
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
           Log.d("TEXTURE", "AVAILABLE");
+          parent.mSurface = new Surface(surface);
+          if (parent.mMediaPlayer != null) {
+            parent.mMediaPlayer.setSurface(parent.mSurface);
+            if (!parent.mPlayerNeedsPrepare) {
+              parent.mMediaPlayer.seekTo(parent.mPlayerPosition);
+              parent.mMediaPlayer.setPlayWhenReady(parent.mPlayRequested);
+            }
+          } else {
+            parent.preparePlayer(parent.mPlayRequested);
+          }
 
         }
 
@@ -86,13 +97,27 @@ abstract class SurfaceTextureHelper
 
         @Override public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
           Log.d("TEXTURE", "DESTROYED");
-          return false;
+          if (!parent.mBackgroundAudioEnabled) {
+            parent.releasePlayer();
+          } else {
+            if (parent.mMediaPlayer != null) {
+              parent.mMediaPlayer.setBackgrounded(true);
+            }
+          }
+
+          if (parent.mMediaPlayer != null) {
+            parent.mMediaPlayer.blockingClearSurface();
+          }
+
+          parent.mPlayerNeedsPrepare = true;
+          parent.mSurface = null;
+          return true;
         }
 
         @Override public void onSurfaceTextureUpdated(SurfaceTexture surface) {
           Log.d("TEXTURE", "UPDATED");
         }
-      } : new SurfaceTextureHelper() {
+      } : new SurfaceHelper() {
         @Override public void surfaceCreated(SurfaceHolder holder) {
           Log.d("SURFACE", "CREATED");
           parent.mSurface = holder.getSurface();

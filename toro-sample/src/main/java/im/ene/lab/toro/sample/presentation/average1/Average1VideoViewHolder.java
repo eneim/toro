@@ -29,12 +29,12 @@ import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
 import im.ene.toro.exoplayer.ExoVideo;
-import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.exoplayer.ExoVideoView;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link ToroExoPlayer.Player} API to play medias. So by default, Video ViewHolder
+ * This sample use {@link ExoVideoView} API to play medias. So by default, Video ViewHolder
  * requires an implemented Component of that interface. For samples those use legacy API such as
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacyActivity}
  * implementations.
@@ -44,7 +44,7 @@ public class Average1VideoViewHolder extends Average1BaseVideoViewHolder {
   public static final int LAYOUT_RES = R.layout.vh_toro_video_average_1;
 
   private SimpleVideoObject video;
-  private final ToroExoPlayer.Player videoPlayer;
+  private final ExoVideoView videoPlayer;
   private final View videoView;
   private final TextView stateView;
 
@@ -52,13 +52,13 @@ public class Average1VideoViewHolder extends Average1BaseVideoViewHolder {
     super(itemView);
     stateView = (TextView) itemView.findViewById(R.id.state);
     videoView = itemView.findViewById(R.id.video);
-    if (getPlayerView() instanceof ToroExoPlayer.Player) {
-      videoPlayer = (ToroExoPlayer.Player) getPlayerView();
+    if (getPlayerView() instanceof ExoVideoView) {
+      videoPlayer = (ExoVideoView) getPlayerView();
     } else {
-      throw new IllegalArgumentException("Illegal Video player widget. Requires a ToroExoPlayer.Player");
+      throw new IllegalArgumentException("Illegal Video player widget. Requires a ExoVideoView");
     }
     // !IMPORTANT: Helper is helpful, don't forget it.
-    videoPlayer.setOnPlayerStateChangeListener(helper);
+    videoPlayer.setOnStateChangeListener(helper);
   }
 
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
@@ -145,6 +145,10 @@ public class Average1VideoViewHolder extends Average1BaseVideoViewHolder {
   @Override public boolean onPlaybackError(Exception error) {
     stateView.setText(error != null ? "Error: " + error.getLocalizedMessage() : "Error!");
     return super.onPlaybackError(error);
+  }
+
+  @Override public int getBufferPercentage() {
+    return videoPlayer.getBufferPercentage();
   }
 
   /* END: ToroPlayer callbacks (partly) */

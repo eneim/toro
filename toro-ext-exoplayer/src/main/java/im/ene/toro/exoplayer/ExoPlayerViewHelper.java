@@ -18,12 +18,14 @@ package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.toro.exoplayer.internal.DemoPlayer;
 
 /**
  * Created by eneim on 2/6/16.
@@ -89,27 +91,32 @@ public final class ExoPlayerViewHelper extends PlayerViewHelper implements OnSta
     }
   }
 
+  private static final String TAG = "ExoPlayerViewHelper";
+
   /**
    * Implement {@link OnStateChangeListener}
    */
   @Override public final void onPlayerStateChanged(boolean playWhenReady, @State int state) {
+    Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
+        + playWhenReady
+        + "], state = ["
+        + state
+        + "]");
     switch (state) {
-      case ToroExoPlayer.PLAYER_PREPARED:
-        this.player.onVideoPrepared();
-        this.onPrepared(this.itemView, this.itemView.getParent());
-        break;
-      case ToroExoPlayer.PLAYER_ENDED:
+      case DemoPlayer.STATE_ENDED:
         this.player.onPlaybackCompleted();
         this.onCompletion();
         break;
-      case ToroExoPlayer.PLAYER_BUFFERING:
+      case DemoPlayer.STATE_BUFFERING:
+        this.player.onVideoPrepared();
+        this.onPrepared(this.itemView, this.itemView.getParent());
         break;
-      case ToroExoPlayer.PLAYER_IDLE:
+      case DemoPlayer.STATE_IDLE:
         break;
-      case ToroExoPlayer.PLAYER_PREPARING:
+      case DemoPlayer.STATE_PREPARING:
         this.player.onVideoPreparing();
         break;
-      case ToroExoPlayer.PLAYER_READY:
+      case DemoPlayer.STATE_READY:
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {

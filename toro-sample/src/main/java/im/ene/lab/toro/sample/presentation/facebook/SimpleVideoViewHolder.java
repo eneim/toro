@@ -30,13 +30,13 @@ import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.exoplayer.OnReleaseCallback;
 import im.ene.toro.exoplayer.SimpleMediaPlayer;
-import im.ene.toro.exoplayer.ToroExoVideoViewHolder;
-import im.ene.toro.exoplayer.widget.ToroVideoView;
+import im.ene.toro.exoplayer.ExoVideoView;
+import im.ene.toro.exoplayer.DemoVideoViewHolder;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements OnReleaseCallback {
+public class SimpleVideoViewHolder extends DemoVideoViewHolder implements OnReleaseCallback {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
@@ -53,8 +53,8 @@ public class SimpleVideoViewHolder extends ToroExoVideoViewHolder implements OnR
     mVideoView.setLastMomentCallback(this);
   }
 
-  @Override protected ToroVideoView findVideoView(View itemView) {
-    return (ToroVideoView) itemView.findViewById(R.id.video);
+  @Override protected ExoVideoView findVideoView(View itemView) {
+    return (ExoVideoView) itemView.findViewById(R.id.video);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {

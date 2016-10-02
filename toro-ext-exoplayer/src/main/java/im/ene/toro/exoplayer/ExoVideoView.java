@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer.develop;
+package im.ene.toro.exoplayer;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -35,20 +35,22 @@ import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.util.Util;
-import im.ene.toro.exoplayer.OnReleaseCallback;
-import im.ene.toro.exoplayer.Media;
-import im.ene.toro.exoplayer.OnStateChangeListener;
-import im.ene.toro.exoplayer.R;
-import im.ene.toro.exoplayer.SimpleMediaPlayer;
+import im.ene.toro.exoplayer.internal.DemoPlayer;
+import im.ene.toro.exoplayer.internal.RendererBuilderFactory;
 
 /**
  * Created by eneim on 10/1/16.
+ *
+ * A FrameLayout which holds a Surface for Video Stream. Due to the update of Android N, it is
+ * recommended to use SurfaceView again, so this Layout will be able to switch that base on the
+ * host
+ * OS Version.
  */
-
-public class DemoVideoView extends FrameLayout {
+public class ExoVideoView extends FrameLayout /* implements MediaPlayer */ {
 
   private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
 
+  // Default implementation of Player's Listener
   private final class VideoPlayerListener implements DemoPlayer.Listener {
 
     @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
@@ -78,17 +80,17 @@ public class DemoVideoView extends FrameLayout {
     }
   }
 
-  public DemoVideoView(Context context) {
+  public ExoVideoView(Context context) {
     this(context, null);
   }
 
-  public DemoVideoView(Context context, AttributeSet attrs) {
+  public ExoVideoView(Context context, AttributeSet attrs) {
     this(context, attrs, 0);
   }
 
-  public DemoVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public ExoVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-
+    // By default, TextureView is used for Android 23 and below, and SurfaceView is for the rest
     boolean useTextureView = context.getResources().getBoolean(R.bool.use_texture_view);
     View view = useTextureView ? new TextureView(context) : new SurfaceView(context);
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -98,13 +100,15 @@ public class DemoVideoView extends FrameLayout {
     addView(surfaceView, 0);
 
     playerListener = new VideoPlayerListener();
+
+    SurfaceHelper surfaceHelper = SurfaceHelper.Factory.getInstance(this, surfaceView);
+    surfaceHelper.setupForView(surfaceView);
+
+    this.mAudioCapabilities = AudioCapabilities.getCapabilities(context);
+
     setFocusable(true);
     setFocusableInTouchMode(true);
     requestFocus();
-    this.mAudioCapabilities = AudioCapabilities.getCapabilities(context);
-
-    SurfaceTextureHelper helper = SurfaceTextureHelper.Factory.getInstance(this, surfaceView);
-    helper.setupForView(surfaceView);
   }
 
   /**
@@ -151,12 +155,12 @@ public class DemoVideoView extends FrameLayout {
 
   // VideoView Implementation
   Surface mSurface;
+  DemoPlayer mMediaPlayer;
   private float videoAspectRatio;
   private final View surfaceView;
   private final VideoPlayerListener playerListener;
   private int mPlaybackState;
-  DemoPlayer mMediaPlayer;
-  private Media mMediaUri;
+  private Media mMedia;
   long mPlayerPosition;
   boolean mPlayerNeedsPrepare;
   boolean mPlayRequested = false;
@@ -211,7 +215,7 @@ public class DemoVideoView extends FrameLayout {
     releasePlayer();
   }
 
-  void releasePlayer() {
+  public final void releasePlayer() {
     if (mMediaPlayer != null) {
       if (lastMomentCallback != null) {
         lastMomentCallback.onRelease(new SimpleMediaPlayer() {
@@ -232,21 +236,19 @@ public class DemoVideoView extends FrameLayout {
     }
   }
 
-  void preparePlayer(boolean playWhenReady) {
-    if (mMediaUri == null || mSurface == null) {
+  public final void preparePlayer(boolean playWhenReady) {
+    if (mMedia == null || mSurface == null) {
       return;
     }
 
     if (mMediaPlayer == null) {
       mMediaPlayer =
-          new DemoPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mMediaUri));
+          new DemoPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mMedia));
       mMediaPlayer.addListener(playerListener);
-
-      // mMediaPlayer.setPlayerStateChangeListener(stateChangeListenerDelegate);
-      // mMediaPlayer.setOnInfoListener(onInfoListenerDelegate);
-
+      // TODO Define the need of Caption/Subtitle and MetaData Listener
       // mMediaPlayer.setCaptionListener(mExoMediaPlayerHelper);
       // mMediaPlayer.setMetadataListener(mExoMediaPlayerHelper);
+
       /* mMediaPlayer.setScreenOnWhilePlaying(true); */ // this is handle by this View
       mMediaPlayer.seekTo(mPlayerPosition);
       mPlayerNeedsPrepare = true;
@@ -345,12 +347,12 @@ public class DemoVideoView extends FrameLayout {
           + "Consider to request READ_EXTERNAL_STORAGE permission.");
     }
 
-    if (this.mMediaUri == media) {
+    if (this.mMedia == media) {
       return;
     }
 
     this.mPlayerPosition = 0;
-    this.mMediaUri = media;
+    this.mMedia = media;
     this.mPlayRequested = false;
     preparePlayer(false);
   }
