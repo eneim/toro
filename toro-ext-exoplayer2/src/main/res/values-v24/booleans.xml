@@ -15,20 +15,6 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="im.ene.lab.toro.sample.develop.DemoActivity"
-    >
-
-  <im.ene.toro.exoplayer2.ExoVideoView
-      android:id="@+id/demo_video_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:layout_centerInParent="true"
-      />
-
-</RelativeLayout>
+<resources>
+  <bool name="use_texture_view">false</bool>
+</resources>

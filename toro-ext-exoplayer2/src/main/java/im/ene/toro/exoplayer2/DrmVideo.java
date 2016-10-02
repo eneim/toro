@@ -16,25 +16,35 @@
 
 package im.ene.toro.exoplayer2;
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.FrameLayout;
+import android.net.Uri;
 
 /**
  * Created by eneim on 10/2/16.
  */
 
-public class ToroVideoView extends FrameLayout {
+public class DrmVideo extends Media {
 
-  public ToroVideoView(Context context) {
-    super(context);
+  private final String type;
+  private final String licenseUrl;
+  private final String[] keyRequestPropertiesArray;
+
+  public DrmVideo(Uri mediaUri, String type, String licenseUrl,
+      String[] keyRequestPropertiesArray) {
+    super(mediaUri);
+    this.type = type;
+    this.licenseUrl = licenseUrl;
+    this.keyRequestPropertiesArray = keyRequestPropertiesArray;
   }
 
-  public ToroVideoView(Context context, AttributeSet attrs) {
-    super(context, attrs);
+  public String getType() {
+    return type;
   }
 
-  public ToroVideoView(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
+  public String getLicenseUrl() {
+    return licenseUrl;
+  }
+
+  public String[] getKeyRequestPropertiesArray() {
+    return keyRequestPropertiesArray;
   }
 }
