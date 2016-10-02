@@ -18,7 +18,6 @@ package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import im.ene.lab.toro.PlayerViewHelper;
@@ -91,17 +90,10 @@ public final class ExoPlayerViewHelper extends PlayerViewHelper implements OnSta
     }
   }
 
-  private static final String TAG = "ExoPlayerViewHelper";
-
   /**
    * Implement {@link OnStateChangeListener}
    */
   @Override public final void onPlayerStateChanged(boolean playWhenReady, @State int state) {
-    Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
-        + playWhenReady
-        + "], state = ["
-        + state
-        + "]");
     switch (state) {
       case ExoMediaPlayer.STATE_ENDED:
         this.player.onPlaybackCompleted();
