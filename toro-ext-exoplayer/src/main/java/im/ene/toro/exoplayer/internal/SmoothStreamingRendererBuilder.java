@@ -45,7 +45,7 @@ import com.google.android.exoplayer.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.Util;
-import im.ene.toro.exoplayer.internal.DemoPlayer.RendererBuilder;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer.RendererBuilder;
 import java.io.IOException;
 
 /**
@@ -74,7 +74,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder {
     this.drmCallback = drmCallback;
   }
 
-  @Override public void buildRenderers(DemoPlayer player) {
+  @Override public void buildRenderers(ExoMediaPlayer player) {
     currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, drmCallback, player);
     currentAsyncBuilder.init();
   }
@@ -92,13 +92,13 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder {
     private final Context context;
     private final String userAgent;
     private final MediaDrmCallback drmCallback;
-    private final DemoPlayer player;
+    private final ExoMediaPlayer player;
     private final ManifestFetcher<SmoothStreamingManifest> manifestFetcher;
 
     private boolean canceled;
 
     public AsyncRendererBuilder(Context context, String userAgent, String url,
-        MediaDrmCallback drmCallback, DemoPlayer player) {
+        MediaDrmCallback drmCallback, ExoMediaPlayer player) {
       this.context = context;
       this.userAgent = userAgent;
       this.drmCallback = drmCallback;
@@ -158,7 +158,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder {
           videoDataSource, new AdaptiveEvaluator(bandwidthMeter), LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource videoSampleSource = new ChunkSampleSource(videoChunkSource, loadControl,
           VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
-          DemoPlayer.TYPE_VIDEO);
+          ExoMediaPlayer.TYPE_VIDEO);
       TrackRenderer videoRenderer =
           new MediaCodecVideoTrackRenderer(context, videoSampleSource, MediaCodecSelector.DEFAULT,
               MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, drmSessionManager, true,
@@ -171,7 +171,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder {
           LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource audioSampleSource = new ChunkSampleSource(audioChunkSource, loadControl,
           AUDIO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
-          DemoPlayer.TYPE_AUDIO);
+          ExoMediaPlayer.TYPE_AUDIO);
       EnhancedMediaCodecAudioTrackRenderer audioRenderer =
           new EnhancedMediaCodecAudioTrackRenderer(audioSampleSource, MediaCodecSelector.DEFAULT,
               drmSessionManager, true, mainHandler, player,
@@ -184,15 +184,15 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder {
           LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource textSampleSource = new ChunkSampleSource(textChunkSource, loadControl,
           TEXT_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, mainHandler, player,
-          DemoPlayer.TYPE_TEXT);
+          ExoMediaPlayer.TYPE_TEXT);
       TrackRenderer textRenderer =
           new TextTrackRenderer(textSampleSource, player, mainHandler.getLooper());
 
       // Invoke the callback.
-      TrackRenderer[] renderers = new TrackRenderer[DemoPlayer.RENDERER_COUNT];
-      renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
-      renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
-      renderers[DemoPlayer.TYPE_TEXT] = textRenderer;
+      TrackRenderer[] renderers = new TrackRenderer[ExoMediaPlayer.RENDERER_COUNT];
+      renderers[ExoMediaPlayer.TYPE_VIDEO] = videoRenderer;
+      renderers[ExoMediaPlayer.TYPE_AUDIO] = audioRenderer;
+      renderers[ExoMediaPlayer.TYPE_TEXT] = textRenderer;
       player.onRenderers(renderers, bandwidthMeter);
     }
   }

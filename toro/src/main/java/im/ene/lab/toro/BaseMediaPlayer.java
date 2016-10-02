@@ -24,7 +24,7 @@ import android.widget.VideoView;
  * Created by eneim on 10/2/16.
  */
 
-public interface MediaPlayer {
+public interface BaseMediaPlayer {
 
   /**
    * See {@link android.media.MediaPlayer#prepareAsync()}
@@ -103,8 +103,10 @@ public interface MediaPlayer {
    *
    * @return The audio session, or 0 if there was an error.
    */
+  // TODO Comment out. Un-comment if necessary
   // int getAudioSessionId();
 
+  // TODO Comment out. Un-comment if necessary
   // void setBackgroundAudioEnabled(boolean enabled);
 
 }

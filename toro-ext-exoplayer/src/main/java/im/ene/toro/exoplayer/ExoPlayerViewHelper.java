@@ -25,7 +25,7 @@ import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.toro.exoplayer.internal.DemoPlayer;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 
 /**
  * Created by eneim on 2/6/16.
@@ -103,20 +103,20 @@ public final class ExoPlayerViewHelper extends PlayerViewHelper implements OnSta
         + state
         + "]");
     switch (state) {
-      case DemoPlayer.STATE_ENDED:
+      case ExoMediaPlayer.STATE_ENDED:
         this.player.onPlaybackCompleted();
         this.onCompletion();
         break;
-      case DemoPlayer.STATE_BUFFERING:
+      case ExoMediaPlayer.STATE_BUFFERING:
         this.player.onVideoPrepared();
         this.onPrepared(this.itemView, this.itemView.getParent());
         break;
-      case DemoPlayer.STATE_IDLE:
+      case ExoMediaPlayer.STATE_IDLE:
         break;
-      case DemoPlayer.STATE_PREPARING:
+      case ExoMediaPlayer.STATE_PREPARING:
         this.player.onVideoPreparing();
         break;
-      case DemoPlayer.STATE_READY:
+      case ExoMediaPlayer.STATE_READY:
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {

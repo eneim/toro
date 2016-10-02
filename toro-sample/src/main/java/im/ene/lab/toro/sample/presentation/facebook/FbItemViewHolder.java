@@ -34,7 +34,7 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.exoplayer.OnReleaseCallback;
 import im.ene.toro.exoplayer.SimpleMediaPlayer;
 import im.ene.toro.exoplayer.ExoVideoView;
-import im.ene.toro.exoplayer.DemoVideoViewHolder;
+import im.ene.toro.exoplayer.ExoVideoViewHolder;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -117,7 +117,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     }
   }
 
-  static class VideoPost extends DemoVideoViewHolder implements OnReleaseCallback {
+  static class VideoPost extends ExoVideoViewHolder implements OnReleaseCallback {
 
     static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 

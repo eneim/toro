@@ -94,7 +94,7 @@ public abstract class PlayerViewHelper {
   }
   /* END: Callback for View */
 
-  /* BEGIN: Callback for MediaPlayer */
+  /* BEGIN: Callback for BaseMediaPlayer */
 
   /**
    * @param itemView main View of current ViewHolder

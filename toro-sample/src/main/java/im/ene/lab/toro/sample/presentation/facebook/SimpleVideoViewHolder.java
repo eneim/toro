@@ -31,12 +31,12 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.exoplayer.OnReleaseCallback;
 import im.ene.toro.exoplayer.SimpleMediaPlayer;
 import im.ene.toro.exoplayer.ExoVideoView;
-import im.ene.toro.exoplayer.DemoVideoViewHolder;
+import im.ene.toro.exoplayer.ExoVideoViewHolder;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends DemoVideoViewHolder implements OnReleaseCallback {
+public class SimpleVideoViewHolder extends ExoVideoViewHolder implements OnReleaseCallback {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 

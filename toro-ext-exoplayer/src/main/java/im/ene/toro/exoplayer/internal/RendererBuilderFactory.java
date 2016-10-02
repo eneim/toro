@@ -35,7 +35,7 @@ public final class RendererBuilderFactory {
    * created.
    * @param uri The video uri which will be played.
    */
-  public static DemoPlayer.RendererBuilder createRendererBuilder(Context context, Media media) {
+  public static ExoMediaPlayer.RendererBuilder createRendererBuilder(Context context, Media media) {
     final String userAgent = Util.getUserAgent(context, "Toro");
     int contentType = inferContentType(media.getMediaUri(), "");
     switch (contentType) {

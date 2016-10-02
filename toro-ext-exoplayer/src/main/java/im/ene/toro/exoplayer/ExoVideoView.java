@@ -35,7 +35,7 @@ import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.util.Util;
-import im.ene.toro.exoplayer.internal.DemoPlayer;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 import im.ene.toro.exoplayer.internal.RendererBuilderFactory;
 
 /**
@@ -46,18 +46,18 @@ import im.ene.toro.exoplayer.internal.RendererBuilderFactory;
  * host
  * OS Version.
  */
-public class ExoVideoView extends FrameLayout /* implements MediaPlayer */ {
+public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
 
   private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
 
   // Default implementation of Player's Listener
-  private final class VideoPlayerListener implements DemoPlayer.Listener {
+  private final class VideoPlayerListener implements ExoMediaPlayer.Listener {
 
     @Override public void onStateChanged(boolean playWhenReady, int playbackState) {
       mPlaybackState = playbackState;
       setKeepScreenOn(isInPlayableState());
 
-      if (playbackState == DemoPlayer.STATE_ENDED) {
+      if (playbackState == ExoMediaPlayer.STATE_ENDED) {
         mPlayRequested = false;
         releasePlayer();
         mPlayerPosition = 0;
@@ -124,8 +124,8 @@ public class ExoVideoView extends FrameLayout /* implements MediaPlayer */ {
   }
 
   private boolean isInPlayableState() {
-    return !mPlayerNeedsPrepare && (mPlaybackState != DemoPlayer.STATE_IDLE) && (mPlaybackState
-        != DemoPlayer.STATE_PREPARING) && (mPlaybackState != DemoPlayer.STATE_ENDED);
+    return !mPlayerNeedsPrepare && (mPlaybackState != ExoMediaPlayer.STATE_IDLE) && (mPlaybackState
+        != ExoMediaPlayer.STATE_PREPARING) && (mPlaybackState != ExoMediaPlayer.STATE_ENDED);
   }
 
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -155,7 +155,7 @@ public class ExoVideoView extends FrameLayout /* implements MediaPlayer */ {
 
   // VideoView Implementation
   Surface mSurface;
-  DemoPlayer mMediaPlayer;
+  ExoMediaPlayer mMediaPlayer;
   private float videoAspectRatio;
   private final View surfaceView;
   private final VideoPlayerListener playerListener;
@@ -243,7 +243,7 @@ public class ExoVideoView extends FrameLayout /* implements MediaPlayer */ {
 
     if (mMediaPlayer == null) {
       mMediaPlayer =
-          new DemoPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mMedia));
+          new ExoMediaPlayer(RendererBuilderFactory.createRendererBuilder(getContext(), mMedia));
       mMediaPlayer.addListener(playerListener);
       // TODO Define the need of Caption/Subtitle and MetaData Listener
       // mMediaPlayer.setCaptionListener(mExoMediaPlayerHelper);

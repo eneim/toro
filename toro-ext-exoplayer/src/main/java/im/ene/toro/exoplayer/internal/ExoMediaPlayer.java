@@ -57,7 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * with one of a number of {@link RendererBuilder} classes to suit different use cases (e.g. DASH,
  * SmoothStreaming and so on).
  */
-public class DemoPlayer
+public class ExoMediaPlayer
     implements ExoPlayer.Listener, ChunkSampleSource.EventListener, HlsSampleSource.EventListener,
     ExtractorSampleSource.EventListener, SingleSampleSource.EventListener,
     DefaultBandwidthMeter.EventListener, MediaCodecVideoTrackRenderer.EventListener,
@@ -72,17 +72,17 @@ public class DemoPlayer
     /**
      * Builds renderers for playback.
      *
-     * @param player The mMediaPlayer for which renderers are being built. {@link DemoPlayer#onRenderers}
+     * @param player The mMediaPlayer for which renderers are being built. {@link ExoMediaPlayer#onRenderers}
      * should be invoked once the renderers have been built. If building fails,
-     * {@link DemoPlayer#onRenderersError} should be invoked.
+     * {@link ExoMediaPlayer#onRenderersError} should be invoked.
      */
-    void buildRenderers(DemoPlayer player);
+    void buildRenderers(ExoMediaPlayer player);
 
     /**
      * Cancels the current build operation, if there is one. Else does nothing.
      * <p>
-     * A canceled build operation must not invoke {@link DemoPlayer#onRenderers} or
-     * {@link DemoPlayer#onRenderersError} on the mMediaPlayer, which may have been released.
+     * A canceled build operation must not invoke {@link ExoMediaPlayer#onRenderers} or
+     * {@link ExoMediaPlayer#onRenderersError} on the mMediaPlayer, which may have been released.
      */
     void cancel();
   }
@@ -207,7 +207,7 @@ public class DemoPlayer
   private InternalErrorListener internalErrorListener;
   private InfoListener infoListener;
 
-  public DemoPlayer(RendererBuilder rendererBuilder) {
+  public ExoMediaPlayer(RendererBuilder rendererBuilder) {
     this.rendererBuilder = rendererBuilder;
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
     player.addListener(this);
@@ -319,7 +319,7 @@ public class DemoPlayer
   /**
    * Invoked with the results from a {@link RendererBuilder}.
    *
-   * @param renderers Renderers indexed by {@link DemoPlayer} TYPE_* constants. An individual
+   * @param renderers Renderers indexed by {@link ExoMediaPlayer} TYPE_* constants. An individual
    * element may be null if there do not exist tracks of the corresponding type.
    * @param bandwidthMeter Provides an estimate of the currently available bandwidth. May be null.
    */

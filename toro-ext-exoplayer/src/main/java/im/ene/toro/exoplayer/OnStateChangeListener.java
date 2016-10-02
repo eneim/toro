@@ -16,7 +16,7 @@
 
 package im.ene.toro.exoplayer;
 
-import im.ene.toro.exoplayer.internal.DemoPlayer;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 
 /**
  * Created by eneim on 6/9/16.
@@ -25,15 +25,15 @@ public interface OnStateChangeListener {
 
   /**
    * @param playWhenReady Whether playback will proceed when ready.
-   * @param playbackState One of the {@link State} constants defined in the {@link DemoPlayer}
+   * @param playbackState One of the {@link State} constants defined in the {@link ExoMediaPlayer}
    * interface.
    */
   void onPlayerStateChanged(boolean playWhenReady, @State int playbackState);
 
   /**
-   * Invoked when an error occurs. The playback state will transition to {@link DemoPlayer#STATE_IDLE}
+   * Invoked when an error occurs. The playback state will transition to {@link ExoMediaPlayer#STATE_IDLE}
    * immediately after this method is invoked. The player instance can still be used, and {@link
-   * DemoPlayer#release()} must still be called on the player should it no longer be required.
+   * ExoMediaPlayer#release()} must still be called on the player should it no longer be required.
    *
    * @param error The error.
    */

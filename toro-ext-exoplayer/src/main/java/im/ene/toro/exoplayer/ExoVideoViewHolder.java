@@ -23,13 +23,13 @@ import android.view.View;
 /**
  * Created by eneim on 6/11/16.
  */
-public abstract class DemoVideoViewHolder extends BaseVideoViewHolder {
+public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
 
   @NonNull
   protected final ExoVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
-  public DemoVideoViewHolder(View itemView) {
+  public ExoVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = findVideoView(itemView);
     if (mVideoView == null) {
