@@ -32,7 +32,7 @@ public class Media {
     this.mediaUri = mediaUri;
   }
 
-  public Uri getMediaUri() {
+  public final Uri getMediaUri() {
     return mediaUri;
   }
 }

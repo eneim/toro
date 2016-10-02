@@ -15,29 +15,19 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    android:background="#20000000"
-    android:padding="4dp"
+    android:layout_height="match_parent"
+    tools:context="im.ene.lab.toro.sample.develop.DemoActivity"
     >
 
-  <!--
-
-  Generally VideoView is not visible if its height is set to wrap_content, so consider to give it a
-  non-zero initial value. If you have access to your Video's size at runtime, you can have more
-  control to make the UI feel better.
-
-  Here I use 192dp as for the ratio 16:9 of mainstream Videos with the plus/minus of UI measurement.
-  This size will be automatically updated by the View.
-
-  -->
   <im.ene.toro.exoplayer.ExoVideoView
-      android:id="@+id/video"
+      android:id="@+id/demo_video_view"
       android:layout_width="match_parent"
-      android:layout_height="192dp"
-      android:layout_gravity="center"
+      android:layout_height="match_parent"
+      android:layout_centerInParent="true"
       />
 
-</FrameLayout>
+</RelativeLayout>

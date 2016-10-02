@@ -16,76 +16,17 @@
 
 package im.ene.lab.toro;
 
-import android.media.MediaPlayer;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.VideoView;
 
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer {
-
-  // Playback method
-
-  /**
-   * Prepare video
-   */
-  void preparePlayer(boolean playWhenReady);
-
-  /**
-   * See {@link VideoView#start()}
-   */
-  void start();
-
-  /**
-   * See {@link VideoView#pause()}
-   */
-  void pause();
-
-  /**
-   * See {@link VideoView#stopPlayback()}
-   */
-  void stop();
-
-  /**
-   *
-   */
-  void releasePlayer();
-
-  /**
-   * See {@link VideoView#getDuration()}
-   *
-   * @return media's duration.
-   */
-  long getDuration();
-
-  /**
-   * See {@link VideoView#getCurrentPosition()}
-   *
-   * @return current playback position.
-   */
-  long getCurrentPosition();
-
-  /**
-   * See {@link VideoView#seekTo(int)}
-   *
-   * @param pos seek to specific position.
-   */
-  void seekTo(long pos);
-
-  /**
-   * See {@link VideoView#isPlaying()}
-   *
-   * @return {@code true} if the media is being played, {@code false} otherwise.
-   */
-  boolean isPlaying();
-
-  void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+public interface ToroPlayer extends BaseMediaPlayer {
 
   // Custom method to add Toro abilities
 
@@ -158,7 +99,7 @@ public interface ToroPlayer {
   void onVideoPreparing();
 
   /**
-   * Replace {@link MediaPlayer.OnPreparedListener#onPrepared(MediaPlayer)}
+   * Replace {@link android.media.MediaPlayer.OnPreparedListener#onPrepared(android.media.MediaPlayer)}
    *
    * @param mp media player which is prepared
    */

@@ -21,7 +21,7 @@ import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
-import im.ene.toro.exoplayer.ExpPlayerViewHelper;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 
 /**
  * Created by eneim on 6/29/16.
@@ -29,17 +29,17 @@ import im.ene.toro.exoplayer.ExpPlayerViewHelper;
  * Sample ViewHolder which holds a Video, and request support from Toro via ToroPlayer.
  *
  * It is required to implement {@link ToroPlayer} and {@link ToroViewHolder}, as well as a member
- * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ExpPlayerViewHelper}.
+ * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ExoPlayerViewHelper}.
  */
 public abstract class Basic2BaseVideoViewHolder extends Basic2ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final ExpPlayerViewHelper helper;
+  protected final ExoPlayerViewHelper helper;
   protected boolean isPlayable = false;
 
   public Basic2BaseVideoViewHolder(View itemView) {
     super(itemView);
-    helper = new ExpPlayerViewHelper(this, itemView);
+    helper = new ExoPlayerViewHelper(this, itemView);
   }
 
   /* BEGIN: ToroViewHolder callbacks */

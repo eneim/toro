@@ -55,7 +55,6 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
    */
   @Nullable protected abstract Object getItem(int position);
 
-
   public abstract static class ViewHolder extends RecyclerView.ViewHolder
       implements ToroViewHolder {
 
@@ -80,13 +79,13 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     /**
      * Called by {@link RecyclerView.Adapter#onViewRecycled(RecyclerView.ViewHolder)}
      */
-    public void onRecycled() {
+    protected void onRecycled() {
     }
 
     /**
      * Called by {@link RecyclerView.Adapter#onFailedToRecycleView(RecyclerView.ViewHolder)}
      */
-    public boolean onFailedToRecycle() {
+    protected boolean onFailedToRecycle() {
       return false;
     }
 
@@ -94,7 +93,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
      * Called response to {@link RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder,
      * int)}
      */
-    public void onViewHolderBound() {
+    protected void onViewHolderBound() {
     }
 
     /**

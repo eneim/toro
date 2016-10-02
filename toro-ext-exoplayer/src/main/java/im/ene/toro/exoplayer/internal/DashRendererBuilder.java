@@ -15,11 +15,9 @@
  */
 package im.ene.toro.exoplayer.internal;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import com.google.android.exoplayer.DefaultLoadControl;
@@ -40,6 +38,7 @@ import com.google.android.exoplayer.dash.mpd.Period;
 import com.google.android.exoplayer.dash.mpd.UtcTimingElement;
 import com.google.android.exoplayer.dash.mpd.UtcTimingElementResolver;
 import com.google.android.exoplayer.dash.mpd.UtcTimingElementResolver.UtcTimingCallback;
+import com.google.android.exoplayer.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer.drm.MediaDrmCallback;
 import com.google.android.exoplayer.drm.StreamingDrmSessionManager;
 import com.google.android.exoplayer.drm.UnsupportedDrmException;
@@ -54,14 +53,13 @@ import com.google.android.exoplayer.util.Util;
 import java.io.IOException;
 
 /**
- * A {@link RendererBuilder} for DASH.
+ * A {@link ExoMediaPlayer.RendererBuilder} for DASH.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
 public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
   private static final String TAG = "DashRendererBuilder";
 
-  private static final int BUFFER_SEGMENT_SIZE = 64 * 1024; // 64 kilobytes?
+  private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int VIDEO_BUFFER_SEGMENTS = 200;
   private static final int AUDIO_BUFFER_SEGMENTS = 54;
   private static final int TEXT_BUFFER_SEGMENTS = 2;
@@ -189,7 +187,7 @@ public class DashRendererBuilder implements ExoMediaPlayer.RendererBuilder {
 
       // Check drm support if necessary.
       boolean filterHdContent = false;
-      StreamingDrmSessionManager drmSessionManager = null;
+      StreamingDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       if (hasContentProtection) {
         if (Util.SDK_INT < 18) {
           player.onRenderersError(

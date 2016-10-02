@@ -15,11 +15,9 @@
  */
 package im.ene.toro.exoplayer.internal;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
-import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
@@ -46,14 +44,14 @@ import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer.RendererBuilder;
 import java.io.IOException;
 import java.util.List;
 
 /**
- * A {@link ExoMediaPlayer.RendererBuilder} for HLS.
+ * A {@link RendererBuilder} for HLS.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
-public class HlsRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class HlsRendererBuilder implements RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int MAIN_BUFFER_SEGMENTS = 254;

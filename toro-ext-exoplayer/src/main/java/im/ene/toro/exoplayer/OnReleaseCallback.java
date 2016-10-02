@@ -16,24 +16,17 @@
 
 package im.ene.toro.exoplayer;
 
-import android.media.MediaPlayer;
-
 /**
- * Created by eneim on 6/2/16.
+ * Created by eneim on 7/1/16.
  *
- * See {@link MediaPlayer.OnVideoSizeChangedListener}
+ * Callback which will be triggered right before releasing the Media player.
  */
-public interface OnVideoSizeChangedListener {
+public interface OnReleaseCallback {
 
   /**
-   * Called to indicate the video size
+   * Call right before {@code player} is released. Note that it will be null after this moment.
    *
-   * The video size (width and height) could be 0 if there was no video,
-   * no display surface was set, or the value was not determined yet.
-   *
-   * @param mp the MediaPlayer associated with this callback
-   * @param width the width of the video
-   * @param height the height of the video
+   * @param player the Player which is being released.
    */
-  void onVideoSizeChanged(ToroExoPlayer mp, int width, int height);
+  void onRelease(SimpleMediaPlayer player);
 }

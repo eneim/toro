@@ -15,47 +15,40 @@
       android:name=".ToroApp"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
         android:name=".HomeActivity"
         android:theme="@style/AppTheme.NoActionBar"/>
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.basic1.Basic1Activity"/>
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.basic2.Basic2Activity"/>
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.basic3.Basic3Activity"/>
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.average1.Average1Activity"/>
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.advance1.Advance1Activity"/>
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.facebook.FbFeedActivity"/>
 
-    <!--<activity-->
-        <!--android:label="@string/activity_show_case"-->
-        <!--android:launchMode="singleTop"-->
-        <!--android:name=".presentation.youtube.YouTubeVideosActivity"/>-->
+    <!-- <activity -->
+    <!-- android:label="@string/activity_show_case" -->
+    <!-- android:launchMode="singleTop" -->
+    <!-- android:name=".presentation.youtube.YouTubeVideosActivity"/> -->
 
     <activity
         android:label="@string/activity_show_case"
@@ -76,11 +69,21 @@
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
-
     <meta-data
         android:name="toro.ext.youtube.apiKey"
         android:value="${youtube_api_key}"/>
 
+    <activity
+        android:label="@string/app_name"
+        android:name=".develop.DemoActivity"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:theme="@style/AppTheme.NoActionBar">
+      <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN"/>-->
+
+        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
+    </activity>
   </application>
 
 </manifest>

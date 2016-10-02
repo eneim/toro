@@ -24,6 +24,7 @@ import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
 
 /**
  * Created by eneim on 2/6/16.
@@ -35,10 +36,9 @@ import im.ene.lab.toro.VideoPlayerManager;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class ExpPlayerViewHelper extends PlayerViewHelper implements
-    OnPlayerStateChangeListener {
+public final class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChangeListener {
 
-  public ExpPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
@@ -91,27 +91,24 @@ public final class ExpPlayerViewHelper extends PlayerViewHelper implements
   }
 
   /**
-   * Implement {@link OnPlayerStateChangeListener}
+   * Implement {@link OnStateChangeListener}
    */
-  @Override public final void onPlayerStateChanged(ToroExoPlayer player, boolean playWhenReady,
-      @State int playbackState) {
-    switch (playbackState) {
-      case ToroExoPlayer.PLAYER_PREPARED:
-        this.player.onVideoPrepared();
-        this.onPrepared(this.itemView, this.itemView.getParent());
-        break;
-      case ToroExoPlayer.PLAYER_ENDED:
+  @Override public final void onPlayerStateChanged(boolean playWhenReady, @State int state) {
+    switch (state) {
+      case ExoMediaPlayer.STATE_ENDED:
         this.player.onPlaybackCompleted();
         this.onCompletion();
         break;
-      case ToroExoPlayer.PLAYER_BUFFERING:
+      case ExoMediaPlayer.STATE_BUFFERING:
+        this.player.onVideoPrepared();
+        this.onPrepared(this.itemView, this.itemView.getParent());
         break;
-      case ToroExoPlayer.PLAYER_IDLE:
+      case ExoMediaPlayer.STATE_IDLE:
         break;
-      case ToroExoPlayer.PLAYER_PREPARING:
+      case ExoMediaPlayer.STATE_PREPARING:
         this.player.onVideoPreparing();
         break;
-      case ToroExoPlayer.PLAYER_READY:
+      case ExoMediaPlayer.STATE_READY:
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {
@@ -123,7 +120,7 @@ public final class ExpPlayerViewHelper extends PlayerViewHelper implements
     }
   }
 
-  @Override public final boolean onPlayerError(ToroExoPlayer player, PlaybackException error) {
+  @Override public final boolean onPlayerError(Exception error) {
     return super.onPlaybackError(error);
   }
 }

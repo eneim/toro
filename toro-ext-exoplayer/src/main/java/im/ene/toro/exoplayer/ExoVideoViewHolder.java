@@ -19,28 +19,27 @@ package im.ene.toro.exoplayer;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.toro.exoplayer.widget.ToroVideoView;
 
 /**
  * Created by eneim on 6/11/16.
  */
-public abstract class ToroExoVideoViewHolder extends BaseVideoViewHolder {
+public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
 
   @NonNull
-  protected final ToroVideoView mVideoView;
+  protected final ExoVideoView mVideoView;
   private boolean mPlayable = true; // normally true
 
-  public ToroExoVideoViewHolder(View itemView) {
+  public ExoVideoViewHolder(View itemView) {
     super(itemView);
     mVideoView = findVideoView(itemView);
     if (mVideoView == null) {
-      throw new NullPointerException("A valid ToroVideoView is required.");
+      throw new NullPointerException("A valid DemoVideoView is required.");
     }
 
-    mVideoView.setOnPlayerStateChangeListener(mHelper);
+    mVideoView.setOnStateChangeListener(mHelper);
   }
 
-  protected abstract ToroVideoView findVideoView(View itemView);
+  protected abstract ExoVideoView findVideoView(View itemView);
 
   @Override public void preparePlayer(boolean playWhenReady) {
     mVideoView.preparePlayer(playWhenReady);
@@ -86,6 +85,10 @@ public abstract class ToroExoVideoViewHolder extends BaseVideoViewHolder {
 
   @Override public void onVideoPreparing() {
 
+  }
+
+  @Override public int getBufferPercentage() {
+    return mVideoView.getBufferPercentage();
   }
 
   @Override public boolean onPlaybackError(Exception error) {

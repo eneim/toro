@@ -15,12 +15,10 @@
  */
 package im.ene.toro.exoplayer.internal;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaCodec;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
@@ -34,12 +32,12 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import im.ene.toro.exoplayer.internal.ExoMediaPlayer.RendererBuilder;
 
 /**
- * A {@link ExoMediaPlayer.RendererBuilder} for streams that can be read using an {@link Extractor}.
+ * A {@link RendererBuilder} for streams that can be read using an {@link Extractor}.
  */
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)  //
-public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder {
+public class ExtractorRendererBuilder implements RendererBuilder {
 
   private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
   private static final int BUFFER_SEGMENT_COUNT = 256;
@@ -84,4 +82,5 @@ public class ExtractorRendererBuilder implements ExoMediaPlayer.RendererBuilder 
   @Override public void cancel() {
     // Do nothing.
   }
+
 }

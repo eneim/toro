@@ -29,12 +29,12 @@ import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
 import im.ene.toro.exoplayer.ExoVideo;
-import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.exoplayer.ExoVideoView;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link ToroExoPlayer.Player} API to play medias. So by default, Video ViewHolder
+ * This sample use {@link ExoVideoView} API to play medias. So by default, Video ViewHolder
  * requires an implemented Component of that interface. For samples those use legacy API such as
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacyActivity}
  * implementations.
@@ -46,7 +46,7 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
   public static final int LAYOUT_RES = R.layout.vh_toro_video_basic_3;
 
   private SimpleVideoObject video;
-  private final ToroExoPlayer.Player videoPlayer;
+  private final ExoVideoView videoPlayer;
   /* package */ final View videoView; // package private so Adapter can judge the clicked View.
   final TextView dummyView;
 
@@ -54,13 +54,13 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
     super(itemView);
     dummyView = (TextView) itemView.findViewById(R.id.text);
     videoView = itemView.findViewById(R.id.video);
-    if (getPlayerView() instanceof ToroExoPlayer.Player) {
-      videoPlayer = (ToroExoPlayer.Player) getPlayerView();
+    if (getPlayerView() instanceof ExoVideoView) {
+      videoPlayer = (ExoVideoView) getPlayerView();
     } else {
-      throw new IllegalArgumentException("Illegal Video player widget. Requires a ToroExoPlayer.Player");
+      throw new IllegalArgumentException("Illegal Video player widget. Requires a ExoVideoView");
     }
     // !IMPORTANT: Helper is helpful, don't forget it.
-    videoPlayer.setOnPlayerStateChangeListener(helper);
+    videoPlayer.setOnStateChangeListener(helper);
   }
 
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
@@ -111,6 +111,10 @@ public class Basic3VideoViewHolder extends Basic3BaseVideoViewHolder {
 
   @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
     this.videoPlayer.setVolume(volume);
+  }
+
+  @Override public int getBufferPercentage() {
+    return videoPlayer.getBufferPercentage();
   }
 
   // MEMO: Unique or null

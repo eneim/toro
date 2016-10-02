@@ -16,22 +16,13 @@
 
 package im.ene.toro.exoplayer;
 
-import android.media.MediaPlayer;
-
 /**
- * Created by eneim on 6/2/16.
- *
- * See {@link MediaPlayer.OnInfoListener}
+ * Created by eneim on 10/1/16.
  */
-public class PlaybackInfo {
 
-  private final String info;
+public interface SimpleMediaPlayer {
 
-  public PlaybackInfo(String info) {
-    this.info = info;
-  }
+  long getDuration();
 
-  public String getInfo() {
-    return info;
-  }
+  long getCurrentPosition();
 }
