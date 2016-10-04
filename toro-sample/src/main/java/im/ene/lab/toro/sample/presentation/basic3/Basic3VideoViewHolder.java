@@ -27,7 +27,7 @@ import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
 import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.extended.ExtVideoViewHolder;
 
 /**
  * Created by eneim on 6/29/16.
@@ -37,7 +37,7 @@ import im.ene.toro.exoplayer2.ExoVideoViewHolder;
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacyActivity}
  * implementations.
  */
-public class Basic3VideoViewHolder extends ExoVideoViewHolder {
+public class Basic3VideoViewHolder extends ExtVideoViewHolder {
 
   // vh_toro_video_basic_3 is the updated version for vh_toro_video_basic, which has an extra
   // TextView to show the selective click event handling.
@@ -84,11 +84,9 @@ public class Basic3VideoViewHolder extends ExoVideoViewHolder {
 
   @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
     super.setOnItemLongClickListener(listener);
-    // Additional support for long-press on Video.
     videoView.setOnLongClickListener(new View.OnLongClickListener() {
-      @Override public boolean onLongClick(View view) {
-        return listener.onLongClick(view) &&  //
-            helper.onItemLongClick(Basic3VideoViewHolder.this, itemView, itemView.getParent());
+      @Override public boolean onLongClick(View v) {
+        return listener.onLongClick(v) && helper.onLongClick(v);
       }
     });
   }

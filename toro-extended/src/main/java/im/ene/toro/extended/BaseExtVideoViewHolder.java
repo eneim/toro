@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer2;
+package im.ene.toro.extended;
 
 import android.support.annotation.CallSuper;
 import android.view.View;
@@ -24,18 +24,26 @@ import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
 
 /**
- * Created by eneim on 1/31/16.
- *
- * Abstract implementation of {@link ToroPlayer} and {@link ToroViewHolder}.
+ * Created by eneim on 10/4/16.
  */
-public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
+
+public abstract class BaseExtVideoViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final ExoPlayerViewHelper helper;
+  protected final LongClickableViewHelper helper;
 
-  public BaseVideoViewHolder(View itemView) {
+  public BaseExtVideoViewHolder(View itemView) {
     super(itemView);
-    helper = new ExoPlayerViewHelper(this, itemView);
+    helper = new LongClickableViewHelper(this, itemView);
+  }
+
+  // This method will overwrite ExtToroPlayer's call, so it requires some help.
+  @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
+    super.setOnItemLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        return listener.onLongClick(v) || helper.onLongClick(v);
+      }
+    });
   }
 
   @CallSuper @Override public void onActivityActive() {

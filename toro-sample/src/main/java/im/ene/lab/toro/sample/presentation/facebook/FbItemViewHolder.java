@@ -33,7 +33,7 @@ import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.extended.ExtVideoViewHolder;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -124,7 +124,7 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     }
   }
 
-  static class VideoPost extends ExoVideoViewHolder /* implements OnReleaseCallback */ {
+  static class VideoPost extends ExtVideoViewHolder /* implements OnReleaseCallback */ {
 
     static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 
@@ -255,9 +255,5 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     //  isReleased = true;
     //  latestPosition = player.getCurrentPosition();
     //}
-
-    @Override protected boolean allowLongPressSupport() {
-      return true;
-    }
   }
 }

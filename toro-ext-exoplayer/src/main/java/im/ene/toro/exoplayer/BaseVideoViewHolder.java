@@ -33,64 +33,17 @@ public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
 
   protected final ExoPlayerViewHelper helper;
 
-  private View.OnLongClickListener mLongClickListener;
-
   public BaseVideoViewHolder(View itemView) {
     super(itemView);
     helper = new ExoPlayerViewHelper(this, itemView);
-    if (allowLongPressSupport()) {
-      if (mLongClickListener == null) {
-        mLongClickListener = new View.OnLongClickListener() {
-          @Override public boolean onLongClick(View v) {
-            return helper.onItemLongClick(BaseVideoViewHolder.this,
-                BaseVideoViewHolder.this.itemView, BaseVideoViewHolder.this.itemView.getParent());
-          }
-        };
-      }
-
-      super.setOnItemLongClickListener(mLongClickListener);
-    } else {
-      mLongClickListener = null;
-    }
   }
 
   @CallSuper @Override public void onActivityActive() {
 
   }
 
-  @CallSuper @Override
-  public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
-    if (allowLongPressSupport()) {
-      // Client set different long click listener, but this View holder tends to support Long
-      // press, so we must support it
-      if (mLongClickListener == null) {
-        mLongClickListener = new View.OnLongClickListener() {
-          @Override public boolean onLongClick(View v) {
-            return helper.onItemLongClick(BaseVideoViewHolder.this, itemView,
-                itemView.getParent());
-          }
-        };
-      }
-    } else {
-      mLongClickListener = null;
-    }
-
-    super.setOnItemLongClickListener(new View.OnLongClickListener() {
-      @Override public boolean onLongClick(View v) {
-        boolean longClickHandled = false;
-
-        if (mLongClickListener != null) {
-          longClickHandled = mLongClickListener.onLongClick(v); // we can ignore this boolean result
-        }
-
-        return listener.onLongClick(v) && longClickHandled;
-      }
-    });
-  }
-
   @CallSuper @Override public void onActivityInactive() {
     // Release listener to prevent memory leak
-    mLongClickListener = null;
   }
 
   @CallSuper @Override public void onAttachedToWindow() {
@@ -103,13 +56,6 @@ public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
 
   @Override public int getPlayOrder() {
     return getAdapterPosition();
-  }
-
-  /**
-   * Allow long press to play support or not. {@code false} by default
-   */
-  protected boolean allowLongPressSupport() {
-    return false;
   }
 
   @Override public void onVideoPreparing() {

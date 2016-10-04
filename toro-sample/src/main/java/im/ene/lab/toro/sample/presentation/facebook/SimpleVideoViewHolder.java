@@ -141,10 +141,6 @@ public class SimpleVideoViewHolder extends ExoVideoViewHolder /* implements OnRe
     return super.onPlaybackError(error);
   }
 
-  @Override protected boolean allowLongPressSupport() {
-    return itemView != null && itemView.getResources().getBoolean(R.bool.accept_long_press);
-  }
-
   @Override public boolean isLoopAble() {
     return true;
   }
