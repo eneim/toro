@@ -28,7 +28,8 @@ import im.ene.lab.toro.ToroPlayer;
  */
 
 public class LegacyVideoViewHelper extends PlayerViewHelper
-    implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+    implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
+    MediaPlayer.OnErrorListener {
 
   private boolean playWhenReady;
   private MediaPlayer mediaPlayer;
@@ -62,5 +63,9 @@ public class LegacyVideoViewHelper extends PlayerViewHelper
     if (this.mediaPlayer != null) {
       this.mediaPlayer.setVolume(volume, volume);
     }
+  }
+
+  @Override public boolean onError(MediaPlayer mp, int what, int extra) {
+    return super.onPlaybackError(new MediaPlayerException(extra));
   }
 }

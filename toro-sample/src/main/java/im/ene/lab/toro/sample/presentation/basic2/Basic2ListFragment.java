@@ -110,8 +110,8 @@ public class Basic2ListFragment extends Fragment {
 
     mAdapter = getAdapter();
     // Do the magic.
-    if (mAdapter instanceof OrderedPlaylist) {
-      firstVideoPosition = ((OrderedPlaylist) mAdapter).getFirstVideoPosition();
+    if (mAdapter instanceof OrderedVideoList) {
+      firstVideoPosition = ((OrderedVideoList) mAdapter).getFirstVideoPosition();
     }
 
     mRecyclerView.setHasFixedSize(false);

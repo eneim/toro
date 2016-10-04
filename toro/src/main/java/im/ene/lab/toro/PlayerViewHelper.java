@@ -46,6 +46,7 @@ public abstract class PlayerViewHelper {
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
   @CallSuper public void onAttachedToWindow() {
+    player.preparePlayer(false);
     ToroScrollListener listener = itemView.getParent() != null ?  //
         Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
     if (listener != null && listener.getManager().getPlayer() == null) {
@@ -53,9 +54,6 @@ public abstract class PlayerViewHelper {
         listener.getManager().setPlayer(player);
         listener.getManager().restoreVideoState(player.getMediaId());
         listener.getManager().startPlayback();
-      } else {
-        // Prepare
-        player.preparePlayer(false);
       }
     }
   }
@@ -73,15 +71,16 @@ public abstract class PlayerViewHelper {
             player.getMediaId(), player.getCurrentPosition(), player.getDuration());
         listener.getManager().pausePlayback();
       }
-      // Release player.
-      player.releasePlayer();
       // Detach current Player
       listener.getManager().setPlayer(null);
     }
+    // Release player.
+    player.releasePlayer();
   }
 
   /**
-   * Support long press on Video, called by {@link View.OnLongClickListener#onLongClick(View)}
+   * Support long press on Video, called by {@link View.OnLongClickListener#onLongClick(View)}.
+   * Override this for custom behavior.
    *
    * @param player the {@link ToroPlayer} which is attached to current ViewHolder
    * @param itemView main View of current ViewHolder
@@ -90,7 +89,50 @@ public abstract class PlayerViewHelper {
    */
   public boolean onItemLongClick(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
-    return false;
+    VideoPlayerManager manager = getPlayerManager(parent);
+    // Important components are missing, return
+    if (manager == null) {
+      return false;
+    }
+
+    // Being pressed player is not be able to play, return
+    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
+      return false;
+    }
+
+    ToroPlayer currentPlayer = manager.getPlayer();
+    if (!player.equals(currentPlayer)) {
+      // Being pressed player is a new one
+      // All conditions to switch players has passed, process the switching
+      // Manually save Video state
+      // Not the current player, and new player wants to play, so switch players
+      if (currentPlayer != null) {
+        if (currentPlayer.isPlaying()) {
+          manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+              currentPlayer.getDuration());
+        }
+        // Force pause
+        manager.pausePlayback();
+      }
+
+      // Trigger new player
+      manager.setPlayer(player);
+      manager.restoreVideoState(player.getMediaId());
+      manager.startPlayback();
+      return true;
+    } else {
+      // Pressing current player, pause it if it is playing
+      if (currentPlayer.isPlaying()) {
+        manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+            currentPlayer.getDuration());
+        manager.pausePlayback();
+      } else {
+        // It's paused, so we resume it
+        manager.restoreVideoState(currentPlayer.getMediaId());
+        manager.startPlayback();
+      }
+      return true;
+    }
   }
   /* END: Callback for View */
 

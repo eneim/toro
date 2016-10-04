@@ -15,6 +15,7 @@
       android:name=".ToroApp"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
+
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
@@ -44,12 +45,6 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.facebook.FbFeedActivity"/>
-
-    <!-- <activity -->
-    <!-- android:label="@string/activity_show_case" -->
-    <!-- android:launchMode="singleTop" -->
-    <!-- android:name=".presentation.youtube.YouTubeVideosActivity"/> -->
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -69,9 +64,6 @@
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
-    <meta-data
-        android:name="toro.ext.youtube.apiKey"
-        android:value="${youtube_api_key}"/>
 
     <activity
         android:label="@string/app_name"

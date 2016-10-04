@@ -18,9 +18,10 @@
 <!--
 android:descendantFocusability="blocksDescendants" is added to pass click event down to children
 -->
-<com.google.android.exoplayer.AspectRatioFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<im.ene.toro.exoplayer2.ExoVideoView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/video"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="192dp"
     android:layout_margin="4dp"
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical"
@@ -36,12 +37,12 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
   This size will be automatically updated by the View.
 
   -->
-  <im.ene.toro.exoplayer.ExoVideoView
-      android:id="@+id/video"
-      android:layout_width="match_parent"
-      android:layout_height="192dp"
-      android:layout_gravity="center"
-      />
+  <!--<im.ene.toro.exoplayer2.ExoVideoView-->
+  <!--android:id="@+id/video"-->
+  <!--android:layout_width="match_parent"-->
+  <!--android:layout_height="192dp"-->
+  <!--android:layout_gravity="center"-->
+  <!--/>-->
 
   <TextView
       android:id="@+id/state"
@@ -58,4 +59,4 @@ android:descendantFocusability="blocksDescendants" is added to pass click event 
       android:paddingTop="4dp"
       android:textAppearance="@style/TextAppearance.AppCompat.Body1"
       />
-</com.google.android.exoplayer.AspectRatioFrameLayout>
+</im.ene.toro.exoplayer2.ExoVideoView>

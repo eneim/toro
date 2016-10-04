@@ -36,4 +36,12 @@ public class Basic2NormalViewHolder extends Basic2ViewHolder {
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
 
   }
+
+  @Override public void onAttachedToWindow() {
+
+  }
+
+  @Override public void onDetachedFromWindow() {
+
+  }
 }

@@ -31,18 +31,18 @@ import im.ene.lab.toro.ToroViewHolder;
 public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer, ToroViewHolder {
 
-  protected final ExoPlayerViewHelper mHelper;
+  protected final ExoPlayerViewHelper helper;
 
   private View.OnLongClickListener mLongClickListener;
 
   public BaseVideoViewHolder(View itemView) {
     super(itemView);
-    mHelper = new ExoPlayerViewHelper(this, itemView);
+    helper = new ExoPlayerViewHelper(this, itemView);
     if (allowLongPressSupport()) {
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(BaseVideoViewHolder.this,
+            return helper.onItemLongClick(BaseVideoViewHolder.this,
                 BaseVideoViewHolder.this.itemView, BaseVideoViewHolder.this.itemView.getParent());
           }
         };
@@ -66,7 +66,7 @@ public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
       if (mLongClickListener == null) {
         mLongClickListener = new View.OnLongClickListener() {
           @Override public boolean onLongClick(View v) {
-            return mHelper.onItemLongClick(BaseVideoViewHolder.this, itemView,
+            return helper.onItemLongClick(BaseVideoViewHolder.this, itemView,
                 itemView.getParent());
           }
         };
@@ -94,11 +94,11 @@ public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @CallSuper @Override public void onAttachedToWindow() {
-    mHelper.onAttachedToWindow();
+    helper.onAttachedToWindow();
   }
 
   @CallSuper @Override public void onDetachedFromWindow() {
-    mHelper.onDetachedFromWindow();
+    helper.onDetachedFromWindow();
   }
 
   @Override public int getPlayOrder() {

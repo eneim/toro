@@ -17,6 +17,7 @@
 package im.ene.toro.exoplayer;
 
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -26,61 +27,62 @@ import android.view.View;
 public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
 
   @NonNull
-  protected final ExoVideoView mVideoView;
-  private boolean mPlayable = true; // normally true
+  protected final ExoVideoView videoView;
+  private boolean playable = true; // normally true
 
   public ExoVideoViewHolder(View itemView) {
     super(itemView);
-    mVideoView = findVideoView(itemView);
-    if (mVideoView == null) {
-      throw new NullPointerException("A valid DemoVideoView is required.");
+    videoView = findVideoView(itemView);
+    if (videoView == null) {
+      throw new NullPointerException("A valid ExoVideoView is required.");
     }
 
-    mVideoView.setOnStateChangeListener(mHelper);
+    // !IMPORTANT: Helper is helpful, don't forget it.
+    videoView.setOnStateChangeListener(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    mVideoView.preparePlayer(playWhenReady);
+    videoView.preparePlayer(playWhenReady);
   }
 
   @Override public void releasePlayer() {
-    mVideoView.releasePlayer();
+    videoView.releasePlayer();
   }
 
   // Client could override this method for better practice
   @Override public void start() {
-    mVideoView.start();
+    videoView.start();
   }
 
   @Override public void pause() {
-    mVideoView.pause();
+    videoView.pause();
   }
 
   @Override public long getDuration() {
-    return mVideoView.getDuration();
+    return videoView.getDuration();
   }
 
   @Override public long getCurrentPosition() {
-    return mVideoView.getCurrentPosition();
+    return videoView.getCurrentPosition();
   }
 
   @Override public void seekTo(long pos) {
-    mVideoView.seekTo(pos);
+    videoView.seekTo(pos);
   }
 
   @Override public boolean isPlaying() {
-    return mVideoView.isPlaying();
+    return videoView.isPlaying();
   }
 
   @Override public boolean wantsToPlay() {
     // Default implementation
-    return visibleAreaOffset() >= 0.75 && mPlayable;
+    return visibleAreaOffset() >= 0.75 && playable;
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    mPlayable = true;
+    playable = true;
   }
 
   @Override public void onVideoPreparing() {
@@ -88,20 +90,23 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
   }
 
   @Override public int getBufferPercentage() {
-    return mVideoView.getBufferPercentage();
+    return videoView.getBufferPercentage();
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    mPlayable = false;
+    playable = false;
     return super.onPlaybackError(error);
   }
 
   @Override public void stop() {
-    mVideoView.stop();
+    videoView.stop();
   }
 
   @NonNull @Override public View getPlayerView() {
-    return mVideoView;
+    return videoView;
   }
 
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    videoView.setVolume(volume);
+  }
 }

@@ -20,14 +20,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="im.ene.lab.toro.sample.develop.DemoActivity"
     >
 
-  <im.ene.toro.exoplayer.ExoVideoView
+  <im.ene.toro.exoplayer2.ExoVideoView
       android:id="@+id/demo_video_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_centerInParent="true"
-      />
+      >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#ccf5f5f5"
+        android:orientation="horizontal"
+        style="?attr/buttonBarStyle"
+        >
+      <Button
+          android:id="@+id/start"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_weight="1"
+          android:padding="16dp"
+          android:text="Start"
+          style="?attr/buttonBarButtonStyle"
+          />
+      <Button
+          android:id="@+id/close"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_weight="1"
+          android:padding="16dp"
+          android:text="Close"
+          style="?attr/buttonBarButtonStyle"
+          />
+    </LinearLayout>
+
+  </im.ene.toro.exoplayer2.ExoVideoView>
 
 </RelativeLayout>

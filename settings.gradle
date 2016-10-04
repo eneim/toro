@@ -1,1 +1,2 @@
-include ':toro-sample', ':toro', ':toro-ext-exoplayer', ':toro-ext-mediaplayer'
+include ':toro-sample', ':toro', ':toro-ext-exoplayer', ':toro-ext-mediaplayer',
+    ':toro-ext-exoplayer2'

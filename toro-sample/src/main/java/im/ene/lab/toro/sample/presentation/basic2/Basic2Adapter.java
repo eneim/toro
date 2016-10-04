@@ -16,27 +16,26 @@
 
 package im.ene.lab.toro.sample.presentation.basic2;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
  */
-public class Basic2Adapter extends RecyclerView.Adapter<Basic2ViewHolder>
-    implements OrderedPlaylist {
+public class Basic2Adapter extends ToroAdapter<ToroAdapter.ViewHolder> implements OrderedVideoList {
 
   public Basic2Adapter() {
     super();
     setHasStableIds(true);  // MUST have this.
   }
 
-  @Override public Basic2ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view;
-    final Basic2ViewHolder viewHolder;
+    final ToroAdapter.ViewHolder viewHolder;
     if (viewType == Basic2ViewHolder.TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())
           .inflate(Basic2VideoViewHolder.LAYOUT_RES, parent, false);
@@ -50,11 +49,7 @@ public class Basic2Adapter extends RecyclerView.Adapter<Basic2ViewHolder>
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(Basic2ViewHolder holder, int position) {
-    holder.bind(this, getItem(position));
-  }
-
-  Object getItem(int position) {
+  @Override protected Object getItem(int position) {
     if (position % 3 != 2) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {
@@ -76,7 +71,7 @@ public class Basic2Adapter extends RecyclerView.Adapter<Basic2ViewHolder>
   }
 
   /**
-   * See {@link OrderedPlaylist#getFirstVideoPosition()}
+   * See {@link OrderedVideoList#getFirstVideoPosition()}
    *
    * @return Position of the Video on top, or the Video user prefer to be played first.
    */

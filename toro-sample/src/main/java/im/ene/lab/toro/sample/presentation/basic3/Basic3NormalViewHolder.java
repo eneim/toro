@@ -36,4 +36,12 @@ public class Basic3NormalViewHolder extends Basic3ViewHolder {
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
 
   }
+
+  @Override public void onAttachedToWindow() {
+
+  }
+
+  @Override public void onDetachedFromWindow() {
+
+  }
 }
