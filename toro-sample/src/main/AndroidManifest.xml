@@ -15,6 +15,7 @@
       android:name=".ToroApp"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
+
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
@@ -44,12 +45,6 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".presentation.facebook.FbFeedActivity"/>
-
-    <!-- <activity -->
-    <!-- android:label="@string/activity_show_case" -->
-    <!-- android:launchMode="singleTop" -->
-    <!-- android:name=".presentation.youtube.YouTubeVideosActivity"/> -->
-
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -59,30 +54,27 @@
         android:label="@string/app_name"
         android:name=".Launcher"
         android:targetActivity=".HomeActivity">
-      <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
 
-        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
     </activity-alias>
 
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
-    <meta-data
-        android:name="toro.ext.youtube.apiKey"
-        android:value="${youtube_api_key}"/>
 
     <activity
         android:label="@string/app_name"
         android:name=".develop.DemoActivity"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:theme="@style/AppTheme.NoActionBar">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
+      <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN"/>-->
 
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
+        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
     </activity>
   </application>
 

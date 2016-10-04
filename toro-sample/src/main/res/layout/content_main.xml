@@ -97,5 +97,14 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
+    <im.ene.lab.toro.sample.widget.SampleItemButton
+        android:id="@+id/exoplayer2_sample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/legacy_sample_1_description"
+        app:btn_title="ExoPlayer2 Sample"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
   </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

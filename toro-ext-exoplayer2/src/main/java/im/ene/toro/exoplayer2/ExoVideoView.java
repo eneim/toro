@@ -114,7 +114,9 @@ public class ExoVideoView extends FrameLayout {
     }
 
     @Override public void onPlayerError(ExoPlaybackException error) {
-
+      if (onStateChangeListener != null) {
+        onStateChangeListener.onPlayerError(error);
+      }
     }
 
     @Override public void onPositionDiscontinuity() {
@@ -216,10 +218,10 @@ public class ExoVideoView extends FrameLayout {
         MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
   }
 
-  SimpleExoPlayer mMediaPlayer;
+  SimpleExoPlayer player;
 
   public void setMedia(Uri uri) {
-    if (uri == null || (this.mMedia != null && uri.equals(this.mMedia.getMediaUri()))) {
+    if (uri == null || (this.media != null && uri.equals(this.media.getMediaUri()))) {
       return;
     }
 
@@ -227,33 +229,33 @@ public class ExoVideoView extends FrameLayout {
   }
 
   public void setMedia(Media media) {
-    if (this.mMedia == media) {
+    if (this.media == media) {
       return;
     }
 
-    this.mMedia = media;
+    this.media = media;
 
     releasePlayer();
-    initializePlayer();
+    initializePlayer(false);
   }
 
   /**
    * Set the {@link SimpleExoPlayer} to use. The {@link SimpleExoPlayer#setTextOutput} and
-   * {@link SimpleExoPlayer#setVideoListener} method of the mMediaPlayer will be called and
+   * {@link SimpleExoPlayer#setVideoListener} method of the player will be called and
    * previous
    * assignments are overridden.
    *
    * @param player The {@link SimpleExoPlayer} to use.
    */
   /* package */ void setPlayer(SimpleExoPlayer player) {
-    if (this.mMediaPlayer != null) {
-      this.mMediaPlayer.setTextOutput(null);
-      this.mMediaPlayer.setVideoListener(null);
-      this.mMediaPlayer.removeListener(componentListener);
-      this.mMediaPlayer.setVideoSurface(null);
+    if (this.player != null) {
+      this.player.setTextOutput(null);
+      this.player.setVideoListener(null);
+      this.player.removeListener(componentListener);
+      this.player.setVideoSurface(null);
     }
 
-    this.mMediaPlayer = player;
+    this.player = player;
     if (player != null) {
       if (surfaceView instanceof TextureView) {
         player.setVideoTextureView((TextureView) surfaceView);
@@ -268,16 +270,17 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
-  public final void initializePlayer() {
-    if (mMediaPlayer == null) {
+  public final void initializePlayer(boolean shouldAutoPlay) {
+    this.shouldAutoPlay = shouldAutoPlay;
+    if (player == null) {
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       try {
         UUID drmSchemeUuid =
-            this.mMedia instanceof DrmVideo ? getDrmUuid(((DrmVideo) this.mMedia).getType()) : null;
+            this.media instanceof DrmVideo ? getDrmUuid(((DrmVideo) this.media).getType()) : null;
         if (drmSchemeUuid != null) {
-          String drmLicenseUrl = ((DrmVideo) this.mMedia).getLicenseUrl();
+          String drmLicenseUrl = ((DrmVideo) this.media).getLicenseUrl();
           String[] keyRequestPropertiesArray =
-              ((DrmVideo) this.mMedia).getKeyRequestPropertiesArray();
+              ((DrmVideo) this.media).getKeyRequestPropertiesArray();
           Map<String, String> keyRequestProperties;
           if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
             keyRequestProperties = null;
@@ -310,49 +313,49 @@ public class ExoVideoView extends FrameLayout {
       TrackSelection.Factory videoTrackSelectionFactory =
           new AdaptiveVideoTrackSelection.Factory(BANDWIDTH_METER);
       trackSelector = new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
-      mMediaPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,  //
+      player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,  //
           new DefaultLoadControl(), drmSessionManager, false);
-      setPlayer(mMediaPlayer);
+      setPlayer(player);
       if (shouldRestorePosition) {
         // playerWindow is not null here
         if (playerPosition == C.TIME_UNSET) {
-          mMediaPlayer.seekToDefaultPosition(playerWindow);
+          player.seekToDefaultPosition(playerWindow);
         } else {
-          mMediaPlayer.seekTo(playerWindow, playerPosition);
+          player.seekTo(playerWindow, playerPosition);
         }
       }
 
-      mMediaPlayer.setPlayWhenReady(shouldAutoPlay);
+      player.setPlayWhenReady(shouldAutoPlay);
       playerNeedsSource = true;
     }
 
     if (playerNeedsSource) {
-      if (requiresPermission(mMedia.getMediaUri())) {
-        // The mMediaPlayer will be reinitialized if the permission is granted.
+      if (requiresPermission(media.getMediaUri())) {
+        // The player will be reinitialized if the permission is granted.
         return;
       }
 
-      MediaSource mediaSource = buildMediaSource(mMedia.getMediaUri(), null);
-      mMediaPlayer.prepare(mediaSource, !shouldRestorePosition);
+      MediaSource mediaSource = buildMediaSource(media.getMediaUri(), null);
+      player.prepare(mediaSource, !shouldRestorePosition);
       playerNeedsSource = false;
     }
   }
 
   public final void releasePlayer() {
-    if (mMediaPlayer != null) {
-      shouldAutoPlay = mMediaPlayer.getPlayWhenReady();
+    if (player != null) {
+      shouldAutoPlay = player.getPlayWhenReady();
       shouldRestorePosition = false;
-      Timeline timeline = mMediaPlayer.getCurrentTimeline();
+      Timeline timeline = player.getCurrentTimeline();
       if (timeline != null) {
-        playerWindow = mMediaPlayer.getCurrentWindowIndex();
+        playerWindow = player.getCurrentWindowIndex();
         Timeline.Window window = timeline.getWindow(playerWindow, new Timeline.Window());
         if (!window.isDynamic) {
           shouldRestorePosition = true;
-          playerPosition = window.isSeekable ? mMediaPlayer.getCurrentPosition() : C.TIME_UNSET;
+          playerPosition = window.isSeekable ? player.getCurrentPosition() : C.TIME_UNSET;
         }
       }
-      mMediaPlayer.release();
-      mMediaPlayer = null;
+      player.release();
+      player = null;
       trackSelector = null;
     }
   }
@@ -374,7 +377,7 @@ public class ExoVideoView extends FrameLayout {
   private int playerWindow;
   private long playerPosition;
 
-  private Media mMedia;
+  private Media media;
 
   private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
     int type = Util.inferContentType(
@@ -466,53 +469,53 @@ public class ExoVideoView extends FrameLayout {
 
   // Player Interface Implementation
   public long getDuration() {
-    return mMediaPlayer != null ? mMediaPlayer.getDuration() : C.TIME_UNSET;
+    return player != null ? player.getDuration() : C.TIME_UNSET;
   }
 
   public long getCurrentPosition() {
-    return mMediaPlayer != null ? mMediaPlayer.getCurrentPosition() : C.TIME_UNSET;
+    return player != null ? player.getCurrentPosition() : C.TIME_UNSET;
   }
 
   public boolean isPlaying() {
-    return mMediaPlayer != null && mMediaPlayer.getPlayWhenReady();
+    return player != null && player.getPlayWhenReady();
   }
 
   public int getBufferPercentage() {
-    return mMediaPlayer != null ? mMediaPlayer.getBufferedPercentage() : 0;
+    return player != null ? player.getBufferedPercentage() : 0;
   }
 
   public int getAudioSessionId() {
-    return mMediaPlayer != null ? mMediaPlayer.getAudioSessionId() : 0;
+    return player != null ? player.getAudioSessionId() : 0;
   }
 
   public void start() {
-    if (this.mMediaPlayer != null) {
-      this.mMediaPlayer.setPlayWhenReady(true);
+    if (this.player != null) {
+      this.player.setPlayWhenReady(true);
     }
   }
 
   public void pause() {
-    if (this.mMediaPlayer != null) {
-      this.mMediaPlayer.setPlayWhenReady(false);
+    if (this.player != null) {
+      this.player.setPlayWhenReady(false);
     }
   }
 
   public void stop() {
-    if (this.mMediaPlayer != null) {
-      this.mMediaPlayer.setPlayWhenReady(false);
+    if (this.player != null) {
+      this.player.setPlayWhenReady(false);
     }
     releasePlayer();
   }
 
   public void seekTo(long milliSec) {
-    if (mMediaPlayer != null) {
-      mMediaPlayer.seekTo(milliSec);
+    if (player != null) {
+      player.seekTo(milliSec);
     }
   }
 
   public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-    if (mMediaPlayer != null) {
-      mMediaPlayer.setVolume(volume);
+    if (player != null) {
+      player.setVolume(volume);
     }
   }
 

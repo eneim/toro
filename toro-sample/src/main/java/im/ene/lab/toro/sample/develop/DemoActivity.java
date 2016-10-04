@@ -20,23 +20,75 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import im.ene.lab.toro.sample.R;
 import im.ene.toro.exoplayer2.ExoVideoView;
+import im.ene.toro.exoplayer2.OnStateChangeListener;
+import im.ene.toro.exoplayer2.State;
 
 public class DemoActivity extends AppCompatActivity {
 
+  private static final String TAG = "DemoActivity";
+
   ExoVideoView videoView;
+  Button buttonStart;
+  Button buttonClose;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_demo);
 
     videoView = (ExoVideoView) findViewById(R.id.demo_video_view);
+
+    buttonStart = (Button) findViewById(R.id.start);
+    if (videoView.isPlaying()) {
+      buttonStart.setText("Pause");
+    } else {
+      buttonStart.setText("Start");
+    }
+
+    buttonStart.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (!videoView.isPlaying()) {
+          videoView.start();
+          buttonStart.setText("Pause");
+        } else {
+          videoView.pause();
+          buttonStart.setText("Start");
+        }
+      }
+    });
+
+    buttonClose = (Button) findViewById(R.id.close);
+    buttonClose.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        videoView.stop();
+        buttonStart.setText("Start");
+      }
+    });
+
+    videoView.setOnStateChangeListener(new OnStateChangeListener() {
+      @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+        Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
+            + playWhenReady
+            + "], playbackState = ["
+            + playbackState
+            + "]");
+      }
+
+      @Override public boolean onPlayerError(Exception error) {
+        return false;
+      }
+    });
+
     videoView.setMedia(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
   }
 
   @Override protected void onStart() {
     super.onStart();
+    
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       if (!videoView.isPlaying()) {
         videoView.start();

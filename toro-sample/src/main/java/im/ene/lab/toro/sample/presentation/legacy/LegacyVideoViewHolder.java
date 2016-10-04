@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.VideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.mediaplayer.LegacyBaseVideoViewHolder;
 
 /**
  * Created by eneim on 9/29/16.
@@ -34,13 +35,13 @@ public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
   static final int LAYOUT_RES = R.layout.vh_toro_video_legacy;
 
   private SimpleVideoObject video;
-  private VideoView videoView;
 
   public LegacyVideoViewHolder(View itemView) {
     super(itemView);
-    videoView = (VideoView) itemView.findViewById(R.id.video);
-    videoView.setOnPreparedListener(helper);
-    videoView.setOnCompletionListener(helper);
+  }
+
+  @Override protected VideoView findVideoView(View itemView) {
+    return (VideoView) itemView.findViewById(R.id.video);
   }
 
   @Override public void preparePlayer(boolean playWhenReady) {

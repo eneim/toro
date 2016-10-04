@@ -18,8 +18,6 @@ package im.ene.lab.toro.sample.presentation.basic2;
 
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -27,8 +25,8 @@ import android.widget.VideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
-import im.ene.toro.exoplayer.ExoVideo;
-import im.ene.toro.exoplayer.ExoVideoView;
+import im.ene.toro.exoplayer2.ExoVideoView;
+import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 
 /**
  * Created by eneim on 6/29/16.
@@ -38,24 +36,14 @@ import im.ene.toro.exoplayer.ExoVideoView;
  * {@link VideoView} or {@link MediaPlayer}, please take a look at {@link LegacyActivity}
  * implementations.
  */
-public class Basic2VideoViewHolder extends Basic2BaseVideoViewHolder {
+public class Basic2VideoViewHolder extends ExoVideoViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_basic;
 
   private SimpleVideoObject video;
-  private final ExoVideoView videoPlayer;
-  private final View videoView;
 
   public Basic2VideoViewHolder(View itemView) {
     super(itemView);
-    videoView = itemView.findViewById(R.id.video);
-    if (getPlayerView() instanceof ExoVideoView) {
-      videoPlayer = (ExoVideoView) getPlayerView();
-    } else {
-      throw new IllegalArgumentException("Illegal Video player widget. Requires a ExoVideoView");
-    }
-    // !IMPORTANT: Helper is helpful, don't forget it.
-    videoPlayer.setOnStateChangeListener(helper);
   }
 
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {
@@ -64,52 +52,7 @@ public class Basic2VideoViewHolder extends Basic2BaseVideoViewHolder {
     }
 
     this.video = (SimpleVideoObject) item;
-    this.videoPlayer.setMedia(new ExoVideo(Uri.parse(this.video.video), this.video.name));
-  }
-
-  /* BEGIN: ToroPlayer callbacks (partly) */
-  @Override public void preparePlayer(boolean playWhenReady) {
-    this.videoPlayer.preparePlayer(playWhenReady);
-  }
-
-  @Override public void start() {
-    this.videoPlayer.start();
-  }
-
-  @Override public void pause() {
-    this.videoPlayer.pause();
-  }
-
-  @Override public void stop() {
-    this.videoPlayer.stop();
-  }
-
-  @Override public void releasePlayer() {
-    this.videoPlayer.releasePlayer();
-  }
-
-  @Override public long getDuration() {
-    return this.videoPlayer.getDuration();
-  }
-
-  @Override public long getCurrentPosition() {
-    return this.videoPlayer.getCurrentPosition();
-  }
-
-  @Override public void seekTo(long pos) {
-    this.videoPlayer.seekTo(pos);
-  }
-
-  @Override public boolean isPlaying() {
-    return this.videoPlayer.isPlaying();
-  }
-
-  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
-    this.videoPlayer.setVolume(volume);
-  }
-
-  @Override public int getBufferPercentage() {
-    return videoPlayer.getBufferPercentage();
+    this.videoView.setMedia(Uri.parse(this.video.video));
   }
 
   // MEMO: Unique or null
@@ -117,8 +60,7 @@ public class Basic2VideoViewHolder extends Basic2BaseVideoViewHolder {
     return this.video != null ? this.video.video + "@" + getAdapterPosition() : null;
   }
 
-  @NonNull @Override public View getPlayerView() {
-    return this.videoView;
+  @Override protected ExoVideoView findVideoView(View itemView) {
+    return (ExoVideoView) itemView.findViewById(R.id.video);
   }
-  /* END: ToroPlayer callbacks (partly) */
 }

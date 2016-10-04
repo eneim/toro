@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.toro.mediaplayer;
+package im.ene.lab.toro.sample.presentation.basic2;
 
 /**
- * Created by eneim on 10/1/16.
+ * Created by eneim on 6/30/16.
  */
+public interface OrderedVideoList {
 
-public class LegacyMediaPlayer {
+  int getFirstVideoPosition();
 }

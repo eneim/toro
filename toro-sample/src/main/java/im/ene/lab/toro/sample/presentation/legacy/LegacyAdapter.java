@@ -28,7 +28,7 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
  * Created by eneim on 10/1/16.
  */
 
-public class LegacyAdapter extends ToroAdapter<LegacyViewHolder> {
+public class LegacyAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   @Nullable @Override protected Object getItem(int position) {
     if (position % 3 == 0) {
@@ -38,9 +38,9 @@ public class LegacyAdapter extends ToroAdapter<LegacyViewHolder> {
     }
   }
 
-  @Override public LegacyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view;
-    final LegacyViewHolder viewHolder;
+    final ToroAdapter.ViewHolder viewHolder;
     if (viewType == LegacyViewHolder.TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())
           .inflate(LegacyVideoViewHolder.LAYOUT_RES, parent, false);

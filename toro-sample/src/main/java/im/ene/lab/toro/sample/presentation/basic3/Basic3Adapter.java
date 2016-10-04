@@ -19,11 +19,11 @@ package im.ene.lab.toro.sample.presentation.basic3;
 import android.content.DialogInterface;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.lab.toro.Toro;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
@@ -31,18 +31,18 @@ import im.ene.lab.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 6/29/16.
  */
-public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
+public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
-  private static final String TAG = "Basic3Adapter";
+  private static final String TAG = "ExoPlayer2Adapter";
 
   public Basic3Adapter() {
     super();
     setHasStableIds(true);  // MUST have this.
   }
 
-  @Override public Basic3ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
     final View view;
-    final Basic3ViewHolder viewHolder;
+    final ToroAdapter.ViewHolder viewHolder;
     if (viewType == Basic3ViewHolder.TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())
           .inflate(Basic3VideoViewHolder.LAYOUT_RES, parent, false);
@@ -57,7 +57,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
       viewHolder.setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
           // Do this for for videoView only.
-          if (view == ((Basic3VideoViewHolder) viewHolder).videoView) {
+          if (view == ((Basic3VideoViewHolder) viewHolder).getPlayerView()) {
             // 1. Temporary disable the playback.
             Toro.rest(true);
             new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
@@ -87,11 +87,7 @@ public class Basic3Adapter extends RecyclerView.Adapter<Basic3ViewHolder> {
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(Basic3ViewHolder holder, int position) {
-    holder.bind(this, getItem(position));
-  }
-
-  Object getItem(int position) {
+  @Override protected Object getItem(int position) {
     if (position % 3 == 0) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {

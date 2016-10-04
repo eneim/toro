@@ -16,26 +16,26 @@
 
 package im.ene.lab.toro.sample.presentation.average1;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
  */
-public class Average1Adapter extends RecyclerView.Adapter<Average1ViewHolder> {
+public class Average1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   public Average1Adapter() {
     super();
     setHasStableIds(true);  // MUST have this.
   }
 
-  @Override public Average1ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view;
-    final Average1ViewHolder viewHolder;
+    final ToroAdapter.ViewHolder viewHolder;
     if (viewType == Average1ViewHolder.TYPE_VIDEO) {
       view = LayoutInflater.from(parent.getContext())
           .inflate(Average1VideoViewHolder.LAYOUT_RES, parent, false);
@@ -49,11 +49,7 @@ public class Average1Adapter extends RecyclerView.Adapter<Average1ViewHolder> {
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(Average1ViewHolder holder, int position) {
-    holder.bind(this, getItem(position));
-  }
-
-  Object getItem(int position) {
+  @Override protected Object getItem(int position) {
     if (position % 3 == 1) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {

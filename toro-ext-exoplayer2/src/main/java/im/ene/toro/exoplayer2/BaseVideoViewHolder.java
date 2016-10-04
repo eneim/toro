@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer;
+package im.ene.toro.exoplayer2;
 
 import android.support.annotation.CallSuper;
 import android.view.View;

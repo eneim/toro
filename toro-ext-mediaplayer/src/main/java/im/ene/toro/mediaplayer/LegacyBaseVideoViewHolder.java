@@ -14,33 +14,41 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.presentation.advance1;
+package im.ene.toro.mediaplayer;
 
+import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.PlayerViewHelper;
+import android.widget.VideoView;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
-import im.ene.lab.toro.ToroViewHolder;
-import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 
 /**
- * Created by eneim on 6/29/16.
- *
- * Sample ViewHolder which holds a Video, and request support from Toro via ToroPlayer.
- *
- * It is required to implement {@link ToroPlayer} and {@link ToroViewHolder}, as well as a member
- * instance of {@link PlayerViewHelper}. Here we use a well-created {@link ExoPlayerViewHelper}.
+ * Created by eneim on 9/29/16.
  */
-public abstract class Advance1BaseVideoViewHolder extends Advance1ViewHolder
-    implements ToroPlayer, ToroViewHolder {
 
-  protected final ExoPlayerViewHelper helper;
+public abstract class LegacyBaseVideoViewHolder extends ToroAdapter.ViewHolder
+    implements ToroPlayer {
+
+  protected final LegacyVideoViewHelper helper;
   protected boolean isPlayable = false;
+  @NonNull
+  protected final VideoView videoView;
 
-  public Advance1BaseVideoViewHolder(View itemView) {
+  public LegacyBaseVideoViewHolder(View itemView) {
     super(itemView);
-    helper = new ExoPlayerViewHelper(this, itemView);
+    videoView = findVideoView(itemView);
+    if (videoView == null) {
+      throw new NullPointerException("A valid VideoView is required");
+    }
+
+    helper = new LegacyVideoViewHelper(this, itemView);
+    videoView.setOnPreparedListener(helper);
+    videoView.setOnCompletionListener(helper);
+    videoView.setOnErrorListener(helper);
   }
+
+  protected abstract VideoView findVideoView(View itemView);
 
   /* BEGIN: ToroViewHolder callbacks */
   @Override public void onAttachedToWindow() {
@@ -61,8 +69,20 @@ public abstract class Advance1BaseVideoViewHolder extends Advance1ViewHolder
 
   }
 
+  @Override public void onVideoPreparing() {
+
+  }
+
   @Override public void onVideoPrepared() {
     this.isPlayable = true;
+  }
+
+  @Override public void onPlaybackStarted() {
+
+  }
+
+  @Override public void onPlaybackPaused() {
+
   }
 
   @Override public void onPlaybackCompleted() {

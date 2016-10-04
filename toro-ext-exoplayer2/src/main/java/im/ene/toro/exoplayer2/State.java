@@ -17,7 +17,7 @@
 package im.ene.toro.exoplayer2;
 
 import android.support.annotation.IntDef;
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -28,21 +28,21 @@ import java.lang.annotation.RetentionPolicy;
     /**
      * The player is neither prepared or being prepared.
      */
-    SimpleExoPlayer.STATE_IDLE,
+    ExoPlayer.STATE_IDLE,
     /**
      * The player is prepared but not able to immediately play from the current position. The cause
      * is {@link TrackRenderer} specific, but this state typically occurs when more data needs
      * to be buffered for playback to start.
      */
-    SimpleExoPlayer.STATE_BUFFERING,
+    ExoPlayer.STATE_BUFFERING,
     /**
      * The player is prepared and able to immediately play from the current position. The player will
      * be playing if {@link #getPlayWhenReady()} returns true, and paused otherwise.
      */
-    SimpleExoPlayer.STATE_READY,
+    ExoPlayer.STATE_READY,
     /**
      * The player has finished playing the media.
      */
-    SimpleExoPlayer.STATE_ENDED
+    ExoPlayer.STATE_ENDED
 }) @Retention(RetentionPolicy.SOURCE) public @interface State {
 }

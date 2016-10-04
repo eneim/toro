@@ -20,8 +20,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.ToroViewHolder;
 import im.ene.lab.toro.VideoPlayerManager;
 import im.ene.lab.toro.VideoPlayerManagerImpl;
 import im.ene.lab.toro.sample.data.SimpleObject;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created by eneim on 5/13/16.
  */
-public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
     implements OrderedPlayList, VideoPlayerManager {
 
   private OnItemClickListener clickListener;
@@ -67,11 +67,11 @@ public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         : (position % 5 == 2 ? FbItemViewHolder.POST_TYPE_TEXT : FbItemViewHolder.POST_TYPE_PHOTO);
   }
 
-  @Override public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
       @FbItemViewHolder.PostType int viewType) {
-    final RecyclerView.ViewHolder viewHolder = FbItemViewHolder.createViewHolder(parent, viewType);
+    final ToroAdapter.ViewHolder viewHolder = FbItemViewHolder.createViewHolder(parent, viewType);
     if (viewHolder instanceof FbItemViewHolder.VideoPost) {
-      ((FbItemViewHolder.VideoPost) viewHolder).setOnItemClickListener(new View.OnClickListener() {
+      viewHolder.setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
           int pos = viewHolder.getAdapterPosition();
           if (pos == RecyclerView.NO_POSITION || clickListener == null) {
@@ -84,14 +84,6 @@ public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     return viewHolder;
-  }
-
-  @Override public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-    if (holder instanceof FbItemViewHolder) {
-      ((FbItemViewHolder) holder).bind(this, getItem(position));
-    } else if (holder instanceof FbItemViewHolder.VideoPost) {
-      ((FbItemViewHolder.VideoPost) holder).bind(this, getItem(position));
-    }
   }
 
   @Override public int getItemCount() {
@@ -140,17 +132,5 @@ public class FbFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
   @Nullable @Override public Long getSavedPosition(String videoId) {
     return delegate.getSavedPosition(videoId);
-  }
-
-  @Override public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
-    if (holder instanceof ToroViewHolder) {
-      ((ToroViewHolder) holder).onAttachedToWindow();
-    }
-  }
-
-  @Override public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
-    if (holder instanceof ToroViewHolder) {
-      ((ToroViewHolder) holder).onDetachedFromWindow();
-    }
   }
 }

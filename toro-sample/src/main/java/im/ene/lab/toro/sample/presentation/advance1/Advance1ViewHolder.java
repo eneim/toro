@@ -18,13 +18,14 @@ package im.ene.lab.toro.sample.presentation.advance1;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import im.ene.lab.toro.ToroAdapter;
 
 /**
  * Created by eneim on 6/29/16.
  *
  * A sample {@link RecyclerView.ViewHolder} skeleton.
  */
-public abstract class Advance1ViewHolder extends RecyclerView.ViewHolder {
+public abstract class Advance1ViewHolder extends ToroAdapter.ViewHolder {
 
   static int TYPE_VIDEO = 1;
 

@@ -104,8 +104,6 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
     SurfaceHelper surfaceHelper = SurfaceHelper.Factory.getInstance(this, surfaceView);
     surfaceHelper.setupForView(surfaceView);
 
-    this.mAudioCapabilities = AudioCapabilities.getCapabilities(context);
-
     setFocusable(true);
     setFocusableInTouchMode(true);
     requestFocus();
@@ -196,6 +194,7 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
 
   @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    this.mAudioCapabilities = AudioCapabilities.getCapabilities(getContext());
     mAudioCapabilitiesReceiver =
         new AudioCapabilitiesReceiver(getContext(), audioCapabilitiesListener);
     mAudioCapabilitiesReceiver.register();

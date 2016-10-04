@@ -28,15 +28,13 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.toro.exoplayer.OnReleaseCallback;
-import im.ene.toro.exoplayer.SimpleMediaPlayer;
-import im.ene.toro.exoplayer.ExoVideoView;
-import im.ene.toro.exoplayer.ExoVideoViewHolder;
+import im.ene.toro.exoplayer2.ExoVideoView;
+import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends ExoVideoViewHolder implements OnReleaseCallback {
+public class SimpleVideoViewHolder extends ExoVideoViewHolder /* implements OnReleaseCallback */ {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
@@ -50,7 +48,7 @@ public class SimpleVideoViewHolder extends ExoVideoViewHolder implements OnRelea
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
-    mVideoView.setLastMomentCallback(this);
+    // videoView.setLastMomentCallback(this);
   }
 
   @Override protected ExoVideoView findVideoView(View itemView) {
@@ -70,7 +68,7 @@ public class SimpleVideoViewHolder extends ExoVideoViewHolder implements OnRelea
     }
 
     mItem = (SimpleVideoObject) item;
-    mVideoView.setMedia(Uri.parse(mItem.video));
+    videoView.setMedia(Uri.parse(mItem.video));
   }
 
   @Override public boolean wantsToPlay() {
@@ -164,11 +162,11 @@ public class SimpleVideoViewHolder extends ExoVideoViewHolder implements OnRelea
   }
 
   @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
-    this.mVideoView.setVolume(volume);
+    this.videoView.setVolume(volume);
   }
 
-  @Override public void onRelease(SimpleMediaPlayer player) {
-    isReleased = true;
-    latestPosition = player.getCurrentPosition();
-  }
+  //@Override public void onRelease(SimpleMediaPlayer player) {
+  //  isReleased = true;
+  //  latestPosition = player.getCurrentPosition();
+  //}
 }

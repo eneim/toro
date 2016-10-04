@@ -17,7 +17,9 @@
 package im.ene.toro.exoplayer2;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
+import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
 
@@ -31,11 +33,38 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChan
     super(player, itemView);
   }
 
-  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+  private static final String TAG = "ExoPlayerViewHelper";
 
+  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+    Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
+        + playWhenReady
+        + "], playbackState = ["
+        + playbackState
+        + "]");
+    switch (playbackState) {
+      case ExoPlayer.STATE_IDLE:
+        break;
+      case ExoPlayer.STATE_BUFFERING:
+        this.player.onVideoPrepared();
+        this.onPrepared(this.itemView, this.itemView.getParent());
+        break;
+      case ExoPlayer.STATE_READY:
+        if (playWhenReady) {
+          this.player.onPlaybackStarted();
+        } else {
+          this.player.onPlaybackPaused();
+        }
+        break;
+      case ExoPlayer.STATE_ENDED:
+        this.player.onPlaybackCompleted();
+        this.onCompletion();
+        break;
+      default:
+        break;
+    }
   }
 
   @Override public boolean onPlayerError(Exception error) {
-    return false;
+    return true;
   }
 }

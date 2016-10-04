@@ -29,12 +29,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.toro.exoplayer.OnReleaseCallback;
-import im.ene.toro.exoplayer.SimpleMediaPlayer;
-import im.ene.toro.exoplayer.ExoVideoView;
-import im.ene.toro.exoplayer.ExoVideoViewHolder;
+import im.ene.toro.exoplayer2.ExoVideoView;
+import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -43,7 +42,7 @@ import java.lang.annotation.RetentionPolicy;
  *
  * Original base facebook feed item ViewHolder
  */
-public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
+public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
 
   public static final int POST_TYPE_TEXT = 1001;
 
@@ -64,12 +63,12 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     super(itemView);
   }
 
-  public static RecyclerView.ViewHolder createViewHolder(ViewGroup parent, @PostType int type) {
+  public static ToroAdapter.ViewHolder createViewHolder(ViewGroup parent, @PostType int type) {
     if (inflater == null) {
       inflater = LayoutInflater.from(parent.getContext());
     }
 
-    final RecyclerView.ViewHolder viewHolder;
+    final ToroAdapter.ViewHolder viewHolder;
     final View view;
     switch (type) {
       case POST_TYPE_TEXT:
@@ -89,6 +88,14 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     return viewHolder;
+  }
+
+  @Override public void onAttachedToWindow() {
+
+  }
+
+  @Override public void onDetachedFromWindow() {
+
   }
 
   static class TextPost extends FbItemViewHolder {
@@ -117,7 +124,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     }
   }
 
-  static class VideoPost extends ExoVideoViewHolder implements OnReleaseCallback {
+  static class VideoPost extends ExoVideoViewHolder /* implements OnReleaseCallback */ {
 
     static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 
@@ -131,7 +138,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       super(itemView);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
       mInfo = (TextView) itemView.findViewById(R.id.info);
-      mVideoView.setLastMomentCallback(this);
+      // videoView.setLastMomentCallback(this);
     }
 
     @Override protected ExoVideoView findVideoView(View itemView) {
@@ -151,7 +158,7 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
       }
 
       mItem = (SimpleVideoObject) item;
-      mVideoView.setMedia(Uri.parse(mItem.video));
+      videoView.setMedia(Uri.parse(mItem.video));
     }
 
     @Override public boolean wantsToPlay() {
@@ -241,13 +248,13 @@ public abstract class FbItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
-      this.mVideoView.setVolume(volume);
+      this.videoView.setVolume(volume);
     }
 
-    @Override public void onRelease(SimpleMediaPlayer player) {
-      isReleased = true;
-      latestPosition = player.getCurrentPosition();
-    }
+    //@Override public void onRelease(SimpleMediaPlayer player) {
+    //  isReleased = true;
+    //  latestPosition = player.getCurrentPosition();
+    //}
 
     @Override protected boolean allowLongPressSupport() {
       return true;

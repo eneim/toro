@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer;
+package im.ene.toro.exoplayer2;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
@@ -28,23 +28,22 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
 
   @NonNull
   protected final ExoVideoView videoView;
-  private boolean playable = true; // normally true
+  private boolean mPlayable = true; // normally true
 
   public ExoVideoViewHolder(View itemView) {
     super(itemView);
     videoView = findVideoView(itemView);
     if (videoView == null) {
-      throw new NullPointerException("A valid ExoVideoView is required.");
+      throw new NullPointerException("A valid DemoVideoView is required.");
     }
 
-    // !IMPORTANT: Helper is helpful, don't forget it.
     videoView.setOnStateChangeListener(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    videoView.preparePlayer(playWhenReady);
+    videoView.initializePlayer(playWhenReady);
   }
 
   @Override public void releasePlayer() {
@@ -78,11 +77,11 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
 
   @Override public boolean wantsToPlay() {
     // Default implementation
-    return visibleAreaOffset() >= 0.75 && playable;
+    return visibleAreaOffset() >= 0.75 && mPlayable;
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    playable = true;
+    mPlayable = true;
   }
 
   @Override public void onVideoPreparing() {
@@ -94,7 +93,7 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    playable = false;
+    mPlayable = false;
     return super.onPlaybackError(error);
   }
 
@@ -107,6 +106,6 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
   }
 
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-    videoView.setVolume(volume);
+    this.videoView.setVolume(volume);
   }
 }
