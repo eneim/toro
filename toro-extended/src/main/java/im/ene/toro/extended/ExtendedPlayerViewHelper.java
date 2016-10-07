@@ -19,30 +19,24 @@ package im.ene.toro.extended;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
-import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer2.State;
 
 /**
  * Created by eneim on 10/5/16.
  */
 
-public class ExtendedPlayerViewHelper extends ExoPlayerViewHelper {
+public class ExtendedPlayerViewHelper extends LongClickableViewHelper {
 
-  public ExtendedPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
+  public ExtendedPlayerViewHelper(@NonNull ExtToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
-    if (!(player instanceof ExtToroPlayer)) {
-      throw new IllegalArgumentException("This helper requires a ExtToroPlayer");
-    }
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
-    final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
-    // get Next player, scroll to it
-    final VideoPlayerManager manager = super.getPlayerManager(this.itemView.getParent());
+    super.onPlayerStateChanged(playWhenReady, playbackState);
     if (playbackState == ExoPlayer.STATE_ENDED) {
-      super.onPlayerStateChanged(playWhenReady, playbackState);
+      final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
+      final VideoPlayerManager manager = super.getPlayerManager(this.itemView.getParent());
       switch (nextTarget) {
         case NEXT_PLAYER:
           // TODO
@@ -50,7 +44,8 @@ public class ExtendedPlayerViewHelper extends ExoPlayerViewHelper {
         case PREV_PLAYER:
           // TODO
           break;
-        case THIS:
+        case THIS_PLAYER:
+          player.preparePlayer(false);
           // immediately repeat
           if (manager != null) {
             manager.restoreVideoState(player.getMediaId());
@@ -61,8 +56,6 @@ public class ExtendedPlayerViewHelper extends ExoPlayerViewHelper {
         default:
           break;
       }
-    } else {
-      super.onPlayerStateChanged(playWhenReady, playbackState);
     }
   }
 }

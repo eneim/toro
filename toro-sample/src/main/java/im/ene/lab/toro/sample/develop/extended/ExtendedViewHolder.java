@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extended;
+package im.ene.lab.toro.sample.develop.extended;
 
-import im.ene.lab.toro.ToroPlayer;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import im.ene.lab.toro.ToroAdapter;
 
 /**
- * Created by eneim on 10/5/16.
+ * Created by eneim on 6/29/16.
+ *
+ * A sample {@link RecyclerView.ViewHolder} skeleton.
  */
+public abstract class ExtendedViewHolder extends ToroAdapter.ViewHolder {
 
-public interface ExtToroPlayer extends ToroPlayer {
+  static int TYPE_VIDEO = 1;
 
-  enum Target {
+  static int TYPE_NORMAL = 2;
 
-    NEXT_PLAYER,
-
-    PREV_PLAYER,
-
-    THIS_PLAYER,
-
-    NONE
+  public ExtendedViewHolder(View itemView) {
+    super(itemView);
   }
-  
-  Target getNextTarget();
+
+  public abstract void bind(RecyclerView.Adapter adapter, Object item);
 }

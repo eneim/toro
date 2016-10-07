@@ -50,15 +50,26 @@
         android:launchMode="singleTop"
         android:name=".presentation.legacy.LegacyActivity"/>
 
-    <activity-alias
-        android:label="@string/app_name"
-        android:name=".Launcher"
-        android:targetActivity=".HomeActivity">
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".develop.extended.ExtendedListActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
+    </activity>
+
+    <activity-alias
+        android:label="@string/app_name"
+        android:name=".Launcher"
+        android:targetActivity=".HomeActivity">
+      <!--<intent-filter>-->
+      <!--<action android:name="android.intent.action.MAIN"/>-->
+
+      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
     </activity-alias>
 
     <meta-data
@@ -66,14 +77,14 @@
         android:value="${fabric_api_key}"/>
 
     <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:label="@string/app_name"
         android:name=".develop.DemoActivity"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:theme="@style/AppTheme.NoActionBar">
       <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
+      <!--<action android:name="android.intent.action.MAIN"/>-->
 
-        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
       <!--</intent-filter>-->
     </activity>
   </application>

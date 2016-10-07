@@ -19,7 +19,6 @@ package im.ene.toro.extended;
 import android.support.annotation.CallSuper;
 import android.view.View;
 import im.ene.lab.toro.ToroAdapter;
-import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroUtil;
 import im.ene.lab.toro.ToroViewHolder;
 
@@ -28,13 +27,13 @@ import im.ene.lab.toro.ToroViewHolder;
  */
 
 public abstract class BaseExtVideoViewHolder extends ToroAdapter.ViewHolder
-    implements ToroPlayer, ToroViewHolder {
+    implements ExtToroPlayer, ToroViewHolder {
 
-  protected final LongClickableViewHelper helper;
+  protected final ExtendedPlayerViewHelper helper;
 
   public BaseExtVideoViewHolder(View itemView) {
     super(itemView);
-    helper = new LongClickableViewHelper(this, itemView);
+    helper = new ExtendedPlayerViewHelper(this, itemView);
   }
 
   @CallSuper @Override public void onActivityActive() {

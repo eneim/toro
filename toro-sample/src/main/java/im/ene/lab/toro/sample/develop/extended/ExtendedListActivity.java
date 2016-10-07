@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extended;
+package im.ene.lab.toro.sample.develop.extended;
 
-import im.ene.lab.toro.ToroPlayer;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by eneim on 10/5/16.
+ * Created by eneim on 6/30/16.
  */
+public class ExtendedListActivity extends AppCompatActivity {
 
-public interface ExtToroPlayer extends ToroPlayer {
-
-  enum Target {
-
-    NEXT_PLAYER,
-
-    PREV_PLAYER,
-
-    THIS_PLAYER,
-
-    NONE
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (savedInstanceState == null) {
+      getSupportFragmentManager().beginTransaction()
+          .replace(android.R.id.content, ExtendedListFragment.newInstance())
+          .commit();
+    }
   }
-  
-  Target getNextTarget();
 }

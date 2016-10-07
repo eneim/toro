@@ -532,11 +532,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
       manager.stopPlayback();
       // It's loop-able, so restart it immediately
-      if (player.isLoopAble()) {
-        // immediately repeat
-        manager.restoreVideoState(player.getMediaId());
-        manager.startPlayback();
-      }
+      //if (player.isLoopAble()) {
+      //  // immediately repeat
+      //  manager.restoreVideoState(player.getMediaId());
+      //  manager.startPlayback();
+      //}
     }
   }
 

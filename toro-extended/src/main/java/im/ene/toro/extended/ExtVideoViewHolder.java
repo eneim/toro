@@ -37,7 +37,6 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
     if (videoView == null) {
       throw new NullPointerException("A valid DemoVideoView is required.");
     }
-
     videoView.setPlayerCallback(helper);
   }
 
@@ -117,5 +116,11 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
 
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
     this.videoView.setVolume(volume);
+  }
+
+  // ExtToroPlayer
+
+  @Override public Target getNextTarget() {
+    return Target.NONE; // By Default
   }
 }
