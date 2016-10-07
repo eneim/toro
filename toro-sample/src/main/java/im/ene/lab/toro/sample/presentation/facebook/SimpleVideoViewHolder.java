@@ -29,12 +29,12 @@ import com.squareup.picasso.Picasso;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.extended.ExtVideoViewHolder;
 
 /**
  * Created by eneim on 1/30/16.
  */
-public class SimpleVideoViewHolder extends ExoVideoViewHolder /* implements OnReleaseCallback */ {
+public class SimpleVideoViewHolder extends ExtVideoViewHolder /* implements OnReleaseCallback */ {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
 
@@ -165,4 +165,8 @@ public class SimpleVideoViewHolder extends ExoVideoViewHolder /* implements OnRe
   //  isReleased = true;
   //  latestPosition = player.getCurrentPosition();
   //}
+
+  @Override public Target getNextTarget() {
+    return Target.NEXT_PLAYER;
+  }
 }
