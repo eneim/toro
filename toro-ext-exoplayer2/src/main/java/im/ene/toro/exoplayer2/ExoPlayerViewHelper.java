@@ -17,36 +17,38 @@
 package im.ene.toro.exoplayer2;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
-import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 
 /**
  * Created by eneim on 10/3/16.
+ *
+ * This helper class provide internal access to Toro's helper methods. It will hook into each
+ * ViewHolder's transaction to trigger the expected behavior. Client is not recommended to override
+ * this, but in case it wants to provide custom behaviors, it is recommended to call super method
+ * from this Helper.
+ *
  */
 
-public class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChangeListener {
+public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
-  private static final String TAG = "ExoPlayerViewHelper";
-
-  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
-    Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
-        + playWhenReady
-        + "], playbackState = ["
-        + playbackState
-        + "]");
+  @Override
+  public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
     switch (playbackState) {
       case ExoPlayer.STATE_IDLE:
+        // Do nothing
         break;
       case ExoPlayer.STATE_BUFFERING:
-        this.player.onVideoPrepared();
-        this.onPrepared(this.itemView, this.itemView.getParent());
+        if (!playWhenReady) {
+          this.onPrepared(this.itemView, this.itemView.getParent());
+          this.player.onVideoPrepared();
+        }
         break;
       case ExoPlayer.STATE_READY:
         if (playWhenReady) {
@@ -56,15 +58,19 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChan
         }
         break;
       case ExoPlayer.STATE_ENDED:
-        this.player.onPlaybackCompleted();
-        this.onCompletion();
+        if (!playWhenReady) { // Completely ENDED
+          this.onCompletion();
+          this.player.onPlaybackCompleted();
+          this.player.releasePlayer();
+        }
         break;
       default:
+        // Do nothing
         break;
     }
   }
 
-  @Override public boolean onPlayerError(Exception error) {
-    return true;
+  @Override public final boolean onPlayerError(Exception error) {
+    return super.onPlaybackError(error);
   }
 }

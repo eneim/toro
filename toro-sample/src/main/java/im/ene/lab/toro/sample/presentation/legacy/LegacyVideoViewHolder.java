@@ -16,21 +16,19 @@
 
 package im.ene.lab.toro.sample.presentation.legacy;
 
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
-import im.ene.toro.mediaplayer.LegacyBaseVideoViewHolder;
+import im.ene.toro.mediaplayer.BaseLegacyVideoViewHolder;
 
 /**
  * Created by eneim on 9/29/16.
  */
 
-public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
+public class LegacyVideoViewHolder extends BaseLegacyVideoViewHolder {
 
   static final int LAYOUT_RES = R.layout.vh_toro_video_legacy;
 
@@ -44,56 +42,8 @@ public class LegacyVideoViewHolder extends LegacyBaseVideoViewHolder {
     return (VideoView) itemView.findViewById(R.id.video);
   }
 
-  @Override public void preparePlayer(boolean playWhenReady) {
-    helper.setPlayWhenReady(playWhenReady);
-  }
-
-  @Override public void start() {
-    videoView.start();
-  }
-
-  @Override public void pause() {
-    videoView.pause();
-  }
-
-  @Override public void stop() {
-    videoView.stopPlayback();
-  }
-
-  @Override public void releasePlayer() {
-    // Do nothing here
-  }
-
-  @Override public long getDuration() {
-    return videoView.getDuration();
-  }
-
-  @Override public long getCurrentPosition() {
-    return videoView.getCurrentPosition();
-  }
-
-  @Override public void seekTo(long pos) {
-    videoView.seekTo((int) pos);
-  }
-
-  @Override public boolean isPlaying() {
-    return videoView.isPlaying();
-  }
-
-  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
-    this.helper.setVolume(volume);
-  }
-
   @Nullable @Override public String getMediaId() {
     return this.video != null ? this.video.video + "@" + getAdapterPosition() : null;
-  }
-
-  @NonNull @Override public View getPlayerView() {
-    return videoView;
-  }
-
-  @Override public int getBufferPercentage() {
-    return videoView.getBufferPercentage();
   }
 
   @Override public void bind(RecyclerView.Adapter adapter, Object item) {

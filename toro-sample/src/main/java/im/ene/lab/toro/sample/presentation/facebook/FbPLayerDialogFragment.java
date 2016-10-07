@@ -33,17 +33,17 @@ import android.view.ViewParent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import im.ene.lab.toro.Toro;
+import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.ToroStrategy;
-import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.lab.toro.VideoPlayerManagerImpl;
-import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.BuildConfig;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 import im.ene.lab.toro.sample.data.VideoSource;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 import im.ene.lab.toro.sample.widget.LargeDialogFragment;
+import im.ene.toro.extended.ExtToroAdapter;
+import im.ene.toro.extended.SnapToTopLinearLayoutManager;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -143,7 +143,7 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
   @Override public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     RecyclerView.LayoutManager layoutManager =
-        new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        new SnapToTopLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
         ((LinearLayoutManager) layoutManager).getOrientation()));
@@ -176,7 +176,8 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     super.onDismiss(dialog);
   }
 
-  private static class Adapter extends ToroAdapter<ToroAdapter.ViewHolder> implements VideoPlayerManager, OrderedPlayList {
+  private static class Adapter extends ExtToroAdapter<ToroAdapter.ViewHolder>
+      implements OrderedPlayList {
 
     public static final int VIEW_TYPE_NO_VIDEO = 1;
 
@@ -192,7 +193,6 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
     }
 
     private final SimpleVideoObject initItem;
-    private final VideoPlayerManager delegate;
 
     public Adapter(SimpleVideoObject initItem) {
       super();
@@ -202,7 +202,6 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       }
 
       this.initItem = initItem;
-      this.delegate = new VideoPlayerManagerImpl();
     }
 
     @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -253,44 +252,5 @@ public class FbPLayerDialogFragment extends LargeDialogFragment {
       return mVideos.get(position % mVideos.size());
     }
 
-    @Override public ToroPlayer getPlayer() {
-      return delegate.getPlayer();
-    }
-
-    @Override public void setPlayer(ToroPlayer player) {
-      delegate.setPlayer(player);
-    }
-
-    @Override public void onRegistered() {
-      delegate.onRegistered();
-    }
-
-    @Override public void onUnregistered() {
-      delegate.onUnregistered();
-    }
-
-    @Override public void startPlayback() {
-      delegate.startPlayback();
-    }
-
-    @Override public void pausePlayback() {
-      delegate.pausePlayback();
-    }
-
-    @Override public void stopPlayback() {
-      delegate.stopPlayback();
-    }
-
-    @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
-      delegate.saveVideoState(videoId, position, duration);
-    }
-
-    @Override public void restoreVideoState(String videoId) {
-      delegate.restoreVideoState(videoId);
-    }
-
-    @Nullable @Override public Long getSavedPosition(String videoId) {
-      return delegate.getSavedPosition(videoId);
-    }
   }
 }

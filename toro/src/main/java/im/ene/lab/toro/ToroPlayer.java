@@ -37,13 +37,6 @@ public interface ToroPlayer extends BaseMediaPlayer {
   boolean wantsToPlay();
 
   /**
-   * Indicate that this Player is able to replay right after it stops (loop-able) or not.
-   *
-   * @return true if this Player is loop-able, false otherwise
-   */
-  boolean isLoopAble();
-
-  /**
    * @return value from 0.0 ~ 1.0 the visible Area offset of current Video
    */
   @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();

@@ -63,14 +63,14 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
         mPlayerPosition = 0;
       }
 
-      if (onStateChangeListener != null) {
-        onStateChangeListener.onPlayerStateChanged(playWhenReady, playbackState);
+      if (playerCallback != null) {
+        playerCallback.onPlayerStateChanged(playWhenReady, playbackState);
       }
     }
 
     @Override public void onError(Exception e) {
-      if (onStateChangeListener != null) {
-        onStateChangeListener.onPlayerError(e);
+      if (playerCallback != null) {
+        playerCallback.onPlayerError(e);
       }
     }
 
@@ -165,7 +165,7 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
   boolean mBackgroundAudioEnabled = false;
   private OnReleaseCallback lastMomentCallback;
 
-  private OnStateChangeListener onStateChangeListener;
+  private PlayerCallback playerCallback;
   private AudioCapabilitiesReceiver mAudioCapabilitiesReceiver;
   private AudioCapabilities mAudioCapabilities;
 
@@ -325,8 +325,8 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
     this.lastMomentCallback = lastMomentCallback;
   }
 
-  public void setOnStateChangeListener(OnStateChangeListener stateChangeListener) {
-    this.onStateChangeListener = stateChangeListener;
+  public void setPlayerCallback(PlayerCallback stateChangeListener) {
+    this.playerCallback = stateChangeListener;
   }
 
   @TargetApi(23) private boolean requiresPermission(Uri uri) {

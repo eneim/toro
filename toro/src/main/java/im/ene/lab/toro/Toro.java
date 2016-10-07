@@ -311,7 +311,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       for (SavedState state : mStates.values()) {
         if (state.player != null) {
           // Release resource if there is any
-          state.player.pause();
+          state.player.stop();
           state.player.onActivityInactive();
           // Release this player
           state.player = null;
@@ -531,12 +531,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (manager != null) {
       manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
       manager.stopPlayback();
-      // It's loop-able, so restart it immediately
-      if (player.isLoopAble()) {
-        // immediately repeat
-        manager.restoreVideoState(player.getMediaId());
-        manager.startPlayback();
-      }
     }
   }
 

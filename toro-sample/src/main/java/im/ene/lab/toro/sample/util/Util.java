@@ -16,7 +16,9 @@
 
 package im.ene.lab.toro.sample.util;
 
+import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.util.TimeUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,5 +45,17 @@ public class Util {
             return filename.endsWith(".mp4");
           }
         });
+  }
+
+  public static String genVideoId(@NonNull Uri videoUri, int playbackOrder, Object... manifest) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(videoUri.toString()).append(":").append(playbackOrder);
+    if (manifest != null && manifest.length > 0) {
+      for (Object o : manifest) {
+        builder.append(":").append(o.toString());
+      }
+    }
+
+    return builder.toString();
   }
 }
