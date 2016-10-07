@@ -27,9 +27,9 @@ import im.ene.toro.exoplayer2.State;
  * Created by eneim on 10/5/16.
  */
 
-public class ExtendedPlayerViewHelper extends LongClickableViewHelper {
+public class ExtPlayerViewHelper extends LongClickableViewHelper {
 
-  public ExtendedPlayerViewHelper(@NonNull ExtToroPlayer player, @NonNull View itemView) {
+  public ExtPlayerViewHelper(@NonNull ExtToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
     TAG = "PVH:";
   }

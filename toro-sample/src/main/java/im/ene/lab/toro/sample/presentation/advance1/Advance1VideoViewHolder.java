@@ -99,9 +99,4 @@ public class Advance1VideoViewHolder extends ExoVideoViewHolder {
     return super.onPlaybackError(error);
   }
 
-  /* END: ToroPlayer callbacks (partly) */
-
-  @Override public boolean isLoopAble() {
-    return true;
-  }
 }

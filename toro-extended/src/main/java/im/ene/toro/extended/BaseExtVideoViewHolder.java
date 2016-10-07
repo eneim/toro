@@ -30,11 +30,11 @@ import im.ene.lab.toro.ToroViewHolder;
 public abstract class BaseExtVideoViewHolder extends ToroAdapter.ViewHolder
     implements ExtToroPlayer, ToroViewHolder {
 
-  protected final ExtendedPlayerViewHelper helper;
+  protected final ExtPlayerViewHelper helper;
 
   public BaseExtVideoViewHolder(View itemView) {
     super(itemView);
-    helper = new ExtendedPlayerViewHelper(this, itemView);
+    helper = new ExtPlayerViewHelper(this, itemView);
   }
 
   @CallSuper @Override public void onActivityActive() {
@@ -87,12 +87,4 @@ public abstract class BaseExtVideoViewHolder extends ToroAdapter.ViewHolder
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
 
-  /**
-   * Indicate that this Player is able to replay right after it stops (loop-able) or not.
-   *
-   * @return true if this Player is loop-able, false otherwise
-   */
-  @Override public boolean isLoopAble() {
-    return false;
-  }
 }

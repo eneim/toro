@@ -69,9 +69,6 @@ public class Basic3VideoViewHolder extends ExtVideoViewHolder {
     return this.video != null ? this.video.video + "@" + getAdapterPosition() : null;
   }
 
-  @Override public boolean isLoopAble() {
-    return true;
-  }
   /* END: ToroPlayer callbacks (partly) */
 
   // Interaction setup

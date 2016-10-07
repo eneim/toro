@@ -102,10 +102,6 @@ public abstract class LegacyBaseVideoViewHolder extends ToroAdapter.ViewHolder
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
 
-  @Override public boolean isLoopAble() {
-    return false;
-  }
-
   @Override public int getPlayOrder() {
     return getAdapterPosition();
   }

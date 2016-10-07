@@ -141,10 +141,6 @@ public class SimpleVideoViewHolder extends ExtVideoViewHolder /* implements OnRe
     return super.onPlaybackError(error);
   }
 
-  @Override public boolean isLoopAble() {
-    return true;
-  }
-
   @Override public String toString() {
     return "Video: " + getMediaId();
   }

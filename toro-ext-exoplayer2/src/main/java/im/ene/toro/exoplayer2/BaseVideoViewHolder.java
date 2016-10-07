@@ -86,12 +86,4 @@ public abstract class BaseVideoViewHolder extends ToroAdapter.ViewHolder
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
 
-  /**
-   * Indicate that this Player is able to replay right after it stops (loop-able) or not.
-   *
-   * @return true if this Player is loop-able, false otherwise
-   */
-  @Override public boolean isLoopAble() {
-    return false;
-  }
 }
