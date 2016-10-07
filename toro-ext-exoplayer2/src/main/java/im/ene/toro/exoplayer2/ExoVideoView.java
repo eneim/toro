@@ -209,11 +209,15 @@ public class ExoVideoView extends FrameLayout {
       return;
     }
 
-    if (aspectDeformation > 0) {
-      height = (int) (width / videoAspectRatio);
-    } else {
-      width = (int) (height * videoAspectRatio);
-    }
+    // Comment out. I will just change the height right now.
+    // TODO: re-consider this if need
+    //if (aspectDeformation > 0) {
+    //  height = (int) (width / videoAspectRatio);
+    //} else {
+    //  width = (int) (height * videoAspectRatio);
+    //}
+
+    height = (int) (width / videoAspectRatio);
     super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
         MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
   }

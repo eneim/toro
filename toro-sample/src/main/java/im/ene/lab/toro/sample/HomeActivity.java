@@ -29,6 +29,7 @@ import im.ene.lab.toro.sample.presentation.average1.Average1Activity;
 import im.ene.lab.toro.sample.presentation.basic1.Basic1Activity;
 import im.ene.lab.toro.sample.presentation.basic2.Basic2Activity;
 import im.ene.lab.toro.sample.presentation.basic3.Basic3Activity;
+import im.ene.lab.toro.sample.presentation.extended.ExtendedListActivity;
 import im.ene.lab.toro.sample.presentation.facebook.FbFeedActivity;
 import im.ene.lab.toro.sample.presentation.legacy.LegacyActivity;
 
@@ -74,4 +75,7 @@ public class HomeActivity extends AppCompatActivity {
     startActivity(new Intent(this, LegacyActivity.class));
   }
 
+  @OnClick(R.id.exoplayer2_sample) void openExoPlayer2Sample1() {
+    startActivity(new Intent(this, ExtendedListActivity.class));
+  }
 }
