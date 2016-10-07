@@ -29,7 +29,7 @@
       android:orientation="vertical"
       >
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/basic_sample_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/basic_sample_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/basic_sample_3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/average_sample_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/advance_sample_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/custom_sample_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/legacy_sample_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
-    <im.ene.lab.toro.sample.widget.SampleItemButton
+    <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/exoplayer2_sample"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
