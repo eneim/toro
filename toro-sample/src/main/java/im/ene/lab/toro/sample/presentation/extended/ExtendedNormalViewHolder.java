@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.develop.extended;
+package im.ene.lab.toro.sample.presentation.extended;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.sample.R;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * A sample {@link RecyclerView.ViewHolder} skeleton.
+ * Sample ViewHolder which holds no Video. Or it doesn't request support from Toro.
  */
-public abstract class ExtendedViewHolder extends ToroAdapter.ViewHolder {
+public class ExtendedNormalViewHolder extends ExtendedViewHolder {
 
-  static int TYPE_VIDEO = 1;
+  public static final int LAYOUT_RES = R.layout.vh_normal_view;
 
-  static int TYPE_NORMAL = 2;
-
-  public ExtendedViewHolder(View itemView) {
+  public ExtendedNormalViewHolder(View itemView) {
     super(itemView);
   }
 
-  public abstract void bind(RecyclerView.Adapter adapter, Object item);
+  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
+
+  }
+
+  @Override public void onAttachedToWindow() {
+
+  }
+
+  @Override public void onDetachedFromWindow() {
+
+  }
 }

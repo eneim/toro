@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.sample.develop.extended;
+package im.ene.lab.toro.sample.presentation.extended;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
