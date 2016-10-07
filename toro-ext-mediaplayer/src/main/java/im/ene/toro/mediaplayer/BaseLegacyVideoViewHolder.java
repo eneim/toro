@@ -20,9 +20,9 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.VideoView;
-import im.ene.lab.toro.ToroAdapter;
-import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.ToroUtil;
+import im.ene.toro.ToroAdapter;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 
 /**
  * Created by eneim on 9/29/16.

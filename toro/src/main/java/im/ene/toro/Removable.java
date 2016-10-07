@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
-
-import java.util.LinkedHashMap;
+package im.ene.toro;
 
 /**
- * Created by eneim on 3/14/16.
+ * Created by eneim on 6/8/16.
  *
- * A linked-list with specific capacity
+ * A self-removable object. Implement this and call {@link #remove()} when this object needs to
+ * cleanup.
  */
-final class StateLinkedList extends LinkedHashMap<Integer, SavedState> {
+public interface Removable {
 
-  private int mCapacity = 1;
-
-  StateLinkedList(int initialCapacity) {
-    super(initialCapacity);
-    mCapacity = initialCapacity;
-  }
-
-  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
-    return size() > mCapacity;
-  }
+  void remove();
 }

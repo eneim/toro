@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.toro;
 
 import android.os.Handler;
 import android.os.Looper;

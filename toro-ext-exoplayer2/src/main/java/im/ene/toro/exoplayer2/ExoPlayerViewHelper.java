@@ -18,8 +18,8 @@ package im.ene.toro.exoplayer2;
 
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.PlayerViewHelper;
-import im.ene.lab.toro.ToroPlayer;
+import im.ene.toro.PlayerViewHelper;
+import im.ene.toro.ToroPlayer;
 import com.google.android.exoplayer2.ExoPlayer;
 
 /**

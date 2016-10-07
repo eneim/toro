@@ -20,9 +20,9 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewParent;
-import im.ene.lab.toro.Toro;
-import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.toro.Toro;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.VideoPlayerManager;
 import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
 
 /**

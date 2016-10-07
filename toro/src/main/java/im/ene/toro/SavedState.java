@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.toro;
 
 /**
- * Created by eneim on 6/8/16.
+ * Created by eneim on 3/14/16.
  *
- * A self-removable object. Implement this and call {@link #remove()} when this object needs to
- * cleanup.
+ * Used to save current playing states. Need to be cleaned after each Activity has been destroyed.
  */
-public interface Removable {
+class SavedState {
 
-  void remove();
+  ToroPlayer player;
+
+  Long position;
 }

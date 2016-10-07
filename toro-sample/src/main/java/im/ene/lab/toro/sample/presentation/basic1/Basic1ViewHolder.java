@@ -18,7 +18,7 @@ package im.ene.lab.toro.sample.presentation.basic1;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.toro.ToroAdapter;
 
 /**
  * Created by eneim on 6/29/16.

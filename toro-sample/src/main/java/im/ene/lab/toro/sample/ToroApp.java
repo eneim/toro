@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
-import im.ene.lab.toro.Toro;
+import im.ene.toro.Toro;
 import io.fabric.sdk.android.Fabric;
 
 /**

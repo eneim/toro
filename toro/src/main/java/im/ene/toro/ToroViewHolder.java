@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.toro;
+
+import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by eneim on 3/14/16.
- *
- * Used to save current playing states. Need to be cleaned after each Activity has been destroyed.
+ * Created by eneim on 6/29/16.
  */
-class SavedState {
+public interface ToroViewHolder {
 
-  ToroPlayer player;
+  /**
+   * Required for {@link PlayerViewHelper#onAttachedToWindow()}. See {@link
+   * RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
+   */
+  void onAttachedToWindow();
 
-  Long position;
+  /**
+   * Required for {@link PlayerViewHelper#onDetachedFromWindow()}. See {@link
+   * RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
+   */
+  void onDetachedFromWindow();
 }

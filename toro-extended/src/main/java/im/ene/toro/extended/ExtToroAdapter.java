@@ -18,10 +18,10 @@ package im.ene.toro.extended;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import im.ene.lab.toro.ToroAdapter;
-import im.ene.lab.toro.ToroPlayer;
-import im.ene.lab.toro.VideoPlayerManager;
-import im.ene.lab.toro.VideoPlayerManagerImpl;
+import im.ene.toro.ToroAdapter;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.VideoPlayerManager;
+import im.ene.toro.VideoPlayerManagerImpl;
 
 /**
  * Created by eneim on 10/7/16.

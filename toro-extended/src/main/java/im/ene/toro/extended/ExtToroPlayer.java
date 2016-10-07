@@ -16,7 +16,7 @@
 
 package im.ene.toro.extended;
 
-import im.ene.lab.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer;
 
 /**
  * Created by eneim on 10/5/16.

@@ -26,7 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.Toro;
+import im.ene.toro.Toro;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
 

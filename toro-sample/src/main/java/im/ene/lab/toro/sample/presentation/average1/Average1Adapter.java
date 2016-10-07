@@ -19,7 +19,7 @@ package im.ene.lab.toro.sample.presentation.average1;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.lab.toro.ToroAdapter;
+import im.ene.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
 

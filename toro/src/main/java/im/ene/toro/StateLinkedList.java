@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.toro;
 
-import android.support.v7.widget.RecyclerView;
+import java.util.LinkedHashMap;
 
 /**
- * Created by eneim on 6/29/16.
+ * Created by eneim on 3/14/16.
+ *
+ * A linked-list with specific capacity
  */
-public interface ToroViewHolder {
+final class StateLinkedList extends LinkedHashMap<Integer, SavedState> {
 
-  /**
-   * Required for {@link PlayerViewHelper#onAttachedToWindow()}. See {@link
-   * RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
-   */
-  void onAttachedToWindow();
+  private int mCapacity = 1;
 
-  /**
-   * Required for {@link PlayerViewHelper#onDetachedFromWindow()}. See {@link
-   * RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
-   */
-  void onDetachedFromWindow();
+  StateLinkedList(int initialCapacity) {
+    super(initialCapacity);
+    mCapacity = initialCapacity;
+  }
+
+  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
+    return size() > mCapacity;
+  }
 }

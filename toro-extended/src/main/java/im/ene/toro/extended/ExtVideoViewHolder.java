@@ -20,9 +20,9 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.ToroAdapter;
-import im.ene.lab.toro.ToroUtil;
-import im.ene.lab.toro.ToroViewHolder;
+import im.ene.toro.ToroAdapter;
+import im.ene.toro.ToroUtil;
+import im.ene.toro.ToroViewHolder;
 import im.ene.toro.exoplayer2.ExoVideoView;
 
 /**

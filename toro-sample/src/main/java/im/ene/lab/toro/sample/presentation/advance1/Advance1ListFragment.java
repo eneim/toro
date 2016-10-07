@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
 import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener;
 import com.azoft.carousellayoutmanager.CenterScrollListener;
-import im.ene.lab.toro.Toro;
+import im.ene.toro.Toro;
 import im.ene.lab.toro.sample.R;
 
 /**

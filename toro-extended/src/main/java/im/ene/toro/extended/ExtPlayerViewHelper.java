@@ -19,7 +19,7 @@ package im.ene.toro.extended;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
-import im.ene.lab.toro.VideoPlayerManager;
+import im.ene.toro.VideoPlayerManager;
 import im.ene.toro.exoplayer2.State;
 
 /**

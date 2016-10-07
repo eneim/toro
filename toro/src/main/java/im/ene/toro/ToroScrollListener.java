@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro;
+package im.ene.toro;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;

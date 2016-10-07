@@ -17,7 +17,7 @@
 package im.ene.lab.toro.sample.presentation.advance1;
 
 import com.azoft.carousellayoutmanager.CarouselLayoutManager;
-import im.ene.lab.toro.ToroLayoutManager;
+import im.ene.toro.ToroLayoutManager;
 
 /**
  * Created by eneim on 6/30/16.

@@ -20,8 +20,8 @@ import android.media.MediaPlayer;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.lab.toro.PlayerViewHelper;
-import im.ene.lab.toro.ToroPlayer;
+import im.ene.toro.PlayerViewHelper;
+import im.ene.toro.ToroPlayer;
 
 /**
  * Created by eneim on 9/29/16.
