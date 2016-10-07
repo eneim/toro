@@ -311,7 +311,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       for (SavedState state : mStates.values()) {
         if (state.player != null) {
           // Release resource if there is any
-          state.player.pause();
+          state.player.stop();
           state.player.onActivityInactive();
           // Release this player
           state.player = null;

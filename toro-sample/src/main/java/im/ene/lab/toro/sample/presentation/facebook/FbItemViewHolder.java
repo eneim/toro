@@ -257,5 +257,8 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     //  latestPosition = player.getCurrentPosition();
     //}
 
+    @Override public Target getNextTarget() {
+      return Target.NONE;
+    }
   }
 }

@@ -37,8 +37,10 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
       case ExoPlayer.STATE_IDLE:
         break;
       case ExoPlayer.STATE_BUFFERING:
-        this.onPrepared(this.itemView, this.itemView.getParent());
-        this.player.onVideoPrepared();
+        if (!playWhenReady) {
+          this.onPrepared(this.itemView, this.itemView.getParent());
+          this.player.onVideoPrepared();
+        }
         break;
       case ExoPlayer.STATE_READY:
         if (playWhenReady) {
@@ -48,9 +50,11 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         }
         break;
       case ExoPlayer.STATE_ENDED:
-        this.onCompletion();
-        this.player.onPlaybackCompleted();
-        this.player.releasePlayer();
+        if (!playWhenReady) { // Completely ENDED
+          this.onCompletion();
+          this.player.onPlaybackCompleted();
+          this.player.releasePlayer();
+        }
         break;
       default:
         break;

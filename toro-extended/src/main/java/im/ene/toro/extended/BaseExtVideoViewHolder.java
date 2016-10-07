@@ -17,6 +17,7 @@
 package im.ene.toro.extended;
 
 import android.support.annotation.CallSuper;
+import android.util.Log;
 import android.view.View;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroUtil;
@@ -45,10 +46,12 @@ public abstract class BaseExtVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @CallSuper @Override public void onAttachedToWindow() {
+    Log.i("PVH:" + getPlayOrder() + ":" + hashCode(), "Attached");
     helper.onAttachedToWindow();
   }
 
   @CallSuper @Override public void onDetachedFromWindow() {
+    Log.i("PVH:" + getPlayOrder() + ":" + hashCode(), "Detached");
     helper.onDetachedFromWindow();
   }
 

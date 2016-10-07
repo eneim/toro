@@ -17,6 +17,7 @@
 package im.ene.toro.extended;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
@@ -30,9 +31,17 @@ public class ExtendedPlayerViewHelper extends LongClickableViewHelper {
 
   public ExtendedPlayerViewHelper(@NonNull ExtToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
+    TAG = "PVH:";
   }
 
+  private final String TAG;
+
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+    Log.d("PVH:" + player.getPlayOrder() + ":" + player.hashCode(), "StateChanged: playWhenReady = ["
+        + playWhenReady
+        + "], playbackState = ["
+        + playbackState
+        + "]");
     super.onPlayerStateChanged(playWhenReady, playbackState);
     if (playbackState == ExoPlayer.STATE_ENDED) {
       final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();

@@ -54,22 +54,22 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".develop.extended.ExtendedListActivity">
-      <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
 
-        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
     </activity>
 
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
         android:targetActivity=".HomeActivity">
-      <intent-filter>
-      <action android:name="android.intent.action.MAIN"/>
+      <!--<intent-filter>-->
+      <!--<action android:name="android.intent.action.MAIN"/>-->
 
-      <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
+      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
     </activity-alias>
 
     <meta-data

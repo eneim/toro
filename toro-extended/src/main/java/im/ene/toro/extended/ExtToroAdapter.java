@@ -18,6 +18,7 @@ package im.ene.toro.extended;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
@@ -109,14 +110,32 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   }
 
   @Override public void stopPlayback() {
+    if (getPlayer() != null) {
+      Log.e("PVH:" + getPlayer().getPlayOrder() + ":" + getPlayer().hashCode(), "STOP");
+    }
     delegate.stopPlayback();
   }
 
   @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
+    if (getPlayer() != null) {
+      Log.w("PVH:" + getPlayer().getPlayOrder() + ":" + getPlayer().hashCode(),
+          "saveVideoState() called with: videoId = ["
+              + videoId
+              + "], position = ["
+              + position
+              + "], duration = ["
+              + duration
+              + "]");
+    }
     delegate.saveVideoState(videoId, position, duration);
   }
 
   @Override public void restoreVideoState(String videoId) {
+    if (getPlayer() != null) {
+      Log.w("PVH:" + getPlayer().getPlayOrder() + ":" + getPlayer().hashCode(),
+          "restoreVideoState() called with: videoId = [" + videoId + "]");
+    }
+
     delegate.restoreVideoState(videoId);
   }
 
