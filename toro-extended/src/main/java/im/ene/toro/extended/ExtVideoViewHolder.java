@@ -20,15 +20,20 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
+import im.ene.lab.toro.ToroAdapter;
+import im.ene.lab.toro.ToroUtil;
+import im.ene.lab.toro.ToroViewHolder;
 import im.ene.toro.exoplayer2.ExoVideoView;
 
 /**
  * Created by eneim on 10/4/16.
  */
 
-public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
+public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder
+    implements ExtToroPlayer, ToroViewHolder {
 
   @NonNull protected final ExoVideoView videoView;
+  protected final ExtPlayerViewHelper helper;
   private boolean mPlayable = true; // normally true
 
   public ExtVideoViewHolder(View itemView) {
@@ -37,6 +42,7 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
     if (videoView == null) {
       throw new NullPointerException("A valid DemoVideoView is required.");
     }
+    helper = new ExtPlayerViewHelper(this, itemView);
     videoView.setPlayerCallback(helper);
   }
 
@@ -93,8 +99,44 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
     mPlayable = true;
   }
 
+  @CallSuper @Override public void onActivityActive() {
+
+  }
+
+  @CallSuper @Override public void onActivityInactive() {
+
+  }
+
+  @CallSuper @Override public void onAttachedToWindow() {
+    helper.onAttachedToWindow();
+  }
+
+  @CallSuper @Override public void onDetachedFromWindow() {
+    helper.onDetachedFromWindow();
+  }
+
+  @Override public int getPlayOrder() {
+    return getAdapterPosition();
+  }
+
   @Override public void onVideoPreparing() {
 
+  }
+
+  @Override public void onPlaybackStarted() {
+
+  }
+
+  @Override public void onPlaybackPaused() {
+
+  }
+
+  @Override public void onPlaybackCompleted() {
+
+  }
+
+  @Override public float visibleAreaOffset() {
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
 
   @Override public int getBufferPercentage() {
@@ -103,7 +145,7 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
 
   @Override public boolean onPlaybackError(Exception error) {
     mPlayable = false;
-    return super.onPlaybackError(error);
+    return true;
   }
 
   @Override public void stop() {
@@ -119,8 +161,7 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
   }
 
   // ExtToroPlayer
-
   @Override public Target getNextTarget() {
-    return Target.NONE; // By Default
+    return Target.NONE; // Default Target
   }
 }

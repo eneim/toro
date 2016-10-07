@@ -16,6 +16,7 @@
 
 package im.ene.toro.mediaplayer;
 
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.VideoView;
@@ -27,15 +28,15 @@ import im.ene.lab.toro.ToroUtil;
  * Created by eneim on 9/29/16.
  */
 
-public abstract class LegacyBaseVideoViewHolder extends ToroAdapter.ViewHolder
+public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
     implements ToroPlayer {
 
   protected final LegacyVideoViewHelper helper;
-  protected boolean isPlayable = false;
+  private boolean isPlayable = false;
   @NonNull
   protected final VideoView videoView;
 
-  public LegacyBaseVideoViewHolder(View itemView) {
+  public BaseLegacyVideoViewHolder(View itemView) {
     super(itemView);
     videoView = findVideoView(itemView);
     if (videoView == null) {
@@ -105,5 +106,54 @@ public abstract class LegacyBaseVideoViewHolder extends ToroAdapter.ViewHolder
   @Override public int getPlayOrder() {
     return getAdapterPosition();
   }
+
+  @Override public void preparePlayer(boolean playWhenReady) {
+    helper.setPlayWhenReady(playWhenReady);
+  }
+
+  @Override public void start() {
+    videoView.start();
+  }
+
+  @Override public void pause() {
+    videoView.pause();
+  }
+
+  @Override public void stop() {
+    videoView.stopPlayback();
+  }
+
+  @Override public void releasePlayer() {
+    // Do nothing here
+  }
+
+  @Override public long getDuration() {
+    return videoView.getDuration();
+  }
+
+  @Override public long getCurrentPosition() {
+    return videoView.getCurrentPosition();
+  }
+
+  @Override public void seekTo(long pos) {
+    videoView.seekTo((int) pos);
+  }
+
+  @Override public boolean isPlaying() {
+    return videoView.isPlaying();
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+    this.helper.setVolume(volume);
+  }
+
+  @NonNull @Override public View getPlayerView() {
+    return videoView;
+  }
+
+  @Override public int getBufferPercentage() {
+    return videoView.getBufferPercentage();
+  }
+
   /* END: ToroPlayer callbacks (partly) */
 }

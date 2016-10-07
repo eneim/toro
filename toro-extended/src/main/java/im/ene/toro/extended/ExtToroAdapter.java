@@ -18,7 +18,6 @@ package im.ene.toro.extended;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.ToroPlayer;
 import im.ene.lab.toro.VideoPlayerManager;
@@ -49,37 +48,39 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
     this.parent = null;
   }
 
-  @Nullable public final RecyclerView.ViewHolder findViewHolderForPosition(int position) {
+  @Nullable private RecyclerView.ViewHolder findViewHolderForPosition(int position) {
     return parent == null ? null : parent.findViewHolderForAdapterPosition(position);
   }
 
-  public final void scrollToPosition(int position) {
+  private void scrollToPosition(int position) {
     if (parent != null) {
       parent.smoothScrollToPosition(position);
     }
   }
 
-  public final int findNextVideoPosition() {
-    int currentVideoPosition =
-        getPlayer() == null ? INVALID_VIDEO_POSITION : getPlayer().getPlayOrder();
+  private int findNextVideoPosition() {
+    int currentVideoPosition = getPlayer() == null ?  //
+        INVALID_VIDEO_POSITION : getPlayer().getPlayOrder();
+
     do {
       currentVideoPosition++;
-    } while (currentVideoPosition < getItemCount() && !(findViewHolderForPosition(
-        currentVideoPosition) instanceof ToroPlayer));
+    } while (currentVideoPosition < getItemCount() && //
+        !(findViewHolderForPosition(currentVideoPosition) instanceof ToroPlayer));
 
     return currentVideoPosition < getItemCount() ? currentVideoPosition : INVALID_VIDEO_POSITION;
   }
 
-  public final ToroPlayer findNextPlayer() {
-    int nextVideoPosition = findNextVideoPosition();
-    return nextVideoPosition == INVALID_VIDEO_POSITION ? null
-        : (ToroPlayer) findViewHolderForPosition(nextVideoPosition);
-  }
+  // Comment out, Un-comment if need
+  //final ToroPlayer findNextPlayer() {
+  //  int nextVideoPosition = findNextVideoPosition();
+  //  return nextVideoPosition == INVALID_VIDEO_POSITION ? null
+  //      : (ToroPlayer) findViewHolderForPosition(nextVideoPosition);
+  //}
 
-  public final void scrollToNextVideo() {
+  final void scrollToNextVideo() {
     int nextVideoPosition = findNextVideoPosition();
     if (nextVideoPosition != INVALID_VIDEO_POSITION) {
-      scrollToPosition(findNextVideoPosition());
+      scrollToPosition(nextVideoPosition);
     }
   }
 
@@ -110,32 +111,14 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   }
 
   @Override public void stopPlayback() {
-    if (getPlayer() != null) {
-      Log.e("PVH:" + getPlayer().getPlayOrder() + ":" + getPlayer().hashCode(), "STOP");
-    }
     delegate.stopPlayback();
   }
 
   @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
-    if (getPlayer() != null) {
-      Log.w("PVH:" + getPlayer().getPlayOrder() + ":" + getPlayer().hashCode(),
-          "saveVideoState() called with: videoId = ["
-              + videoId
-              + "], position = ["
-              + position
-              + "], duration = ["
-              + duration
-              + "]");
-    }
     delegate.saveVideoState(videoId, position, duration);
   }
 
   @Override public void restoreVideoState(String videoId) {
-    if (getPlayer() != null) {
-      Log.w("PVH:" + getPlayer().getPlayOrder() + ":" + getPlayer().hashCode(),
-          "restoreVideoState() called with: videoId = [" + videoId + "]");
-    }
-
     delegate.restoreVideoState(videoId);
   }
 

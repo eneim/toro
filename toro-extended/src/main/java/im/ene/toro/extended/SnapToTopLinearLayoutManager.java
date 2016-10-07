@@ -17,7 +17,6 @@
 package im.ene.toro.extended;
 
 import android.content.Context;
-import android.graphics.PointF;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
@@ -56,16 +55,12 @@ public class SnapToTopLinearLayoutManager extends LinearLayoutManager {
       super(context);
     }
 
-    @Override public PointF computeScrollVectorForPosition(int targetPosition) {
-      return super.computeScrollVectorForPosition(targetPosition);
-    }
-
     @Override protected int getVerticalSnapPreference() {
       return SNAP_TO_START;
     }
 
     @Override protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-      return super.calculateSpeedPerPixel(displayMetrics) * 6.5f;
+      return super.calculateSpeedPerPixel(displayMetrics) * 5.f;
     }
   }
 }

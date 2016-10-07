@@ -30,26 +30,23 @@ import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
  * this, but in case it wants to provide custom behaviors, it is recommended to call super method
  * from this Helper.
  *
- * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
+public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
-  @Override public final void onPlayerStateChanged(boolean playWhenReady, @State int state) {
+  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int state) {
     switch (state) {
-      case ExoMediaPlayer.STATE_ENDED:
-        this.player.onPlaybackCompleted();
-        this.onCompletion();
-        break;
-      case ExoMediaPlayer.STATE_BUFFERING:
-        this.player.onVideoPrepared();
-        this.onPrepared(this.itemView, this.itemView.getParent());
-        break;
       case ExoMediaPlayer.STATE_IDLE:
         // Do nothing
+        break;
+      case ExoMediaPlayer.STATE_BUFFERING:
+        if (!playWhenReady) {
+          this.onPrepared(this.itemView, this.itemView.getParent());
+          this.player.onVideoPrepared();
+        }
         break;
       case ExoMediaPlayer.STATE_PREPARING:
         this.player.onVideoPreparing();
@@ -59,6 +56,13 @@ public final class ExoPlayerViewHelper extends PlayerViewHelper implements Playe
           this.player.onPlaybackStarted();
         } else {
           this.player.onPlaybackPaused();
+        }
+        break;
+      case ExoMediaPlayer.STATE_ENDED:
+        if (!playWhenReady) { // Completely ENDED
+          this.onCompletion();
+          this.player.onPlaybackCompleted();
+          this.player.releasePlayer();
         }
         break;
       default:

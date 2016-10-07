@@ -18,12 +18,18 @@ package im.ene.toro.exoplayer2;
 
 import android.support.annotation.NonNull;
 import android.view.View;
-import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.lab.toro.PlayerViewHelper;
 import im.ene.lab.toro.ToroPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 
 /**
  * Created by eneim on 10/3/16.
+ *
+ * This helper class provide internal access to Toro's helper methods. It will hook into each
+ * ViewHolder's transaction to trigger the expected behavior. Client is not recommended to override
+ * this, but in case it wants to provide custom behaviors, it is recommended to call super method
+ * from this Helper.
+ *
  */
 
 public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
@@ -32,9 +38,11 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
     super(player, itemView);
   }
 
-  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+  @Override
+  public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
     switch (playbackState) {
       case ExoPlayer.STATE_IDLE:
+        // Do nothing
         break;
       case ExoPlayer.STATE_BUFFERING:
         if (!playWhenReady) {
@@ -57,11 +65,12 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         }
         break;
       default:
+        // Do nothing
         break;
     }
   }
 
-  @Override public boolean onPlayerError(Exception error) {
-    return true;
+  @Override public final boolean onPlayerError(Exception error) {
+    return super.onPlaybackError(error);
   }
 }
