@@ -84,6 +84,7 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
         }
       });
     }
+
     return viewHolder;
   }
 

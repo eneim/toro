@@ -104,8 +104,8 @@ public class ExoVideoView extends FrameLayout {
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      if (onStateChangeListener != null) {
-        onStateChangeListener.onPlayerStateChanged(playWhenReady, playbackState);
+      if (playerCallback != null) {
+        playerCallback.onPlayerStateChanged(playWhenReady, playbackState);
       }
     }
 
@@ -114,8 +114,8 @@ public class ExoVideoView extends FrameLayout {
     }
 
     @Override public void onPlayerError(ExoPlaybackException error) {
-      if (onStateChangeListener != null) {
-        onStateChangeListener.onPlayerError(error);
+      if (playerCallback != null) {
+        playerCallback.onPlayerError(error);
       }
     }
 
@@ -140,7 +140,7 @@ public class ExoVideoView extends FrameLayout {
   private final View surfaceView;
   private final View shutterView;
   private final ComponentListener componentListener;
-  private OnStateChangeListener onStateChangeListener;
+  private PlayerCallback playerCallback;
 
   public ExoVideoView(Context context) {
     this(context, null);
@@ -519,7 +519,7 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
-  public void setOnStateChangeListener(OnStateChangeListener stateChangeListener) {
-    this.onStateChangeListener = stateChangeListener;
+  public void setPlayerCallback(PlayerCallback stateChangeListener) {
+    this.playerCallback = stateChangeListener;
   }
 }

@@ -86,7 +86,7 @@ public class Basic3VideoViewHolder extends ExtVideoViewHolder {
     super.setOnItemLongClickListener(listener);
     videoView.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
-        return listener.onLongClick(v) && helper.onLongClick(v);
+        return listener.onLongClick(v) || helper.onLongClick(v);
       }
     });
   }

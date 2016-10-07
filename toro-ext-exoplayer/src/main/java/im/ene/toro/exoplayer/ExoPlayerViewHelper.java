@@ -32,7 +32,7 @@ import im.ene.toro.exoplayer.internal.ExoMediaPlayer;
  *
  * Extending this class is prohibited. An extension should have an instance of this as a delegate.
  */
-public final class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChangeListener {
+public final class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);

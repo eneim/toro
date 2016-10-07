@@ -37,14 +37,6 @@ public abstract class BaseExtVideoViewHolder extends ToroAdapter.ViewHolder
     helper = new LongClickableViewHelper(this, itemView);
   }
 
-  @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
-    super.setOnItemLongClickListener(new View.OnLongClickListener() {
-      @Override public boolean onLongClick(View v) {
-        return listener.onLongClick(v) || helper.onLongClick(v);
-      }
-    });
-  }
-
   @CallSuper @Override public void onActivityActive() {
 
   }

@@ -36,7 +36,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
   }
 
   @Override public boolean onLongClick(View v) {
-    final ViewParent parent = v.getParent();
+    final ViewParent parent = this.itemView.getParent();
     VideoPlayerManager manager = getPlayerManager(parent);
     // Important components are missing, return
     if (manager == null) {

@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import im.ene.lab.toro.sample.R;
 import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.exoplayer2.OnStateChangeListener;
+import im.ene.toro.exoplayer2.PlayerCallback;
 import im.ene.toro.exoplayer2.State;
 
 public class DemoActivity extends AppCompatActivity {
@@ -69,7 +69,7 @@ public class DemoActivity extends AppCompatActivity {
       }
     });
 
-    videoView.setOnStateChangeListener(new OnStateChangeListener() {
+    videoView.setPlayerCallback(new PlayerCallback() {
       @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
         Log.d(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
             + playWhenReady

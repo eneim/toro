@@ -21,7 +21,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 /**
  * Created by eneim on 6/9/16.
  */
-public interface OnStateChangeListener {
+public interface PlayerCallback {
 
   /**
    * @param playWhenReady Whether playback will proceed when ready.

@@ -38,10 +38,19 @@ public abstract class ExtVideoViewHolder extends BaseExtVideoViewHolder {
       throw new NullPointerException("A valid DemoVideoView is required.");
     }
 
-    videoView.setOnStateChangeListener(helper);
+    videoView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
+
+  @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
+    super.setOnItemLongClickListener(listener);
+    videoView.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        return listener.onLongClick(v) && helper.onLongClick(v);
+      }
+    });
+  }
 
   @Override public void preparePlayer(boolean playWhenReady) {
     videoView.initializePlayer(playWhenReady);

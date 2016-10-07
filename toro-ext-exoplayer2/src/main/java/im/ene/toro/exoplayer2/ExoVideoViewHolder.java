@@ -37,7 +37,7 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
       throw new NullPointerException("A valid DemoVideoView is required.");
     }
 
-    videoView.setOnStateChangeListener(helper);
+    videoView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);

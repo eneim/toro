@@ -16,14 +16,24 @@
 
 package im.ene.toro.extended;
 
-import android.view.View;
 import im.ene.lab.toro.ToroPlayer;
 
 /**
- * Created by eneim on 10/4/16.
+ * Created by eneim on 10/5/16.
  */
 
 public interface ExtToroPlayer extends ToroPlayer {
 
-  void setOnLongClickListener(View.OnLongClickListener listener);
+  enum Target {
+
+    NEXT_PLAYER,
+
+    PREV_PLAYER,
+
+    THIS,
+
+    NONE
+  }
+  
+  Target getNextTarget();
 }

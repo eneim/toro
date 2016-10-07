@@ -148,6 +148,7 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     @Override public void setOnItemClickListener(View.OnClickListener listener) {
       super.setOnItemClickListener(listener);
       mInfo.setOnClickListener(listener);
+      this.videoView.setOnClickListener(listener);
     }
 
     private SimpleVideoObject mItem;
@@ -255,5 +256,6 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     //  isReleased = true;
     //  latestPosition = player.getCurrentPosition();
     //}
+
   }
 }

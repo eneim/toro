@@ -38,7 +38,7 @@ public abstract class ExoVideoViewHolder extends BaseVideoViewHolder {
     }
 
     // !IMPORTANT: Helper is helpful, don't forget it.
-    videoView.setOnStateChangeListener(helper);
+    videoView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);

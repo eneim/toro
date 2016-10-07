@@ -26,7 +26,7 @@ import im.ene.lab.toro.ToroPlayer;
  * Created by eneim on 10/3/16.
  */
 
-public class ExoPlayerViewHelper extends PlayerViewHelper implements OnStateChangeListener {
+public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);

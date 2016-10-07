@@ -17,6 +17,7 @@
 package im.ene.lab.toro.sample.presentation.facebook;
 
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,7 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
         : (position % 5 == 2 ? FbItemViewHolder.POST_TYPE_TEXT : FbItemViewHolder.POST_TYPE_PHOTO);
   }
 
-  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+  @Override public ToroAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent,
       @FbItemViewHolder.PostType int viewType) {
     final ToroAdapter.ViewHolder viewHolder = FbItemViewHolder.createViewHolder(parent, viewType);
     if (viewHolder instanceof FbItemViewHolder.VideoPost) {
@@ -79,6 +80,13 @@ public class FbFeedAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
           }
 
           clickListener.onItemClick(FbFeedAdapter.this, viewHolder, v, pos, getItemId(pos));
+        }
+      });
+
+      viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
+        @Override public boolean onLongClick(View v) {
+          Snackbar.make(parent, "Long pressed to VIDEO", Snackbar.LENGTH_LONG).show();
+          return true;
         }
       });
     }
