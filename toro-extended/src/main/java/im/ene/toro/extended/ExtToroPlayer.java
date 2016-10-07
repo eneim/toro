@@ -25,15 +25,16 @@ import im.ene.lab.toro.ToroPlayer;
 public interface ExtToroPlayer extends ToroPlayer {
 
   enum Target {
-
+    // Alpha Experiment
     NEXT_PLAYER,
 
+    // Alpha Experiment
     PREV_PLAYER,
 
     THIS_PLAYER,
 
     NONE
   }
-  
+
   Target getNextTarget();
 }

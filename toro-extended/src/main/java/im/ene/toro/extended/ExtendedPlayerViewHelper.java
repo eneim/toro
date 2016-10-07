@@ -39,7 +39,9 @@ public class ExtendedPlayerViewHelper extends LongClickableViewHelper {
       final VideoPlayerManager manager = super.getPlayerManager(this.itemView.getParent());
       switch (nextTarget) {
         case NEXT_PLAYER:
-          // TODO
+          if (manager instanceof ExtToroAdapter) {
+            ((ExtToroAdapter) manager).scrollToNextVideo();
+          }
           break;
         case PREV_PLAYER:
           // TODO

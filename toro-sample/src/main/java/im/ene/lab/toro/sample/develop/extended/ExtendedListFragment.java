@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import im.ene.lab.toro.Toro;
 import im.ene.lab.toro.sample.R;
 import im.ene.lab.toro.sample.widget.DividerItemDecoration;
+import im.ene.toro.extended.SnapToTopLinearLayoutManager;
 
 /**
  * Created by eneim on 6/30/16.
@@ -74,7 +75,7 @@ public class ExtendedListFragment extends Fragment {
   }
 
   RecyclerView.LayoutManager getLayoutManager() {
-    return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    return new SnapToTopLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
   }
 
   RecyclerView.Adapter getAdapter() {

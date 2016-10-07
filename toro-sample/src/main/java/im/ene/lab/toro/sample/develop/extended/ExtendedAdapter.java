@@ -22,11 +22,12 @@ import android.view.ViewGroup;
 import im.ene.lab.toro.ToroAdapter;
 import im.ene.lab.toro.sample.data.SimpleObject;
 import im.ene.lab.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.extended.ExtToroAdapter;
 
 /**
  * Created by eneim on 6/29/16.
  */
-public class ExtendedAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class ExtendedAdapter extends ExtToroAdapter<ToroAdapter.ViewHolder> {
 
   public ExtendedAdapter() {
     super();
