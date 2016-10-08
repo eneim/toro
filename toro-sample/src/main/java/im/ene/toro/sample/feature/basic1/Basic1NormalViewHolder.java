@@ -18,14 +18,15 @@ package im.ene.toro.sample.feature.basic1;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.R;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * Sample ViewHolder which holds no Video. Or it doesn't request support from Toro.
+ * Simple ViewHolder which holds no Video. Or it doesn't request support from Toro.
  */
-public class Basic1NormalViewHolder extends Basic1ViewHolder {
+public class Basic1NormalViewHolder extends ToroAdapter.ViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_normal_view;
 

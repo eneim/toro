@@ -29,21 +29,28 @@ import im.ene.toro.sample.data.SimpleVideoObject;
  */
 public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
+  static int TYPE_VIDEO = 1;
+
+  static int TYPE_NORMAL = 2;
+
+  private LayoutInflater inflater;
+
   public Basic1Adapter() {
     super();
-    setHasStableIds(true);  // MUST have this.
   }
 
   @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view;
     final ToroAdapter.ViewHolder viewHolder;
-    if (viewType == Basic1ViewHolder.TYPE_VIDEO) {
-      view = LayoutInflater.from(parent.getContext())
-          .inflate(Basic1VideoViewHolder.LAYOUT_RES, parent, false);
+    if (inflater == null) {
+      inflater = LayoutInflater.from(parent.getContext());
+    }
+
+    if (viewType == TYPE_VIDEO) {
+      view = inflater.inflate(Basic1VideoViewHolder.LAYOUT_RES, parent, false);
       viewHolder = new Basic1VideoViewHolder(view);
     } else {
-      view = LayoutInflater.from(parent.getContext())
-          .inflate(Basic1NormalViewHolder.LAYOUT_RES, parent, false);
+      view = inflater.inflate(Basic1NormalViewHolder.LAYOUT_RES, parent, false);
       viewHolder = new Basic1NormalViewHolder(view);
     }
 
@@ -65,15 +72,11 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? Basic1ViewHolder.TYPE_VIDEO : Basic1ViewHolder.TYPE_NORMAL;
+    return position % 3 == 0 ? TYPE_VIDEO : TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {
     return 512;
   }
 
-  // Toro requires this method to return item's unique Id.
-  @Override public long getItemId(int position) {
-    return position;
-  }
 }

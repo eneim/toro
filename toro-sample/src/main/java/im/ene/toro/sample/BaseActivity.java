@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import im.ene.toro.ToroAdapter;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
- * Created by eneim on 6/29/16.
- *
- * A sample {@link RecyclerView.ViewHolder} skeleton.
+ * Created by eneim on 10/8/16.
  */
-public abstract class Basic1ViewHolder extends ToroAdapter.ViewHolder {
 
-  static int TYPE_VIDEO = 1;
+public abstract class BaseActivity extends AppCompatActivity {
 
-  static int TYPE_NORMAL = 2;
-
-  public Basic1ViewHolder(View itemView) {
-    super(itemView);
+  @Nullable protected String getScreenName() {
+    return null;
   }
 
-  public abstract void bind(RecyclerView.Adapter adapter, Object item);
+  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+  }
 }

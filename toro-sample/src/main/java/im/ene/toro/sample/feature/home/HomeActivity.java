@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.feature.home;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import im.ene.toro.sample.BaseActivity;
+import im.ene.toro.sample.R;
 import im.ene.toro.sample.feature.advance1.Advance1Activity;
 import im.ene.toro.sample.feature.average1.Average1Activity;
 import im.ene.toro.sample.feature.basic1.Basic1Activity;
@@ -36,7 +37,7 @@ import im.ene.toro.sample.feature.legacy.LegacyActivity;
 /**
  * Created by eneim on 6/30/16.
  */
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseActivity {
 
   @Bind(R.id.toolbar) Toolbar toolbar;
 

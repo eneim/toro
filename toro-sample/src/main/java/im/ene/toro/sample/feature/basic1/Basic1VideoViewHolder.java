@@ -20,26 +20,21 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.VideoView;
-import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.SimpleVideoObject;
-import im.ene.toro.sample.feature.legacy.LegacyActivity;
 import im.ene.toro.exoplayer2.ExoVideoView;
 import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.sample.R;
+import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link ExoVideoView} API to play medias. So by default, Video ViewHolder
- * requires an implemented Component of that interface. For samples those use legacy API such as
- * {@link VideoView} or {@link android.media.MediaPlayer}, please take a look at {@link
- * LegacyActivity} implementations.
+ * This sample use {@link ExoVideoView} API to play medias.
  */
 public class Basic1VideoViewHolder extends ExoVideoViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_basic;
 
-  private SimpleVideoObject video;
+  private SimpleVideoObject videoItem;
 
   public Basic1VideoViewHolder(View itemView) {
     super(itemView);
@@ -50,8 +45,8 @@ public class Basic1VideoViewHolder extends ExoVideoViewHolder {
       throw new IllegalArgumentException("Invalid Object: " + item);
     }
 
-    this.video = (SimpleVideoObject) item;
-    this.videoView.setMedia(Uri.parse(this.video.video));
+    this.videoItem = (SimpleVideoObject) item;
+    this.videoView.setMedia(Uri.parse(this.videoItem.video));
   }
 
   @Override protected ExoVideoView findVideoView(View itemView) {
@@ -59,6 +54,6 @@ public class Basic1VideoViewHolder extends ExoVideoViewHolder {
   }
 
   @Nullable @Override public String getMediaId() {
-    return this.video != null ? this.video.video + "@" + getAdapterPosition() : null;
+    return this.videoItem != null ? this.videoItem.video + "@" + getAdapterPosition() : null;
   }
 }

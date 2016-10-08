@@ -29,6 +29,11 @@ import android.view.View;
 public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     extends RecyclerView.Adapter<VH> {
 
+  public ToroAdapter() {
+    super();
+    setHasStableIds(true);
+  }
+
   @CallSuper @Override public void onViewRecycled(VH holder) {
     holder.onRecycled();
   }
@@ -48,6 +53,11 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
   @CallSuper @Override public void onBindViewHolder(VH holder, int position) {
     holder.bind(this, getItem(position));
     holder.onViewHolderBound();
+  }
+
+  // Toro requires this method to return item's unique Id.
+  @Override public long getItemId(int position) {
+    return position;
   }
 
   /**

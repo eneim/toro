@@ -43,9 +43,9 @@ public class SampleItemButton extends ForegroundLinearLayout {
     this(context, attrs, 0);
   }
 
-  @Bind(R.id.title) TextView mTitle;
-  @Bind(R.id.subtitle) TextView mSubtitle;
-  @Bind(R.id.sample_gif) ImageView mImage;
+  @Bind(R.id.title) TextView titleTextView;
+  @Bind(R.id.subtitle) TextView subtitleTextView;
+  @Bind(R.id.sample_gif) ImageView demoImageView;
 
   public SampleItemButton(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -64,21 +64,21 @@ public class SampleItemButton extends ForegroundLinearLayout {
       throw new IllegalArgumentException("Title must not be empty");
     }
 
-    mTitle.setText(title);
+    titleTextView.setText(title);
 
     if (subTitle == null || TextUtils.isEmpty(subTitle)) {
-      mSubtitle.setVisibility(GONE);
+      subtitleTextView.setVisibility(GONE);
     } else {
-      mSubtitle.setVisibility(VISIBLE);
-      mSubtitle.setText(subTitle);
+      subtitleTextView.setVisibility(VISIBLE);
+      subtitleTextView.setText(subTitle);
     }
 
     if (imageResource != 0) {
-      mImage.setVisibility(VISIBLE);
-      GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(mImage);
+      demoImageView.setVisibility(VISIBLE);
+      GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(demoImageView);
       Glide.with(context).load(imageResource).crossFade().into(imageViewTarget);
     } else {
-      mImage.setVisibility(GONE);
+      demoImageView.setVisibility(GONE);
     }
   }
 }

@@ -7,6 +7,10 @@
     edit pages to use for documentation, examples, support, or anything you wish.
   </string>
 
+  <string name="readme">
+    Video list auto playback made simple, specially built for RecyclerView
+  </string>
+
   <string name="basic_sample_1">
     Basic Sample 1: Minimal
   </string>
