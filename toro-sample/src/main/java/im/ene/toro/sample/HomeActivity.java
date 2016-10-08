@@ -24,14 +24,14 @@ import android.support.v7.widget.Toolbar;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import im.ene.toro.sample.presentation.advance1.Advance1Activity;
-import im.ene.toro.sample.presentation.average1.Average1Activity;
-import im.ene.toro.sample.presentation.basic1.Basic1Activity;
-import im.ene.toro.sample.presentation.basic2.Basic2Activity;
-import im.ene.toro.sample.presentation.basic3.Basic3Activity;
-import im.ene.toro.sample.presentation.extended.ExtendedListActivity;
-import im.ene.toro.sample.presentation.facebook.FbFeedActivity;
-import im.ene.toro.sample.presentation.legacy.LegacyActivity;
+import im.ene.toro.sample.feature.advance1.Advance1Activity;
+import im.ene.toro.sample.feature.average1.Average1Activity;
+import im.ene.toro.sample.feature.basic1.Basic1Activity;
+import im.ene.toro.sample.feature.basic2.Basic2Activity;
+import im.ene.toro.sample.feature.basic3.Basic3Activity;
+import im.ene.toro.sample.feature.extended.ExtendedListActivity;
+import im.ene.toro.sample.feature.facebook.FbFeedActivity;
+import im.ene.toro.sample.feature.legacy.LegacyActivity;
 
 /**
  * Created by eneim on 6/30/16.
