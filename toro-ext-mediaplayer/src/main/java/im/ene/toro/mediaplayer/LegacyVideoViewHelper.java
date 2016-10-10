@@ -38,8 +38,12 @@ public class LegacyVideoViewHelper extends PlayerViewHelper
     super(player, itemView);
   }
 
-  public void setPlayWhenReady(boolean playWhenReady) {
+  public void preparePlayer(boolean playWhenReady) {
     this.playWhenReady = playWhenReady;
+  }
+
+  public void releasePlayer() {
+    // Do nothing
   }
 
   @Override public void onPrepared(MediaPlayer mp) {
@@ -55,8 +59,8 @@ public class LegacyVideoViewHelper extends PlayerViewHelper
   }
 
   @Override public void onCompletion(MediaPlayer mp) {
-    this.player.onPlaybackCompleted();
     super.onCompletion();
+    this.player.onPlaybackCompleted();
   }
 
   public final void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {

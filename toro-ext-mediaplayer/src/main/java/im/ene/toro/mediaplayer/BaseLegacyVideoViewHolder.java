@@ -20,6 +20,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.VideoView;
+import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -87,7 +88,11 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @Override public void onPlaybackCompleted() {
-    this.isPlayable = false;
+    isPlayable = false;
+  }
+
+  @Override public boolean isPrepared() {
+    return isPlayable;
   }
 
   @Override public boolean onPlaybackError(Exception error) {
@@ -96,7 +101,7 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @Override public boolean wantsToPlay() {
-    return isPlayable && visibleAreaOffset() >= 0.85;
+    return isPlayable && visibleAreaOffset() >= Toro.DEFAULT_OFFSET;
   }
 
   @Override public float visibleAreaOffset() {
@@ -108,7 +113,7 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    helper.setPlayWhenReady(playWhenReady);
+    helper.preparePlayer(playWhenReady);
   }
 
   @Override public void start() {
@@ -125,6 +130,7 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
 
   @Override public void releasePlayer() {
     // Do nothing here
+    helper.releasePlayer();
   }
 
   @Override public long getDuration() {
