@@ -101,7 +101,7 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
 
   @Override public boolean wantsToPlay() {
     // Default implementation
-    return visibleAreaOffset() >= Toro.DEFAULT_OFFSET /* && isPlayable */;
+    return visibleAreaOffset() >= Toro.DEFAULT_OFFSET;
   }
 
   @CallSuper @Override public void onVideoPrepared() {
