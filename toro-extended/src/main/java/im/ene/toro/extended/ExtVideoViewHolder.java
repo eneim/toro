@@ -56,7 +56,7 @@ public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    videoView.initializePlayer(playWhenReady);
+    videoView.preparePlayer(playWhenReady);
   }
 
   @Override public void releasePlayer() {

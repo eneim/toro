@@ -38,7 +38,7 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
     super(itemView);
     videoView = findVideoView(itemView);
     if (videoView == null) {
-      throw new NullPointerException("A valid DemoVideoView is required.");
+      throw new NullPointerException("A valid ExoVideoView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
     videoView.setPlayerCallback(helper);
@@ -47,12 +47,13 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   protected abstract ExoVideoView findVideoView(View itemView);
 
   // BEGIN: ToroViewHolder
-  @Override public void onDetachedFromWindow() {
-    helper.onDetachedFromWindow();
+
+  @CallSuper @Override public void onAttachedToWindow() {
+    helper.onAttachedToWindow();
   }
 
-  @Override public void onAttachedToWindow() {
-    helper.onAttachedToWindow();
+  @CallSuper @Override public void onDetachedFromWindow() {
+    helper.onDetachedFromWindow();
   }
   // END: ToroViewHolder
 
@@ -67,7 +68,7 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    videoView.initializePlayer(playWhenReady);
+    videoView.preparePlayer(playWhenReady);
   }
 
   @Override public void releasePlayer() {

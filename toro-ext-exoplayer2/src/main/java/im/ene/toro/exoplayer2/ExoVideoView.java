@@ -240,7 +240,7 @@ public class ExoVideoView extends FrameLayout {
     this.media = media;
 
     releasePlayer();
-    initializePlayer(false);
+    preparePlayer(false);
   }
 
   /**
@@ -274,7 +274,7 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
-  public final void initializePlayer(boolean shouldAutoPlay) {
+  public final void preparePlayer(boolean shouldAutoPlay) {
     this.shouldAutoPlay = shouldAutoPlay;
     this.playerNeedsSource = player == null || player.getPlaybackState() == ExoPlayer.STATE_IDLE;
     if (player == null) {
