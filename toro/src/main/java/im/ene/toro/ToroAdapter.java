@@ -65,12 +65,23 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
    */
   @Nullable protected abstract Object getItem(int position);
 
-  public abstract static class ViewHolder extends RecyclerView.ViewHolder
-      implements ToroViewHolder {
+  public abstract static class ViewHolder extends RecyclerView.ViewHolder {
 
     public ViewHolder(View itemView) {
       super(itemView);
     }
+
+    /**
+     * Required for {@link PlayerViewHelper#onAttachedToWindow()}. See {@link
+     * RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
+     */
+    public abstract void onAttachedToWindow();
+
+    /**
+     * Required for {@link PlayerViewHelper#onDetachedFromWindow()}. See {@link
+     * RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
+     */
+    public abstract void onDetachedFromWindow();
 
     /**
      * Client can setup long click listener from inside viewHolder
