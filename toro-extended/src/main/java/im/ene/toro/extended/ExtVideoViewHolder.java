@@ -22,15 +22,13 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.ToroViewHolder;
 import im.ene.toro.exoplayer2.ExoVideoView;
 
 /**
  * Created by eneim on 10/4/16.
  */
 
-public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder
-    implements ExtToroPlayer, ToroViewHolder {
+public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder implements ExtToroPlayer {
 
   @NonNull protected final ExoVideoView videoView;
   protected final ExtPlayerViewHelper helper;
@@ -132,7 +130,12 @@ public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @Override public void onPlaybackCompleted() {
+    mPlayable = false;
+    this.videoView.stop();
+  }
 
+  @Override public boolean isPrepared() {
+    return mPlayable;
   }
 
   @Override public float visibleAreaOffset() {

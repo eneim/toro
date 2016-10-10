@@ -16,7 +16,7 @@
 
 package im.ene.toro.exoplayer2;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 
 /**
  * Created by eneim on 6/9/16.
@@ -25,16 +25,16 @@ public interface PlayerCallback {
 
   /**
    * @param playWhenReady Whether playback will proceed when ready.
-   * @param playbackState One of the {@link State} constants defined in the {@link SimpleExoPlayer}
+   * @param playbackState One of the {@link State} constants defined in the {@link ExoPlayer}
    * interface.
    */
   void onPlayerStateChanged(boolean playWhenReady, @State int playbackState);
 
   /**
    * Invoked when an error occurs. The playback state will transition to {@link
-   * SimpleExoPlayer#STATE_IDLE}
-   * immediately after this method is invoked. The player instance can still be used, and {@link
-   * SimpleExoPlayer#release()} must still be called on the player should it no longer be required.
+   * ExoPlayer#STATE_IDLE} immediately after this method is invoked. The player instance can still
+   * be used, and {@link ExoPlayer#release()} must still be called on the player should it no longer
+   * be required.
    *
    * @param error The error.
    */

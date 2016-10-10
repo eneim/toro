@@ -17,10 +17,11 @@
 package im.ene.toro.exoplayer2;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
+import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.PlayerViewHelper;
 import im.ene.toro.ToroPlayer;
-import com.google.android.exoplayer2.ExoPlayer;
 
 /**
  * Created by eneim on 10/3/16.
@@ -29,25 +30,28 @@ import com.google.android.exoplayer2.ExoPlayer;
  * ViewHolder's transaction to trigger the expected behavior. Client is not recommended to override
  * this, but in case it wants to provide custom behaviors, it is recommended to call super method
  * from this Helper.
- *
  */
-
 public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
 
+  // Require the player Object and the View holds it.
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
-  @Override
-  public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
+    Log.d("VH:" + player.getPlayOrder(), "onPlayerStateChanged() called with: playWhenReady = ["
+        + playWhenReady
+        + "], playbackState = ["
+        + playbackState
+        + "]");
     switch (playbackState) {
       case ExoPlayer.STATE_IDLE:
         // Do nothing
         break;
       case ExoPlayer.STATE_BUFFERING:
         if (!playWhenReady) {
-          this.onPrepared(this.itemView, this.itemView.getParent());
           this.player.onVideoPrepared();
+          this.onPrepared(this.itemView, this.itemView.getParent());
         }
         break;
       case ExoPlayer.STATE_READY:
@@ -58,11 +62,11 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         }
         break;
       case ExoPlayer.STATE_ENDED:
-        if (!playWhenReady) { // Completely ENDED
+        if (playWhenReady) {  // Before calling player.stop().
           this.onCompletion();
           this.player.onPlaybackCompleted();
-          this.player.releasePlayer();
         }
+        // this.player.preparePlayer(false);
         break;
       default:
         // Do nothing
