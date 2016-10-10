@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by eneim on 6/29/16.
  */
-public interface ToroViewHolder {
+interface ToroViewHolder {
 
   /**
    * Required for {@link PlayerViewHelper#onAttachedToWindow()}. See {@link

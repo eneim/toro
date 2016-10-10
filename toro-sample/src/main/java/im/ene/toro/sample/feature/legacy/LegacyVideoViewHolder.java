@@ -53,7 +53,7 @@ public class LegacyVideoViewHolder extends BaseLegacyVideoViewHolder {
       throw new IllegalArgumentException("Item must be a SimpleVideoObject");
     }
 
-    helper.setPlayWhenReady(false);
+    helper.preparePlayer(false);
     videoView.setVideoPath(this.video.video);
   }
 }

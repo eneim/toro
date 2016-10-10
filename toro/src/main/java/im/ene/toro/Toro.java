@@ -51,6 +51,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   private static final String TAG = "LOG:TORO";
   private static final Object LOCK = new Object();
 
+  public static final double DEFAULT_OFFSET = 0.75;
+
   /**
    * Stop playback strategy
    */
@@ -527,10 +529,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
     }
 
-    // Normally stop playback
+    // Update video position as 0
     if (manager != null) {
       manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
-      manager.stopPlayback();
     }
   }
 

@@ -28,7 +28,7 @@ import android.view.View;
  */
 public interface ToroPlayer extends BaseMediaPlayer {
 
-  // Custom method to add Toro abilities
+  boolean isPrepared();
 
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to

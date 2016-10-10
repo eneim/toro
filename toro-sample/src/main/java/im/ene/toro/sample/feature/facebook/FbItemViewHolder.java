@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
+import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
@@ -124,21 +125,17 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     }
   }
 
-  static class VideoPost extends ExtVideoViewHolder /* implements OnReleaseCallback */ {
+  static class VideoPost extends ExtVideoViewHolder {
 
     static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 
     private ImageView mThumbnail;
     private TextView mInfo;
-    private boolean isPlayable = false;
-    private boolean isReleased = false;
-    private long latestPosition = 0;
 
     public VideoPost(View itemView) {
       super(itemView);
       mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
       mInfo = (TextView) itemView.findViewById(R.id.info);
-      // videoView.setLastMomentCallback(this);
     }
 
     @Override protected ExoVideoView findVideoView(View itemView) {
@@ -163,7 +160,7 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     }
 
     @Override public boolean wantsToPlay() {
-      return isPlayable && visibleAreaOffset() >= 0.75;
+      return visibleAreaOffset() >= Toro.DEFAULT_OFFSET;
     }
 
     @Nullable @Override public String getMediaId() {
@@ -177,10 +174,7 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
 
     @Override public void onVideoPrepared() {
       super.onVideoPrepared();
-      isPlayable = true;
       mInfo.setText("Prepared");
-      latestPosition = 0;
-      isReleased = false;
     }
 
     @Override public void onViewHolderBound() {
@@ -212,7 +206,6 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     }
 
     @Override public void onPlaybackCompleted() {
-      isPlayable = false;
       mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
         @Override public void onAnimationEnd(Animator animation) {
           VideoPost.super.onPlaybackCompleted();
@@ -221,11 +214,14 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
       mInfo.setText("Completed");
     }
 
+    @Override public boolean isPrepared() {
+      return super.isPrepared();
+    }
+
     @Override public boolean onPlaybackError(Exception error) {
-      isPlayable = false;
-      mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+      mThumbnail.animate().alpha(1.f).setDuration(0).setListener(new AnimatorListenerAdapter() {
         @Override public void onAnimationEnd(Animator animation) {
-          VideoPost.super.onPlaybackCompleted();
+          // Immediately finish the animation.
         }
       }).start();
       mInfo.setText("Error: videoId = " + getMediaId());
@@ -237,21 +233,12 @@ public abstract class FbItemViewHolder extends ToroAdapter.ViewHolder {
     }
 
     @Override public long getCurrentPosition() {
-      if (!isReleased) {
-        latestPosition = super.getCurrentPosition();
-      }
-
-      return latestPosition;
+      return super.getCurrentPosition();
     }
 
     @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
       this.videoView.setVolume(volume);
     }
-
-    //@Override public void onRelease(SimpleMediaPlayer player) {
-    //  isReleased = true;
-    //  latestPosition = player.getCurrentPosition();
-    //}
 
     @Override public Target getNextTarget() {
       return Target.NONE;
