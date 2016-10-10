@@ -163,7 +163,7 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
   boolean mPlayerNeedsPrepare;
   boolean mPlayRequested = false;
   boolean mBackgroundAudioEnabled = false;
-  private OnReleaseCallback lastMomentCallback;
+  private OnReleaseCallback onReleaseCallback;
 
   private PlayerCallback playerCallback;
   private AudioCapabilitiesReceiver mAudioCapabilitiesReceiver;
@@ -216,8 +216,8 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
 
   public final void releasePlayer() {
     if (mMediaPlayer != null) {
-      if (lastMomentCallback != null) {
-        lastMomentCallback.onRelease(new SimpleMediaPlayer() {
+      if (onReleaseCallback != null) {
+        onReleaseCallback.onRelease(new SimpleMediaPlayer() {
           @Override public long getDuration() {
             return mMediaPlayer.getDuration();
           }
@@ -321,8 +321,8 @@ public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
     mBackgroundAudioEnabled = enabled;
   }
 
-  public void setLastMomentCallback(OnReleaseCallback lastMomentCallback) {
-    this.lastMomentCallback = lastMomentCallback;
+  public void setOnReleaseCallback(OnReleaseCallback onReleaseCallback) {
+    this.onReleaseCallback = onReleaseCallback;
   }
 
   public void setPlayerCallback(PlayerCallback stateChangeListener) {

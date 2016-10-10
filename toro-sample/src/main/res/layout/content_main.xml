@@ -29,6 +29,19 @@
       android:orientation="vertical"
       >
 
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/readme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:ellipsize="end"
+        android:maxHeight="120dp"
+        android:padding="12dp"
+        android:text="@string/readme"
+        android:textColor="#F5F5F5"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
     <im.ene.toro.sample.widget.SampleItemButton
         android:id="@+id/basic_sample_1"
         android:layout_width="match_parent"

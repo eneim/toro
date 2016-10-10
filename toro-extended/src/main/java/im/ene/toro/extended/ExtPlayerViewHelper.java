@@ -34,7 +34,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
     super.onPlayerStateChanged(playWhenReady, playbackState);
-    if (playbackState == ExoPlayer.STATE_ENDED) {
+    if (playbackState == ExoPlayer.STATE_IDLE && !playWhenReady) {
       final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
       final VideoPlayerManager manager = super.getPlayerManager(this.itemView.getParent());
       switch (nextTarget) {
@@ -48,7 +48,6 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
           // TODO implement this if need
           break;
         case THIS_PLAYER:
-          player.preparePlayer(false);
           // immediately repeat
           if (manager != null) {
             manager.restoreVideoState(player.getMediaId());

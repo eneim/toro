@@ -240,7 +240,7 @@ public class ExoVideoView extends FrameLayout {
     this.media = media;
 
     releasePlayer();
-    initializePlayer(false);
+    preparePlayer(false);
   }
 
   /**
@@ -274,8 +274,9 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
-  public final void initializePlayer(boolean shouldAutoPlay) {
+  public final void preparePlayer(boolean shouldAutoPlay) {
     this.shouldAutoPlay = shouldAutoPlay;
+    this.playerNeedsSource = player == null || player.getPlaybackState() == ExoPlayer.STATE_IDLE;
     if (player == null) {
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       try {
@@ -329,10 +330,9 @@ public class ExoVideoView extends FrameLayout {
         }
       }
 
-      player.setPlayWhenReady(shouldAutoPlay);
-      playerNeedsSource = true;
     }
 
+    player.setPlayWhenReady(this.shouldAutoPlay);
     if (playerNeedsSource) {
       if (requiresPermission(media.getMediaUri())) {
         // The player will be reinitialized if the permission is granted.
@@ -506,9 +506,10 @@ public class ExoVideoView extends FrameLayout {
 
   public void stop() {
     if (this.player != null) {
+      this.player.stop();
       this.player.setPlayWhenReady(false);
+      this.shouldAutoPlay = false;
     }
-    releasePlayer();
   }
 
   public void seekTo(long milliSec) {

@@ -19,46 +19,46 @@
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name="im.ene.toro.sample.HomeActivity"
+        android:name="im.ene.toro.sample.feature.home.HomeActivity"
         android:theme="@style/AppTheme.NoActionBar"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.basic1.Basic1Activity"/>
+        android:name=".feature.basic1.Basic1Activity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.basic2.Basic2Activity"/>
+        android:name=".feature.basic2.Basic2Activity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.basic3.Basic3Activity"/>
+        android:name=".feature.basic3.Basic3Activity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.average1.Average1Activity"/>
+        android:name=".feature.average1.Average1Activity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.advance1.Advance1Activity"/>
+        android:name=".feature.advance1.Advance1Activity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.facebook.FbFeedActivity"/>
+        android:name=".feature.facebook.FbFeedActivity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.legacy.LegacyActivity"/>
+        android:name=".feature.legacy.LegacyActivity"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".presentation.extended.ExtendedListActivity"/>
+        android:name=".feature.extended.ExtendedListActivity"/>
 
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".HomeActivity">
+        android:targetActivity=".feature.home.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

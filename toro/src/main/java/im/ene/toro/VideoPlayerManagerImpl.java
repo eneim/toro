@@ -42,8 +42,13 @@ public final class VideoPlayerManagerImpl implements VideoPlayerManager {
   }
 
   @Override public void startPlayback() {
+    // Should prepare video if need?
     if (mPlayer != null) {
-      mPlayer.start();
+      if (!mPlayer.isPrepared()) {
+        mPlayer.preparePlayer(false);
+      } else {
+        mPlayer.start();
+      }
     }
   }
 
