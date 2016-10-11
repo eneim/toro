@@ -200,6 +200,12 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       playerManager.setPlayer(state.player);
       playerManager.saveVideoState(state.player.getMediaId(), state.position,
           state.player.getDuration());
+
+      if (!state.player.isPlaying() && state.player.wantsToPlay() && Toro.getStrategy()
+          .allowsToPlay(state.player, view)) {
+        playerManager.restoreVideoState(state.player.getMediaId());
+        playerManager.startPlayback();
+      }
     }
 
     // Done registering new View

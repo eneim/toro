@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
@@ -83,6 +84,21 @@ public class ExoVideoView extends FrameLayout {
 
   private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
 
+  /**
+   * Either the width or height is decreased to obtain the desired aspect ratio.
+   */
+  public static final int RESIZE_MODE_DEFAULT = 0;
+  /**
+   * The width is fixed and the height is increased or decreased to obtain the desired aspect
+   * ratio.
+   */
+  public static final int RESIZE_MODE_FIXED_WIDTH = 1;
+  /**
+   * The height is fixed and the width is increased or decreased to obtain the desired aspect
+   * ratio.
+   */
+  public static final int RESIZE_MODE_FIXED_HEIGHT = 2;
+
   private final class ComponentListener
       implements SimpleExoPlayer.VideoListener, ExoPlayer.EventListener, TextRenderer.Output {
 
@@ -130,15 +146,20 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
+  private static final int SURFACE_TYPE_DEFAULT = 0;
+  private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
+  private static final int SURFACE_TYPE_TEXTURE_VIEW = 2;
+
   private TextRenderer.Output subtitleListener;
 
   public void setSubtitleListener(TextRenderer.Output subtitleListener) {
     this.subtitleListener = subtitleListener;
   }
 
-  private float videoAspectRatio;
   private final View surfaceView;
   private final View shutterView;
+  private float videoAspectRatio;
+  private int resizeMode = RESIZE_MODE_FIXED_WIDTH;
   private final ComponentListener componentListener;
   private PlayerCallback playerCallback;
 
@@ -154,6 +175,31 @@ public class ExoVideoView extends FrameLayout {
     super(context, attrs, defStyleAttr);
     // By default, TextureView is used for Android 23 and below, and SurfaceView is for the rest
     boolean useTextureView = context.getResources().getBoolean(R.bool.use_texture_view);
+    if (attrs != null) {
+      TypedArray a =
+          context.getTheme().obtainStyledAttributes(attrs, R.styleable.ExoVideoView, 0, 0);
+      try {
+        int surfaceType = a.getInt(R.styleable.ExoVideoView_tx2_surfaceType, SURFACE_TYPE_DEFAULT);
+        switch (surfaceType) {
+          case SURFACE_TYPE_SURFACE_VIEW:
+            useTextureView = false;
+            break;
+          case SURFACE_TYPE_TEXTURE_VIEW:
+            useTextureView = true;
+            break;
+          case SURFACE_TYPE_DEFAULT:
+          default:
+            // Unchanged, so don't need to execute the line below
+            // useTextureView = context.getResources().getBoolean(R.bool.use_texture_view);
+            break;
+        }
+
+        resizeMode = a.getInt(R.styleable.ExoVideoView_tx2_resizeMode, RESIZE_MODE_FIXED_WIDTH);
+      } finally {
+        a.recycle();
+      }
+    }
+
     View view = useTextureView ? new TextureView(context) : new SurfaceView(context);
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT);
@@ -209,20 +255,28 @@ public class ExoVideoView extends FrameLayout {
       return;
     }
 
-    // Comment out. I will just change the height right now.
-    // TODO: re-consider this if need
-    //if (aspectDeformation > 0) {
-    //  height = (int) (width / videoAspectRatio);
-    //} else {
-    //  width = (int) (height * videoAspectRatio);
-    //}
+    switch (this.resizeMode) {
+      case RESIZE_MODE_FIXED_WIDTH:
+        height = (int) (width / videoAspectRatio);
+        break;
+      case RESIZE_MODE_FIXED_HEIGHT:
+        width = (int) (height * videoAspectRatio);
+        break;
+      case RESIZE_MODE_DEFAULT:
+      default:
+        if (aspectDeformation > 0) {
+          height = (int) (width / videoAspectRatio);
+        } else {
+          width = (int) (height * videoAspectRatio);
+        }
+        break;
+    }
 
-    height = (int) (width / videoAspectRatio);
     super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
         MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
   }
 
-  SimpleExoPlayer player;
+  private SimpleExoPlayer player;
 
   public void setMedia(Uri uri) {
     if (uri == null || (this.media != null && uri.equals(this.media.getMediaUri()))) {
@@ -329,7 +383,6 @@ public class ExoVideoView extends FrameLayout {
           player.seekTo(playerWindow, playerPosition);
         }
       }
-
     }
 
     player.setPlayWhenReady(this.shouldAutoPlay);
@@ -521,6 +574,17 @@ public class ExoVideoView extends FrameLayout {
   public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
     if (player != null) {
       player.setVolume(volume);
+    }
+  }
+
+  public int getResizeMode() {
+    return resizeMode;
+  }
+
+  public void setResizeMode(int resizeMode) {
+    if (this.resizeMode != resizeMode) {
+      this.resizeMode = resizeMode;
+      requestLayout();
     }
   }
 
