@@ -16,6 +16,30 @@
 
 apply plugin: 'com.android.library'
 
+ext {
+  bintrayRepo = 'Toro'
+  bintrayName = 'toro-ext-exoplayer'
+
+  publishedGroupId = 'im.ene.toro2'
+  artifact = 'extension-exoplayer'
+  libraryName = 'toro-extension-exoplayer'
+
+  libraryDescription = 'Base implementation for Toro, built on top of ExoPlayer v1'
+
+  siteUrl = 'https://github.com/eneim/Toro'
+  gitUrl = 'https://github.com/eneim/Toro.git'
+
+  libraryVersion = rootProject.ext.libraryVersion
+
+  developerId = 'eneim'
+  developerName = 'Nam Nguyen'
+  developerEmail = 'nam@ene.im'
+
+  licenseName = 'The Apache Software License, Version 2.0'
+  licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  allLicenses = ["Apache-2.0"]
+}
+
 android {
   compileSdkVersion 24
   buildToolsVersion "24.0.2"
@@ -54,3 +78,9 @@ dependencies {
   compile project(':toro')
   compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}"
 }
+
+// REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
+// > gradlew install
+// > gradlew bintrayUpload
+apply from: '../.scripts/installv1.gradle'
+apply from: '../.scripts/bintrayv1.gradle'
