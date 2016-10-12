@@ -271,6 +271,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
+  // Experiment
+  public static boolean isResting() {
+    return getStrategy() == REST;
+  }
+
   private static void dispatchStrategyChanged(ToroStrategy newStrategy) {
     for (RecyclerView view : sInstance.mViews.values()) {
       ToroScrollListener listener = sInstance.mListeners.get(view.hashCode());

@@ -16,14 +16,11 @@
 
 package im.ene.toro.sample.feature.facebook;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,6 +31,7 @@ import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
 import im.ene.toro.VideoPlayerManager;
+import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.sample.widget.DividerItemDecoration;
@@ -45,9 +43,7 @@ import java.util.List;
  * This is the normal Facebook feed list, which is different to 'Video playlist' which contains
  * only Video.
  */
-public class FbFeedFragment extends Fragment {
-
-  public static final String TAG = "Toro:Facebook";
+public class FbFeedFragment extends BaseToroFragment {
 
   public static FbFeedFragment newInstance() {
     return new FbFeedFragment();
@@ -99,8 +95,7 @@ public class FbFeedFragment extends Fragment {
     return inflater.inflate(R.layout.generic_recycler_view, container, false);
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
     RecyclerView.LayoutManager layoutManager = getLayoutManager();
@@ -119,26 +114,24 @@ public class FbFeedFragment extends Fragment {
     }
   }
 
-  @Override public void onResume() {
-    super.onResume();
+  @Override protected void dispatchFragmentActivated() {
     Toro.register(mRecyclerView);
   }
 
-  @Override public void onPause() {
-    super.onPause();
+  @Override protected void dispatchFragmentDeActivated() {
     Toro.unregister(mRecyclerView);
   }
 
   @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     if (mAdapter instanceof FbFeedAdapter) {
-      ((FbFeedAdapter) mAdapter).setOnItemClickListener(listener);
+      ((FbFeedAdapter) mAdapter).setOnItemClickListener(itemClickListener);
     }
   }
 
   public static final int RESUME_REQUEST_CODE = 1024;
 
-  private OnItemClickListener listener = new OnItemClickListener() {
+  private OnItemClickListener itemClickListener = new OnItemClickListener() {
     @Override
     public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder,
         View view, int adapterPosition, long itemId) {
