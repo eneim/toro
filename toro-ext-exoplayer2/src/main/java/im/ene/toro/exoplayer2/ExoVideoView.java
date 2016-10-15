@@ -305,7 +305,7 @@ public class ExoVideoView extends FrameLayout {
    *
    * @param player The {@link SimpleExoPlayer} to use.
    */
-  /* package */ void setPlayer(SimpleExoPlayer player) {
+  protected void setPlayer(SimpleExoPlayer player) {
     if (this.player != null) {
       this.player.setTextOutput(null);
       this.player.setVideoListener(null);
@@ -415,6 +415,8 @@ public class ExoVideoView extends FrameLayout {
       player = null;
       trackSelector = null;
     }
+
+    shutterView.setVisibility(VISIBLE);
   }
 
   private DataSource.Factory mediaDataSourceFactory;

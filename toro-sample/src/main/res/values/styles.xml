@@ -38,6 +38,14 @@
     <item name="windowNoTitle">true</item>
   </style>
 
+  <style name="DimmedTextButton" parent="Facebook.Button.Feed">
+    <item name="android:textColor">#e5e5e5</item>
+  </style>
+
+  <style name="Toro.Theme.Playlist" parent="Toro.Dialog.Fullscreen.NoActionBar">
+    <item name="android:windowBackground">@android:color/black</item>
+  </style>
+
   <style name="Facebook.Button.Feed" parent="android:Widget">
     <item name="android:gravity">center</item>
     <item name="android:clickable">true</item>

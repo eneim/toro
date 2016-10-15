@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.facebook;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**
- * Created by eneim on 5/14/16.
+ * Created by eneim on 10/11/16.
  */
+
 public interface OnItemClickListener {
 
   void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,

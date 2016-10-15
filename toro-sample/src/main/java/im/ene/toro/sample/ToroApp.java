@@ -46,6 +46,10 @@ public class ToroApp extends Application {
     return sApp.getPackageName();
   }
 
+  public static ToroApp getApp() {
+    return sApp;
+  }
+
   /* Preference Keys */
   public static final String PREF_ACCOUNT_NAME = "toro_pref_account_name";
 }
