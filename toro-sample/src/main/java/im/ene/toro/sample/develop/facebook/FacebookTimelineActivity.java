@@ -22,24 +22,29 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.google.android.exoplayer2.C;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.develop.facebook.playlist.FacebookPlaylistFragment;
 import im.ene.toro.sample.develop.facebook.timeline.TimelineAdapter;
 import im.ene.toro.sample.develop.facebook.timeline.TimelineItem;
+import im.ene.toro.sample.util.Util;
 import java.util.List;
 
 /**
  * Created by eneim on 10/11/16.
  */
 
-public class FacebookTimelineActivity extends BaseActivity {
+public class FacebookTimelineActivity extends BaseActivity
+    implements FacebookPlaylistFragment.Callback {
 
   @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
   private TimelineAdapter adapter;
@@ -83,28 +88,71 @@ public class FacebookTimelineActivity extends BaseActivity {
     });
 
     adapter.setOnItemClickListener(new TimelineAdapter.ItemClickListener() {
-      @Override protected void onOgpItemClick(View view, TimelineItem.OgpItem item) {
+      @Override protected void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
+          TimelineItem.OgpItem item) {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.getItemUrl()));
         startActivity(intent);
       }
 
-      @Override protected void onPhotoClick(View view, TimelineItem.PhotoItem item) {
+      @Override protected void onPhotoClick(RecyclerView.ViewHolder viewHolder, View view,
+          TimelineItem.PhotoItem item) {
 
       }
 
-      @Override protected void onVideoClick(View view, TimelineItem.VideoItem item) {
+      @Override protected void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
+          TimelineItem.VideoItem item) {
+        long duration = C.LENGTH_UNSET;
+        long position = C.POSITION_UNSET;
+        int order = viewHolder.getAdapterPosition();
+        ToroPlayer player = adapter.getPlayer();
+        if (player != null) {
+          duration = player.getDuration();
+          position = player.isPlaying() ? player.getCurrentPosition()
+              : adapter.getSavedPosition(Util.genVideoId(item.getVideoUrl(), order)); // safe
+        }
 
+        if (item != null) {
+          FacebookPlaylistFragment playlistFragment =
+              FacebookPlaylistFragment.newInstance(item, position, duration, order);
+          playlistFragment.show(getSupportFragmentManager(),
+              FacebookPlaylistFragment.class.getSimpleName());
+        }
       }
     });
   }
 
+  boolean isActive = false;
+
   @Override protected void onActive() {
     super.onActive();
     Toro.register(mRecyclerView);
+    isActive = true;
   }
 
   @Override protected void onInactive() {
     super.onInactive();
     Toro.unregister(mRecyclerView);
+    isActive = false;
+  }
+
+  private static final String TAG = "Toro:FB:TL";
+
+  @Override public void onPlaylistAttached() {
+    Log.i(TAG, "onPlaylistAttached() called");
+    Toro.unregister(mRecyclerView);
+  }
+
+  @Override
+  public void onPlaylistDetached(TimelineItem.VideoItem baseItem, Long position, int order) {
+    Log.i(TAG,
+        "onPlaylistDetached() called with: position = [" + position + "], order = [" + order + "]");
+    if (adapter.getPlayer() != null) {
+      adapter.saveVideoState(Util.genVideoId(baseItem.getVideoUrl(), order), position,
+          adapter.getPlayer().getDuration());
+    }
+
+    if (isActive) {
+      Toro.register(mRecyclerView);
+    }
   }
 }

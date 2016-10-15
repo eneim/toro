@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import im.ene.toro.exoplayer2.ExoVideoView;
 import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.util.Util;
 
 /**
  * Created by eneim on 10/11/16.
@@ -68,7 +69,7 @@ public class VideoViewHolder extends ExoVideoViewHolder {
   }
 
   @Nullable @Override public String getMediaId() {
-    return this.videoItem.getVideoUrl() + "@" + getAdapterPosition();
+    return Util.genVideoId(this.videoItem.getVideoUrl(), getAdapterPosition());
   }
 
   @Override public void onVideoPreparing() {
@@ -116,10 +117,6 @@ public class VideoViewHolder extends ExoVideoViewHolder {
       }
     }).start();
     mInfo.setText("Completed");
-  }
-
-  @Override public boolean isPrepared() {
-    return super.isPrepared();
   }
 
   @Override public boolean onPlaybackError(Exception error) {

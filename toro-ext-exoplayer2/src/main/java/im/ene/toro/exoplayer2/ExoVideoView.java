@@ -415,6 +415,8 @@ public class ExoVideoView extends FrameLayout {
       player = null;
       trackSelector = null;
     }
+
+    shutterView.setVisibility(VISIBLE);
   }
 
   private DataSource.Factory mediaDataSourceFactory;

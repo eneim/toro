@@ -17,10 +17,14 @@
 package im.ene.toro.sample.develop.facebook.timeline;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.ToroAdapter;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.VideoPlayerManager;
+import im.ene.toro.VideoPlayerManagerImpl;
 import im.ene.toro.sample.ToroApp;
 import im.ene.toro.sample.develop.facebook.OrderedPlayList;
 import java.util.ArrayList;
@@ -31,7 +35,7 @@ import java.util.List;
  */
 
 public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements OrderedPlayList {
+    implements OrderedPlayList, VideoPlayerManager {
 
   static final int TYPE_OGP = 1;
   static final int TYPE_PHOTO = 2;
@@ -39,9 +43,11 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
   private static final int ITEM_COUNT = 512;
   private final List<TimelineItem> items;
+  private final VideoPlayerManager delegate;
 
   public TimelineAdapter() {
-    items = new ArrayList<>();
+    this.delegate = new VideoPlayerManagerImpl();
+    this.items = new ArrayList<>();
     for (int i = 0; i < ITEM_COUNT; i++) {
       items.add(new TimelineItem(ToroApp.getApp()));
     }
@@ -66,13 +72,24 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
           if (position != RecyclerView.NO_POSITION
               && onItemClickListener != null
               && v == ((OgpItemViewHolder) viewHolder).ogpView) {
-            onItemClickListener.onOgpItemClick(v,
+            onItemClickListener.onOgpItemClick(viewHolder, v,
                 (TimelineItem.OgpItem) getItem(position).getEmbedItem());
           }
         }
       });
     } else if (viewHolder instanceof VideoViewHolder) {
       // TODO Click to Video
+      viewHolder.setOnItemClickListener(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          int position = viewHolder.getAdapterPosition();
+          if (position != RecyclerView.NO_POSITION
+              && onItemClickListener != null
+              && v == ((VideoViewHolder) viewHolder).getPlayerView()) {
+            onItemClickListener.onVideoClick(viewHolder, v,
+                (TimelineItem.VideoItem) getItem(position).getEmbedItem());
+          }
+        }
+      });
     } else if (viewHolder instanceof PhotoViewHolder) {
       // TODO Click to Photo
     }
@@ -116,10 +133,55 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
     }
 
-    protected abstract void onOgpItemClick(View view, TimelineItem.OgpItem item);
+    protected abstract void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
+        TimelineItem.OgpItem item);
 
-    protected abstract void onPhotoClick(View view, TimelineItem.PhotoItem item);
+    protected abstract void onPhotoClick(RecyclerView.ViewHolder viewHolder, View view,
+        TimelineItem.PhotoItem item);
 
-    protected abstract void onVideoClick(View view, TimelineItem.VideoItem item);
+    protected abstract void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
+        TimelineItem.VideoItem item);
+  }
+
+  // VideoPlayerManager implementation
+
+  @Nullable @Override public ToroPlayer getPlayer() {
+    return delegate.getPlayer();
+  }
+
+  @Override public void setPlayer(ToroPlayer player) {
+    delegate.setPlayer(player);
+  }
+
+  @Override public void onRegistered() {
+    delegate.onRegistered();
+  }
+
+  @Override public void onUnregistered() {
+    delegate.onUnregistered();
+  }
+
+  @Override public void startPlayback() {
+    delegate.startPlayback();
+  }
+
+  @Override public void pausePlayback() {
+    delegate.pausePlayback();
+  }
+
+  @Override public void stopPlayback() {
+    delegate.stopPlayback();
+  }
+
+  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
+    delegate.saveVideoState(videoId, position, duration);
+  }
+
+  @Override public void restoreVideoState(String videoId) {
+    delegate.restoreVideoState(videoId);
+  }
+
+  @Nullable @Override public Long getSavedPosition(String videoId) {
+    return delegate.getSavedPosition(videoId);
   }
 }

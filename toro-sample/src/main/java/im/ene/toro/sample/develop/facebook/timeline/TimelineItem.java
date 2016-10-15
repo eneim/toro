@@ -110,7 +110,11 @@ public class TimelineItem {
     private final String videoUrl;
 
     public VideoItem() {
-      videoUrl = "https://storage.googleapis.com/wvmedia/clear/vp9/tears/tears.mpd";
+      videoUrl = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    }
+
+    public VideoItem(String videoUrl) {
+      this.videoUrl = videoUrl;
     }
 
     protected VideoItem(Parcel in) {
