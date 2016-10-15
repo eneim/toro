@@ -5,15 +5,15 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'im.ene.lab'
 
 ext {
-  bintrayRepo = 'maven'
-  bintrayName = 'Toro'
+  bintrayRepo = 'Toro'
+  bintrayName = 'toro'
 
   publishedGroupId = 'im.ene.toro2'
   artifact = 'toro'
   libraryName = 'Toro'
 
   libraryDescription =
-      'Toro core service, provide easy to implement Auto Video playback to Android. Built for RecyclerView'
+      'Toro core service, provide Extensible Auto Video playback to Android. Built for RecyclerView.'
 
   siteUrl = 'https://github.com/eneim/Toro'
   gitUrl = 'https://github.com/eneim/Toro.git'
