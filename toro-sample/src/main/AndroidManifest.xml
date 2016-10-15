@@ -43,14 +43,10 @@
         android:launchMode="singleTop"
         android:name=".feature.advance1.Advance1Activity"/>
     <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.facebook.FbFeedActivity"/>
-    <activity
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".develop.facebook.FacebookTimelineActivity"
+        android:name=".feature.facebook.FacebookTimelineActivity"
         android:resizeableActivity="false"/>
     <activity
         android:label="@string/activity_show_case"

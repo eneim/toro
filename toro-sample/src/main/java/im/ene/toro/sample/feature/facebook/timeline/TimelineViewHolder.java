@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.timeline;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.view.LayoutInflater;
 import android.view.View;

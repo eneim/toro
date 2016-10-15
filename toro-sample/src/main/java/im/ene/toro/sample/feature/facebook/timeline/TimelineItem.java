@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.timeline;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.content.Context;
 import android.os.Parcel;
@@ -22,7 +22,7 @@ import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.develop.facebook.FbUser;
+import im.ene.toro.sample.feature.facebook.FbUser;
 
 /**
  * Created by eneim on 10/11/16.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.timeline;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook;
+package im.ene.toro.sample.feature.facebook;
 
 import android.support.annotation.DrawableRes;
 import im.ene.toro.sample.R;

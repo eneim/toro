@@ -14,38 +14,26 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.timeline;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
-import com.bumptech.glide.Glide;
 import im.ene.toro.sample.R;
 
 /**
  * Created by eneim on 10/11/16.
  */
 
-public class OgpItemViewHolder extends TimelineViewHolder {
+public class PhotoViewHolder extends TimelineViewHolder {
 
-  static final int LAYOUT_RES = R.layout.vh_fb_feed_post_text;
+  static final int LAYOUT_RES = R.layout.vh_fb_feed_post_photo;
 
-  View ogpView;
-  ImageView imageView;
-
-  public OgpItemViewHolder(View itemView) {
+  public PhotoViewHolder(View itemView) {
     super(itemView);
-    ogpView = itemView.findViewById(R.id.ogp_item);
-    imageView = (ImageView) itemView.findViewById(R.id.item_image);
   }
 
   @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
-    Glide.with(itemView.getContext()).load(R.drawable.toro_icon).into(imageView);
-  }
 
-  @Override public void setOnItemClickListener(View.OnClickListener listener) {
-    super.setOnItemClickListener(listener);
-    ogpView.setOnClickListener(listener);
   }
 }

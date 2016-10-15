@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.develop.facebook.FacebookTimelineActivity;
+import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.advance1.Advance1Activity;
 import im.ene.toro.sample.feature.average1.Average1Activity;
 import im.ene.toro.sample.feature.basic1.Basic1Activity;

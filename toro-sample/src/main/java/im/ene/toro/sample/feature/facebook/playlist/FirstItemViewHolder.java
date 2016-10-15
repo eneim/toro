@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.playlist;
+package im.ene.toro.sample.feature.facebook.playlist;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -23,7 +23,7 @@ import android.view.View;
 import im.ene.toro.exoplayer2.ExoVideoView;
 import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.develop.facebook.timeline.TimelineItem;
+import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import im.ene.toro.sample.util.Util;
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.timeline;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +26,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.VideoPlayerManager;
 import im.ene.toro.VideoPlayerManagerImpl;
 import im.ene.toro.sample.ToroApp;
-import im.ene.toro.sample.develop.facebook.OrderedPlayList;
+import im.ene.toro.sample.feature.facebook.OrderedPlayList;
 import java.util.ArrayList;
 import java.util.List;
 

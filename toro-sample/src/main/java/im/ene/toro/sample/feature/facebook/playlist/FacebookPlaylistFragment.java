@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.playlist;
+package im.ene.toro.sample.feature.facebook.playlist;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -41,7 +41,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
 import im.ene.toro.extended.SnapToTopLinearLayoutManager;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.develop.facebook.timeline.TimelineItem;
+import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import im.ene.toro.sample.util.Util;
 import java.util.List;
 

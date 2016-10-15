@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook.playlist;
+package im.ene.toro.sample.feature.facebook.playlist;
 
-import im.ene.toro.sample.develop.facebook.timeline.TimelineItem;
+import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import java.util.ArrayList;
 import java.util.List;
 

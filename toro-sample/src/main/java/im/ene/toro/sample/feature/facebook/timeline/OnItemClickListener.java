@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.develop.facebook;
+package im.ene.toro.sample.feature.facebook.timeline;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import im.ene.toro.sample.BaseActivity;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
  * Created by eneim on 10/11/16.
  */
 
-public class FacebookPlaylistActivity extends BaseActivity {
+public interface OnItemClickListener {
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-  }
+  void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,
+      int adapterPosition, long itemId);
 }
