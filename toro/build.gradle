@@ -8,12 +8,12 @@ ext {
   bintrayRepo = 'maven'
   bintrayName = 'Toro'
 
-  publishedGroupId = 'im.ene.lab'
-  libraryName = 'Toro'
+  publishedGroupId = 'im.ene.toro2'
   artifact = 'toro'
+  libraryName = 'Toro'
 
   libraryDescription =
-      'Toro core service, backed by Toro Player, provide easy to implement Auto Video playback to Android.'
+      'Toro core service, provide easy to implement Auto Video playback to Android. Built for RecyclerView'
 
   siteUrl = 'https://github.com/eneim/Toro'
   gitUrl = 'https://github.com/eneim/Toro.git'
