@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.facebook;
+package im.ene.toro.sample.feature.facebook.timeline;
 
-import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import im.ene.toro.sample.R;
 
 /**
- * Created by eneim on 6/29/16.
+ * Created by eneim on 10/11/16.
  */
-public class FbFeedActivity extends AppCompatActivity {
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, FbFeedFragment.newInstance())
-          .commit();
-    }
+public class PhotoViewHolder extends TimelineViewHolder {
+
+  static final int LAYOUT_RES = R.layout.vh_fb_feed_post_photo;
+
+  public PhotoViewHolder(View itemView) {
+    super(itemView);
+  }
+
+  @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+
   }
 }

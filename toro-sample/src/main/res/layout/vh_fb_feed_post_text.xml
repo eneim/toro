@@ -16,6 +16,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -29,15 +30,76 @@
 
   <include layout="@layout/vh_fb_feed_user"/>
 
-  <TextView
+  <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="#f5f5f5"
-      android:lineSpacingMultiplier="1.2"
-      android:padding="8dp"
-      android:text="@string/sample"
-      android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-      />
+      android:orientation="vertical"
+      android:padding="4dp"
+      >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingMultiplier="1.2"
+        android:padding="4dp"
+        android:text="@string/sample"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/ogp_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="#ffffff"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="1dp"
+        >
+
+      <ImageView
+          android:id="@+id/item_image"
+          android:layout_width="@dimen/ogp_image_size"
+          android:layout_height="@dimen/ogp_image_size"
+          />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/ogp_image_size"
+          android:layout_marginLeft="@dimen/ogp_image_size"
+          android:layout_marginStart="@dimen/ogp_image_size"
+          android:orientation="vertical"
+          >
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/readme"
+            style="@style/TextAppearance.AppCompat.Body1"
+            />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="8dp"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/sample"
+            style="@style/TextAppearance.AppCompat.Caption"
+            />
+
+      </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+  </LinearLayout>
 
   <View
       android:layout_width="match_parent"

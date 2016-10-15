@@ -198,8 +198,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (state.player != null) {
       // Cold start VideoPlayerManager from a saved state
       playerManager.setPlayer(state.player);
-      playerManager.saveVideoState(state.player.getMediaId(), state.position,
-          state.player.getDuration());
+      playerManager.saveVideoState(state.player.getMediaId(),
+          playerManager.getSavedPosition(state.player.getMediaId()), state.player.getDuration());
+
+      if (!state.player.isPlaying() && state.player.wantsToPlay() && Toro.getStrategy()
+          .allowsToPlay(state.player, view)) {
+        playerManager.restoreVideoState(state.player.getMediaId());
+        playerManager.startPlayback();
+      }
     }
 
     // Done registering new View
@@ -263,6 +269,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         cachedStrategy = null;  // release
       }
     }
+  }
+
+  // Experiment
+  public static boolean isResting() {
+    return getStrategy() == REST;
   }
 
   private static void dispatchStrategyChanged(ToroStrategy newStrategy) {

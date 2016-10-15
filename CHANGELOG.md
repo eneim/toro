@@ -1,5 +1,9 @@
 # Release note
 
+### 2.0.0 (DRAFT)
+
+**Toro has been re-designed from ground up**
+
 ### 2.0.0-RC4 (2016.06.23)
 
 **Toro has been re-designed from ground up**

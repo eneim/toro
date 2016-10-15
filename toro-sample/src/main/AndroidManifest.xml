@@ -7,6 +7,7 @@
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <!-- Play video from internet -->
   <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
   <application
       android:allowBackup="false"
@@ -42,9 +43,11 @@
         android:launchMode="singleTop"
         android:name=".feature.advance1.Advance1Activity"/>
     <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".feature.facebook.FbFeedActivity"/>
+        android:name=".feature.facebook.FacebookTimelineActivity"
+        android:resizeableActivity="false"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"

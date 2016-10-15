@@ -14,69 +14,62 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.facebook;
+package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
-import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
-import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.extended.ExtVideoViewHolder;
+import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.sample.R;
+import im.ene.toro.sample.util.Util;
 
 /**
- * Created by eneim on 1/30/16.
+ * Created by eneim on 10/11/16.
  */
-public class SimpleVideoViewHolder extends ExtVideoViewHolder /* implements OnReleaseCallback */ {
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_simple;
+public class VideoViewHolder extends ExoVideoViewHolder {
 
+  static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
+
+  private TimelineItem.VideoItem videoItem;
   private ImageView mThumbnail;
   private TextView mInfo;
-  private boolean isPlayable = false;
-  private boolean isReleased = false;
-  private long latestPosition = 0;
 
-  public SimpleVideoViewHolder(View itemView) {
+  public VideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
-    // videoView.setLastMomentCallback(this);
   }
 
   @Override protected ExoVideoView findVideoView(View itemView) {
     return (ExoVideoView) itemView.findViewById(R.id.video);
   }
 
+  @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+    if (!(object instanceof TimelineItem)
+        || !(((TimelineItem) object).getEmbedItem() instanceof TimelineItem.VideoItem)) {
+      throw new IllegalArgumentException("Only VideoItem is accepted");
+    }
+
+    this.videoItem = (TimelineItem.VideoItem) ((TimelineItem) object).getEmbedItem();
+    this.videoView.setMedia(Uri.parse(videoItem.getVideoUrl()));
+  }
+
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
     super.setOnItemClickListener(listener);
     mInfo.setOnClickListener(listener);
-  }
-
-  private SimpleVideoObject mItem;
-
-  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
-    if (!(item instanceof SimpleVideoObject)) {
-      throw new IllegalStateException("Unexpected object: " + item.toString());
-    }
-
-    mItem = (SimpleVideoObject) item;
-    videoView.setMedia(Uri.parse(mItem.video));
-  }
-
-  @Override public boolean wantsToPlay() {
-    return isPlayable && visibleAreaOffset() >= 0.75;
+    this.videoView.setOnClickListener(listener);
   }
 
   @Nullable @Override public String getMediaId() {
-    return mItem.toString() + "@" + getAdapterPosition();
+    return Util.genVideoId(this.videoItem.getVideoUrl(), getAdapterPosition());
   }
 
   @Override public void onVideoPreparing() {
@@ -86,10 +79,7 @@ public class SimpleVideoViewHolder extends ExtVideoViewHolder /* implements OnRe
 
   @Override public void onVideoPrepared() {
     super.onVideoPrepared();
-    isPlayable = true;
     mInfo.setText("Prepared");
-    latestPosition = 0;
-    isReleased = false;
   }
 
   @Override public void onViewHolderBound() {
@@ -105,7 +95,7 @@ public class SimpleVideoViewHolder extends ExtVideoViewHolder /* implements OnRe
   @Override public void onPlaybackStarted() {
     mThumbnail.animate().alpha(0.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleVideoViewHolder.super.onPlaybackStarted();
+        VideoViewHolder.super.onPlaybackStarted();
       }
     }).start();
     mInfo.setText("Started");
@@ -114,55 +104,28 @@ public class SimpleVideoViewHolder extends ExtVideoViewHolder /* implements OnRe
   @Override public void onPlaybackPaused() {
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleVideoViewHolder.super.onPlaybackPaused();
+        VideoViewHolder.super.onPlaybackPaused();
       }
     }).start();
     mInfo.setText("Paused");
   }
 
   @Override public void onPlaybackCompleted() {
-    isPlayable = false;
     mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleVideoViewHolder.super.onPlaybackCompleted();
+        VideoViewHolder.super.onPlaybackCompleted();
       }
     }).start();
     mInfo.setText("Completed");
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    isPlayable = false;
-    mThumbnail.animate().alpha(1.f).setDuration(250).setListener(new AnimatorListenerAdapter() {
+    mThumbnail.animate().alpha(1.f).setDuration(0).setListener(new AnimatorListenerAdapter() {
       @Override public void onAnimationEnd(Animator animation) {
-        SimpleVideoViewHolder.super.onPlaybackCompleted();
+        // Immediately finish the animation.
       }
     }).start();
     mInfo.setText("Error: videoId = " + getMediaId());
     return super.onPlaybackError(error);
-  }
-
-  @Override public String toString() {
-    return "Video: " + getMediaId();
-  }
-
-  @Override public long getCurrentPosition() {
-    if (!isReleased) {
-      latestPosition = super.getCurrentPosition();
-    }
-
-    return latestPosition;
-  }
-
-  @Override public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
-    this.videoView.setVolume(volume);
-  }
-
-  //@Override public void onRelease(SimpleMediaPlayer player) {
-  //  isReleased = true;
-  //  latestPosition = player.getCurrentPosition();
-  //}
-
-  @Override public Target getNextTarget() {
-    return Target.NEXT_PLAYER;
   }
 }
