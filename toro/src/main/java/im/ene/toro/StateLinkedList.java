@@ -17,6 +17,7 @@
 package im.ene.toro;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by eneim on 3/14/16.
@@ -32,7 +33,7 @@ final class StateLinkedList extends LinkedHashMap<Integer, SavedState> {
     mCapacity = initialCapacity;
   }
 
-  @Override protected boolean removeEldestEntry(Entry<Integer, SavedState> eldest) {
+  @Override protected boolean removeEldestEntry(Map.Entry<Integer, SavedState> eldest) {
     return size() > mCapacity;
   }
 }

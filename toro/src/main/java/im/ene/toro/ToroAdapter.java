@@ -62,6 +62,9 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
 
   /**
    * Require client to feed data. Actually object returned from this method could be null.
+   *
+   * @param position position of the object this Adapter will obtain
+   * @return the Object at the position of {@code position} in this Adapter, can be {@code null}.
    */
   @Nullable protected abstract Object getItem(int position);
 
@@ -85,6 +88,8 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
 
     /**
      * Client can setup long click listener from inside viewHolder
+     *
+     * @param listener the long click event listener
      */
     public void setOnItemLongClickListener(View.OnLongClickListener listener) {
       itemView.setOnLongClickListener(listener);
@@ -92,6 +97,8 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
 
     /**
      * Setup on click listener to current ViewHolder's components.
+     *
+     * @param listener the click event listener
      */
     public void setOnItemClickListener(View.OnClickListener listener) {
       itemView.setOnClickListener(listener);
@@ -105,6 +112,12 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
 
     /**
      * Called by {@link RecyclerView.Adapter#onFailedToRecycleView(RecyclerView.ViewHolder)}
+     *
+     * @return True if the View should be recycled, false otherwise. Note that if this method
+     * returns <code>true</code>, RecyclerView <em>will ignore</em> the transient state of
+     * the View and recycle it regardless. If this method returns <code>false</code>,
+     * RecyclerView will check the View's transient state again before giving a final decision.
+     * Default implementation returns false.
      */
     protected boolean onFailedToRecycle() {
       return false;
@@ -120,6 +133,9 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     /**
      * Accept null object, but client must acknowledge this, and try to supply valid object to
      * ViewHolder
+     *
+     * @param adapter the adapter that is using this ViewHolder
+     * @param object the item to be bound to this ViewHolder
      */
     public abstract void bind(RecyclerView.Adapter adapter, @Nullable Object object);
   }

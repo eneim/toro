@@ -73,12 +73,18 @@ public interface VideoPlayerManager {
   void stopPlayback();
 
   /**
-   * Save current video state
+   * Save current video playback state.
+   *
+   * @param videoId the unique Id of video inside the RecyclerView.
+   * @param position current playing position, can be {@code null}.
+   * @param duration duration of playing video.
    */
   void saveVideoState(String videoId, @Nullable Long position, long duration);
 
   /**
    * Restore and setup state of a Video to current video player
+   *
+   * @param videoId the unique Id of video inside the RecyclerView.
    */
   void restoreVideoState(String videoId);
 
