@@ -1,8 +1,30 @@
 # Release note
 
-### 2.0.0 (DRAFT)
+### 2.1.0 (DRAFT)
 
 **Toro has been re-designed from ground up**
+
+- Toro is now extensible. Built-in extensions are enough for a good start.
+ - Toro core library provides all the concepts and base implementation.
+ - The extensions which are based on Media playback libraries will do the real Application level work (imlementing the VideoHold, Video Player Widget, Player helpers, ...).
+ 
+- Welcome ExoPlayer 2, Toro is now catching up with latest developer's interest.
+ - ExoPlayer v2 is supported as an Toro's Extension. All the basic work is done.
+ 
+- Rich features sample App
+ - IMO, sample App is as important as the library. Toro comes with a rich feature App, wrap the usecases from simple to advance.
+ 
+- Still specially built for RecyclerView
+ - Toro 2 keeps trying best to support RecyclerView. Now with an extra interface for LayoutManager, custom LayoutManager can be integrated easily (Toro 1 supports only Linear/Staggered Layout Managers).
+
+- Many more features to explore, but still easy to use.
+
+- Goodbye jitpack, hello jcenter**: I was a fan of jitpack.io for quite a long time. In fact, most of my current libraries are published on jitpack. But since Toro v2 has been splitted to many sub modules, jitpack seems to not very well support.
+Furthermore, I tend to update my libraries' dependencies to latest official version really quick, meanwhile jitpack server is not that adaptive. So I move Toro to jcenter which is always there with Android Studio.
+
+### 2.0.0 (2016/10/16: Unreleased)
+
+**Due to some big internal changes as well as my mental changes, I decided to skip version 2.0 and move directly to 2.1.0**
 
 ### 2.0.0-RC4 (2016.06.23)
 
