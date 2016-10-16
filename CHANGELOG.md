@@ -2,9 +2,9 @@
 
 ### 2.1.0 (DRAFT)
 
-**Toro has been re-designed from ground up**
+**Months of works, Toro has been re-designed from ground up**
 
-- Toro is now extensible. Built-in extensions are enough for a good start.
+- Toro is now lightweight, extensible. Built-in extensions are enough for a good start.
  - Toro core library provides all the concepts and base implementation.
  - The extensions which are based on Media playback libraries will do the real Application level work (imlementing the VideoHold, Video Player Widget, Player helpers, ...).
  
@@ -15,7 +15,7 @@
  - ExoPlayer v1 and Official Android MediaPlayer API is supported as 2 other Extensions.
 
 - Toro & Toro Extended
- - People asked for the loop ability of Video Widget, I put it to even more flexible concept : ExtToroPlayer interface will ask for the next target to grab. Here you can define that target as current Player itself (i.e LOOP), or next player to play (Visible Video in the same Windows will be detected and scrolled to to trigger the playback). More 'traversable' behaviours will come in the future. 
+ - People asked many time for the loop ability of Video Widget, I put it to even more flexible concept : ExtToroPlayer interface will ask for the next target to grab. Here you can define that target as current Player itself (i.e LOOP), or next player to play (Visible Video in the same Windows will be detected and scrolled to to trigger the playback). More 'traversable' behaviours will come in the future. 
  
 - Rich features sample App
  - IMO, sample App is as important as the library. Toro comes with a rich feature App, wrap the usecases from simple to advance, including Custom LayoutManager samples as well as a well-taylored sample which reproduce the behaviour of **Facebook timeline**.
@@ -23,6 +23,10 @@
 - Still specially built for RecyclerView
  - Toro 2 keeps trying best to support RecyclerView. Now with an extra interface for LayoutManager, custom LayoutManager can be integrated easily (Toro 1 supports only Linear/Staggered Layout Managers).
 
+- Nougat - friendly
+ - Toro knows how important the Activity's lifecycle is, and it's already support the change on Android 7.
+ - Resizeable Activity is all set.
+ 
 - Many more features to explore, but still easy to use.
 
 - Goodbye jitpack, hello jcenter**: I was a fan of jitpack.io for quite a long time. In fact, most of my current libraries are published on jitpack. But since Toro v2 has been splitted to many sub modules, jitpack seems to not very well support.
