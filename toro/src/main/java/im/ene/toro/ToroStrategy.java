@@ -32,7 +32,10 @@ public interface ToroStrategy {
 
   /**
    * Each item of candidates returns true for {@link ToroPlayer#wantsToPlay()}. A
-   * Strategy gives the best fit Player to start playing
+   * Strategy gives the best fit Player to start playing.
+   *
+   * @param candidates the list of all possible to play {@code ToroPlayer}s.
+   * @return the best {@code ToroPlayer} widget to start playback.
    */
   @Nullable ToroPlayer findBestPlayer(List<ToroPlayer> candidates);
 
@@ -41,6 +44,9 @@ public interface ToroStrategy {
    * allowed to play by current Strategy
    *
    * @param player ToroPlayer object which wants to play, and wait for permission
+   * @param parent the RecyclerView that {@code player} is attached to.
+   * @return {@code true} if {@code player} suffices all requirements to play, {@code false}
+   * otherwise.
    */
   boolean allowsToPlay(ToroPlayer player, ViewParent parent);
 }

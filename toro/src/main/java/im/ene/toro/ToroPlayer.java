@@ -33,6 +33,8 @@ public interface ToroPlayer extends BaseMediaPlayer {
   /**
    * This player wants to play or not. Client must provide reasonable motivation for this Player to
    * be played. For example, it could be properly visible by User, therefore It wants to behave.
+   *
+   * @return {@code true} if this Player wants to start playback, {@code false} otherwise.
    */
   boolean wantsToPlay();
 
@@ -47,7 +49,7 @@ public interface ToroPlayer extends BaseMediaPlayer {
    * !IMPORTANT this ID must be unique, and avoid using Media's filename, url String or any object
    * that depends <b>only</b> on the Media object itself. There will be the case user uses same
    * Media in different places.
-   * <p/>
+   *
    * Furthermore, ToroPlayer would be recycled, so it requires a separated, resource-independent Id
    *
    * @return current Media source's id.
@@ -60,6 +62,8 @@ public interface ToroPlayer extends BaseMediaPlayer {
    *
    * In RecyclerView (which is the only widget Toro currently support), this method expect
    * ViewHolder's Adapter position (see {@link RecyclerView.ViewHolder#getAdapterPosition()})
+   *
+   * @return current Adapter position of this Player
    */
   @IntRange(from = RecyclerView.NO_POSITION) int getPlayOrder();
 
@@ -93,8 +97,6 @@ public interface ToroPlayer extends BaseMediaPlayer {
 
   /**
    * Replace {@link android.media.MediaPlayer.OnPreparedListener#onPrepared(android.media.MediaPlayer)}
-   *
-   * @param mp media player which is prepared
    */
   void onVideoPrepared();
 

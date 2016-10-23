@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.media;
+package im.ene.toro.extended;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.content.Context;
+import android.support.v7.widget.LinearSmoothScroller;
+import android.util.DisplayMetrics;
 
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
-  public ApplicationTest() {
-    super(Application.class);
+ * Created by eneim on 10/23/16.
+ */class TopSnappedSmoothScroller extends LinearSmoothScroller {
+  TopSnappedSmoothScroller(Context context) {
+    super(context);
+  }
+
+  @Override protected int getVerticalSnapPreference() {
+    return SNAP_TO_START;
+  }
+
+  @Override protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+    return super.calculateSpeedPerPixel(displayMetrics) * 5.f;
   }
 }

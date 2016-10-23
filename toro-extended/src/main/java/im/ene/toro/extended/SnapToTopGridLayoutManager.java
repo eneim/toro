@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package im.ene.lab.toro.player;
+package im.ene.toro.extended;
+
+import android.content.Context;
+import android.util.AttributeSet;
 
 /**
- * Created by eneim on 6/12/16.
+ * Created by eneim on 10/23/16.
  */
 
-/**
- * Callback for handling the play or pause of a player control.
- */
-public interface PlayerControlCallback {
+public class SnapToTopGridLayoutManager extends SnapToTopLinearLayoutManager {
 
-  /**
-   * Respond when the player has just been paused.
-   */
-  void onPause();
+  public SnapToTopGridLayoutManager(Context context) {
+    super(context);
+  }
 
-  /**
-   * Respond when the player just started playing.
-   */
-  void onPlay();
+  public SnapToTopGridLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    super(context, orientation, reverseLayout);
+  }
+
+  public SnapToTopGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr,
+      int defStyleRes) {
+    super(context, attrs, defStyleAttr, defStyleRes);
+  }
 }

@@ -18,10 +18,8 @@ package im.ene.toro.extended;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 
 /**
  * Created by eneim on 10/7/16.
@@ -48,19 +46,5 @@ public class SnapToTopLinearLayoutManager extends LinearLayoutManager {
         new TopSnappedSmoothScroller(recyclerView.getContext());
     smoothScroller.setTargetPosition(position);
     startSmoothScroll(smoothScroller);
-  }
-
-  private class TopSnappedSmoothScroller extends LinearSmoothScroller {
-    TopSnappedSmoothScroller(Context context) {
-      super(context);
-    }
-
-    @Override protected int getVerticalSnapPreference() {
-      return SNAP_TO_START;
-    }
-
-    @Override protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-      return super.calculateSpeedPerPixel(displayMetrics) * 5.f;
-    }
   }
 }

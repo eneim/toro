@@ -34,4 +34,18 @@ public class Media {
   @NonNull public final Uri getMediaUri() {
     return mediaUri;
   }
+
+  @Override public boolean equals(Object o) {
+    if (o == null) return false;
+    if (this == o) return true;
+    if (!(o instanceof Media)) return false;
+
+    Media media = (Media) o;
+
+    return mediaUri.equals(media.mediaUri);
+  }
+
+  @Override public int hashCode() {
+    return mediaUri.hashCode();
+  }
 }

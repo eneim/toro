@@ -37,13 +37,9 @@ import static android.os.Build.VERSION.SDK_INT;
 
 /**
  * Created by eneim on 1/31/16.
- * <p/>
+ *
  * Control Application's lifecycle to properly handling callbacks, prevent Memory leak and
  * unexpected behavior;
- *
- * <code>
- *
- * </code>
  */
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)  //
 public final class Toro implements Application.ActivityLifecycleCallbacks {
@@ -102,6 +98,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   /**
    * Same purpose to {@link Toro#attach(Activity)}, but support overall the Application
+   *
+   * @param application the Application where Toro will apply for.
    */
   public static void init(Application application) {
     if (sInstance == null) {
@@ -118,6 +116,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   /**
    * Carefully detach current Activity from Toro. Should be coupled with {@link
    * Toro#attach(Activity)}
+   *
+   * @param activity The host Activity where Toro will detach from.
    */
   public static void detach(Activity activity) {
     Application application = activity.getApplication();

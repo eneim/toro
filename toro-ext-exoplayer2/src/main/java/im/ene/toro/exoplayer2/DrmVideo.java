@@ -16,35 +16,15 @@
 
 package im.ene.toro.exoplayer2;
 
-import android.net.Uri;
-
 /**
  * Created by eneim on 10/2/16.
  */
 
-public class DrmVideo extends Media {
+public interface DrmVideo {
 
-  private final String type;
-  private final String licenseUrl;
-  private final String[] keyRequestPropertiesArray;
+  String getType();
 
-  public DrmVideo(Uri mediaUri, String type, String licenseUrl,
-      String[] keyRequestPropertiesArray) {
-    super(mediaUri);
-    this.type = type;
-    this.licenseUrl = licenseUrl;
-    this.keyRequestPropertiesArray = keyRequestPropertiesArray;
-  }
+  String getLicenseUrl();
 
-  public String getType() {
-    return type;
-  }
-
-  public String getLicenseUrl() {
-    return licenseUrl;
-  }
-
-  public String[] getKeyRequestPropertiesArray() {
-    return keyRequestPropertiesArray;
-  }
+  String[] getKeyRequestPropertiesArray();
 }
