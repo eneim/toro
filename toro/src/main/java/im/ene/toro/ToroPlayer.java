@@ -91,8 +91,11 @@ public interface ToroPlayer extends BaseMediaPlayer {
   /* Playback lifecycle callback */
 
   /**
-   * Preparing resources;
+   * Preparing resources.
+   *
+   * @deprecated only used in ExoPlayer v1 Extension.
    */
+  @Deprecated
   void onVideoPreparing();
 
   /**
