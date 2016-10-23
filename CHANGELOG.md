@@ -17,7 +17,7 @@
 
  - After: 
   
-    - Repository: ```jcenter()``` # keep empty since it is Android Studio's default.
+    - Repository: ```jcenter() # or do nothing since it is Android Studio's default.```
     
     - Dependency: ```"im.ene.toro2:toro:${toro_latest_version}"```
  
