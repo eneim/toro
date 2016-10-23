@@ -49,6 +49,14 @@
  
 - Many more features to explore, but still easy to use.
 
+- Q&A, Help:
+  
+  - Backward Compatible to v1? - ***No***
+  
+  - Migration Helper? - ***No Official Guide***, it is too much. But since ***(1)*** v2 has completely new package structure, you can include both v1 and v2 into your project, and change the current implementation partly. ***(2)*** Question related to Migration can be post in issue with the tag "Migration v1 - v2", I will be there for help.
+
+  - Why v2.1.0, where is v2.0.0? - ***Sorry***, due to some internal changes at the time of releasing, and some mental issue (mostly my last decision of the package name and bintray repo relocation), I decided to move directly to 2.1.0.
+  
 ### 2.0.0 (2016/10/16: Unreleased)
 
 **Due to some big internal changes as well as my mental changes, I decided to skip version 2.0 and move directly to 2.1.0**
