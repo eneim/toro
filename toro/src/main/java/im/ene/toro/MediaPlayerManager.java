@@ -22,7 +22,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by eneim on 1/29/16.
  */
-public interface VideoPlayerManager {
+public interface MediaPlayerManager {
 
   /* BEGIN Setup current Player */
 

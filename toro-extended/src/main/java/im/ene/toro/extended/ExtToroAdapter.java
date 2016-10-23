@@ -18,25 +18,25 @@ package im.ene.toro.extended;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.VideoPlayerManager;
-import im.ene.toro.VideoPlayerManagerImpl;
+import im.ene.toro.MediaPlayerManagerImpl;
 
 /**
  * Created by eneim on 10/7/16.
  */
 
 public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends ToroAdapter<VH>
-    implements VideoPlayerManager {
+    implements MediaPlayerManager {
 
   public static final int INVALID_VIDEO_POSITION = -1;
 
   private RecyclerView parent;
-  private final VideoPlayerManagerImpl delegate;
+  private final MediaPlayerManagerImpl delegate;
 
   public ExtToroAdapter() {
-    delegate = new VideoPlayerManagerImpl();
+    delegate = new MediaPlayerManagerImpl();
   }
 
   @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -84,7 +84,7 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
     }
   }
 
-  // VideoPlayerManager implementation
+  // MediaPlayerManager implementation
 
   @Nullable @Override public ToroPlayer getPlayer() {
     return delegate.getPlayer();

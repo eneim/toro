@@ -171,14 +171,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
     }
 
-    // 1. Retrieve current VideoPlayerManager instance
-    final VideoPlayerManager playerManager;
+    // 1. Retrieve current MediaPlayerManager instance
+    final MediaPlayerManager playerManager;
     RecyclerView.Adapter adapter = view.getAdapter();
-    // Client of this API should implement VideoPlayerManager to its Adapter.
-    if (adapter instanceof VideoPlayerManager) {
-      playerManager = (VideoPlayerManager) adapter;
+    // Client of this API should implement MediaPlayerManager to its Adapter.
+    if (adapter instanceof MediaPlayerManager) {
+      playerManager = (MediaPlayerManager) adapter;
     } else {
-      playerManager = new VideoPlayerManagerImpl();
+      playerManager = new MediaPlayerManagerImpl();
     }
 
     final ToroScrollListener listener = new ToroScrollListener(playerManager);
@@ -196,7 +196,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
 
     if (state.player != null) {
-      // Cold start VideoPlayerManager from a saved state
+      // Cold start MediaPlayerManager from a saved state
       playerManager.setPlayer(state.player);
       playerManager.saveVideoState(state.player.getMediaId(),
           playerManager.getSavedPosition(state.player.getMediaId()), state.player.getDuration());
@@ -491,7 +491,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
-    VideoPlayerManager manager = null;
+    MediaPlayerManager manager = null;
     ToroScrollListener listener;
     RecyclerView view;
     // Find correct Player manager for this player
@@ -530,7 +530,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onPlaybackCompletion(@NonNull ToroPlayer player) {
     // 1. Internal jobs
-    VideoPlayerManager manager = null;
+    MediaPlayerManager manager = null;
     for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
       manager = listener.getManager();
       if (player == manager.getPlayer()) {
@@ -548,7 +548,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {
     for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
-      VideoPlayerManager manager = listener.getManager();
+      MediaPlayerManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
         manager.pausePlayback();
@@ -572,7 +572,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
           mStates.put(viewEntry.getKey(), state);
         }
 
-        VideoPlayerManager manager = listener.getManager();
+        MediaPlayerManager manager = listener.getManager();
         if (manager.getPlayer() != null) {
           // Save state
           state.player = manager.getPlayer();
@@ -599,7 +599,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         }
 
         SavedState state = mStates.get(viewEntry.getKey());
-        VideoPlayerManager manager = listener.getManager();
+        MediaPlayerManager manager = listener.getManager();
         if (manager.getPlayer() == null) {
           if (state != null && state.player != null) {
             manager.setPlayer(state.player);

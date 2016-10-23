@@ -22,7 +22,7 @@ import android.view.View.OnLongClickListener;
 import android.view.ViewParent;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.VideoPlayerManager;
+import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
 
 /**
@@ -37,7 +37,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
 
   @Override public boolean onLongClick(View v) {
     final ViewParent parent = this.itemView.getParent();
-    VideoPlayerManager manager = getPlayerManager(parent);
+    MediaPlayerManager manager = getPlayerManager(parent);
     // Important components are missing, return
     if (manager == null) {
       return false;

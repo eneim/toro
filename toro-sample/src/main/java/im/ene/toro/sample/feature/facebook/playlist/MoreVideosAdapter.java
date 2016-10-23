@@ -21,10 +21,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.VideoPlayerManager;
-import im.ene.toro.VideoPlayerManagerImpl;
+import im.ene.toro.MediaPlayerManagerImpl;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,18 +34,18 @@ import java.util.List;
  */
 
 public class MoreVideosAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements VideoPlayerManager {
+    implements MediaPlayerManager {
 
   static final int VIDEO_TYPE_FIRST = 0;
   static final int VIDEO_TYPE_NEXT = 1;
 
   private final List<TimelineItem.VideoItem> items;
-  private final VideoPlayerManager delegate;
+  private final MediaPlayerManager delegate;
 
   public MoreVideosAdapter(@NonNull TimelineItem.VideoItem firstItem) {
     this.items = new ArrayList<>();
     this.items.add(firstItem);
-    this.delegate = new VideoPlayerManagerImpl();
+    this.delegate = new MediaPlayerManagerImpl();
   }
 
   @Nullable @Override protected TimelineItem.VideoItem getItem(int position) {
@@ -85,7 +85,7 @@ public class MoreVideosAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
     }
   }
 
-  // VideoPlayerManager implementation
+  // MediaPlayerManager implementation
 
   @Nullable @Override public ToroPlayer getPlayer() {
     return delegate.getPlayer();

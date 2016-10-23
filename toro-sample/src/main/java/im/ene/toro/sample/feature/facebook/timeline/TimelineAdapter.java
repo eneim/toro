@@ -21,10 +21,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.VideoPlayerManager;
-import im.ene.toro.VideoPlayerManagerImpl;
+import im.ene.toro.MediaPlayerManagerImpl;
 import im.ene.toro.sample.ToroApp;
 import im.ene.toro.sample.feature.facebook.OrderedPlayList;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.List;
  */
 
 public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements OrderedPlayList, VideoPlayerManager {
+    implements OrderedPlayList, MediaPlayerManager {
 
   static final int TYPE_OGP = 1;
   static final int TYPE_PHOTO = 2;
@@ -43,10 +43,10 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
   private static final int ITEM_COUNT = 512;
   private final List<TimelineItem> items;
-  private final VideoPlayerManager delegate;
+  private final MediaPlayerManager delegate;
 
   public TimelineAdapter() {
-    this.delegate = new VideoPlayerManagerImpl();
+    this.delegate = new MediaPlayerManagerImpl();
     this.items = new ArrayList<>();
     for (int i = 0; i < ITEM_COUNT; i++) {
       items.add(new TimelineItem(ToroApp.getApp()));
@@ -143,7 +143,7 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
         TimelineItem.VideoItem item);
   }
 
-  // VideoPlayerManager implementation
+  // MediaPlayerManager implementation
 
   @Nullable @Override public ToroPlayer getPlayer() {
     return delegate.getPlayer();

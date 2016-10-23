@@ -23,11 +23,11 @@ import java.util.Map;
 /**
  * Created by eneim on 1/31/16.
  *
- * Extension/Implementation of {@link VideoPlayerManager}. Can be used as a delegation.
+ * Extension/Implementation of {@link MediaPlayerManager}. Can be used as a delegation.
  */
-public final class VideoPlayerManagerImpl implements VideoPlayerManager {
+public final class MediaPlayerManagerImpl implements MediaPlayerManager {
 
-  private static final String TAG = "VideoPlayerManager";
+  private static final String TAG = "MediaPlayerManager";
 
   private final Map<String, Long> mVideoStates = new HashMap<>();
 
