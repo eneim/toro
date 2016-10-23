@@ -126,7 +126,8 @@ public class ExoVideoView extends FrameLayout {
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-
+      isTimelineStatic = timeline != null && timeline.getWindowCount() > 0
+          && !timeline.getWindow(timeline.getWindowCount() - 1, window).isDynamic;
     }
 
     @Override public void onPlayerError(ExoPlaybackException error) {
@@ -215,6 +216,8 @@ public class ExoVideoView extends FrameLayout {
     shutterView.setBackgroundColor(Color.BLACK);
     addView(shutterView);
 
+    window = new Timeline.Window();
+
     componentListener = new ComponentListener();
 
     mediaDataSourceFactory = buildDataSourceFactory(true);
@@ -294,6 +297,7 @@ public class ExoVideoView extends FrameLayout {
     this.media = media;
 
     releasePlayer();
+    this.isTimelineStatic = false;
     preparePlayer(false);
   }
 
@@ -375,7 +379,7 @@ public class ExoVideoView extends FrameLayout {
       player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,  //
           new DefaultLoadControl(), drmSessionManager, false);
       setPlayer(player);
-      if (shouldRestorePosition) {
+      if (isTimelineStatic) {
         // playerWindow is not null here
         if (playerPosition == C.TIME_UNSET) {
           player.seekToDefaultPosition(playerWindow);
@@ -393,7 +397,8 @@ public class ExoVideoView extends FrameLayout {
       }
 
       MediaSource mediaSource = buildMediaSource(media.getMediaUri(), null);
-      player.prepare(mediaSource, !shouldRestorePosition);
+      // player.prepare(mediaSource, !isTimelineStatic);
+      player.prepare(mediaSource, !isTimelineStatic, !isTimelineStatic);
       playerNeedsSource = false;
     }
   }
@@ -401,15 +406,11 @@ public class ExoVideoView extends FrameLayout {
   public final void releasePlayer() {
     if (player != null) {
       shouldAutoPlay = player.getPlayWhenReady();
-      shouldRestorePosition = false;
+      playerWindow = player.getCurrentWindowIndex();
+      playerPosition = C.TIME_UNSET;
       Timeline timeline = player.getCurrentTimeline();
-      if (timeline != null) {
-        playerWindow = player.getCurrentWindowIndex();
-        Timeline.Window window = timeline.getWindow(playerWindow, new Timeline.Window());
-        if (!window.isDynamic) {
-          shouldRestorePosition = true;
-          playerPosition = window.isSeekable ? player.getCurrentPosition() : C.TIME_UNSET;
-        }
+      if (timeline != null && timeline.getWindow(playerWindow, window).isSeekable) {
+        playerPosition = player.getCurrentPosition();
       }
       player.release();
       player = null;
@@ -428,10 +429,11 @@ public class ExoVideoView extends FrameLayout {
     DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
   }
 
+  private Timeline.Window window;
   private Handler mainHandler;
   private MappingTrackSelector trackSelector;
   private boolean playerNeedsSource = true;
-  private boolean shouldRestorePosition;
+  private boolean isTimelineStatic;
   private boolean shouldAutoPlay;
   private int playerWindow;
   private long playerPosition;

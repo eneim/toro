@@ -155,7 +155,7 @@ bintray {
     version {
       desc = libraryDescription
       gpg {
-        sign = true // Determines whether to GPG sign the files. The default is false
+        sign = isReleaseBuild() // Determines whether to GPG sign the files. The default is false
         passphrase = bintray_gpg_password
         // Optional. The passphrase for GPG signing'
       }
