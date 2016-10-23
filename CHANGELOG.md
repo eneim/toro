@@ -4,10 +4,10 @@
 
 **Months of works, Toro has been re-designed from ground up**
 
-- Changes in package structure:
+- **New** package structure:
  - Before: ```im.ene.lab.toro.*``` --> ***After***: ```im.ene.toro.*```.
 
-- Changes in dependency repositories and ids:
+- **New** dependency repositories and ids:
 
  - Before:
   
@@ -21,39 +21,38 @@
     
     - Dependency: ```"im.ene.toro2:toro:${toro_latest_version}"```
  
-- Changes in library structures:
+- **New** library structures:
 
  - Before: Toro is All In One solution, robust, compact but somehow inflexible and imposible to extend.
  
- - After: Toro is now lightweight, extensible. Built-in extensions are enough for a good start.
+ - After: Toro is now lightweight, extensible:
  
    - Toro core library provides all the concepts and base implementation.
    
-   - The extensions which are based on Media playback libraries will do the real Application level work (imlementing the VideoHold, Video Player Widget, Player helpers, ...).
+   - The extensions those are based on Media playback libraries will do the real Application level work (imlementing the VideoHolder, Video Player Widget, Player helpers, ...).
+
+- **New** extensions based on ExoPlayer 2, Toro is now catching up with latest developer's interest.
  
-- Welcome ExoPlayer 2, Toro is now catching up with latest developer's interest.
  - ExoPlayer v2 is supported as an Toro's Extension. All the basic work is done.
  
-- Fallbackable to legacy
- - ExoPlayer v1 and Official Android MediaPlayer API is supported as 2 other Extensions.
+ - Fallback to legacy
+  
+   - ExoPlayer v1 and Official Android MediaPlayer API is supported as 2 other Extensions.
 
-- Toro & Toro Extended
- - People asked many time for the loop ability of Video Widget, I put it to even more flexible concept : ExtToroPlayer interface will ask for the next target to grab. Here you can define that target as current Player itself (i.e LOOP), or next player to play (Visible Video in the same Windows will be detected and scrolled to to trigger the playback). More 'traversable' behaviours will come in the future. 
+- **New** extension: 'Toro Extended'
+ - People asked many times for the looping ability of Video Widget, I put it to even more flexible concept : ExtToroPlayer interface will ask for the next target to grab. Here you can define that target as current Player itself (i.e LOOP), or next player to play (Visible Video in the same Window will be detected and scrolled to, trigger the next playback). More 'traversable' behaviours will come in the future. 
  
-- Rich features sample App
+- **New** rich features sample App
  - IMO, sample App is as important as the library. Toro comes with a rich feature App, wrap the usecases from simple to advance, including Custom LayoutManager samples as well as a well-taylored sample which reproduce the behaviour of **Facebook timeline**.
  
-- Still specially built for RecyclerView
+- **Un-changed**: Still specially built for RecyclerView
  - Toro 2 keeps trying best to support RecyclerView. Now with an extra interface for LayoutManager, custom LayoutManager can be integrated easily (Toro 1 supports only Linear/Staggered Layout Managers).
 
-- Nougat - friendly
- - Toro knows how important the Activity's lifecycle is, and it's already support the change on Android 7.
+- Nougat - ready
+ - Carefully deal with Activity's lifecycle, support the change on Android 7.
  - Resizeable Activity is all set.
  
 - Many more features to explore, but still easy to use.
-
-- Goodbye jitpack, hello jcenter**: I was a fan of jitpack.io for quite a long time. In fact, most of my current libraries are published on jitpack. But since Toro v2 has been splitted to many sub modules, jitpack seems to not very well support.
-Furthermore, I tend to update my libraries' dependencies to latest official version really quick, meanwhile jitpack server is not that adaptive. So I move Toro to jcenter which is always there with Android Studio.
 
 ### 2.0.0 (2016/10/16: Unreleased)
 
