@@ -45,8 +45,8 @@
 - **New** rich features sample App
  - IMO, sample App is as important as the library. Toro comes with a rich feature App, wrap the usecases from simple to advance, including Custom LayoutManager samples as well as a well-taylored sample which reproduce the behaviour of **Facebook timeline**.
  
-- **Un-changed**: Still specially built for RecyclerView
- - Toro 2 keeps trying best to support RecyclerView. Now with an extra interface for LayoutManager, custom LayoutManager can be integrated easily (Toro 1 supports only Linear/Staggered Layout Managers).
+- **New**: Custom LayoutManager
+ - Toro 2 keeps trying best to support RecyclerView. Now with an extra interface for LayoutManager, custom LayoutManager can be integrated easily by implementing ```ToroLayoutManager``` (Toro 1 supports only Linear/Staggered Layout Managers).
 
 - Nougat - ready
  - Carefully deal with Activity's lifecycle, support the change on Android 7.
