@@ -4,9 +4,32 @@
 
 **Months of works, Toro has been re-designed from ground up**
 
-- Toro is now lightweight, extensible. Built-in extensions are enough for a good start.
- - Toro core library provides all the concepts and base implementation.
- - The extensions which are based on Media playback libraries will do the real Application level work (imlementing the VideoHold, Video Player Widget, Player helpers, ...).
+- Changes in package structure:
+ - Before: ```im.ene.lab.toro.*``` --> ***After***: ```im.ene.toro.*```.
+
+- Changes in dependency repositories and ids:
+
+ - Before:
+  
+    - Repository: ```maven { url "https://jitpack.io" }```
+    
+    - Dependency: ```"com.github.eneim:Toro:${toro_latest_version}"```
+
+ - After: 
+  
+    - Repository: ```jcenter()``` # keep empty since it is Android Studio's default.
+    
+    - Dependency: ```"im.ene.toro2:toro:${toro_latest_version}"```
+ 
+- Changes in library structures:
+
+ - Before: Toro is All In One solution, robust, compact but somehow inflexible and imposible to extend.
+ 
+ - After: Toro is now lightweight, extensible. Built-in extensions are enough for a good start.
+ 
+   - Toro core library provides all the concepts and base implementation.
+   
+   - The extensions which are based on Media playback libraries will do the real Application level work (imlementing the VideoHold, Video Player Widget, Player helpers, ...).
  
 - Welcome ExoPlayer 2, Toro is now catching up with latest developer's interest.
  - ExoPlayer v2 is supported as an Toro's Extension. All the basic work is done.
