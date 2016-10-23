@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer2;
+package im.ene.toro.extended;
+
+import android.content.Context;
+import android.support.v7.widget.LinearSmoothScroller;
+import android.util.DisplayMetrics;
 
 /**
- * Created by eneim on 10/2/16.
- */
+ * Created by eneim on 10/23/16.
+ */class TopSnappedSmoothScroller extends LinearSmoothScroller {
+  TopSnappedSmoothScroller(Context context) {
+    super(context);
+  }
 
-public interface DrmVideo {
+  @Override protected int getVerticalSnapPreference() {
+    return SNAP_TO_START;
+  }
 
-  String getType();
-
-  String getLicenseUrl();
-
-  String[] getKeyRequestPropertiesArray();
+  @Override protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
+    return super.calculateSpeedPerPixel(displayMetrics) * 5.f;
+  }
 }

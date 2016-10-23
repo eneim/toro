@@ -126,8 +126,8 @@ public class ExoVideoView extends FrameLayout {
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-      isTimelineStatic = timeline != null && timeline.getWindowCount() > 0
-          && !timeline.getWindow(timeline.getWindowCount() - 1, window).isDynamic;
+      isTimelineStatic = timeline != null && timeline.getWindowCount() > 0 && !timeline.getWindow(
+          timeline.getWindowCount() - 1, window).isDynamic;
     }
 
     @Override public void onPlayerError(ExoPlaybackException error) {
@@ -282,7 +282,7 @@ public class ExoVideoView extends FrameLayout {
   private SimpleExoPlayer player;
 
   public void setMedia(Uri uri) {
-    if (uri == null || (this.media != null && uri.equals(this.media.getMediaUri()))) {
+    if (uri == null) {
       return;
     }
 
@@ -290,7 +290,7 @@ public class ExoVideoView extends FrameLayout {
   }
 
   public void setMedia(Media media) {
-    if (this.media == media) {
+    if (media.equals(this.media)) {
       return;
     }
 
@@ -318,15 +318,15 @@ public class ExoVideoView extends FrameLayout {
     }
 
     this.player = player;
-    if (player != null) {
+    if (this.player != null) {
       if (surfaceView instanceof TextureView) {
-        player.setVideoTextureView((TextureView) surfaceView);
+        this.player.setVideoTextureView((TextureView) surfaceView);
       } else if (surfaceView instanceof SurfaceView) {
-        player.setVideoSurfaceView((SurfaceView) surfaceView);
+        this.player.setVideoSurfaceView((SurfaceView) surfaceView);
       }
-      player.setVideoListener(componentListener);
-      player.addListener(componentListener);
-      player.setTextOutput(componentListener);
+      this.player.setVideoListener(componentListener);
+      this.player.addListener(componentListener);
+      this.player.setTextOutput(componentListener);
     } else {
       shutterView.setVisibility(VISIBLE);
     }
@@ -336,6 +336,7 @@ public class ExoVideoView extends FrameLayout {
     this.shouldAutoPlay = shouldAutoPlay;
     this.playerNeedsSource = player == null || player.getPlaybackState() == ExoPlayer.STATE_IDLE;
     if (player == null) {
+      // Setup DRM Resources
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       try {
         UUID drmSchemeUuid =
@@ -389,10 +390,10 @@ public class ExoVideoView extends FrameLayout {
       }
     }
 
-    player.setPlayWhenReady(this.shouldAutoPlay);
     if (playerNeedsSource) {
       if (requiresPermission(media.getMediaUri())) {
         // The player will be reinitialized if the permission is granted.
+        // TODO reinitialize the Player from higher layer.
         return;
       }
 
@@ -401,6 +402,8 @@ public class ExoVideoView extends FrameLayout {
       player.prepare(mediaSource, !isTimelineStatic, !isTimelineStatic);
       playerNeedsSource = false;
     }
+
+    player.setPlayWhenReady(this.shouldAutoPlay);
   }
 
   public final void releasePlayer() {
