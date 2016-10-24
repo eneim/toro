@@ -1,21 +1,19 @@
 # Toro
 
-<a href="http://www.methodscount.com/?lib=com.github.eneim%3AToro%3A1.2.0"><img src="https://img.shields.io/badge/Methods and size-core: 610 | deps: 17357 | 76 KB-e91e63.svg"></img></a>
-[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
+<a href="http://www.methodscount.com/?lib=com.github.eneim%3AToro%3A1.2.0"><img src="https://img.shields.io/badge/Methods and size-core: 610 | deps: 17357 | 76 KB-e91e63.svg"></img></a>[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 
 <a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512""><img src="https://github.com/eneim/Toro/blob/develop/art/web_hi_res_512.png" width="256"></a>
 
 
 
-
-
 > ***Video list auto playback made simple, specially built for RecyclerView***
 
-## 0. Version 2.0.0
+## 0. Version 2.1.0
 
-[ ![Download](https://api.bintray.com/packages/eneim/maven/Toro/images/download.svg) ](https://bintray.com/eneim/maven/Toro/_latestVersion)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro/badge.svg)](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro)
+[ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
+
+> [![Maven Central](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro/badge.svg)](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro)
 
 - Currently next update is under development with many improvement.
 
