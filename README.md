@@ -61,7 +61,8 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 ```groovy
 allprojects {
 	repositories {
-		jcenter() # Android Studio use this by default.
+    // Android Studio use this by default.
+		jcenter()
 	}
 }
 ```
@@ -95,42 +96,21 @@ Latest version is always visible here: [![Download](https://api.bintray.com/pack
 
 ##### **TL,DR**: **toro-sample** module from this library comes with several good practice of this library. Please take a look.
 
-##### 2. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
+##### 2. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/0.-Toro-starting-guide)
 
-##### 3. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
+##### 3. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/0.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
 
-##### 4. Create ViewHolder to use with **Toro**: by default, just simply extend one of ```ToroVideoViewHolder```, ```TextureVideoViewHolder``` or ```AbsVideoViewHolder```. See [ToroViewHolder](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s)#toroviewholder) for more information.
-
-  - A sample ViewHolder's code (see Sample app for more):
-
-```java
-public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
-
-  public DeadlySimpleToroVideoViewHolder(View itemView) {
-    super(itemView);
-  }
-
-  @Override protected ToroVideoView findVideoView(View itemView) {
-    return (ToroVideoView) itemView.findViewById(R.id.video);
-  }
-
-  @Nullable @Override public String getVideoId() {
-    return "my awesome video's id and its order: " + getAdapterPosition();
-  }
-
-  @Override public void bind(@Nullable Object object) {
-    if (object != null && object instanceof SimpleVideoObject) {
-      mVideoView.setVideoPath(((SimpleVideoObject) object).video);
-    }
-  }
-}
-```
+##### 4. Create ViewHolder to use with **Toro**: see [This Wiki](https://github.com/eneim/Toro/wiki/1.-Toro-in-Practice---A-Beginner-Guide) to see how to start implementing.
 
 ##### 5. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
 
 ### Contribute to Toro
 
 - Issue report and PRs are welcome.
+
+### Hall of Fames
+
+*Use Toro in your App? [Email me]("mailto:nam@ene.im") to get promoted here.*
 
 ### License
 
