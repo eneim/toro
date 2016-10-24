@@ -110,7 +110,7 @@ Latest version is always visible here: [![Download](https://api.bintray.com/pack
 
 ### Hall of Fames
 
-*Use Toro in your App? <a href="mailto:nam@ene.im">Email me</a> to get promoted here.*
+*Use Toro in your App? <a href="mailto:nam@ene.im?subject=Hi Nam">Email me</a> to get promoted here.*
 
 ### License
 
