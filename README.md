@@ -41,6 +41,8 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 
 ## 2. Toro in Action
 
+***TO BE UPDATED***
+
 <img src="/art/sample_1.gif" width="180">
 <img src="/art/sample_2.gif" width="180">
 <img src="/art/sample_4.gif" width="180">
@@ -81,11 +83,11 @@ dependencies {
   compile "im.ene.toro2:toro:${toroVersion}"
 
   // include extension for ExoPlayer v2 (Toro is included already)
-  compile "im.ene.toro2:extension-exoplayer2:${toroVersion}"
+  compile "im.ene.toro2:toro-ext-exoplayer2:${toroVersion}"
   // include extension for ExoPlayer v1 (Toro is included already)
-  compile "im.ene.toro2:extension-exoplayer:${toroVersion}"
+  compile "im.ene.toro2:toro-ext-exoplayer:${toroVersion}"
   // include extension for Legacy MediaPlayer (Toro is included already)
-  compile "im.ene.toro2:extension-mediaplayer:${toroVersion}"
+  compile "im.ene.toro2:oro-ext-mediaplayer:${toroVersion}"
 
   // include Toro extended helper (Toro and ExoPlayer v2 extension is included already)
   compile "im.ene.toro2:toro-extended:${toroVersion}"
