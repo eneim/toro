@@ -1,9 +1,14 @@
 # Toro
 
-[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 
+[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GEQ9RVMLB79MA)
+
 <a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro%3A2.1.0"><img src="https://img.shields.io/badge/Methods and size-core: 250 | deps: 9441 | 28 KB-e91e63.svg"/></a>
+
 
 <a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512""><img src="https://github.com/eneim/Toro/blob/develop/art/web_hi_res_512.png" width="256"></a>
 
