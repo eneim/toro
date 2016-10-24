@@ -569,6 +569,7 @@ public class ExoVideoView extends FrameLayout {
       this.player.stop();
       this.player.setPlayWhenReady(false);
       this.shouldAutoPlay = false;
+      this.isTimelineStatic = false;
     }
   }
 

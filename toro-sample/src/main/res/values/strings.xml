@@ -85,6 +85,16 @@
     \tThis sample use the legacy VideoView.
   </string>
 
+  <string name="extended_sample_1">
+    Toro Extended Sample 1: Minimal, Powerful
+  </string>
+
+  <string name="extended_sample_1_description">
+    \tIn this sample, we learn how to use the extended benefit or Toro.\n\n
+    \tThe list will automatically scroll to next Player and trigger the playback.\n\n
+    \tA long click is handled to support more ideas in your Application.
+  </string>
+
   <string name="title_activity_main">MainActivity</string>
 
   <string name="navigation_drawer_open">Open navigation drawer</string>
