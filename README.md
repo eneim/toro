@@ -7,6 +7,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HXQS6ZP9UHXHY)
 
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HXQS6ZP9UHXHY)
 
 <a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro%3A2.1.0"><img src="https://img.shields.io/badge/Methods and size-core: 250 | deps: 9441 | 28 KB-e91e63.svg"/></a>
 
