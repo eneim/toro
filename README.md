@@ -16,8 +16,6 @@
 
 [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 
-> [![Maven Central](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro/badge.svg)](https://maven-badges.herokuapp.com/maven-central/im.ene.lab/toro)
-
 - Currently next update is under development with many improvement.
 
 - SNAPSHOT is available, the usage is as follow:
