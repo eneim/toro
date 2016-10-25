@@ -1,6 +1,6 @@
 # Release note
 
-### 2.1.0 (DRAFT)
+### 2.1.0 (2016/10/26)
 
 **Months of works, Toro has been re-designed from ground up**
 
