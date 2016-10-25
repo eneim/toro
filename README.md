@@ -41,8 +41,6 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 
 ## 2. Toro in Action
 
-***TO BE UPDATED***
-
 | | |
 |---|------|
 | <img src="/art/sample_6.gif" width="648"> | <img src="/art/sample_1.gif" width="162"> <img src="/art/sample_2.gif" width="162"> <img src="/art/sample_3.gif" width="162"> <img src="/art/sample_4.gif" width="162"> <img src="/art/sample_5.gif" width="162"> <img src="/art/sample_7.gif" width="162"> |
