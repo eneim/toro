@@ -80,7 +80,7 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
       viewHolder.setOnItemLongClickListener(new View.OnLongClickListener() {
         @Override public boolean onLongClick(View view) {
           Snackbar.make(parent, "Long pressed to VIDEO", Snackbar.LENGTH_LONG).show();
-          return true;
+          return false; // Return false to trigger Toro's behaviour.
         }
       });
     }

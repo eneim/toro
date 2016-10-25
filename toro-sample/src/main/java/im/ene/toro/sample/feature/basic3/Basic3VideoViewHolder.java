@@ -23,11 +23,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.VideoView;
+import im.ene.toro.exoplayer2.ExoVideoView;
+import im.ene.toro.extended.ExtVideoViewHolder;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
 import im.ene.toro.sample.feature.legacy.LegacyActivity;
-import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.extended.ExtVideoViewHolder;
 
 /**
  * Created by eneim on 6/29/16.
@@ -86,5 +86,9 @@ public class Basic3VideoViewHolder extends ExtVideoViewHolder {
         return listener.onLongClick(v) || helper.onLongClick(v);
       }
     });
+  }
+
+  @Override public Target getNextTarget() {
+    return Target.THIS_PLAYER;
   }
 }
