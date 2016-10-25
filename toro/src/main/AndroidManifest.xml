@@ -1,6 +1,1 @@
-<manifest
-    package="im.ene.lab.toro">
-
-  <application/>
-
-</manifest>
+<manifest package="im.ene.toro"/>

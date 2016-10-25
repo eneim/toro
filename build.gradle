@@ -5,22 +5,26 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.1.2'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.4.3'
-    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
-    classpath 'com.novoda:bintray-release:0.3.5'
+    classpath 'com.android.tools.build:gradle:2.2.2'
+
+    // classpath 'com.google.gms:google-services:3.0.0'
+
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.6'
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+    classpath 'com.novoda:bintray-release:0.3.4'
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
   }
 }
 
 ext {
-  libraryVersion = '2.0.0-RC4'
-  androidVersion = 24
-  buildToolVersion = '24.0.0'
-  supportLibraryVersion = '24.0.0'
-
-  minSupportSDKVersion = 15
+  libraryVersion = '2.1.0'
+  androidVersion = 25
+  buildToolVersion = '25.0.0'
+  supportLibraryVersion = '25.0.0'
+  exoPlayerVersion = 'r1.5.11'
+  exoPlayer2Version = 'r2.0.4'
+  minSupportSDKVersion = 16
 }
 
 allprojects {
@@ -28,11 +32,15 @@ allprojects {
     jcenter()
 
     maven { url "https://jitpack.io" }
+    maven {
+      url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
   }
 
   tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
+    options.author(true)
   }
 
   configurations {

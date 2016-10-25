@@ -1,92 +1,98 @@
 <resources>
   <string name="app_name">Toro v2</string>
-  <string name="activity_show_case">Toro Showcase</string>
+  <string name="activity_show_case">Toro v2 Showcase</string>
 
   <string name="sample">
-    GitHub Wikis is a simple way to let others contribute content. Any GitHub user can create and
+    GitHub Wiki is a simple way to let others contribute content. Any GitHub user can create and
     edit pages to use for documentation, examples, support, or anything you wish.
   </string>
 
-  <string name="fragment_simple_video_list">
-    Simple Video List
+  <string name="readme">
+    Video list auto playback made simple, specially built for RecyclerView
   </string>
 
-  <string name="fragment_simple_video_list_detail">
-    Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video.
+  <string name="basic_sample_1">
+    Basic Sample 1: Minimal
   </string>
 
-  <string name="fragment_single_video_simple_list">
-    Single Video Simple List
+  <string name="basic_sample_1_description">
+    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    add Toro support into the App.\n\n
+    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
+    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
+    we could reduce a lot of time on Video.
   </string>
 
-  <string name="fragment_single_video_simple_list_detail">
-    Simple RecyclerView with Vertical LinearLayoutManager. Contains only one Video at a specific position.
+  <string name="basic_sample_2">
+    Basic Sample 2: Minimal, Ordered
   </string>
 
-  <string name="fragment_multi_video_staggered_grid">
-    Multi Video Staggered Grid
+  <string name="basic_sample_2_description">
+    \tThis basic example is similar to Basic Sample 1. Additionally, we have a feature to tell Toro
+    which is the first Video we want to play.
+    Until that Video is prepared and start playing, no other Videos is allowed to play.
   </string>
 
-  <string name="fragment_multi_video_staggered_grid_detail">
-    Simple RecyclerView with Vertical StaggeredGridLayoutManager. All items are Videos.
+  <string name="basic_sample_3">
+    Basic Sample 3: Minimal, Loop, Interaction
   </string>
 
-  <string name="fragment_multi_video_complicated_grid">
-    Multi Video Complicated Grid
+  <string name="basic_sample_3_description">
+    \tThis basic example is similar to Basic Sample 1. Additionally, we enable interaction with Video View.
+    On single click, we temporarily pause the playback and show an AlertDialog, after we close that dialog, we resume the playback.
+    We also provide custom feedback on long press too.
+    \n\nFurthermore, we add the ability to selective react to click event: we have different response on the View user clicked.
   </string>
 
-  <string name="fragment_multi_video_complicated_grid_detail">
-    RecyclerView with Vertical GridLayoutManager, custom span size. Items are mixed between Text only, Video only and both Text and Video.
+  <string name="average_sample_1">
+    Average Sample 1: Custom, Stateful
   </string>
 
-  <string name="fragment_multi_video_dual_list">
-    Multi Video Dual Lists
+  <string name="average_sample_1_description">
+    \tThis example is similar to Basic Sample 1. But we add more complicated state listening event.
+    So that we could see how ToroPlayer\'s callback works in practice.
   </string>
 
-  <string name="fragment_multi_video_dual_list_detail">
-    2 Separated RecyclerViews in same layout:
-    \n\n    - Top RecyclerView with Horizontal LinearLayoutManager. Items are mixed from Video-only and Video-Text items.
-    \n\n    - Bottom RecyclerView with Vertical StaggeredGridLayoutManager.Items are all Videos.
+  <string name="advance_sample_1">
+    Advance Sample 1: Custom LayoutManager, Stateful playback
   </string>
 
-  <string name="fragment_deadly_simple_list">
-    Deadly Simple Video List
+  <string name="advance_sample_1_description">
+    \tThis example is similar to Average Sample 1. This time, we use a custom LayoutManager
+    (here I use CarouselLayoutManager) and implement ToroLayoutManager to get native support from Toro.
   </string>
 
-  <string name="fragment_deadly_simple_list_detail">
-    Very simple implementation for a Video List. a RecyclerView with Vertical LinearLayoutManager, simple Video list.
+  <string name="custom_sample_1">
+    Custom Sample 1: Facebook + DialogFragment
   </string>
 
-  <string name="fragment_youtube_video_list">
-    Youtube Videos (Alpha)
+  <string name="custom_sample_1_description">
+    \tThis example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
+    A click event to a Video will bring a \'Video list\' where requested Video is played as well as
+    many suggested Videos.
   </string>
 
-  <string name="fragment_youtube_video_list_detail">
-    A test with Youtube Videos, using Youtube Player API. Still unstable and need more improvement.
+  <string name="legacy_sample_1">
+    Legacy Sample 1: Minimal, Legacy
   </string>
 
-  <string name="fragment_view_pager">
-    ViewPager
+  <string name="legacy_sample_1_description">
+    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    add Toro support into the App.\n\n
+    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
+    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
+    we could reduce a lot of time on Video.\n\n
+    \tThis sample use the legacy VideoView.
   </string>
 
-  <string name="fragment_view_pager_detail">
-    ViewPager, contains 2 fragments. Each fragment is a single RecyclerView.
+  <string name="extended_sample_1">
+    Toro Extended Sample 1: Minimal, Powerful
   </string>
 
-  <string name="fragment_toggleable_list">
-    Simple Toggleable Video List
-  </string>
-
-  <string name="fragment_toggleable_list_detail">
-    Simple RecyclerView with Vertical LinearLayoutManager. All items are mixed Text-Video. Auto-playback is toggle-able by Toggle button.
-  </string>
-
-  <string name="facebook_feed">
-    Simple Facebook alike timeline
-  </string>
-
-  <string name="facebook_feed_detail">
-    Simple timeline feed which mimics Facebook\'s behaviour.
+  <string name="extended_sample_1_description">
+    \tIn this sample, we learn how to use the extended benefit or Toro.\n\n
+    \tThe list will automatically scroll to next Player and trigger the playback.\n\n
+    \tA long click is handled to support more ideas in your Application.
   </string>
 
   <string name="title_activity_main">MainActivity</string>
@@ -95,4 +101,5 @@
   <string name="navigation_drawer_close">Close navigation drawer</string>
 
   <string name="action_settings">Settings</string>
+  <string name="title_activity_demo">DemoActivity</string>
 </resources>

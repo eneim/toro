@@ -5,15 +5,15 @@ apply plugin: 'com.github.dcendents.android-maven'
 group = 'im.ene.lab'
 
 ext {
-  bintrayRepo = 'maven'
-  bintrayName = 'Toro'
+  bintrayRepo = 'Toro'
+  bintrayName = 'toro'
 
-  publishedGroupId = 'im.ene.lab'
-  libraryName = 'Toro'
+  publishedGroupId = 'im.ene.toro2'
   artifact = 'toro'
+  libraryName = 'Toro'
 
   libraryDescription =
-      'Toro core service, backed by Toro Player, provide easy to implement Auto Video playback to Android.'
+      'Toro core service, provide Extensible Auto Video playback to Android. Built for RecyclerView.'
 
   siteUrl = 'https://github.com/eneim/Toro'
   gitUrl = 'https://github.com/eneim/Toro.git'
@@ -58,17 +58,14 @@ android {
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   testCompile 'junit:junit:4.12'
-  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  // compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(':toro-media')
-
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
-  javadocDeps project(':toro-player')
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
 // > gradlew install
 // > gradlew bintrayUpload
-apply from: 'https://raw.githubusercontent.com/eneim/eneim.github.io/resources/publish/jcenter/installv1.gradle'
-apply from: '../ref/bintrayv1.gradle'
+apply from: '../.scripts/installv1.gradle'
+apply from: '../.scripts/bintrayv1.gradle'

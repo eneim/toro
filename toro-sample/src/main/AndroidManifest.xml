@@ -1,56 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="im.ene.lab.toro.sample">
+    package="im.ene.toro.sample">
 
+  <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+  <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <!-- Play video from internet -->
   <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
   <application
       android:allowBackup="false"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
-      android:name=".ToroSampleApp"
+      android:name=".ToroApp"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
 
     <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".activity.ShowCaseActivity"
-        android:parentActivityName=".activity.MainActivity"/>
-
-    <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name=".activity.MainActivity"
-        android:theme="@style/AppTheme.NoActionBar">
-    </activity>
-
-    <activity
-        android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
-        android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:name=".activity.StandalonePlayerActivity"
-        android:theme="@style/ToroTheme">
-    </activity>
-
+        android:name="im.ene.toro.sample.feature.home.HomeActivity"
+        android:theme="@style/AppTheme.NoActionBar"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".custom.MyToroActivity"/>
+        android:name=".feature.basic1.Basic1Activity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.basic2.Basic2Activity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.basic3.Basic3Activity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.average1.Average1Activity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.advance1.Advance1Activity"/>
+    <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.facebook.FacebookTimelineActivity"
+        android:resizeableActivity="false"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.legacy.LegacyActivity"/>
 
-    <!--<activity-->
-    <!--android:label="@string/app_name"-->
-    <!--android:launchMode="singleTop"-->
-    <!--android:name="develop.com.google.android.exoplayer.demo.SampleChooserActivity"-->
-    <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
-    <!--</activity>-->
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.extended.ExtendedListActivity"/>
 
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".activity.MainActivity">
+        android:targetActivity=".feature.home.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
@@ -62,10 +73,17 @@
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
 
-    <meta-data
-        android:name="Youtube.API_KEY"
-        android:value="${youtube_api_key}"/>
+    <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:label="@string/app_name"
+        android:name=".develop.DemoActivity"
+        android:theme="@style/AppTheme.NoActionBar">
+      <!--<intent-filter>-->
+      <!--<action android:name="android.intent.action.MAIN"/>-->
 
+      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
+    </activity>
   </application>
 
 </manifest>

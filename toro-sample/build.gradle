@@ -4,7 +4,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.fabric.tools:gradle:1.21.5'
+    classpath 'io.fabric.tools:gradle:1.21.7'
   }
 }
 apply plugin: 'com.android.application'
@@ -57,18 +57,17 @@ android {
     versionName dateTimeString()
     archivesBaseName = "toro_sample"
 
-    manifestPlaceholders = [
-        fabric_api_key: "${TORO_SAMPLE_FABRIC_API_KEY}",
-        youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"
-    ]
+    manifestPlaceholders = [fabric_api_key : "${TORO_SAMPLE_FABRIC_API_KEY}",
+                            youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"]
 
     vectorDrawables.useSupportLibrary = true
+    multiDexEnabled true
   }
 
   buildTypes {
     release {
       signingConfig signingConfigs.release
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
@@ -100,21 +99,27 @@ android {
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
   testCompile 'junit:junit:4.12'
-  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
+  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  compile "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
 
-  compile project(path: ':toro-ext')
-  // compile 'im.ene.lab:toro-ext:2.0.0-beta1'
+  // compile project(path: ':toro-ext-exoplayer')
+  compile project(path: ':toro-extended')
+  // compile "im.ene.toro2:toro-extended:2.1.0-SNAPSHOT"
 
-  /* compile project(':toro') */  // un-comment if user just need toro
-  // compile 'com.github.eneim:Toro:1.2.0'
+  compile ('com.azoft.carousellayoutmanager:carousel:1.1.6', {
+    exclude group: 'com.android.support', module: 'recyclerview-v7'
+  })
 
+  compile 'com.github.bumptech.glide:glide:3.7.0'
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
-  compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+
+  compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
     transitive = true;
   }
-  compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
+
+  compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.4@aar') {
     transitive = true;
   }
 }
@@ -124,3 +129,5 @@ crashlytics {
   androidNdkOut 'src/main/obj'
   androidNdkLibsOut 'src/main/libs'
 }
+
+// apply plugin: 'com.google.gms.google-services'

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2016 eneim@Eneim Labs, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/Theme.AppCompat"
+    >
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/activity_vertical_margin"
+      />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      >
+
+    <ImageButton
+        android:layout_width="?attr/actionBarSize"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_profile"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="4dp"
+        >
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="Toro Creator"
+          android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+          />
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="A good guy"
+          android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+          />
+
+    </LinearLayout>
+  </LinearLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="0.5dp"
+      />
+
+  <im.ene.toro.sample.feature.facebook.playlist.FacebookVideoView
+      android:id="@+id/video"
+      android:layout_width="match_parent"
+      android:layout_height="240dp"
+      app:tx2_resizeMode="fixedWidth"
+      app:tx2_surfaceType="Default"
+      >
+  </im.ene.toro.sample.feature.facebook.playlist.FacebookVideoView>
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:lineSpacingMultiplier="1.2"
+      android:padding="8dp"
+      android:text="@string/sample"
+      android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+      android:textColor="#f5f5f5"
+      />
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="0.5dp"
+      android:layout_marginLeft="24dp"
+      android:layout_marginRight="24dp"
+      />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="36dp"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      >
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Like!"
+        style="@style/Facebook.Button.Feed"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Comment"
+        style="@style/Facebook.Button.Feed"
+        />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Share"
+        style="@style/Facebook.Button.Feed"
+        />
+  </LinearLayout>
+
+</LinearLayout>

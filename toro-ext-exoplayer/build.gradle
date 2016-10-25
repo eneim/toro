@@ -1,0 +1,86 @@
+/*
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.library'
+
+ext {
+  bintrayRepo = 'Toro'
+  bintrayName = 'toro-ext-exoplayer'
+
+  publishedGroupId = 'im.ene.toro2'
+  artifact = 'toro-ext-exoplayer'
+  libraryName = 'toro-ext-exoplayer'
+
+  libraryVersion = rootProject.ext.libraryVersion
+
+  libraryDescription = 'Base implementation for Toro, built on top of ExoPlayer v1'
+
+  siteUrl = 'https://github.com/eneim/Toro'
+  gitUrl = 'https://github.com/eneim/Toro.git'
+
+  developerId = 'eneim'
+  developerName = 'Nam Nguyen'
+  developerEmail = 'nam@ene.im'
+
+  licenseName = 'The Apache Software License, Version 2.0'
+  licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  allLicenses = ["Apache-2.0"]
+}
+
+android {
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
+
+  defaultConfig {
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
+    versionCode 1
+    versionName "1.0"
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+  }
+}
+
+dependencies {
+  compile fileTree(include: ['*.jar'], dir: 'libs')
+  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  })
+
+  testCompile 'junit:junit:4.12'
+
+  // Non default dependencies
+  compile project(':toro')
+  compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayerVersion}"
+}
+
+// REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
+// > gradlew install
+// > gradlew bintrayUpload
+apply from: '../.scripts/installv1.gradle'
+apply from: '../.scripts/bintrayv1.gradle'

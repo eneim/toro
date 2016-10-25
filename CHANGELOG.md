@@ -1,6 +1,67 @@
 # Release note
 
-### 2.0.0-RC3 (2016.06.23)
+### 2.1.0 (2016/10/26)
+
+**Months of works, Toro has been re-designed from ground up**
+
+- **New** package structure:
+  - Before: ```im.ene.lab.toro.*``` --> ***After***: ```im.ene.toro.*```.
+
+- **New** dependency repositories and ids:
+  - Before:
+    - Repository: ```maven { url "https://jitpack.io" }```
+    
+    - Dependency: ```"com.github.eneim:Toro:${toro_latest_version}"```
+  
+  - After:
+    - Repository: ```jcenter() # or do nothing since it is Android Studio's default.```
+    
+    - Dependency: ```"im.ene.toro2:toro:${toro_latest_version}"```
+ 
+- **New** library structures:
+  - Before: Toro is All In One solution, robust, compact but somehow inflexible and imposible to extend.
+  
+  - After: Toro is now lightweight, extensible:
+    - Toro core library provides all the concepts and base implementation.
+
+    - The extensions those are based on Media playback libraries will do the real Application level work (imlementing the VideoHolder, Video Player Widget, Player helpers, ...).
+
+- **New** extensions based on ExoPlayer 2, Toro is now catching up with latest developer's interest.
+ 
+ - ExoPlayer v2 is supported as an Toro's Extension. All the basic work is done.
+ 
+ - Fallback to legacy
+  
+   - ExoPlayer v1 and Official Android MediaPlayer API is supported as 2 other Extensions.
+
+- **New** extension: 'Toro Extended'
+ - People asked many times for the looping ability of Video Widget, I put it to even more flexible concept : ExtToroPlayer interface will ask for the next target to grab. Here you can define that target as current Player itself (i.e LOOP), or next player to play (Visible Video in the same Window will be detected and scrolled to, trigger the next playback). More 'traversable' behaviours will come in the future. 
+ 
+- **New** rich features sample App
+ - IMO, sample App is as important as the library. Toro comes with a rich feature App, wrap the usecases from simple to advance, including Custom LayoutManager samples as well as a well-taylored sample which reproduce the behaviour of **Facebook timeline**.
+ 
+- **New**: Custom LayoutManager
+ - Toro 2 keeps trying best to support RecyclerView. Now with an extra interface for LayoutManager, custom LayoutManager can be integrated easily by implementing ```ToroLayoutManager``` (Toro 1 supports only Linear/Staggered Layout Managers).
+
+- Nougat - ready
+ - Carefully deal with Activity's lifecycle, support the change on Android 7.
+ - Resizeable Activity is all set.
+ 
+- Many more features to explore, but still easy to use.
+
+- Q&A, Help:
+  
+  - Backward Compatible to v1? - ***No***
+  
+  - Migration Helper? - ***No Official Guide***, it is too much. But since ***(1)*** v2 has completely new package structure, you can include both v1 and v2 into your project, and change the current implementation partly. ***(2)*** Question related to Migration can be post in issue with the tag "Migration v1 - v2", I will be there for help.
+
+  - Why v2.1.0, where is v2.0.0? - ***Sorry***, due to some internal changes at the time of releasing, and some mental issue (mostly my last decision of the package name and bintray repo relocation), I decided to move directly to 2.1.0.
+  
+### 2.0.0 (2016/10/16: Unreleased)
+
+**Due to some big internal changes as well as my mental changes, I decided to skip version 2.0 and move directly to 2.1.0**
+
+### 2.0.0-RC4 (2016.06.23)
 
 **Toro has been re-designed from ground up**
 
@@ -32,9 +93,13 @@ repositories {
     jcenter()
     mavenCentral()  // Toro is available on Maven too, optional beside jcenter.
 }
+```
 
+<a href='https://bintray.com/eneim/maven/Toro/_latestVersion'><img src='https://api.bintray.com/packages/eneim/maven/Toro/images/download.svg'></a>
+
+```groovy
 ext {
-  toro_version = '2.0.0-RC3'  // one version for all modules
+  toro_version = '<hint: check the badge number>'  // one version for all modules
 }
 
 dependencies {

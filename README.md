@@ -1,63 +1,65 @@
 # Toro
 
-<a href="http://www.methodscount.com/?lib=com.github.eneim%3AToro%3A1.2.0"><img src="https://img.shields.io/badge/Methods and size-core: 610 | deps: 17357 | 76 KB-e91e63.svg"></img></a>
-[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
+[ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 
-<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512""><img src="https://github.com/eneim/Toro/blob/develop/art/web_hi_res_512.png" width="256"></a>
+[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) <a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro%3A2.1.0"><img src="https://img.shields.io/badge/Methods and size-core: 250 | deps: 9441 | 28 KB-e91e63.svg"/></a>
 
 
+<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512""><img src="/art/web_hi_res_512.png" width="256"></a>
 
 
 
 > ***Video list auto playback made simple, specially built for RecyclerView***
 
+## 0. Latest Version:  [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
+
+See [CHANGELOG.md](CHANGELOG.md) for more information.
+
 ## 1. Main features:
 
-- Auto start/pause/resume video by scrolling your RecyclerView, support all Official built-in LayoutManagers. 
+- Auto start/pause/resume video while scrolling your RecyclerView. Well handling playback lifecycle and callback states. Rich feature extensions and easy to start Demo App.
 
-- Smart caching: Toro remembers last playback position and resume from where you left (*note: in Android default Media Player, depend on Video's format and codec, the resume timestamp may varies*). 
+- Playback state cache: Toro remembers last playback position and resume from where you left (*note: in Android default Media Player API, depend on Video's format and codec, the resume timestamp may varies*).
 
-- Playback behavior decided by User, not by library:
-  - Customizable playback Strategy to decide which is the best component to start playback. Optimized built-in Strategies to help you start.
-  - UI-based logic, straight-forward approach: you see the Video, then it should play. **Default**: you see 75% of the Video then it should start playing. **Advance**: you decide how much the visible Video should trigger the playback. See [Wiki](https://github.com/eneim/Toro/wiki) for more details. 
-  - Decision from both side: Toro's core and your implementation. Toro listens to your widget: does it want to play?, is it able to play (video is well-prepared or not), then Toro's strategy will decide if it allows your video to play or not. **Default**: built-in Strategy and widget do the rest. **Advance**: you have control to the both side: your custom ViewHolder and your custom Strategy. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
-  
-- Built-in widgets: an abstract ViewHolder for original VideoView, an abstract ViewHolder for "TextureView version" of VideoView: [TextureVideoView](https://github.com/sprylab/texturevideoview), and an abstract ViewHolder for my customized version of TextureVideoView: ToroVideoView, with more flexible API and less *annoying* error processing.
+- Playback extensible behavior:
+  - Customizable playback Strategy to decide the best component to start playback. Built-in Strategies included.
+  - UI-based logic, straight-forward approach: you see the Video, then it should play. **Default**: you see 75% of the Video then it should start playing. **Advance**: you decide how much the visible Video should trigger the playback. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+  - Straight-forward decision making strategy: UI tells Toro API if it wants to play a Media or not, then Toro's strategy will decide if it allows the Media to play or not (well, when many of them want to play, we need to choose only one). **Default**: built-in implementation takes care of everything. **Advance**: control to both sides, extensible UI Widgets and Core APIs. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+
+- Built-in rich feature Extensions: ExoPlayer (v2, v1) based Playback widget as well as fine tuned combination with RecyclerView APIs. Fallback to legacy with Extension for Android MediaPlayer API.
 
 - Powerful, flexible and highly customizable API. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Selective playback: find the best playable item, defined by smart, flexible [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/ToroStrategy.java) to decide when and how a player should start playing. Toro comes with optimized built-in [Strategies](https://github.com/eneim/Toro/blob/master/toro/src/main/java/im/ene/lab/toro/Toro.java#L465), but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+- Selective playback: find the best playable item, defined by smart, flexible [Strategies](/toro/src/main/java/im/ene/toro/ToroStrategy.java) to decide when and how a player should start playing. Optimized built-in [Strategies](/toro/src/main/java/im/ene/toro/Toro.java#L339) is enough to begin, but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Smart long press: support Grid (with many Videos in one window) by built-in [Long press listener](https://github.com/eneim/Toro/blob/develop/toro/src/main/java/im/ene/lab/toro/RecyclerViewItemHelper.java#L73). Turning ON/OFF in one line of code. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
- 
+- Toro Extended: an extension based on ExoPlayer 2 extension, provides the concept of "Next Target Player to trigger", and long click/press handling. See Wiki for more information.
+
 - **I create lots of built-in components, but keep Toro highly customizable.** You are free to decide how you want to start your player, but if you don't know, just let Toro help you to decide.
 
 **See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
 ## 2. Toro in Action
 
-<img src="https://github.com/eneim/Toro/blob/master/art/sample_1.gif" width="180">
-<img src="https://github.com/eneim/Toro/blob/master/art/sample_2.gif" width="180">
-<img src="https://github.com/eneim/Toro/blob/master/art/sample_4.gif" width="180">
-<img src="https://github.com/eneim/Toro/blob/master/art/sample_5.gif" width="180">
-
-<img src="https://github.com/eneim/Toro/blob/master/art/sample_3.gif" width="360">
+| | |
+|---|------|
+| <img src="/art/sample_6.gif" width="648"> | <img src="/art/sample_1.gif" width="162"> <img src="/art/sample_2.gif" width="162"> <img src="/art/sample_3.gif" width="162"> <img src="/art/sample_4.gif" width="162"> <img src="/art/sample_5.gif" width="162"> <img src="/art/sample_7.gif" width="162"> |
 
 ## 3. How to use
 
 ##### 0. Prerequirement
 
-- Min support version: Android SDK level 15 (4.0.x)
+- Min support version: Android SDK level 16 (4.1.x)
 
 ##### 1. Add Toro to your project
 
-- Add this to Project's top level ```build.gradle```
+- Make sure to have this in Project's top level ```build.gradle```
 
 ```groovy
 allprojects {
 	repositories {
-		maven { url "https://jitpack.io" }
+    // Android Studio use this by default.
+		jcenter()
 	}
 }
 ```
@@ -66,48 +68,36 @@ allprojects {
 
 ```groovy
 ext {
-	toro_latest_version = '1.2.0'
+	toro_latest_version = '2.1.0'
 }
 
 dependencies {
-	compile "com.github.eneim:Toro:${toro_latest_version}"
+
+  // include in your module (app or library)
+  // include only core Toro library
+  compile "im.ene.toro2:toro:${toroVersion}"
+
+  // include extension for ExoPlayer v2 (Toro is included already)
+  compile "im.ene.toro2:toro-ext-exoplayer2:${toroVersion}"
+  // include extension for ExoPlayer v1 (Toro is included already)
+  compile "im.ene.toro2:toro-ext-exoplayer:${toroVersion}"
+  // include extension for Legacy MediaPlayer (Toro is included already)
+  compile "im.ene.toro2:oro-ext-mediaplayer:${toroVersion}"
+
+  // include Toro extended helper (Toro and ExoPlayer v2 extension is included already)
+  compile "im.ene.toro2:toro-extended:${toroVersion}"
 }
 ```
 
-Latest version is always visible by jitpack badge: [![](https://jitpack.io/v/eneim/Toro.svg)](https://jitpack.io/#eneim/Toro)
+Latest version is always visible here: [![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 
-##### **TL,DR**: **app** module from this library comes with several good practice of this library. Please take a look.
+##### **TL,DR**: **toro-sample** module from this library comes with several good practice of this library. Please take a look.
 
-##### 2. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide)
+##### 2. Integrate **Toro** into your Application: see [Toro starting guide](https://github.com/eneim/Toro/wiki/0.-Toro-starting-guide)
 
-##### 3. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/1.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
+##### 3. Register/Unregister a RecyclerView to get support from **Toro**: see [Register/Unregister RecyclerView to Toro](https://github.com/eneim/Toro/wiki/0.-Toro-starting-guide#registerunregister-recyclerview-to-toro)
 
-##### 4. Create ViewHolder to use with **Toro**: by default, just simply extend one of ```ToroVideoViewHolder```, ```TextureVideoViewHolder``` or ```AbsVideoViewHolder```. See [ToroViewHolder](https://github.com/eneim/Toro/wiki/2.-ToroPlayer,-ToroAdapter,-ToroViewHolder:-Toro's-heart(s)#toroviewholder) for more information.
-
-  - A sample ViewHolder's code (see Sample app for more):
-  
-```java
-public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
-
-  public DeadlySimpleToroVideoViewHolder(View itemView) {
-    super(itemView);
-  }
-
-  @Override protected ToroVideoView findVideoView(View itemView) {
-    return (ToroVideoView) itemView.findViewById(R.id.video);
-  }
-
-  @Nullable @Override public String getVideoId() {
-    return "my awesome video's id and its order: " + getAdapterPosition();
-  }
-
-  @Override public void bind(@Nullable Object object) {
-    if (object != null && object instanceof SimpleVideoObject) {
-      mVideoView.setVideoPath(((SimpleVideoObject) object).video);
-    }
-  }
-}
-```
+##### 4. Create ViewHolder to use with **Toro**: see [This Wiki](https://github.com/eneim/Toro/wiki/1.-Toro-in-Practice---A-Beginner-Guide) to see how to start implementing.
 
 ##### 5. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
 
@@ -115,16 +105,20 @@ public class DeadlySimpleToroVideoViewHolder extends ToroVideoViewHolder {
 
 - Issue report and PRs are welcome.
 
+### Hall of Fames
+
+*Use Toro in your App? <a href="mailto:nam@ene.im?subject=Hi Nam">Email me</a> to get promoted here.*
+
 ### License
 
 > Copyright 2016 eneim@Eneim Labs, nam@ene.im
 
-> Licensed under the Apache License, Version 2.0 (the "License"); 
+> Licensed under the Apache License, Version 2.0 (the "License");
 > you may not use this file except in compliance with the License.
 > You may obtain a copy of the License at
- 
+
 >        http://www.apache.org/licenses/LICENSE-2.0
-       
+
 > Unless required by applicable law or agreed to in writing, software
 > distributed under the License is distributed on an "AS IS" BASIS,
 > WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
