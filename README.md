@@ -68,7 +68,7 @@ allprojects {
 
 ```groovy
 ext {
-	toro_latest_version = '2.1.0'
+	toroVersion = '2.1.0'
 }
 
 dependencies {
