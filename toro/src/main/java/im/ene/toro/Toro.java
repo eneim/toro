@@ -462,7 +462,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   /**
    * @hide
    */
-  private static boolean doAllowsToPlay(ToroPlayer player, ViewParent parent) {
+  static boolean doAllowsToPlay(ToroPlayer player, ViewParent parent) {
     Rect windowRect = new Rect();
     Rect parentRect = new Rect();
     if (parent instanceof View) {
