@@ -17,6 +17,7 @@
 package im.ene.toro.sample.feature.basic1;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,6 +29,7 @@ import android.view.ViewGroup;
 import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.feature.legacy.LegacyActivity;
 import im.ene.toro.sample.widget.DividerItemDecoration;
 
 /**
@@ -36,7 +38,7 @@ import im.ene.toro.sample.widget.DividerItemDecoration;
 public class Basic1ListFragment extends BaseToroFragment {
 
   protected RecyclerView recyclerView;
-  protected RecyclerView.Adapter adapter;
+  protected Basic1Adapter adapter;
 
   public static Basic1ListFragment newInstance() {
     return new Basic1ListFragment();
@@ -58,7 +60,14 @@ public class Basic1ListFragment extends BaseToroFragment {
           ((LinearLayoutManager) layoutManager).getOrientation()));
     }
 
-    adapter = getAdapter();
+    adapter = new Basic1Adapter();
+    adapter.setOnItemClickListener(new Basic1Adapter.ItemClickListener() {
+      @Override public void onItemClick(RecyclerView.ViewHolder viewHolder, View view) {
+        super.onItemClick(viewHolder, view);
+        Intent intent = new Intent(getContext(), LegacyActivity.class);
+        startActivity(intent);
+      }
+    });
     recyclerView.setHasFixedSize(false);
     recyclerView.setAdapter(adapter);
   }
@@ -83,9 +92,5 @@ public class Basic1ListFragment extends BaseToroFragment {
 
   RecyclerView.LayoutManager getLayoutManager() {
     return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-  }
-
-  RecyclerView.Adapter getAdapter() {
-    return new Basic1Adapter();
   }
 }

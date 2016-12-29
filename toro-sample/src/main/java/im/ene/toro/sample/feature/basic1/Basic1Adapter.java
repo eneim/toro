@@ -17,6 +17,7 @@
 package im.ene.toro.sample.feature.basic1;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,14 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   private LayoutInflater inflater;
 
+  private ItemClickListener onItemClickListener;
+
   public Basic1Adapter() {
     super();
+  }
+
+  public void setOnItemClickListener(ItemClickListener onItemClickListener) {
+    this.onItemClickListener = onItemClickListener;
   }
 
   @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,6 +61,13 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
       viewHolder = new Basic1NormalViewHolder(view);
     }
 
+    if (this.onItemClickListener != null) {
+      view.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          onItemClickListener.onItemClick(viewHolder, view);
+        }
+      });
+    }
     return viewHolder;
   }
 
@@ -79,4 +93,9 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
     return 512;
   }
 
+  public static abstract class ItemClickListener {
+
+    public void onItemClick(RecyclerView.ViewHolder viewHolder, View view) {
+    }
+  }
 }
