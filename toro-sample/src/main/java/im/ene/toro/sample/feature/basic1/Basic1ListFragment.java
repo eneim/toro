@@ -63,6 +63,16 @@ public class Basic1ListFragment extends BaseToroFragment {
     recyclerView.setAdapter(adapter);
   }
 
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (recyclerView == null) return;
+    if (isVisibleToUser) {
+      Toro.register(recyclerView);
+    } else {
+      Toro.unregister(recyclerView);
+    }
+  }
+
   @Override protected void dispatchFragmentActivated() {
     Toro.register(recyclerView);
   }
