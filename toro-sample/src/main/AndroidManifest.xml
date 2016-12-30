@@ -75,7 +75,6 @@
 
     <meta-data
         android:name="io.fabric.ApiKey"
-        android:value="d370ece8bdfee5bab552f9b5ad02debb484c1bff"/>
 
     <activity
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
