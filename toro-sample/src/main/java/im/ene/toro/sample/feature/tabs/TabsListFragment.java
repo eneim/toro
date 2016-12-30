@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample.feature.tabs;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,18 +29,19 @@ import android.view.ViewGroup;
 import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.feature.legacy.LegacyActivity;
 import im.ene.toro.sample.widget.DividerItemDecoration;
 
 /**
  * Created by eneim on 6/30/16.
  */
-public class Basic1ListFragment extends BaseToroFragment {
+public class TabsListFragment extends BaseToroFragment {
 
   protected RecyclerView recyclerView;
-  protected RecyclerView.Adapter adapter;
+  protected Tabs1Adapter adapter;
 
-  public static Basic1ListFragment newInstance() {
-    return new Basic1ListFragment();
+  public static TabsListFragment newInstance() {
+    return new TabsListFragment();
   }
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,9 +60,26 @@ public class Basic1ListFragment extends BaseToroFragment {
           ((LinearLayoutManager) layoutManager).getOrientation()));
     }
 
-    adapter = getAdapter();
+    adapter = new Tabs1Adapter();
+    adapter.setOnItemClickListener(new Tabs1Adapter.ItemClickListener() {
+      @Override public void onItemClick(RecyclerView.ViewHolder viewHolder, View view) {
+        super.onItemClick(viewHolder, view);
+        Intent intent = new Intent(getContext(), LegacyActivity.class);
+        startActivity(intent);
+      }
+    });
     recyclerView.setHasFixedSize(false);
     recyclerView.setAdapter(adapter);
+  }
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (recyclerView == null) return;
+    if (isVisibleToUser) {
+      Toro.register(recyclerView);
+    } else {
+      Toro.unregister(recyclerView);
+    }
   }
 
   @Override protected void dispatchFragmentActivated() {
@@ -73,9 +92,5 @@ public class Basic1ListFragment extends BaseToroFragment {
 
   RecyclerView.LayoutManager getLayoutManager() {
     return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-  }
-
-  RecyclerView.Adapter getAdapter() {
-    return new Basic1Adapter();
   }
 }

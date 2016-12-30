@@ -119,5 +119,14 @@
         style="@style/Toro.Widget.SampleItemButton"
         />
 
+    <im.ene.toro.sample.widget.SampleItemButton
+        android:id="@+id/tabs_sample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:btn_subtitle="@string/tabs_description"
+        app:btn_title="@string/tabs_title"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
   </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

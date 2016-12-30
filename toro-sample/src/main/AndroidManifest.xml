@@ -52,6 +52,10 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".feature.legacy.LegacyActivity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.tabs.Tabs1Activity"/>
 
     <activity
         android:label="@string/activity_show_case"
@@ -71,7 +75,7 @@
 
     <meta-data
         android:name="io.fabric.ApiKey"
-        android:value="${fabric_api_key}"/>
+        android:value="d370ece8bdfee5bab552f9b5ad02debb484c1bff"/>
 
     <activity
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
