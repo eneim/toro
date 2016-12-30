@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewParent;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -192,6 +193,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       state = sInstance.mStates.get(view.hashCode());
     } else {
       state = new SavedState();
+      state.contextHashCode = view.getContext().hashCode();
       sInstance.mStates.put(view.hashCode(), state);
     }
 
@@ -235,6 +237,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
           state = sInstance.mStates.get(view.hashCode());
         } else {
           state = new SavedState();
+          state.contextHashCode = view.getContext().hashCode();
           sInstance.mStates.put(view.hashCode(), state);
         }
         state.player = player;
@@ -321,17 +324,23 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   @Override public void onActivityDestroyed(Activity activity) {
     if (mStates != null) {
-      for (SavedState state : mStates.values()) {
-        if (state.player != null) {
-          // Release resource if there is any
-          state.player.stop();
-          state.player.onActivityInactive();
-          // Release this player
-          state.player = null;
+      int activityHashCode = activity.hashCode();
+      for (Iterator<Map.Entry<Integer, SavedState>> it = mStates.entrySet().iterator();
+          it.hasNext(); ) {
+        SavedState state = it.next().getValue();
+        if (state.contextHashCode == activityHashCode) {
+          // state was saved for *this* Activity
+          if (state.player != null) {
+            // Release resource if there is any
+            state.player.stop();
+            state.player.onActivityInactive();
+            // Release this player
+            state.player = null;
+          }
+          // remove state
+          it.remove();
         }
       }
-
-      mStates.clear();
     }
   }
 
@@ -569,6 +578,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         SavedState state = mStates.get(viewEntry.getKey());
         if (state == null) {
           state = new SavedState();
+          state.contextHashCode = activity.hashCode();
           mStates.put(viewEntry.getKey(), state);
         }
 

@@ -26,4 +26,10 @@ class SavedState {
   ToroPlayer player;
 
   Long position;
+
+  /**
+   * hashCode of recyclerView.getContext(); used to only clean correct Activity's states in
+   * onActivityDestroyed()
+   */
+  int contextHashCode;
 }
