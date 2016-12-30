@@ -257,6 +257,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
+  public static ToroScrollListener getScrollListener(RecyclerView view) {
+    if (view == null) return null;
+    return sInstance.mListeners.get(view.hashCode());
+  }
+
   public static void rest(boolean willPause) {
     if (willPause) {
       cachedStrategy = getStrategy();

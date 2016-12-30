@@ -20,13 +20,16 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.Toro;
+import im.ene.toro.ToroScrollListener;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.feature.legacy.LegacyActivity;
@@ -72,13 +75,30 @@ public class TabsListFragment extends BaseToroFragment {
     recyclerView.setAdapter(adapter);
   }
 
-  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
-    super.setUserVisibleHint(isVisibleToUser);
-    if (recyclerView == null) return;
-    if (isVisibleToUser) {
-      Toro.register(recyclerView);
+  /**
+   * called when this fragment (tab) becomes active or inactive
+   */
+  public void notifyTabSelected(boolean isSelected) {
+    final ToroScrollListener scrollListener = Toro.getScrollListener(recyclerView);
+    if (scrollListener == null) {
+      // should never happen as long as Toro.register() was called
+      return;
+    }
+    MediaPlayerManager manager = scrollListener.getManager();
+    if (isSelected && manager.getPlayer() == null) {
+      // NOTE: first time a tab/fragment is selected it doesn't start to playback until user starts to scroll
+      //   > if we can just simulate a scroll event to ToroScrollListener once tab is visible this issue is fixed
+      new Handler().postDelayed(new Runnable() {
+        @Override public void run() {
+          scrollListener.onScrollStateChanged(recyclerView, RecyclerView.SCROLL_STATE_IDLE);
+        }
+      }, 100);
+    } else if (isSelected) {
+      // resume video playback
+      manager.startPlayback();
     } else {
-      Toro.unregister(recyclerView);
+      // pause video playback
+      manager.pausePlayback();
     }
   }
 

@@ -33,6 +33,7 @@ public class Tabs1Activity extends AppCompatActivity {
 
   TabLayout tabLayout;
   TabAdapter adapter;
+  int currentSelectedTab = 0;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -44,6 +45,30 @@ public class Tabs1Activity extends AppCompatActivity {
     adapter = new TabAdapter(getSupportFragmentManager());
     viewPager.setAdapter(adapter);
     tabLayout.setupWithViewPager(viewPager);
+
+    viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+      @Override
+      public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+      }
+
+      @Override public void onPageSelected(int position) {
+        // notify previous and current fragments so they can pause/resume video playback
+        if (currentSelectedTab != position) {
+          notifyTabSelected(currentSelectedTab, false);
+        }
+        notifyTabSelected(position, true);
+        currentSelectedTab = position;
+      }
+
+      @Override public void onPageScrollStateChanged(int state) {
+      }
+    });
+  }
+
+  private void notifyTabSelected(int position, boolean isSelected) {
+    // get tab and notify it of selection state
+    TabsListFragment prevFragment = (TabsListFragment) adapter.getItem(position);
+    prevFragment.notifyTabSelected(isSelected);
   }
 
   public class TabAdapter extends FragmentStatePagerAdapter {
