@@ -320,18 +320,22 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
-    if (mStates != null) {
-      for (SavedState state : mStates.values()) {
-        if (state.player != null) {
-          // Release resource if there is any
-          state.player.stop();
-          state.player.onActivityInactive();
-          // Release this player
-          state.player = null;
+    // Only clear the State entry of corresponding RecyclerView.
+    for (Map.Entry<Integer, RecyclerView> viewEntry : mViews.entrySet()) {
+      if (viewEntry.getValue().getContext() == activity) {
+        SavedState state;
+        if (mStates != null && (state = mStates.get(viewEntry.getKey())) != null) {
+          if (state.player != null) {
+            // Release resource if there is any
+            state.player.stop();
+            state.player.onActivityInactive();
+            // Release this player
+            state.player = null;
+          }
+
+          mStates.remove(viewEntry.getKey());
         }
       }
-
-      mStates.clear();
     }
   }
 
