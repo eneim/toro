@@ -52,6 +52,10 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".feature.legacy.LegacyActivity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.tabs.Tabs1Activity"/>
 
     <activity
         android:label="@string/activity_show_case"

@@ -25,14 +25,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.advance1.Advance1Activity;
 import im.ene.toro.sample.feature.average1.Average1Activity;
 import im.ene.toro.sample.feature.basic1.Basic1Activity;
 import im.ene.toro.sample.feature.basic2.Basic2Activity;
 import im.ene.toro.sample.feature.basic3.Basic3Activity;
 import im.ene.toro.sample.feature.extended.ExtendedListActivity;
+import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.legacy.LegacyActivity;
+import im.ene.toro.sample.feature.tabs.Tabs1Activity;
 
 /**
  * Created by eneim on 6/30/16.
@@ -78,5 +79,9 @@ public class HomeActivity extends BaseActivity {
 
   @OnClick(R.id.exoplayer2_sample) void openExoPlayer2Sample1() {
     startActivity(new Intent(this, ExtendedListActivity.class));
+  }
+
+  @OnClick(R.id.tabs_sample) void openTabsSample() {
+    startActivity(new Intent(this, Tabs1Activity.class));
   }
 }

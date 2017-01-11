@@ -26,10 +26,8 @@ import java.util.List;
 
 /**
  * Created by eneim on 1/31/16.
- *
- * @hide
  */
-final class ToroScrollListener extends RecyclerView.OnScrollListener {
+public final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
   private final MediaPlayerManager playerManager;
   private final List<ToroPlayer> candidates;
@@ -39,7 +37,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     this.candidates = new ArrayList<>();
   }
 
-  @NonNull final MediaPlayerManager getManager() {
+  @NonNull public final MediaPlayerManager getManager() {
     return playerManager;
   }
 

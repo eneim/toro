@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample.feature.tabs;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.data.SimpleObject;
 import im.ene.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.sample.feature.basic1.Basic1NormalViewHolder;
+import im.ene.toro.sample.feature.basic1.Basic1VideoViewHolder;
 
 /**
  * Created by eneim on 6/29/16.
  */
-public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class Tabs1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   static int TYPE_VIDEO = 1;
 
@@ -35,13 +38,19 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   private LayoutInflater inflater;
 
-  public Basic1Adapter() {
+  private ItemClickListener onItemClickListener;
+
+  public Tabs1Adapter() {
     super();
   }
 
-  @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  public void setOnItemClickListener(ItemClickListener onItemClickListener) {
+    this.onItemClickListener = onItemClickListener;
+  }
+
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     final View view;
-    final ToroAdapter.ViewHolder viewHolder;
+    final ViewHolder viewHolder;
     if (inflater == null) {
       inflater = LayoutInflater.from(parent.getContext());
     }
@@ -54,6 +63,13 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
       viewHolder = new Basic1NormalViewHolder(view);
     }
 
+    if (this.onItemClickListener != null) {
+      view.setOnClickListener(new View.OnClickListener() {
+        @Override public void onClick(View view) {
+          onItemClickListener.onItemClick(viewHolder, view);
+        }
+      });
+    }
     return viewHolder;
   }
 
@@ -77,5 +93,11 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
 
   @Override public int getItemCount() {
     return 512;
+  }
+
+  public static abstract class ItemClickListener {
+
+    public void onItemClick(RecyclerView.ViewHolder viewHolder, View view) {
+    }
   }
 }

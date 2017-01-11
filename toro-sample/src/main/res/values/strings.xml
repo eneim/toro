@@ -102,4 +102,13 @@
 
   <string name="action_settings">Settings</string>
   <string name="title_activity_demo">DemoActivity</string>
+
+  <string name="tabs_title">
+    Tabs Sample
+  </string>
+
+  <string name="tabs_description">
+    Similar to the Basic Sample 1 but with a ViewPager and 2 tabs\n\n
+    Clicking on an item will open another video list (multiple video Activities).
+  </string>
 </resources>

@@ -220,7 +220,10 @@ public class ExoVideoView extends FrameLayout {
 
     componentListener = new ComponentListener();
 
-    mediaDataSourceFactory = buildDataSourceFactory(true);
+    if (!isInEditMode()) {
+      mediaDataSourceFactory = buildDataSourceFactory(true);
+    }
+
     mainHandler = new Handler();
 
     if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
