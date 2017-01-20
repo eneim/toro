@@ -51,6 +51,7 @@ import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -62,6 +63,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -111,8 +113,17 @@ public class ExoVideoView extends FrameLayout {
       shutterView.setVisibility(GONE);
     }
 
-    @Override public void onVideoTracksDisabled() {
-      shutterView.setVisibility(VISIBLE);
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+      if (player == null) {
+        return;
+      }
+
+      // Video disabled so the shutter must be closed.
+      //noinspection ConstantConditions
+      if (shutterView != null) {
+        shutterView.setVisibility(VISIBLE);
+      }
     }
 
     @Override public void onLoadingChanged(boolean isLoading) {
@@ -151,18 +162,18 @@ public class ExoVideoView extends FrameLayout {
   private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
   private static final int SURFACE_TYPE_TEXTURE_VIEW = 2;
 
-  private TextRenderer.Output subtitleListener;
+  TextRenderer.Output subtitleListener;
 
   public void setSubtitleListener(TextRenderer.Output subtitleListener) {
     this.subtitleListener = subtitleListener;
   }
 
   private final View surfaceView;
-  private final View shutterView;
+  final View shutterView;
   private float videoAspectRatio;
   private int resizeMode = RESIZE_MODE_FIXED_WIDTH;
   private final ComponentListener componentListener;
-  private PlayerCallback playerCallback;
+  PlayerCallback playerCallback;
 
   public ExoVideoView(Context context) {
     this(context, null);
@@ -235,7 +246,7 @@ public class ExoVideoView extends FrameLayout {
    *
    * @param widthHeightRatio The width to height ratio.
    */
-  private void setAspectRatio(float widthHeightRatio) {
+  void setAspectRatio(float widthHeightRatio) {
     if (this.videoAspectRatio != widthHeightRatio) {
       this.videoAspectRatio = widthHeightRatio;
       requestLayout();
@@ -279,7 +290,7 @@ public class ExoVideoView extends FrameLayout {
         MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
   }
 
-  private SimpleExoPlayer player;
+  SimpleExoPlayer player;
 
   public void setMedia(Uri uri) {
     if (uri == null) {
@@ -376,9 +387,9 @@ public class ExoVideoView extends FrameLayout {
 
       TrackSelection.Factory videoTrackSelectionFactory =
           new AdaptiveVideoTrackSelection.Factory(BANDWIDTH_METER);
-      trackSelector = new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
+      trackSelector = new DefaultTrackSelector(/* mainHandler, */ videoTrackSelectionFactory);
       player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,  //
-          new DefaultLoadControl(), drmSessionManager, false);
+          new DefaultLoadControl(), drmSessionManager /*, false */);
       setPlayer(player);
       if (isTimelineStatic) {
         // playerWindow is not null here
@@ -432,11 +443,11 @@ public class ExoVideoView extends FrameLayout {
     DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
   }
 
-  private Timeline.Window window;
+  Timeline.Window window;
   private Handler mainHandler;
   private MappingTrackSelector trackSelector;
   private boolean playerNeedsSource = true;
-  private boolean isTimelineStatic;
+  boolean isTimelineStatic;
   private boolean shouldAutoPlay;
   private int playerWindow;
   private long playerPosition;
