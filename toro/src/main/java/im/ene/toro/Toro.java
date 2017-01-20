@@ -29,9 +29,9 @@ import android.view.View;
 import android.view.ViewParent;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -74,8 +74,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   // It requires client to detach Activity/unregister View to prevent Memory leak
   // Use RecyclerView#hashCode() to sync between maps
-  final Map<Integer, RecyclerView> mViews = new ConcurrentHashMap<>();
-  final Map<Integer, ToroScrollListener> mListeners = new ConcurrentHashMap<>();
+  final LinkedHashMap<Integer, RecyclerView> mViews = new LinkedHashMap<>();
+  final LinkedHashMap<Integer, ToroScrollListener> mListeners = new LinkedHashMap<>();
 
   // Default strategy
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;
@@ -300,7 +300,18 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
-
+    for (Map.Entry<Integer, RecyclerView> viewEntry : mViews.entrySet()) {
+      if (viewEntry.getValue().getContext() == activity) {
+        ToroScrollListener listener = sInstance.mListeners.get(viewEntry.hashCode());
+        if (listener != null) {
+          try {
+            listener.getManager().remove();
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }
+    }
   }
 
   // Built-in Strategies
@@ -530,20 +541,18 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     for (Map.Entry<Integer, RecyclerView> viewEntry : mViews.entrySet()) {
       if (viewEntry.getValue().getContext() == activity) {
         ToroScrollListener listener = mListeners.get(viewEntry.getKey());
-        if (listener == null) { // This should not happen generally
-          continue;
-        }
+        if (listener != null) { // This should not happen generally
+          MediaPlayerManager manager = listener.getManager();
+          if (manager.getPlayer() != null) {
 
-        MediaPlayerManager manager = listener.getManager();
-        if (manager.getPlayer() != null) {
+            if (manager.getPlayer().isPlaying()) {
+              manager.saveVideoState(manager.getPlayer().getMediaId(),
+                  manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
+              manager.pausePlayback();
+            }
 
-          if (manager.getPlayer().isPlaying()) {
-            manager.saveVideoState(manager.getPlayer().getMediaId(),
-                manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
-            manager.pausePlayback();
+            manager.getPlayer().onActivityInactive();
           }
-
-          manager.getPlayer().onActivityInactive();
         }
       }
     }
@@ -553,16 +562,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     for (Map.Entry<Integer, RecyclerView> viewEntry : mViews.entrySet()) {
       if (viewEntry.getValue().getContext() == activity) {
         ToroScrollListener listener = mListeners.get(viewEntry.getKey());
-        if (listener == null) { // This should not happen generally
-          continue;
-        }
+        if (listener != null) { // This should not happen generally
+          MediaPlayerManager manager = listener.getManager();
 
-        MediaPlayerManager manager = listener.getManager();
-
-        if (manager.getPlayer() != null) {
-          manager.getPlayer().onActivityActive();
-          manager.restoreVideoState(manager.getPlayer().getMediaId());
-          manager.startPlayback();
+          if (manager.getPlayer() != null) {
+            manager.getPlayer().onActivityActive();
+            manager.restoreVideoState(manager.getPlayer().getMediaId());
+            manager.startPlayback();
+          }
         }
       }
     }

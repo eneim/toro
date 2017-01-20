@@ -22,7 +22,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by eneim on 1/29/16.
  */
-public interface MediaPlayerManager {
+public interface MediaPlayerManager extends Removable {
 
   public static class Factory {
     public static MediaPlayerManager getDefault() {

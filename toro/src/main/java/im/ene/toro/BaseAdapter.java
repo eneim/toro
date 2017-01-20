@@ -101,4 +101,8 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
   @Nullable @Override public PlaybackState getSavedState(String videoId) {
     return playbackStates.get(videoId);
   }
+
+  @Override public void remove() throws Exception {
+    playbackStates.clear();
+  }
 }
