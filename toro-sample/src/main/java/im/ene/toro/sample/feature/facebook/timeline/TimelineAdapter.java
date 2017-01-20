@@ -57,7 +57,7 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
     return items.get(position);
   }
 
-  private ItemClickListener onItemClickListener;
+  ItemClickListener onItemClickListener;
 
   public void setOnItemClickListener(ItemClickListener onItemClickListener) {
     this.onItemClickListener = onItemClickListener;

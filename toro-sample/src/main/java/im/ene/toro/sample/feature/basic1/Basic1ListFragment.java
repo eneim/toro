@@ -61,14 +61,23 @@ public class Basic1ListFragment extends BaseToroFragment {
     adapter = getAdapter();
     recyclerView.setHasFixedSize(false);
     recyclerView.setAdapter(adapter);
-  }
 
-  @Override protected void dispatchFragmentActivated() {
     Toro.register(recyclerView);
   }
 
-  @Override protected void dispatchFragmentDeActivated() {
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Toro.unregister(recyclerView);
+  }
+
+  @Override protected void dispatchFragmentActivated() {
+    if (!Toro.isActive()) {
+      Toro.resume();
+    }
+  }
+
+  @Override protected void dispatchFragmentDeActivated() {
+    Toro.pause();
   }
 
   RecyclerView.LayoutManager getLayoutManager() {

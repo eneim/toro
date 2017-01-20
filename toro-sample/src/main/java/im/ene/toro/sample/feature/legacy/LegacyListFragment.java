@@ -18,20 +18,20 @@ package im.ene.toro.sample.feature.legacy;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.Toro;
+import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.widget.DividerItemDecoration;
 
 /**
  * Created by eneim on 6/30/16.
  */
-public class LegacyListFragment extends Fragment {
+public class LegacyListFragment extends BaseToroFragment {
 
   protected RecyclerView mRecyclerView;
   protected RecyclerView.Adapter mAdapter;
@@ -58,15 +58,22 @@ public class LegacyListFragment extends Fragment {
     mAdapter = getAdapter();
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setAdapter(mAdapter);
-  }
 
-  @Override public void onResume() {
-    super.onResume();
     Toro.register(mRecyclerView);
   }
 
-  @Override public void onPause() {
-    super.onPause();
+  @Override protected void dispatchFragmentActivated() {
+    if (!Toro.isActive()) {
+      Toro.resume();
+    }
+  }
+
+  @Override protected void dispatchFragmentDeActivated() {
+    Toro.pause();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Toro.unregister(mRecyclerView);
   }
 

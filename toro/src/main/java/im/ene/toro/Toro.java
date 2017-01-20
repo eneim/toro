@@ -108,9 +108,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
     }
 
-    if (application != null) {
-      application.registerActivityLifecycleCallbacks(sInstance);
-    }
+    application.registerActivityLifecycleCallbacks(sInstance);
+    application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
   }
 
   /**
@@ -254,6 +253,19 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
+  public static void resume() {
+    rest(false);
+  }
+
+  public static void pause() {
+    rest(true);
+  }
+
+  public static boolean isActive() {
+    return !isResting();
+  }
+
+  @Deprecated
   public static void rest(boolean willPause) {
     if (willPause) {
       cachedStrategy = getStrategy();
@@ -272,6 +284,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   // Experiment
+  @Deprecated
   public static boolean isResting() {
     return getStrategy() == REST;
   }

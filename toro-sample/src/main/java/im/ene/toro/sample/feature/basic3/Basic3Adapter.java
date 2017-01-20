@@ -59,13 +59,13 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
           // Do this for for videoView only.
           if (view == ((Basic3VideoViewHolder) viewHolder).getPlayerView()) {
             // 1. Temporary disable the playback.
-            Toro.rest(true);
+            Toro.pause();
             new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
                 .setMessage(R.string.sample)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                   @Override public void onDismiss(DialogInterface dialogInterface) {
                     // 2. Resume the playback.
-                    Toro.rest(false);
+                    Toro.resume();
                   }
                 })
                 .create()

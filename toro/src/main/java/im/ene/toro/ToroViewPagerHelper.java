@@ -74,8 +74,8 @@ public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
   @Override public boolean handleMessage(Message msg) {
     if (msg.what == MSG_LAYOUT_STABLE) {
       // Question: Is this a bad practice?
-      Toro.rest(true);
-      Toro.rest(false);
+      Toro.pause();
+      Toro.resume();
       return true;
     }
 
