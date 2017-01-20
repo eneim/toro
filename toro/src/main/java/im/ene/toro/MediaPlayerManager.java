@@ -24,6 +24,12 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface MediaPlayerManager {
 
+  public static class Factory {
+    public static MediaPlayerManager getDefault() {
+      return new MediaPlayerManagerImpl();
+    }
+  }
+
   /* BEGIN Setup current Player */
 
   /**
@@ -88,6 +94,9 @@ public interface MediaPlayerManager {
    */
   void restoreVideoState(String videoId);
 
-  @Nullable Long getSavedPosition(String videoId);
+  @Deprecated @Nullable Long getSavedPosition(String videoId);
+
+  PlaybackState getSavedState(String videoId);
+
   /* END Directly control current player */
 }

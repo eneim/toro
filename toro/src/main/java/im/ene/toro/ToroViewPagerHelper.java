@@ -25,12 +25,12 @@ import android.support.v4.view.ViewPager;
  * Created by eneim on 6/8/16.
  *
  * Support ViewPager with Pages as 'Video List', not Single Video item.
- * 
+ *
  * The following snippet from {@link ViewPager#onLayout(boolean, int, int, int, int)}
  *
  * <code>
  * if (mFirstLayout) {
- *    scrollToItem(mCurItem, false, 0, false);
+ * scrollToItem(mCurItem, false, 0, false);
  * }
  * </code>
  *
@@ -66,7 +66,7 @@ public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
     }
   }
 
-  @Override public void remove() {
+  @Override public void remove() throws Exception {
     this.handler.removeCallbacksAndMessages(null);
     this.handler = null;
   }

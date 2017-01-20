@@ -423,7 +423,8 @@ public class ExoVideoView extends FrameLayout {
       playerWindow = player.getCurrentWindowIndex();
       playerPosition = C.TIME_UNSET;
       Timeline timeline = player.getCurrentTimeline();
-      if (timeline != null && timeline.getWindow(playerWindow, window).isSeekable) {
+      if (timeline != null && timeline.getWindowCount() > playerWindow && //
+          timeline.getWindow(playerWindow, window).isSeekable) {
         playerPosition = player.getCurrentPosition();
       }
       player.release();

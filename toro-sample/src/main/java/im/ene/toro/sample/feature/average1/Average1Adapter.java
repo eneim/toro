@@ -19,6 +19,7 @@ package im.ene.toro.sample.feature.average1;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.data.SimpleObject;
 import im.ene.toro.sample.data.SimpleVideoObject;
@@ -26,7 +27,7 @@ import im.ene.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 6/29/16.
  */
-public class Average1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class Average1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   public Average1Adapter() {
     super();

@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.R;
@@ -31,7 +32,7 @@ import im.ene.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 6/29/16.
  */
-public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   private static final String TAG = "ExoPlayer2Adapter";
 
