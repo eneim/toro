@@ -73,7 +73,7 @@ public class Basic1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? TYPE_VIDEO : TYPE_NORMAL;
+    return getItem(position) instanceof SimpleVideoObject ? TYPE_VIDEO : TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {
