@@ -45,23 +45,34 @@ public abstract class PlayerViewHelper {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
+  @Deprecated
   @CallSuper public void onAttachedToWindow() {
-    player.preparePlayer(false);
-    ToroScrollListener listener = itemView.getParent() != null ?  //
-        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
-    if (listener != null && listener.getManager().getPlayer() == null) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
-        listener.getManager().setPlayer(player);
-        listener.getManager().restoreVideoState(player.getMediaId());
-        listener.getManager().startPlayback();
-      }
-    }
   }
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
+  @Deprecated
   @CallSuper public void onDetachedFromWindow() {
+  }
+
+  @CallSuper public void onBound() {
+    ToroScrollListener listener = itemView.getParent() != null ?  //
+        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
+    if (listener != null && listener.getManager().getPlayer() == null) {
+      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
+        listener.getManager().setPlayer(player);
+        if (!player.isPrepared()) {
+          player.preparePlayer(false);
+        } else {
+          listener.getManager().restoreVideoState(player.getMediaId());
+          listener.getManager().startPlayback();
+        }
+      }
+    }
+  }
+
+  @CallSuper public void onRecycled() {
     ToroScrollListener listener = itemView.getParent() != null ?  //
         Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
     // Manually save Video state
@@ -78,7 +89,7 @@ public abstract class PlayerViewHelper {
     player.releasePlayer();
   }
 
-  /* BEGIN: Callback for BaseMediaPlayer */
+  /* BEGIN: Callback for MediaPlayer */
 
   /**
    * @param itemView main View of current ViewHolder
@@ -88,7 +99,7 @@ public abstract class PlayerViewHelper {
     Toro.sInstance.onVideoPrepared(this.player, itemView, parent);
   }
 
-  @Nullable protected final MediaPlayerManager getPlayerManager(ViewParent parent) {
+  @Nullable protected final PlayerManager getPlayerManager(ViewParent parent) {
     ToroScrollListener listener =
         parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
     return listener == null ? null : listener.getManager();

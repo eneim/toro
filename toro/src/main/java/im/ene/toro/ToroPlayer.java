@@ -26,7 +26,7 @@ import android.view.View;
 /**
  * Created by eneim on 1/29/16.
  */
-public interface ToroPlayer extends BaseMediaPlayer {
+public interface ToroPlayer extends MediaPlayer {
 
   boolean isPrepared();
 

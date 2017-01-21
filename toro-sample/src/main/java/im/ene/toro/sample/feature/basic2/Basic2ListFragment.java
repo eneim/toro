@@ -21,6 +21,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,7 +33,6 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.widget.DividerItemDecoration;
 import java.util.List;
 
 /**
@@ -121,10 +121,6 @@ public class Basic2ListFragment extends BaseToroFragment {
   }
 
   @Override protected void dispatchFragmentActivated() {
-    if (!Toro.isActive()) {
-      Toro.resume();
-    }
-
     // Trick to force RecyclerView to scroll to first Video position. Note that it will trigger the
     // scroll every time the Fragment resumes, so comment out to disable.
     mRecyclerView.postDelayed(new Runnable() {
@@ -137,7 +133,7 @@ public class Basic2ListFragment extends BaseToroFragment {
   }
 
   @Override protected void dispatchFragmentDeActivated() {
-    Toro.pause();
+
   }
 
   @Override public void onDestroyView() {

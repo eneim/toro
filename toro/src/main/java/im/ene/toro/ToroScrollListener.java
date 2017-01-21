@@ -31,15 +31,15 @@ import java.util.List;
  */
 final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
-  private final MediaPlayerManager playerManager;
+  private final PlayerManager playerManager;
   private final List<ToroPlayer> candidates;
 
-  ToroScrollListener(@NonNull MediaPlayerManager manager) {
+  ToroScrollListener(@NonNull PlayerManager manager) {
     this.playerManager = manager;
     this.candidates = new ArrayList<>();
   }
 
-  @NonNull final MediaPlayerManager getManager() {
+  @NonNull final PlayerManager getManager() {
     return playerManager;
   }
 
@@ -110,10 +110,16 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
     if (electedPlayer == currentPlayer) {
       // No thing changes, no new President. Let it go
-      if (currentPlayer != null && !currentPlayer.isPlaying()) {
-        playerManager.restoreVideoState(currentPlayer.getMediaId());
-        playerManager.startPlayback();
+      if (currentPlayer != null) {
+        if (!currentPlayer.isPrepared()) {
+          // We catch the state of prepared and trigger it manually
+          currentPlayer.preparePlayer(false);
+        } else if (!currentPlayer.isPlaying()) {  // player is prepared and ready to play
+          playerManager.restoreVideoState(currentPlayer.getMediaId());
+          playerManager.startPlayback();
+        }
       }
+
       return;
     }
 
@@ -125,13 +131,17 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     }
 
     if (electedPlayer == null) {
-      // Old president resigned, there is no new ones, we are screwed up, get out of here.
+      // Old president resigned, but there is no new ones, we are screwed up, get out of here.
       return;
     }
 
     // Well... let's the BlackHouse starts new cycle with the new President!
     playerManager.setPlayer(electedPlayer);
-    playerManager.restoreVideoState(electedPlayer.getMediaId());
-    playerManager.startPlayback();
+    if (!electedPlayer.isPrepared()) {
+      electedPlayer.preparePlayer(false);
+    } else {
+      playerManager.restoreVideoState(electedPlayer.getMediaId());
+      playerManager.startPlayback();
+    }
   }
 }

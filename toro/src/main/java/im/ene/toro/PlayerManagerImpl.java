@@ -16,7 +16,6 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,9 +23,9 @@ import java.util.Map;
 /**
  * Created by eneim on 1/31/16.
  *
- * Extension/Implementation of {@link MediaPlayerManager}. Can be used as a delegation.
+ * Extension/Implementation of {@link PlayerManager}. Can be used as a delegation.
  */
-final class MediaPlayerManagerImpl implements MediaPlayerManager {
+final class PlayerManagerImpl implements PlayerManager {
 
   private final Map<String, PlaybackState> playbackStates = new LinkedHashMap<>();
 
@@ -85,9 +84,9 @@ final class MediaPlayerManagerImpl implements MediaPlayerManager {
     player.seekTo(getSavedPosition(videoId));
   }
 
-  @NonNull @Override public Long getSavedPosition(String videoId) {
+  private long getSavedPosition(String videoId) {
     PlaybackState savedState = playbackStates.get(videoId);
-    Long position = 0L;
+    long position = 0;
     if (savedState != null) {
       position = savedState.getPosition();
     }
