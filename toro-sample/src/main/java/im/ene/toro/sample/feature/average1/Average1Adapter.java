@@ -52,7 +52,8 @@ public class Average1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   @Override protected Object getItem(int position) {
     if (position % 3 == 1) {
-      return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+      return new SimpleVideoObject(
+          "http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism");
     } else {
       return new SimpleObject();
     }
