@@ -45,45 +45,41 @@ public abstract class PlayerViewHelper {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
-  @Deprecated
-  @CallSuper public void onAttachedToWindow() {
+  @Deprecated @CallSuper public void onAttachedToWindow() {
   }
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
-  @Deprecated
-  @CallSuper public void onDetachedFromWindow() {
+  @Deprecated @CallSuper public void onDetachedFromWindow() {
   }
 
   @CallSuper public void onBound() {
-    ToroScrollListener listener = itemView.getParent() != null ?  //
-        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
-    if (listener != null && listener.getManager().getPlayer() == null) {
+    PlayerManager manager = getPlayerManager(itemView.getParent());
+    if (manager != null && manager.getPlayer() == null) {
       if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
-        listener.getManager().setPlayer(player);
+        manager.setPlayer(player);
         if (!player.isPrepared()) {
           player.preparePlayer(false);
         } else {
-          listener.getManager().restoreVideoState(player.getMediaId());
-          listener.getManager().startPlayback();
+          manager.restoreVideoState(player.getMediaId());
+          manager.startPlayback();
         }
       }
     }
   }
 
   @CallSuper public void onRecycled() {
-    ToroScrollListener listener = itemView.getParent() != null ?  //
-        Toro.sInstance.mListeners.get(itemView.getParent().hashCode()) : null;
+    PlayerManager manager = getPlayerManager(itemView.getParent());
     // Manually save Video state
-    if (listener != null && player.equals(listener.getManager().getPlayer())) {
+    if (manager != null && player.equals(manager.getPlayer())) {
       if (player.isPlaying()) {
-        listener.getManager().saveVideoState( //
+        manager.saveVideoState( //
             player.getMediaId(), player.getCurrentPosition(), player.getDuration());
-        listener.getManager().pausePlayback();
+        manager.pausePlayback();
       }
       // Detach current Player
-      listener.getManager().setPlayer(null);
+      manager.setPlayer(null);
     }
     // Release player.
     player.releasePlayer();
@@ -100,9 +96,7 @@ public abstract class PlayerViewHelper {
   }
 
   @Nullable protected final PlayerManager getPlayerManager(ViewParent parent) {
-    ToroScrollListener listener =
-        parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
-    return listener == null ? null : listener.getManager();
+    return parent instanceof RecyclerView ? Toro.getManager((RecyclerView) parent) : null;
   }
 
   /**

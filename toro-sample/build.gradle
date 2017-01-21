@@ -62,7 +62,9 @@ android {
                             youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"]
 
     vectorDrawables.useSupportLibrary = true
-    multiDexEnabled true
+
+    // multiDexEnabled true
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {

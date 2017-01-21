@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -29,22 +28,23 @@ import java.util.List;
  *
  * @hide
  */
-final class ToroScrollListener extends RecyclerView.OnScrollListener {
+final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implements Removable {
 
-  private final PlayerManager playerManager;
   private final List<ToroPlayer> candidates;
 
-  ToroScrollListener(@NonNull PlayerManager manager) {
-    this.playerManager = manager;
+  OnScrollListenerImpl() {
     this.candidates = new ArrayList<>();
   }
 
-  @NonNull final PlayerManager getManager() {
-    return playerManager;
-  }
+  private PlayerManager playerManager;
 
   @Override public void onScrollStateChanged(RecyclerView parent, int newState) {
     if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+      return;
+    }
+
+    playerManager = Toro.getManager(this);
+    if (playerManager == null) {
       return;
     }
 
@@ -143,5 +143,9 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       playerManager.restoreVideoState(electedPlayer.getMediaId());
       playerManager.startPlayback();
     }
+  }
+
+  @Override public void remove() throws Exception {
+    candidates.clear();
   }
 }
