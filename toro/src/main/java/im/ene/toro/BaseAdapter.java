@@ -22,15 +22,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by eneim on 1/31/16.
- *
- * Extension/Implementation of {@link MediaPlayerManager}. Can be used as a delegation.
+ * Created by eneim on 1/20/17.
  */
-final class MediaPlayerManagerImpl implements MediaPlayerManager {
+
+public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends ToroAdapter<VH>
+    implements MediaPlayerManager {
 
   private final Map<String, PlaybackState> playbackStates = new LinkedHashMap<>();
 
   private ToroPlayer player;
+
+  public BaseAdapter() {
+
+  }
 
   @Nullable @Override public ToroPlayer getPlayer() {
     return player;

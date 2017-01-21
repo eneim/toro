@@ -47,7 +47,7 @@ public class FacebookTimelineActivity extends BaseActivity
     implements FacebookPlaylistFragment.Callback {
 
   @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
-  private TimelineAdapter adapter;
+  TimelineAdapter adapter;
   private RecyclerView.LayoutManager layoutManager;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,20 +119,30 @@ public class FacebookTimelineActivity extends BaseActivity
         }
       }
     });
+
+    Toro.register(mRecyclerView);
   }
 
   boolean isActive = false;
 
   @Override protected void onActive() {
     super.onActive();
-    Toro.register(mRecyclerView);
+    if (!Toro.isActive()) {
+      Toro.resume();
+    }
+
     isActive = true;
   }
 
   @Override protected void onInactive() {
     super.onInactive();
-    Toro.unregister(mRecyclerView);
+    Toro.pause();
     isActive = false;
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    Toro.unregister(mRecyclerView);
   }
 
   private static final String TAG = "Toro:FB:TL";

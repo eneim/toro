@@ -17,14 +17,11 @@
 package im.ene.toro.sample.feature.facebook.timeline;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.MediaPlayerManager;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
-import im.ene.toro.ToroPlayer;
-import im.ene.toro.MediaPlayerManagerImpl;
 import im.ene.toro.sample.ToroApp;
 import im.ene.toro.sample.feature.facebook.OrderedPlayList;
 import java.util.ArrayList;
@@ -34,8 +31,8 @@ import java.util.List;
  * Created by eneim on 10/11/16.
  */
 
-public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements OrderedPlayList, MediaPlayerManager {
+public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
+    implements OrderedPlayList {
 
   static final int TYPE_OGP = 1;
   static final int TYPE_PHOTO = 2;
@@ -43,10 +40,8 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
 
   private static final int ITEM_COUNT = 512;
   private final List<TimelineItem> items;
-  private final MediaPlayerManager delegate;
 
   public TimelineAdapter() {
-    this.delegate = new MediaPlayerManagerImpl();
     this.items = new ArrayList<>();
     for (int i = 0; i < ITEM_COUNT; i++) {
       items.add(new TimelineItem(ToroApp.getApp()));
@@ -57,7 +52,7 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
     return items.get(position);
   }
 
-  private ItemClickListener onItemClickListener;
+  ItemClickListener onItemClickListener;
 
   public void setOnItemClickListener(ItemClickListener onItemClickListener) {
     this.onItemClickListener = onItemClickListener;
@@ -143,45 +138,4 @@ public class TimelineAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
         TimelineItem.VideoItem item);
   }
 
-  // MediaPlayerManager implementation
-
-  @Nullable @Override public ToroPlayer getPlayer() {
-    return delegate.getPlayer();
-  }
-
-  @Override public void setPlayer(ToroPlayer player) {
-    delegate.setPlayer(player);
-  }
-
-  @Override public void onRegistered() {
-    delegate.onRegistered();
-  }
-
-  @Override public void onUnregistered() {
-    delegate.onUnregistered();
-  }
-
-  @Override public void startPlayback() {
-    delegate.startPlayback();
-  }
-
-  @Override public void pausePlayback() {
-    delegate.pausePlayback();
-  }
-
-  @Override public void stopPlayback() {
-    delegate.stopPlayback();
-  }
-
-  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
-    delegate.saveVideoState(videoId, position, duration);
-  }
-
-  @Override public void restoreVideoState(String videoId) {
-    delegate.restoreVideoState(videoId);
-  }
-
-  @Nullable @Override public Long getSavedPosition(String videoId) {
-    return delegate.getSavedPosition(videoId);
-  }
 }

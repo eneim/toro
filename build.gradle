@@ -11,18 +11,18 @@ buildscript {
 
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.2'
     classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-    classpath 'com.novoda:bintray-release:0.3.4'
+    classpath 'com.novoda:bintray-release:0.4.0'
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
   }
 }
 
 ext {
-  libraryVersion = '3.0.0'
+libraryVersion = '3.0.0'
   androidVersion = 25
   buildToolVersion = '25.0.2'
   supportLibraryVersion = '25.1.0'
-  exoPlayerVersion = 'r1.5.11'
+  exoPlayerVersion = 'r1.5.13'
   exoPlayer2Version = 'r2.1.1'
   minSupportSDKVersion = 16
 }

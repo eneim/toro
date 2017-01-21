@@ -4,9 +4,10 @@ buildscript {
   }
 
   dependencies {
-    classpath 'io.fabric.tools:gradle:1.21.7'
+    classpath 'io.fabric.tools:gradle:1.22.0'
   }
 }
+
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 apply plugin: 'com.getkeepsafe.dexcount'
@@ -107,7 +108,7 @@ dependencies {
   compile project(path: ':toro-extended')
   // compile "im.ene.toro2:toro-extended:2.1.0-SNAPSHOT"
 
-  compile ('com.azoft.carousellayoutmanager:carousel:1.1.6', {
+  compile ('com.azoft.carousellayoutmanager:carousel:1.2.1', {
     exclude group: 'com.android.support', module: 'recyclerview-v7'
   })
 
@@ -115,11 +116,11 @@ dependencies {
   compile 'com.squareup.picasso:picasso:2.5.2'
   compile 'com.jakewharton:butterknife:7.0.1'
 
-  compile('com.crashlytics.sdk.android:crashlytics:2.6.3@aar') {
+  compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
     transitive = true;
   }
 
-  compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.4@aar') {
+  compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.5') {
     transitive = true;
   }
 }
