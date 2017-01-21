@@ -283,7 +283,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-    // TODO need to do something?
+    // Do nothing here
   }
 
   @Override public void onActivityStarted(Activity activity) {
@@ -560,6 +560,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
                 manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
             manager.pausePlayback();
           }
+          manager.getPlayer().releasePlayer();
           manager.getPlayer().onActivityInactive();
         }
       }
@@ -568,12 +569,16 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   private void dispatchOnActivityActive(Activity activity) {
     for (Map.Entry<RecyclerView, PlayerManager> entry : managers.entrySet()) {
-      if (entry.getKey().getContext() == activity) {
+      if (entry.getKey().getContext() == activity) {  // reference equality
         PlayerManager manager = entry.getValue();
         if (manager.getPlayer() != null) {
           manager.getPlayer().onActivityActive();
-          manager.restoreVideoState(manager.getPlayer().getMediaId());
-          manager.startPlayback();
+          if (!manager.getPlayer().isPrepared()) {
+            manager.getPlayer().preparePlayer(false);
+          } else {
+            manager.restoreVideoState(manager.getPlayer().getMediaId());
+            manager.startPlayback();
+          }
         }
       }
     }

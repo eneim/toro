@@ -146,6 +146,7 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
   }
 
   @Override public void remove() throws Exception {
+    playerManager = null;
     candidates.clear();
   }
 }
