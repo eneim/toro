@@ -31,15 +31,15 @@ import java.util.List;
  */
 final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
-  private final MediaPlayerManager playerManager;
+  private final PlayerManager playerManager;
   private final List<ToroPlayer> candidates;
 
-  ToroScrollListener(@NonNull MediaPlayerManager manager) {
+  ToroScrollListener(@NonNull PlayerManager manager) {
     this.playerManager = manager;
     this.candidates = new ArrayList<>();
   }
 
-  @NonNull final MediaPlayerManager getManager() {
+  @NonNull final PlayerManager getManager() {
     return playerManager;
   }
 

@@ -24,9 +24,9 @@ import java.util.Map;
 /**
  * Created by eneim on 1/31/16.
  *
- * Extension/Implementation of {@link MediaPlayerManager}. Can be used as a delegation.
+ * Extension/Implementation of {@link PlayerManager}. Can be used as a delegation.
  */
-final class MediaPlayerManagerImpl implements MediaPlayerManager {
+final class PlayerManagerImpl implements PlayerManager {
 
   private final Map<String, PlaybackState> playbackStates = new LinkedHashMap<>();
 

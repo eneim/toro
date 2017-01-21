@@ -26,7 +26,7 @@ import java.util.Map;
  */
 
 public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends ToroAdapter<VH>
-    implements MediaPlayerManager {
+    implements PlayerManager {
 
   private final Map<String, PlaybackState> playbackStates = new LinkedHashMap<>();
 

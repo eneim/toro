@@ -160,15 +160,15 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
     }
 
-    // 1. Retrieve current MediaPlayerManager instance
-    final MediaPlayerManager playerManager;
+    // 1. Retrieve current PlayerManager instance
+    final PlayerManager playerManager;
     RecyclerView.Adapter adapter = view.getAdapter();
-    // Client of this API should implement MediaPlayerManager to its Adapter.
-    if (adapter instanceof MediaPlayerManager) {
-      playerManager = (MediaPlayerManager) adapter;
+    // Client of this API should implement PlayerManager to its Adapter.
+    if (adapter instanceof PlayerManager) {
+      playerManager = (PlayerManager) adapter;
     } else {
-      // Toro 3+ will force the implementation of MediaPlayerManager. Of course, there is delegation
-      throw new RuntimeException("Adapter must be a MediaPlayerManager");
+      // Toro 3+ will force the implementation of PlayerManager. Of course, there is delegation
+      throw new RuntimeException("Adapter must be a PlayerManager");
     }
 
     // setup new scroll listener
@@ -473,7 +473,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
-    MediaPlayerManager manager = null;
+    PlayerManager manager = null;
     ToroScrollListener listener;
     RecyclerView view;
     // Find correct Player manager for this player
@@ -512,7 +512,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onPlaybackCompletion(@NonNull ToroPlayer player) {
     // 1. Internal jobs
-    MediaPlayerManager manager = null;
+    PlayerManager manager = null;
     for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
       manager = listener.getManager();
       if (player == manager.getPlayer()) {
@@ -530,7 +530,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {
     for (ToroScrollListener listener : Toro.sInstance.mListeners.values()) {
-      MediaPlayerManager manager = listener.getManager();
+      PlayerManager manager = listener.getManager();
       if (player.equals(manager.getPlayer())) {
         manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
         manager.pausePlayback();
@@ -545,7 +545,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (viewEntry.getValue().getContext() == activity) {
         ToroScrollListener listener = mListeners.get(viewEntry.getKey());
         if (listener != null) { // This should not happen generally
-          MediaPlayerManager manager = listener.getManager();
+          PlayerManager manager = listener.getManager();
           if (manager.getPlayer() != null) {
 
             if (manager.getPlayer().isPlaying()) {
@@ -566,7 +566,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (viewEntry.getValue().getContext() == activity) {
         ToroScrollListener listener = mListeners.get(viewEntry.getKey());
         if (listener != null) { // This should not happen generally
-          MediaPlayerManager manager = listener.getManager();
+          PlayerManager manager = listener.getManager();
 
           if (manager.getPlayer() != null) {
             manager.getPlayer().onActivityActive();

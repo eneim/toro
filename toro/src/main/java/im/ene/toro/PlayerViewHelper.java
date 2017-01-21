@@ -88,7 +88,7 @@ public abstract class PlayerViewHelper {
     Toro.sInstance.onVideoPrepared(this.player, itemView, parent);
   }
 
-  @Nullable protected final MediaPlayerManager getPlayerManager(ViewParent parent) {
+  @Nullable protected final PlayerManager getPlayerManager(ViewParent parent) {
     ToroScrollListener listener =
         parent != null ? Toro.sInstance.mListeners.get(parent.hashCode()) : null;
     return listener == null ? null : listener.getManager();
