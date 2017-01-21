@@ -43,7 +43,6 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
       throw new NullPointerException("A valid ExoVideoView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
-    videoView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
@@ -54,10 +53,12 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
 
   @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
     onBind(adapter, object);
+    videoView.setPlayerCallback(helper);
     helper.onBound();
   }
 
   @CallSuper @Override protected void onRecycled() {
+    videoView.setPlayerCallback(null);
     helper.onRecycled();
   }
 
