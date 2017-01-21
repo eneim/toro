@@ -72,14 +72,6 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
-    prerelease {
-      debuggable true // this value may change
-      zipAlignEnabled true
-      signingConfig signingConfigs.release
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-    }
-
     debug {
       signingConfig signingConfigs.debug
       applicationIdSuffix ".debug"
@@ -94,6 +86,7 @@ android {
 
   lintOptions {
     disable 'InvalidPackage'
+    abortOnError false
   }
 }
 

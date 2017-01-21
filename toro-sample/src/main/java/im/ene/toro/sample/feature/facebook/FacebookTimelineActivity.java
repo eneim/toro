@@ -28,6 +28,7 @@ import android.view.ViewParent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
+import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
@@ -106,9 +107,10 @@ public class FacebookTimelineActivity extends BaseActivity
         int order = viewHolder.getAdapterPosition();
         ToroPlayer player = adapter.getPlayer();
         if (player != null) {
+          PlaybackState state = adapter.getSavedState(Util.genVideoId(item.getVideoUrl(), order));
           duration = player.getDuration();
           position = player.isPlaying() ? player.getCurrentPosition()
-              : adapter.getSavedPosition(Util.genVideoId(item.getVideoUrl(), order)); // safe
+              : state != null ? state.getPosition() : 0; // safe
         }
 
         if (item != null) {

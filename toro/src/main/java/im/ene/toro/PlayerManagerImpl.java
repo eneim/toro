@@ -16,7 +16,6 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -85,9 +84,9 @@ final class PlayerManagerImpl implements PlayerManager {
     player.seekTo(getSavedPosition(videoId));
   }
 
-  @NonNull @Override public Long getSavedPosition(String videoId) {
+  private long getSavedPosition(String videoId) {
     PlaybackState savedState = playbackStates.get(videoId);
-    Long position = 0L;
+    long position = 0;
     if (savedState != null) {
       position = savedState.getPosition();
     }
