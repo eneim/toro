@@ -47,7 +47,7 @@ import im.ene.toro.exoplayer.internal.RendererBuilderFactory;
  * host
  * OS Version.
  */
-public class ExoVideoView extends FrameLayout /* implements BaseMediaPlayer */ {
+public class ExoVideoView extends FrameLayout /* implements MediaPlayer */ {
 
   private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
 

@@ -24,7 +24,7 @@ import android.widget.VideoView;
  * Created by eneim on 10/2/16.
  */
 
-public interface BaseMediaPlayer {
+public interface MediaPlayer {
 
   /**
    * See {@link android.media.MediaPlayer#prepareAsync()}

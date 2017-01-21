@@ -78,7 +78,7 @@ public abstract class PlayerViewHelper {
     player.releasePlayer();
   }
 
-  /* BEGIN: Callback for BaseMediaPlayer */
+  /* BEGIN: Callback for MediaPlayer */
 
   /**
    * @param itemView main View of current ViewHolder
