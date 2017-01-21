@@ -25,7 +25,7 @@ import android.util.Log;
  * Created by eneim on 1/20/17.
  */
 // TODO Remove this when release
-public class LifeCycleDebugger implements Application.ActivityLifecycleCallbacks {
+final class LifeCycleDebugger implements Application.ActivityLifecycleCallbacks {
 
   private static final String TAG = "Toro:Life";
 

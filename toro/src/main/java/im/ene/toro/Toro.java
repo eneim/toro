@@ -167,29 +167,33 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (adapter instanceof MediaPlayerManager) {
       playerManager = (MediaPlayerManager) adapter;
     } else {
+      // Toro 3+ will force the implementation of MediaPlayerManager. Of course, there is delegation
       throw new RuntimeException("Adapter must be a MediaPlayerManager");
     }
 
+    // setup new scroll listener
     final ToroScrollListener listener = new ToroScrollListener(playerManager);
     view.addOnScrollListener(listener);
     // Save to Cache
     sInstance.mViews.put(view.hashCode(), view);
     sInstance.mListeners.put(view.hashCode(), listener);
 
-    if (playerManager.getPlayer() != null) {
-      ToroPlayer player = playerManager.getPlayer();
-      PlaybackState savedState = playerManager.getSavedState(player.getMediaId());
-      if (savedState != null) {
-        if (!player.isPlaying() && player.wantsToPlay() &&  //
-            Toro.getStrategy().allowsToPlay(player, view)) {
-          playerManager.restoreVideoState(player.getMediaId());
-          playerManager.startPlayback();
-        }
-      }
-    }
-
     // Done registering new View
     playerManager.onRegistered();
+
+    // in case the Manager/Adapter has a preset Player and a saved playback state
+    // (either coming back from Stopped state or a predefined one)
+    if (playerManager.getPlayer() != null
+        && playerManager.getSavedState(playerManager.getPlayer().getMediaId()) != null) {
+      ToroPlayer player = playerManager.getPlayer();
+      if (!player.isPrepared()) {
+        player.preparePlayer(false);
+      } else if (!player.isPlaying() && player.wantsToPlay() &&  //
+          Toro.getStrategy().allowsToPlay(player, view)) {
+        playerManager.restoreVideoState(player.getMediaId());
+        playerManager.startPlayback();
+      }
+    }
   }
 
   /**
@@ -209,7 +213,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // Cleanup manager
       if (listener.getManager().getPlayer() != null) {
         final ToroPlayer player = listener.getManager().getPlayer();
-
         listener.getManager().saveVideoState(player.getMediaId(), //
             player.getCurrentPosition(), player.getDuration());
         if (player.isPlaying()) {
@@ -233,7 +236,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   public static boolean isActive() {
-    return !isResting();
+    return !isResting();  // not resting!!
   }
 
   @Deprecated public static void rest(boolean willPause) {
@@ -268,7 +271,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
+    // TODO need to do something?
   }
 
   @Override public void onActivityStarted(Activity activity) {
