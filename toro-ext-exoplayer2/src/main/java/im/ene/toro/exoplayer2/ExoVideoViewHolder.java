@@ -52,8 +52,8 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   // BEGIN: ToroViewHolder
 
   @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
-    onBind(adapter, object);
     videoView.setPlayerCallback(helper);
+    onBind(adapter, object);
     helper.onBound();
   }
 
