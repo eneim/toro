@@ -186,12 +186,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (playerManager.getPlayer() != null
         && playerManager.getSavedState(playerManager.getPlayer().getMediaId()) != null) {
       ToroPlayer player = playerManager.getPlayer();
-      if (!player.isPrepared()) {
-        player.preparePlayer(false);
-      } else if (!player.isPlaying() && player.wantsToPlay() &&  //
+      if (player.wantsToPlay() && player.wantsToPlay() && //
           Toro.getStrategy().allowsToPlay(player, view)) {
-        playerManager.restoreVideoState(player.getMediaId());
-        playerManager.startPlayback();
+        if (!player.isPrepared()) {
+          player.preparePlayer(false);
+        } else if (!player.isPlaying()) {
+          playerManager.restoreVideoState(player.getMediaId());
+          playerManager.startPlayback();
+        }
       }
     }
   }
@@ -494,6 +496,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     // 1. Check if current manager wrapped this player
     if (player.equals(manager.getPlayer())) {
       if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+        // player.isPlaying() is always false here
         manager.restoreVideoState(player.getMediaId());
         manager.startPlayback();
       }
@@ -503,6 +506,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         // ... if it's possible
         if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
           manager.setPlayer(player);
+          // player.isPrepared() is always true here
           manager.restoreVideoState(player.getMediaId());
           manager.startPlayback();
         }

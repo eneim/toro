@@ -19,6 +19,8 @@ package im.ene.toro.exoplayer2;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
@@ -46,13 +48,24 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
 
   protected abstract ExoVideoView findVideoView(View itemView);
 
+  protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
+
   // BEGIN: ToroViewHolder
 
-  @CallSuper @Override public void onAttachedToWindow() {
+  @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+    onBind(adapter, object);
+    helper.onBound();
+  }
+
+  @CallSuper @Override protected void onRecycled() {
+    helper.onRecycled();
+  }
+
+  @Deprecated @CallSuper @Override public void onAttachedToWindow() {
     helper.onAttachedToWindow();
   }
 
-  @CallSuper @Override public void onDetachedFromWindow() {
+  @Deprecated @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
   }
   // END: ToroViewHolder
@@ -69,10 +82,12 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
 
   @Override public void preparePlayer(boolean playWhenReady) {
     videoView.preparePlayer(playWhenReady);
+    isPlayable = true;
   }
 
   @Override public void releasePlayer() {
     videoView.releasePlayer();
+    isPlayable = false;
   }
 
   // Client could override this method for better practice
@@ -106,7 +121,7 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    isPlayable = true;
+    // isPlayable = true;
   }
 
   @Override public int getBufferPercentage() {

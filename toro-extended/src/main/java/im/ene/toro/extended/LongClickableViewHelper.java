@@ -65,8 +65,13 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
 
       // Trigger new player
       manager.setPlayer(player);
-      manager.restoreVideoState(player.getMediaId());
-      manager.startPlayback();
+      if (!player.isPrepared()) {
+        manager.startPlayback();
+        player.preparePlayer(false);
+      } else {
+        manager.restoreVideoState(player.getMediaId());
+        manager.startPlayback();
+      }
       return true;
     } else {
       // Pressing current player, pause it if it is playing
@@ -76,8 +81,13 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
         manager.pausePlayback();
       } else {
         // It's paused, so we resume it
-        manager.restoreVideoState(currentPlayer.getMediaId());
-        manager.startPlayback();
+        if (!currentPlayer.isPrepared()) {
+          manager.startPlayback();
+          currentPlayer.preparePlayer(false);
+        } else {
+          manager.restoreVideoState(currentPlayer.getMediaId());
+          manager.startPlayback();
+        }
       }
       return true;
     }
