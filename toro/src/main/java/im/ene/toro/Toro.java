@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -44,10 +45,11 @@ import static android.os.Build.VERSION.SDK_INT;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)  //
 public final class Toro implements Application.ActivityLifecycleCallbacks {
 
-  private static final String TAG = "LOG:TORO";
-  private static final Object LOCK = new Object();
+  private static final String TAG = "ToroLib";
 
   public static final double DEFAULT_OFFSET = 0.75;
+
+  private static AtomicInteger attachCount = new AtomicInteger();
 
   /**
    * Stop playback strategy
@@ -88,6 +90,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    */
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
+    attachCount.incrementAndGet();
   }
 
   /**
@@ -97,12 +100,15 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    */
   public static void init(Application application) {
     if (sInstance == null) {
-      synchronized (LOCK) {
+      synchronized (Toro.class) {
         sInstance = new Toro();
       }
     }
 
-    application.registerActivityLifecycleCallbacks(sInstance);
+    if (attachCount.get() == 0) {
+      application.registerActivityLifecycleCallbacks(sInstance);
+    }
+
     application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
   }
 
@@ -114,7 +120,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    */
   public static void detach(Activity activity) {
     Application application = activity.getApplication();
-    if (application != null) {
+    if (application != null && attachCount.decrementAndGet() == 0) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
     }
 
