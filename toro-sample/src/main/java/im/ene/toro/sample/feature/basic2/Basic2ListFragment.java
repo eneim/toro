@@ -121,10 +121,6 @@ public class Basic2ListFragment extends BaseToroFragment {
   }
 
   @Override protected void dispatchFragmentActivated() {
-    if (!Toro.isActive()) {
-      Toro.resume();
-    }
-
     // Trick to force RecyclerView to scroll to first Video position. Note that it will trigger the
     // scroll every time the Fragment resumes, so comment out to disable.
     mRecyclerView.postDelayed(new Runnable() {
@@ -137,7 +133,7 @@ public class Basic2ListFragment extends BaseToroFragment {
   }
 
   @Override protected void dispatchFragmentDeActivated() {
-    Toro.pause();
+
   }
 
   @Override public void onDestroyView() {

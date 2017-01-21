@@ -551,13 +551,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         if (listener != null) { // This should not happen generally
           PlayerManager manager = listener.getManager();
           if (manager.getPlayer() != null) {
-
             if (manager.getPlayer().isPlaying()) {
               manager.saveVideoState(manager.getPlayer().getMediaId(),
                   manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
               manager.pausePlayback();
             }
-
             manager.getPlayer().onActivityInactive();
           }
         }

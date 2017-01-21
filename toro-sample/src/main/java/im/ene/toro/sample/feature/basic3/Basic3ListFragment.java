@@ -66,13 +66,11 @@ public class Basic3ListFragment extends BaseToroFragment {
   }
 
   @Override protected void dispatchFragmentActivated() {
-    if (!Toro.isActive()) {
-      Toro.resume();
-    }
+    // Do nothing
   }
 
   @Override protected void dispatchFragmentDeActivated() {
-    Toro.pause();
+    // Do nothing
   }
 
   @Override public void onDestroyView() {

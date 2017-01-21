@@ -129,16 +129,11 @@ public class FacebookTimelineActivity extends BaseActivity
 
   @Override protected void onActive() {
     super.onActive();
-    if (!Toro.isActive()) {
-      Toro.resume();
-    }
-
     isActive = true;
   }
 
   @Override protected void onInactive() {
     super.onInactive();
-    Toro.pause();
     isActive = false;
   }
 
