@@ -106,6 +106,10 @@ public abstract class PlayerViewHelper {
     return parent instanceof RecyclerView ? Toro.getManager((RecyclerView) parent) : null;
   }
 
+  protected final ToroStrategy getStrategy(ViewParent parent) {
+    return Toro.getStrategy(parent);
+  }
+
   /**
    * Complete the playback
    */

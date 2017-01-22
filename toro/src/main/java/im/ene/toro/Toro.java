@@ -127,11 +127,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  public static ToroStrategy getDefaultStrategy() {
+  private static ToroStrategy getDefaultStrategy() {
     return sInstance.mStrategy;
   }
 
-  public static ToroStrategy getStrategy(ViewParent viewParent) {
+  static ToroStrategy getStrategy(ViewParent viewParent) {
     return getBundle(viewParent).getStrategy();
   }
 
@@ -180,11 +180,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
 
     ToroBundle bundle = new ToroBundle();
-    bundle.setStrategy(Toro.getDefaultStrategy());
+    bundle.setStrategy(Strategies.FIRST_PLAYABLE_TOP_DOWN);
     register(view, bundle);
   }
 
-  static void register(RecyclerView view, @NonNull ToroBundle bundles) {
+  static void register(RecyclerView view, @NonNull ToroBundle bundle) {
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
@@ -192,6 +192,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (sInstance.bundles.containsKey(view)) {
       sInstance.bundles.get(view).getManager().onRegistered();
       return;
+    }
+
+    //noinspection ConstantConditions
+    if (bundle == null || bundle.getStrategy() == null) {
+      throw new IllegalArgumentException("Bundle must be non-null and has a Strategy");
     }
 
     // 1. Retrieve current PlayerManager instance
@@ -204,15 +209,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // Toro 3+ will force the implementation of PlayerManager. Of course, there is delegation
       throw new RuntimeException("Adapter must be a PlayerManager");
     }
-
-    bundles.setManager(playerManager);
+    bundle.setManager(playerManager);
 
     // setup new scroll listener
     OnScrollListenerImpl listener = new OnScrollListenerImpl();
     view.addOnScrollListener(listener);
-    bundles.setScrollListener(listener);
+    bundle.setScrollListener(listener);
 
-    sInstance.bundles.put(view, bundles);
+    sInstance.bundles.put(view, bundle);
 
     // Done registering new View
     playerManager.onRegistered();
@@ -222,7 +226,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         && playerManager.getSavedState(playerManager.getPlayer().getMediaId()) != null) {
       ToroPlayer player = playerManager.getPlayer();
       if (player.wantsToPlay() && player.wantsToPlay() && //
-          Toro.getDefaultStrategy().allowsToPlay(player, view)) {
+          bundle.getStrategy().allowsToPlay(player, view)) {
         if (!player.isPrepared()) {
           player.preparePlayer(false);
         } else if (!player.isPlaying()) {
@@ -514,11 +518,13 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
+    ToroBundle bundle = null;
     PlayerManager manager = null;
     // Find correct Player manager for this player
     for (Map.Entry<RecyclerView, ToroBundle> entry : sInstance.bundles.entrySet()) {
       if (entry.getKey() == parent) {
-        manager = entry.getValue().getManager();
+        bundle = entry.getValue();
+        manager = bundle.getManager();
         break;
       }
     }
@@ -529,7 +535,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     // 1. Check if current manager wrapped this player
     if (player.equals(manager.getPlayer())) {
-      if (player.wantsToPlay() && Toro.getDefaultStrategy().allowsToPlay(player, parent)) {
+      if (player.wantsToPlay() && bundle.getStrategy().allowsToPlay(player, parent)) {
         // player.isPlaying() is always false here
         manager.restoreVideoState(player.getMediaId());
         manager.startPlayback();
@@ -538,7 +544,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // There is no current player, but this guy is prepared, so let's him go ...
       if (manager.getPlayer() == null) {
         // ... if it's possible
-        if (player.wantsToPlay() && Toro.getDefaultStrategy().allowsToPlay(player, parent)) {
+        if (player.wantsToPlay() && bundle.getStrategy().allowsToPlay(player, parent)) {
           manager.setPlayer(player);
           // player.isPrepared() is always true here
           manager.restoreVideoState(player.getMediaId());
