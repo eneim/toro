@@ -76,8 +76,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   // It requires client to detach Activity/unregister View to prevent Memory leak
   // Use RecyclerView#hashCode() to sync between maps
-  private final LinkedHashMap<RecyclerView, PlayerManager> managers = new LinkedHashMap<>();
-  private final LinkedHashMap<RecyclerView, OnScrollListenerImpl> listeners = new LinkedHashMap<>();
+  private final LinkedHashMap<RecyclerView, ToroBundle> bundles = new LinkedHashMap<>();
 
   // Default strategy
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;
@@ -103,13 +102,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       synchronized (Toro.class) {
         sInstance = new Toro();
       }
-    }
 
-    if (attachCount.get() == 0) {
       application.registerActivityLifecycleCallbacks(sInstance);
+      application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
     }
-
-    application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
   }
 
   /**
@@ -122,16 +118,33 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     Application application = activity.getApplication();
     if (application != null && attachCount.decrementAndGet() == 0) {
       application.unregisterActivityLifecycleCallbacks(sInstance);
+      sInstance = null;
     }
 
     // Cleanup
-    for (RecyclerView view : sInstance.managers.keySet()) {
+    for (RecyclerView view : sInstance.bundles.keySet()) {
       unregister(view);
     }
   }
 
-  public static ToroStrategy getStrategy() {
+  private static ToroStrategy getDefaultStrategy() {
     return sInstance.mStrategy;
+  }
+
+  static ToroStrategy getStrategy(ViewParent viewParent) {
+    return getBundle(viewParent).getStrategy();
+  }
+
+  static ToroBundle getBundle(ViewParent viewParent) {
+    if (viewParent == null) {
+      throw new NullPointerException("View is null");
+    }
+
+    if (!(viewParent instanceof RecyclerView)) {
+      throw new IllegalArgumentException("Only RecyclerView is accepted here");
+    }
+
+    return sInstance.bundles.get(viewParent);
   }
 
   /**
@@ -139,6 +152,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    *
    * @param strategy requested policy from client
    */
+  @Deprecated
   public static void setStrategy(@NonNull ToroStrategy strategy) {
     if (sInstance.mStrategy == strategy) {
       // Nothing changes
@@ -154,14 +168,35 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    *
    * @param view which will be registered
    */
-  public static void register(RecyclerView view) {
+  @Deprecated public static void register(RecyclerView view) {
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
 
-    if (sInstance.managers.containsKey(view) && sInstance.listeners.containsKey(view)) {
-      sInstance.managers.get(view).onRegistered();
+    if (sInstance.bundles.containsKey(view)) {
+      sInstance.bundles.get(view).getManager().onRegistered();
+      ;
       return;
+    }
+
+    ToroBundle bundle = new ToroBundle();
+    bundle.setStrategy(Strategies.FIRST_PLAYABLE_TOP_DOWN);
+    register(view, bundle);
+  }
+
+  static void register(RecyclerView view, @NonNull ToroBundle bundle) {
+    if (view == null) {
+      throw new NullPointerException("Registering View must not be null");
+    }
+
+    if (sInstance.bundles.containsKey(view)) {
+      sInstance.bundles.get(view).getManager().onRegistered();
+      return;
+    }
+
+    //noinspection ConstantConditions
+    if (bundle == null || bundle.getStrategy() == null) {
+      throw new IllegalArgumentException("Bundle must be non-null and has a Strategy");
     }
 
     // 1. Retrieve current PlayerManager instance
@@ -174,25 +209,24 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // Toro 3+ will force the implementation of PlayerManager. Of course, there is delegation
       throw new RuntimeException("Adapter must be a PlayerManager");
     }
+    bundle.setManager(playerManager);
 
-    sInstance.managers.put(view, playerManager);
     // setup new scroll listener
-    // final ToroScrollListener listener = new ToroScrollListener(playerManager);
     OnScrollListenerImpl listener = new OnScrollListenerImpl();
     view.addOnScrollListener(listener);
-    // Save to Cache
-    sInstance.listeners.put(view, listener);
+    bundle.setScrollListener(listener);
+
+    sInstance.bundles.put(view, bundle);
 
     // Done registering new View
     playerManager.onRegistered();
-
     // in case the Manager/Adapter has a preset Player and a saved playback state
     // (either coming back from Stopped state or a predefined one)
     if (playerManager.getPlayer() != null
         && playerManager.getSavedState(playerManager.getPlayer().getMediaId()) != null) {
       ToroPlayer player = playerManager.getPlayer();
       if (player.wantsToPlay() && player.wantsToPlay() && //
-          Toro.getStrategy().allowsToPlay(player, view)) {
+          bundle.getStrategy().allowsToPlay(player, view)) {
         if (!player.isPrepared()) {
           player.preparePlayer(false);
         } else if (!player.isPlaying()) {
@@ -213,8 +247,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       throw new NullPointerException("Un-registering View must not be null");
     }
 
-    OnScrollListenerImpl listener = sInstance.listeners.remove(view);
-    PlayerManager manager = sInstance.managers.remove(view);
+    ToroBundle bundle = sInstance.bundles.remove(view);
+
+    PlayerManager manager = bundle.getManager();
     if (manager.getPlayer() != null) {
       final ToroPlayer player = manager.getPlayer();
       manager.saveVideoState(player.getMediaId(), //
@@ -225,17 +260,17 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
 
     manager.onUnregistered();
-    view.removeOnScrollListener(listener);
+    view.removeOnScrollListener(bundle.getScrollListener());
   }
 
   static PlayerManager getManager(RecyclerView recyclerView) {
-    return sInstance.managers.get(recyclerView);
+    return sInstance.bundles.get(recyclerView).getManager();
   }
 
   static PlayerManager getManager(OnScrollListenerImpl listener) {
-    for (Map.Entry<RecyclerView, OnScrollListenerImpl> entry : sInstance.listeners.entrySet()) {
-      if (listener.equals(entry.getValue())) {
-        return sInstance.managers.get(entry.getKey());
+    for (Map.Entry<RecyclerView, ToroBundle> entry : sInstance.bundles.entrySet()) {
+      if (listener.equals(entry.getValue().getScrollListener())) {
+        return entry.getValue().getManager();
       }
     }
 
@@ -256,11 +291,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   @Deprecated public static void rest(boolean willPause) {
     if (willPause) {
-      cachedStrategy = getStrategy();
+      cachedStrategy = getDefaultStrategy();
       setStrategy(REST);
     } else {
       // Don't allow to unrest if Toro has not been in rested state. Be careful.
-      if (getStrategy() != REST) {
+      if (getDefaultStrategy() != REST) {
         throw new IllegalStateException("Toro has already waken up.");
       }
 
@@ -273,12 +308,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   // Experiment
   @Deprecated public static boolean isResting() {
-    return getStrategy() == REST;
+    return getDefaultStrategy() == REST;
   }
 
   private static void dispatchStrategyChanged(ToroStrategy newStrategy) {
-    for (Map.Entry<RecyclerView, OnScrollListenerImpl> entry : sInstance.listeners.entrySet()) {
-      entry.getValue().onScrollStateChanged(entry.getKey(), RecyclerView.SCROLL_STATE_IDLE);
+    for (Map.Entry<RecyclerView, ToroBundle> entry : sInstance.bundles.entrySet()) {
+      entry.getValue()
+          .getScrollListener()
+          .onScrollStateChanged(entry.getKey(), RecyclerView.SCROLL_STATE_IDLE);
     }
   }
 
@@ -315,17 +352,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
-    for (PlayerManager manager : managers.values()) {
+    for (ToroBundle bundle : bundles.values()) {
       try {
-        manager.remove();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-
-    for (OnScrollListenerImpl listener : listeners.values()) {
-      try {
-        listener.remove();
+        bundle.getManager().remove();
+        bundle.getScrollListener().remove();
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -488,11 +518,13 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
+    ToroBundle bundle = null;
     PlayerManager manager = null;
     // Find correct Player manager for this player
-    for (Map.Entry<RecyclerView, PlayerManager> entry : sInstance.managers.entrySet()) {
+    for (Map.Entry<RecyclerView, ToroBundle> entry : sInstance.bundles.entrySet()) {
       if (entry.getKey() == parent) {
-        manager = entry.getValue();
+        bundle = entry.getValue();
+        manager = bundle.getManager();
         break;
       }
     }
@@ -503,7 +535,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     // 1. Check if current manager wrapped this player
     if (player.equals(manager.getPlayer())) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+      if (player.wantsToPlay() && bundle.getStrategy().allowsToPlay(player, parent)) {
         // player.isPlaying() is always false here
         manager.restoreVideoState(player.getMediaId());
         manager.startPlayback();
@@ -512,7 +544,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // There is no current player, but this guy is prepared, so let's him go ...
       if (manager.getPlayer() == null) {
         // ... if it's possible
-        if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
+        if (player.wantsToPlay() && bundle.getStrategy().allowsToPlay(player, parent)) {
           manager.setPlayer(player);
           // player.isPrepared() is always true here
           manager.restoreVideoState(player.getMediaId());
@@ -525,9 +557,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   void onPlaybackCompletion(@NonNull ToroPlayer player) {
     // 1. Internal jobs
     PlayerManager manager = null;
-    for (PlayerManager playerManager : sInstance.managers.values()) {
-      if (player == playerManager.getPlayer()) {
-        manager = playerManager;
+    for (ToroBundle bundle : sInstance.bundles.values()) {
+      if (player == bundle.getManager().getPlayer()) {
+        manager = bundle.getManager();
         break;
       }
     }
@@ -539,10 +571,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {
-    for (PlayerManager manager : sInstance.managers.values()) {
-      if (player.equals(manager.getPlayer())) {
-        manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
-        manager.pausePlayback();
+    for (ToroBundle bundle : sInstance.bundles.values()) {
+      if (player == bundle.getManager().getPlayer()) {
+        bundle.getManager().saveVideoState(player.getMediaId(), 0L, player.getDuration());
+        bundle.getManager().pausePlayback();
       }
     }
 
@@ -551,9 +583,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   // Update to correctly support API 24+
   private void dispatchOnActivityInactive(Activity activity) {
-    for (Map.Entry<RecyclerView, PlayerManager> entry : managers.entrySet()) {
+    for (Map.Entry<RecyclerView, ToroBundle> entry : bundles.entrySet()) {
       if (entry.getKey().getContext() == activity) {
-        PlayerManager manager = entry.getValue();
+        PlayerManager manager = entry.getValue().getManager();
         if (manager.getPlayer() != null) {
           if (manager.getPlayer().isPlaying()) {
             manager.saveVideoState(manager.getPlayer().getMediaId(),
@@ -568,9 +600,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   private void dispatchOnActivityActive(Activity activity) {
-    for (Map.Entry<RecyclerView, PlayerManager> entry : managers.entrySet()) {
+    for (Map.Entry<RecyclerView, ToroBundle> entry : bundles.entrySet()) {
       if (entry.getKey().getContext() == activity) {  // reference equality
-        PlayerManager manager = entry.getValue();
+        PlayerManager manager = entry.getValue().getManager();
         if (manager.getPlayer() != null) {
           manager.getPlayer().onActivityActive();
           if (!manager.getPlayer().isPrepared()) {
@@ -581,6 +613,31 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
           }
         }
       }
+    }
+  }
+
+  // New implementation
+
+  public static Builder with(Activity activity) {
+    init(activity.getApplication());
+    return new Builder();
+  }
+
+  public static class Builder {
+
+    private final ToroBundle bundles = new ToroBundle();
+
+    public Builder strategy(ToroStrategy strategy) {
+      this.bundles.setStrategy(strategy);
+      return this;
+    }
+
+    public void register(RecyclerView recyclerView) {
+      if (bundles.getStrategy() == null) {
+        // apply default strategy
+        bundles.setStrategy(Strategies.FIRST_PLAYABLE_TOP_DOWN);
+      }
+      Toro.register(recyclerView, bundles);
     }
   }
 }

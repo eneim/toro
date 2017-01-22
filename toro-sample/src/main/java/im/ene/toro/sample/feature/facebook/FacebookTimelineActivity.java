@@ -62,10 +62,10 @@ public class FacebookTimelineActivity extends BaseActivity
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
 
-    final ToroStrategy oldStrategy = Toro.getStrategy();
     final int firstVideoPosition = adapter.firstVideoPosition();
 
-    Toro.setStrategy(new ToroStrategy() {
+    ToroStrategy strategy = new ToroStrategy() {
+      ToroStrategy delegate = Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN;
       boolean isFirstPlayerDone = firstVideoPosition != -1; // Valid first position only
 
       @Override public String getDescription() {
@@ -73,12 +73,12 @@ public class FacebookTimelineActivity extends BaseActivity
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return oldStrategy.findBestPlayer(candidates);
+        return delegate.findBestPlayer(candidates);
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == firstVideoPosition)  //
-            && oldStrategy.allowsToPlay(player, parent);
+            && delegate.allowsToPlay(player, parent);
 
         // A work-around to keep track of first video on top.
         if (player.getPlayOrder() == firstVideoPosition) {
@@ -86,7 +86,7 @@ public class FacebookTimelineActivity extends BaseActivity
         }
         return allowToPlay;
       }
-    });
+    };
 
     adapter.setOnItemClickListener(new TimelineAdapter.ItemClickListener() {
       @Override protected void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
@@ -122,7 +122,7 @@ public class FacebookTimelineActivity extends BaseActivity
       }
     });
 
-    Toro.register(mRecyclerView);
+    Toro.with(this).strategy(strategy).register(mRecyclerView);
   }
 
   boolean isActive = false;

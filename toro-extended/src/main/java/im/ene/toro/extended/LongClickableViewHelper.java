@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewParent;
 import im.ene.toro.PlayerManager;
-import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
 
@@ -44,7 +43,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
     }
 
     // Being pressed player is not be able to play, return
-    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
+    if (!player.wantsToPlay() || !getStrategy(parent).allowsToPlay(player, parent)) {
       return false;
     }
 
