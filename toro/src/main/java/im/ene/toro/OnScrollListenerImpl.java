@@ -36,14 +36,12 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
     this.candidates = new ArrayList<>();
   }
 
-  private ToroBundle bundle;
-
   @Override public void onScrollStateChanged(RecyclerView parent, int newState) {
     if (newState != RecyclerView.SCROLL_STATE_IDLE) {
       return;
     }
 
-    bundle = Toro.getBundle(parent);
+    ToroBundle bundle = Toro.getBundle(parent);
     if (bundle == null || bundle.getScrollListener() != this) {
       return;
     }
