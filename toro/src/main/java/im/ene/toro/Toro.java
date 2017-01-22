@@ -32,7 +32,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -48,8 +47,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   private static final String TAG = "ToroLib";
 
   public static final double DEFAULT_OFFSET = 0.75;
-
-  private static AtomicInteger attachCount = new AtomicInteger();
 
   /**
    * Stop playback strategy
@@ -82,17 +79,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;
 
   /**
-   * Attach an activity to Toro. Toro register activity's life cycle to properly handle Screen
-   * visibility: free necessary resource if User doesn't need it anymore
-   *
-   * @param activity the Activity to which Toro gonna attach to
-   */
-  public static void attach(@NonNull Activity activity) {
-    init(activity.getApplication());
-    attachCount.incrementAndGet();
-  }
-
-  /**
    * Same purpose to {@link Toro#attach(Activity)}, but support overall the Application
    *
    * @param application the Application where Toro will apply for.
@@ -105,25 +91,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
       application.registerActivityLifecycleCallbacks(sInstance);
       application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
-    }
-  }
-
-  /**
-   * Carefully detach current Activity from Toro. Should be coupled with {@link
-   * Toro#attach(Activity)}
-   *
-   * @param activity The host Activity where Toro will detach from.
-   */
-  public static void detach(Activity activity) {
-    Application application = activity.getApplication();
-    if (application != null && attachCount.decrementAndGet() == 0) {
-      application.unregisterActivityLifecycleCallbacks(sInstance);
-      sInstance = null;
-    }
-
-    // Cleanup
-    for (RecyclerView view : sInstance.bundles.keySet()) {
-      unregister(view);
     }
   }
 
@@ -152,8 +119,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    *
    * @param strategy requested policy from client
    */
-  @Deprecated
-  public static void setStrategy(@NonNull ToroStrategy strategy) {
+  @Deprecated public static void setStrategy(@NonNull ToroStrategy strategy) {
     if (sInstance.mStrategy == strategy) {
       // Nothing changes
       return;
@@ -359,6 +325,11 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       } catch (Exception e) {
         e.printStackTrace();
       }
+    }
+
+    // Cleanup
+    for (RecyclerView view : sInstance.bundles.keySet()) {
+      unregister(view);
     }
   }
 
