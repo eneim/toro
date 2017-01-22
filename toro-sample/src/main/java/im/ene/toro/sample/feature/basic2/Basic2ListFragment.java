@@ -54,43 +54,32 @@ public class Basic2ListFragment extends BaseToroFragment {
     return new Basic2ListFragment();
   }
 
-  // Restore in onDetach to prevent the playback strategy on other places.
-  ToroStrategy strategyToRestore;
   // To tell Toro's strategy which is the Video to play first.
   int firstVideoPosition;
 
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-    strategyToRestore = Toro.getStrategy();
-    Toro.setStrategy(new ToroStrategy() {
-      boolean isFirstVideoObserved = false;
+  private ToroStrategy strategy = new ToroStrategy() {
+    boolean isFirstVideoObserved = false;
+    ToroStrategy delegate = Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN;
 
-      @Override public String getDescription() {
-        return "First video plays first";
+    @Override public String getDescription() {
+      return "First video plays first";
+    }
+
+    @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      return delegate.findBestPlayer(candidates);
+    }
+
+    @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+      boolean allowToPlay =
+          (isFirstVideoObserved || player.getPlayOrder() == firstVideoPosition)  //
+              && delegate.allowsToPlay(player, parent);
+      // Keep track of first video on top.
+      if (player.getPlayOrder() == firstVideoPosition) {
+        isFirstVideoObserved = true;
       }
-
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return strategyToRestore.findBestPlayer(candidates);
-      }
-
-      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        boolean allowToPlay =
-            (isFirstVideoObserved || player.getPlayOrder() == firstVideoPosition)  //
-                && strategyToRestore.allowsToPlay(player, parent);
-        // Keep track of first video on top.
-        if (player.getPlayOrder() == firstVideoPosition) {
-          isFirstVideoObserved = true;
-        }
-        return allowToPlay;
-      }
-    });
-  }
-
-  @Override public void onDetach() {
-    // Restore to old Strategy.
-    Toro.setStrategy(strategyToRestore);
-    super.onDetach();
-  }
+      return allowToPlay;
+    }
+  };
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -117,7 +106,7 @@ public class Basic2ListFragment extends BaseToroFragment {
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setAdapter(mAdapter);
 
-    Toro.register(mRecyclerView);
+    Toro.with(getActivity()).strategy(strategy).register(mRecyclerView);
   }
 
   @Override protected void dispatchFragmentActivated() {

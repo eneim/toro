@@ -45,19 +45,11 @@ public abstract class PlayerViewHelper {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
-  @Deprecated @CallSuper public void onAttachedToWindow() {
-  }
-
-  /**
-   * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
-   */
-  @Deprecated @CallSuper public void onDetachedFromWindow() {
-  }
-
-  @CallSuper public void onBound() {
-    PlayerManager manager = getPlayerManager(itemView.getParent());
+  @CallSuper public void onAttachedToWindow() {
+    ToroBundle bundle = Toro.getBundle(itemView.getParent());
+    PlayerManager manager = bundle.getManager();
     if (manager != null && manager.getPlayer() == null) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
+      if (player.wantsToPlay() && bundle.getStrategy().allowsToPlay(player, itemView.getParent())) {
         manager.setPlayer(player);
         if (!player.isPrepared()) {
           player.preparePlayer(false);
@@ -69,8 +61,23 @@ public abstract class PlayerViewHelper {
     }
   }
 
+  /**
+   * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
+   */
+  @CallSuper public void onDetachedFromWindow() {
+
+  }
+
+  @CallSuper public void onBound() {
+    // TODO
+  }
+
   @CallSuper public void onRecycled() {
-    PlayerManager manager = getPlayerManager(itemView.getParent());
+    if (itemView.getParent() == null) {
+      return;
+    }
+
+    PlayerManager manager = Toro.getBundle(itemView.getParent()).getManager();
     // Manually save Video state
     if (manager != null && player.equals(manager.getPlayer())) {
       if (player.isPlaying()) {

@@ -36,24 +36,24 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
     this.candidates = new ArrayList<>();
   }
 
-  private PlayerManager playerManager;
+  private ToroBundle bundle;
 
   @Override public void onScrollStateChanged(RecyclerView parent, int newState) {
     if (newState != RecyclerView.SCROLL_STATE_IDLE) {
       return;
     }
 
-    playerManager = Toro.getManager(this);
-    if (playerManager == null) {
+    bundle = Toro.getBundle(parent);
+    if (bundle == null || bundle.getScrollListener() != this) {
       return;
     }
 
     // clear current playback candidates
     candidates.clear();
     // Check current playing position
-    final ToroPlayer currentPlayer = playerManager.getPlayer();
+    final ToroPlayer currentPlayer = bundle.getManager().getPlayer();
     if (currentPlayer != null && currentPlayer.getPlayOrder() != RecyclerView.NO_POSITION) {
-      if (currentPlayer.wantsToPlay() && Toro.getStrategy().allowsToPlay(currentPlayer, parent)) {
+      if (currentPlayer.wantsToPlay() && bundle.getStrategy().allowsToPlay(currentPlayer, parent)) {
         candidates.add(currentPlayer);
       }
     }
@@ -95,7 +95,7 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
         if (viewHolder != null && viewHolder instanceof ToroPlayer) {
           candidate = (ToroPlayer) viewHolder;
           // check candidate's view position
-          if (candidate.wantsToPlay() && Toro.getStrategy().allowsToPlay(candidate, parent)) {
+          if (candidate.wantsToPlay() && bundle.getStrategy().allowsToPlay(candidate, parent)) {
             // Have a new candidate who can play
             if (!candidates.contains(candidate)) {
               candidates.add(candidate);
@@ -106,7 +106,7 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
     }
 
     // Ask strategy to elect one
-    final ToroPlayer electedPlayer = Toro.getStrategy().findBestPlayer(candidates);
+    final ToroPlayer electedPlayer = bundle.getStrategy().findBestPlayer(candidates);
 
     if (electedPlayer == currentPlayer) {
       // No thing changes, no new President. Let it go
@@ -115,8 +115,8 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
           // We catch the state of prepared and trigger it manually
           currentPlayer.preparePlayer(false);
         } else if (!currentPlayer.isPlaying()) {  // player is prepared and ready to play
-          playerManager.restoreVideoState(currentPlayer.getMediaId());
-          playerManager.startPlayback();
+          bundle.getManager().restoreVideoState(currentPlayer.getMediaId());
+          bundle.getManager().startPlayback();
         }
       }
 
@@ -125,9 +125,9 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
 
     // Current player is not elected anymore, pause it.
     if (currentPlayer != null && currentPlayer.isPlaying()) {
-      playerManager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+      bundle.getManager().saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
           currentPlayer.getDuration());
-      playerManager.pausePlayback();
+      bundle.getManager().pausePlayback();
     }
 
     if (electedPlayer == null) {
@@ -136,17 +136,16 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
     }
 
     // Well... let's the BlackHouse starts new cycle with the new President!
-    playerManager.setPlayer(electedPlayer);
+    bundle.getManager().setPlayer(electedPlayer);
     if (!electedPlayer.isPrepared()) {
       electedPlayer.preparePlayer(false);
     } else {
-      playerManager.restoreVideoState(electedPlayer.getMediaId());
-      playerManager.startPlayback();
+      bundle.getManager().restoreVideoState(electedPlayer.getMediaId());
+      bundle.getManager().startPlayback();
     }
   }
 
   @Override public void remove() throws Exception {
-    playerManager = null;
     candidates.clear();
   }
 }

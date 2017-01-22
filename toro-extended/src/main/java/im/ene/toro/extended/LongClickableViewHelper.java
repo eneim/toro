@@ -44,7 +44,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
     }
 
     // Being pressed player is not be able to play, return
-    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
+    if (!player.wantsToPlay() || !Toro.getStrategy(parent).allowsToPlay(player, parent)) {
       return false;
     }
 

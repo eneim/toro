@@ -62,7 +62,9 @@ public class Basic1ListFragment extends BaseToroFragment {
     recyclerView.setHasFixedSize(false);
     recyclerView.setAdapter(adapter);
 
-    Toro.register(recyclerView);
+    Toro.with(getActivity())
+        .strategy(Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN_KEEP_LAST)
+        .register(recyclerView);
   }
 
   @Override public void onDestroyView() {
