@@ -50,7 +50,7 @@ public class Advance1VideoViewHolder extends ExoVideoViewHolder {
     stateView = (TextView) itemView.findViewById(R.id.state);
   }
 
-  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
+  @Override protected void onBind(RecyclerView.Adapter adapter, Object item) {
     if (!(item instanceof SimpleVideoObject)) {
       throw new IllegalArgumentException("Invalid Object: " + item);
     }

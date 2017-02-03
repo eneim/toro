@@ -36,6 +36,7 @@ import android.view.ViewParent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
+import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
@@ -85,35 +86,32 @@ public class FacebookPlaylistFragment extends DialogFragment {
     return new Dialog(getContext(), R.style.Toro_Theme_Playlist);
   }
 
-  private ToroStrategy strategyToRestore;
+  private ToroStrategy strategy = new ToroStrategy() {
+    ToroStrategy delegate = Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN;
+    boolean isFirstPlayerDone = false;
+
+    @Override public String getDescription() {
+      return "First video plays first";
+    }
+
+    @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      return delegate.findBestPlayer(candidates);
+    }
+
+    @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+      boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == 0)  //
+          && delegate.allowsToPlay(player, parent);
+
+      // A work-around to keep track of first video on top.
+      if (player.getPlayOrder() == 0) {
+        isFirstPlayerDone = true;
+      }
+      return allowToPlay;
+    }
+  };
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    strategyToRestore = Toro.getStrategy();
-
-    Toro.setStrategy(new ToroStrategy() {
-      boolean isFirstPlayerDone = false;
-
-      @Override public String getDescription() {
-        return "First video plays first";
-      }
-
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return strategyToRestore.findBestPlayer(candidates);
-      }
-
-      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == 0)  //
-            && strategyToRestore.allowsToPlay(player, parent);
-
-        // A work-around to keep track of first video on top.
-        if (player.getPlayOrder() == 0) {
-          isFirstPlayerDone = true;
-        }
-        return allowToPlay;
-      }
-    });
-
     if (getArguments() != null) {
       this.baseItem = getArguments().getParcelable(ARGS_BASE_VIDEO);
       this.basePosition = getArguments().getLong(ARGS_BASE_START_POSITION, C.POSITION_UNSET);
@@ -122,14 +120,9 @@ public class FacebookPlaylistFragment extends DialogFragment {
     }
   }
 
-  @Override public void onDestroy() {
-    super.onDestroy();
-    Toro.setStrategy(strategyToRestore);
-  }
-
   @Bind(R.id.recycler_view) RecyclerView recyclerView;
   private MoreVideoRepo videoRepo;
-  private MoreVideosAdapter adapter;
+  MoreVideosAdapter adapter;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -149,6 +142,8 @@ public class FacebookPlaylistFragment extends DialogFragment {
         new SnapToTopLinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(adapter);
+
+    Toro.with(getActivity()).strategy(strategy).register(recyclerView);
 
     // Maybe DI in real practice, not here.
     videoRepo = new MoreVideoRepo(baseItem);
@@ -191,11 +186,15 @@ public class FacebookPlaylistFragment extends DialogFragment {
   }
 
   protected void dispatchFragmentActivated() {
-    Toro.register(recyclerView);
     adapter.saveVideoState(Util.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
   }
 
   protected void dispatchFragmentDeActivated() {
+
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Toro.unregister(recyclerView);
   }
 
@@ -219,9 +218,10 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @Override public void onDetach() {
     if (callback != null) {
+      PlaybackState state = adapter.getSavedState(Util.genVideoId(baseItem.getVideoUrl(), 0));
       callback.onPlaylistDetached(this.baseItem,
           // Get saved position of first Item in this list, pass it to origin item at "baseOrder"
-          adapter.getSavedPosition(Util.genVideoId(baseItem.getVideoUrl(), 0)), baseOrder);
+          state != null ? state.getPosition() : 0, baseOrder);
     }
     Log.w(TAG, "onDetach() called. Callback: " + callback + " , Host: " + getContext());
     super.onDetach();

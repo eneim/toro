@@ -22,7 +22,13 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Created by eneim on 1/29/16.
  */
-public interface MediaPlayerManager {
+public interface PlayerManager extends Removable {
+
+  public static class Factory {
+    public static PlayerManager createInstance() {
+      return new PlayerManagerImpl();
+    }
+  }
 
   /* BEGIN Setup current Player */
 
@@ -88,6 +94,7 @@ public interface MediaPlayerManager {
    */
   void restoreVideoState(String videoId);
 
-  @Nullable Long getSavedPosition(String videoId);
+  @Nullable PlaybackState getSavedState(String videoId);
+
   /* END Directly control current player */
 }

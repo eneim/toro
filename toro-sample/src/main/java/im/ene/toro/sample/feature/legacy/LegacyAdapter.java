@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.data.SimpleObject;
 import im.ene.toro.sample.data.SimpleVideoObject;
@@ -28,7 +29,7 @@ import im.ene.toro.sample.data.SimpleVideoObject;
  * Created by eneim on 10/1/16.
  */
 
-public class LegacyAdapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class LegacyAdapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   @Nullable @Override protected Object getItem(int position) {
     if (position % 3 == 0) {

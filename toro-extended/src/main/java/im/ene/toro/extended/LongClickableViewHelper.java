@@ -20,9 +20,8 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewParent;
-import im.ene.toro.Toro;
+import im.ene.toro.PlayerManager;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
 
 /**
@@ -37,14 +36,14 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
 
   @Override public boolean onLongClick(View v) {
     final ViewParent parent = this.itemView.getParent();
-    MediaPlayerManager manager = getPlayerManager(parent);
+    PlayerManager manager = getPlayerManager(parent);
     // Important components are missing, return
     if (manager == null) {
       return false;
     }
 
     // Being pressed player is not be able to play, return
-    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
+    if (!player.wantsToPlay() || !getStrategy(parent).allowsToPlay(player, parent)) {
       return false;
     }
 
@@ -65,8 +64,13 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
 
       // Trigger new player
       manager.setPlayer(player);
-      manager.restoreVideoState(player.getMediaId());
-      manager.startPlayback();
+      if (!player.isPrepared()) {
+        manager.startPlayback();
+        player.preparePlayer(false);
+      } else {
+        manager.restoreVideoState(player.getMediaId());
+        manager.startPlayback();
+      }
       return true;
     } else {
       // Pressing current player, pause it if it is playing
@@ -76,8 +80,13 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
         manager.pausePlayback();
       } else {
         // It's paused, so we resume it
-        manager.restoreVideoState(currentPlayer.getMediaId());
-        manager.startPlayback();
+        if (!currentPlayer.isPrepared()) {
+          manager.startPlayback();
+          currentPlayer.preparePlayer(false);
+        } else {
+          manager.restoreVideoState(currentPlayer.getMediaId());
+          manager.startPlayback();
+        }
       }
       return true;
     }

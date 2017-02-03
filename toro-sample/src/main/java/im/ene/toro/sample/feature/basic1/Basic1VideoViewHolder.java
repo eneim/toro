@@ -40,7 +40,7 @@ public class Basic1VideoViewHolder extends ExoVideoViewHolder {
     super(itemView);
   }
 
-  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
+  @Override protected void onBind(RecyclerView.Adapter adapter, Object item) {
     if (!(item instanceof SimpleVideoObject)) {
       throw new IllegalArgumentException("Invalid Object: " + item);
     }

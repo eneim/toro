@@ -21,7 +21,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,8 +31,8 @@ import android.view.ViewParent;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
+import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.widget.DividerItemDecoration;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ import java.util.List;
  * In this sample, we manipulate our global {@link ToroStrategy} to make it be able to listen to
  * our Playback order. See {@link Basic2ListFragment#onAttach(Context)}
  */
-public class Basic2ListFragment extends Fragment {
+public class Basic2ListFragment extends BaseToroFragment {
 
   protected RecyclerView mRecyclerView;
   protected RecyclerView.Adapter mAdapter;
@@ -54,43 +54,32 @@ public class Basic2ListFragment extends Fragment {
     return new Basic2ListFragment();
   }
 
-  // Restore in onDetach to prevent the playback strategy on other places.
-  private ToroStrategy strategyToRestore;
   // To tell Toro's strategy which is the Video to play first.
-  private int firstVideoPosition;
+  int firstVideoPosition;
 
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-    strategyToRestore = Toro.getStrategy();
-    Toro.setStrategy(new ToroStrategy() {
-      boolean isFirstVideoObserved = false;
+  private ToroStrategy strategy = new ToroStrategy() {
+    boolean isFirstVideoObserved = false;
+    ToroStrategy delegate = Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN;
 
-      @Override public String getDescription() {
-        return "First video plays first";
+    @Override public String getDescription() {
+      return "First video plays first";
+    }
+
+    @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
+      return delegate.findBestPlayer(candidates);
+    }
+
+    @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
+      boolean allowToPlay =
+          (isFirstVideoObserved || player.getPlayOrder() == firstVideoPosition)  //
+              && delegate.allowsToPlay(player, parent);
+      // Keep track of first video on top.
+      if (player.getPlayOrder() == firstVideoPosition) {
+        isFirstVideoObserved = true;
       }
-
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return strategyToRestore.findBestPlayer(candidates);
-      }
-
-      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        boolean allowToPlay =
-            (isFirstVideoObserved || player.getPlayOrder() == firstVideoPosition)  //
-                && strategyToRestore.allowsToPlay(player, parent);
-        // Keep track of first video on top.
-        if (player.getPlayOrder() == firstVideoPosition) {
-          isFirstVideoObserved = true;
-        }
-        return allowToPlay;
-      }
-    });
-  }
-
-  @Override public void onDetach() {
-    // Restore to old Strategy.
-    Toro.setStrategy(strategyToRestore);
-    super.onDetach();
-  }
+      return allowToPlay;
+    }
+  };
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
@@ -116,12 +105,11 @@ public class Basic2ListFragment extends Fragment {
 
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setAdapter(mAdapter);
+
+    Toro.with(getActivity()).strategy(strategy).register(mRecyclerView);
   }
 
-  @Override public void onResume() {
-    super.onResume();
-    Toro.register(mRecyclerView);
-
+  @Override protected void dispatchFragmentActivated() {
     // Trick to force RecyclerView to scroll to first Video position. Note that it will trigger the
     // scroll every time the Fragment resumes, so comment out to disable.
     mRecyclerView.postDelayed(new Runnable() {
@@ -133,8 +121,12 @@ public class Basic2ListFragment extends Fragment {
     }, 200);
   }
 
-  @Override public void onPause() {
-    super.onPause();
+  @Override protected void dispatchFragmentDeActivated() {
+
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Toro.unregister(mRecyclerView);
   }
 

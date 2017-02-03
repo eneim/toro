@@ -28,6 +28,7 @@ import android.view.ViewParent;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
+import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
@@ -47,7 +48,7 @@ public class FacebookTimelineActivity extends BaseActivity
     implements FacebookPlaylistFragment.Callback {
 
   @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
-  private TimelineAdapter adapter;
+  TimelineAdapter adapter;
   private RecyclerView.LayoutManager layoutManager;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,10 +62,10 @@ public class FacebookTimelineActivity extends BaseActivity
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
 
-    final ToroStrategy oldStrategy = Toro.getStrategy();
     final int firstVideoPosition = adapter.firstVideoPosition();
 
-    Toro.setStrategy(new ToroStrategy() {
+    ToroStrategy strategy = new ToroStrategy() {
+      ToroStrategy delegate = Toro.Strategies.FIRST_PLAYABLE_TOP_DOWN;
       boolean isFirstPlayerDone = firstVideoPosition != -1; // Valid first position only
 
       @Override public String getDescription() {
@@ -72,12 +73,12 @@ public class FacebookTimelineActivity extends BaseActivity
       }
 
       @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return oldStrategy.findBestPlayer(candidates);
+        return delegate.findBestPlayer(candidates);
       }
 
       @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
         boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == firstVideoPosition)  //
-            && oldStrategy.allowsToPlay(player, parent);
+            && delegate.allowsToPlay(player, parent);
 
         // A work-around to keep track of first video on top.
         if (player.getPlayOrder() == firstVideoPosition) {
@@ -85,7 +86,7 @@ public class FacebookTimelineActivity extends BaseActivity
         }
         return allowToPlay;
       }
-    });
+    };
 
     adapter.setOnItemClickListener(new TimelineAdapter.ItemClickListener() {
       @Override protected void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
@@ -106,9 +107,10 @@ public class FacebookTimelineActivity extends BaseActivity
         int order = viewHolder.getAdapterPosition();
         ToroPlayer player = adapter.getPlayer();
         if (player != null) {
+          PlaybackState state = adapter.getSavedState(Util.genVideoId(item.getVideoUrl(), order));
           duration = player.getDuration();
           position = player.isPlaying() ? player.getCurrentPosition()
-              : adapter.getSavedPosition(Util.genVideoId(item.getVideoUrl(), order)); // safe
+              : state != null ? state.getPosition() : 0; // safe
         }
 
         if (item != null) {
@@ -119,20 +121,25 @@ public class FacebookTimelineActivity extends BaseActivity
         }
       }
     });
+
+    Toro.with(this).strategy(strategy).register(mRecyclerView);
   }
 
   boolean isActive = false;
 
   @Override protected void onActive() {
     super.onActive();
-    Toro.register(mRecyclerView);
     isActive = true;
   }
 
   @Override protected void onInactive() {
     super.onInactive();
-    Toro.unregister(mRecyclerView);
     isActive = false;
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    Toro.unregister(mRecyclerView);
   }
 
   private static final String TAG = "Toro:FB:TL";
