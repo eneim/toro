@@ -78,6 +78,9 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     super(context, attrs, defStyleAttr);
     playerView = new SimpleExoPlayerView(context);
     addView(playerView, 0);
+
+    // hide by default
+    playerView.hideController();
   }
 
   private MediaSource mediaSource;
@@ -114,6 +117,18 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
 
   public void setPlayerCallback(PlayerCallback playerCallback) {
     this.playerCallback = playerCallback;
+  }
+
+  public void hideController() {
+    this.playerView.hideController();
+  }
+
+  public void showController() {
+    this.playerView.showController();
+  }
+
+  public void setControllerShowTimeoutMs(int millisecond) {
+    this.playerView.setControllerShowTimeoutMs(millisecond);
   }
 
   void initializePlayer() throws ParserException {
@@ -256,7 +271,9 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-    // TODO Deal with state
+    if (this.playerCallback != null) {
+      this.playerCallback.onPlayerStateChanged(playWhenReady, playbackState);
+    }
   }
 
   @Override public void onPlayerError(ExoPlaybackException e) {
@@ -311,7 +328,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
 
   // Implement player interface
 
-  private SimpleExoPlayer getPlayer() {
+  public SimpleExoPlayer getPlayer() {
     return this.playerView.getPlayer();
   }
 

@@ -66,11 +66,11 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
     helper.onRecycled();
   }
 
-  @Deprecated @CallSuper @Override public void onAttachedToWindow() {
+  @CallSuper @Override public void onAttachedToWindow() {
     helper.onAttachedToWindow();
   }
 
-  @Deprecated @CallSuper @Override public void onDetachedFromWindow() {
+  @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
   }
   // END: ToroViewHolder
@@ -177,7 +177,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public boolean isPrepared() {
-    return isPlayable;
+    return isPlayable && playerView.getPlayer() != null;
   }
 
   @Override public float visibleAreaOffset() {

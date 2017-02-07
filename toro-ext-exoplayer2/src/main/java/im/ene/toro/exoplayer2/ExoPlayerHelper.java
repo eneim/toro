@@ -50,7 +50,7 @@ import java.util.UUID;
  * Created by eneim on 2/7/17.
  */
 
-class ExoPlayerHelper {
+public class ExoPlayerHelper {
 
   static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
   static final CookieManager DEFAULT_COOKIE_MANAGER;
@@ -64,7 +64,7 @@ class ExoPlayerHelper {
     throw new RuntimeException("Meh");
   }
 
-  static MediaSource buildMediaSource(Context context, Uri uri,
+  public static MediaSource buildMediaSource(Context context, Uri uri,
       DataSource.Factory mediaDataSourceFactory, Handler mainHandler, String overrideExtension) {
     int type = Util.inferContentType(
         !TextUtils.isEmpty(overrideExtension) ? "." + overrideExtension : uri.getLastPathSegment());
