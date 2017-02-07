@@ -46,7 +46,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
-import com.google.android.exoplayer2.drm.StreamingDrmSessionManager;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -485,7 +485,7 @@ public class ExoVideoView extends FrameLayout {
     HttpMediaDrmCallback drmCallback =
         new HttpMediaDrmCallback(licenseUrl, buildHttpDataSourceFactory(false),
             keyRequestProperties);
-    return new StreamingDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
+    return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
         null, mainHandler, null /* eventLogger */);
   }
 

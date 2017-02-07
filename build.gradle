@@ -22,8 +22,8 @@ libraryVersion = '3.0.0'
   androidVersion = 25
   buildToolVersion = '25.0.2'
   supportLibraryVersion = '25.1.0'
-  exoPlayerVersion = 'r1.5.13'
-  exoPlayer2Version = 'r2.1.1'
+  exoPlayerVersion = 'r1.5.14'
+  exoPlayer2Version = 'r2.2.0'
   minSupportSDKVersion = 16
 }
 
