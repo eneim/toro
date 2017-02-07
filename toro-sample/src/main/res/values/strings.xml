@@ -11,6 +11,18 @@
     Video list auto playback made simple, specially built for RecyclerView
   </string>
 
+  <string name="basic_sample_4">
+    Basic Sample 4: Official SimpleExoPlayerView
+  </string>
+
+  <string name="basic_sample_4_description">
+    \tThis demo show the use of Official SimpleExoPlayerView.
+    It is the same with Basic sample 1, accept for the Player View in used.\n\n
+    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
+    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
+    we could reduce a lot of time on Video.
+  </string>
+
   <string name="basic_sample_1">
     Basic Sample 1: Minimal
   </string>

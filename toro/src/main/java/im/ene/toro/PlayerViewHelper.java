@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 
 /**
  * Created by eneim on 2/1/16.
@@ -45,28 +46,37 @@ public abstract class PlayerViewHelper {
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
    */
-  @Deprecated @CallSuper public void onAttachedToWindow() {
+  @CallSuper public void onAttachedToWindow() {
+    final PlayerManager manager = getPlayerManager(itemView.getParent());
+    if (manager != null && manager.getPlayer() == null) {
+      itemView.getViewTreeObserver().addOnGlobalLayoutListener( //
+          new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override public void onGlobalLayout() {
+              itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+              if (player.wantsToPlay() && Toro.getStrategy()
+                  .allowsToPlay(player, itemView.getParent())) {
+                manager.setPlayer(player);
+                if (!player.isPrepared()) {
+                  player.preparePlayer(false);
+                } else {
+                  manager.restoreVideoState(player.getMediaId());
+                  manager.startPlayback();
+                }
+              }
+            }
+          });
+    }
   }
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
-  @Deprecated @CallSuper public void onDetachedFromWindow() {
+  @CallSuper public void onDetachedFromWindow() {
+    //
   }
 
   @CallSuper public void onBound() {
-    PlayerManager manager = getPlayerManager(itemView.getParent());
-    if (manager != null && manager.getPlayer() == null) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
-        manager.setPlayer(player);
-        if (!player.isPrepared()) {
-          player.preparePlayer(false);
-        } else {
-          manager.restoreVideoState(player.getMediaId());
-          manager.startPlayback();
-        }
-      }
-    }
+    //
   }
 
   @CallSuper public void onRecycled() {

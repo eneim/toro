@@ -25,13 +25,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.advance1.Advance1Activity;
 import im.ene.toro.sample.feature.average1.Average1Activity;
 import im.ene.toro.sample.feature.basic1.Basic1Activity;
 import im.ene.toro.sample.feature.basic2.Basic2Activity;
 import im.ene.toro.sample.feature.basic3.Basic3Activity;
+import im.ene.toro.sample.feature.basic4.Basic4Activity;
 import im.ene.toro.sample.feature.extended.ExtendedListActivity;
+import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.legacy.LegacyActivity;
 
 /**
@@ -49,6 +50,10 @@ public class HomeActivity extends BaseActivity {
   }
 
   @OnClick(R.id.basic_sample_1) void openBasicSample1() {
+    startActivity(new Intent(this, Basic4Activity.class));
+  }
+
+  @OnClick(R.id.basic_sample_4) void openBasicSample4() {
     startActivity(new Intent(this, Basic1Activity.class));
   }
 

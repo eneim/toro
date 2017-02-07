@@ -46,6 +46,15 @@
         android:id="@+id/basic_sample_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:btn_subtitle="@string/basic_sample_4_description"
+        app:btn_title="@string/basic_sample_4"
+        style="@style/Toro.Widget.SampleItemButton"
+        />
+
+    <im.ene.toro.sample.widget.SampleItemButton
+        android:id="@+id/basic_sample_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:btn_image="@drawable/basic_sample_1"
         app:btn_subtitle="@string/basic_sample_1_description"
         app:btn_title="@string/basic_sample_1"

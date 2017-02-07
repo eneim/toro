@@ -37,6 +37,10 @@
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
+        android:name=".feature.basic4.Basic4Activity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
         android:name=".feature.average1.Average1Activity"/>
     <activity
         android:label="@string/activity_show_case"
