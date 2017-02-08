@@ -80,8 +80,10 @@ import java.util.UUID;
 
 /**
  * Created by eneim on 10/2/16.
+ *
+ * @deprecated from 2.2.0 Use {@link ExoPlayerView} instead.
  */
-
+@Deprecated
 public class ExoVideoView extends FrameLayout {
 
   private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;

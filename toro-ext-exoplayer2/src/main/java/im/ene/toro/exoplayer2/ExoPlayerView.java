@@ -131,16 +131,20 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     this.playerView.setControllerShowTimeoutMs(millisecond);
   }
 
-  void initializePlayer() throws ParserException {
+  public final void initializePlayer() throws ParserException {
+    if (mediaSource == null) {
+      throw new IllegalStateException("Media Source must not be null.");
+    }
+
     SimpleExoPlayer player = playerView.getPlayer();
     if (player == null) {
       UUID drmSchemeUuid =
-          mediaSource instanceof DrmMedia ? getDrmUuid(((DrmMedia) mediaSource).getType()) : null;
+          mediaSource instanceof DrmVideo ? getDrmUuid(((DrmVideo) mediaSource).getType()) : null;
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       if (drmSchemeUuid != null) {
-        String drmLicenseUrl = ((DrmMedia) mediaSource).getLicenseUrl();
+        String drmLicenseUrl = ((DrmVideo) mediaSource).getLicenseUrl();
         String[] keyRequestPropertiesArray =
-            ((DrmMedia) mediaSource).getKeyRequestPropertiesArray();
+            ((DrmVideo) mediaSource).getKeyRequestPropertiesArray();
         Map<String, String> keyRequestProperties;
         if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
           keyRequestProperties = null;
@@ -187,16 +191,31 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     }
   }
 
-  void releasePlayer() {
+  public final void releasePlayer() {
     SimpleExoPlayer player = playerView.getPlayer();
     if (player != null) {
       shouldAutoPlay = player.getPlayWhenReady();
       updateResumePosition();
+      player.removeListener(this);
       player.release();
       player = null;
       playerView.setPlayer(null); // TODO check this
       trackSelector = null;
     }
+  }
+
+  @Override protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    try {
+      initializePlayer();
+    } catch (ParserException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    releasePlayer();
   }
 
   // private methods //
@@ -247,7 +266,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   // Implement listeners
 
   @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-
+    // TODO ??
   }
 
   @Override

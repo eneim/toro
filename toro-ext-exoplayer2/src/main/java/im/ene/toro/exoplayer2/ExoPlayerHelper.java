@@ -86,8 +86,8 @@ public class ExoPlayerHelper {
     }
   }
 
-  static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(Context context, UUID uuid,
-      String licenseUrl, Map<String, String> keyRequestProperties, Handler mainHandler)
+  public static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(Context context,
+      UUID uuid, String licenseUrl, Map<String, String> keyRequestProperties, Handler mainHandler)
       throws UnsupportedDrmException {
     if (Util.SDK_INT < 18) {
       return null;
@@ -116,8 +116,7 @@ public class ExoPlayerHelper {
     return buildHttpDataSourceFactory(context, useBandwidthMeter ? BANDWIDTH_METER : null);
   }
 
-  static DataSource.Factory buildDataSourceFactory(Context context,
-      boolean useBandwidthMeter) {
+  static DataSource.Factory buildDataSourceFactory(Context context, boolean useBandwidthMeter) {
     return buildDataSourceFactory(context, useBandwidthMeter ? BANDWIDTH_METER : null);
   }
 }

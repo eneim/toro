@@ -29,7 +29,10 @@ import im.ene.toro.ToroUtil;
 
 /**
  * Created by eneim on 6/11/16.
+ *
+ * @deprecated from 2.2.0, use {@link ExoPlayerViewHolder} instead.
  */
+@Deprecated
 public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
   @NonNull protected final ExoVideoView videoView;
