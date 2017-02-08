@@ -65,11 +65,11 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
     helper.onRecycled();
   }
 
-  @Deprecated @CallSuper @Override public void onAttachedToWindow() {
+  @CallSuper @Override public void onAttachedToWindow() {
     helper.onAttachedToWindow();
   }
 
-  @Deprecated @CallSuper @Override public void onDetachedFromWindow() {
+  @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
   }
   // END: ToroViewHolder
