@@ -206,11 +206,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
 
   @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
-    try {
-      initializePlayer();
-    } catch (ParserException e) {
-      e.printStackTrace();
-    }
+    // Do nothing here.
   }
 
   @Override protected void onDetachedFromWindow() {
