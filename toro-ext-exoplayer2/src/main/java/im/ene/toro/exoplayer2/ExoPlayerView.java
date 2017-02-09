@@ -221,23 +221,11 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       updateResumePosition();
       player.removeListener(this);
       player.release();
-      player = null;
       playerView.setPlayer(null); // TODO check this
       trackSelector = null;
     }
 
     this.mediaSource = null;
-  }
-
-  @Override protected void onAttachedToWindow() {
-    super.onAttachedToWindow();
-    if (this.mediaSource != null) {
-      try {
-        initializePlayer();
-      } catch (ParserException e) {
-        e.printStackTrace();
-      }
-    }
   }
 
   @Override protected void onDetachedFromWindow() {
