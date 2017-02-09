@@ -16,6 +16,7 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
@@ -36,8 +37,13 @@
   <im.ene.toro.exoplayer2.ExoPlayerView
       android:id="@+id/video"
       android:layout_width="match_parent"
-      android:layout_height="192dp"
+      android:layout_height="wrap_content"
       android:layout_gravity="center"
+      android:minHeight="192dp"
+      app:resize_mode="fixed_width"
+      app:surface_type="texture_view"
+      app:use_artwork="true"
+      app:use_controller="false"
       />
 
 </FrameLayout>

@@ -22,10 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
-import im.ene.toro.sample.data.SimpleObject;
 import im.ene.toro.sample.data.SimpleVideoObject;
-import im.ene.toro.sample.feature.basic1.Basic1NormalViewHolder;
-import im.ene.toro.sample.feature.basic1.Basic1VideoViewHolder;
 
 /**
  * Created by eneim on 6/29/16.
@@ -67,11 +64,12 @@ public class Basic4Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
   //}
 
   @Nullable @Override protected Object getItem(int position) {
-    if (position % 3 == 0) {
-      return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
-    } else {
-      return new SimpleObject();
-    }
+    //if (position % 3 == 0) {
+    //  return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+    //} else {
+    //  return new SimpleObject();
+    //}
+    return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
   }
 
   @Override public int getItemViewType(int position) {
