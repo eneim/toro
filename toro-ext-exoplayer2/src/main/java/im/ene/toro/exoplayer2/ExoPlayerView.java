@@ -162,12 +162,12 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     SimpleExoPlayer player = playerView.getPlayer();
     if (player == null) {
       UUID drmSchemeUuid =
-          mediaSource instanceof DrmVideo ? getDrmUuid(((DrmVideo) mediaSource).getType()) : null;
+          mediaSource instanceof DrmMedia ? getDrmUuid(((DrmMedia) mediaSource).getType()) : null;
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       if (drmSchemeUuid != null) {
-        String drmLicenseUrl = ((DrmVideo) mediaSource).getLicenseUrl();
+        String drmLicenseUrl = ((DrmMedia) mediaSource).getLicenseUrl();
         String[] keyRequestPropertiesArray =
-            ((DrmVideo) mediaSource).getKeyRequestPropertiesArray();
+            ((DrmMedia) mediaSource).getKeyRequestPropertiesArray();
         Map<String, String> keyRequestProperties;
         if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
           keyRequestProperties = null;

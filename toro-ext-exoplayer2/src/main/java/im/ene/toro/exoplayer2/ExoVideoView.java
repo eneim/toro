@@ -353,11 +353,11 @@ public class ExoVideoView extends FrameLayout {
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       try {
         UUID drmSchemeUuid =
-            this.media instanceof DrmVideo ? getDrmUuid(((DrmVideo) this.media).getType()) : null;
+            this.media instanceof DrmMedia ? getDrmUuid(((DrmMedia) this.media).getType()) : null;
         if (drmSchemeUuid != null) {
-          String drmLicenseUrl = ((DrmVideo) this.media).getLicenseUrl();
+          String drmLicenseUrl = ((DrmMedia) this.media).getLicenseUrl();
           String[] keyRequestPropertiesArray =
-              ((DrmVideo) this.media).getKeyRequestPropertiesArray();
+              ((DrmMedia) this.media).getKeyRequestPropertiesArray();
           Map<String, String> keyRequestProperties;
           if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
             keyRequestProperties = null;
