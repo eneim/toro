@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2016 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,14 @@
 
 package im.ene.toro.exoplayer2;
 
-import android.support.annotation.NonNull;
-import com.google.android.exoplayer2.source.MediaSource;
-
 /**
- * Created by eneim on 2/7/17.
+ * Created by eneim on 10/2/16.
  */
+public interface DrmMedia {
 
-public abstract class DrmMedia extends MediaBundle {
+  String getType();
 
-  public DrmMedia(@NonNull MediaSource mediaSource) {
-    super(mediaSource);
-  }
+  String getLicenseUrl();
 
-  public abstract String getType();
-
-  public abstract String getLicenseUrl();
-
-  public abstract String[] getKeyRequestPropertiesArray();
+  String[] getKeyRequestPropertiesArray();
 }

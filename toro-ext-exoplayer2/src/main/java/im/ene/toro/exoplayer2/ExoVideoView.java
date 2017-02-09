@@ -80,8 +80,10 @@ import java.util.UUID;
 
 /**
  * Created by eneim on 10/2/16.
+ *
+ * @deprecated from 2.2.0 Use {@link ExoPlayerView} instead.
  */
-
+@Deprecated
 public class ExoVideoView extends FrameLayout {
 
   private static final float MAX_ASPECT_RATIO_DEFORMATION_FRACTION = 0.01f;
@@ -351,11 +353,11 @@ public class ExoVideoView extends FrameLayout {
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
       try {
         UUID drmSchemeUuid =
-            this.media instanceof DrmVideo ? getDrmUuid(((DrmVideo) this.media).getType()) : null;
+            this.media instanceof DrmMedia ? getDrmUuid(((DrmMedia) this.media).getType()) : null;
         if (drmSchemeUuid != null) {
-          String drmLicenseUrl = ((DrmVideo) this.media).getLicenseUrl();
+          String drmLicenseUrl = ((DrmMedia) this.media).getLicenseUrl();
           String[] keyRequestPropertiesArray =
-              ((DrmVideo) this.media).getKeyRequestPropertiesArray();
+              ((DrmMedia) this.media).getKeyRequestPropertiesArray();
           Map<String, String> keyRequestProperties;
           if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
             keyRequestProperties = null;

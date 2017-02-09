@@ -101,6 +101,7 @@ dependencies {
 
   // compile project(path: ':toro-ext-exoplayer')
   compile project(path: ':toro-extended')
+  compile project(path: ':toro-ext-mediaplayer')
   // compile "im.ene.toro2:toro-extended:2.1.0-SNAPSHOT"
 
   compile ('com.azoft.carousellayoutmanager:carousel:1.2.1', {

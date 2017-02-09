@@ -17,6 +17,7 @@
 package im.ene.toro.exoplayer2;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
@@ -45,6 +46,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
@@ -76,11 +78,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   public ExoPlayerView(@NonNull Context context, @Nullable AttributeSet attrs,
       @AttrRes int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    playerView = new SimpleExoPlayerView(context);
+    playerView = new SimpleExoPlayerView(context, attrs, defStyleAttr);
     addView(playerView, 0);
-
-    // hide by default
-    playerView.hideController();
   }
 
   private MediaSource mediaSource;
@@ -131,7 +130,35 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     this.playerView.setControllerShowTimeoutMs(millisecond);
   }
 
-  void initializePlayer() throws ParserException {
+  public void setResizeMode(@AspectRatioFrameLayout.ResizeMode int resizeMode) {
+    this.playerView.setResizeMode(resizeMode);
+  }
+
+  public void setUseArtwork(boolean useArtwork) {
+    playerView.setUseArtwork(useArtwork);
+  }
+
+  public Bitmap getDefaultArtwork() {
+    return playerView.getDefaultArtwork();
+  }
+
+  public void setDefaultArtwork(Bitmap defaultArtwork) {
+    playerView.setDefaultArtwork(defaultArtwork);
+  }
+
+  public void setUseController(boolean useController) {
+    playerView.setUseController(useController);
+  }
+
+  public boolean getUseController() {
+    return playerView.getUseController();
+  }
+
+  public final void initializePlayer() throws ParserException {
+    if (mediaSource == null) {
+      throw new IllegalStateException("Media Source must not be null.");
+    }
+
     SimpleExoPlayer player = playerView.getPlayer();
     if (player == null) {
       UUID drmSchemeUuid =
@@ -187,16 +214,23 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     }
   }
 
-  void releasePlayer() {
+  public final void releasePlayer() {
     SimpleExoPlayer player = playerView.getPlayer();
     if (player != null) {
       shouldAutoPlay = player.getPlayWhenReady();
       updateResumePosition();
+      player.removeListener(this);
       player.release();
-      player = null;
       playerView.setPlayer(null); // TODO check this
       trackSelector = null;
     }
+
+    this.mediaSource = null;
+  }
+
+  @Override protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    releasePlayer();
   }
 
   // private methods //
@@ -247,7 +281,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   // Implement listeners
 
   @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-
+    // TODO ??
   }
 
   @Override
