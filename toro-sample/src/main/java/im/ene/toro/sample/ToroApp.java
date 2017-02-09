@@ -34,13 +34,10 @@ public class ToroApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return;
+    if (BuildConfig.DEBUG) {
+      initLeakCanary();
     }
-    LeakCanary.install(this);
-
+    
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     Toro.init(this);
     sApp = this;
@@ -56,6 +53,15 @@ public class ToroApp extends Application {
 
   public static ToroApp getApp() {
     return sApp;
+  }
+
+  private void initLeakCanary() {
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      // You should not init your app in this process.
+      return;
+    }
+    LeakCanary.install(this);
   }
 
   /* Preference Keys */
