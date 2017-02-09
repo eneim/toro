@@ -27,6 +27,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import im.ene.toro.sample.R;
 
@@ -75,8 +76,14 @@ public class SampleItemButton extends ForegroundLinearLayout {
 
     if (imageResource != 0) {
       demoImageView.setVisibility(VISIBLE);
-      GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(demoImageView);
-      Glide.with(context).load(imageResource).crossFade().into(imageViewTarget);
+      GlideDrawableImageViewTarget imageViewTarget =
+          new GlideDrawableImageViewTarget(demoImageView);
+      Glide.with(context)
+          .load(imageResource)
+          .diskCacheStrategy(DiskCacheStrategy.RESULT)
+          .skipMemoryCache(true)
+          .crossFade()
+          .into(imageViewTarget);
     } else {
       demoImageView.setVisibility(GONE);
     }
