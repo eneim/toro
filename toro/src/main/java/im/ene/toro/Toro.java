@@ -177,7 +177,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     sInstance.managers.put(view, playerManager);
     // setup new scroll listener
-    // final ToroScrollListener listener = new ToroScrollListener(playerManager);
     OnScrollListenerImpl listener = new OnScrollListenerImpl();
     view.addOnScrollListener(listener);
     // Save to Cache
@@ -222,6 +221,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (player.isPlaying()) {
         manager.pausePlayback();
       }
+
+      player.releasePlayer();
     }
 
     manager.onUnregistered();
@@ -261,7 +262,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     } else {
       // Don't allow to unrest if Toro has not been in rested state. Be careful.
       if (getStrategy() != REST) {
-        throw new IllegalStateException("Toro has already waken up.");
+        throw new IllegalStateException("Toro has already resumed.");
       }
 
       if (cachedStrategy != null) { // Actually, cachedStrategy would not be null here.

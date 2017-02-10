@@ -58,7 +58,6 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
       }
     }
 
-    ToroPlayer candidate;
     int firstPosition = RecyclerView.NO_POSITION;
     int lastPosition = RecyclerView.NO_POSITION;
 
@@ -71,7 +70,7 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
       StaggeredGridLayoutManager layoutManager =
           (StaggeredGridLayoutManager) parent.getLayoutManager();
 
-      // StaggeredGridLayoutManager can have many rows ...
+      // StaggeredGridLayoutManager can have many rows or columns ...
       int[] firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null);
       int[] lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null);
 
@@ -90,11 +89,11 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
     if (firstPosition <= lastPosition /* protect the 'for' loop */ &&  //
         (firstPosition != RecyclerView.NO_POSITION || lastPosition != RecyclerView.NO_POSITION)) {
       for (int i = firstPosition; i <= lastPosition; i++) {
-        // Detected a view holder for video player
+        // Detected a view holder for media player
         RecyclerView.ViewHolder viewHolder = parent.findViewHolderForAdapterPosition(i);
         if (viewHolder != null && viewHolder instanceof ToroPlayer) {
-          candidate = (ToroPlayer) viewHolder;
-          // check candidate's view position
+          ToroPlayer candidate = (ToroPlayer) viewHolder;
+          // check candidate's condition
           if (candidate.wantsToPlay() && Toro.getStrategy().allowsToPlay(candidate, parent)) {
             // Have a new candidate who can play
             if (!candidates.contains(candidate)) {
