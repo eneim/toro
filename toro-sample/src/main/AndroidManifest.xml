@@ -72,7 +72,7 @@
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".v3.MediaListActivity">
+        android:targetActivity=".feature.home.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

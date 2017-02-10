@@ -30,10 +30,10 @@ import im.ene.toro.sample.feature.average1.Average1Activity;
 import im.ene.toro.sample.feature.basic1.Basic1Activity;
 import im.ene.toro.sample.feature.basic2.Basic2Activity;
 import im.ene.toro.sample.feature.basic3.Basic3Activity;
-import im.ene.toro.sample.feature.basic4.Basic4Activity;
 import im.ene.toro.sample.feature.extended.ExtendedListActivity;
 import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.legacy.LegacyActivity;
+import im.ene.toro.sample.v3.MediaListActivity;
 
 /**
  * Created by eneim on 6/30/16.
@@ -50,7 +50,7 @@ public class HomeActivity extends BaseActivity {
   }
 
   @OnClick(R.id.basic_sample_1) void openBasicSample1() {
-    startActivity(new Intent(this, Basic4Activity.class));
+    startActivity(new Intent(this, MediaListActivity.class));
   }
 
   @OnClick(R.id.basic_sample_4) void openBasicSample4() {
