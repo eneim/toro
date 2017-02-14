@@ -102,6 +102,10 @@ public class FacebookTimelineActivity extends BaseActivity
 
       @Override protected void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
           TimelineItem.VideoItem item) {
+        if (item == null) {
+          return;
+        }
+
         long duration = C.LENGTH_UNSET;
         long position = C.POSITION_UNSET;
         int order = viewHolder.getAdapterPosition();
@@ -113,12 +117,10 @@ public class FacebookTimelineActivity extends BaseActivity
               : state != null ? state.getPosition() : 0; // safe
         }
 
-        if (item != null) {
-          FacebookPlaylistFragment playlistFragment =
-              FacebookPlaylistFragment.newInstance(item, position, duration, order);
-          playlistFragment.show(getSupportFragmentManager(),
-              FacebookPlaylistFragment.class.getSimpleName());
-        }
+        FacebookPlaylistFragment playlistFragment =
+            FacebookPlaylistFragment.newInstance(item, position, duration, order);
+        playlistFragment.show(getSupportFragmentManager(),
+            FacebookPlaylistFragment.class.getSimpleName());
       }
     });
 

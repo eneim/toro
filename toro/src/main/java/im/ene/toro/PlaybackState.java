@@ -29,7 +29,7 @@ public final class PlaybackState {
   private Long position;
 
   PlaybackState(String mediaId) {
-    this.mediaId = mediaId;
+    this(mediaId, null, null);
   }
 
   PlaybackState(String mediaId, Long duration, Long position) {

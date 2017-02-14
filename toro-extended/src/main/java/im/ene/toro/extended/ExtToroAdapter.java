@@ -81,4 +81,8 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
     }
   }
 
+  @Override public void remove() throws Exception {
+    super.remove();
+    this.parent = null;
+  }
 }
