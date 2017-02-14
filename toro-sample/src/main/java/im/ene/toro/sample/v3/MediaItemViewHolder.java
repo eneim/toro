@@ -44,6 +44,11 @@ public class MediaItemViewHolder extends ExoPlayerViewHolder {
     super(itemView);
   }
 
+  @Override public void setOnItemClickListener(View.OnClickListener listener) {
+    super.setOnItemClickListener(listener);
+    this.playerView.setOnClickListener(listener);
+  }
+
   @Override protected ExoPlayerView findVideoView(View itemView) {
     return (ExoPlayerView) itemView.findViewById(R.id.video);
   }

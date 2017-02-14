@@ -28,11 +28,11 @@ public final class PlaybackState {
 
   private Long position;
 
-  PlaybackState(String mediaId) {
+  public PlaybackState(String mediaId) {
     this(mediaId, null, null);
   }
 
-  PlaybackState(String mediaId, Long duration, Long position) {
+  public PlaybackState(String mediaId, Long duration, Long position) {
     this.mediaId = mediaId;
     this.duration = duration;
     this.position = position;

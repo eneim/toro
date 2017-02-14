@@ -63,16 +63,22 @@
         android:name=".feature.extended.ExtendedListActivity"/>
 
     <activity
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".v3.MediaListActivity">
     </activity>
 
+    <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".v3.MediaPlayerActivity">
+    </activity>
+
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".feature.home.HomeActivity">
+        android:targetActivity=".v3.MediaListActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

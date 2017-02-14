@@ -228,6 +228,14 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     this.mediaSource = null;
   }
 
+  public long getResumePosition() {
+    return resumePosition;
+  }
+
+  public void setResumePosition(long resumePosition) {
+    this.resumePosition = resumePosition;
+  }
+
   @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     releasePlayer();

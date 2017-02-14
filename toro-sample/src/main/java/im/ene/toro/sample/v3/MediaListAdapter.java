@@ -17,10 +17,12 @@
 package im.ene.toro.sample.v3;
 
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.BaseAdapter;
+import im.ene.toro.PlaybackState;
 import im.ene.toro.sample.data.SimpleVideoObject;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,7 +34,13 @@ import java.util.Map;
 public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
 
   // cache data, mimic a data source
-  private Map<Integer, SimpleVideoObject> items = new LinkedHashMap<>();
+  private final Map<Integer, SimpleVideoObject> items = new LinkedHashMap<>();
+
+  @SuppressWarnings("WeakerAccess") ItemClickHandler itemClickHandler;
+
+  public void setItemClickHandler(ItemClickHandler itemClickHandler) {
+    this.itemClickHandler = itemClickHandler;
+  }
 
   @Nullable @Override protected Object getItem(int position) {
     SimpleVideoObject item = items.get(position);
@@ -47,10 +55,37 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
   @Override public MediaItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(MediaItemViewHolder.LAYOUT_RES, parent, false);
-    return new MediaItemViewHolder(view);
+    final MediaItemViewHolder viewHolder = new MediaItemViewHolder(view);
+    viewHolder.setOnItemClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        // open full screen player?
+        int pos = viewHolder.getAdapterPosition();
+        if (pos != RecyclerView.NO_POSITION && itemClickHandler != null) {
+          itemClickHandler.onItemClick(MediaListAdapter.this, viewHolder, v, pos, getItemId(pos));
+        }
+      }
+    });
+    return viewHolder;
   }
 
   @Override public int getItemCount() {
     return Integer.MAX_VALUE;
+  }
+
+  static abstract class ItemClickHandler implements OnItemClickListener {
+
+    public abstract void openVideoPlayer(View view, SimpleVideoObject source, PlaybackState state);
+
+    @Override
+    public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder,
+        View view, int position, long itemId) {
+      if (viewHolder instanceof MediaItemViewHolder) {
+        MediaItemViewHolder vh = (MediaItemViewHolder) viewHolder;
+        PlaybackState state =
+            new PlaybackState(vh.getMediaId(), vh.getDuration(), vh.getCurrentPosition());
+        openVideoPlayer(view, (SimpleVideoObject) ((MediaListAdapter) adapter).getItem(position),
+            state);
+      }
+    }
   }
 }
