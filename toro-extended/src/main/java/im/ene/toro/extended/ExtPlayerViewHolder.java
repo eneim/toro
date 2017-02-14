@@ -34,7 +34,7 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @NonNull protected final ExoPlayerView playerView;
   protected final ExtPlayerViewHelper helper;
-  private boolean mPlayable = true; // normally true
+  private boolean playable = true; // normally true
 
   public ExtPlayerViewHolder(View itemView) {
     super(itemView);
@@ -98,11 +98,11 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @Override public boolean wantsToPlay() {
     // Default implementation
-    return visibleAreaOffset() >= 0.75 && mPlayable;
+    return visibleAreaOffset() >= 0.75 && playable;
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    mPlayable = true;
+    playable = true;
   }
 
   @CallSuper @Override public void onActivityActive() {
@@ -138,12 +138,12 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public void onPlaybackCompleted() {
-    mPlayable = false;
+    playable = false;
     this.playerView.stop();
   }
 
   @Override public boolean isPrepared() {
-    return mPlayable && playerView.getPlayer() != null;
+    return playable && playerView.getPlayer() != null;
   }
 
   @Override public float visibleAreaOffset() {
@@ -155,7 +155,7 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    mPlayable = false;
+    playable = false;
     return true;
   }
 
