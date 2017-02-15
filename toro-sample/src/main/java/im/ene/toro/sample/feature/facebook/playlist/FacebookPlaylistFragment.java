@@ -33,7 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
@@ -128,7 +128,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
     Toro.setStrategy(strategyToRestore);
   }
 
-  @Bind(R.id.recycler_view) RecyclerView recyclerView;
+  @BindView(R.id.recycler_view) RecyclerView recyclerView;
   private MoreVideoRepo videoRepo;
   private MoreVideosAdapter adapter;
 

@@ -23,7 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
@@ -40,7 +40,7 @@ public class MediaListActivity extends BaseActivity {
   static final int REQUEST_CODE_POSITION = 100;
   PlaybackState playbackState;  // save the latest playback state
 
-  @Bind(R.id.recycler_view) RecyclerView recyclerView;
+  @BindView(R.id.recycler_view) RecyclerView recyclerView;
   MediaListAdapter adapter;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {

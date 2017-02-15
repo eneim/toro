@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
@@ -47,7 +47,7 @@ import java.util.List;
 public class FacebookTimelineActivity extends BaseActivity
     implements FacebookPlaylistFragment.Callback {
 
-  @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
+  @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
   private RecyclerView.LayoutManager layoutManager;
 

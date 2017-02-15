@@ -20,8 +20,9 @@
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name="im.ene.toro.sample.feature.home.HomeActivity"
+        android:name=".feature.home.HomeActivity"
         android:theme="@style/AppTheme.NoActionBar"/>
+
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -78,7 +79,7 @@
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".v3.MediaListActivity">
+        android:targetActivity=".feature.home.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

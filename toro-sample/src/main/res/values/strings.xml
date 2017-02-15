@@ -16,11 +16,8 @@
   </string>
 
   <string name="basic_sample_4_description">
-    \tThis demo show the use of Official SimpleExoPlayerView.
-    It is the same with Basic sample 1, accept for the Player View in used.\n\n
-    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
-    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
-    we could reduce a lot of time on Video.
+    This demo show the use of Official SimpleExoPlayerView.
+    It is the same with Basic sample 1, accept for the Player View in used.
   </string>
 
   <string name="basic_sample_1">
@@ -28,11 +25,8 @@
   </string>
 
   <string name="basic_sample_1_description">
-    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
-    add Toro support into the App.\n\n
-    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
-    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
-    we could reduce a lot of time on Video.
+    In this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    add Toro support into the App.
   </string>
 
   <string name="basic_sample_2">
@@ -40,7 +34,7 @@
   </string>
 
   <string name="basic_sample_2_description">
-    \tThis basic example is similar to Basic Sample 1. Additionally, we have a feature to tell Toro
+    This basic example is similar to Basic Sample 1. Additionally, we have a feature to tell Toro
     which is the first Video we want to play.
     Until that Video is prepared and start playing, no other Videos is allowed to play.
   </string>
@@ -50,10 +44,10 @@
   </string>
 
   <string name="basic_sample_3_description">
-    \tThis basic example is similar to Basic Sample 1. Additionally, we enable interaction with Video View.
+    This basic example is similar to Basic Sample 1 plus interaction with Video View.
     On single click, we temporarily pause the playback and show an AlertDialog, after we close that dialog, we resume the playback.
     We also provide custom feedback on long press too.
-    \n\nFurthermore, we add the ability to selective react to click event: we have different response on the View user clicked.
+    \n\nFurthermore, we add the ability to selective react to click event: we have different responses on the View user clicked.
   </string>
 
   <string name="average_sample_1">
@@ -61,7 +55,7 @@
   </string>
 
   <string name="average_sample_1_description">
-    \tThis example is similar to Basic Sample 1. But we add more complicated state listening event.
+    This example is similar to Basic Sample 1. But we add more complicated state listening event.
     So that we could see how ToroPlayer\'s callback works in practice.
   </string>
 
@@ -70,16 +64,16 @@
   </string>
 
   <string name="advance_sample_1_description">
-    \tThis example is similar to Average Sample 1. This time, we use a custom LayoutManager
+    This example is similar to Average Sample 1. This time, we use a custom LayoutManager
     (here I use CarouselLayoutManager) and implement ToroLayoutManager to get native support from Toro.
   </string>
 
-  <string name="custom_sample_1">
+  <string name="facebook_sample_1">
     Custom Sample 1: Facebook + DialogFragment
   </string>
 
-  <string name="custom_sample_1_description">
-    \tThis example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
+  <string name="facebook_sample_1_description">
+    This example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
     A click event to a Video will bring a \'Video list\' where requested Video is played as well as
     many suggested Videos.
   </string>
@@ -89,12 +83,9 @@
   </string>
 
   <string name="legacy_sample_1_description">
-    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    In this sample, we learn how to implement very simple Video ViewHolder and Video list and
     add Toro support into the App.\n\n
-    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
-    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
-    we could reduce a lot of time on Video.\n\n
-    \tThis sample use the legacy VideoView.
+    This sample use the legacy VideoView.
   </string>
 
   <string name="extended_sample_1">
@@ -102,9 +93,17 @@
   </string>
 
   <string name="extended_sample_1_description">
-    \tIn this sample, we learn how to use the extended benefit or Toro.\n\n
-    \tThe list will automatically scroll to next Player and trigger the playback.\n\n
-    \tA long click is handled to support more ideas in your Application.
+    In this sample, we learn how to use the extended benefit or Toro.\n\n
+    The list will automatically scroll to next Player and trigger the playback.\n\n
+    A long click is handled to support more ideas in your Application.
+  </string>
+
+  <string name="media_list_1">
+    Toro Basic Sample 5: Minimal + External Player
+  </string>
+
+  <string name="media_list_1_description">
+    Another sample with minimal implementation, with click to open external Player.
   </string>
 
   <string name="title_activity_main">MainActivity</string>
