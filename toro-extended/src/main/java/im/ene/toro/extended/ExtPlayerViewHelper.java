@@ -50,7 +50,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
         case THIS_PLAYER:
           // immediately repeat
           if (manager != null) {
-            manager.restoreVideoState(player.getMediaId());
+            manager.restorePlaybackState(player.getMediaId());
             manager.startPlayback();
           }
           break;

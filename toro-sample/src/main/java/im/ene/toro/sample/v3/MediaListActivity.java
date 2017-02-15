@@ -77,7 +77,7 @@ public class MediaListActivity extends BaseActivity {
       if (requestCode == REQUEST_CODE_POSITION && this.playbackState != null) {
         long position = data.getLongExtra(MediaPlayerActivity.EXTRA_INIT_POSITION, 0);
         this.playbackState.setPosition(position);
-        adapter.saveVideoState(playbackState.getMediaId(), playbackState.getPosition(),
+        adapter.savePlaybackState(playbackState.getMediaId(), playbackState.getPosition(),
             playbackState.getDuration());
       }
     }

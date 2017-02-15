@@ -68,6 +68,18 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
     delegate.saveVideoState(videoId, position, duration);
   }
 
+  @Override public void savePlaybackState(String mediaId, @Nullable Long position, long duration) {
+    delegate.savePlaybackState(mediaId, position, duration);
+  }
+
+  @Override public void restorePlaybackState(String mediaId) {
+    delegate.restorePlaybackState(mediaId);
+  }
+
+  @Nullable @Override public PlaybackState getPlaybackState(String mediaId) {
+    return delegate.getPlaybackState(mediaId);
+  }
+
   @Override public void restoreVideoState(String videoId) {
     delegate.restoreVideoState(videoId);
   }

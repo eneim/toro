@@ -193,7 +193,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   protected void dispatchFragmentActivated() {
     Toro.register(recyclerView);
-    adapter.saveVideoState(Util.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
+    adapter.savePlaybackState(Util.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
   }
 
   protected void dispatchFragmentDeActivated() {
@@ -220,7 +220,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @Override public void onDetach() {
     if (callback != null) {
-      PlaybackState state = adapter.getSavedState(Util.genVideoId(baseItem.getVideoUrl(), 0));
+      PlaybackState state = adapter.getPlaybackState(Util.genVideoId(baseItem.getVideoUrl(), 0));
       callback.onPlaylistDetached(this.baseItem,
           // Get saved position of first Item in this list, pass it to origin item at "baseOrder"
           state != null ? state.getPosition() : 0, baseOrder);

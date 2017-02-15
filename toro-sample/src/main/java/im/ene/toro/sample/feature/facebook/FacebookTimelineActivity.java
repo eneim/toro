@@ -111,7 +111,7 @@ public class FacebookTimelineActivity extends BaseActivity
         int order = viewHolder.getAdapterPosition();
         ToroPlayer player = adapter.getPlayer();
         if (player != null) {
-          PlaybackState state = adapter.getSavedState(Util.genVideoId(item.getVideoUrl(), order));
+          PlaybackState state = adapter.getPlaybackState(Util.genVideoId(item.getVideoUrl(), order));
           duration = player.getDuration();
           position = player.isPlaying() ? player.getCurrentPosition()
               : state != null ? state.getPosition() : 0; // safe
@@ -156,7 +156,7 @@ public class FacebookTimelineActivity extends BaseActivity
     Log.i(TAG,
         "onPlaylistDetached() called with: position = [" + position + "], order = [" + order + "]");
     if (adapter.getPlayer() != null) {
-      adapter.saveVideoState(Util.genVideoId(baseItem.getVideoUrl(), order), position,
+      adapter.savePlaybackState(Util.genVideoId(baseItem.getVideoUrl(), order), position,
           adapter.getPlayer().getDuration());
     }
 

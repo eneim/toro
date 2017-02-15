@@ -188,14 +188,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     // in case the Manager/Adapter has a preset Player and a saved playback state
     // (either coming back from Stopped state or a predefined one)
     if (playerManager.getPlayer() != null
-        && playerManager.getSavedState(playerManager.getPlayer().getMediaId()) != null) {
+        && playerManager.getPlaybackState(playerManager.getPlayer().getMediaId()) != null) {
       ToroPlayer player = playerManager.getPlayer();
       if (player.wantsToPlay() && player.wantsToPlay() && //
           Toro.getStrategy().allowsToPlay(player, view)) {
         if (!player.isPrepared()) {
           player.preparePlayer(false);
         } else if (!player.isPlaying()) {
-          playerManager.restoreVideoState(player.getMediaId());
+          playerManager.restorePlaybackState(player.getMediaId());
           playerManager.startPlayback();
         }
       }
@@ -216,7 +216,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     PlayerManager manager = sInstance.managers.remove(view);
     if (manager.getPlayer() != null) {
       final ToroPlayer player = manager.getPlayer();
-      manager.saveVideoState(player.getMediaId(), //
+      manager.savePlaybackState(player.getMediaId(), //
           player.getCurrentPosition(), player.getDuration());
       if (player.isPlaying()) {
         manager.pausePlayback();
@@ -506,7 +506,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (player.equals(manager.getPlayer())) {
       if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
         // player.isPlaying() is always false here
-        manager.restoreVideoState(player.getMediaId());
+        manager.restorePlaybackState(player.getMediaId());
         manager.startPlayback();
       }
     } else {
@@ -516,7 +516,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
           manager.setPlayer(player);
           // player.isPrepared() is always true here
-          manager.restoreVideoState(player.getMediaId());
+          manager.restorePlaybackState(player.getMediaId());
           manager.startPlayback();
         }
       }
@@ -535,14 +535,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     // Update video position as 0
     if (manager != null) {
-      manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
+      manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
     }
   }
 
   boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {
     for (PlayerManager manager : sInstance.managers.values()) {
       if (player.equals(manager.getPlayer())) {
-        manager.saveVideoState(player.getMediaId(), 0L, player.getDuration());
+        manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
         manager.pausePlayback();
       }
     }
@@ -557,7 +557,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         PlayerManager manager = entry.getValue();
         if (manager.getPlayer() != null) {
           if (manager.getPlayer().isPlaying()) {
-            manager.saveVideoState(manager.getPlayer().getMediaId(),
+            manager.savePlaybackState(manager.getPlayer().getMediaId(),
                 manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
             manager.pausePlayback();
           }
@@ -577,7 +577,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
           if (!manager.getPlayer().isPrepared()) {
             manager.getPlayer().preparePlayer(false);
           } else {
-            manager.restoreVideoState(manager.getPlayer().getMediaId());
+            manager.restorePlaybackState(manager.getPlayer().getMediaId());
             manager.startPlayback();
           }
         }
