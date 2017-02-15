@@ -316,19 +316,23 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
-    for (PlayerManager manager : managers.values()) {
-      try {
-        manager.remove();
-      } catch (Exception e) {
-        e.printStackTrace();
+    for (Map.Entry<RecyclerView, PlayerManager> entry : managers.entrySet()) {
+      if (entry.getKey().getContext() == activity) {
+        try {
+          entry.getValue().remove();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
 
-    for (OnScrollListenerImpl listener : listeners.values()) {
-      try {
-        listener.remove();
-      } catch (Exception e) {
-        e.printStackTrace();
+    for (Map.Entry<RecyclerView, OnScrollListenerImpl> entry : listeners.entrySet()) {
+      if (entry.getKey().getContext() == activity) {
+        try {
+          entry.getValue().remove();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }

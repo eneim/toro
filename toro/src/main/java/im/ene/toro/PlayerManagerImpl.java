@@ -111,5 +111,6 @@ final class PlayerManagerImpl implements PlayerManager {
 
   @Override public void remove() throws Exception {
     playbackStates.clear();
+    setPlayer(null);  // TODO verify the correctness, or make this place better
   }
 }

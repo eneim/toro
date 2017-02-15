@@ -32,7 +32,6 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
   }
 
   @Override public void remove() throws Exception {
-    this.delegate.setPlayer(null);
     this.delegate.remove();
   }
 
