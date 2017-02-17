@@ -36,13 +36,13 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @NonNull protected final ExoPlayerView playerView;
   protected final ExoPlayerViewHelper helper;
-  private boolean isPlayable = false; // normally false
+  private boolean playable = false; // normally false
 
   public ExoPlayerViewHolder(View itemView) {
     super(itemView);
     playerView = findVideoView(itemView);
     if (playerView == null) {
-      throw new NullPointerException("A valid ExoVideoView is required.");
+      throw new NullPointerException("A valid ExoPlayerView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
   }
@@ -52,8 +52,6 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   protected abstract MediaSource getMediaSource();
 
   protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
-
-  // BEGIN: ToroViewHolder
 
   @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
     playerView.setPlayerCallback(helper);
@@ -73,9 +71,6 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
   }
-  // END: ToroViewHolder
-
-  // BEGIN: ToroPlayer
 
   @CallSuper @Override public void onActivityActive() {
 
@@ -95,7 +90,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @Override public void releasePlayer() {
     playerView.releasePlayer();
-    isPlayable = false;
+    playable = false;
   }
 
   // Client could override this method for better practice
@@ -129,7 +124,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    isPlayable = true;
+    playable = true;
   }
 
   @Override public int getBufferPercentage() {
@@ -137,7 +132,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    isPlayable = false;
+    playable = false;
     return true;
   }
 
@@ -170,16 +165,15 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public void onPlaybackCompleted() {
-    isPlayable = false;
+    playable = false;
     this.playerView.stop();
   }
 
   @Override public boolean isPrepared() {
-    return isPlayable && playerView.getPlayer() != null;
+    return playable && playerView.getPlayer() != null;
   }
 
   @Override public float visibleAreaOffset() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
-  // END: ToroPlayer
 }
