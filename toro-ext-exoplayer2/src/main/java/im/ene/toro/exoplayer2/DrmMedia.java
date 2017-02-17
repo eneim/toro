@@ -19,8 +19,7 @@ package im.ene.toro.exoplayer2;
 /**
  * Created by eneim on 10/2/16.
  */
-
-public interface DrmVideo {
+public interface DrmMedia {
 
   String getType();
 

@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,7 +29,6 @@ import android.view.ViewGroup;
 import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.widget.DividerItemDecoration;
 
 /**
  * Created by eneim on 6/30/16.
@@ -61,14 +61,21 @@ public class Basic1ListFragment extends BaseToroFragment {
     adapter = getAdapter();
     recyclerView.setHasFixedSize(false);
     recyclerView.setAdapter(adapter);
-  }
 
-  @Override protected void dispatchFragmentActivated() {
     Toro.register(recyclerView);
   }
 
-  @Override protected void dispatchFragmentDeActivated() {
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Toro.unregister(recyclerView);
+  }
+
+  @Override protected void dispatchFragmentActivated() {
+    // Do nothing
+  }
+
+  @Override protected void dispatchFragmentDeActivated() {
+    // Do nothing
   }
 
   RecyclerView.LayoutManager getLayoutManager() {

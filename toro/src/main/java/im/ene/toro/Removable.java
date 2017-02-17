@@ -24,5 +24,5 @@ package im.ene.toro;
  */
 public interface Removable {
 
-  void remove();
+  void remove() throws Exception;
 }

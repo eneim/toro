@@ -17,24 +17,35 @@
 package im.ene.toro.extended;
 
 import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 /**
  * Created by eneim on 10/23/16.
  */
 
-public class SnapToTopGridLayoutManager extends SnapToTopLinearLayoutManager {
-
-  public SnapToTopGridLayoutManager(Context context) {
-    super(context);
-  }
-
-  public SnapToTopGridLayoutManager(Context context, int orientation, boolean reverseLayout) {
-    super(context, orientation, reverseLayout);
-  }
+public class SnapToTopGridLayoutManager extends GridLayoutManager {
 
   public SnapToTopGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr,
       int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
+  }
+
+  public SnapToTopGridLayoutManager(Context context, int spanCount) {
+    super(context, spanCount);
+  }
+
+  public SnapToTopGridLayoutManager(Context context, int spanCount, int orientation,
+      boolean reverseLayout) {
+    super(context, spanCount, orientation, reverseLayout);
+  }
+
+  @Override public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
+      int position) {
+    RecyclerView.SmoothScroller smoothScroller =
+        new TopSnappedSmoothScroller(recyclerView.getContext());
+    smoothScroller.setTargetPosition(position);
+    startSmoothScroll(smoothScroller);
   }
 }

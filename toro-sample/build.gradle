@@ -62,21 +62,15 @@ android {
                             youtube_api_key: "${TORO_SAMPLE_YOUTUBE_API_KEY}"]
 
     vectorDrawables.useSupportLibrary = true
-    multiDexEnabled true
+
+    // multiDexEnabled true
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {
     release {
       signingConfig signingConfigs.release
       minifyEnabled true
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-    }
-
-    prerelease {
-      debuggable true // this value may change
-      zipAlignEnabled true
-      signingConfig signingConfigs.release
-      minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
@@ -94,18 +88,20 @@ android {
 
   lintOptions {
     disable 'InvalidPackage'
+    abortOnError false
   }
 }
 
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
-  testCompile 'junit:junit:4.12'
+
   compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
 
   // compile project(path: ':toro-ext-exoplayer')
   compile project(path: ':toro-extended')
+  compile project(path: ':toro-ext-mediaplayer')
   // compile "im.ene.toro2:toro-extended:2.1.0-SNAPSHOT"
 
   compile ('com.azoft.carousellayoutmanager:carousel:1.2.1', {
@@ -114,7 +110,9 @@ dependencies {
 
   compile 'com.github.bumptech.glide:glide:3.7.0'
   compile 'com.squareup.picasso:picasso:2.5.2'
-  compile 'com.jakewharton:butterknife:7.0.1'
+
+  compile 'com.jakewharton:butterknife:8.5.1'
+  annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
   compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
     transitive = true;
@@ -123,6 +121,37 @@ dependencies {
   compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.5') {
     transitive = true;
   }
+
+  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+
+  // Dependencies for local unit tests
+  testCompile "junit:junit:$rootProject.ext.junitVersion"
+  testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+  testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+
+  // Android Testing Support Library's runner and rules
+  androidTestCompile "com.android.support.test:runner:$rootProject.ext.runnerVersion"
+  androidTestCompile "com.android.support.test:rules:$rootProject.ext.runnerVersion"
+
+  // Dependencies for Android unit tests
+  androidTestCompile "junit:junit:$rootProject.ext.junitVersion"
+  androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+  androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+  androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+
+  // Espresso UI Testing
+  androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+  androidTestCompile "com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion"
+  androidTestCompile "com.android.support.test.espresso:espresso-intents:$rootProject.espressoVersion"
+
+  // Resolve conflicts between main and test APK:
+  androidTestCompile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+  androidTestCompile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+  androidTestCompile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+  androidTestCompile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+  androidTestCompile "com.android.support:design:$rootProject.supportLibraryVersion"
 }
 
 crashlytics {

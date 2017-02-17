@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.R;
@@ -31,7 +32,7 @@ import im.ene.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 6/29/16.
  */
-public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   private static final String TAG = "ExoPlayer2Adapter";
 
@@ -59,13 +60,13 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
           // Do this for for videoView only.
           if (view == ((Basic3VideoViewHolder) viewHolder).getPlayerView()) {
             // 1. Temporary disable the playback.
-            Toro.rest(true);
+            Toro.pause();
             new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
                 .setMessage(R.string.sample)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                   @Override public void onDismiss(DialogInterface dialogInterface) {
                     // 2. Resume the playback.
-                    Toro.rest(false);
+                    Toro.resume();
                   }
                 })
                 .create()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.sample.v3;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 /**
- * Created by eneim on 3/14/16.
- *
- * A linked-list with specific capacity
+ * Created by eneim on 10/11/16.
  */
-final class StateLinkedList extends LinkedHashMap<Integer, SavedState> {
 
-  private int mCapacity = 1;
+public interface OnItemClickListener {
 
-  StateLinkedList(int initialCapacity) {
-    super(initialCapacity);
-    mCapacity = initialCapacity;
-  }
-
-  @Override protected boolean removeEldestEntry(Map.Entry<Integer, SavedState> eldest) {
-    return size() > mCapacity;
-  }
+  void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,
+      int adapterPosition, long itemId);
 }

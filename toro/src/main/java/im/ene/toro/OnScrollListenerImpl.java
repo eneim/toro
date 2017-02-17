@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -29,22 +28,23 @@ import java.util.List;
  *
  * @hide
  */
-final class ToroScrollListener extends RecyclerView.OnScrollListener {
+final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implements Removable {
 
-  private final MediaPlayerManager playerManager;
   private final List<ToroPlayer> candidates;
 
-  ToroScrollListener(@NonNull MediaPlayerManager manager) {
-    this.playerManager = manager;
+  OnScrollListenerImpl() {
     this.candidates = new ArrayList<>();
   }
 
-  @NonNull final MediaPlayerManager getManager() {
-    return playerManager;
-  }
+  private PlayerManager playerManager;
 
   @Override public void onScrollStateChanged(RecyclerView parent, int newState) {
     if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+      return;
+    }
+
+    playerManager = Toro.getManager(this);
+    if (playerManager == null) {
       return;
     }
 
@@ -58,7 +58,6 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       }
     }
 
-    ToroPlayer candidate;
     int firstPosition = RecyclerView.NO_POSITION;
     int lastPosition = RecyclerView.NO_POSITION;
 
@@ -71,7 +70,7 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
       StaggeredGridLayoutManager layoutManager =
           (StaggeredGridLayoutManager) parent.getLayoutManager();
 
-      // StaggeredGridLayoutManager can have many rows ...
+      // StaggeredGridLayoutManager can have many rows or columns ...
       int[] firstVisibleItemPositions = layoutManager.findFirstVisibleItemPositions(null);
       int[] lastVisibleItemPositions = layoutManager.findLastVisibleItemPositions(null);
 
@@ -90,11 +89,11 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
     if (firstPosition <= lastPosition /* protect the 'for' loop */ &&  //
         (firstPosition != RecyclerView.NO_POSITION || lastPosition != RecyclerView.NO_POSITION)) {
       for (int i = firstPosition; i <= lastPosition; i++) {
-        // Detected a view holder for video player
+        // Detected a view holder for media player
         RecyclerView.ViewHolder viewHolder = parent.findViewHolderForAdapterPosition(i);
         if (viewHolder != null && viewHolder instanceof ToroPlayer) {
-          candidate = (ToroPlayer) viewHolder;
-          // check candidate's view position
+          ToroPlayer candidate = (ToroPlayer) viewHolder;
+          // check candidate's condition
           if (candidate.wantsToPlay() && Toro.getStrategy().allowsToPlay(candidate, parent)) {
             // Have a new candidate who can play
             if (!candidates.contains(candidate)) {
@@ -110,28 +109,43 @@ final class ToroScrollListener extends RecyclerView.OnScrollListener {
 
     if (electedPlayer == currentPlayer) {
       // No thing changes, no new President. Let it go
-      if (currentPlayer != null && !currentPlayer.isPlaying()) {
-        playerManager.restoreVideoState(currentPlayer.getMediaId());
-        playerManager.startPlayback();
+      if (currentPlayer != null) {
+        if (!currentPlayer.isPrepared()) {
+          // We catch the state of prepared and trigger it manually
+          currentPlayer.preparePlayer(false);
+        } else if (!currentPlayer.isPlaying()) {  // player is prepared and ready to play
+          playerManager.restorePlaybackState(currentPlayer.getMediaId());
+          playerManager.startPlayback();
+        }
       }
+
       return;
     }
 
     // Current player is not elected anymore, pause it.
     if (currentPlayer != null && currentPlayer.isPlaying()) {
-      playerManager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+      playerManager.savePlaybackState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
           currentPlayer.getDuration());
       playerManager.pausePlayback();
     }
 
     if (electedPlayer == null) {
-      // Old president resigned, there is no new ones, we are screwed up, get out of here.
+      // Old president resigned, but there is no new ones, we are screwed up, get out of here.
       return;
     }
 
     // Well... let's the BlackHouse starts new cycle with the new President!
     playerManager.setPlayer(electedPlayer);
-    playerManager.restoreVideoState(electedPlayer.getMediaId());
-    playerManager.startPlayback();
+    if (!electedPlayer.isPrepared()) {
+      electedPlayer.preparePlayer(false);
+    } else {
+      playerManager.restorePlaybackState(electedPlayer.getMediaId());
+      playerManager.startPlayback();
+    }
+  }
+
+  @Override public void remove() throws Exception {
+    playerManager = null;
+    candidates.clear();
   }
 }

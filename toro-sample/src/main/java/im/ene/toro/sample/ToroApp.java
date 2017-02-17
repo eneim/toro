@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
+import com.squareup.leakcanary.LeakCanary;
 import im.ene.toro.Toro;
 import io.fabric.sdk.android.Fabric;
 
@@ -33,6 +34,10 @@ public class ToroApp extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+    if (BuildConfig.DEBUG) {
+      initLeakCanary();
+    }
+    
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     Toro.init(this);
     sApp = this;
@@ -48,6 +53,15 @@ public class ToroApp extends Application {
 
   public static ToroApp getApp() {
     return sApp;
+  }
+
+  private void initLeakCanary() {
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      // You should not init your app in this process.
+      return;
+    }
+    LeakCanary.install(this);
   }
 
   /* Preference Keys */

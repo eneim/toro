@@ -28,4 +28,13 @@
       <enum name="fixedHeight" value="2"/>
     </attr>
   </declare-styleable>
+
+  <declare-styleable name="ExoPlayerView">
+    <attr name="surface_type"/>
+    <attr name="use_artwork"/>
+    <attr name="use_controller"/>
+    <attr name="default_artwork"/>
+    <attr name="resize_mode"/>
+    <attr name="show_timeout"/>
+  </declare-styleable>
 </resources>

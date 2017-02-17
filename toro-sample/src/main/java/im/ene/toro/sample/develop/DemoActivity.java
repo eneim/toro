@@ -23,16 +23,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import im.ene.toro.sample.R;
-import im.ene.toro.exoplayer2.ExoVideoView;
+import com.google.android.exoplayer2.ParserException;
+import im.ene.toro.exoplayer2.ExoPlayerView;
+import im.ene.toro.exoplayer2.Media;
 import im.ene.toro.exoplayer2.PlayerCallback;
 import im.ene.toro.exoplayer2.State;
+import im.ene.toro.sample.R;
 
 public class DemoActivity extends AppCompatActivity {
 
   private static final String TAG = "DemoActivity";
 
-  ExoVideoView videoView;
+  ExoPlayerView videoView;
   Button buttonStart;
   Button buttonClose;
 
@@ -40,7 +42,7 @@ public class DemoActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_demo);
 
-    videoView = (ExoVideoView) findViewById(R.id.demo_video_view);
+    videoView = (ExoPlayerView) findViewById(R.id.demo_video_view);
 
     buttonStart = (Button) findViewById(R.id.start);
     if (videoView.isPlaying()) {
@@ -83,12 +85,17 @@ public class DemoActivity extends AppCompatActivity {
       }
     });
 
-    videoView.setMedia(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
+    try {
+      videoView.setMedia( //
+          new Media(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4")), false);
+    } catch (ParserException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override protected void onStart() {
     super.onStart();
-    
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       if (!videoView.isPlaying()) {
         videoView.start();

@@ -52,7 +52,7 @@ public class VideoViewHolder extends ExoVideoViewHolder {
     return (ExoVideoView) itemView.findViewById(R.id.video);
   }
 
-  @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+  @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object object) {
     if (!(object instanceof TimelineItem)
         || !(((TimelineItem) object).getEmbedItem() instanceof TimelineItem.VideoItem)) {
       throw new IllegalArgumentException("Only VideoItem is accepted");

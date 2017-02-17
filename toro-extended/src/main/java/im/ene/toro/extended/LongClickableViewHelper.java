@@ -20,9 +20,9 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewParent;
+import im.ene.toro.PlayerManager;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.MediaPlayerManager;
 import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
 
 /**
@@ -37,7 +37,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
 
   @Override public boolean onLongClick(View v) {
     final ViewParent parent = this.itemView.getParent();
-    MediaPlayerManager manager = getPlayerManager(parent);
+    PlayerManager manager = getPlayerManager(parent);
     // Important components are missing, return
     if (manager == null) {
       return false;
@@ -56,7 +56,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
       // Not the current player, and new player wants to play, so switch players
       if (currentPlayer != null) {
         if (currentPlayer.isPlaying()) {
-          manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+          manager.savePlaybackState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
               currentPlayer.getDuration());
         }
         // Force pause
@@ -65,21 +65,29 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
 
       // Trigger new player
       manager.setPlayer(player);
-      manager.restoreVideoState(player.getMediaId());
-      manager.startPlayback();
-      return true;
+      if (!player.isPrepared()) {
+        player.preparePlayer(false);
+      } else {
+        manager.restorePlaybackState(player.getMediaId());
+        manager.startPlayback();
+      }
     } else {
       // Pressing current player, pause it if it is playing
       if (currentPlayer.isPlaying()) {
-        manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+        manager.savePlaybackState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
             currentPlayer.getDuration());
         manager.pausePlayback();
       } else {
         // It's paused, so we resume it
-        manager.restoreVideoState(currentPlayer.getMediaId());
-        manager.startPlayback();
+        if (!currentPlayer.isPrepared()) {
+          currentPlayer.preparePlayer(false);
+        } else {
+          manager.restorePlaybackState(currentPlayer.getMediaId());
+          manager.startPlayback();
+        }
       }
-      return true;
     }
+
+    return true;
   }
 }

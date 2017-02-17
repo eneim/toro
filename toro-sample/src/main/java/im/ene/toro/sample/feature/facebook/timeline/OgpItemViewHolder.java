@@ -20,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import com.bumptech.glide.Glide;
 import im.ene.toro.sample.R;
 
 /**
@@ -41,7 +40,8 @@ public class OgpItemViewHolder extends TimelineViewHolder {
   }
 
   @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
-    Glide.with(itemView.getContext()).load(R.drawable.toro_icon).into(imageView);
+    // Glide.with(itemView.getContext()).load(R.drawable.toro_icon).into(imageView);
+    imageView.setImageResource(R.drawable.toro_icon);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {

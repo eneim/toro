@@ -19,6 +19,8 @@ package im.ene.toro.exoplayer2;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
@@ -27,7 +29,10 @@ import im.ene.toro.ToroUtil;
 
 /**
  * Created by eneim on 6/11/16.
+ *
+ * @deprecated from 2.2.0, use {@link ExoPlayerViewHolder} instead.
  */
+@Deprecated
 public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
   @NonNull protected final ExoVideoView videoView;
@@ -41,12 +46,24 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
       throw new NullPointerException("A valid ExoVideoView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
-    videoView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
 
+  protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
+
   // BEGIN: ToroViewHolder
+
+  @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+    videoView.setPlayerCallback(helper);
+    onBind(adapter, object);
+    helper.onBound();
+  }
+
+  @CallSuper @Override protected void onRecycled() {
+    videoView.setPlayerCallback(null);
+    helper.onRecycled();
+  }
 
   @CallSuper @Override public void onAttachedToWindow() {
     helper.onAttachedToWindow();
@@ -69,10 +86,12 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
 
   @Override public void preparePlayer(boolean playWhenReady) {
     videoView.preparePlayer(playWhenReady);
+    isPlayable = true;
   }
 
   @Override public void releasePlayer() {
     videoView.releasePlayer();
+    isPlayable = false;
   }
 
   // Client could override this method for better practice
@@ -106,7 +125,7 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    isPlayable = true;
+    // isPlayable = true;
   }
 
   @Override public int getBufferPercentage() {
