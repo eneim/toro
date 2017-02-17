@@ -229,18 +229,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     view.removeOnScrollListener(listener);
   }
 
-  static PlayerManager getManager(RecyclerView recyclerView) {
-    return sInstance.managers.get(recyclerView);
-  }
-
-  static PlayerManager getManager(OnScrollListenerImpl listener) {
-    for (Map.Entry<RecyclerView, OnScrollListenerImpl> entry : sInstance.listeners.entrySet()) {
-      if (listener.equals(entry.getValue())) {
-        return sInstance.managers.get(entry.getKey());
-      }
-    }
-
-    return null;
+  @Nullable static PlayerManager getManager(ViewParent viewParent) {
+    return viewParent instanceof RecyclerView ? sInstance.managers.get(viewParent) : null;
   }
 
   public static void resume() {
@@ -493,21 +483,13 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
-    PlayerManager manager = null;
-    // Find correct Player manager for this player
-    for (Map.Entry<RecyclerView, PlayerManager> entry : sInstance.managers.entrySet()) {
-      if (entry.getKey() == parent) {
-        manager = entry.getValue();
-        break;
-      }
-    }
-
+    PlayerManager manager = getManager(parent);
     if (manager == null) {
       return;
     }
 
     // 1. Check if current manager wrapped this player
-    if (player.equals(manager.getPlayer())) {
+    if (player == manager.getPlayer()) {
       if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
         // player.isPlaying() is always false here
         manager.restorePlaybackState(player.getMediaId());
