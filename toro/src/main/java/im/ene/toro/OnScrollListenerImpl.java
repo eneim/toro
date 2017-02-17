@@ -43,7 +43,7 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
       return;
     }
 
-    playerManager = Toro.getManager(this);
+    playerManager = Toro.getManager(parent);
     if (playerManager == null) {
       return;
     }
@@ -124,8 +124,8 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
 
     // Current player is not elected anymore, pause it.
     if (currentPlayer != null && currentPlayer.isPlaying()) {
-      playerManager.savePlaybackState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
-          currentPlayer.getDuration());
+      playerManager.savePlaybackState(currentPlayer.getMediaId(),
+          currentPlayer.getCurrentPosition(), currentPlayer.getDuration());
       playerManager.pausePlayback();
     }
 

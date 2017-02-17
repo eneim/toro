@@ -409,7 +409,9 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   }
 
   public void stop() {
-    pause();
+    if (getPlayer() != null) {
+      getPlayer().stop();
+    }
     releasePlayer();
   }
 
