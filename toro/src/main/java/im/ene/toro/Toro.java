@@ -483,6 +483,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
   void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
+    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
+      return;
+    }
+
     PlayerManager manager = getManager(parent);
     if (manager == null) {
       return;
@@ -490,11 +494,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     // 1. Check if current manager wrapped this player
     if (player == manager.getPlayer()) {
-      if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
-        // player.isPlaying() is always false here
-        manager.restorePlaybackState(player.getMediaId());
-        manager.startPlayback();
-      }
+      // player.isPlaying() is always false here
+      manager.restorePlaybackState(player.getMediaId());
+      manager.startPlayback();
     } else {
       // There is no current player, but this guy is prepared, so let's him go ...
       if (manager.getPlayer() == null) {
