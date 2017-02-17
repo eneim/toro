@@ -20,8 +20,9 @@
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name="im.ene.toro.sample.feature.home.HomeActivity"
+        android:name=".feature.home.HomeActivity"
         android:theme="@style/AppTheme.NoActionBar"/>
+
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -61,6 +62,19 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".feature.extended.ExtendedListActivity"/>
+
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".v3.MediaListActivity">
+    </activity>
+
+    <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".v3.MediaPlayerActivity">
+    </activity>
 
     <activity-alias
         android:label="@string/app_name"

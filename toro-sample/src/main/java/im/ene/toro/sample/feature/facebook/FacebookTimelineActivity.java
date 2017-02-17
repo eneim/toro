@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
@@ -47,7 +47,7 @@ import java.util.List;
 public class FacebookTimelineActivity extends BaseActivity
     implements FacebookPlaylistFragment.Callback {
 
-  @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
+  @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
   private RecyclerView.LayoutManager layoutManager;
 
@@ -102,23 +102,25 @@ public class FacebookTimelineActivity extends BaseActivity
 
       @Override protected void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
           TimelineItem.VideoItem item) {
+        if (item == null) {
+          return;
+        }
+
         long duration = C.LENGTH_UNSET;
         long position = C.POSITION_UNSET;
         int order = viewHolder.getAdapterPosition();
         ToroPlayer player = adapter.getPlayer();
         if (player != null) {
-          PlaybackState state = adapter.getSavedState(Util.genVideoId(item.getVideoUrl(), order));
+          PlaybackState state = adapter.getPlaybackState(Util.genVideoId(item.getVideoUrl(), order));
           duration = player.getDuration();
           position = player.isPlaying() ? player.getCurrentPosition()
               : state != null ? state.getPosition() : 0; // safe
         }
 
-        if (item != null) {
-          FacebookPlaylistFragment playlistFragment =
-              FacebookPlaylistFragment.newInstance(item, position, duration, order);
-          playlistFragment.show(getSupportFragmentManager(),
-              FacebookPlaylistFragment.class.getSimpleName());
-        }
+        FacebookPlaylistFragment playlistFragment =
+            FacebookPlaylistFragment.newInstance(item, position, duration, order);
+        playlistFragment.show(getSupportFragmentManager(),
+            FacebookPlaylistFragment.class.getSimpleName());
       }
     });
 
@@ -154,7 +156,7 @@ public class FacebookTimelineActivity extends BaseActivity
     Log.i(TAG,
         "onPlaylistDetached() called with: position = [" + position + "], order = [" + order + "]");
     if (adapter.getPlayer() != null) {
-      adapter.saveVideoState(Util.genVideoId(baseItem.getVideoUrl(), order), position,
+      adapter.savePlaybackState(Util.genVideoId(baseItem.getVideoUrl(), order), position,
           adapter.getPlayer().getDuration());
     }
 

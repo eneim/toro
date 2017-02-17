@@ -56,7 +56,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
       // Not the current player, and new player wants to play, so switch players
       if (currentPlayer != null) {
         if (currentPlayer.isPlaying()) {
-          manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+          manager.savePlaybackState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
               currentPlayer.getDuration());
         }
         // Force pause
@@ -66,30 +66,28 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
       // Trigger new player
       manager.setPlayer(player);
       if (!player.isPrepared()) {
-        manager.startPlayback();
         player.preparePlayer(false);
       } else {
-        manager.restoreVideoState(player.getMediaId());
+        manager.restorePlaybackState(player.getMediaId());
         manager.startPlayback();
       }
-      return true;
     } else {
       // Pressing current player, pause it if it is playing
       if (currentPlayer.isPlaying()) {
-        manager.saveVideoState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
+        manager.savePlaybackState(currentPlayer.getMediaId(), currentPlayer.getCurrentPosition(),
             currentPlayer.getDuration());
         manager.pausePlayback();
       } else {
         // It's paused, so we resume it
         if (!currentPlayer.isPrepared()) {
-          manager.startPlayback();
           currentPlayer.preparePlayer(false);
         } else {
-          manager.restoreVideoState(currentPlayer.getMediaId());
+          manager.restorePlaybackState(currentPlayer.getMediaId());
           manager.startPlayback();
         }
       }
-      return true;
     }
+
+    return true;
   }
 }

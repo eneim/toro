@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
 public interface PlayerManager extends Removable {
 
   public static class Factory {
-    public static PlayerManager createInstance() {
+    public static PlayerManager getInstance() {
       return new PlayerManagerImpl();
     }
   }
@@ -85,16 +85,33 @@ public interface PlayerManager extends Removable {
    * @param position current playing position, can be {@code null}.
    * @param duration duration of playing video.
    */
-  void saveVideoState(String videoId, @Nullable Long position, long duration);
+  @Deprecated void saveVideoState(String videoId, @Nullable Long position, long duration);
+
+  /**
+   * Save current video playback state.
+   *
+   * @param mediaId the unique Id of video inside the RecyclerView.
+   * @param position current playing position, can be {@code null}.
+   * @param duration duration of playing video.
+   */
+  void savePlaybackState(String mediaId, @Nullable Long position, long duration);
 
   /**
    * Restore and setup state of a Video to current video player
    *
    * @param videoId the unique Id of video inside the RecyclerView.
    */
-  void restoreVideoState(String videoId);
+  @Deprecated void restoreVideoState(String videoId);
 
-  @Nullable PlaybackState getSavedState(String videoId);
+  /**
+   * Restore and setup state of a Video to current video player
+   *
+   * @param mediaId the unique Id of video inside the RecyclerView.
+   */
+  void restorePlaybackState(String mediaId);
 
+  @Deprecated @Nullable PlaybackState getSavedState(String videoId);
+
+  @Nullable PlaybackState getPlaybackState(String mediaId);
   /* END Directly control current player */
 }

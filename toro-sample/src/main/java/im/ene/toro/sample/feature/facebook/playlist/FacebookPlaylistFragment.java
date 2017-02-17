@@ -33,7 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
@@ -128,7 +128,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
     Toro.setStrategy(strategyToRestore);
   }
 
-  @Bind(R.id.recycler_view) RecyclerView recyclerView;
+  @BindView(R.id.recycler_view) RecyclerView recyclerView;
   private MoreVideoRepo videoRepo;
   private MoreVideosAdapter adapter;
 
@@ -193,7 +193,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   protected void dispatchFragmentActivated() {
     Toro.register(recyclerView);
-    adapter.saveVideoState(Util.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
+    adapter.savePlaybackState(Util.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
   }
 
   protected void dispatchFragmentDeActivated() {
@@ -220,7 +220,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @Override public void onDetach() {
     if (callback != null) {
-      PlaybackState state = adapter.getSavedState(Util.genVideoId(baseItem.getVideoUrl(), 0));
+      PlaybackState state = adapter.getPlaybackState(Util.genVideoId(baseItem.getVideoUrl(), 0));
       callback.onPlaylistDetached(this.baseItem,
           // Get saved position of first Item in this list, pass it to origin item at "baseOrder"
           state != null ? state.getPosition() : 0, baseOrder);

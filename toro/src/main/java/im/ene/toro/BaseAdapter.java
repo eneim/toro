@@ -28,11 +28,10 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
   private final PlayerManager delegate;
 
   public BaseAdapter() {
-    this.delegate = PlayerManager.Factory.createInstance();
+    this.delegate = PlayerManager.Factory.getInstance();
   }
 
   @Override public void remove() throws Exception {
-    this.delegate.setPlayer(null);
     this.delegate.remove();
   }
 
@@ -66,6 +65,18 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
 
   @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
     delegate.saveVideoState(videoId, position, duration);
+  }
+
+  @Override public void savePlaybackState(String mediaId, @Nullable Long position, long duration) {
+    delegate.savePlaybackState(mediaId, position, duration);
+  }
+
+  @Override public void restorePlaybackState(String mediaId) {
+    delegate.restorePlaybackState(mediaId);
+  }
+
+  @Nullable @Override public PlaybackState getPlaybackState(String mediaId) {
+    return delegate.getPlaybackState(mediaId);
   }
 
   @Override public void restoreVideoState(String videoId) {

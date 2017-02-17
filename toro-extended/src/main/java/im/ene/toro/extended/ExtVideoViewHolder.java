@@ -26,8 +26,10 @@ import im.ene.toro.exoplayer2.ExoVideoView;
 
 /**
  * Created by eneim on 10/4/16.
+ *
+ * @deprecated use {@link ExtPlayerViewHolder} instead
  */
-
+@Deprecated
 public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder implements ExtToroPlayer {
 
   @NonNull protected final ExoVideoView videoView;

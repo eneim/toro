@@ -19,69 +19,55 @@ package im.ene.toro.sample.feature.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import butterknife.Bind;
+import android.view.View;
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.advance1.Advance1Activity;
-import im.ene.toro.sample.feature.average1.Average1Activity;
-import im.ene.toro.sample.feature.basic1.Basic1Activity;
-import im.ene.toro.sample.feature.basic2.Basic2Activity;
-import im.ene.toro.sample.feature.basic3.Basic3Activity;
-import im.ene.toro.sample.feature.basic4.Basic4Activity;
-import im.ene.toro.sample.feature.extended.ExtendedListActivity;
-import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
-import im.ene.toro.sample.feature.legacy.LegacyActivity;
+import im.ene.toro.sample.feature.Feature;
 
 /**
  * Created by eneim on 6/30/16.
  */
 public class HomeActivity extends BaseActivity {
 
-  @Bind(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.toolbar) Toolbar toolbar;
+  @BindView(R.id.drawer_layout) DrawerLayout drawer;
+  @BindView(R.id.recycler_view) RecyclerView recyclerView;
+
+  FeatureAdapter adapter;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
     setSupportActionBar(toolbar);
-  }
 
-  @OnClick(R.id.basic_sample_1) void openBasicSample1() {
-    startActivity(new Intent(this, Basic4Activity.class));
-  }
+    setTitle(R.string.activity_show_case);
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
 
-  @OnClick(R.id.basic_sample_4) void openBasicSample4() {
-    startActivity(new Intent(this, Basic1Activity.class));
-  }
+    ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, //
+        R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+    drawer.addDrawerListener(toggle);
+    toggle.syncState();
 
-  @OnClick(R.id.basic_sample_2) void openBasicSample2() {
-    startActivity(new Intent(this, Basic2Activity.class));
-  }
+    adapter = new FeatureAdapter();
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    recyclerView.setLayoutManager(layoutManager);
+    recyclerView.setAdapter(adapter);
 
-  @OnClick(R.id.basic_sample_3) void openBasicSample3() {
-    startActivity(new Intent(this, Basic3Activity.class));
-  }
-
-  @OnClick(R.id.average_sample_1) void openAverageSample1() {
-    startActivity(new Intent(this, Average1Activity.class));
-  }
-
-  @OnClick(R.id.advance_sample_1) void openAdvanceSample1() {
-    startActivity(new Intent(this, Advance1Activity.class));
-  }
-
-  @OnClick(R.id.custom_sample_1) void openCustomSample1() {
-    startActivity(new Intent(this, FacebookTimelineActivity.class));
-  }
-
-  @OnClick(R.id.legacy_sample_1) void openLegacySample1() {
-    startActivity(new Intent(this, LegacyActivity.class));
-  }
-
-  @OnClick(R.id.exoplayer2_sample) void openExoPlayer2Sample1() {
-    startActivity(new Intent(this, ExtendedListActivity.class));
+    adapter.setItemClickListener(new FeatureAdapter.ItemClickListener() {
+      @Override public void onItemClick(View view, Feature feature) {
+        startActivity(new Intent(HomeActivity.this, feature.clazz));
+      }
+    });
   }
 }

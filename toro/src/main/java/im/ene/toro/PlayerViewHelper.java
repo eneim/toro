@@ -59,7 +59,7 @@ public abstract class PlayerViewHelper {
                 if (!player.isPrepared()) {
                   player.preparePlayer(false);
                 } else {
-                  manager.restoreVideoState(player.getMediaId());
+                  manager.restorePlaybackState(player.getMediaId());
                   manager.startPlayback();
                 }
               }
@@ -84,7 +84,7 @@ public abstract class PlayerViewHelper {
     // Manually save Video state
     if (manager != null && player.equals(manager.getPlayer())) {
       if (player.isPlaying()) {
-        manager.saveVideoState( //
+        manager.savePlaybackState( //
             player.getMediaId(), player.getCurrentPosition(), player.getDuration());
         manager.pausePlayback();
       }

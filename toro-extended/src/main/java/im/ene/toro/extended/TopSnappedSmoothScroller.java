@@ -22,7 +22,8 @@ import android.util.DisplayMetrics;
 
 /**
  * Created by eneim on 10/23/16.
- */class TopSnappedSmoothScroller extends LinearSmoothScroller {
+ */
+class TopSnappedSmoothScroller extends LinearSmoothScroller {
   TopSnappedSmoothScroller(Context context) {
     super(context);
   }

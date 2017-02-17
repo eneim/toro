@@ -97,7 +97,20 @@ final class PlayerManagerImpl implements PlayerManager {
     return playbackStates.get(videoId);
   }
 
+  @Override public void savePlaybackState(String mediaId, @Nullable Long position, long duration) {
+    saveVideoState(mediaId, position, duration);
+  }
+
+  @Override public void restorePlaybackState(String mediaId) {
+    restoreVideoState(mediaId);
+  }
+
+  @Nullable @Override public PlaybackState getPlaybackState(String mediaId) {
+    return getSavedState(mediaId);
+  }
+
   @Override public void remove() throws Exception {
     playbackStates.clear();
+    setPlayer(null);  // TODO verify the correctness, or make this place better
   }
 }
