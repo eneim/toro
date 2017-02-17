@@ -106,7 +106,7 @@ public abstract class PlayerViewHelper {
   }
 
   @Nullable protected final PlayerManager getPlayerManager(ViewParent parent) {
-    return parent instanceof RecyclerView ? Toro.getManager((RecyclerView) parent) : null;
+    return Toro.getManager(parent);
   }
 
   /**
