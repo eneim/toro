@@ -27,7 +27,7 @@ import im.ene.toro.exoplayer2.ExoPlayerView;
 import im.ene.toro.exoplayer2.Media;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.sample.data.OrderedVideoObject;
 
 /**
  * Created by eneim on 2/14/17.
@@ -41,7 +41,7 @@ public class MediaPlayerActivity extends BaseActivity {
 
   static final String EXTRA_INIT_VIDEO = "extra_init_video";
 
-  public static Intent createIntent(Context context, SimpleVideoObject video, Long position) {
+  public static Intent createIntent(Context context, OrderedVideoObject video, Long position) {
     Intent intent = new Intent(context, MediaPlayerActivity.class);
     Bundle extras = new Bundle();
     if (video != null) {
@@ -56,7 +56,7 @@ public class MediaPlayerActivity extends BaseActivity {
 
   ExoPlayerView playerView;
 
-  private SimpleVideoObject video;
+  private OrderedVideoObject video;
   private long position;
 
   private Media media;

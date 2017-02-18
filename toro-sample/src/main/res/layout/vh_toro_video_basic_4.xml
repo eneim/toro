@@ -36,7 +36,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center"
-      android:minHeight="128dp"
+      android:minHeight="96dp"
       app:resize_mode="fixed_width"
       app:surface_type="texture_view"
       app:use_artwork="true"

@@ -30,7 +30,7 @@ import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.sample.data.OrderedVideoObject;
 
 /**
  * Created by eneim on 2/9/17.
@@ -81,7 +81,7 @@ public class MediaListActivity extends BaseActivity {
 
     adapter.setItemClickHandler(new MediaListAdapter.ItemClickHandler() {
       @Override
-      public void openVideoPlayer(View view, SimpleVideoObject source, PlaybackState state) {
+      public void openVideoPlayer(View view, OrderedVideoObject source, PlaybackState state) {
         playbackState = state;
         startActivityForResult(
             MediaPlayerActivity.createIntent(MediaListActivity.this, source, state.getPosition()),

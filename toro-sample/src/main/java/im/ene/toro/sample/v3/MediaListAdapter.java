@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import im.ene.toro.BaseAdapter;
 import im.ene.toro.PlaybackState;
 import im.ene.toro.sample.data.OrderedVideoObject;
-import im.ene.toro.sample.data.SimpleVideoObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,7 +101,7 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
 
   static abstract class ItemClickHandler implements OnItemClickListener {
 
-    public abstract void openVideoPlayer(View view, SimpleVideoObject source, PlaybackState state);
+    public abstract void openVideoPlayer(View view, OrderedVideoObject source, PlaybackState state);
 
     @Override
     public void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder,
@@ -111,7 +110,7 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
         MediaItemViewHolder vh = (MediaItemViewHolder) viewHolder;
         PlaybackState state =
             new PlaybackState(vh.getMediaId(), vh.getDuration(), vh.getCurrentPosition());
-        openVideoPlayer(view, (SimpleVideoObject) ((MediaListAdapter) adapter).getItem(position),
+        openVideoPlayer(view, (OrderedVideoObject) ((MediaListAdapter) adapter).getItem(position),
             state);
       }
     }
