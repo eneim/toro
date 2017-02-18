@@ -46,7 +46,7 @@ public class Basic1VideoViewHolder extends ExoVideoViewHolder {
     }
 
     this.videoItem = (SimpleVideoObject) item;
-    this.videoView.setMedia(Uri.parse(this.videoItem.video));
+    this.playerView.setMedia(Uri.parse(this.videoItem.video));
   }
 
   @Override protected ExoVideoView findVideoView(View itemView) {

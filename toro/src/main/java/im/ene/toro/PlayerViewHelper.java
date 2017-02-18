@@ -31,7 +31,7 @@ import android.view.ViewTreeObserver;
  */
 public abstract class PlayerViewHelper {
 
-  @SuppressWarnings("unused") static final String TAG = "PlayerViewHelper";
+  @SuppressWarnings("unused") static final String TAG = "ToroLib@Helper";
 
   protected final ToroPlayer player;
   protected final View itemView;
@@ -48,7 +48,18 @@ public abstract class PlayerViewHelper {
    */
   @CallSuper public void onAttachedToWindow() {
     final PlayerManager manager = getPlayerManager(itemView.getParent());
-    if (manager != null && manager.getPlayer() == null) {
+    if (manager == null) {
+      return;
+    }
+
+    if (manager.getPlayer() == player) {
+      if (!player.isPrepared()) {
+        player.preparePlayer(false);
+      } else {
+        manager.restorePlaybackState(player.getMediaId());
+        manager.startPlayback();
+      }
+    } else if (manager.getPlayer() == null) {
       itemView.getViewTreeObserver().addOnGlobalLayoutListener( //
           new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override public void onGlobalLayout() {

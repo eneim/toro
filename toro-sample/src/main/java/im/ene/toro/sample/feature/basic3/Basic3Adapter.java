@@ -57,7 +57,7 @@ public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
     if (viewHolder instanceof Basic3VideoViewHolder) {
       viewHolder.setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
-          // Do this for for videoView only.
+          // Do this for for playerView only.
           if (view == ((Basic3VideoViewHolder) viewHolder).getPlayerView()) {
             // 1. Temporary disable the playback.
             Toro.pause();

@@ -345,6 +345,10 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
+  public SimpleExoPlayer getPlayer() {
+    return this.player;
+  }
+
   public final void preparePlayer(boolean shouldAutoPlay) {
     this.shouldAutoPlay = shouldAutoPlay;
     this.playerNeedsSource = player == null || player.getPlaybackState() == ExoPlayer.STATE_IDLE;

@@ -50,7 +50,7 @@ public class FirstItemViewHolder extends ExoVideoViewHolder {
       throw new IllegalArgumentException("Illegal object: " + object);
     }
     this.videoItem = (TimelineItem.VideoItem) object;
-    this.videoView.setMedia(Uri.parse(videoItem.getVideoUrl()));
+    this.playerView.setMedia(Uri.parse(videoItem.getVideoUrl()));
   }
 
   @Nullable @Override public String getMediaId() {

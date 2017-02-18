@@ -52,7 +52,7 @@ public class Basic2VideoViewHolder extends ExoVideoViewHolder {
     }
 
     this.video = (SimpleVideoObject) item;
-    this.videoView.setMedia(Uri.parse(this.video.video));
+    this.playerView.setMedia(Uri.parse(this.video.video));
   }
 
   // MEMO: Unique or null

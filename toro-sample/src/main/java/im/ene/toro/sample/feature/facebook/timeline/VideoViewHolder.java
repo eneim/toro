@@ -59,13 +59,13 @@ public class VideoViewHolder extends ExoVideoViewHolder {
     }
 
     this.videoItem = (TimelineItem.VideoItem) ((TimelineItem) object).getEmbedItem();
-    this.videoView.setMedia(Uri.parse(videoItem.getVideoUrl()));
+    this.playerView.setMedia(Uri.parse(videoItem.getVideoUrl()));
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
     super.setOnItemClickListener(listener);
     mInfo.setOnClickListener(listener);
-    this.videoView.setOnClickListener(listener);
+    this.playerView.setOnClickListener(listener);
   }
 
   @Nullable @Override public String getMediaId() {
