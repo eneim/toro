@@ -45,7 +45,7 @@ import static android.os.Build.VERSION.SDK_INT;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)  //
 public final class Toro implements Application.ActivityLifecycleCallbacks {
 
-  private static final String TAG = "ToroLib";
+  static final String TAG = "ToroLib";
 
   public static final double DEFAULT_OFFSET = 0.75;
 
@@ -78,6 +78,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   // Use RecyclerView#hashCode() to sync between maps
   private final LinkedHashMap<RecyclerView, PlayerManager> managers = new LinkedHashMap<>();
   private final LinkedHashMap<RecyclerView, OnScrollListenerImpl> listeners = new LinkedHashMap<>();
+  private final LinkedHashMap<PlayerManager, MediaDataObserver> observers = new LinkedHashMap<>();
 
   // Default strategy
   private ToroStrategy mStrategy = Strategies.MOST_VISIBLE_TOP_DOWN;
@@ -171,9 +172,13 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (adapter instanceof PlayerManager) {
       playerManager = (PlayerManager) adapter;
     } else {
-      // Toro 3+ will force the implementation of PlayerManager. Of course, there is delegation
+      // Toro 2.2.0+ and 3+ will force the implementation of PlayerManager. Of course, there is delegation
       throw new RuntimeException("Adapter must be a PlayerManager");
     }
+
+    MediaDataObserver observer = new MediaDataObserver(adapter);
+    adapter.registerAdapterDataObserver(observer);
+    sInstance.observers.put(playerManager, observer);
 
     sInstance.managers.put(view, playerManager);
     // setup new scroll listener
@@ -214,6 +219,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     OnScrollListenerImpl listener = sInstance.listeners.remove(view);
     PlayerManager manager = sInstance.managers.remove(view);
+    MediaDataObserver observer = sInstance.observers.get(manager);
     if (manager.getPlayer() != null) {
       final ToroPlayer player = manager.getPlayer();
       manager.savePlaybackState(player.getMediaId(), //
@@ -227,6 +233,12 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     manager.onUnregistered();
     view.removeOnScrollListener(listener);
+
+    try {
+      observer.remove();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Nullable static PlayerManager getManager(ViewParent viewParent) {
@@ -308,8 +320,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   @Override public void onActivityDestroyed(Activity activity) {
     for (Map.Entry<RecyclerView, PlayerManager> entry : managers.entrySet()) {
       if (entry.getKey().getContext() == activity) {
+        PlayerManager manager = entry.getValue();
         try {
-          entry.getValue().remove();
+          observers.get(manager).remove();
+          manager.remove();
         } catch (Exception e) {
           e.printStackTrace();
         }

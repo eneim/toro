@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -27,7 +28,7 @@ import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
 import im.ene.toro.exoplayer2.ExoPlayerViewHolder;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.sample.data.OrderedVideoObject;
 
 /**
  * Created by eneim on 2/9/17.
@@ -37,11 +38,14 @@ public class MediaItemViewHolder extends ExoPlayerViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_video_basic_4;
 
-  private SimpleVideoObject videoItem;
+  private OrderedVideoObject videoItem;
   private MediaSource mediaSource;
+
+  private TextView number;
 
   public MediaItemViewHolder(View itemView) {
     super(itemView);
+    number = (TextView) itemView.findViewById(R.id.text_number);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -58,11 +62,12 @@ public class MediaItemViewHolder extends ExoPlayerViewHolder {
   }
 
   @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object item) {
-    if (!(item instanceof SimpleVideoObject)) {
+    if (!(item instanceof OrderedVideoObject)) {
       throw new IllegalArgumentException("Invalid Object: " + item);
     }
 
-    this.videoItem = (SimpleVideoObject) item;
+    this.videoItem = (OrderedVideoObject) item;
+    this.number.setText("" + videoItem.position);
     // prepare mediaSource
     this.mediaSource = ExoPlayerHelper.buildMediaSource(itemView.getContext(), //
         Uri.parse(this.videoItem.video), new DefaultDataSourceFactory(itemView.getContext(),

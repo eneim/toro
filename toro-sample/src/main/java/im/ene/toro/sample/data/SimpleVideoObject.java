@@ -35,21 +35,6 @@ public class SimpleVideoObject implements Parcelable {
     this.video = video;
   }
 
-  protected SimpleVideoObject(Parcel in) {
-    name = in.readString();
-    video = in.readString();
-  }
-
-  public static final Creator<SimpleVideoObject> CREATOR = new Creator<SimpleVideoObject>() {
-    @Override public SimpleVideoObject createFromParcel(Parcel in) {
-      return new SimpleVideoObject(in);
-    }
-
-    @Override public SimpleVideoObject[] newArray(int size) {
-      return new SimpleVideoObject[size];
-    }
-  };
-
   @Override public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -75,7 +60,22 @@ public class SimpleVideoObject implements Parcelable {
   }
 
   @Override public void writeToParcel(Parcel dest, int flags) {
-    dest.writeString(name);
-    dest.writeString(video);
+    dest.writeString(this.name);
+    dest.writeString(this.video);
   }
+
+  protected SimpleVideoObject(Parcel in) {
+    this.name = in.readString();
+    this.video = in.readString();
+  }
+
+  public static final Creator<SimpleVideoObject> CREATOR = new Creator<SimpleVideoObject>() {
+    @Override public SimpleVideoObject createFromParcel(Parcel source) {
+      return new SimpleVideoObject(source);
+    }
+
+    @Override public SimpleVideoObject[] newArray(int size) {
+      return new SimpleVideoObject[size];
+    }
+  };
 }

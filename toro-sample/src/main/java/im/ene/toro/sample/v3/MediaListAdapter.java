@@ -16,16 +16,18 @@
 
 package im.ene.toro.sample.v3;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.BaseAdapter;
 import im.ene.toro.PlaybackState;
+import im.ene.toro.sample.data.OrderedVideoObject;
 import im.ene.toro.sample.data.SimpleVideoObject;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by eneim on 2/9/17.
@@ -34,7 +36,7 @@ import java.util.Map;
 public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
 
   // cache data, mimic a data source
-  private final Map<Integer, SimpleVideoObject> items = new LinkedHashMap<>();
+  private final List<OrderedVideoObject> items = new ArrayList<>();
 
   @SuppressWarnings("WeakerAccess") ItemClickHandler itemClickHandler;
 
@@ -42,14 +44,21 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
     this.itemClickHandler = itemClickHandler;
   }
 
-  @Nullable @Override protected Object getItem(int position) {
-    SimpleVideoObject item = items.get(position);
-    if (item == null) {
-      item = new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
-      items.put(position, item);
+  @NonNull @Override protected Object getItem(int position) {
+    OrderedVideoObject item;
+    if (items.size() <= position) {
+      item = new OrderedVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", position);
+      items.add(item);
+    } else {
+      item = items.get(position);
     }
 
     return item;
+  }
+
+  // ! IMPORTANT: this is must have for Drag & Drop behaviour
+  @Override public long getItemId(int position) {
+    return getItem(position).hashCode();
   }
 
   @Override public MediaItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -70,6 +79,25 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
 
   @Override public int getItemCount() {
     return Integer.MAX_VALUE;
+  }
+
+  public boolean moveItem(int fromPosition, int toPosition) {
+    boolean changed = fromPosition != toPosition;
+    if (fromPosition < toPosition) {
+      for (int i = fromPosition; i < toPosition; i++) {
+        Collections.swap(items, i, i + 1);
+      }
+    } else {
+      for (int i = fromPosition; i > toPosition; i--) {
+        Collections.swap(items, i, i - 1);
+      }
+    }
+
+    if (changed) {
+      notifyItemMoved(fromPosition, toPosition);
+    }
+
+    return changed;
   }
 
   static abstract class ItemClickHandler implements OnItemClickListener {
