@@ -31,7 +31,6 @@ public class ExtendedAdapter extends ExtToroAdapter<ToroAdapter.ViewHolder> {
 
   public ExtendedAdapter() {
     super();
-    setHasStableIds(true);  // MUST have this.
   }
 
   @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

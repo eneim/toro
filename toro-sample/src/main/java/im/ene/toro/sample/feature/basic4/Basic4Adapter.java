@@ -80,4 +80,8 @@ public class Basic4Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
     return 512;
   }
 
+  @Override public void remove() throws Exception {
+    super.remove();
+    this.inflater = null;
+  }
 }

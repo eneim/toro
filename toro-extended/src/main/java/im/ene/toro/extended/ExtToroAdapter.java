@@ -33,7 +33,7 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   private RecyclerView parent;
 
   public ExtToroAdapter() {
-
+    super();
   }
 
   @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -68,6 +68,7 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   }
 
   // Comment out, Un-comment if need
+
   //final ToroPlayer findNextPlayer() {
   //  int nextVideoPosition = findNextVideoPosition();
   //  return nextVideoPosition == INVALID_VIDEO_POSITION ? null

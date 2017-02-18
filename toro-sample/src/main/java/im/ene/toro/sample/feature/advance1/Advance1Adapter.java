@@ -31,7 +31,6 @@ public class Advance1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   public Advance1Adapter() {
     super();
-    setHasStableIds(true);  // MUST have this.
   }
 
   @Override public ToroAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -28,6 +28,7 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
   private final PlayerManager delegate;
 
   public BaseAdapter() {
+    super();
     this.delegate = PlayerManager.Factory.getInstance();
   }
 

@@ -38,7 +38,6 @@ public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   public Basic3Adapter() {
     super();
-    setHasStableIds(true);  // MUST have this.
   }
 
   @Override public ToroAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
