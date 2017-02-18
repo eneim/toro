@@ -56,7 +56,7 @@ public class Advance1VideoViewHolder extends ExoVideoViewHolder {
     }
 
     this.video = (SimpleVideoObject) item;
-    this.videoView.setMedia(Uri.parse(this.video.video));
+    this.playerView.setMedia(Uri.parse(this.video.video));
   }
 
   @Override protected ExoVideoView findVideoView(View itemView) {
@@ -69,7 +69,7 @@ public class Advance1VideoViewHolder extends ExoVideoViewHolder {
   }
 
   @NonNull @Override public View getPlayerView() {
-    return this.videoView;
+    return this.playerView;
   }
 
   @Override public void onVideoPreparing() {
