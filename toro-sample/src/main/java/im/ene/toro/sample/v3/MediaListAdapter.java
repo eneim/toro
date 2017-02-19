@@ -36,6 +36,7 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
 
   // cache data, mimic a data source
   private final List<OrderedVideoObject> items = new ArrayList<>();
+  int maxObject = 0;
 
   @SuppressWarnings("WeakerAccess") ItemClickHandler itemClickHandler;
 
@@ -77,7 +78,7 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
   }
 
   @Override public int getItemCount() {
-    return Integer.MAX_VALUE;
+    return items.size();
   }
 
   public boolean moveItem(int fromPosition, int toPosition) {
@@ -97,6 +98,38 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
     }
 
     return changed;
+  }
+
+  // Actions
+  public void reset() {
+    items.clear();
+    notifyDataSetChanged();
+  }
+
+  public void addItemNotify() {
+    OrderedVideoObject item =
+        new OrderedVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", maxObject++);
+    items.add(0, item);
+    notifyItemInserted(0);
+  }
+
+  public void addItemNotifyAll() {
+    OrderedVideoObject item =
+        new OrderedVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", maxObject++);
+    items.add(0, item);
+    notifyDataSetChanged();
+  }
+
+  public void removeItemNotify() {
+    if (items.size() == 0) return;
+    items.remove(0);
+    notifyItemRemoved(0);
+  }
+
+  public void removeItemNotifyAll() {
+    if (items.size() == 0) return;
+    items.remove(0);
+    notifyDataSetChanged();
   }
 
   static abstract class ItemClickHandler implements OnItemClickListener {

@@ -93,7 +93,7 @@ public abstract class PlayerViewHelper {
   @CallSuper public void onRecycled() {
     PlayerManager manager = getPlayerManager(itemView.getParent());
     // Manually save Video state
-    if (manager != null && player.equals(manager.getPlayer())) {
+    if (manager != null && player == manager.getPlayer()) {
       if (player.isPlaying()) {
         manager.savePlaybackState( //
             player.getMediaId(), player.getCurrentPosition(), player.getDuration());

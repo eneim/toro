@@ -18,7 +18,6 @@ package im.ene.toro;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 /**
  * Created by eneim on 2/18/17.
@@ -26,70 +25,54 @@ import android.util.Log;
 
 final class MediaDataObserver extends RecyclerView.AdapterDataObserver implements Removable {
 
-  private static final String TAG = Toro.TAG + "@Observer";
-  final RecyclerView.Adapter adapter;
+  @SuppressWarnings("unused") private static final String TAG = Toro.TAG + "@Observer";
+  private PlayerManager manager;
 
-  MediaDataObserver(@NonNull RecyclerView.Adapter adapter) {
-    this.adapter = adapter;
+  MediaDataObserver(@NonNull PlayerManager manager) {
+    this.manager = manager;
   }
 
   @Override public void onChanged() {
     super.onChanged();
-    Log.d(TAG, "onChanged() called");
+    // placeholder: v3
+    // TODO implement me
   }
 
   @Override public void onItemRangeChanged(int positionStart, int itemCount) {
     super.onItemRangeChanged(positionStart, itemCount);
-    Log.d(TAG, "onItemRangeChanged() called with: positionStart = ["
-        + positionStart
-        + "], itemCount = ["
-        + itemCount
-        + "]");
+    // placeholder: v3
+    // TODO implement me
   }
 
   @Override public void onItemRangeChanged(int positionStart, int itemCount, Object payload) {
     super.onItemRangeChanged(positionStart, itemCount, payload);
-    Log.d(TAG, "onItemRangeChanged() called with: positionStart = ["
-        + positionStart
-        + "], itemCount = ["
-        + itemCount
-        + "], payload = ["
-        + payload
-        + "]");
+    // placeholder: v3
+    // TODO implement me
   }
 
   @Override public void onItemRangeInserted(int positionStart, int itemCount) {
     super.onItemRangeInserted(positionStart, itemCount);
-    Log.d(TAG, "onItemRangeInserted() called with: positionStart = ["
-        + positionStart
-        + "], itemCount = ["
-        + itemCount
-        + "]");
+    // placeholder: v3
+    // TODO implement me
   }
 
   @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
     super.onItemRangeRemoved(positionStart, itemCount);
-    Log.d(TAG, "onItemRangeRemoved() called with: positionStart = ["
-        + positionStart
-        + "], itemCount = ["
-        + itemCount
-        + "]");
+    // placeholder: v3
+    // TODO implement me
   }
 
   @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
     super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-    Log.d(TAG, "onItemRangeMoved() called with: fromPosition = ["
-        + fromPosition
-        + "], toPosition = ["
-        + toPosition
-        + "], itemCount = ["
-        + itemCount
-        + "]");
+    // placeholder: v3
+    // TODO implement me
   }
 
   @Override public void remove() throws Exception {
-    if (adapter.hasObservers()) {
-      adapter.unregisterAdapterDataObserver(this);
+    if (((RecyclerView.Adapter) manager).hasObservers()) {
+      ((RecyclerView.Adapter) manager).unregisterAdapterDataObserver(this);
     }
+
+    this.manager = null;
   }
 }

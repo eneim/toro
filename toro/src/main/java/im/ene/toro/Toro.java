@@ -176,7 +176,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       throw new RuntimeException("Adapter must be a PlayerManager");
     }
 
-    MediaDataObserver observer = new MediaDataObserver(adapter);
+    MediaDataObserver observer = new MediaDataObserver(playerManager);
     adapter.registerAdapterDataObserver(observer);
     sInstance.observers.put(playerManager, observer);
 
@@ -219,7 +219,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     OnScrollListenerImpl listener = sInstance.listeners.remove(view);
     PlayerManager manager = sInstance.managers.remove(view);
-    MediaDataObserver observer = sInstance.observers.get(manager);
+    MediaDataObserver observer = sInstance.observers.remove(manager);
     if (manager.getPlayer() != null) {
       final ToroPlayer player = manager.getPlayer();
       manager.savePlaybackState(player.getMediaId(), //
@@ -322,8 +322,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (entry.getKey().getContext() == activity) {
         PlayerManager manager = entry.getValue();
         try {
-          observers.get(manager).remove();
           manager.remove();
+          observers.get(manager).remove();
         } catch (Exception e) {
           e.printStackTrace();
         }
