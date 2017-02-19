@@ -70,7 +70,7 @@ public class MediaListActivity extends BaseActivity {
 
     mediaListAdapter = new MediaListAdapter();
     if (!mediaListAdapter.hasStableIds()) throw new AssertionError("Adapter must have stable Ids");
-    LinearLayoutManager layoutManager = new GridLayoutManager(this, 1);
+    LinearLayoutManager layoutManager = new GridLayoutManager(this, 2);
     recyclerView.setLayoutManager(layoutManager);
     recyclerView.setAdapter(mediaListAdapter);
 

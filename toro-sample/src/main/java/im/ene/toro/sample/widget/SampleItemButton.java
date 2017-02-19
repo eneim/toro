@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.DrawableRes;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -70,7 +71,7 @@ public class SampleItemButton extends LinearLayoutCompat {
       subtitleTextView.setVisibility(GONE);
     } else {
       subtitleTextView.setVisibility(VISIBLE);
-      subtitleTextView.setText(subTitle);
+      subtitleTextView.setText(Html.fromHtml(subTitle));
     }
 
     if (imageResource != 0) {
@@ -93,7 +94,7 @@ public class SampleItemButton extends LinearLayoutCompat {
   }
 
   public void setSubTitle(CharSequence subTitle) {
-    this.subtitleTextView.setText(subTitle);
+    this.subtitleTextView.setText(Html.fromHtml(subTitle.toString()));
     this.subtitleTextView.setVisibility(VISIBLE);
   }
 
