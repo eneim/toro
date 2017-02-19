@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -31,6 +32,8 @@ import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.OrderedVideoObject;
+import im.ene.toro.sample.v3.action.Action;
+import im.ene.toro.sample.v3.action.ActionAdapter;
 
 /**
  * Created by eneim on 2/9/17.
@@ -42,19 +45,34 @@ public class MediaListActivity extends BaseActivity {
   PlaybackState playbackState;  // save the latest playback state
 
   @BindView(R.id.recycler_view) RecyclerView recyclerView;
-  MediaListAdapter adapter;
+  MediaListAdapter mediaListAdapter;
   ItemTouchHelper itemTouchHelper;
+
+  @BindView(R.id.list_actions) RecyclerView actions;
+  ActionAdapter actionAdapter;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.generic_recycler_view);
+    setContentView(R.layout.activity_experiment);
     ButterKnife.bind(this);
 
-    adapter = new MediaListAdapter();
-    if (!adapter.hasStableIds()) throw new AssertionError("Adapter must have stable Ids");
-    GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+    // Setup actions
+    actionAdapter = new ActionAdapter();
+    LinearLayoutManager actionLayoutManager =
+        new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+    actions.setLayoutManager(actionLayoutManager);
+    actions.setAdapter(actionAdapter);
+    actionAdapter.setActionClickListener(new ActionAdapter.ActionClickListener() {
+      @Override public void onActionClick(View view, Action action) {
+        handleAction(view, action);
+      }
+    });
+
+    mediaListAdapter = new MediaListAdapter();
+    if (!mediaListAdapter.hasStableIds()) throw new AssertionError("Adapter must have stable Ids");
+    LinearLayoutManager layoutManager = new GridLayoutManager(this, 1);
     recyclerView.setLayoutManager(layoutManager);
-    recyclerView.setAdapter(adapter);
+    recyclerView.setAdapter(mediaListAdapter);
 
     itemTouchHelper = new ItemTouchHelper(  //
         new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN  //
@@ -64,7 +82,7 @@ public class MediaListActivity extends BaseActivity {
               RecyclerView.ViewHolder target) {
             final int fromPos = viewHolder.getAdapterPosition();
             final int toPos = target.getAdapterPosition();
-            return adapter.moveItem(fromPos, toPos);
+            return mediaListAdapter.moveItem(fromPos, toPos);
           }
 
           @Override public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
@@ -79,7 +97,7 @@ public class MediaListActivity extends BaseActivity {
 
     itemTouchHelper.attachToRecyclerView(recyclerView);
 
-    adapter.setItemClickHandler(new MediaListAdapter.ItemClickHandler() {
+    mediaListAdapter.setItemClickHandler(new MediaListAdapter.ItemClickHandler() {
       @Override
       public void openVideoPlayer(View view, OrderedVideoObject source, PlaybackState state) {
         playbackState = state;
@@ -94,10 +112,12 @@ public class MediaListActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    adapter.setItemClickHandler(null);
+    mediaListAdapter.setItemClickHandler(null);
     itemTouchHelper.attachToRecyclerView(null);
     itemTouchHelper = null;
     Toro.unregister(recyclerView);
+
+    actionAdapter.setActionClickListener(null);
   }
 
   @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -106,9 +126,34 @@ public class MediaListActivity extends BaseActivity {
       if (requestCode == REQUEST_CODE_POSITION && this.playbackState != null) {
         long position = data.getLongExtra(MediaPlayerActivity.EXTRA_INIT_POSITION, 0);
         this.playbackState.setPosition(position);
-        adapter.savePlaybackState(playbackState.getMediaId(), playbackState.getPosition(),
+        mediaListAdapter.savePlaybackState(playbackState.getMediaId(), playbackState.getPosition(),
             playbackState.getDuration());
       }
+    }
+  }
+
+  // Handle actions
+  void handleAction(View view, Action action) {
+    switch (action) {
+      case RESET:
+        mediaListAdapter.reset();
+        break;
+      case ADD_NOTIFY_ALL:
+        mediaListAdapter.addItemNotifyAll();
+        break;
+      case ADD_NOTIFY:
+        mediaListAdapter.addItemNotify();
+        break;
+      case REMOVE_NOTIFY:
+        mediaListAdapter.removeItemNotify();
+        break;
+      case REMOVE_NOTIFY_ALL:
+        mediaListAdapter.removeItemNotifyAll();
+        break;
+      case MOVE_NOTIFY:
+        break;
+      default:
+        break;
     }
   }
 }
