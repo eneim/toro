@@ -255,6 +255,11 @@ public class ExoVideoView extends FrameLayout {
     }
   }
 
+  @Override protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    releasePlayer();
+  }
+
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     if (videoAspectRatio == 0) {
@@ -433,6 +438,10 @@ public class ExoVideoView extends FrameLayout {
           timeline.getWindow(playerWindow, window).isSeekable) {
         playerPosition = player.getCurrentPosition();
       }
+      player.setTextOutput(null);
+      player.setVideoListener(null);
+      player.removeListener(componentListener);
+      player.setVideoSurface(null);
       player.release();
       player = null;
       trackSelector = null;
