@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.v3;
+package im.ene.toro.sample.experiment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -32,8 +32,8 @@ import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.OrderedVideoObject;
-import im.ene.toro.sample.v3.action.Action;
-import im.ene.toro.sample.v3.action.ActionAdapter;
+import im.ene.toro.sample.experiment.action.Action;
+import im.ene.toro.sample.experiment.action.ActionAdapter;
 
 /**
  * Created by eneim on 2/9/17.

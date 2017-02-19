@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.v3;
+package im.ene.toro.sample.experiment;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;

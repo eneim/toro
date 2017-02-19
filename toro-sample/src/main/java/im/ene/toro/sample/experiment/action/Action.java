@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.v3.action;
+package im.ene.toro.sample.experiment.action;
 
 /**
  * Created by eneim on 2/18/17.

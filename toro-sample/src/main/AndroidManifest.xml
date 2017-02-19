@@ -66,14 +66,14 @@
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".v3.MediaListActivity">
+        android:name=".experiment.MediaListActivity">
     </activity>
 
     <activity
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".v3.MediaPlayerActivity">
+        android:name=".experiment.MediaPlayerActivity">
     </activity>
 
     <activity-alias
@@ -90,18 +90,6 @@
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
-
-    <activity
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-        android:label="@string/app_name"
-        android:name=".develop.DemoActivity"
-        android:theme="@style/AppTheme.NoActionBar">
-      <!--<intent-filter>-->
-      <!--<action android:name="android.intent.action.MAIN"/>-->
-
-      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
-    </activity>
   </application>
 
 </manifest>

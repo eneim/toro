@@ -17,6 +17,7 @@
 package im.ene.toro.sample.feature.home;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
@@ -46,5 +47,11 @@ public class FeatureItemViewHolder extends RecyclerView.ViewHolder {
     itemButton.setTitle(context.getString(feature.title));
     itemButton.setSubTitle(context.getString(feature.description));
     itemButton.setImageResource(0);
+
+    if (feature == Feature.EXPERIMENT) {
+      itemButton.setBackgroundColor(Color.parseColor("#ffc5f507"));
+    } else {
+      itemButton.setBackgroundColor(Color.parseColor("#ffffffff"));
+    }
   }
 }

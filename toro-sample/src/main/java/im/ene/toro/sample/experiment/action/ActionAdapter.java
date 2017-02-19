@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.v3.action;
+package im.ene.toro.sample.experiment.action;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;

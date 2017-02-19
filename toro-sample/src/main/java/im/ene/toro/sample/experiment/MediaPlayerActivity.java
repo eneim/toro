@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.v3;
+package im.ene.toro.sample.experiment;
 
 import android.content.Context;
 import android.content.Intent;

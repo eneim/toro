@@ -28,15 +28,15 @@ import im.ene.toro.sample.feature.basic4.Basic4Activity;
 import im.ene.toro.sample.feature.extended.ExtendedListActivity;
 import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
 import im.ene.toro.sample.feature.legacy.LegacyActivity;
-import im.ene.toro.sample.v3.MediaListActivity;
+import im.ene.toro.sample.experiment.MediaListActivity;
 
 /**
  * Created by eneim on 2/15/17.
  */
 
 public enum Feature {
+  EXPERIMENT(MediaListActivity.class, R.string.experiment, R.string.experiment_description), //
   BASIC_4(Basic4Activity.class, R.string.basic_sample_4, R.string.basic_sample_4_description),  //
-  MEDIA_LIST(MediaListActivity.class, R.string.media_list_1, R.string.media_list_1_description), //
   BASIC_1(Basic1Activity.class, R.string.basic_sample_1, R.string.basic_sample_1_description),  //
   BASIC_2(Basic2Activity.class, R.string.basic_sample_2, R.string.basic_sample_2_description),  //
   BASIC_3(Basic3Activity.class, R.string.basic_sample_3, R.string.basic_sample_3_description),  //

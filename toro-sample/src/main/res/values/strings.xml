@@ -98,12 +98,15 @@
     A long click is handled to support more ideas in your Application.
   </string>
 
-  <string name="media_list_1">
-    Toro Basic Sample 5: Minimal + External Player
+  <string name="experiment">
+    Experiment: about what is coming to Toro
   </string>
 
-  <string name="media_list_1_description">
-    Another sample with minimal implementation, with click to open external Player.
+  <string name="experiment_description">
+    This sample is the place I experiment the next features of Toro, but not be stable enough or even working.
+    Some may be included in next version, some may not.
+    \n\n
+    It is not encourage to use it in production, but it is highly expected to have feedback as Github Issue.
   </string>
 
   <string name="title_activity_main">MainActivity</string>
