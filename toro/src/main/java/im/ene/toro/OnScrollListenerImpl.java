@@ -26,7 +26,10 @@ import java.util.List;
 /**
  * Created by eneim on 1/31/16.
  *
+ * Re-implementation of old ToroScrollListener.
+ *
  * @hide
+ * @since 2.2.0
  */
 final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implements Removable {
 
