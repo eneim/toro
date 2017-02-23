@@ -101,32 +101,32 @@ public class MediaListAdapter extends BaseAdapter<MediaItemViewHolder> {
   }
 
   // Actions
-  public void reset() {
+  void reset() {
     items.clear();
     notifyDataSetChanged();
   }
 
-  public void addItemNotify() {
+  void addItemNotify() {
     OrderedVideoObject item =
         new OrderedVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", maxObject++);
     items.add(0, item);
     notifyItemInserted(0);
   }
 
-  public void addItemNotifyAll() {
+  void addItemNotifyAll() {
     OrderedVideoObject item =
         new OrderedVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4", maxObject++);
     items.add(0, item);
     notifyDataSetChanged();
   }
 
-  public void removeItemNotify() {
+  void removeItemNotify() {
     if (items.size() == 0) return;
     items.remove(0);
     notifyItemRemoved(0);
   }
 
-  public void removeItemNotifyAll() {
+  void removeItemNotifyAll() {
     if (items.size() == 0) return;
     items.remove(0);
     notifyDataSetChanged();

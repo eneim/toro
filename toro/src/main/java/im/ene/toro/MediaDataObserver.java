@@ -21,8 +21,9 @@ import android.support.v7.widget.RecyclerView;
 
 /**
  * Created by eneim on 2/18/17.
+ *
+ * @since 3.0.0, on-going work
  */
-
 final class MediaDataObserver extends RecyclerView.AdapterDataObserver implements Removable {
 
   @SuppressWarnings("unused") private static final String TAG = Toro.TAG + "@Observer";
