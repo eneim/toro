@@ -18,8 +18,9 @@ package im.ene.toro;
 
 /**
  * Created by eneim on 1/20/17.
+ *
+ * @since 2.2.0
  */
-
 public final class PlaybackState {
 
   private final String mediaId;

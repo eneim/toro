@@ -83,7 +83,7 @@ public abstract class PlayerViewHelper {
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
   @CallSuper public void onDetachedFromWindow() {
-    //
+    // Prefer to use onRecycled for cleaning up data.
   }
 
   @CallSuper public void onBound() {

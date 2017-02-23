@@ -22,7 +22,7 @@ package im.ene.toro;
  * A self-removable object. Implement this and call {@link #remove()} when this object needs to
  * cleanup.
  */
-public interface Removable {
+@SuppressWarnings("WeakerAccess") public interface Removable {
 
   void remove() throws Exception;
 }
