@@ -44,7 +44,7 @@ public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
   private static final int MSG_DELAY = 50;  // Reasonable and relatively short delay
 
   private Handler handler;
-  boolean firstScroll = true;
+  private boolean firstScroll = true;
 
   public ToroViewPagerHelper() {
     this.handler = new Handler(Looper.getMainLooper(), this);
