@@ -39,7 +39,7 @@ public interface ToroPlayer extends MediaPlayer {
   boolean wantsToPlay();
 
   /**
-   * @return value from 0.0 ~ 1.0 the visible Area offset of current Video
+   * @return value from 0.0 ~ 1.0 the visible Area offset of current Player View
    */
   @FloatRange(from = 0.0, to = 1.0) float visibleAreaOffset();
 
@@ -70,7 +70,7 @@ public interface ToroPlayer extends MediaPlayer {
   /**
    * Retrieve current player's View
    *
-   * @return attached video view
+   * @return attached Player View
    */
   @NonNull View getPlayerView();
 

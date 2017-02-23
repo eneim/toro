@@ -25,6 +25,8 @@ import android.view.View;
  * Created by eneim on 1/30/16.
  *
  * Basic implementation/extension of {@link RecyclerView.Adapter} to have support from Toro.
+ *
+ * @since 1.0.0
  */
 public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
     extends RecyclerView.Adapter<VH> {
@@ -119,7 +121,7 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
      * RecyclerView will check the View's transient state again before giving a final decision.
      * Default implementation returns false.
      */
-    protected boolean onFailedToRecycle() {
+    @SuppressWarnings("WeakerAccess") protected boolean onFailedToRecycle() {
       return false;
     }
 
