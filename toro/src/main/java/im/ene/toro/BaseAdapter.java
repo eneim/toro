@@ -20,6 +20,10 @@ import android.support.annotation.Nullable;
 
 /**
  * Created by eneim on 1/20/17.
+ *
+ * A base implementation of {@link PlayerManager}, ready to use.
+ *
+ * @since 2.2.0
  */
 
 public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends ToroAdapter<VH>
@@ -64,7 +68,8 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
     delegate.stopPlayback();
   }
 
-  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
+  @Deprecated @Override
+  public void saveVideoState(String videoId, @Nullable Long position, long duration) {
     delegate.saveVideoState(videoId, position, duration);
   }
 
@@ -80,11 +85,11 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
     return delegate.getPlaybackState(mediaId);
   }
 
-  @Override public void restoreVideoState(String videoId) {
+  @Deprecated @Override public void restoreVideoState(String videoId) {
     delegate.restoreVideoState(videoId);
   }
 
-  @Override public PlaybackState getSavedState(String videoId) {
+  @Deprecated @Override public PlaybackState getSavedState(String videoId) {
     return delegate.getSavedState(videoId);
   }
 }
