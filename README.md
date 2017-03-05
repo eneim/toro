@@ -19,24 +19,22 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 
 ## 1. Main features:
 
-- Auto start/pause/resume video while scrolling your RecyclerView. Well handling playback lifecycle and callback states. Rich feature extensions and easy to start Demo App.
-
-- Playback state cache: Toro remembers last playback position and resume from where you left (*note: in Android default Media Player API, depend on Video's format and codec, the resume timestamp may varies*).
-
-- Playback extensible behavior:
-  - Customizable playback Strategy to decide the best component to start playback. Built-in Strategies included.
-  - UI-based logic, straight-forward approach: you see the Video, then it should play. **Default**: you see 75% of the Video then it should start playing. **Advance**: you decide how much the visible Video should trigger the playback. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
-  - Straight-forward decision making strategy: UI tells Toro API if it wants to play a Media or not, then Toro's strategy will decide if it allows the Media to play or not (well, when many of them want to play, we need to choose only one). **Default**: built-in implementation takes care of everything. **Advance**: control to both sides, extensible UI Widgets and Core APIs. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
-
-- Built-in rich feature Extensions: ExoPlayer (v2, v1) based Playback widget as well as fine tuned combination with RecyclerView APIs. Fallback to legacy with Extension for Android MediaPlayer API.
-
+- Auto start media playback after RecyclerView layout has been settled down.
+- Auto start/pause/resume media base on RecyclerView scroll state.
+- Auto save latest media last playback position and resume from there later (*note: in Android default Media Player API, depend on Video's format and codec, the resume timestamp may varies*).
+- Customizable playback behavior:
+  - Customizable playback Strategy to decide the best component to start playback.
+  - UI-based approach: you see the Video, then it can play. **Default**: you see 75% of the Video then it can start playing. **Advance**: you decide how much the visible Video should trigger the playback. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+  
 - Powerful, flexible and highly customizable API. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
 
-- Selective playback: find the best playable item, defined by smart, flexible [Strategies](/toro/src/main/java/im/ene/toro/ToroStrategy.java) to decide when and how a player should start playing. Optimized built-in [Strategies](/toro/src/main/java/im/ene/toro/Toro.java#L339) is enough to begin, but user could always create their own. See [Wiki](https://github.com/eneim/Toro/wiki) for more details.
+- Selective playback: among many playable items, Strategy helps find the best one to start playback.
 
-- Toro Extended: an extension based on ExoPlayer 2 extension, provides the concept of "Next Target Player to trigger", and long click/press handling. See Wiki for more information.
+- Extensions: ExoPlayer (v2, v1), (legacy) Android MediaPlayer API.
 
-- **I create lots of built-in components, but keep Toro highly customizable.** You are free to decide how you want to start your player, but if you don't know, just let Toro help you to decide.
+  - Toro Extended: extension based on ExoPlayer 2, provides the concept of "Next Player to play" (abstract concept for loop/auto scroll, ...), and long click/press handling. See Wiki for more information.
+
+- **Lots of built-in components, but Toro is still highly customizable.**
 
 **See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
@@ -48,7 +46,7 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 
 ## 3. How to use
 
-##### 0. Prerequirement
+##### 0. Pre-requirement
 
 - Min support version: Android SDK level 16 (4.1.x)
 
@@ -59,7 +57,7 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 ```groovy
 allprojects {
 	repositories {
-    // Android Studio use this by default.
+    // Android Studio has this by default.
 		jcenter()
 	}
 }
@@ -69,24 +67,28 @@ allprojects {
 
 ```groovy
 ext {
-	toroVersion = '2.1.0'
+	toroVersion = '2.2.0'
 }
 
 dependencies {
 
+  // TODO !IMPORTANT: use only one of the following
+  
   // include in your module (app or library)
   // include only core Toro library
   compile "im.ene.toro2:toro:${toroVersion}"
 
-  // include extension for ExoPlayer v2 (Toro is included already)
-  compile "im.ene.toro2:toro-ext-exoplayer2:${toroVersion}"
-  // include extension for ExoPlayer v1 (Toro is included already)
-  compile "im.ene.toro2:toro-ext-exoplayer:${toroVersion}"
-  // include extension for Legacy MediaPlayer (Toro is included already)
-  compile "im.ene.toro2:oro-ext-mediaplayer:${toroVersion}"
-
   // include Toro extended helper (Toro and ExoPlayer v2 extension is included already)
   compile "im.ene.toro2:toro-extended:${toroVersion}"
+  
+  // include extension for ExoPlayer v2 (Toro is included already)
+  compile "im.ene.toro2:toro-ext-exoplayer2:${toroVersion}"
+  
+  // include extension for ExoPlayer v1 (Toro is included already)
+  compile "im.ene.toro2:toro-ext-exoplayer:${toroVersion}"
+  
+  // include extension for Legacy MediaPlayer (Toro is included already)
+  compile "im.ene.toro2:oro-ext-mediaplayer:${toroVersion}"
 }
 ```
 
@@ -105,6 +107,10 @@ Latest version is always visible here: [![Download](https://api.bintray.com/pack
 ### Contribute to Toro
 
 - Issue report and PRs are welcome.
+
+- Buy me some coffee for shorter update cycle ...
+
+<a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ### Hall of Fames
 
