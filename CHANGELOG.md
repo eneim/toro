@@ -8,7 +8,7 @@
   - "MediaPlayerManager" is now "PlayerManager".
   - There is default [BaseAdapter](/toro/src/main/java/im/ene/toro/BaseAdapter.java) that can be extended to help the new change. See [this sample](/toro-sample/src/main/java/im/ene/toro/sample/feature/basic4/Basic4Adapter.java#L30) for instance.
   - There is [default implementation for "PlayerManager"](/toro/src/main/java/im/ene/toro/PlayerManagerImpl.java) that can be used as delegation for Adapter that doesn't extend BaseAdapter. Usage can be found in [how BaseAdapter is implemented](/toro/src/main/java/im/ene/toro/BaseAdapter.java).
-- ExoVideoView is deprecated, ExoPlayerView is added to replace it. ExoPlayerView uses ExoPlayer's official SimpleExoPlayerView internally.
+- **ExoVideoView** is deprecated, **ExoPlayerView** is added to replace it. ExoPlayerView uses ExoPlayer's official SimpleExoPlayerView internally.
 - All classes those are backed by ExoVideoView are deprecated, alternative classes are added accordingly.
 
 **Bug fix and improvement**
