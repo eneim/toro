@@ -1,5 +1,33 @@
 # Release note
 
+### 2.2.0 (2017/03/05)
+
+**Big changes**
+
+- Adapter is required to implement "PlayerManager"
+  - "MediaPlayerManager" is now "PlayerManager".
+  - There is default [BaseAdapter](/toro/src/main/java/im/ene/toro/BaseAdapter.java) that can be extended to help the new change. See [this sample](/toro-sample/src/main/java/im/ene/toro/sample/feature/basic4/Basic4Adapter.java#L30) for instance.
+  - There is [default implementation for "PlayerManager"](/toro/src/main/java/im/ene/toro/PlayerManagerImpl.java) that can be used as delegation for Adapter that doesn't extend BaseAdapter. Usage can be found in [how BaseAdapter is implemented](/toro/src/main/java/im/ene/toro/BaseAdapter.java).
+- **ExoVideoView** is deprecated, **ExoPlayerView** is added to replace it. ExoPlayerView uses ExoPlayer's official SimpleExoPlayerView internally.
+- All classes those are backed by ExoVideoView are deprecated, alternative classes are added accordingly.
+
+**Bug fix and improvement**
+
+- Lots of bug fixes and Performance improvement.
+- **RecyclerView registering/un-registering are now recommended to do in creation/destroying of life cycle (i.e onCreate/onDestroy for Activity and onViewCreated/onDestroyView for Fragment).**
+- Life Cycle handling is improved.
+- Lots of leak prone are fixed.
+- Playback order has been fixed.
+
+**Setup dependency**
+
+- In app folder, add this to build.gradle's **dependencies** block:
+
+``` groovy
+compile "im.ene.toro2:toro-extended:2.2.0"
+```
+- **IMPORTANT: change the dependency artifact Id to your need. There are: ```toro-extended```, ```toro-ext-exoplayer2```, ```toro-ext-exoplayer```, ```toro-ext-mediaplayer```**.
+
 ### 2.1.0 (2016/10/26)
 
 **Months of works, Toro has been re-designed from ground up**
