@@ -1,4 +1,5 @@
-# Toro
+# Toro 
+<a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
