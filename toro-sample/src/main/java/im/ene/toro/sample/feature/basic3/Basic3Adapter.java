@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.R;
@@ -30,14 +31,16 @@ import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
+ *
+ * @since 1.0.0
  */
-public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+
+public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   private static final String TAG = "ExoPlayer2Adapter";
 
   public Basic3Adapter() {
     super();
-    setHasStableIds(true);  // MUST have this.
   }
 
   @Override public ToroAdapter.ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
@@ -56,16 +59,16 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
     if (viewHolder instanceof Basic3VideoViewHolder) {
       viewHolder.setOnItemClickListener(new View.OnClickListener() {
         @Override public void onClick(View view) {
-          // Do this for for videoView only.
+          // Do this for for playerView only.
           if (view == ((Basic3VideoViewHolder) viewHolder).getPlayerView()) {
             // 1. Temporary disable the playback.
-            Toro.rest(true);
+            Toro.pause();
             new AlertDialog.Builder(parent.getContext()).setTitle(R.string.app_name)
                 .setMessage(R.string.sample)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                   @Override public void onDismiss(DialogInterface dialogInterface) {
                     // 2. Resume the playback.
-                    Toro.rest(false);
+                    Toro.resume();
                   }
                 })
                 .create()
@@ -89,7 +92,7 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override protected Object getItem(int position) {
-    if (position % 3 == 0) {
+    if (position % 3 != 0) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {
       return new SimpleObject();
@@ -97,7 +100,7 @@ public class Basic3Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? Basic3ViewHolder.TYPE_VIDEO : Basic3ViewHolder.TYPE_NORMAL;
+    return position % 3 != 0 ? Basic3ViewHolder.TYPE_VIDEO : Basic3ViewHolder.TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {

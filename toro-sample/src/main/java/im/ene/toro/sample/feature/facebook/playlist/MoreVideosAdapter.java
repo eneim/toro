@@ -21,10 +21,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.MediaPlayerManager;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
-import im.ene.toro.ToroPlayer;
-import im.ene.toro.MediaPlayerManagerImpl;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +31,16 @@ import java.util.List;
  * Created by eneim on 10/13/16.
  */
 
-public class MoreVideosAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
-    implements MediaPlayerManager {
+public class MoreVideosAdapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   static final int VIDEO_TYPE_FIRST = 0;
   static final int VIDEO_TYPE_NEXT = 1;
 
   private final List<TimelineItem.VideoItem> items;
-  private final MediaPlayerManager delegate;
 
   public MoreVideosAdapter(@NonNull TimelineItem.VideoItem firstItem) {
     this.items = new ArrayList<>();
     this.items.add(firstItem);
-    this.delegate = new MediaPlayerManagerImpl();
   }
 
   @Nullable @Override protected TimelineItem.VideoItem getItem(int position) {
@@ -83,47 +78,5 @@ public class MoreVideosAdapter extends ToroAdapter<ToroAdapter.ViewHolder>
       this.items.addAll(newItems);
       notifyItemRangeInserted(oldLen, newItems.size());
     }
-  }
-
-  // MediaPlayerManager implementation
-
-  @Nullable @Override public ToroPlayer getPlayer() {
-    return delegate.getPlayer();
-  }
-
-  @Override public void setPlayer(ToroPlayer player) {
-    delegate.setPlayer(player);
-  }
-
-  @Override public void onRegistered() {
-    delegate.onRegistered();
-  }
-
-  @Override public void onUnregistered() {
-    delegate.onUnregistered();
-  }
-
-  @Override public void startPlayback() {
-    delegate.startPlayback();
-  }
-
-  @Override public void pausePlayback() {
-    delegate.pausePlayback();
-  }
-
-  @Override public void stopPlayback() {
-    delegate.stopPlayback();
-  }
-
-  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
-    delegate.saveVideoState(videoId, position, duration);
-  }
-
-  @Override public void restoreVideoState(String videoId) {
-    delegate.restoreVideoState(videoId);
-  }
-
-  @Nullable @Override public Long getSavedPosition(String videoId) {
-    return delegate.getSavedPosition(videoId);
   }
 }

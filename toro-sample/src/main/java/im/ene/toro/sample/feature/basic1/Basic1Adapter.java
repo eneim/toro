@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.data.SimpleObject;
 import im.ene.toro.sample.data.SimpleVideoObject;
@@ -27,7 +28,7 @@ import im.ene.toro.sample.data.SimpleVideoObject;
 /**
  * Created by eneim on 6/29/16.
  */
-public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
+public class Basic1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   static int TYPE_VIDEO = 1;
 
@@ -72,11 +73,15 @@ public class Basic1Adapter extends ToroAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? TYPE_VIDEO : TYPE_NORMAL;
+    return getItem(position) instanceof SimpleVideoObject ? TYPE_VIDEO : TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {
     return 512;
   }
 
+  @Override public void remove() throws Exception {
+    super.remove();
+    this.inflater = null;
+  }
 }

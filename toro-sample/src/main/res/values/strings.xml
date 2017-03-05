@@ -11,16 +11,22 @@
     Video list auto playback made simple, specially built for RecyclerView
   </string>
 
+  <string name="basic_sample_4">
+    Basic Sample 4: Official SimpleExoPlayerView
+  </string>
+
+  <string name="basic_sample_4_description">
+    <![CDATA[This demo show the use of Official SimpleExoPlayerView.
+    It is the same with Basic sample 1, accept for the Player View in used.]]>
+  </string>
+
   <string name="basic_sample_1">
     Basic Sample 1: Minimal
   </string>
 
   <string name="basic_sample_1_description">
-    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
-    add Toro support into the App.\n\n
-    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
-    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
-    we could reduce a lot of time on Video.
+    <![CDATA[In this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    add Toro support into the App.]]>
   </string>
 
   <string name="basic_sample_2">
@@ -28,9 +34,9 @@
   </string>
 
   <string name="basic_sample_2_description">
-    \tThis basic example is similar to Basic Sample 1. Additionally, we have a feature to tell Toro
+    <![CDATA[This basic example is similar to Basic Sample 1. Additionally, we have a feature to tell Toro
     which is the first Video we want to play.
-    Until that Video is prepared and start playing, no other Videos is allowed to play.
+    Until that Video is prepared and start playing, no other Videos is allowed to play.]]>
   </string>
 
   <string name="basic_sample_3">
@@ -38,10 +44,10 @@
   </string>
 
   <string name="basic_sample_3_description">
-    \tThis basic example is similar to Basic Sample 1. Additionally, we enable interaction with Video View.
+    <![CDATA[<p>This basic example is similar to Basic Sample 1 plus interaction with Video View.
     On single click, we temporarily pause the playback and show an AlertDialog, after we close that dialog, we resume the playback.
-    We also provide custom feedback on long press too.
-    \n\nFurthermore, we add the ability to selective react to click event: we have different response on the View user clicked.
+    We also provide custom feedback on long press too.</p>
+    Furthermore, we add the ability to selective react to click event: we have different responses on the View user clicked.]]>
   </string>
 
   <string name="average_sample_1">
@@ -49,8 +55,8 @@
   </string>
 
   <string name="average_sample_1_description">
-    \tThis example is similar to Basic Sample 1. But we add more complicated state listening event.
-    So that we could see how ToroPlayer\'s callback works in practice.
+    <![CDATA[This example is similar to Basic Sample 1. But we add more complicated state listening event.
+    So that we could see how ToroPlayer\'s callback works in practice.]]>
   </string>
 
   <string name="advance_sample_1">
@@ -58,18 +64,18 @@
   </string>
 
   <string name="advance_sample_1_description">
-    \tThis example is similar to Average Sample 1. This time, we use a custom LayoutManager
-    (here I use CarouselLayoutManager) and implement ToroLayoutManager to get native support from Toro.
+    <![CDATA[This example is similar to Average Sample 1. This time, we use a custom LayoutManager
+    (here I use CarouselLayoutManager) and implement ToroLayoutManager to get native support from Toro.]]>
   </string>
 
-  <string name="custom_sample_1">
+  <string name="facebook_sample_1">
     Custom Sample 1: Facebook + DialogFragment
   </string>
 
-  <string name="custom_sample_1_description">
-    \tThis example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
+  <string name="facebook_sample_1_description">
+    <![CDATA[This example introduce a Facebook-alike timeline, with mixed contents of Text and Videos.
     A click event to a Video will bring a \'Video list\' where requested Video is played as well as
-    many suggested Videos.
+    many suggested Videos.]]>
   </string>
 
   <string name="legacy_sample_1">
@@ -77,12 +83,9 @@
   </string>
 
   <string name="legacy_sample_1_description">
-    \tIn this sample, we learn how to implement very simple Video ViewHolder and Video list and
-    add Toro support into the App.\n\n
-    \tThere are 2 types of components here: normal ViewHolder (shows no Videos) and video ViewHolder
-    (will have a Video). Here we can see that by correctly implementing Toro\'s core components,
-    we could reduce a lot of time on Video.\n\n
-    \tThis sample use the legacy VideoView.
+    <![CDATA[<p>In this sample, we learn how to implement very simple Video ViewHolder and Video list and
+    add Toro support into the App.</p>
+    This sample use the legacy VideoView.]]>
   </string>
 
   <string name="extended_sample_1">
@@ -90,10 +93,30 @@
   </string>
 
   <string name="extended_sample_1_description">
-    \tIn this sample, we learn how to use the extended benefit or Toro.\n\n
-    \tThe list will automatically scroll to next Player and trigger the playback.\n\n
-    \tA long click is handled to support more ideas in your Application.
+    <![CDATA[<p>In this sample, we learn how to use the extended benefit or Toro.</p>
+    <p>The list will automatically scroll to next Player and trigger the playback.</p>
+    A long click is handled to support more ideas in your Application.]]>
   </string>
+
+  <string name="experiment">
+    Experiment: about what is coming to Toro
+  </string>
+
+  <string name="experiment_description"><![CDATA[
+    <p>This sample is the place I experiment the next features of Toro, but not be stable enough or even working.
+    Some may be included in next version, some may not.</p>
+
+    <p>It is not encourage to use it in production, but it is highly expected to have feedback as Github Issue.</p>
+
+    This experiment includes:
+
+    <ul>
+      <li>Action button with various Add/Remove behaviours to verify how Toro works with Adapter#notify***</li>
+      <li>Drag & drop to verify how Toro works with Adapter\'s data change in that case</li>
+      <li>Click to open Single Player (portrait)</li>
+    </ul>
+    To be continued.
+  ]]></string>
 
   <string name="title_activity_main">MainActivity</string>
 

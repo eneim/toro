@@ -24,6 +24,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
  * Created by eneim on 3/7/16.
  *
  * This interface will allow user to use custom {@link RecyclerView.LayoutManager} in Toro
+ *
+ * @since 2.1.0
  */
 public interface ToroLayoutManager {
 

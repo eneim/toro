@@ -19,82 +19,57 @@ package im.ene.toro.extended;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer2.ExoVideoView;
 
 /**
  * Created by eneim on 10/4/16.
+ *
+ * @deprecated use {@link ExtPlayerViewHolder} instead
  */
-
+@Deprecated
 public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder implements ExtToroPlayer {
 
-  @NonNull protected final ExoVideoView videoView;
+  @NonNull protected final ExoVideoView playerView;
   protected final ExtPlayerViewHelper helper;
-  private boolean mPlayable = true; // normally true
+  private boolean playable = false; // normally false
 
   public ExtVideoViewHolder(View itemView) {
     super(itemView);
-    videoView = findVideoView(itemView);
-    if (videoView == null) {
+    playerView = findVideoView(itemView);
+    if (playerView == null) {
       throw new NullPointerException("A valid DemoVideoView is required.");
     }
     helper = new ExtPlayerViewHelper(this, itemView);
-    videoView.setPlayerCallback(helper);
+    playerView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
 
-  @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
-    super.setOnItemLongClickListener(listener);
-    videoView.setOnLongClickListener(new View.OnLongClickListener() {
-      @Override public boolean onLongClick(View v) {
-        return listener.onLongClick(v) && helper.onLongClick(v);
-      }
-    });
+  protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
+
+  @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+    playerView.setPlayerCallback(helper);
+    onBind(adapter, object);
+    helper.onBound();
   }
 
-  @Override public void preparePlayer(boolean playWhenReady) {
-    videoView.preparePlayer(playWhenReady);
+  @CallSuper @Override protected void onRecycled() {
+    playerView.setPlayerCallback(null);
+    helper.onRecycled();
   }
 
-  @Override public void releasePlayer() {
-    videoView.releasePlayer();
+  @CallSuper @Override public void onAttachedToWindow() {
+    helper.onAttachedToWindow();
   }
 
-  // Client could override this method for better practice
-  @Override public void start() {
-    videoView.start();
-  }
-
-  @Override public void pause() {
-    videoView.pause();
-  }
-
-  @Override public long getDuration() {
-    return videoView.getDuration();
-  }
-
-  @Override public long getCurrentPosition() {
-    return videoView.getCurrentPosition();
-  }
-
-  @Override public void seekTo(long pos) {
-    videoView.seekTo(pos);
-  }
-
-  @Override public boolean isPlaying() {
-    return videoView.isPlaying();
-  }
-
-  @Override public boolean wantsToPlay() {
-    // Default implementation
-    return visibleAreaOffset() >= 0.75 && mPlayable;
-  }
-
-  @CallSuper @Override public void onVideoPrepared() {
-    mPlayable = true;
+  @CallSuper @Override public void onDetachedFromWindow() {
+    helper.onDetachedFromWindow();
   }
 
   @CallSuper @Override public void onActivityActive() {
@@ -105,12 +80,68 @@ public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder implemen
 
   }
 
-  @CallSuper @Override public void onAttachedToWindow() {
-    helper.onAttachedToWindow();
+  @Override public void preparePlayer(boolean playWhenReady) {
+    playerView.preparePlayer(playWhenReady);
   }
 
-  @CallSuper @Override public void onDetachedFromWindow() {
-    helper.onDetachedFromWindow();
+  @Override public void releasePlayer() {
+    playerView.releasePlayer();
+    playable = false;
+  }
+
+  // Client could override this method for better practice
+  @Override public void start() {
+    playerView.start();
+  }
+
+  @Override public void pause() {
+    playerView.pause();
+  }
+
+  @Override public long getDuration() {
+    return playerView.getDuration();
+  }
+
+  @Override public long getCurrentPosition() {
+    return playerView.getCurrentPosition();
+  }
+
+  @Override public void seekTo(long pos) {
+    playerView.seekTo(pos);
+  }
+
+  @Override public boolean isPlaying() {
+    return playerView.isPlaying();
+  }
+
+  @Override public boolean wantsToPlay() {
+    // Default implementation
+    return visibleAreaOffset() >= Toro.DEFAULT_OFFSET;
+  }
+
+  @CallSuper @Override public void onVideoPrepared() {
+    playable = true;
+  }
+
+  @Override public int getBufferPercentage() {
+    return playerView.getBufferPercentage();
+  }
+
+  @Override public boolean onPlaybackError(Exception error) {
+    playable = false;
+    return true;
+  }
+
+  @Override public void stop() {
+    playerView.stop();
+  }
+
+  @NonNull @Override public View getPlayerView() {
+    return playerView;
+  }
+
+  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
+    this.playerView.setVolume(volume);
   }
 
   @Override public int getPlayOrder() {
@@ -130,37 +161,25 @@ public abstract class ExtVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @Override public void onPlaybackCompleted() {
-    mPlayable = false;
-    this.videoView.stop();
+    playable = false;
+    this.playerView.stop();
   }
 
   @Override public boolean isPrepared() {
-    return mPlayable;
+    return playable && playerView.getPlayer() != null;
   }
 
   @Override public float visibleAreaOffset() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
 
-  @Override public int getBufferPercentage() {
-    return videoView.getBufferPercentage();
-  }
-
-  @Override public boolean onPlaybackError(Exception error) {
-    mPlayable = false;
-    return true;
-  }
-
-  @Override public void stop() {
-    videoView.stop();
-  }
-
-  @NonNull @Override public View getPlayerView() {
-    return videoView;
-  }
-
-  @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-    this.videoView.setVolume(volume);
+  @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
+    super.setOnItemLongClickListener(listener);
+    playerView.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override public boolean onLongClick(View v) {
+        return listener.onLongClick(v) && helper.onLongClick(v);
+      }
+    });
   }
 
   // ExtToroPlayer

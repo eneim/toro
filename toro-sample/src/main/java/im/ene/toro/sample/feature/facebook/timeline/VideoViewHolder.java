@@ -52,20 +52,20 @@ public class VideoViewHolder extends ExoVideoViewHolder {
     return (ExoVideoView) itemView.findViewById(R.id.video);
   }
 
-  @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+  @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object object) {
     if (!(object instanceof TimelineItem)
         || !(((TimelineItem) object).getEmbedItem() instanceof TimelineItem.VideoItem)) {
       throw new IllegalArgumentException("Only VideoItem is accepted");
     }
 
     this.videoItem = (TimelineItem.VideoItem) ((TimelineItem) object).getEmbedItem();
-    this.videoView.setMedia(Uri.parse(videoItem.getVideoUrl()));
+    this.playerView.setMedia(Uri.parse(videoItem.getVideoUrl()));
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
     super.setOnItemClickListener(listener);
     mInfo.setOnClickListener(listener);
-    this.videoView.setOnClickListener(listener);
+    this.playerView.setOnClickListener(listener);
   }
 
   @Nullable @Override public String getMediaId() {

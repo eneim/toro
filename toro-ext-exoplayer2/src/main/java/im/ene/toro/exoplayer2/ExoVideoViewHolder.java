@@ -19,6 +19,8 @@ package im.ene.toro.exoplayer2;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
@@ -27,26 +29,39 @@ import im.ene.toro.ToroUtil;
 
 /**
  * Created by eneim on 6/11/16.
+ *
+ * @deprecated from 2.2.0, use {@link ExoPlayerViewHolder} instead.
  */
+@Deprecated
 public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
-  @NonNull protected final ExoVideoView videoView;
+  @NonNull protected final ExoVideoView playerView;
   protected final ExoPlayerViewHelper helper;
-  private boolean isPlayable = true; // normally true
+  private boolean playable = false; // normally false
 
   public ExoVideoViewHolder(View itemView) {
     super(itemView);
-    videoView = findVideoView(itemView);
-    if (videoView == null) {
+    playerView = findVideoView(itemView);
+    if (playerView == null) {
       throw new NullPointerException("A valid ExoVideoView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
-    videoView.setPlayerCallback(helper);
   }
 
   protected abstract ExoVideoView findVideoView(View itemView);
 
-  // BEGIN: ToroViewHolder
+  protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
+
+  @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
+    playerView.setPlayerCallback(helper);
+    onBind(adapter, object);
+    helper.onBound();
+  }
+
+  @CallSuper @Override protected void onRecycled() {
+    playerView.setPlayerCallback(null);
+    helper.onRecycled();
+  }
 
   @CallSuper @Override public void onAttachedToWindow() {
     helper.onAttachedToWindow();
@@ -55,9 +70,6 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
   }
-  // END: ToroViewHolder
-
-  // BEGIN: ToroPlayer
 
   @CallSuper @Override public void onActivityActive() {
 
@@ -68,36 +80,37 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @Override public void preparePlayer(boolean playWhenReady) {
-    videoView.preparePlayer(playWhenReady);
+    playerView.preparePlayer(playWhenReady);
   }
 
   @Override public void releasePlayer() {
-    videoView.releasePlayer();
+    playerView.releasePlayer();
+    playable = false;
   }
 
   // Client could override this method for better practice
   @Override public void start() {
-    videoView.start();
+    playerView.start();
   }
 
   @Override public void pause() {
-    videoView.pause();
+    playerView.pause();
   }
 
   @Override public long getDuration() {
-    return videoView.getDuration();
+    return playerView.getDuration();
   }
 
   @Override public long getCurrentPosition() {
-    return videoView.getCurrentPosition();
+    return playerView.getCurrentPosition();
   }
 
   @Override public void seekTo(long pos) {
-    videoView.seekTo(pos);
+    playerView.seekTo(pos);
   }
 
   @Override public boolean isPlaying() {
-    return videoView.isPlaying();
+    return playerView.isPlaying();
   }
 
   @Override public boolean wantsToPlay() {
@@ -106,28 +119,28 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    isPlayable = true;
+    playable = true;
   }
 
   @Override public int getBufferPercentage() {
-    return videoView.getBufferPercentage();
+    return playerView.getBufferPercentage();
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    isPlayable = false;
+    playable = false;
     return true;
   }
 
   @Override public void stop() {
-    videoView.stop();
+    playerView.stop();
   }
 
   @NonNull @Override public View getPlayerView() {
-    return videoView;
+    return playerView;
   }
 
   @Override public void setVolume(@FloatRange(from = 0.f, to = 1.f) float volume) {
-    this.videoView.setVolume(volume);
+    this.playerView.setVolume(volume);
   }
 
   @Override public int getPlayOrder() {
@@ -147,16 +160,15 @@ public abstract class ExoVideoViewHolder extends ToroAdapter.ViewHolder implemen
   }
 
   @Override public void onPlaybackCompleted() {
-    isPlayable = false;
-    this.videoView.stop();
+    playable = false;
+    this.playerView.stop();
   }
 
   @Override public boolean isPrepared() {
-    return isPlayable;
+    return playable && playerView.getPlayer() != null;
   }
 
   @Override public float visibleAreaOffset() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent());
   }
-  // END: ToroPlayer
 }

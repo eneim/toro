@@ -42,7 +42,7 @@ public abstract class TimelineViewHolder extends ToroAdapter.ViewHolder {
   }
 
   static ToroAdapter.ViewHolder createViewHolder(ViewGroup parent, int type) {
-    if (inflater == null) {
+    if (inflater == null || inflater.getContext() != parent.getContext()) {
       inflater = LayoutInflater.from(parent.getContext());
     }
 

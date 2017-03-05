@@ -19,7 +19,7 @@ package im.ene.toro.extended;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
-import im.ene.toro.MediaPlayerManager;
+import im.ene.toro.PlayerManager;
 import im.ene.toro.exoplayer2.State;
 
 /**
@@ -36,7 +36,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
     super.onPlayerStateChanged(playWhenReady, playbackState);
     if (playbackState == ExoPlayer.STATE_IDLE && !playWhenReady) {
       final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
-      final MediaPlayerManager manager = super.getPlayerManager(this.itemView.getParent());
+      final PlayerManager manager = super.getPlayerManager(this.itemView.getParent());
       switch (nextTarget) {
         case NEXT_PLAYER:
           if (manager instanceof ExtToroAdapter) {
@@ -50,7 +50,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
         case THIS_PLAYER:
           // immediately repeat
           if (manager != null) {
-            manager.restoreVideoState(player.getMediaId());
+            manager.restorePlaybackState(player.getMediaId());
             manager.startPlayback();
           }
           break;

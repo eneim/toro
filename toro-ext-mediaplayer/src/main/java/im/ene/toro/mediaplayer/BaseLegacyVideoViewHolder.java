@@ -16,8 +16,11 @@
 
 package im.ene.toro.mediaplayer;
 
+import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.VideoView;
 import im.ene.toro.Toro;
@@ -45,12 +48,16 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
     }
 
     helper = new LegacyVideoViewHelper(this, itemView);
+  }
+
+  protected abstract VideoView findVideoView(View itemView);
+
+  @CallSuper
+  @Override public void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
     videoView.setOnPreparedListener(helper);
     videoView.setOnCompletionListener(helper);
     videoView.setOnErrorListener(helper);
   }
-
-  protected abstract VideoView findVideoView(View itemView);
 
   /* BEGIN: ToroViewHolder callbacks */
   @Override public void onAttachedToWindow() {
@@ -129,7 +136,9 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
   }
 
   @Override public void releasePlayer() {
-    // Do nothing here
+    videoView.setOnPreparedListener(null);
+    videoView.setOnCompletionListener(null);
+    videoView.setOnErrorListener(null);
     helper.releasePlayer();
   }
 

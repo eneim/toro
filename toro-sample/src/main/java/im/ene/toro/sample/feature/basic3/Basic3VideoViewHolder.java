@@ -51,13 +51,13 @@ public class Basic3VideoViewHolder extends ExtVideoViewHolder {
     dummyView = (TextView) itemView.findViewById(R.id.text);
   }
 
-  @Override public void bind(RecyclerView.Adapter adapter, Object item) {
+  @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object item) {
     if (!(item instanceof SimpleVideoObject)) {
       throw new IllegalArgumentException("Invalid Object: " + item);
     }
 
     this.video = (SimpleVideoObject) item;
-    this.videoView.setMedia(Uri.parse(this.video.video));
+    this.playerView.setMedia(Uri.parse(this.video.video));
   }
 
   @Override protected ExoVideoView findVideoView(View itemView) {
@@ -74,14 +74,14 @@ public class Basic3VideoViewHolder extends ExtVideoViewHolder {
   // Interaction setup
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
     super.setOnItemClickListener(listener);
-    videoView.setOnClickListener(listener);
+    playerView.setOnClickListener(listener);
     // HINT: Un-comment this to enable click event on this TextView.
     // dummyView.setOnClickListener(listener);
   }
 
   @Override public void setOnItemLongClickListener(final View.OnLongClickListener listener) {
     super.setOnItemLongClickListener(listener);
-    videoView.setOnLongClickListener(new View.OnLongClickListener() {
+    playerView.setOnLongClickListener(new View.OnLongClickListener() {
       @Override public boolean onLongClick(View v) {
         return listener.onLongClick(v) || helper.onLongClick(v);
       }

@@ -52,6 +52,7 @@ android {
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -71,7 +72,7 @@ dependencies {
   // Non default dependencies
   compile project(':toro')
   compile project(path: ':toro-ext-exoplayer2')
-  compile project(path: ':toro-ext-mediaplayer')
+  // compile project(path: ':toro-ext-mediaplayer')
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

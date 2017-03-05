@@ -18,25 +18,22 @@ package im.ene.toro.extended;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import im.ene.toro.MediaPlayerManager;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.MediaPlayerManagerImpl;
 
 /**
  * Created by eneim on 10/7/16.
  */
 
-public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends ToroAdapter<VH>
-    implements MediaPlayerManager {
+public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends BaseAdapter<VH> {
 
   public static final int INVALID_VIDEO_POSITION = -1;
 
   private RecyclerView parent;
-  private final MediaPlayerManagerImpl delegate;
 
   public ExtToroAdapter() {
-    delegate = new MediaPlayerManagerImpl();
+    super();
   }
 
   @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -71,6 +68,7 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   }
 
   // Comment out, Un-comment if need
+
   //final ToroPlayer findNextPlayer() {
   //  int nextVideoPosition = findNextVideoPosition();
   //  return nextVideoPosition == INVALID_VIDEO_POSITION ? null
@@ -84,45 +82,8 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
     }
   }
 
-  // MediaPlayerManager implementation
-
-  @Nullable @Override public ToroPlayer getPlayer() {
-    return delegate.getPlayer();
-  }
-
-  @Override public void setPlayer(ToroPlayer player) {
-    delegate.setPlayer(player);
-  }
-
-  @Override public void onRegistered() {
-    delegate.onRegistered();
-  }
-
-  @Override public void onUnregistered() {
-    delegate.onUnregistered();
-  }
-
-  @Override public void startPlayback() {
-    delegate.startPlayback();
-  }
-
-  @Override public void pausePlayback() {
-    delegate.pausePlayback();
-  }
-
-  @Override public void stopPlayback() {
-    delegate.stopPlayback();
-  }
-
-  @Override public void saveVideoState(String videoId, @Nullable Long position, long duration) {
-    delegate.saveVideoState(videoId, position, duration);
-  }
-
-  @Override public void restoreVideoState(String videoId) {
-    delegate.restoreVideoState(videoId);
-  }
-
-  @Nullable @Override public Long getSavedPosition(String videoId) {
-    return delegate.getSavedPosition(videoId);
+  @Override public void remove() throws Exception {
+    super.remove();
+    this.parent = null;
   }
 }

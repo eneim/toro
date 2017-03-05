@@ -18,22 +18,25 @@ package im.ene.toro.sample.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.design.internal.ForegroundLinearLayout;
+import android.support.annotation.DrawableRes;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import im.ene.toro.sample.R;
 
 /**
  * Created by eneim on 3/11/16.
  */
-public class SampleItemButton extends ForegroundLinearLayout {
+public class SampleItemButton extends LinearLayoutCompat {
 
   public SampleItemButton(Context context) {
     this(context, null);
@@ -43,9 +46,9 @@ public class SampleItemButton extends ForegroundLinearLayout {
     this(context, attrs, 0);
   }
 
-  @Bind(R.id.title) TextView titleTextView;
-  @Bind(R.id.subtitle) TextView subtitleTextView;
-  @Bind(R.id.sample_gif) ImageView demoImageView;
+  @BindView(R.id.title) TextView titleTextView;
+  @BindView(R.id.subtitle) TextView subtitleTextView;
+  @BindView(R.id.sample_gif) ImageView demoImageView;
 
   public SampleItemButton(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
@@ -60,23 +63,52 @@ public class SampleItemButton extends ForegroundLinearLayout {
 
     a.recycle();
 
-    if (title == null || TextUtils.isEmpty(title)) {
-      throw new IllegalArgumentException("Title must not be empty");
+    if (!TextUtils.isEmpty(title)) {
+      titleTextView.setText(title);
     }
-
-    titleTextView.setText(title);
 
     if (subTitle == null || TextUtils.isEmpty(subTitle)) {
       subtitleTextView.setVisibility(GONE);
     } else {
       subtitleTextView.setVisibility(VISIBLE);
-      subtitleTextView.setText(subTitle);
+      subtitleTextView.setText(Html.fromHtml(subTitle));
     }
 
     if (imageResource != 0) {
       demoImageView.setVisibility(VISIBLE);
-      GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(demoImageView);
-      Glide.with(context).load(imageResource).crossFade().into(imageViewTarget);
+      GlideDrawableImageViewTarget imageViewTarget =
+          new GlideDrawableImageViewTarget(demoImageView);
+      Glide.with(context)
+          .load(imageResource)
+          .diskCacheStrategy(DiskCacheStrategy.RESULT)
+          .skipMemoryCache(true)
+          .crossFade()
+          .into(imageViewTarget);
+    } else {
+      demoImageView.setVisibility(GONE);
+    }
+  }
+
+  public void setTitle(CharSequence title) {
+    this.titleTextView.setText(title);
+  }
+
+  public void setSubTitle(CharSequence subTitle) {
+    this.subtitleTextView.setText(Html.fromHtml(subTitle.toString()));
+    this.subtitleTextView.setVisibility(VISIBLE);
+  }
+
+  public void setImageResource(@DrawableRes int imageResource) {
+    if (imageResource != 0) {
+      demoImageView.setVisibility(VISIBLE);
+      GlideDrawableImageViewTarget imageViewTarget =
+          new GlideDrawableImageViewTarget(demoImageView);
+      Glide.with(getContext())
+          .load(imageResource)
+          .diskCacheStrategy(DiskCacheStrategy.RESULT)
+          .skipMemoryCache(true)
+          .crossFade()
+          .into(imageViewTarget);
     } else {
       demoImageView.setVisibility(GONE);
     }

@@ -22,6 +22,8 @@ import java.util.List;
 
 /**
  * Created by eneim on 2/1/16.
+ *
+ * @since 1.0.0
  */
 public interface ToroStrategy {
 

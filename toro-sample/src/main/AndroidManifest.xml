@@ -20,8 +20,9 @@
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name="im.ene.toro.sample.feature.home.HomeActivity"
+        android:name=".feature.home.HomeActivity"
         android:theme="@style/AppTheme.NoActionBar"/>
+
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -34,6 +35,10 @@
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
         android:name=".feature.basic3.Basic3Activity"/>
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".feature.basic4.Basic4Activity"/>
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -58,6 +63,19 @@
         android:launchMode="singleTop"
         android:name=".feature.extended.ExtendedListActivity"/>
 
+    <activity
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".experiment.MediaListActivity">
+    </activity>
+
+    <activity
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+        android:label="@string/activity_show_case"
+        android:launchMode="singleTop"
+        android:name=".experiment.MediaPlayerActivity">
+    </activity>
+
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
@@ -72,18 +90,6 @@
     <meta-data
         android:name="io.fabric.ApiKey"
         android:value="${fabric_api_key}"/>
-
-    <activity
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-        android:label="@string/app_name"
-        android:name=".develop.DemoActivity"
-        android:theme="@style/AppTheme.NoActionBar">
-      <!--<intent-filter>-->
-      <!--<action android:name="android.intent.action.MAIN"/>-->
-
-      <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-      <!--</intent-filter>-->
-    </activity>
   </application>
 
 </manifest>
