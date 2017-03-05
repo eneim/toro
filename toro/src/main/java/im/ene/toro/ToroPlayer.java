@@ -25,6 +25,8 @@ import android.view.View;
 
 /**
  * Created by eneim on 1/29/16.
+ *
+ * @since 1.0.0
  */
 public interface ToroPlayer extends MediaPlayer {
 

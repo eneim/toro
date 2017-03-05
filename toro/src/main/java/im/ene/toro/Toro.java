@@ -538,6 +538,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     // Update video position as 0
     if (manager != null) {
       manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
+      manager.setPlayer(null);
     }
   }
 
@@ -546,6 +547,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (player.equals(manager.getPlayer())) {
         manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
         manager.pausePlayback();
+        manager.setPlayer(null);
       }
     }
 

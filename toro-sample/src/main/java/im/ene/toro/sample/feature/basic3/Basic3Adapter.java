@@ -31,7 +31,10 @@ import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
+ *
+ * @since 1.0.0
  */
+
 public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
   private static final String TAG = "ExoPlayer2Adapter";
@@ -89,7 +92,7 @@ public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override protected Object getItem(int position) {
-    if (position % 3 == 0) {
+    if (position % 3 != 0) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {
       return new SimpleObject();
@@ -97,7 +100,7 @@ public class Basic3Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override public int getItemViewType(int position) {
-    return position % 3 == 0 ? Basic3ViewHolder.TYPE_VIDEO : Basic3ViewHolder.TYPE_NORMAL;
+    return position % 3 != 0 ? Basic3ViewHolder.TYPE_VIDEO : Basic3ViewHolder.TYPE_NORMAL;
   }
 
   @Override public int getItemCount() {

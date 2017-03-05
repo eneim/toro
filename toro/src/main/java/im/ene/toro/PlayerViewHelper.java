@@ -66,10 +66,10 @@ public abstract class PlayerViewHelper {
               itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
               if (player.wantsToPlay() && Toro.getStrategy()
                   .allowsToPlay(player, itemView.getParent())) {
-                manager.setPlayer(player);
                 if (!player.isPrepared()) {
                   player.preparePlayer(false);
                 } else {
+                  manager.setPlayer(player);
                   manager.restorePlaybackState(player.getMediaId());
                   manager.startPlayback();
                 }

@@ -49,7 +49,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
     }
 
     ToroPlayer currentPlayer = manager.getPlayer();
-    if (!player.equals(currentPlayer)) {
+    if (player != currentPlayer) {
       // Being pressed player is a new one
       // All conditions to switch players has passed, process the switching
       // Manually save Video state
@@ -63,11 +63,12 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
         manager.pausePlayback();
       }
 
+      manager.setPlayer(null);
       // Trigger new player
-      manager.setPlayer(player);
       if (!player.isPrepared()) {
         player.preparePlayer(false);
       } else {
+        manager.setPlayer(player);
         manager.restorePlaybackState(player.getMediaId());
         manager.startPlayback();
       }
