@@ -44,8 +44,8 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         break;
       case ExoPlayer.STATE_BUFFERING:
         if (!playWhenReady && !player.isPrepared()) {
-          this.player.onVideoPrepared();
           this.onPrepared(this.itemView, this.itemView.getParent());
+          this.player.onVideoPrepared();
         }
         break;
       case ExoPlayer.STATE_READY:
