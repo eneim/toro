@@ -170,9 +170,9 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   @Override public boolean isPrepared() {
     SimpleExoPlayer player = playerView.getPlayer();
     // either: has been triggered playback, and not playing
-    return player != null && (player.getPlaybackState() == ExoPlayer.STATE_READY ||  //
-        // or being played and needing to buffer
-        (player.getPlaybackState() == ExoPlayer.STATE_BUFFERING && player.getPlayWhenReady()));
+    return player != null && (player.getPlaybackState() == ExoPlayer.STATE_READY
+        || (player.getPlaybackState() == ExoPlayer.STATE_BUFFERING
+        && player.getCurrentPosition() > 0));
   }
 
   @Override public float visibleAreaOffset() {
