@@ -5,9 +5,9 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.0'
+    classpath 'com.android.tools.build:gradle:2.3.1'
 
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.2'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
     classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     classpath 'com.novoda:bintray-release:0.4.0'
     // NOTE: Do not place your application dependencies here; they belong
@@ -19,9 +19,9 @@ ext {
   libraryVersion = '2.2.1-SNAPSHOT'
   androidVersion = 25
   buildToolVersion = '25.0.2'
-  supportLibraryVersion = '25.2.0'
-  exoPlayerVersion = 'r1.5.14'
-  exoPlayer2Version = 'r2.2.0'
+  supportLibraryVersion = '25.3.1'
+  exoPlayerVersion = 'r1.5.15'
+  exoPlayer2Version = 'r2.3.1'
   minSupportSDKVersion = 16
 
   // test
