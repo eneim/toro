@@ -24,7 +24,7 @@ import android.support.v7.widget.RecyclerView;
  */
 public interface PlayerManager extends Removable {
 
-  public static class Factory {
+  class Factory {
     public static PlayerManager getInstance() {
       return new PlayerManagerImpl();
     }

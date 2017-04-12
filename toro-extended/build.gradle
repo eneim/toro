@@ -67,8 +67,6 @@ dependencies {
     exclude group: 'com.android.support', module: 'support-annotations'
   })
 
-  testCompile 'junit:junit:4.12'
-
   // Non default dependencies
   compile project(':toro')
   compile project(path: ':toro-ext-exoplayer2')
@@ -79,12 +77,12 @@ dependencies {
   testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
   testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
 
-  testCompile 'org.powermock:powermock-core:1.6.2'
-  testCompile 'org.powermock:powermock-api-mockito:1.6.2'
-  testCompile 'org.powermock:powermock-module-junit4:1.6.2'
-  testCompile 'org.powermock:powermock-module-junit4-rule:1.6.2'
-  testCompile 'org.powermock:powermock-classloading-base:1.6.2'
-  testCompile 'org.powermock:powermock-classloading-xstream:1.6.2'
+  testCompile "org.powermock:powermock-core:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-module-junit4-rule:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-classloading-base:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-classloading-xstream:$rootProject.ext.powerMockito"
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

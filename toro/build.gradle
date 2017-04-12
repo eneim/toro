@@ -57,11 +57,22 @@ android {
 
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
-  testCompile 'junit:junit:4.12'
   // compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
 
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+
+  // Dependencies for local unit tests
+  testCompile "junit:junit:$rootProject.ext.junitVersion"
+  testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+  testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+
+  testCompile "org.powermock:powermock-core:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-module-junit4-rule:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-classloading-base:$rootProject.ext.powerMockito"
+  testCompile "org.powermock:powermock-classloading-xstream:$rootProject.ext.powerMockito"
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

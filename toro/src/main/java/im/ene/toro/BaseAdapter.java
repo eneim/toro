@@ -86,10 +86,10 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
   }
 
   @Deprecated @Override public void restoreVideoState(String videoId) {
-    delegate.restoreVideoState(videoId);
+    delegate.restorePlaybackState(videoId);
   }
 
   @Deprecated @Override public PlaybackState getSavedState(String videoId) {
-    return delegate.getSavedState(videoId);
+    return delegate.getPlaybackState(videoId);
   }
 }

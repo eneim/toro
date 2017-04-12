@@ -37,6 +37,7 @@ import android.support.v4.view.ViewPager;
  * Gives us a clue that on very first layout pass,
  * {@link ViewPager.OnPageChangeListener#onPageScrolled(int, float, int)} will be triggered.
  */
+@SuppressWarnings("unused") //
 public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
     implements Removable, Handler.Callback {
 
