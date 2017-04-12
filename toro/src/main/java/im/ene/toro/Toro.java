@@ -24,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
@@ -241,7 +242,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  @Nullable static PlayerManager getManager(ViewParent viewParent) {
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+  @Nullable public static PlayerManager getManager(ViewParent viewParent) {
     return viewParent instanceof RecyclerView ? sInstance.managers.get(viewParent) : null;
   }
 
