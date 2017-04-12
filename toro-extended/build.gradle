@@ -73,6 +73,18 @@ dependencies {
   compile project(':toro')
   compile project(path: ':toro-ext-exoplayer2')
   // compile project(path: ':toro-ext-mediaplayer')
+
+  // Dependencies for local unit tests
+  testCompile "junit:junit:$rootProject.ext.junitVersion"
+  testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+  testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+
+  testCompile 'org.powermock:powermock-core:1.6.2'
+  testCompile 'org.powermock:powermock-api-mockito:1.6.2'
+  testCompile 'org.powermock:powermock-module-junit4:1.6.2'
+  testCompile 'org.powermock:powermock-module-junit4-rule:1.6.2'
+  testCompile 'org.powermock:powermock-classloading-base:1.6.2'
+  testCompile 'org.powermock:powermock-classloading-xstream:1.6.2'
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
