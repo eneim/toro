@@ -88,7 +88,7 @@ dependencies {
   compile "im.ene.toro2:toro-ext-exoplayer:${toroVersion}"
   
   // include extension for Legacy MediaPlayer (Toro is included already)
-  compile "im.ene.toro2:oro-ext-mediaplayer:${toroVersion}"
+  compile "im.ene.toro2:toro-ext-mediaplayer:${toroVersion}"
 }
 ```
 
