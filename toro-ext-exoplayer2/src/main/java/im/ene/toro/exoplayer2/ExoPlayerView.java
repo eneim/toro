@@ -240,6 +240,11 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     super.onDetachedFromWindow();
     releasePlayer();
   }
+  
+  public Bitmap getCurrentFrameAsBitmap() {
+    TextureView textureView = (TextureView) playerView.getVideoSurfaceView();
+    return textureView.getBitmap();
+  }
 
   // private methods //
 
