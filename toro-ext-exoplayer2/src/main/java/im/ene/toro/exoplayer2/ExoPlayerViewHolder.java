@@ -31,9 +31,6 @@ import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 
-/**
- * Created by eneim on 6/11/16.
- */
 public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
   @NonNull protected final ExoPlayerView playerView;
@@ -164,7 +161,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public void onPlaybackCompleted() {
-    this.playerView.stop();
+
   }
 
   @Override public boolean isPrepared() {

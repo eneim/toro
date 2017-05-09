@@ -23,10 +23,13 @@ import im.ene.toro.PlayerManager;
 import im.ene.toro.exoplayer2.State;
 
 /**
- * Created by eneim on 10/5/16.
+ * @author eneim
+ * @since 10/5/16
  */
 
 public class ExtPlayerViewHelper extends LongClickableViewHelper {
+
+  private static final String TAG = "Toro:ExtHelper";
 
   public ExtPlayerViewHelper(@NonNull ExtToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
@@ -34,7 +37,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
     super.onPlayerStateChanged(playWhenReady, playbackState);
-    if (playbackState == ExoPlayer.STATE_IDLE && !playWhenReady) {
+    if (playbackState == ExoPlayer.STATE_ENDED) {
       final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
       final PlayerManager manager = super.getPlayerManager(this.itemView.getParent());
       switch (nextTarget) {
@@ -43,10 +46,9 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
             ((ExtToroAdapter) manager).scrollToNextVideo();
           }
           break;
-        case PREV_PLAYER:
+        // case PREV_PLAYER:
           // Currently this is not supported
-          // TODO implement this if need
-          break;
+        //  break;
         case THIS_PLAYER:
           // immediately repeat
           if (manager != null) {

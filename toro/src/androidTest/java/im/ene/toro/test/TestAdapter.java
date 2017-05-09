@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extended;
+package im.ene.toro.test;
 
-import im.ene.toro.ToroPlayer;
+import android.support.annotation.Nullable;
+import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
+import im.ene.toro.ToroAdapter;
 
 /**
- * @author eneim
- * @since 10/5/16
+ * @author eneim.
+ * @since 4/13/17.
  */
 
-public interface ExtToroPlayer extends ToroPlayer {
+public class TestAdapter extends BaseAdapter<ToroAdapter.ViewHolder> {
 
-  enum Target {
-    // Alpha Experiment
-    NEXT_PLAYER,
-
-    // Alpha Experiment, Not implemented yet
-    // PREV_PLAYER,
-
-    THIS_PLAYER,
-
-    NONE
+  @Nullable @Override protected Object getItem(int position) {
+    return null;
   }
 
-  Target getNextTarget();
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    return null;
+  }
+
+  @Override public int getItemCount() {
+    return 0;
+  }
 }

@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
@@ -118,5 +119,20 @@ public class ExoPlayerHelper {
 
   static DataSource.Factory buildDataSourceFactory(Context context, boolean useBandwidthMeter) {
     return buildDataSourceFactory(context, useBandwidthMeter ? BANDWIDTH_METER : null);
+  }
+
+  static UUID getDrmUuid(String typeString) throws ParserException {
+    switch (typeString.toLowerCase()) {
+      case "widevine":
+        return C.WIDEVINE_UUID;
+      case "playready":
+        return C.PLAYREADY_UUID;
+      default:
+        try {
+          return UUID.fromString(typeString);
+        } catch (RuntimeException e) {
+          throw new ParserException("Unsupported drm type: " + typeString);
+        }
+    }
   }
 }

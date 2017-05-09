@@ -60,12 +60,12 @@ public abstract class PlayerViewHelper {
         manager.startPlayback();
       }
     } else if (manager.getPlayer() == null) {
-      itemView.getViewTreeObserver().addOnGlobalLayoutListener( //
-          new ViewTreeObserver.OnGlobalLayoutListener() {
+      itemView.getViewTreeObserver()
+          .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override public void onGlobalLayout() {
               itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-              if (player.wantsToPlay() && Toro.getStrategy()
-                  .allowsToPlay(player, itemView.getParent())) {
+              if (player.wantsToPlay() && //
+                  Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
                 if (!player.isPrepared()) {
                   player.preparePlayer(false);
                 } else {

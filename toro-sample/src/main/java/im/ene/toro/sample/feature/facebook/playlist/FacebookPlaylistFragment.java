@@ -43,7 +43,7 @@ import im.ene.toro.ToroStrategy;
 import im.ene.toro.extended.SnapToTopLinearLayoutManager;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
-import im.ene.toro.sample.util.Util;
+import im.ene.toro.sample.util.DemoUtil;
 import java.util.List;
 
 /**
@@ -193,7 +193,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   protected void dispatchFragmentActivated() {
     Toro.register(recyclerView);
-    adapter.savePlaybackState(Util.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
+    adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
   }
 
   protected void dispatchFragmentDeActivated() {
@@ -220,7 +220,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @Override public void onDetach() {
     if (callback != null) {
-      PlaybackState state = adapter.getPlaybackState(Util.genVideoId(baseItem.getVideoUrl(), 0));
+      PlaybackState state = adapter.getPlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), 0));
       callback.onPlaylistDetached(this.baseItem,
           // Get saved position of first Item in this list, pass it to origin item at "baseOrder"
           state != null ? state.getPosition() : 0, baseOrder);

@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -55,6 +56,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import static im.ene.toro.exoplayer2.ExoPlayerHelper.BANDWIDTH_METER;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.buildDataSourceFactory;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.buildDrmSessionManager;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.buildMediaSource;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.getDrmUuid;
 
 /**
  * Created by eneim on 2/7/17.
@@ -93,13 +98,13 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   // public methods //
 
   public void setMedia(Media media, boolean shouldAutoPlay) throws ParserException {
-    setMedia(media, shouldAutoPlay, ExoPlayerHelper.buildDataSourceFactory(getContext(), true));
+    setMedia(media, shouldAutoPlay, buildDataSourceFactory(getContext(), true));
   }
 
   public void setMedia(Media media, boolean shouldAutoPlay,
       DataSource.Factory mediaDataSourceFactory) throws ParserException {
     MediaSource mediaSource =
-        ExoPlayerHelper.buildMediaSource(getContext(), media.getMediaUri(), mediaDataSourceFactory,
+        buildMediaSource(getContext(), media.getMediaUri(), mediaDataSourceFactory,
             mainHandler, null);
     setMediaSource(mediaSource, shouldAutoPlay);
   }
@@ -154,6 +159,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     return playerView.getUseController();
   }
 
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
   public final void initializePlayer() throws ParserException {
     if (mediaSource == null) {
       throw new IllegalStateException("Media Source must not be null.");
@@ -181,7 +187,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
 
         try {
           drmSessionManager =
-              ExoPlayerHelper.buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
+              buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
                   keyRequestProperties, mainHandler);
         } catch (UnsupportedDrmException e) {
           int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
@@ -199,8 +205,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
           new DefaultLoadControl(), drmSessionManager, SimpleExoPlayer.EXTENSION_RENDERER_MODE_OFF);
       player.addListener(this);
 
-      playerView.setPlayer(player);
       player.setPlayWhenReady(shouldAutoPlay);
+      playerView.setPlayer(player);
       playerNeedsSource = true;
     }
 
@@ -221,7 +227,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       updateResumePosition();
       player.removeListener(this);
       player.release();
-      playerView.setPlayer(null); // TODO check this
+      playerView.setPlayer(null);
       trackSelector = null;
     }
 
@@ -255,21 +261,6 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   private void clearResumePosition() {
     resumeWindow = C.INDEX_UNSET;
     resumePosition = C.TIME_UNSET;
-  }
-
-  private UUID getDrmUuid(String typeString) throws ParserException {
-    switch (typeString.toLowerCase()) {
-      case "widevine":
-        return C.WIDEVINE_UUID;
-      case "playready":
-        return C.PLAYREADY_UUID;
-      default:
-        try {
-          return UUID.fromString(typeString);
-        } catch (RuntimeException e) {
-          throw new ParserException("Unsupported drm type: " + typeString);
-        }
-    }
   }
 
   private static boolean isBehindLiveWindow(ExoPlaybackException e) {

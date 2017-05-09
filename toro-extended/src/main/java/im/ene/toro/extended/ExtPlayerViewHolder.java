@@ -166,7 +166,6 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @Override public void onPlaybackCompleted() {
     playable = false;
-    this.playerView.stop();
   }
 
   @Override public boolean isPrepared() {

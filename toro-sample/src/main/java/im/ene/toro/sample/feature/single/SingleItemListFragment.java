@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample.feature.single;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -29,19 +29,18 @@ import android.view.ViewGroup;
 import im.ene.toro.Toro;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.feature.basic1.Basic1Adapter;
 
 /**
- * @author eneim
- * @since 6/30/16
+ * Created by eneim on 6/30/16.
  */
-
-public class Basic1ListFragment extends BaseToroFragment {
+public class SingleItemListFragment extends BaseToroFragment {
 
   protected RecyclerView recyclerView;
   protected RecyclerView.Adapter adapter;
 
-  public static Basic1ListFragment newInstance() {
-    return new Basic1ListFragment();
+  public static SingleItemListFragment newInstance() {
+    return new SingleItemListFragment();
   }
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,

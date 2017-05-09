@@ -70,7 +70,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   };
 
   // Singleton, GOD object
-  static volatile Toro sInstance;
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+  public static volatile Toro sInstance;
 
   // Used to swap strategies if need. It should be a strong reference.
   private static volatile ToroStrategy cachedStrategy;
@@ -89,7 +90,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    * visibility: free necessary resource if User doesn't need it anymore
    *
    * @param activity the Activity to which Toro gonna attach to
+   * @deprecated since 2.2.1
    */
+  @Deprecated
   public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
     attachCount.incrementAndGet();
@@ -103,7 +106,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   public static void init(Application application) {
     if (sInstance == null) {
       synchronized (Toro.class) {
-        sInstance = new Toro();
+        if (sInstance == null) {
+          sInstance = new Toro();
+        }
       }
     }
 
@@ -119,7 +124,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    * Toro#attach(Activity)}
    *
    * @param activity The host Activity where Toro will detach from.
+   * @deprecated since 2.2.1
    */
+  @Deprecated
   public static void detach(Activity activity) {
     Application application = activity.getApplication();
     if (application != null && attachCount.decrementAndGet() == 0) {
@@ -160,6 +167,12 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
+
+    if (!(view.getContext().getApplicationContext() instanceof Application)) {
+      throw new UnsupportedOperationException("Cannot register with non-Application context");
+    }
+
+    init((Application) view.getContext().getApplicationContext());
 
     if (sInstance.managers.containsKey(view) && sInstance.listeners.containsKey(view)) {
       sInstance.managers.get(view).onRegistered();
@@ -542,6 +555,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
       manager.setPlayer(null);
     }
+
+    player.stop();
+    player.releasePlayer();
   }
 
   boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {

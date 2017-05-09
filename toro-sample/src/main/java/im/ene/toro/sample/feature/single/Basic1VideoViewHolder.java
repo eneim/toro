@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,27 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample.feature.single;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.exoplayer2.ExoPlayerHelper;
-import im.ene.toro.exoplayer2.ExoPlayerView;
-import im.ene.toro.exoplayer2.ExoPlayerViewHolder;
+import im.ene.toro.exoplayer2.ExoVideoView;
+import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link ExoPlayerView} API to play medias.
+ * This sample use {@link ExoVideoView} API to play medias.
  */
-public class Basic1VideoViewHolder extends ExoPlayerViewHolder {
+public class Basic1VideoViewHolder extends ExoVideoViewHolder {
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_basic_1;
+  public static final int LAYOUT_RES = R.layout.vh_toro_video_basic;
 
   private SimpleVideoObject videoItem;
-  private MediaSource mediaSource;
 
   public Basic1VideoViewHolder(View itemView) {
     super(itemView);
@@ -51,18 +46,11 @@ public class Basic1VideoViewHolder extends ExoPlayerViewHolder {
     }
 
     this.videoItem = (SimpleVideoObject) item;
-    // prepare mediaSource
-    this.mediaSource = ExoPlayerHelper.buildMediaSource(itemView.getContext(), //
-        Uri.parse(this.videoItem.video), new DefaultDataSourceFactory(itemView.getContext(),
-            Util.getUserAgent(itemView.getContext(), "Toro-Sample")), itemView.getHandler(), null);
+    this.playerView.setMedia(Uri.parse(this.videoItem.video));
   }
 
-  @Override protected ExoPlayerView findVideoView(View itemView) {
-    return (ExoPlayerView) itemView.findViewById(R.id.video);
-  }
-
-  @Override protected MediaSource getMediaSource() {
-    return this.mediaSource;
+  @Override protected ExoVideoView findVideoView(View itemView) {
+    return (ExoVideoView) itemView.findViewById(R.id.video);
   }
 
   @Nullable @Override public String getMediaId() {

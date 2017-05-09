@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by eneim on 10/11/16.
+ * @author eneim
+ * @since 10/11/16
  */
 
 public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
@@ -137,5 +138,4 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
     protected abstract void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
         TimelineItem.VideoItem item);
   }
-
 }

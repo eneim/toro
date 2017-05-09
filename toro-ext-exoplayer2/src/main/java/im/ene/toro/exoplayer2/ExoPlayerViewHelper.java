@@ -17,6 +17,7 @@
 package im.ene.toro.exoplayer2;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.PlayerViewHelper;
@@ -32,23 +33,33 @@ import im.ene.toro.ToroPlayer;
  */
 public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
 
+  private static final String TAG = "Toro:ExoHelper";
+
   // Require the player Object and the View holds it.
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int state) {
+    Log.w(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
+        + playWhenReady
+        + "], state = ["
+        + state
+        + "]");
     switch (state) {
       case ExoPlayer.STATE_IDLE:
         // Do nothing
+        this.itemView.setKeepScreenOn(false);
         break;
       case ExoPlayer.STATE_BUFFERING:
+        this.itemView.setKeepScreenOn(true);
         if (!playWhenReady && !player.isPrepared()) {
           this.onPrepared(this.itemView, this.itemView.getParent());
           this.player.onVideoPrepared();
         }
         break;
       case ExoPlayer.STATE_READY:
+        this.itemView.setKeepScreenOn(true);
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {
@@ -56,6 +67,7 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         }
         break;
       case ExoPlayer.STATE_ENDED:
+        this.itemView.setKeepScreenOn(false);
         if (playWhenReady) {
           this.onCompletion();
           this.player.onPlaybackCompleted();

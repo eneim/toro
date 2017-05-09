@@ -32,6 +32,7 @@ import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
 import im.ene.toro.extended.ExtPlayerViewHolder;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.util.DemoUtil;
 
 /**
  * @author eneim
@@ -52,6 +53,7 @@ public class VideoViewHolder extends ExtPlayerViewHolder {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
+    this.playerView.setUseController(false);
   }
 
   @Override protected ExoPlayerView findVideoView(View itemView) {
@@ -82,7 +84,7 @@ public class VideoViewHolder extends ExtPlayerViewHolder {
   }
 
   @Nullable @Override public String getMediaId() {
-    return im.ene.toro.sample.util.Util.genVideoId( //
+    return DemoUtil.genVideoId( //
         this.videoItem.getVideoUrl(), getAdapterPosition());
   }
 
