@@ -31,6 +31,7 @@ import im.ene.toro.sample.feature.facebook.FacebookTimelineFragment;
  */
 
 enum Page {
+  SINGLE_ITEM("Single Item", SingleItemFragment.class),
   FACEBOOK("Facebook", FacebookTimelineFragment.class),
   BASIC1("Basic 1", Basic1ListFragment.class),
   BASIC2("Basic 2", Basic2ListFragment.class),

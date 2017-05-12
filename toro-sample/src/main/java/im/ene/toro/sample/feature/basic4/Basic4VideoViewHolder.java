@@ -17,6 +17,7 @@
 package im.ene.toro.sample.feature.basic4;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -57,11 +58,11 @@ public class Basic4VideoViewHolder extends ExoPlayerViewHolder {
             Util.getUserAgent(itemView.getContext(), "Toro-Sample")), itemView.getHandler(), null);
   }
 
-  @Override protected ExoPlayerView findVideoView(View itemView) {
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
     return (ExoPlayerView) itemView.findViewById(R.id.video);
   }
 
-  @Override protected MediaSource getMediaSource() {
+  @NonNull @Override protected MediaSource getMediaSource() {
     return mediaSource;
   }
 

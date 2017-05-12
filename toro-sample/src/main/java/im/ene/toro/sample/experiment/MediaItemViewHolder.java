@@ -17,6 +17,7 @@
 package im.ene.toro.sample.experiment;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -53,11 +54,11 @@ public class MediaItemViewHolder extends ExoPlayerViewHolder {
     this.playerView.setOnClickListener(listener);
   }
 
-  @Override protected ExoPlayerView findVideoView(View itemView) {
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
     return (ExoPlayerView) itemView.findViewById(R.id.video);
   }
 
-  @Override protected MediaSource getMediaSource() {
+  @NonNull @Override protected MediaSource getMediaSource() {
     return mediaSource;
   }
 

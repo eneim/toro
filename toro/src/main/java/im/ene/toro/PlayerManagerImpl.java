@@ -17,8 +17,11 @@
 package im.ene.toro;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static im.ene.toro.Toro.TAG;
 
 /**
  * Created by eneim on 1/31/16.
@@ -48,12 +51,14 @@ final class PlayerManagerImpl implements PlayerManager {
   }
 
   @Override public void startPlayback() {
+    Log.d(TAG, "startPlayback: " + player);
     if (player != null) {
       player.start();
     }
   }
 
   @Override public void pausePlayback() {
+    Log.w(TAG, "pausePlayback: " + player);
     if (player != null) {
       player.pause();
     }

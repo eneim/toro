@@ -40,7 +40,7 @@ public class DemoActivity extends BaseActivity {
 
   @BindView(R.id.viewpager) ViewPager pager;
   @BindView(R.id.tab_layout) TabLayout tabLayout;
-  final ToroViewPagerHelper pagerHelper = new ToroViewPagerHelper();
+  ToroViewPagerHelper pagerHelper = new ToroViewPagerHelper();
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -59,6 +59,7 @@ public class DemoActivity extends BaseActivity {
     pager.removeOnPageChangeListener(pagerHelper);
     try {
       pagerHelper.remove();
+      pagerHelper = null;
     } catch (Exception e) {
       e.printStackTrace();
     }

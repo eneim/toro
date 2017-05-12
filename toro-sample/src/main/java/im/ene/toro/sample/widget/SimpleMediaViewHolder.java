@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample.widget;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -31,24 +31,36 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
- * Created by eneim on 6/29/16.
+ * @author eneim.
+ * @since 5/9/17.
  *
- * This sample use {@link ExoPlayerView} API to play medias.
+ * Simple Media ViewHolder, used for basic Demonstrations.
  */
-public class Basic1VideoViewHolder extends ExoPlayerViewHolder {
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_basic_1;
+public class SimpleMediaViewHolder extends ExoPlayerViewHolder {
+
+  public static final int LAYOUT_RES = R.layout.vh_toro_media_simple;
 
   private SimpleVideoObject videoItem;
   private MediaSource mediaSource;
 
-  public Basic1VideoViewHolder(View itemView) {
+  public SimpleMediaViewHolder(View itemView) {
     super(itemView);
   }
 
-  @Override protected void onBind(RecyclerView.Adapter adapter, Object item) {
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
+    return (ExoPlayerView) itemView.findViewById(R.id.media);
+  }
+
+  @NonNull @Override protected MediaSource getMediaSource() {
+    return mediaSource;
+  }
+
+  @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object item) {
     if (!(item instanceof SimpleVideoObject)) {
-      throw new IllegalArgumentException("Invalid Object: " + item);
+      throw new IllegalArgumentException(
+          "SimpleMediaViewHolder requires a SimpleVideoObject. Found: " + //
+              (item == null ? "null" : item.getClass().getSimpleName()));
     }
 
     this.videoItem = (SimpleVideoObject) item;
@@ -56,14 +68,6 @@ public class Basic1VideoViewHolder extends ExoPlayerViewHolder {
     this.mediaSource = ExoPlayerHelper.buildMediaSource(itemView.getContext(), //
         Uri.parse(this.videoItem.video), new DefaultDataSourceFactory(itemView.getContext(),
             Util.getUserAgent(itemView.getContext(), "Toro-Sample")), itemView.getHandler(), null);
-  }
-
-  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
-    return (ExoPlayerView) itemView.findViewById(R.id.video);
-  }
-
-  @NonNull @Override protected MediaSource getMediaSource() {
-    return this.mediaSource;
   }
 
   @Nullable @Override public String getMediaId() {

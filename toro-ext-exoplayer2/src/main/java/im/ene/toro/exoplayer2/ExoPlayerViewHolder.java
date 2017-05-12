@@ -34,19 +34,22 @@ import im.ene.toro.ToroUtil;
 public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
   @NonNull protected final ExoPlayerView playerView;
-  protected final ExoPlayerViewHelper helper;
+  @SuppressWarnings("WeakerAccess") protected final ExoPlayerViewHelper helper;
 
   public ExoPlayerViewHolder(View itemView) {
     super(itemView);
     playerView = findVideoView(itemView);
+    //noinspection ConstantConditions
     if (playerView == null) {
       throw new NullPointerException("A valid ExoPlayerView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
   }
 
+  @NonNull
   protected abstract ExoPlayerView findVideoView(View itemView);
 
+  @NonNull
   protected abstract MediaSource getMediaSource();
 
   protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);

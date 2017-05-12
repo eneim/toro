@@ -54,7 +54,9 @@ public abstract class BaseToroFragment extends Fragment {
     super.onPause();
   }
 
-  protected abstract void dispatchFragmentActive();
+  protected void dispatchFragmentActive() {
+  }
 
-  protected abstract void dispatchFragmentInactive();
+  protected void dispatchFragmentInactive() {
+  }
 }
