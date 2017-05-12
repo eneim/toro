@@ -10,7 +10,6 @@ buildscript {
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
     classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
     classpath 'com.novoda:bintray-release:0.4.0'
-    classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
   }
@@ -19,10 +18,10 @@ buildscript {
 ext {
   libraryVersion = '2.2.1-SNAPSHOT'
   androidVersion = 25
-  buildToolVersion = '25.0.2'
+  buildToolVersion = '25.0.3'
   supportLibraryVersion = '25.3.1'
-  exoPlayerVersion = 'r1.5.15'
-  exoPlayer2Version = 'r2.3.1'
+  exoPlayerVersion = 'r1.5.16'
+  exoPlayer2Version = 'r2.4.0'
   minSupportSDKVersion = 16
 
   // test
