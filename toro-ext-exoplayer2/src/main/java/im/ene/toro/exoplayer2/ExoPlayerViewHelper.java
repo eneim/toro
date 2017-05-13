@@ -19,7 +19,6 @@ package im.ene.toro.exoplayer2;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.PlayerViewHelper;
@@ -33,7 +32,8 @@ import im.ene.toro.ToroPlayer;
  * this, but in case it wants to provide custom behaviors, it is recommended to call super method
  * from this Helper.
  */
-public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback, Handler.Callback {
+public class ExoPlayerViewHelper extends PlayerViewHelper
+    implements PlayerCallback, Handler.Callback {
 
   private static final String TAG = "ToroLib:ExoHelper";
 
@@ -44,26 +44,31 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
     super(player, itemView);
   }
 
+  // if lastPlayWhenReady == true and state == BUFFERING then this player is not buffering for the first time.
   private boolean lastPlayWhenReady = false;
+
+  @Override public void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    handler = new Handler(this);
+  }
 
   @Override public void onBound() {
     super.onBound();
     lastPlayWhenReady = false;
-    handler = new Handler(this);
   }
 
   @Override public void onRecycled() {
     super.onRecycled();
     handler.removeCallbacksAndMessages(null);
+  }
+
+  @Override public void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
     handler = null;
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int state) {
-    Log.w(TAG, "onPlayerStateChanged() called with: playWhenReady = ["
-        + playWhenReady
-        + "], state = ["
-        + state
-        + "]");
+    // Using Handler to ensure that states are handled in queue.
     handler.obtainMessage(state, playWhenReady).sendToTarget();
   }
 

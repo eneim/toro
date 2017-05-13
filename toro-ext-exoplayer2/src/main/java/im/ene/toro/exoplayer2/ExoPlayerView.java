@@ -54,8 +54,6 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static im.ene.toro.exoplayer2.ExoPlayerHelper.BANDWIDTH_METER;
@@ -192,20 +190,10 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
         String drmLicenseUrl = ((DrmMedia) mediaSource).getLicenseUrl();
         String[] keyRequestPropertiesArray =
             ((DrmMedia) mediaSource).getKeyRequestPropertiesArray();
-        Map<String, String> keyRequestProperties;
-        if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
-          keyRequestProperties = null;
-        } else {
-          keyRequestProperties = new HashMap<>();
-          for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
-            keyRequestProperties.put(keyRequestPropertiesArray[i],
-                keyRequestPropertiesArray[i + 1]);
-          }
-        }
 
         try {
           drmSessionManager = buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
-              keyRequestProperties, mainHandler);
+              keyRequestPropertiesArray, mainHandler);
         } catch (UnsupportedDrmException e) {
           int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
               : (e.reason == UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME

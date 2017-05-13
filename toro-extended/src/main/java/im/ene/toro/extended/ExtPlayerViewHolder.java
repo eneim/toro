@@ -21,7 +21,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ParserException;
@@ -114,9 +113,7 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public boolean isPlaying() {
-    boolean isPlaying = playerView.isPlaying();
-    Log.d("ToroLib:" + hashCode(), "isPlaying() called, result = " + isPlaying);
-    return isPlaying;
+    return playerView.isPlaying();
   }
 
   @Override public boolean wantsToPlay() {

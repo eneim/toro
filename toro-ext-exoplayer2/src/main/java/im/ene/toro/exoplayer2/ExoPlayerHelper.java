@@ -44,7 +44,6 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -87,20 +86,25 @@ public class ExoPlayerHelper {
     }
   }
 
-  public static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(Context context,
-      UUID uuid, String licenseUrl, Map<String, String> keyRequestProperties, Handler mainHandler)
+  static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(Context context, UUID uuid,
+      String licenseUrl, String[] keyRequestPropertiesArray, Handler mainHandler)
       throws UnsupportedDrmException {
     if (Util.SDK_INT < 18) {
       return null;
     }
-
     HttpMediaDrmCallback drmCallback =
-        new HttpMediaDrmCallback(licenseUrl, buildHttpDataSourceFactory(context, false),
-            keyRequestProperties);
+        new HttpMediaDrmCallback(licenseUrl, buildHttpDataSourceFactory(context, false));
+    if (keyRequestPropertiesArray != null) {
+      for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
+        drmCallback.setKeyRequestProperty(keyRequestPropertiesArray[i],
+            keyRequestPropertiesArray[i + 1]);
+      }
+    }
     return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
-        null, mainHandler, null /* eventLogger */);
+        null, mainHandler, null);
   }
 
+  @SuppressWarnings("WeakerAccess")
   static HttpDataSource.Factory buildHttpDataSourceFactory(Context context,
       DefaultBandwidthMeter bandwidthMeter) {
     return new DefaultHttpDataSourceFactory(Util.getUserAgent(context, "Toro"), bandwidthMeter);
@@ -112,6 +116,7 @@ public class ExoPlayerHelper {
         buildHttpDataSourceFactory(context, bandwidthMeter));
   }
 
+  @SuppressWarnings("WeakerAccess")
   static HttpDataSource.Factory buildHttpDataSourceFactory(Context context,
       boolean useBandwidthMeter) {
     return buildHttpDataSourceFactory(context, useBandwidthMeter ? BANDWIDTH_METER : null);

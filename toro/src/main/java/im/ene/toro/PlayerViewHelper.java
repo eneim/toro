@@ -31,7 +31,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
  */
 public abstract class PlayerViewHelper {
 
-  @SuppressWarnings("unused") static final String TAG = "ToroLib:Helper";
+  private static final String TAG = "ToroLib:Helper";
 
   protected final ToroPlayer player;
   protected final View itemView;
