@@ -40,18 +40,21 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int state) {
     switch (state) {
       case ExoMediaPlayer.STATE_IDLE:
-        // Do nothing
+        this.itemView.setKeepScreenOn(false);
         break;
       case ExoMediaPlayer.STATE_BUFFERING:
+        this.itemView.setKeepScreenOn(true);
         if (!playWhenReady) {
           this.player.onVideoPrepared();
           this.onPrepared(this.itemView, this.itemView.getParent());
         }
         break;
       case ExoMediaPlayer.STATE_PREPARING:
+        this.itemView.setKeepScreenOn(true);
         this.player.onVideoPreparing();
         break;
       case ExoMediaPlayer.STATE_READY:
+        this.itemView.setKeepScreenOn(true);
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {
@@ -59,6 +62,7 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         }
         break;
       case ExoMediaPlayer.STATE_ENDED:
+        this.itemView.setKeepScreenOn(false);
         if (playWhenReady) {
           this.onCompletion();
           this.player.onPlaybackCompleted();

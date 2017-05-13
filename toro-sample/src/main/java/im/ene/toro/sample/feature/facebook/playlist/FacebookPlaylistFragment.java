@@ -42,7 +42,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
 import im.ene.toro.extended.SnapToTopLinearLayoutManager;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
+import im.ene.toro.sample.feature.facebook.timeline.TimelineItem.VideoItem;
 import im.ene.toro.sample.util.DemoUtil;
 import java.util.List;
 
@@ -57,13 +57,8 @@ public class FacebookPlaylistFragment extends DialogFragment {
   private static final String ARGS_BASE_START_DURATION = "playlist_base_duration";
   private static final String ARGS_BASE_VIDEO_ORDER = "playlist_base_order";
 
-  public static FacebookPlaylistFragment newInstance(TimelineItem.VideoItem baseItem,
-      long basePosition, long baseDuration, int baseOrder) {
-    Log.i(TAG, "newInstance() called with: basePosition = ["
-        + basePosition
-        + "], baseOrder = ["
-        + baseOrder
-        + "]");
+  public static FacebookPlaylistFragment newInstance(VideoItem baseItem, long basePosition,
+      long baseDuration, int baseOrder) {
     FacebookPlaylistFragment fragment = new FacebookPlaylistFragment();
     if (baseItem != null) {
       Bundle args = new Bundle();
@@ -76,7 +71,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
     return fragment;
   }
 
-  private TimelineItem.VideoItem baseItem;
+  private VideoItem baseItem;
   private long basePosition;
   private long baseDuration;
   // Used to cache the base video's adapter position. Will be used in onDetach
@@ -86,7 +81,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
     return new Dialog(getContext(), R.style.Toro_Theme_Playlist);
   }
 
-  private ToroStrategy strategyToRestore;
+  ToroStrategy strategyToRestore;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -129,8 +124,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
   }
 
   @BindView(R.id.recycler_view) RecyclerView recyclerView;
-  private MoreVideoRepo videoRepo;
-  private MoreVideosAdapter adapter;
+  MoreVideosAdapter adapter;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -152,10 +146,10 @@ public class FacebookPlaylistFragment extends DialogFragment {
     recyclerView.setAdapter(adapter);
 
     // Maybe DI in real practice, not here.
-    videoRepo = new MoreVideoRepo(baseItem);
+    MoreVideoRepo videoRepo = new MoreVideoRepo(baseItem);
     // Fake the API Request.
     videoRepo.getMoreVideos(new MoreVideoRepo.Callback() {
-      @Override public void onMoreVideosLoaded(List<TimelineItem.VideoItem> items) {
+      @Override public void onMoreVideosLoaded(List<VideoItem> items) {
         if (adapter != null) {
           adapter.addAll(items);
         }
@@ -166,13 +160,13 @@ public class FacebookPlaylistFragment extends DialogFragment {
   @CallSuper @Override public void onStart() {
     super.onStart();
     if (Build.VERSION.SDK_INT >= 24) {
-      dispatchFragmentActivated();
+      dispatchFragmentActive();
     }
   }
 
   @CallSuper @Override public void onStop() {
     if (Build.VERSION.SDK_INT >= 24) {
-      dispatchFragmentDeActivated();
+      dispatchFragmentInactive();
     }
     super.onStop();
   }
@@ -180,23 +174,25 @@ public class FacebookPlaylistFragment extends DialogFragment {
   @CallSuper @Override public void onResume() {
     super.onResume();
     if (Build.VERSION.SDK_INT < 24) {
-      dispatchFragmentActivated();
+      dispatchFragmentActive();
     }
   }
 
   @CallSuper @Override public void onPause() {
     if (Build.VERSION.SDK_INT < 24) {
-      dispatchFragmentDeActivated();
+      dispatchFragmentInactive();
     }
     super.onPause();
   }
 
-  protected void dispatchFragmentActivated() {
+  protected void dispatchFragmentActive() {
     Toro.register(recyclerView);
-    adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), 0), basePosition, baseDuration);
+    // restore playback state from base video into this playlist.
+    adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), 0), basePosition,
+        baseDuration);
   }
 
-  protected void dispatchFragmentDeActivated() {
+  protected void dispatchFragmentInactive() {
     Toro.unregister(recyclerView);
   }
 
@@ -208,11 +204,10 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    if (context instanceof Callback) {
-      this.callback = (Callback) context;
+    if (getTargetFragment() instanceof Callback) {
+      this.callback = (Callback) getTargetFragment();
     }
 
-    Log.w(TAG, "onAttach() called with: callback = [" + callback + "]");
     if (callback != null) {
       callback.onPlaylistAttached();
     }
@@ -220,12 +215,14 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @Override public void onDetach() {
     if (callback != null) {
-      PlaybackState state = adapter.getPlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), 0));
-      callback.onPlaylistDetached(this.baseItem,
-          // Get saved position of first Item in this list, pass it to origin item at "baseOrder"
-          state != null ? state.getPosition() : 0, baseOrder);
+      String mediaId = DemoUtil.genVideoId(baseItem.getVideoUrl(), 0);
+      PlaybackState state = adapter.getPlaybackState(mediaId);
+      if (state == null) {
+        state = new PlaybackState(mediaId, baseDuration, basePosition);
+      }
+
+      callback.onPlaylistDetached(this.baseItem, state, baseOrder);
     }
-    Log.w(TAG, "onDetach() called. Callback: " + callback + " , Host: " + getContext());
     super.onDetach();
   }
 
@@ -255,9 +252,9 @@ public class FacebookPlaylistFragment extends DialogFragment {
      * Pass the playback information back to timeline
      *
      * @param baseItem the Item which was passed here at first
-     * @param position latest playback position in this playlist
+     * @param state latest playback state in this playlist
      * @param order original order of the baseItem
      */
-    void onPlaylistDetached(TimelineItem.VideoItem baseItem, Long position, int order);
+    void onPlaylistDetached(VideoItem baseItem, @NonNull PlaybackState state, int order);
   }
 }

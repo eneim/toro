@@ -41,7 +41,6 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   }
 
   @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-    // TODO Do some tearing down jobs before setting the parent View to null
     this.parent = null;
   }
 
@@ -55,12 +54,9 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
     }
   }
 
-  private int findNextVideoPosition() {
-    int currentVideoPosition = getPlayer() == null ?  //
-        INVALID_VIDEO_POSITION : getPlayer().getPlayOrder();
-
+  private int findNextVideoPosition(int currentVideoPosition) {
     do {
-      currentVideoPosition++;
+      currentVideoPosition += 1;
     } while (currentVideoPosition < getItemCount() && //
         !(findViewHolderForPosition(currentVideoPosition) instanceof ToroPlayer));
 
@@ -75,8 +71,8 @@ public abstract class ExtToroAdapter<VH extends ToroAdapter.ViewHolder> extends 
   //      : (ToroPlayer) findViewHolderForPosition(nextVideoPosition);
   //}
 
-  final void scrollToNextVideo() {
-    int nextVideoPosition = findNextVideoPosition();
+  final void scrollToNextVideoFromPosition(int currentPosition) {
+    int nextVideoPosition = findNextVideoPosition(currentPosition);
     if (nextVideoPosition != INVALID_VIDEO_POSITION) {
       scrollToPosition(nextVideoPosition);
     }

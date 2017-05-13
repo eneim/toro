@@ -5,7 +5,7 @@ import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.Toro;
 import im.ene.toro.exoplayer2.ExoPlayerViewHelper;
-import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.exoplayer2.ExoPlayerViewHolder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class ExampleUnitTest {
 
   @Mock Application application;
 
-  @Mock ExoVideoViewHolder mockViewHolder;
+  @Mock ExoPlayerViewHolder mockViewHolder;
   @Mock View itemView;
 
   private ExoPlayerViewHelper helper;

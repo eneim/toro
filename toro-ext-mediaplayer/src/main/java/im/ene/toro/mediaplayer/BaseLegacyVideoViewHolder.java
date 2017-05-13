@@ -59,6 +59,11 @@ public abstract class BaseLegacyVideoViewHolder extends ToroAdapter.ViewHolder
     videoView.setOnErrorListener(helper);
   }
 
+  @Override protected void onRecycled() {
+    super.onRecycled();
+    helper.onRecycled();
+  }
+
   /* BEGIN: ToroViewHolder callbacks */
   @Override public void onAttachedToWindow() {
     helper.onAttachedToWindow();

@@ -46,6 +46,17 @@ public class LegacyVideoViewHelper extends PlayerViewHelper
     // Do nothing
   }
 
+  @Override public void onRecycled() {
+    super.onRecycled();
+    if (this.mediaPlayer != null) {
+      try {
+        this.mediaPlayer.reset();
+      } catch (IllegalStateException er) {
+        er.printStackTrace();
+      }
+    }
+  }
+
   @Override public void onPrepared(MediaPlayer mp) {
     this.mediaPlayer = mp;
     this.player.onVideoPrepared();

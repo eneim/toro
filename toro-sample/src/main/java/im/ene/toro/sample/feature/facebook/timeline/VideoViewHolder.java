@@ -144,6 +144,6 @@ public class VideoViewHolder extends ExtPlayerViewHolder {
   }
 
   @Override public Target getNextTarget() {
-    return Target.THIS_PLAYER;
+    return Target.NONE;
   }
 }
