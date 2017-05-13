@@ -18,6 +18,7 @@ package im.ene.toro.extended;
 
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.PlayerManager;
@@ -45,7 +46,8 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
       switch (nextTarget) {
         case NEXT_PLAYER:
           if (manager instanceof ExtToroAdapter) {
-            ((ExtToroAdapter) manager).scrollToNextVideo();
+            ((ExtToroAdapter) manager).scrollToNextVideoFromPosition(
+                ((RecyclerView.ViewHolder) player).getAdapterPosition());
           }
           break;
         // case PREV_PLAYER:

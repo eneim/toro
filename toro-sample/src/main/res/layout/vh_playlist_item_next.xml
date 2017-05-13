@@ -72,14 +72,13 @@
       android:layout_height="0.5dp"
       />
 
-  <im.ene.toro.sample.feature.facebook.playlist.FacebookVideoView
+  <im.ene.toro.exoplayer2.ExoPlayerView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="240dp"
-      app:tx2_resizeMode="fixedWidth"
-      app:tx2_surfaceType="Default"
-      >
-  </im.ene.toro.sample.feature.facebook.playlist.FacebookVideoView>
+      app:resize_mode="fixed_width"
+      app:surface_type="texture_view"
+      />
 
   <TextView
       android:layout_width="match_parent"

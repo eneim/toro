@@ -130,7 +130,7 @@ public class FacebookPlaylistFragment extends DialogFragment {
 
   @BindView(R.id.recycler_view) RecyclerView recyclerView;
   private MoreVideoRepo videoRepo;
-  private MoreVideosAdapter adapter;
+  MoreVideosAdapter adapter;
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,

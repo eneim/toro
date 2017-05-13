@@ -35,8 +35,11 @@ import im.ene.toro.sample.feature.single.SingleItemFragment;
  */
 
 public enum Feature {
-  SINGLE(SingleItemFragment.class, R.string.single_item, R.string.single_item_description), BASIC_1(
-      Basic1ListFragment.class, R.string.basic_sample_1, R.string.basic_sample_1_description),  //
+  SINGLE(SingleItemFragment.class, R.string.single_item, R.string.single_item_description), //
+  FACEBOOK(FacebookTimelineFragment.class, R.string.facebook_sample_1,
+      R.string.facebook_sample_1_description), //
+  BASIC_1(Basic1ListFragment.class, R.string.basic_sample_1,
+      R.string.basic_sample_1_description),  //
   BASIC_2(Basic2ListFragment.class, R.string.basic_sample_2,
       R.string.basic_sample_2_description),  //
   BASIC_3(Basic3ListFragment.class, R.string.basic_sample_3,
@@ -49,8 +52,6 @@ public enum Feature {
       R.string.advance_sample_1_description),  //
   EXTENDED(ExtendedListFragment.class, R.string.extended_sample_1,
       R.string.extended_sample_1_description), //
-  FACEBOOK(FacebookTimelineFragment.class, R.string.facebook_sample_1,
-      R.string.facebook_sample_1_description), //
   LEGACY(LegacyListFragment.class, R.string.legacy_sample_1,
       R.string.legacy_sample_1_description)  //
   ;
