@@ -113,4 +113,8 @@ final class PlayerManagerImpl implements PlayerManager {
     playbackStates.clear();
     setPlayer(null);  // TODO verify the correctness, or make this place better
   }
+
+  @Override public String toString() {
+    return getClass().getSimpleName() + "@" + hashCode();
+  }
 }

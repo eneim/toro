@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.experiment;
+package im.ene.toro.test;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import android.app.Activity;
 
 /**
- * Created by eneim on 10/11/16.
+ * @author eneim.
+ * @since 4/13/17.
  */
 
-public interface OnItemClickListener {
+public class ToroTestActivity extends Activity {
 
-  void onItemClick(RecyclerView.Adapter adapter, RecyclerView.ViewHolder viewHolder, View view,
-      int adapterPosition, long itemId);
 }

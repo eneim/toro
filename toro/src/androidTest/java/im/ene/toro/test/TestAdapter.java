@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.extended;
+package im.ene.toro.test;
 
-import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
+import im.ene.toro.ToroAdapter;
 
 /**
- * Created by eneim on 6/30/16.
+ * @author eneim.
+ * @since 4/13/17.
  */
-public class ExtendedListActivity extends AppCompatActivity {
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      getSupportFragmentManager().beginTransaction()
-          .replace(android.R.id.content, ExtendedListFragment.newInstance())
-          .commit();
-    }
+public class TestAdapter extends BaseAdapter<ToroAdapter.ViewHolder> {
+
+  @Nullable @Override protected Object getItem(int position) {
+    return null;
+  }
+
+  @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    return null;
+  }
+
+  @Override public int getItemCount() {
+    return 0;
   }
 }

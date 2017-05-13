@@ -19,36 +19,40 @@ package im.ene.toro.sample.feature;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.advance1.Advance1Activity;
-import im.ene.toro.sample.feature.average1.Average1Activity;
-import im.ene.toro.sample.feature.basic1.Basic1Activity;
-import im.ene.toro.sample.feature.basic2.Basic2Activity;
-import im.ene.toro.sample.feature.basic3.Basic3Activity;
-import im.ene.toro.sample.feature.basic4.Basic4Activity;
-import im.ene.toro.sample.feature.extended.ExtendedListActivity;
-import im.ene.toro.sample.feature.facebook.FacebookTimelineActivity;
-import im.ene.toro.sample.feature.legacy.LegacyActivity;
-import im.ene.toro.sample.experiment.MediaListActivity;
+import im.ene.toro.sample.feature.advance1.Advance1ListFragment;
+import im.ene.toro.sample.feature.average1.Average1ListFragment;
+import im.ene.toro.sample.feature.basic1.Basic1ListFragment;
+import im.ene.toro.sample.feature.basic2.Basic2ListFragment;
+import im.ene.toro.sample.feature.basic3.Basic3ListFragment;
+import im.ene.toro.sample.feature.basic4.Basic4ListFragment;
+import im.ene.toro.sample.feature.extended.ExtendedListFragment;
+import im.ene.toro.sample.feature.facebook.FacebookTimelineFragment;
+import im.ene.toro.sample.feature.legacy.LegacyListFragment;
+import im.ene.toro.sample.feature.single.SingleItemFragment;
 
 /**
  * Created by eneim on 2/15/17.
  */
 
 public enum Feature {
-  EXPERIMENT(MediaListActivity.class, R.string.experiment, R.string.experiment_description), //
-  BASIC_4(Basic4Activity.class, R.string.basic_sample_4, R.string.basic_sample_4_description),  //
-  BASIC_1(Basic1Activity.class, R.string.basic_sample_1, R.string.basic_sample_1_description),  //
-  BASIC_2(Basic2Activity.class, R.string.basic_sample_2, R.string.basic_sample_2_description),  //
-  BASIC_3(Basic3Activity.class, R.string.basic_sample_3, R.string.basic_sample_3_description),  //
-  AVERAGE_1(Average1Activity.class, R.string.average_sample_1,
+  SINGLE(SingleItemFragment.class, R.string.single_item, R.string.single_item_description), BASIC_1(
+      Basic1ListFragment.class, R.string.basic_sample_1, R.string.basic_sample_1_description),  //
+  BASIC_2(Basic2ListFragment.class, R.string.basic_sample_2,
+      R.string.basic_sample_2_description),  //
+  BASIC_3(Basic3ListFragment.class, R.string.basic_sample_3,
+      R.string.basic_sample_3_description),  //
+  BASIC_4(Basic4ListFragment.class, R.string.basic_sample_4,
+      R.string.basic_sample_4_description),  //
+  AVERAGE_1(Average1ListFragment.class, R.string.average_sample_1,
       R.string.average_sample_1_description),  //
-  ADVANCE_1(Advance1Activity.class, R.string.advance_sample_1,
+  ADVANCE_1(Advance1ListFragment.class, R.string.advance_sample_1,
       R.string.advance_sample_1_description),  //
-  EXTENDED(ExtendedListActivity.class, R.string.extended_sample_1,
+  EXTENDED(ExtendedListFragment.class, R.string.extended_sample_1,
       R.string.extended_sample_1_description), //
-  FACEBOOK(FacebookTimelineActivity.class, R.string.facebook_sample_1,
+  FACEBOOK(FacebookTimelineFragment.class, R.string.facebook_sample_1,
       R.string.facebook_sample_1_description), //
-  LEGACY(LegacyActivity.class, R.string.legacy_sample_1, R.string.legacy_sample_1_description)  //
+  LEGACY(LegacyListFragment.class, R.string.legacy_sample_1,
+      R.string.legacy_sample_1_description)  //
   ;
 
   public final Class<?> clazz;

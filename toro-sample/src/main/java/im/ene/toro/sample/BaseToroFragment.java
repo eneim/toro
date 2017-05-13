@@ -29,13 +29,13 @@ public abstract class BaseToroFragment extends Fragment {
   @CallSuper @Override public void onStart() {
     super.onStart();
     if (Build.VERSION.SDK_INT >= 24) {
-      dispatchFragmentActivated();
+      dispatchFragmentActive();
     }
   }
 
   @CallSuper @Override public void onStop() {
     if (Build.VERSION.SDK_INT >= 24) {
-      dispatchFragmentDeActivated();
+      dispatchFragmentInactive();
     }
     super.onStop();
   }
@@ -43,18 +43,20 @@ public abstract class BaseToroFragment extends Fragment {
   @CallSuper @Override public void onResume() {
     super.onResume();
     if (Build.VERSION.SDK_INT < 24) {
-      dispatchFragmentActivated();
+      dispatchFragmentActive();
     }
   }
 
   @CallSuper @Override public void onPause() {
     if (Build.VERSION.SDK_INT < 24) {
-      dispatchFragmentDeActivated();
+      dispatchFragmentInactive();
     }
     super.onPause();
   }
 
-  protected abstract void dispatchFragmentActivated();
+  protected void dispatchFragmentActive() {
+  }
 
-  protected abstract void dispatchFragmentDeActivated();
+  protected void dispatchFragmentInactive() {
+  }
 }

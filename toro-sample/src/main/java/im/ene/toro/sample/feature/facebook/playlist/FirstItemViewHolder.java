@@ -24,7 +24,7 @@ import im.ene.toro.exoplayer2.ExoVideoView;
 import im.ene.toro.exoplayer2.ExoVideoViewHolder;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
-import im.ene.toro.sample.util.Util;
+import im.ene.toro.sample.util.DemoUtil;
 
 /**
  * Created by eneim on 10/13/16.
@@ -54,6 +54,6 @@ public class FirstItemViewHolder extends ExoVideoViewHolder {
   }
 
   @Nullable @Override public String getMediaId() {
-    return Util.genVideoId(this.videoItem.getVideoUrl(), getAdapterPosition());
+    return DemoUtil.genVideoId(this.videoItem.getVideoUrl(), getAdapterPosition());
   }
 }

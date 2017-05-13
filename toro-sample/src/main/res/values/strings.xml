@@ -20,6 +20,14 @@
     It is the same with Basic sample 1, accept for the Player View in used.]]>
   </string>
 
+  <string name="single_item">
+    Single Item
+  </string>
+
+  <string name="single_item_description">
+    <![CDATA[A \'list\' that contains only one Media Item]]>
+  </string>
+
   <string name="basic_sample_1">
     Basic Sample 1: Minimal
   </string>

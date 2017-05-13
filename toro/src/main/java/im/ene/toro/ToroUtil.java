@@ -85,9 +85,9 @@ public final class ToroUtil {
     Rect parentRect = getRecyclerViewRect(parent);
 
     if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
-      float visibleArea = videoRect.height() * videoRect.width();
-      float viewArea = player.getPlayerView().getWidth() * player.getPlayerView().getHeight();
-      return viewArea <= 0.f ? 1.f : visibleArea / viewArea;
+      int visibleArea = videoRect.height() * videoRect.width();
+      int viewArea = player.getPlayerView().getWidth() * player.getPlayerView().getHeight();
+      return viewArea <= 0.f ? 1.f : visibleArea / (float) viewArea;
     } else {
       return 0.f;
     }

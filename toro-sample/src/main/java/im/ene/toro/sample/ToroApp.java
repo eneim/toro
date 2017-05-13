@@ -17,8 +17,6 @@
 package im.ene.toro.sample;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.squareup.leakcanary.LeakCanary;
@@ -37,18 +35,9 @@ public class ToroApp extends Application {
     if (BuildConfig.DEBUG) {
       initLeakCanary();
     }
-    
+    sApp = this;
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
     Toro.init(this);
-    sApp = this;
-  }
-
-  public static SharedPreferences pref() {
-    return sApp.getSharedPreferences("toro_pref", Context.MODE_PRIVATE);
-  }
-
-  public static String packageName() {
-    return sApp.getPackageName();
   }
 
   public static ToroApp getApp() {
@@ -63,7 +52,4 @@ public class ToroApp extends Application {
     }
     LeakCanary.install(this);
   }
-
-  /* Preference Keys */
-  public static final String PREF_ACCOUNT_NAME = "toro_pref_account_name";
 }

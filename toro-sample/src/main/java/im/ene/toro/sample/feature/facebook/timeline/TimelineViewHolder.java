@@ -27,8 +27,6 @@ import im.ene.toro.ToroAdapter;
 
 public abstract class TimelineViewHolder extends ToroAdapter.ViewHolder {
 
-  private static LayoutInflater inflater;
-
   public TimelineViewHolder(View itemView) {
     super(itemView);
   }
@@ -42,9 +40,7 @@ public abstract class TimelineViewHolder extends ToroAdapter.ViewHolder {
   }
 
   static ToroAdapter.ViewHolder createViewHolder(ViewGroup parent, int type) {
-    if (inflater == null || inflater.getContext() != parent.getContext()) {
-      inflater = LayoutInflater.from(parent.getContext());
-    }
+    LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
     final ToroAdapter.ViewHolder viewHolder;
     final View view;

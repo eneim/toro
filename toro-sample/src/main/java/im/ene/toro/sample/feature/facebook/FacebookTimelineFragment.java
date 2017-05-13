@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,41 +23,62 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroStrategy;
-import im.ene.toro.sample.BaseActivity;
+import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.feature.facebook.playlist.FacebookPlaylistFragment;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineAdapter;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
-import im.ene.toro.sample.util.Util;
+import im.ene.toro.sample.util.DemoUtil;
 import java.util.List;
 
 /**
- * Created by eneim on 10/11/16.
+ * @author eneim.
+ * @since 4/13/17.
  */
 
-public class FacebookTimelineActivity extends BaseActivity
+public class FacebookTimelineFragment extends BaseToroFragment
     implements FacebookPlaylistFragment.Callback {
+
+  private static final String TAG = "FbTimeline";
+
+  public static FacebookTimelineFragment newInstance() {
+    Bundle args = new Bundle();
+    FacebookTimelineFragment fragment = new FacebookTimelineFragment();
+    fragment.setArguments(args);
+    return fragment;
+  }
 
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
   private RecyclerView.LayoutManager layoutManager;
+  boolean isActive = false;
 
-  @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.generic_recycler_view);
-    ButterKnife.bind(this);
+  Unbinder unbinder;
+
+  @Nullable @Override
+  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.generic_recycler_view, container, false);
+  }
+
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    unbinder = ButterKnife.bind(this, view);
 
     adapter = new TimelineAdapter();
-    layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
@@ -111,7 +132,8 @@ public class FacebookTimelineActivity extends BaseActivity
         int order = viewHolder.getAdapterPosition();
         ToroPlayer player = adapter.getPlayer();
         if (player != null) {
-          PlaybackState state = adapter.getPlaybackState(Util.genVideoId(item.getVideoUrl(), order));
+          PlaybackState state =
+              adapter.getPlaybackState(DemoUtil.genVideoId(item.getVideoUrl(), order));
           duration = player.getDuration();
           position = player.isPlaying() ? player.getCurrentPosition()
               : state != null ? state.getPosition() : 0; // safe
@@ -119,7 +141,7 @@ public class FacebookTimelineActivity extends BaseActivity
 
         FacebookPlaylistFragment playlistFragment =
             FacebookPlaylistFragment.newInstance(item, position, duration, order);
-        playlistFragment.show(getSupportFragmentManager(),
+        playlistFragment.show(getChildFragmentManager(),
             FacebookPlaylistFragment.class.getSimpleName());
       }
     });
@@ -127,24 +149,13 @@ public class FacebookTimelineActivity extends BaseActivity
     Toro.register(mRecyclerView);
   }
 
-  boolean isActive = false;
-
-  @Override protected void onActive() {
-    super.onActive();
-    isActive = true;
-  }
-
-  @Override protected void onInactive() {
-    super.onInactive();
-    isActive = false;
-  }
-
-  @Override protected void onDestroy() {
-    super.onDestroy();
+  @Override public void onDestroyView() {
+    super.onDestroyView();
     Toro.unregister(mRecyclerView);
+    if (unbinder != null) {
+      unbinder.unbind();
+    }
   }
-
-  private static final String TAG = "Toro:FB:TL";
 
   @Override public void onPlaylistAttached() {
     Log.i(TAG, "onPlaylistAttached() called");
@@ -156,12 +167,20 @@ public class FacebookTimelineActivity extends BaseActivity
     Log.i(TAG,
         "onPlaylistDetached() called with: position = [" + position + "], order = [" + order + "]");
     if (adapter.getPlayer() != null) {
-      adapter.savePlaybackState(Util.genVideoId(baseItem.getVideoUrl(), order), position,
+      adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), order), position,
           adapter.getPlayer().getDuration());
     }
 
     if (isActive) {
       Toro.register(mRecyclerView);
     }
+  }
+
+  @Override protected void dispatchFragmentActive() {
+    isActive = true;
+  }
+
+  @Override protected void dispatchFragmentInactive() {
+    isActive = false;
   }
 }

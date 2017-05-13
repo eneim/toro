@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.basic1;
+package im.ene.toro.sample.feature.single;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
@@ -26,22 +24,42 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import im.ene.toro.BaseAdapter;
 import im.ene.toro.Toro;
+import im.ene.toro.ToroAdapter;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.data.SimpleVideoObject;
+import im.ene.toro.sample.widget.SimpleMediaViewHolder;
 
 /**
- * @author eneim
- * @since 6/30/16
+ * @author eneim.
+ * @since 5/9/17.
  */
 
-public class Basic1ListFragment extends BaseToroFragment {
+public class SingleItemFragment extends BaseToroFragment {
 
-  protected RecyclerView recyclerView;
-  protected RecyclerView.Adapter adapter;
+  public static SingleItemFragment newInstance() {
+    Bundle args = new Bundle();
+    SingleItemFragment fragment = new SingleItemFragment();
+    fragment.setArguments(args);
+    return fragment;
+  }
 
-  public static Basic1ListFragment newInstance() {
-    return new Basic1ListFragment();
+  static class Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
+
+    @Nullable @Override protected Object getItem(int position) {
+      return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
+    }
+
+    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      return new SimpleMediaViewHolder(LayoutInflater.from(parent.getContext())
+          .inflate(SimpleMediaViewHolder.LAYOUT_RES, parent, false));
+    }
+
+    @Override public int getItemCount() {
+      return 1;
+    }
   }
 
   @Nullable @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,18 +67,17 @@ public class Basic1ListFragment extends BaseToroFragment {
     return inflater.inflate(R.layout.generic_recycler_view, container, false);
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2) @Override
+  RecyclerView recyclerView;
+
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-    RecyclerView.LayoutManager layoutManager = getLayoutManager();
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
     recyclerView.setLayoutManager(layoutManager);
-    if (layoutManager instanceof LinearLayoutManager) {
-      recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-          ((LinearLayoutManager) layoutManager).getOrientation()));
-    }
+    recyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+        ((LinearLayoutManager) layoutManager).getOrientation()));
 
-    adapter = getAdapter();
+    Adapter adapter = new Adapter();
     recyclerView.setHasFixedSize(false);
     recyclerView.setAdapter(adapter);
 
@@ -70,21 +87,5 @@ public class Basic1ListFragment extends BaseToroFragment {
   @Override public void onDestroyView() {
     super.onDestroyView();
     Toro.unregister(recyclerView);
-  }
-
-  @Override protected void dispatchFragmentActive() {
-    // Do nothing
-  }
-
-  @Override protected void dispatchFragmentInactive() {
-    // Do nothing
-  }
-
-  RecyclerView.LayoutManager getLayoutManager() {
-    return new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-  }
-
-  RecyclerView.Adapter getAdapter() {
-    return new Basic1Adapter();
   }
 }

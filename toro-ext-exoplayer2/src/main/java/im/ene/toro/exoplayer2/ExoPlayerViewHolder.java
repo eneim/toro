@@ -31,25 +31,25 @@ import im.ene.toro.ToroAdapter;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 
-/**
- * Created by eneim on 6/11/16.
- */
 public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder implements ToroPlayer {
 
   @NonNull protected final ExoPlayerView playerView;
-  protected final ExoPlayerViewHelper helper;
+  @SuppressWarnings("WeakerAccess") protected final ExoPlayerViewHelper helper;
 
   public ExoPlayerViewHolder(View itemView) {
     super(itemView);
     playerView = findVideoView(itemView);
+    //noinspection ConstantConditions
     if (playerView == null) {
       throw new NullPointerException("A valid ExoPlayerView is required.");
     }
     helper = new ExoPlayerViewHelper(this, itemView);
   }
 
+  @NonNull
   protected abstract ExoPlayerView findVideoView(View itemView);
 
+  @NonNull
   protected abstract MediaSource getMediaSource();
 
   protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
@@ -164,7 +164,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public void onPlaybackCompleted() {
-    this.playerView.stop();
+
   }
 
   @Override public boolean isPrepared() {

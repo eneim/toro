@@ -27,7 +27,11 @@ import java.io.FilenameFilter;
 /**
  * Created by eneim on 2/3/16.
  */
-@SuppressWarnings("RestrictedApi") public class Util {
+@SuppressWarnings("RestrictedApi") public class DemoUtil {
+
+  private DemoUtil() {
+    throw new RuntimeException("Meh!");
+  }
 
   public static String timeStamp(long position, long duration) {
     StringBuilder posTime = new StringBuilder();

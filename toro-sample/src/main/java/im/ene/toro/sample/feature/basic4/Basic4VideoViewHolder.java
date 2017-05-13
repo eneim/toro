@@ -17,6 +17,7 @@
 package im.ene.toro.sample.feature.basic4;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,14 +27,13 @@ import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
 import im.ene.toro.exoplayer2.ExoPlayerViewHolder;
-import im.ene.toro.exoplayer2.ExoVideoView;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
  * Created by eneim on 6/29/16.
  *
- * This sample use {@link ExoVideoView} API to play medias.
+ * This sample use {@link ExoPlayerView} API to play medias.
  */
 public class Basic4VideoViewHolder extends ExoPlayerViewHolder {
 
@@ -56,18 +56,13 @@ public class Basic4VideoViewHolder extends ExoPlayerViewHolder {
     this.mediaSource = ExoPlayerHelper.buildMediaSource(itemView.getContext(), //
         Uri.parse(this.videoItem.video), new DefaultDataSourceFactory(itemView.getContext(),
             Util.getUserAgent(itemView.getContext(), "Toro-Sample")), itemView.getHandler(), null);
-    //try {
-    //  this.playerView.setMediaSource(mediaSource, false);
-    //} catch (ParserException e) {
-    //  e.printStackTrace();
-    //}
   }
 
-  @Override protected ExoPlayerView findVideoView(View itemView) {
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
     return (ExoPlayerView) itemView.findViewById(R.id.video);
   }
 
-  @Override protected MediaSource getMediaSource() {
+  @NonNull @Override protected MediaSource getMediaSource() {
     return mediaSource;
   }
 

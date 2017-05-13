@@ -65,11 +65,11 @@ public class Basic3ListFragment extends BaseToroFragment {
     Toro.register(mRecyclerView);
   }
 
-  @Override protected void dispatchFragmentActivated() {
+  @Override protected void dispatchFragmentActive() {
     // Do nothing
   }
 
-  @Override protected void dispatchFragmentDeActivated() {
+  @Override protected void dispatchFragmentInactive() {
     // Do nothing
   }
 

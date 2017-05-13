@@ -70,7 +70,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   };
 
   // Singleton, GOD object
-  static volatile Toro sInstance;
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE) //
+  public static volatile Toro sInstance;
 
   // Used to swap strategies if need. It should be a strong reference.
   private static volatile ToroStrategy cachedStrategy;
@@ -89,8 +90,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    * visibility: free necessary resource if User doesn't need it anymore
    *
    * @param activity the Activity to which Toro gonna attach to
+   * @deprecated since 2.2.1
    */
-  public static void attach(@NonNull Activity activity) {
+  @Deprecated public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
     attachCount.incrementAndGet();
   }
@@ -103,15 +105,13 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   public static void init(Application application) {
     if (sInstance == null) {
       synchronized (Toro.class) {
-        sInstance = new Toro();
+        if (sInstance == null) {
+          sInstance = new Toro();
+          application.registerActivityLifecycleCallbacks(sInstance);
+          application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
+        }
       }
     }
-
-    if (attachCount.get() == 0) {
-      application.registerActivityLifecycleCallbacks(sInstance);
-    }
-
-    application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
   }
 
   /**
@@ -119,16 +119,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    * Toro#attach(Activity)}
    *
    * @param activity The host Activity where Toro will detach from.
+   * @deprecated since 2.2.1
    */
-  public static void detach(Activity activity) {
-    Application application = activity.getApplication();
-    if (application != null && attachCount.decrementAndGet() == 0) {
-      application.unregisterActivityLifecycleCallbacks(sInstance);
-    }
-
+  @Deprecated public static void detach(Activity activity) {
     // Cleanup
     for (RecyclerView view : sInstance.managers.keySet()) {
-      unregister(view);
+      if (view.getContext() == activity) {
+        unregister(view);
+      }
     }
   }
 
@@ -160,6 +158,12 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (view == null) {
       throw new NullPointerException("Registering View must not be null");
     }
+
+    if (!(view.getContext().getApplicationContext() instanceof Application)) {
+      throw new UnsupportedOperationException("Cannot register with non-Application context");
+    }
+
+    init((Application) view.getContext().getApplicationContext());
 
     if (sInstance.managers.containsKey(view) && sInstance.listeners.containsKey(view)) {
       sInstance.managers.get(view).onRegistered();
@@ -230,6 +234,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
 
       player.releasePlayer();
+      manager.setPlayer(null);
     }
 
     manager.onUnregistered();
@@ -242,8 +247,10 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     }
   }
 
-  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-  @Nullable public static PlayerManager getManager(ViewParent viewParent) {
+  @SuppressWarnings("WeakerAccess") //
+  @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE) //
+  @Nullable //
+  public static PlayerManager getManager(ViewParent viewParent) {
     return viewParent instanceof RecyclerView ? sInstance.managers.get(viewParent) : null;
   }
 
@@ -316,7 +323,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-    // TODO: deal with orientation changes
+    // TODO: may deal with orientation changes
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
@@ -495,9 +502,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         || parentRect.intersect(videoRect));
   }
 
-  // Centralize Video state callbacks
+  // Video state callbacks
 
-  void onVideoPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
+  void onMediaPrepared(@NonNull ToroPlayer player, @NonNull View itemView,
       @Nullable ViewParent parent) {
     if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
       return;
@@ -508,7 +515,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       return;
     }
 
-    // 1. Check if current manager wrapped this player
+    // 1. Check if current manager is managing this player
     if (player == manager.getPlayer()) {
       // player.isPlaying() is always false here
       manager.restorePlaybackState(player.getMediaId());
@@ -517,18 +524,16 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       // There is no current player, but this guy is prepared, so let's him go ...
       if (manager.getPlayer() == null) {
         // ... if it's possible
-        if (player.wantsToPlay() && Toro.getStrategy().allowsToPlay(player, parent)) {
-          manager.setPlayer(player);
-          // player.isPrepared() is always true here
-          manager.restorePlaybackState(player.getMediaId());
-          manager.startPlayback();
-        }
+        manager.setPlayer(player);
+        // player.isPrepared() is always true here
+        manager.restorePlaybackState(player.getMediaId());
+        manager.startPlayback();
       }
     }
   }
 
   void onPlaybackCompletion(@NonNull ToroPlayer player) {
-    // 1. Internal jobs
+    // 1. Internal jobs: find the manager for corresponding player.
     PlayerManager manager = null;
     for (PlayerManager playerManager : sInstance.managers.values()) {
       if (player == playerManager.getPlayer()) {
@@ -550,6 +555,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
         manager.pausePlayback();
         manager.setPlayer(null);
+        break;
       }
     }
 

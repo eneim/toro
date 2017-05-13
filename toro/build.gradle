@@ -41,6 +41,8 @@ android {
     targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {
@@ -63,16 +65,11 @@ dependencies {
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
 
   // Dependencies for local unit tests
-  testCompile "junit:junit:$rootProject.ext.junitVersion"
-  testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
-  testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
-
-  testCompile "org.powermock:powermock-core:$rootProject.ext.powerMockito"
-  testCompile "org.powermock:powermock-api-mockito:$rootProject.ext.powerMockito"
-  testCompile "org.powermock:powermock-module-junit4:$rootProject.ext.powerMockito"
-  testCompile "org.powermock:powermock-module-junit4-rule:$rootProject.ext.powerMockito"
-  testCompile "org.powermock:powermock-classloading-base:$rootProject.ext.powerMockito"
-  testCompile "org.powermock:powermock-classloading-xstream:$rootProject.ext.powerMockito"
+  // Force usage of support annotations in the test app, since it is internally used by the runner module.
+  androidTestCompile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}";
+  androidTestCompile "com.android.support.test:runner:${rootProject.ext.runnerVersion}";
+  androidTestCompile "com.android.support.test:rules:${rootProject.ext.rulesVersion}";
+  androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}";
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

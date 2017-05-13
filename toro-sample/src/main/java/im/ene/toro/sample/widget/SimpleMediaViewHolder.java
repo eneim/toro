@@ -14,60 +14,56 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.experiment;
+package im.ene.toro.sample.widget;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
-import im.ene.toro.exoplayer2.ExoPlayerViewHolder;
+import im.ene.toro.extended.ExtPlayerViewHolder;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.OrderedVideoObject;
+import im.ene.toro.sample.data.SimpleVideoObject;
 
 /**
- * Created by eneim on 2/9/17.
+ * @author eneim.
+ * @since 5/9/17.
+ *
+ * Simple Media ViewHolder, used for basic Demonstrations.
  */
 
-public class MediaItemViewHolder extends ExoPlayerViewHolder {
+public class SimpleMediaViewHolder extends ExtPlayerViewHolder {
 
-  public static final int LAYOUT_RES = R.layout.vh_toro_video_basic_4;
+  public static final int LAYOUT_RES = R.layout.vh_toro_media_simple;
 
-  private OrderedVideoObject videoItem;
+  private SimpleVideoObject videoItem;
   private MediaSource mediaSource;
 
-  private TextView number;
-
-  public MediaItemViewHolder(View itemView) {
+  public SimpleMediaViewHolder(View itemView) {
     super(itemView);
-    number = (TextView) itemView.findViewById(R.id.text_number);
   }
 
-  @Override public void setOnItemClickListener(View.OnClickListener listener) {
-    super.setOnItemClickListener(listener);
-    this.playerView.setOnClickListener(listener);
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
+    return (ExoPlayerView) itemView.findViewById(R.id.media);
   }
 
-  @Override protected ExoPlayerView findVideoView(View itemView) {
-    return (ExoPlayerView) itemView.findViewById(R.id.video);
-  }
-
-  @Override protected MediaSource getMediaSource() {
+  @NonNull @Override protected MediaSource getMediaSource() {
     return mediaSource;
   }
 
   @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object item) {
-    if (!(item instanceof OrderedVideoObject)) {
-      throw new IllegalArgumentException("Invalid Object: " + item);
+    if (!(item instanceof SimpleVideoObject)) {
+      throw new IllegalArgumentException(
+          "SimpleMediaViewHolder requires a SimpleVideoObject. Found: " + //
+              (item == null ? "null" : item.getClass().getSimpleName()));
     }
 
-    this.videoItem = (OrderedVideoObject) item;
-    this.number.setText("" + videoItem.position);
+    this.videoItem = (SimpleVideoObject) item;
     // prepare mediaSource
     this.mediaSource = ExoPlayerHelper.buildMediaSource(itemView.getContext(), //
         Uri.parse(this.videoItem.video), new DefaultDataSourceFactory(itemView.getContext(),
@@ -76,5 +72,9 @@ public class MediaItemViewHolder extends ExoPlayerViewHolder {
 
   @Nullable @Override public String getMediaId() {
     return this.videoItem != null ? this.videoItem.video + "@" + getAdapterPosition() : null;
+  }
+
+  @Override public Target getNextTarget() {
+    return Target.THIS_PLAYER;
   }
 }

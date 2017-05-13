@@ -19,6 +19,7 @@ package im.ene.toro.sample.feature.facebook.timeline;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -32,6 +33,7 @@ import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
 import im.ene.toro.extended.ExtPlayerViewHolder;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.util.DemoUtil;
 
 /**
  * @author eneim
@@ -52,13 +54,14 @@ public class VideoViewHolder extends ExtPlayerViewHolder {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
+    this.playerView.setUseController(false);
   }
 
-  @Override protected ExoPlayerView findVideoView(View itemView) {
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
     return (ExoPlayerView) itemView.findViewById(R.id.video);
   }
 
-  @Override protected MediaSource getMediaSource() {
+  @NonNull @Override protected MediaSource getMediaSource() {
     return this.mediaSource;
   }
 
@@ -82,7 +85,7 @@ public class VideoViewHolder extends ExtPlayerViewHolder {
   }
 
   @Nullable @Override public String getMediaId() {
-    return im.ene.toro.sample.util.Util.genVideoId( //
+    return DemoUtil.genVideoId( //
         this.videoItem.getVideoUrl(), getAdapterPosition());
   }
 

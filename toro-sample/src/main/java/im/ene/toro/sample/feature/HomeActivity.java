@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 eneim@Eneim Labs, nam@ene.im
+ * Copyright 2017 eneim@Eneim Labs, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.home;
+package im.ene.toro.sample.feature;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
@@ -29,7 +28,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.sample.BaseActivity;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.Feature;
 
 /**
  * Created by eneim on 6/30/16.
@@ -66,7 +64,7 @@ public class HomeActivity extends BaseActivity {
 
     adapter.setItemClickListener(new FeatureAdapter.ItemClickListener() {
       @Override public void onItemClick(View view, Feature feature) {
-        startActivity(new Intent(HomeActivity.this, feature.clazz));
+        startActivity(DemoActivity.createIntent(HomeActivity.this, feature));
       }
     });
   }

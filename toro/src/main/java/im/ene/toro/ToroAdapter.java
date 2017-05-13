@@ -140,5 +140,9 @@ public abstract class ToroAdapter<VH extends ToroAdapter.ViewHolder>
      * @param object the item to be bound to this ViewHolder
      */
     public abstract void bind(RecyclerView.Adapter adapter, @Nullable Object object);
+
+    @Override public String toString() {
+      return getClass().getSimpleName() + "@" + super.toString();
+    }
   }
 }

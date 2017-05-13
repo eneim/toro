@@ -65,7 +65,7 @@ public class Basic1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
   //}
 
   @Nullable @Override protected Object getItem(int position) {
-    if (position % 3 == 0) {
+    if (position % 5 == 0) {
       return new SimpleVideoObject("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
     } else {
       return new SimpleObject();
@@ -77,7 +77,7 @@ public class Basic1Adapter extends BaseAdapter<ToroAdapter.ViewHolder> {
   }
 
   @Override public int getItemCount() {
-    return 512;
+    return Integer.MAX_VALUE;
   }
 
   @Override public void remove() throws Exception {
