@@ -19,12 +19,9 @@ package im.ene.toro;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static im.ene.toro.Toro.TAG;
 
 /**
  * Created by eneim on 1/31/16.
@@ -112,8 +109,6 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
 
     // Ask strategy to elect one
     final ToroPlayer electedPlayer = Toro.getStrategy().findBestPlayer(candidates);
-
-    Log.i(TAG, "onScrollStateChanged: " + electedPlayer + " | " + currentPlayer);
 
     if (electedPlayer == currentPlayer) {
       // No thing changes, no new President. Let it go

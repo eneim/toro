@@ -40,6 +40,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -157,6 +158,10 @@ public class ExoVideoView extends FrameLayout {
       if (subtitleListener != null) {
         subtitleListener.onCues(cues);
       }
+    }
+
+    @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
     }
   }
 

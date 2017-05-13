@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.home;
+package im.ene.toro.sample.feature;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -23,7 +23,6 @@ import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.Feature;
 import im.ene.toro.sample.widget.SampleItemButton;
 
 /**
@@ -48,10 +47,6 @@ public class FeatureItemViewHolder extends RecyclerView.ViewHolder {
     itemButton.setSubTitle(context.getString(feature.description));
     itemButton.setImageResource(0);
 
-    if (feature == Feature.EXPERIMENT) {
-      itemButton.setBackgroundColor(Color.parseColor("#ffc5f507"));
-    } else {
-      itemButton.setBackgroundColor(Color.parseColor("#ffffffff"));
-    }
+    itemButton.setBackgroundColor(Color.parseColor("#ffffffff"));
   }
 }

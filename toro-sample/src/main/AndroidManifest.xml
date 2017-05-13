@@ -20,39 +20,15 @@
     <activity
         android:label="@string/app_name"
         android:launchMode="singleTop"
-        android:name=".feature.home.HomeActivity"
+        android:name=".feature.HomeActivity"
         android:theme="@style/AppTheme.NoActionBar"/>
 
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".feature.basic1.Basic1Activity"/>
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.basic2.Basic2Activity"/>
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.basic3.Basic3Activity"/>
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.basic4.Basic4Activity"/>
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.average1.Average1Activity"/>
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.advance1.Advance1Activity"/>
-    <activity
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.facebook.FacebookTimelineActivity"
-        android:resizeableActivity="false"/>
+        android:name=".feature.DemoActivity"
+        android:parentActivityName=".feature.HomeActivity"/>
+
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
@@ -61,32 +37,13 @@
     <activity
         android:label="@string/activity_show_case"
         android:launchMode="singleTop"
-        android:name=".feature.extended.ExtendedListActivity"/>
-
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
         android:name=".experiment.MediaListActivity">
-    </activity>
-
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:theme="@style/AppTheme.NoActionBar.Solid"
-        android:name=".dev.DemoActivity">
-    </activity>
-
-    <activity
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".experiment.MediaPlayerActivity">
     </activity>
 
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"
-        android:targetActivity=".dev.DemoActivity">
+        android:targetActivity=".feature.HomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

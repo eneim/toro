@@ -24,14 +24,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -90,7 +92,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   private MediaSource mediaSource;
 
   private DefaultTrackSelector trackSelector;
-  private boolean playerNeedsSource;
+  private boolean needRetrySource;
   private boolean shouldAutoPlay;
   private int resumeWindow;
   private long resumePosition;
@@ -166,7 +168,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     }
 
     SimpleExoPlayer player = playerView.getPlayer();
-    if (player == null) {
+    boolean needNewPlayer = player == null;
+    if (needNewPlayer) {
       UUID drmSchemeUuid =
           mediaSource instanceof DrmMedia ? getDrmUuid(((DrmMedia) mediaSource).getType()) : null;
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
@@ -201,22 +204,26 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       TrackSelection.Factory videoTrackSelectionFactory =
           new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
       trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-      player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,  //
-          new DefaultLoadControl(), drmSessionManager, SimpleExoPlayer.EXTENSION_RENDERER_MODE_OFF);
+
+      DefaultRenderersFactory renderersFactory =
+          new DefaultRenderersFactory(getContext(), drmSessionManager,
+              DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+
+      player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
       player.addListener(this);
 
-      player.setPlayWhenReady(shouldAutoPlay);
       playerView.setPlayer(player);
-      playerNeedsSource = true;
+      player.setPlayWhenReady(shouldAutoPlay);
+      needRetrySource = true;
     }
 
-    if (playerNeedsSource) {
+    if (needNewPlayer || needRetrySource) {
       boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
       if (haveResumePosition) {
         player.seekTo(resumeWindow, resumePosition);
       }
       player.prepare(mediaSource, !haveResumePosition, false);
-      playerNeedsSource = false;
+      needRetrySource = false;
     }
   }
 
@@ -337,7 +344,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       Toast.makeText(getContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    playerNeedsSource = true;
+    needRetrySource = true;
     if (isBehindLiveWindow(e)) {
       clearResumePosition();
       try {
@@ -351,12 +358,18 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   }
 
   @Override public void onPositionDiscontinuity() {
-    if (playerNeedsSource) {
+    if (needRetrySource) {
       // This will only occur if the user has performed a seek whilst in the error state. Update the
       // resume position so that if the user then retries, playback will resume from the position to
       // which they seek.
       updateResumePosition();
     }
+  }
+
+  @Override public void onPlaybackParametersChanged(PlaybackParameters parameters) {
+    // TODO implement this if need
+    Log.d("ToroLib:ExoPlayerView",
+        "onPlaybackParametersChanged() called with: parameters = [" + parameters + "]");
   }
 
   // Implement player interface
@@ -403,12 +416,15 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     if (getPlayer() != null) {
       getPlayer().stop();
     }
-    releasePlayer();
   }
 
   public void setVolume(float volume) {
     if (getPlayer() != null) {
       getPlayer().setVolume(volume);
     }
+  }
+
+  @Override public String toString() {
+    return "ExoPlayerView@" + hashCode();
   }
 }

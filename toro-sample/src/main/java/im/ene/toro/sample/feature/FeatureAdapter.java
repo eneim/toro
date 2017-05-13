@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.feature.home;
+package im.ene.toro.sample.feature;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.sample.feature.Feature;
 
 /**
  * Created by eneim on 2/15/17.

@@ -72,7 +72,12 @@ dependencies {
 
   // Non default dependencies
   compile project(':toro')
-  compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
+  // compile "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
 
   // Dependencies for local unit tests
   testCompile "junit:junit:$rootProject.ext.junitVersion"

@@ -26,6 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewParent;
 import java.util.Collections;
@@ -234,6 +235,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       }
 
       player.releasePlayer();
+      manager.setPlayer(null);
     }
 
     manager.onUnregistered();
@@ -254,10 +256,12 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   public static void resume() {
+    Log.e(TAG, "resume: ");
     rest(false);
   }
 
   public static void pause() {
+    Log.e(TAG, "pause: ");
     rest(true);
   }
 
@@ -322,7 +326,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-    // TODO: deal with orientation changes
+    // TODO: may deal with orientation changes
   }
 
   @Override public void onActivityDestroyed(Activity activity) {
@@ -546,10 +550,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       manager.savePlaybackState(player.getMediaId(), 0L, player.getDuration());
       manager.setPlayer(null);
     }
-
-    player.stop();
-    // TODO 2017/05/09 investigate to see if this need to be released.
-    // player.releasePlayer();
   }
 
   boolean onPlaybackError(@NonNull ToroPlayer player, @NonNull Exception error) {

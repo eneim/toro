@@ -29,6 +29,10 @@ import java.io.FilenameFilter;
  */
 @SuppressWarnings("RestrictedApi") public class DemoUtil {
 
+  private DemoUtil() {
+    throw new RuntimeException("Meh!");
+  }
+
   public static String timeStamp(long position, long duration) {
     StringBuilder posTime = new StringBuilder();
     TimeUtils.formatDuration(position, posTime);

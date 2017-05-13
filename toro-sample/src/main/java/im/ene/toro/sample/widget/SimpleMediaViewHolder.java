@@ -26,7 +26,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
-import im.ene.toro.exoplayer2.ExoPlayerViewHolder;
+import im.ene.toro.extended.ExtPlayerViewHolder;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.SimpleVideoObject;
 
@@ -37,7 +37,7 @@ import im.ene.toro.sample.data.SimpleVideoObject;
  * Simple Media ViewHolder, used for basic Demonstrations.
  */
 
-public class SimpleMediaViewHolder extends ExoPlayerViewHolder {
+public class SimpleMediaViewHolder extends ExtPlayerViewHolder {
 
   public static final int LAYOUT_RES = R.layout.vh_toro_media_simple;
 
@@ -72,5 +72,9 @@ public class SimpleMediaViewHolder extends ExoPlayerViewHolder {
 
   @Nullable @Override public String getMediaId() {
     return this.videoItem != null ? this.videoItem.video + "@" + getAdapterPosition() : null;
+  }
+
+  @Override public Target getNextTarget() {
+    return Target.THIS_PLAYER;
   }
 }

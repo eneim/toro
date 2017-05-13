@@ -31,7 +31,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
  */
 public abstract class PlayerViewHelper {
 
-  @SuppressWarnings("unused") static final String TAG = "ToroLib@Helper";
+  @SuppressWarnings("unused") static final String TAG = "ToroLib:Helper";
 
   protected final ToroPlayer player;
   protected final View itemView;
@@ -107,6 +107,8 @@ public abstract class PlayerViewHelper {
       // Detach current Player
       manager.setPlayer(null);
     }
+
+    player.stop();
   }
 
   /* BEGIN: Callback for MediaPlayer */
