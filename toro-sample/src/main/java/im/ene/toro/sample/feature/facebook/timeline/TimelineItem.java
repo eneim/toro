@@ -22,7 +22,7 @@ import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.feature.facebook.FbUser;
+import im.ene.toro.sample.feature.facebook.data.FbUser;
 
 /**
  * Created by eneim on 10/11/16.

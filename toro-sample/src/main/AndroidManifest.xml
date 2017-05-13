@@ -29,17 +29,6 @@
         android:name=".feature.DemoActivity"
         android:parentActivityName=".feature.HomeActivity"/>
 
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".feature.legacy.LegacyActivity"/>
-
-    <activity
-        android:label="@string/activity_show_case"
-        android:launchMode="singleTop"
-        android:name=".experiment.MediaListActivity">
-    </activity>
-
     <activity-alias
         android:label="@string/app_name"
         android:name=".Launcher"

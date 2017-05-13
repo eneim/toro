@@ -29,7 +29,7 @@ import im.ene.toro.sample.R;
 /**
  * Created by eneim on 10/15/16.
  */
-
+@Deprecated
 public class FacebookVideoView extends ExoVideoView {
 
   PlaybackControlView controller;

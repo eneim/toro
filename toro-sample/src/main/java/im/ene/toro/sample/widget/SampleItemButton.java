@@ -71,6 +71,7 @@ public class SampleItemButton extends LinearLayoutCompat {
       subtitleTextView.setVisibility(GONE);
     } else {
       subtitleTextView.setVisibility(VISIBLE);
+      //noinspection deprecation
       subtitleTextView.setText(Html.fromHtml(subTitle));
     }
 
@@ -94,6 +95,7 @@ public class SampleItemButton extends LinearLayoutCompat {
   }
 
   public void setSubTitle(CharSequence subTitle) {
+    //noinspection deprecation
     this.subtitleTextView.setText(Html.fromHtml(subTitle.toString()));
     this.subtitleTextView.setVisibility(VISIBLE);
   }
