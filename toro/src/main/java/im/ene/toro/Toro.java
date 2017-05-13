@@ -194,22 +194,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
 
     // Done registering new View
     playerManager.onRegistered();
-
-    // in case the Manager/Adapter has a preset Player and a saved playback state
-    // (either coming back from Stopped state or a predefined one)
-    if (playerManager.getPlayer() != null
-        && playerManager.getPlaybackState(playerManager.getPlayer().getMediaId()) != null) {
-      ToroPlayer player = playerManager.getPlayer();
-      if (player.wantsToPlay() && player.wantsToPlay() && //
-          Toro.getStrategy().allowsToPlay(player, view)) {
-        if (!player.isPrepared()) {
-          player.preparePlayer(false);
-        } else if (!player.isPlaying()) {
-          playerManager.restorePlaybackState(player.getMediaId());
-          playerManager.startPlayback();
-        }
-      }
-    }
+    // dispatch an 'idle' scroll so that any existing player can be triggered to play
+    listener.onScrollStateChanged(view, RecyclerView.SCROLL_STATE_IDLE);
   }
 
   /**
@@ -227,13 +213,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     MediaDataObserver observer = sInstance.observers.remove(manager);
     if (manager.getPlayer() != null) {
       final ToroPlayer player = manager.getPlayer();
-      manager.savePlaybackState(player.getMediaId(), //
-          player.getCurrentPosition(), player.getDuration());
-      if (player.isPlaying()) {
-        manager.pausePlayback();
-      }
-
-      player.releasePlayer();
+      manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
+          player.getDuration());
+      manager.pausePlayback();
       manager.setPlayer(null);
     }
 
@@ -568,13 +550,14 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (entry.getKey().getContext() == activity) {
         PlayerManager manager = entry.getValue();
         if (manager.getPlayer() != null) {
-          if (manager.getPlayer().isPlaying()) {
-            manager.savePlaybackState(manager.getPlayer().getMediaId(),
-                manager.getPlayer().getCurrentPosition(), manager.getPlayer().getDuration());
+          ToroPlayer player = manager.getPlayer();
+          if (player.isPlaying()) {
+            manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
+                player.getDuration());
             manager.pausePlayback();
           }
-          manager.getPlayer().releasePlayer();
-          manager.getPlayer().onActivityInactive();
+          player.releasePlayer();
+          player.onActivityInactive();
         }
       }
     }
@@ -585,11 +568,12 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       if (entry.getKey().getContext() == activity) {  // reference equality
         PlayerManager manager = entry.getValue();
         if (manager.getPlayer() != null) {
-          manager.getPlayer().onActivityActive();
-          if (!manager.getPlayer().isPrepared()) {
-            manager.getPlayer().preparePlayer(false);
+          ToroPlayer player = manager.getPlayer();
+          player.onActivityActive();
+          if (!player.isPrepared()) {
+            player.preparePlayer(false);
           } else {
-            manager.restorePlaybackState(manager.getPlayer().getMediaId());
+            manager.restorePlaybackState(player.getMediaId());
             manager.startPlayback();
           }
         }

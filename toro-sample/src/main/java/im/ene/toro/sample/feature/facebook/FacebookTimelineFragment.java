@@ -19,10 +19,10 @@ package im.ene.toro.sample.feature.facebook;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +40,7 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.feature.facebook.playlist.FacebookPlaylistFragment;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineAdapter;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
+import im.ene.toro.sample.feature.facebook.timeline.TimelineItem.VideoItem;
 import im.ene.toro.sample.util.DemoUtil;
 import java.util.List;
 
@@ -121,8 +122,8 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
       }
 
-      @Override protected void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
-          TimelineItem.VideoItem item) {
+      @Override
+      protected void onVideoClick(RecyclerView.ViewHolder viewHolder, View view, VideoItem item) {
         if (item == null) {
           return;
         }
@@ -141,6 +142,7 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
         FacebookPlaylistFragment playlistFragment =
             FacebookPlaylistFragment.newInstance(item, position, duration, order);
+        playlistFragment.setTargetFragment(FacebookTimelineFragment.this, 1000);
         playlistFragment.show(getChildFragmentManager(),
             FacebookPlaylistFragment.class.getSimpleName());
       }
@@ -158,18 +160,13 @@ public class FacebookTimelineFragment extends BaseToroFragment
   }
 
   @Override public void onPlaylistAttached() {
-    Log.i(TAG, "onPlaylistAttached() called");
     Toro.unregister(mRecyclerView);
   }
 
   @Override
-  public void onPlaylistDetached(TimelineItem.VideoItem baseItem, Long position, int order) {
-    Log.i(TAG,
-        "onPlaylistDetached() called with: position = [" + position + "], order = [" + order + "]");
-    if (adapter.getPlayer() != null) {
-      adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), order), position,
-          adapter.getPlayer().getDuration());
-    }
+  public void onPlaylistDetached(VideoItem baseItem, @NonNull PlaybackState state, int order) {
+    adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), order),
+        state.getPosition(), state.getDuration());
 
     if (isActive) {
       Toro.register(mRecyclerView);

@@ -396,7 +396,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   }
 
   public long getCurrentPosition() {
-    return getPlayer() != null ? getPlayer().getCurrentPosition() : C.POSITION_UNSET;
+    return getPlayer() != null ? getPlayer().getCurrentPosition() : resumePosition;
   }
 
   public void seekTo(long pos) {

@@ -47,24 +47,15 @@ public class ExoPlayerViewHelper extends PlayerViewHelper
   // if lastPlayWhenReady == true and state == BUFFERING then this player is not buffering for the first time.
   private boolean lastPlayWhenReady = false;
 
-  @Override public void onAttachedToWindow() {
-    super.onAttachedToWindow();
-    handler = new Handler(this);
-  }
-
   @Override public void onBound() {
     super.onBound();
     lastPlayWhenReady = false;
+    handler = new Handler(this);
   }
 
   @Override public void onRecycled() {
     super.onRecycled();
     handler.removeCallbacksAndMessages(null);
-  }
-
-  @Override public void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
-    handler = null;
   }
 
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int state) {
@@ -82,7 +73,6 @@ public class ExoPlayerViewHelper extends PlayerViewHelper
 
     switch (state) {
       case ExoPlayer.STATE_IDLE:
-        // Do nothing
         this.itemView.setKeepScreenOn(false);
         break;
       case ExoPlayer.STATE_BUFFERING:
