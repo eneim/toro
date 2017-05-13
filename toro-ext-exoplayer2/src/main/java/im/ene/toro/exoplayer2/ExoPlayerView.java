@@ -17,6 +17,7 @@
 package im.ene.toro.exoplayer2;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.AttrRes;
@@ -71,6 +72,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
 
   private final SimpleExoPlayerView playerView;
   private final Handler mainHandler = new Handler();
+  private final int extensionMode;
 
   PlayerCallback playerCallback;
 
@@ -87,6 +89,19 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     super(context, attrs, defStyleAttr);
     playerView = new SimpleExoPlayerView(context, attrs, defStyleAttr);
     addView(playerView, 0);
+
+    if (attrs != null) {
+      TypedArray a =
+          context.getTheme().obtainStyledAttributes(attrs, R.styleable.ExoPlayerView, 0, 0);
+      try {
+        extensionMode = a.getInt(R.styleable.ExoPlayerView_extension_mode,
+            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+      } finally {
+        a.recycle();
+      }
+    } else {
+      extensionMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+    }
   }
 
   private MediaSource mediaSource;
@@ -106,8 +121,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   public void setMedia(Media media, boolean shouldAutoPlay,
       DataSource.Factory mediaDataSourceFactory) throws ParserException {
     MediaSource mediaSource =
-        buildMediaSource(getContext(), media.getMediaUri(), mediaDataSourceFactory,
-            mainHandler, null);
+        buildMediaSource(getContext(), media.getMediaUri(), mediaDataSourceFactory, mainHandler,
+            null);
     setMediaSource(mediaSource, shouldAutoPlay);
   }
 
@@ -161,8 +176,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     return playerView.getUseController();
   }
 
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  public final void initializePlayer() throws ParserException {
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) public final void initializePlayer()
+      throws ParserException {
     if (mediaSource == null) {
       throw new IllegalStateException("Media Source must not be null.");
     }
@@ -189,9 +204,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
         }
 
         try {
-          drmSessionManager =
-              buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
-                  keyRequestProperties, mainHandler);
+          drmSessionManager = buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
+              keyRequestProperties, mainHandler);
         } catch (UnsupportedDrmException e) {
           int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
               : (e.reason == UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME
@@ -206,8 +220,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
 
       DefaultRenderersFactory renderersFactory =
-          new DefaultRenderersFactory(getContext(), drmSessionManager,
-              DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+          new DefaultRenderersFactory(getContext(), drmSessionManager, extensionMode);
 
       player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
       player.addListener(this);

@@ -30,11 +30,21 @@
   </declare-styleable>
 
   <declare-styleable name="ExoPlayerView">
-    <attr name="surface_type"/>
     <attr name="use_artwork"/>
-    <attr name="use_controller"/>
     <attr name="default_artwork"/>
+    <attr name="use_controller"/>
+    <attr name="hide_on_touch"/>
     <attr name="resize_mode"/>
+    <attr name="surface_type"/>
     <attr name="show_timeout"/>
+    <attr name="rewind_increment"/>
+    <attr name="fastforward_increment"/>
+    <attr name="player_layout_id"/>
+    <attr name="controller_layout_id"/>
+    <attr format="enum" name="extension_mode">
+      <enum name="off" value="0"/>
+      <enum name="on" value="1"/>
+      <enum name="prefer" value="2"/>
+    </attr>
   </declare-styleable>
 </resources>
