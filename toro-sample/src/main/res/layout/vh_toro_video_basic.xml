@@ -16,6 +16,7 @@
   -->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
@@ -33,11 +34,12 @@
   This size will be automatically updated by the View.
 
   -->
-  <im.ene.toro.exoplayer2.ExoVideoView
+  <im.ene.toro.exoplayer2.ExoPlayerView
       android:id="@+id/video"
       android:layout_width="match_parent"
       android:layout_height="192dp"
       android:layout_gravity="center"
+      app:use_controller="false"
       />
 
 </FrameLayout>
