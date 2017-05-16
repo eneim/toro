@@ -22,7 +22,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroAdapter;
@@ -36,7 +38,6 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @NonNull protected final ExoPlayerView playerView;
   protected final ExoPlayerViewHelper helper;
-  private boolean playable = false; // normally false
 
   public ExoPlayerViewHolder(View itemView) {
     super(itemView);
@@ -90,7 +91,6 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
 
   @Override public void releasePlayer() {
     playerView.releasePlayer();
-    playable = false;
   }
 
   // Client could override this method for better practice
@@ -124,7 +124,7 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @CallSuper @Override public void onVideoPrepared() {
-    playable = true;
+
   }
 
   @Override public int getBufferPercentage() {
@@ -132,7 +132,6 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public boolean onPlaybackError(Exception error) {
-    playable = false;
     return true;
   }
 
@@ -165,12 +164,14 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   }
 
   @Override public void onPlaybackCompleted() {
-    playable = false;
     this.playerView.stop();
   }
 
   @Override public boolean isPrepared() {
-    return playable && playerView.getPlayer() != null;
+    SimpleExoPlayer player = playerView.getPlayer();
+    // either: has been triggered playback, and not playing
+    return player != null && (player.getPlaybackState() == ExoPlayer.STATE_READY
+        || (player.getPlaybackState() == ExoPlayer.STATE_BUFFERING && player.getPlayWhenReady()));
   }
 
   @Override public float visibleAreaOffset() {
