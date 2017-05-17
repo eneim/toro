@@ -19,7 +19,6 @@ package im.ene.toro.extended;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.view.ViewParent;
 import im.ene.toro.PlayerManager;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
@@ -36,15 +35,14 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
   }
 
   @Override public boolean onLongClick(View v) {
-    final ViewParent parent = this.itemView.getParent();
-    PlayerManager manager = getPlayerManager(parent);
+    PlayerManager manager = getPlayerManager();
     // Important components are missing, return
     if (manager == null) {
       return false;
     }
 
     // Being pressed player is not be able to play, return
-    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, parent)) {
+    if (!player.wantsToPlay() || !Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
       return false;
     }
 

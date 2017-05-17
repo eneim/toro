@@ -16,9 +16,13 @@
 
 package im.ene.toro;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static im.ene.toro.Toro.TAG;
 
 /**
  * Created by eneim on 1/31/16.
@@ -90,6 +94,8 @@ final class PlayerManagerImpl implements PlayerManager {
     if (savedState != null) {
       position = savedState.getPosition();
     }
+
+    Log.i(TAG, "getSavedPosition: " + position);
     return position;
   }
 
@@ -102,11 +108,16 @@ final class PlayerManagerImpl implements PlayerManager {
   }
 
   @Override public void restorePlaybackState(String mediaId) {
+    Log.e(TAG, "restorePlaybackState() called with: mediaId = [" + mediaId + "]");
     restoreVideoState(mediaId);
   }
 
   @Nullable @Override public PlaybackState getPlaybackState(String mediaId) {
     return getSavedState(mediaId);
+  }
+
+  @NonNull @Override public ArrayList<PlaybackState> getPlaybackStates() {
+    return new ArrayList<>(playbackStates.values());
   }
 
   @Override public void remove() throws Exception {

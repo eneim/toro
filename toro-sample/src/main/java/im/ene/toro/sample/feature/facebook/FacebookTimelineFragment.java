@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample.feature.facebook;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,10 +24,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.view.WindowManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -34,15 +36,15 @@ import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroStrategy;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.feature.facebook.bigplayer.BigPlayerFragment;
 import im.ene.toro.sample.feature.facebook.playlist.FacebookPlaylistFragment;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineAdapter;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem.VideoItem;
 import im.ene.toro.sample.util.DemoUtil;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author eneim.
@@ -52,7 +54,9 @@ import java.util.List;
 public class FacebookTimelineFragment extends BaseToroFragment
     implements FacebookPlaylistFragment.Callback {
 
-  private static final String TAG = "FbTimeline";
+  private static final String TAG = "Toro:Fb:Timeline";
+
+  static final String ARGS_PLAYBACK_STATES = "toro:fb:timeline:playback:states";
 
   public static FacebookTimelineFragment newInstance() {
     Bundle args = new Bundle();
@@ -63,8 +67,9 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
-  private RecyclerView.LayoutManager layoutManager;
   boolean isActive = false;
+
+  private DisplayOrientationDetector mDisplayOrientationDetector;
 
   Unbinder unbinder;
 
@@ -79,36 +84,21 @@ public class FacebookTimelineFragment extends BaseToroFragment
     unbinder = ButterKnife.bind(this, view);
 
     adapter = new TimelineAdapter();
-    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
 
-    final ToroStrategy oldStrategy = Toro.getStrategy();
-    final int firstVideoPosition = adapter.firstVideoPosition();
-
-    Toro.setStrategy(new ToroStrategy() {
-      boolean isFirstPlayerDone = firstVideoPosition != -1; // Valid first position only
-
-      @Override public String getDescription() {
-        return "First video plays first";
+    mDisplayOrientationDetector = new DisplayOrientationDetector(getContext()) {
+      @Override public void onDisplayOrientationChanged(int displayOrientation) {
+        FacebookTimelineFragment.this.onDisplayOrientationChanged(displayOrientation);
       }
+    };
 
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return oldStrategy.findBestPlayer(candidates);
-      }
-
-      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == firstVideoPosition)  //
-            && oldStrategy.allowsToPlay(player, parent);
-
-        // A work-around to keep track of first video on top.
-        if (player.getPlayOrder() == firstVideoPosition) {
-          isFirstPlayerDone = true;
-        }
-        return allowToPlay;
-      }
-    });
+    WindowManager windowManager =
+        (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    mDisplayOrientationDetector.enable(windowManager.getDefaultDisplay());
 
     adapter.setOnItemClickListener(new TimelineAdapter.ItemClickListener() {
       @Override protected void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
@@ -147,12 +137,32 @@ public class FacebookTimelineFragment extends BaseToroFragment
             FacebookPlaylistFragment.class.getSimpleName());
       }
     });
+  }
 
+  @Override public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
+    outState.putParcelableArrayList(ARGS_PLAYBACK_STATES, adapter.getPlaybackStates());
+  }
+
+  @Override public void onViewStateRestored(@Nullable Bundle state) {
+    super.onViewStateRestored(state);
+    Log.d(TAG, "onViewStateRestored() called with: state = [" + state + "]");
+    ArrayList<PlaybackState> savedStates;
+    if (state != null
+        && state.containsKey(ARGS_PLAYBACK_STATES)
+        && (savedStates = state.getParcelableArrayList(ARGS_PLAYBACK_STATES)) != null) {
+      for (PlaybackState playbackState : savedStates) {
+        adapter.savePlaybackState(playbackState.getMediaId(), playbackState.getPosition(),
+            playbackState.getDuration());
+      }
+    }
     Toro.register(mRecyclerView);
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
+    mDisplayOrientationDetector.disable();
     Toro.unregister(mRecyclerView);
     if (unbinder != null) {
       unbinder.unbind();
@@ -179,5 +189,34 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
   @Override protected void dispatchFragmentInactive() {
     isActive = false;
+  }
+
+  BigPlayerFragment bigPlayerFragment;
+
+  // grab current player and open a full-screen player for it.
+  void onDisplayOrientationChanged(int displayOrientation) {
+    //if (adapter.getPlayer() == null) {
+    //  return;
+    //}
+    //
+    //if (displayOrientation == 270 || displayOrientation == 90) {
+    //  if (bigPlayerFragment == null) {
+    //    VideoItem videoItem =
+    //        (VideoItem) adapter.getItem(adapter.getPlayer().getPlayOrder()).getEmbedItem();
+    //    bigPlayerFragment = BigPlayerFragment.newInstance(videoItem.getVideoUrl(),
+    //        adapter.getPlayer().getCurrentPosition());
+    //    bigPlayerFragment.setTargetFragment(this, 2000);
+    //    bigPlayerFragment.show(getChildFragmentManager(), BigPlayerFragment.TAG);
+    //  }
+    //} else {
+    //  if (bigPlayerFragment != null) {
+    //    bigPlayerFragment.dismissAllowingStateLoss();
+    //    bigPlayerFragment = null;
+    //  }
+    //}
+
+    Log.d(TAG, "onDisplayOrientationChanged() called with: displayOrientation = ["
+        + displayOrientation
+        + "]");
   }
 }
