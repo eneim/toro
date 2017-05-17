@@ -211,21 +211,25 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     OnScrollListenerImpl listener = sInstance.listeners.remove(view);
     PlayerManager manager = sInstance.managers.remove(view);
     MediaDataObserver observer = sInstance.observers.remove(manager);
-    if (manager.getPlayer() != null) {
-      final ToroPlayer player = manager.getPlayer();
-      manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
-          player.getDuration());
-      manager.pausePlayback();
-      manager.setPlayer(null);
+    if (manager != null) {
+      if (manager.getPlayer() != null) {
+        final ToroPlayer player = manager.getPlayer();
+        manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(), player.getDuration());
+        manager.pausePlayback();
+        manager.setPlayer(null);
+      }
+
+      manager.onUnregistered();
     }
 
-    manager.onUnregistered();
     view.removeOnScrollListener(listener);
 
-    try {
-      observer.remove();
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (observer != null) {
+      try {
+        observer.remove();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -234,6 +238,18 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   @Nullable //
   public static PlayerManager getManager(ViewParent viewParent) {
     return viewParent instanceof RecyclerView ? sInstance.managers.get(viewParent) : null;
+  }
+
+  static PlayerManager getManager(ToroPlayer player) {
+    PlayerManager manager = null;
+    for (PlayerManager playerManager : sInstance.managers.values()) {
+      if (player == playerManager.getPlayer()) {
+        manager = playerManager;
+        break;
+      }
+    }
+
+    return manager;
   }
 
   public static void resume() {

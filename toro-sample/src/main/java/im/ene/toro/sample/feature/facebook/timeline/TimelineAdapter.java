@@ -40,16 +40,20 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
   static final int TYPE_VIDEO = 3;
 
   private static final int ITEM_COUNT = 512;
-  private final List<TimelineItem> items;
+  private static final List<TimelineItem> items;
 
-  public TimelineAdapter() {
-    this.items = new ArrayList<>();
+  static {
+    items = new ArrayList<>();
     for (int i = 0; i < ITEM_COUNT; i++) {
       items.add(new TimelineItem(ToroApp.getApp()));
     }
   }
 
-  @NonNull @Override protected TimelineItem getItem(int position) {
+  public TimelineAdapter() {
+    super();
+  }
+
+  @NonNull @Override public TimelineItem getItem(int position) {
     return items.get(position);
   }
 

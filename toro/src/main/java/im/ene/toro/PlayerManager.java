@@ -16,8 +16,10 @@
 
 package im.ene.toro;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import java.util.ArrayList;
 
 /**
  * Created by eneim on 1/29/16.
@@ -114,4 +116,6 @@ public interface PlayerManager extends Removable {
 
   @Nullable PlaybackState getPlaybackState(String mediaId);
   /* END Directly control current player */
+
+  @NonNull ArrayList<PlaybackState> getPlaybackStates();
 }

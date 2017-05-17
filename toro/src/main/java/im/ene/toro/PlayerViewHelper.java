@@ -69,6 +69,7 @@ public abstract class PlayerViewHelper {
           itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           if (player.wantsToPlay() && //
               Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
+            //noinspection Duplicates
             if (!player.isPrepared()) {
               player.preparePlayer(false);
             } else {
@@ -96,9 +97,9 @@ public abstract class PlayerViewHelper {
   }
 
   @CallSuper public void onRecycled() {
-    PlayerManager manager = getPlayerManager(itemView.getParent());
+    PlayerManager manager = Toro.getManager(player);
     // Manually save Video state
-    if (manager != null && player == manager.getPlayer()) {
+    if (manager != null) {
       if (player.isPlaying()) {
         manager.savePlaybackState( //
             player.getMediaId(), player.getCurrentPosition(), player.getDuration());
@@ -121,8 +122,13 @@ public abstract class PlayerViewHelper {
     Toro.sInstance.onMediaPrepared(this.player, itemView, parent);
   }
 
-  @Nullable protected final PlayerManager getPlayerManager(ViewParent parent) {
+  @SuppressWarnings("WeakerAccess") @Nullable
+  protected final PlayerManager getPlayerManager(ViewParent parent) {
     return Toro.getManager(parent);
+  }
+
+  @Nullable protected final PlayerManager getPlayerManager() {
+    return Toro.getManager(player);
   }
 
   /**
