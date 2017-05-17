@@ -42,7 +42,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
 
     if (state == ExoPlayer.STATE_ENDED) {
       final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
-      final PlayerManager manager = super.getPlayerManager();
+      final PlayerManager manager = super.getPlayerManager(itemView.getParent());
       switch (nextTarget) {
         case NEXT_PLAYER:
           if (manager instanceof ExtToroAdapter) {
