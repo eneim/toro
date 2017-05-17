@@ -7,7 +7,7 @@
 [![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) <a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro%3A2.1.0"><img src="https://img.shields.io/badge/Methods and size-core: 250 | deps: 9441 | 28 KB-e91e63.svg"/></a>
 
 
-<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512""><img src="/art/web_hi_res_512.png" width="256"></a>
+<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512"><img src="/art/web_hi_res_512.png" width="256"></a>
 
 
 
