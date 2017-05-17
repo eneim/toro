@@ -35,7 +35,7 @@ public class LongClickableViewHelper extends ExoPlayerViewHelper implements OnLo
   }
 
   @Override public boolean onLongClick(View v) {
-    PlayerManager manager = getPlayerManager();
+    PlayerManager manager = getPlayerManager(itemView.getParent());
     // Important components are missing, return
     if (manager == null) {
       return false;
