@@ -46,31 +46,29 @@ public abstract class ExoPlayerViewHolder extends ToroAdapter.ViewHolder impleme
     helper = new ExoPlayerViewHelper(this, itemView);
   }
 
-  @NonNull
-  protected abstract ExoPlayerView findVideoView(View itemView);
+  @NonNull protected abstract ExoPlayerView findVideoView(View itemView);
 
-  @NonNull
-  protected abstract MediaSource getMediaSource();
+  @NonNull protected abstract MediaSource getMediaSource();
 
   protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
 
   @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
-    playerView.setPlayerCallback(helper);
     onBind(adapter, object);
     helper.onBound();
   }
 
   @CallSuper @Override protected void onRecycled() {
-    playerView.setPlayerCallback(null);
     helper.onRecycled();
   }
 
   @CallSuper @Override public void onAttachedToWindow() {
+    playerView.setPlayerCallback(helper);
     helper.onAttachedToWindow();
   }
 
   @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
+    playerView.setPlayerCallback(null);
   }
 
   @CallSuper @Override public void onActivityActive() {

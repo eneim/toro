@@ -44,7 +44,10 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
 
   public TimelineAdapter() {
     this.items = new ArrayList<>();
-    for (int i = 0; i < ITEM_COUNT; i++) {
+    // first item tobe video
+    TimelineItem.EmbedItem video = TimelineItem.Factory.newItem(ToroApp.getApp(), 0.1);
+    items.add(new TimelineItem(ToroApp.getApp(), video));
+    for (int i = 0; i < ITEM_COUNT - 1; i++) {
       items.add(new TimelineItem(ToroApp.getApp()));
     }
   }
@@ -94,7 +97,7 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
   }
 
   @Override public int getItemCount() {
-    return ITEM_COUNT;
+    return items.size();
   }
 
   @Override public int firstVideoPosition() {

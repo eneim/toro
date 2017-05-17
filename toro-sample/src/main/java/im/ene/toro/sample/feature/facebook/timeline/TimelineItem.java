@@ -35,9 +35,17 @@ public class TimelineItem {
   @NonNull private final EmbedItem embedItem;
 
   public TimelineItem(Context context) {
-    author = new FbUser();
-    itemContent = context.getString(R.string.sample);
-    embedItem = Factory.newItem(context, Math.random());
+    this(new FbUser(), context.getString(R.string.sample), Factory.newItem(context, Math.random()));
+  }
+
+  public TimelineItem(Context context, @NonNull EmbedItem embedItem) {
+    this(new FbUser(), context.getString(R.string.sample), embedItem);
+  }
+
+  TimelineItem(@NonNull FbUser author, @NonNull String itemContent, @NonNull EmbedItem embedItem) {
+    this.author = author;
+    this.itemContent = itemContent;
+    this.embedItem = embedItem;
   }
 
   @NonNull public FbUser getAuthor() {

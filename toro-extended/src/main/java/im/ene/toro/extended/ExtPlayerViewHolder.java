@@ -33,6 +33,8 @@ import im.ene.toro.exoplayer2.ExoPlayerView;
 
 public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder implements ExtToroPlayer {
 
+  private static final String TAG = "ToroLib:ExtHolder";
+
   @NonNull protected final ExoPlayerView playerView;
   @SuppressWarnings("WeakerAccess") protected final ExtPlayerViewHelper helper;
 
@@ -53,22 +55,22 @@ public abstract class ExtPlayerViewHolder extends ToroAdapter.ViewHolder impleme
   protected abstract void onBind(RecyclerView.Adapter adapter, @Nullable Object object);
 
   @Override public final void bind(RecyclerView.Adapter adapter, @Nullable Object object) {
-    playerView.setPlayerCallback(helper);
     onBind(adapter, object);
     helper.onBound();
   }
 
   @CallSuper @Override protected void onRecycled() {
-    playerView.setPlayerCallback(null);
     helper.onRecycled();
   }
 
   @CallSuper @Override public void onAttachedToWindow() {
+    playerView.setPlayerCallback(helper);
     helper.onAttachedToWindow();
   }
 
   @CallSuper @Override public void onDetachedFromWindow() {
     helper.onDetachedFromWindow();
+    playerView.setPlayerCallback(null);
   }
 
   @CallSuper @Override public void onActivityActive() {

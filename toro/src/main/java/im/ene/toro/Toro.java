@@ -219,7 +219,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
       manager.setPlayer(null);
     }
 
-    manager.onUnregistered();
     view.removeOnScrollListener(listener);
 
     try {
@@ -227,6 +226,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    manager.onUnregistered();
   }
 
   @SuppressWarnings("WeakerAccess") //

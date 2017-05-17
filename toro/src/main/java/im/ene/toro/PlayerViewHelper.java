@@ -69,6 +69,7 @@ public abstract class PlayerViewHelper {
           itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           if (player.wantsToPlay() && //
               Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
+            //noinspection Duplicates
             if (!player.isPrepared()) {
               player.preparePlayer(false);
             } else {
@@ -86,16 +87,6 @@ public abstract class PlayerViewHelper {
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
   @CallSuper public void onDetachedFromWindow() {
-    // Prefer to use onRecycled for cleaning up data.
-    // Only release player here.
-    player.releasePlayer();
-  }
-
-  @CallSuper public void onBound() {
-    //
-  }
-
-  @CallSuper public void onRecycled() {
     PlayerManager manager = getPlayerManager(itemView.getParent());
     // Manually save Video state
     if (manager != null && player == manager.getPlayer()) {
@@ -109,6 +100,14 @@ public abstract class PlayerViewHelper {
     }
 
     player.stop();
+  }
+
+  @CallSuper public void onBound() {
+    //
+  }
+
+  @CallSuper public void onRecycled() {
+    // hmm, somehow this method doesn't work really well
   }
 
   /* BEGIN: Callback for MediaPlayer */
