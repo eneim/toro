@@ -95,7 +95,6 @@ final class PlayerManagerImpl implements PlayerManager {
       position = savedState.getPosition();
     }
 
-    Log.i(TAG, "getSavedPosition: " + position);
     return position;
   }
 
@@ -108,7 +107,6 @@ final class PlayerManagerImpl implements PlayerManager {
   }
 
   @Override public void restorePlaybackState(String mediaId) {
-    Log.e(TAG, "restorePlaybackState() called with: mediaId = [" + mediaId + "]");
     restoreVideoState(mediaId);
   }
 
