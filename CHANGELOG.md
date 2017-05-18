@@ -29,6 +29,11 @@ Maybe more issues are fixed along with this release.
 - ExoVideoView and those ViewHolder built around it are deprecated. Use **ExoPlayerView** and the ViewHolders built around it.
 - Deprecate *PlayerManager#saveVideoState*, *PlayerManager#restoreVideoState*, *PlayerManager#getSavedState*. These methods will be removed in next big release.
 
+**Known issues**
+
+- **ToroViewPagerHelper** is not working well. Solution for ViewPager is under investigation.
+- **Facebook sample** may contain some memory leak, just ignore it for now.
+
 ### 2.2.0 (2017/03/05)
 
 **Big changes**
