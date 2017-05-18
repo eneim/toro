@@ -19,22 +19,28 @@ package im.ene.toro.sample.feature.facebook.timeline;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
-import im.ene.toro.exoplayer2.ExoVideoView;
-import im.ene.toro.exoplayer2.ExoVideoViewHolder;
+import im.ene.toro.exoplayer2.ExoPlayerHelper;
+import im.ene.toro.exoplayer2.ExoPlayerView;
+import im.ene.toro.extended.ExtPlayerViewHolder;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.util.Util;
+import im.ene.toro.sample.util.DemoUtil;
 
 /**
- * Created by eneim on 10/11/16.
+ * @author eneim
+ * @since 10/11/16
  */
 
-public class VideoViewHolder extends ExoVideoViewHolder {
+public class VideoViewHolder extends ExtPlayerViewHolder {
 
   static final int LAYOUT_RES = R.layout.vh_fb_feed_post_video;
 
@@ -42,14 +48,21 @@ public class VideoViewHolder extends ExoVideoViewHolder {
   private ImageView mThumbnail;
   private TextView mInfo;
 
+  private MediaSource mediaSource;
+
   public VideoViewHolder(View itemView) {
     super(itemView);
     mThumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
     mInfo = (TextView) itemView.findViewById(R.id.info);
+    this.playerView.setUseController(false);
   }
 
-  @Override protected ExoVideoView findVideoView(View itemView) {
-    return (ExoVideoView) itemView.findViewById(R.id.video);
+  @NonNull @Override protected ExoPlayerView findVideoView(View itemView) {
+    return (ExoPlayerView) itemView.findViewById(R.id.video);
+  }
+
+  @NonNull @Override protected MediaSource getMediaSource() {
+    return this.mediaSource;
   }
 
   @Override protected void onBind(RecyclerView.Adapter adapter, @Nullable Object object) {
@@ -59,7 +72,10 @@ public class VideoViewHolder extends ExoVideoViewHolder {
     }
 
     this.videoItem = (TimelineItem.VideoItem) ((TimelineItem) object).getEmbedItem();
-    this.playerView.setMedia(Uri.parse(videoItem.getVideoUrl()));
+
+    this.mediaSource = ExoPlayerHelper.buildMediaSource(itemView.getContext(), //
+        Uri.parse(this.videoItem.getVideoUrl()), new DefaultDataSourceFactory(itemView.getContext(),
+            Util.getUserAgent(itemView.getContext(), "Toro-Sample")), itemView.getHandler(), null);
   }
 
   @Override public void setOnItemClickListener(View.OnClickListener listener) {
@@ -69,7 +85,8 @@ public class VideoViewHolder extends ExoVideoViewHolder {
   }
 
   @Nullable @Override public String getMediaId() {
-    return Util.genVideoId(this.videoItem.getVideoUrl(), getAdapterPosition());
+    return DemoUtil.genVideoId( //
+        this.videoItem.getVideoUrl(), getAdapterPosition());
   }
 
   @Override public void onVideoPreparing() {
@@ -84,11 +101,8 @@ public class VideoViewHolder extends ExoVideoViewHolder {
 
   @Override public void onViewHolderBound() {
     super.onViewHolderBound();
-    Picasso.with(itemView.getContext())
-        .load(R.drawable.toro_place_holder)
-        .fit()
-        .centerInside()
-        .into(mThumbnail);
+    Picasso.with(itemView.getContext()).load(R.drawable.toro_place_holder)  //
+        .fit().centerInside().into(mThumbnail);
     mInfo.setText("Bound");
   }
 
@@ -127,5 +141,9 @@ public class VideoViewHolder extends ExoVideoViewHolder {
     }).start();
     mInfo.setText("Error: videoId = " + getMediaId());
     return super.onPlaybackError(error);
+  }
+
+  @Override public Target getNextTarget() {
+    return Target.NONE;
   }
 }

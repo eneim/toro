@@ -31,8 +31,10 @@ import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
 
 /**
- * Created by eneim on 6/30/16.
+ * @author eneim
+ * @since 6/30/16
  */
+
 public class Basic1ListFragment extends BaseToroFragment {
 
   protected RecyclerView recyclerView;
@@ -70,11 +72,11 @@ public class Basic1ListFragment extends BaseToroFragment {
     Toro.unregister(recyclerView);
   }
 
-  @Override protected void dispatchFragmentActivated() {
+  @Override protected void dispatchFragmentActive() {
     // Do nothing
   }
 
-  @Override protected void dispatchFragmentDeActivated() {
+  @Override protected void dispatchFragmentInactive() {
     // Do nothing
   }
 

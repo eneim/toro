@@ -16,6 +16,8 @@
 
 package im.ene.toro.exoplayer2;
 
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -30,25 +32,58 @@ import im.ene.toro.ToroPlayer;
  * this, but in case it wants to provide custom behaviors, it is recommended to call super method
  * from this Helper.
  */
-public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallback {
+public class ExoPlayerViewHelper extends PlayerViewHelper
+    implements PlayerCallback, Handler.Callback {
+
+  private static final String TAG = "ToroLib:ExoHelper";
+
+  private Handler handler;
 
   // Require the player Object and the View holds it.
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
+  // if lastPlayWhenReady == true and state == BUFFERING then this player is not buffering for the first time.
+  private boolean lastPlayWhenReady = false;
+
+  @Override public void onBound() {
+    super.onBound();
+    lastPlayWhenReady = false;
+    handler = new Handler(this);
+  }
+
+  @Override public void onRecycled() {
+    super.onRecycled();
+    handler.removeCallbacksAndMessages(null);
+  }
+
   @Override public void onPlayerStateChanged(boolean playWhenReady, @State int state) {
+    // Using Handler to ensure that states are handled in queue.
+    handler.obtainMessage(state, playWhenReady).sendToTarget();
+  }
+
+  @Override public final boolean onPlayerError(Exception error) {
+    return super.onPlaybackError(error);
+  }
+
+  @Override public boolean handleMessage(Message msg) {
+    int state = msg.what;
+    boolean playWhenReady = (boolean) msg.obj;
+
     switch (state) {
       case ExoPlayer.STATE_IDLE:
-        // Do nothing
+        this.itemView.setKeepScreenOn(false);
         break;
       case ExoPlayer.STATE_BUFFERING:
-        if (!playWhenReady && !player.isPrepared()) {
-          this.player.onVideoPrepared();
+        this.itemView.setKeepScreenOn(true);
+        if (!lastPlayWhenReady && !playWhenReady && !player.isPrepared()) {
           this.onPrepared(this.itemView, this.itemView.getParent());
+          this.player.onVideoPrepared();
         }
         break;
       case ExoPlayer.STATE_READY:
+        this.itemView.setKeepScreenOn(true);
         if (playWhenReady) {
           this.player.onPlaybackStarted();
         } else {
@@ -56,6 +91,7 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         }
         break;
       case ExoPlayer.STATE_ENDED:
+        this.itemView.setKeepScreenOn(false);
         if (playWhenReady) {
           this.onCompletion();
           this.player.onPlaybackCompleted();
@@ -65,9 +101,8 @@ public class ExoPlayerViewHelper extends PlayerViewHelper implements PlayerCallb
         // Do nothing
         break;
     }
-  }
 
-  @Override public final boolean onPlayerError(Exception error) {
-    return super.onPlaybackError(error);
+    lastPlayWhenReady = playWhenReady;
+    return true;
   }
 }

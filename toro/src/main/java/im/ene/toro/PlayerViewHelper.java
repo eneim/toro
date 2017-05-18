@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
-import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
 /**
  * Created by eneim on 2/1/16.
@@ -31,7 +31,7 @@ import android.view.ViewTreeObserver;
  */
 public abstract class PlayerViewHelper {
 
-  @SuppressWarnings("unused") static final String TAG = "ToroLib@Helper";
+  private static final String TAG = "ToroLib:Helper";
 
   protected final ToroPlayer player;
   protected final View itemView;
@@ -45,6 +45,10 @@ public abstract class PlayerViewHelper {
 
   /**
    * Callback from {@link RecyclerView.Adapter#onViewAttachedToWindow(RecyclerView.ViewHolder)}
+   *
+   * Once a view is attached to its parent's window, and there is a {@link PlayerManager} for its
+   * parent, this Helper observes the view's layout state and prepares the player or starts the
+   * playback if possible.
    */
   @CallSuper public void onAttachedToWindow() {
     final PlayerManager manager = getPlayerManager(itemView.getParent());
@@ -60,22 +64,22 @@ public abstract class PlayerViewHelper {
         manager.startPlayback();
       }
     } else if (manager.getPlayer() == null) {
-      itemView.getViewTreeObserver().addOnGlobalLayoutListener( //
-          new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override public void onGlobalLayout() {
-              itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-              if (player.wantsToPlay() && Toro.getStrategy()
-                  .allowsToPlay(player, itemView.getParent())) {
-                if (!player.isPrepared()) {
-                  player.preparePlayer(false);
-                } else {
-                  manager.setPlayer(player);
-                  manager.restorePlaybackState(player.getMediaId());
-                  manager.startPlayback();
-                }
-              }
+      itemView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+        @Override public void onGlobalLayout() {
+          itemView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          if (player.wantsToPlay() && //
+              Toro.getStrategy().allowsToPlay(player, itemView.getParent())) {
+            //noinspection Duplicates
+            if (!player.isPrepared()) {
+              player.preparePlayer(false);
+            } else {
+              manager.setPlayer(player);
+              manager.restorePlaybackState(player.getMediaId());
+              manager.startPlayback();
             }
-          });
+          }
+        }
+      });
     }
   }
 
@@ -83,17 +87,9 @@ public abstract class PlayerViewHelper {
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
   @CallSuper public void onDetachedFromWindow() {
-    // Prefer to use onRecycled for cleaning up data.
-  }
-
-  @CallSuper public void onBound() {
-    //
-  }
-
-  @CallSuper public void onRecycled() {
-    PlayerManager manager = getPlayerManager(itemView.getParent());
+    PlayerManager manager = Toro.getManager(itemView.getParent());
     // Manually save Video state
-    if (manager != null && player == manager.getPlayer()) {
+    if (manager != null) {
       if (player.isPlaying()) {
         manager.savePlaybackState( //
             player.getMediaId(), player.getCurrentPosition(), player.getDuration());
@@ -102,8 +98,16 @@ public abstract class PlayerViewHelper {
       // Detach current Player
       manager.setPlayer(null);
     }
-    // Release player.
-    player.releasePlayer();
+
+    player.stop();
+  }
+
+  @CallSuper public void onBound() {
+    //
+  }
+
+  @CallSuper public void onRecycled() {
+    // hmm, somehow this method doesn't work really well
   }
 
   /* BEGIN: Callback for MediaPlayer */
@@ -113,10 +117,11 @@ public abstract class PlayerViewHelper {
    * @param parent parent which holds current ViewHolder
    */
   @CallSuper protected void onPrepared(@NonNull View itemView, @Nullable ViewParent parent) {
-    Toro.sInstance.onVideoPrepared(this.player, itemView, parent);
+    Toro.sInstance.onMediaPrepared(this.player, itemView, parent);
   }
 
-  @Nullable protected final PlayerManager getPlayerManager(ViewParent parent) {
+  @SuppressWarnings("WeakerAccess") @Nullable
+  protected final PlayerManager getPlayerManager(ViewParent parent) {
     return Toro.getManager(parent);
   }
 

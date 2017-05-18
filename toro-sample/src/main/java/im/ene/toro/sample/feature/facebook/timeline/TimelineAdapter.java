@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by eneim on 10/11/16.
+ * @author eneim
+ * @since 10/11/16
  */
 
 public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
@@ -39,16 +40,22 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
   static final int TYPE_VIDEO = 3;
 
   private static final int ITEM_COUNT = 512;
-  private final List<TimelineItem> items;
+  private static final List<TimelineItem> items;
 
-  public TimelineAdapter() {
-    this.items = new ArrayList<>();
+  static {
+    items = new ArrayList<>();
+    TimelineItem.EmbedItem video = TimelineItem.Factory.newItem(ToroApp.getApp(), 0.1);
+    items.add(new TimelineItem(ToroApp.getApp(), video));
     for (int i = 0; i < ITEM_COUNT; i++) {
       items.add(new TimelineItem(ToroApp.getApp()));
     }
   }
 
-  @NonNull @Override protected TimelineItem getItem(int position) {
+  public TimelineAdapter() {
+    super();
+  }
+
+  @NonNull @Override public TimelineItem getItem(int position) {
     return items.get(position);
   }
 
@@ -93,7 +100,7 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
   }
 
   @Override public int getItemCount() {
-    return ITEM_COUNT;
+    return items.size();
   }
 
   @Override public int firstVideoPosition() {
@@ -137,5 +144,4 @@ public class TimelineAdapter extends BaseAdapter<ToroAdapter.ViewHolder>
     protected abstract void onVideoClick(RecyclerView.ViewHolder viewHolder, View view,
         TimelineItem.VideoItem item);
   }
-
 }

@@ -139,6 +139,7 @@ final class OnScrollListenerImpl extends RecyclerView.OnScrollListener implement
 
     playerManager.setPlayer(null);  // we allows new player, so first we need to clear current one
     // Well... let's the BlackHouse starts new cycle with the new President!
+    //noinspection Duplicates
     if (!electedPlayer.isPrepared()) {
       electedPlayer.preparePlayer(false);
     } else {

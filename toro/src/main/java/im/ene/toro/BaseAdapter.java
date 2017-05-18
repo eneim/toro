@@ -16,7 +16,9 @@
 
 package im.ene.toro;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
  * Created by eneim on 1/20/17.
@@ -85,11 +87,19 @@ public abstract class BaseAdapter<VH extends ToroAdapter.ViewHolder> extends Tor
     return delegate.getPlaybackState(mediaId);
   }
 
+  @NonNull @Override public ArrayList<PlaybackState> getPlaybackStates() {
+    return delegate.getPlaybackStates();
+  }
+
   @Deprecated @Override public void restoreVideoState(String videoId) {
-    delegate.restoreVideoState(videoId);
+    delegate.restorePlaybackState(videoId);
   }
 
   @Deprecated @Override public PlaybackState getSavedState(String videoId) {
-    return delegate.getSavedState(videoId);
+    return delegate.getPlaybackState(videoId);
+  }
+
+  @Override public String toString() {
+    return getClass().getSimpleName() + "@" + hashCode();
   }
 }

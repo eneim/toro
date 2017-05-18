@@ -16,12 +16,15 @@
 
 package im.ene.toro;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by eneim on 1/20/17.
  *
  * @since 2.2.0
  */
-public final class PlaybackState {
+public final class PlaybackState implements Parcelable {
 
   private final String mediaId;
 
@@ -58,4 +61,30 @@ public final class PlaybackState {
   public void setPosition(Long position) {
     this.position = position;
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.mediaId);
+    dest.writeValue(this.duration);
+    dest.writeValue(this.position);
+  }
+
+  protected PlaybackState(Parcel in) {
+    this.mediaId = in.readString();
+    this.duration = (Long) in.readValue(Long.class.getClassLoader());
+    this.position = (Long) in.readValue(Long.class.getClassLoader());
+  }
+
+  public static final Creator<PlaybackState> CREATOR = new Creator<PlaybackState>() {
+    @Override public PlaybackState createFromParcel(Parcel source) {
+      return new PlaybackState(source);
+    }
+
+    @Override public PlaybackState[] newArray(int size) {
+      return new PlaybackState[size];
+    }
+  };
 }

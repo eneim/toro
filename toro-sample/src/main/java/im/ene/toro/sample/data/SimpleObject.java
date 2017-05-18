@@ -17,7 +17,8 @@
 package im.ene.toro.sample.data;
 
 /**
- * Created by eneim on 1/30/16.
+ * @author eneim
+ * @since 1/30/16
  */
 public class SimpleObject {
 
@@ -39,8 +40,6 @@ public class SimpleObject {
   }
 
   @Override public String toString() {
-    return "SimpleObject{" +
-        "name='" + name + '\'' +
-        '}';
+    return "SimpleObject{" + "name='" + name + '\'' + '}';
   }
 }

@@ -19,7 +19,8 @@ package im.ene.toro.extended;
 import im.ene.toro.ToroPlayer;
 
 /**
- * Created by eneim on 10/5/16.
+ * @author eneim
+ * @since 10/5/16
  */
 
 public interface ExtToroPlayer extends ToroPlayer {
@@ -28,8 +29,8 @@ public interface ExtToroPlayer extends ToroPlayer {
     // Alpha Experiment
     NEXT_PLAYER,
 
-    // Alpha Experiment
-    PREV_PLAYER,
+    // Alpha Experiment, Not implemented yet
+    // PREV_PLAYER,
 
     THIS_PLAYER,
 

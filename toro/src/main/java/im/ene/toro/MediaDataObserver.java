@@ -70,10 +70,9 @@ final class MediaDataObserver extends RecyclerView.AdapterDataObserver implement
   }
 
   @Override public void remove() throws Exception {
-    if (((RecyclerView.Adapter) manager).hasObservers()) {
+    if (manager != null && ((RecyclerView.Adapter) manager).hasObservers()) {
       ((RecyclerView.Adapter) manager).unregisterAdapterDataObserver(this);
+      manager = null;
     }
-
-    this.manager = null;
   }
 }

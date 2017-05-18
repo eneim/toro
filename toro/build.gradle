@@ -41,6 +41,8 @@ android {
     targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
 
   buildTypes {
@@ -57,11 +59,17 @@ android {
 
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
-  testCompile 'junit:junit:4.12'
   // compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
 
   javadocDeps "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+
+  // Dependencies for local unit tests
+  // Force usage of support annotations in the test app, since it is internally used by the runner module.
+  androidTestCompile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}";
+  androidTestCompile "com.android.support.test:runner:${rootProject.ext.runnerVersion}";
+  androidTestCompile "com.android.support.test:rules:${rootProject.ext.rulesVersion}";
+  androidTestCompile "com.android.support.test.espresso:espresso-core:${rootProject.ext.espressoVersion}";
 }
 
 // REF: https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en

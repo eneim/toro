@@ -37,6 +37,7 @@ import android.support.v4.view.ViewPager;
  * Gives us a clue that on very first layout pass,
  * {@link ViewPager.OnPageChangeListener#onPageScrolled(int, float, int)} will be triggered.
  */
+@SuppressWarnings("unused") //
 public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
     implements Removable, Handler.Callback {
 
@@ -45,6 +46,7 @@ public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
 
   private Handler handler;
   private boolean firstScroll = true;
+  private int currentPage = -1;
 
   public ToroViewPagerHelper() {
     this.handler = new Handler(Looper.getMainLooper(), this);
@@ -53,14 +55,16 @@ public class ToroViewPagerHelper extends ViewPager.SimpleOnPageChangeListener
   @Override
   public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     if (firstScroll) {
+      currentPage = position;
       handler.removeMessages(MSG_LAYOUT_STABLE);
       handler.sendEmptyMessageDelayed(MSG_LAYOUT_STABLE, MSG_DELAY);
       firstScroll = false;
     }
   }
 
-  @Override public void onPageScrollStateChanged(int state) {
-    if (state == ViewPager.SCROLL_STATE_IDLE) {
+  @Override public void onPageSelected(int position) {
+    if (currentPage != position) {
+      currentPage = position;
       handler.removeMessages(MSG_LAYOUT_STABLE);
       handler.sendEmptyMessageDelayed(MSG_LAYOUT_STABLE, MSG_DELAY);
     }

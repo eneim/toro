@@ -16,40 +16,47 @@
 
 package im.ene.toro.extended;
 
+import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.PlayerManager;
-import im.ene.toro.exoplayer2.State;
 
 /**
- * Created by eneim on 10/5/16.
+ * @author eneim
+ * @since 10/5/16
  */
 
 public class ExtPlayerViewHelper extends LongClickableViewHelper {
+
+  private static final String TAG = "ToroLib:ExtHelper";
 
   public ExtPlayerViewHelper(@NonNull ExtToroPlayer player, @NonNull View itemView) {
     super(player, itemView);
   }
 
-  @Override public void onPlayerStateChanged(boolean playWhenReady, @State int playbackState) {
-    super.onPlayerStateChanged(playWhenReady, playbackState);
-    if (playbackState == ExoPlayer.STATE_IDLE && !playWhenReady) {
+  @Override public boolean handleMessage(Message msg) {
+    boolean handled = super.handleMessage(msg);
+    int state = msg.what;
+
+    if (state == ExoPlayer.STATE_ENDED) {
       final ExtToroPlayer.Target nextTarget = ((ExtToroPlayer) this.player).getNextTarget();
-      final PlayerManager manager = super.getPlayerManager(this.itemView.getParent());
+      final PlayerManager manager = super.getPlayerManager(itemView.getParent());
       switch (nextTarget) {
         case NEXT_PLAYER:
           if (manager instanceof ExtToroAdapter) {
-            ((ExtToroAdapter) manager).scrollToNextVideo();
+            ((ExtToroAdapter) manager).scrollToNextVideoFromPosition(
+                ((RecyclerView.ViewHolder) player).getAdapterPosition());
           }
           break;
-        case PREV_PLAYER:
-          // Currently this is not supported
-          // TODO implement this if need
-          break;
+        // case PREV_PLAYER:
+        // Currently this is not supported
+        //  break;
         case THIS_PLAYER:
           // immediately repeat
           if (manager != null) {
+            manager.setPlayer(player);
             manager.restorePlaybackState(player.getMediaId());
             manager.startPlayback();
           }
@@ -59,5 +66,7 @@ public class ExtPlayerViewHelper extends LongClickableViewHelper {
           break;
       }
     }
+
+    return handled;
   }
 }

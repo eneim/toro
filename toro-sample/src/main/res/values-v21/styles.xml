@@ -23,6 +23,11 @@
     <item name="android:statusBarColor">@android:color/transparent</item>
   </style>
 
+  <style name="AppTheme.NoActionBar.Solid">
+    <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+    <item name="android:statusBarColor">?attr/colorPrimaryDark</item>
+  </style>
+
   <style name="Toro.Widget.SampleItemButton" parent="android:Widget">
     <item name="android:layout_marginBottom">@dimen/activity_horizontal_margin</item>
     <item name="android:background">@android:color/white</item>

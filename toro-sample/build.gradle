@@ -101,6 +101,7 @@ dependencies {
 
   // compile project(path: ':toro-ext-exoplayer')
   compile project(path: ':toro-extended')
+  debugCompile project(path: ':toro-extended')
   compile project(path: ':toro-ext-mediaplayer')
   // compile "im.ene.toro2:toro-extended:2.1.0-SNAPSHOT"
 
@@ -122,9 +123,9 @@ dependencies {
     transitive = true;
   }
 
-  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
   // Dependencies for local unit tests
   testCompile "junit:junit:$rootProject.ext.junitVersion"

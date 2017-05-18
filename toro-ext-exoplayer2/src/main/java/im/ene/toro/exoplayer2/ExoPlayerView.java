@@ -17,20 +17,24 @@
 package im.ene.toro.exoplayer2;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -41,7 +45,7 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -50,11 +54,13 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static im.ene.toro.exoplayer2.ExoPlayerHelper.BANDWIDTH_METER;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.buildDataSourceFactory;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.buildDrmSessionManager;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.buildMediaSource;
+import static im.ene.toro.exoplayer2.ExoPlayerHelper.getDrmUuid;
 
 /**
  * Created by eneim on 2/7/17.
@@ -64,6 +70,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
 
   private final SimpleExoPlayerView playerView;
   private final Handler mainHandler = new Handler();
+  private final int extensionMode;
 
   PlayerCallback playerCallback;
 
@@ -80,12 +87,25 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     super(context, attrs, defStyleAttr);
     playerView = new SimpleExoPlayerView(context, attrs, defStyleAttr);
     addView(playerView, 0);
+
+    if (attrs != null) {
+      TypedArray a =
+          context.getTheme().obtainStyledAttributes(attrs, R.styleable.ExoPlayerView, 0, 0);
+      try {
+        extensionMode = a.getInt(R.styleable.ExoPlayerView_extension_mode,
+            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+      } finally {
+        a.recycle();
+      }
+    } else {
+      extensionMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+    }
   }
 
   private MediaSource mediaSource;
 
   private DefaultTrackSelector trackSelector;
-  private boolean playerNeedsSource;
+  private boolean needRetrySource;
   private boolean shouldAutoPlay;
   private int resumeWindow;
   private long resumePosition;
@@ -93,14 +113,14 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   // public methods //
 
   public void setMedia(Media media, boolean shouldAutoPlay) throws ParserException {
-    setMedia(media, shouldAutoPlay, ExoPlayerHelper.buildDataSourceFactory(getContext(), true));
+    setMedia(media, shouldAutoPlay, buildDataSourceFactory(getContext(), true));
   }
 
   public void setMedia(Media media, boolean shouldAutoPlay,
       DataSource.Factory mediaDataSourceFactory) throws ParserException {
     MediaSource mediaSource =
-        ExoPlayerHelper.buildMediaSource(getContext(), media.getMediaUri(), mediaDataSourceFactory,
-            mainHandler, null);
+        buildMediaSource(getContext(), media.getMediaUri(), mediaDataSourceFactory, mainHandler,
+            null);
     setMediaSource(mediaSource, shouldAutoPlay);
   }
 
@@ -154,13 +174,15 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     return playerView.getUseController();
   }
 
-  public final void initializePlayer() throws ParserException {
+  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE) public final void initializePlayer()
+      throws ParserException {
     if (mediaSource == null) {
       throw new IllegalStateException("Media Source must not be null.");
     }
 
     SimpleExoPlayer player = playerView.getPlayer();
-    if (player == null) {
+    boolean needNewPlayer = player == null;
+    if (needNewPlayer) {
       UUID drmSchemeUuid =
           mediaSource instanceof DrmMedia ? getDrmUuid(((DrmMedia) mediaSource).getType()) : null;
       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
@@ -168,21 +190,10 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
         String drmLicenseUrl = ((DrmMedia) mediaSource).getLicenseUrl();
         String[] keyRequestPropertiesArray =
             ((DrmMedia) mediaSource).getKeyRequestPropertiesArray();
-        Map<String, String> keyRequestProperties;
-        if (keyRequestPropertiesArray == null || keyRequestPropertiesArray.length < 2) {
-          keyRequestProperties = null;
-        } else {
-          keyRequestProperties = new HashMap<>();
-          for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
-            keyRequestProperties.put(keyRequestPropertiesArray[i],
-                keyRequestPropertiesArray[i + 1]);
-          }
-        }
 
         try {
-          drmSessionManager =
-              ExoPlayerHelper.buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
-                  keyRequestProperties, mainHandler);
+          drmSessionManager = buildDrmSessionManager(getContext(), drmSchemeUuid, drmLicenseUrl,
+              keyRequestPropertiesArray, mainHandler);
         } catch (UnsupportedDrmException e) {
           int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
               : (e.reason == UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME
@@ -193,24 +204,27 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       }
 
       TrackSelection.Factory videoTrackSelectionFactory =
-          new AdaptiveVideoTrackSelection.Factory(BANDWIDTH_METER);
+          new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
       trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-      player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector,  //
-          new DefaultLoadControl(), drmSessionManager, SimpleExoPlayer.EXTENSION_RENDERER_MODE_OFF);
+
+      DefaultRenderersFactory renderersFactory =
+          new DefaultRenderersFactory(getContext(), drmSessionManager, extensionMode);
+
+      player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
       player.addListener(this);
 
       playerView.setPlayer(player);
       player.setPlayWhenReady(shouldAutoPlay);
-      playerNeedsSource = true;
+      needRetrySource = true;
     }
 
-    if (playerNeedsSource) {
+    if (needNewPlayer || needRetrySource) {
       boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
       if (haveResumePosition) {
         player.seekTo(resumeWindow, resumePosition);
       }
       player.prepare(mediaSource, !haveResumePosition, false);
-      playerNeedsSource = false;
+      needRetrySource = false;
     }
   }
 
@@ -221,7 +235,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       updateResumePosition();
       player.removeListener(this);
       player.release();
-      playerView.setPlayer(null); // TODO check this
+      playerView.setPlayer(null);
       trackSelector = null;
     }
 
@@ -255,21 +269,6 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   private void clearResumePosition() {
     resumeWindow = C.INDEX_UNSET;
     resumePosition = C.TIME_UNSET;
-  }
-
-  private UUID getDrmUuid(String typeString) throws ParserException {
-    switch (typeString.toLowerCase()) {
-      case "widevine":
-        return C.WIDEVINE_UUID;
-      case "playready":
-        return C.PLAYREADY_UUID;
-      default:
-        try {
-          return UUID.fromString(typeString);
-        } catch (RuntimeException e) {
-          throw new ParserException("Unsupported drm type: " + typeString);
-        }
-    }
   }
 
   private static boolean isBehindLiveWindow(ExoPlaybackException e) {
@@ -346,7 +345,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
       Toast.makeText(getContext(), errorString, Toast.LENGTH_SHORT).show();
     }
 
-    playerNeedsSource = true;
+    needRetrySource = true;
     if (isBehindLiveWindow(e)) {
       clearResumePosition();
       try {
@@ -360,12 +359,18 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   }
 
   @Override public void onPositionDiscontinuity() {
-    if (playerNeedsSource) {
+    if (needRetrySource) {
       // This will only occur if the user has performed a seek whilst in the error state. Update the
       // resume position so that if the user then retries, playback will resume from the position to
       // which they seek.
       updateResumePosition();
     }
+  }
+
+  @Override public void onPlaybackParametersChanged(PlaybackParameters parameters) {
+    // TODO implement this if need
+    Log.d("ToroLib:ExoPlayerView",
+        "onPlaybackParametersChanged() called with: parameters = [" + parameters + "]");
   }
 
   // Implement player interface
@@ -391,7 +396,7 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   }
 
   public long getCurrentPosition() {
-    return getPlayer() != null ? getPlayer().getCurrentPosition() : C.POSITION_UNSET;
+    return getPlayer() != null ? getPlayer().getCurrentPosition() : resumePosition;
   }
 
   public void seekTo(long pos) {
@@ -412,12 +417,15 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
     if (getPlayer() != null) {
       getPlayer().stop();
     }
-    releasePlayer();
   }
 
   public void setVolume(float volume) {
     if (getPlayer() != null) {
       getPlayer().setVolume(volume);
     }
+  }
+
+  @Override public String toString() {
+    return "ExoPlayerView@" + hashCode();
   }
 }

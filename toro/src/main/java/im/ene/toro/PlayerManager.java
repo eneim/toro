@@ -16,16 +16,18 @@
 
 package im.ene.toro;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import java.util.ArrayList;
 
 /**
  * Created by eneim on 1/29/16.
  */
 public interface PlayerManager extends Removable {
 
-  public static class Factory {
-    public static PlayerManager getInstance() {
+  class Factory {
+    @SuppressWarnings("WeakerAccess") public static PlayerManager getInstance() {
       return new PlayerManagerImpl();
     }
   }
@@ -39,6 +41,7 @@ public interface PlayerManager extends Removable {
 
   /**
    * Set current video player. There would be at most one Video player at a time.
+   * Implement constraint: an idling or completed player must not belong to any player manager.
    *
    * @param player the current Video Player of this manager
    */
@@ -114,4 +117,6 @@ public interface PlayerManager extends Removable {
 
   @Nullable PlaybackState getPlaybackState(String mediaId);
   /* END Directly control current player */
+
+  @NonNull ArrayList<PlaybackState> getPlaybackStates();
 }
