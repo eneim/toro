@@ -70,6 +70,30 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
   private PlaybackState initState;
   @SuppressWarnings("WeakerAccess") ExoPlayerView playerView;
 
+  private WindowManager windowManager;
+  private Callback callback;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    // on orientation change, by default Android system will try to retain the view hierarchy.
+    // so, it will try to destroy this dialog-fragment, and recreate it on new orientation with a saved state.
+    // here, we dispatch the orientation check, if we found that it is in portrait mode, we immediately
+    // dismiss the dialog to prevent it from showing unexpectedly.
+    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    if (windowManager.getDefaultDisplay().getRotation() % 180 == 0) {
+      dismissAllowingStateLoss();
+      return;
+    }
+
+    if (getTargetFragment() instanceof Callback) {
+      this.callback = (Callback) getTargetFragment();
+    }
+
+    if (this.callback != null) {
+      callback.onBigPlayerAttached();
+    }
+  }
+
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
@@ -117,26 +141,6 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
       playerView.setMediaSource(mediaSource, true);
     } catch (ParserException e) {
       e.printStackTrace();
-    }
-  }
-
-  private WindowManager windowManager;
-  private Callback callback;
-
-  @Override public void onAttach(Context context) {
-    super.onAttach(context);
-    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    if (windowManager.getDefaultDisplay().getRotation() % 180 == 0) {
-      dismissAllowingStateLoss();
-      return;
-    }
-
-    if (getTargetFragment() instanceof Callback) {
-      this.callback = (Callback) getTargetFragment();
-    }
-
-    if (this.callback != null) {
-      callback.onBigPlayerAttached();
     }
   }
 
