@@ -67,6 +67,7 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
+  LinearLayoutManager layoutManager;
   boolean isActive = false;
 
   private DisplayOrientationDetector mDisplayOrientationDetector;
@@ -84,8 +85,7 @@ public class FacebookTimelineFragment extends BaseToroFragment
     unbinder = ButterKnife.bind(this, view);
 
     adapter = new TimelineAdapter();
-    LinearLayoutManager layoutManager =
-        new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
@@ -141,8 +141,14 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
+    ToroPlayer player = adapter.getPlayer();
+    if (player != null) {
+      adapter.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
+          player.getDuration());
+    }
+
     outState.putParcelableArrayList(ARGS_PLAYBACK_STATES, adapter.getPlaybackStates());
+    Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle state) {
