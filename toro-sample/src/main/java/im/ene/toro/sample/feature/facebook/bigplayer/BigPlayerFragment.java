@@ -16,7 +16,6 @@
 
 package im.ene.toro.sample.feature.facebook.bigplayer;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,7 +43,7 @@ import im.ene.toro.sample.R;
 
 public class BigPlayerFragment extends AppCompatDialogFragment {
 
-  public static final String TAG = "Toro:Fb:BigPlayer";
+  public static final String TAG = "ToroLib:FbPlayer";
 
   private static final String ARG_MEDIA_URL = "toro:fb:player:media:url";
   private static final String ARG_MEDIA_STATE = "toro:fb:player:media:state";
@@ -56,10 +55,6 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
     args.putParcelable(ARG_MEDIA_STATE, playbackState);
     fragment.setArguments(args);
     return fragment;
-  }
-
-  @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-    return super.onCreateDialog(savedInstanceState);
   }
 
   @Override public int getTheme() {
@@ -85,8 +80,8 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
       return;
     }
 
-    if (getTargetFragment() instanceof Callback) {
-      this.callback = (Callback) getTargetFragment();
+    if (getParentFragment() instanceof Callback) {
+      this.callback = (Callback) getParentFragment();
     }
 
     if (this.callback != null) {

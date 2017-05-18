@@ -20,13 +20,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +53,12 @@ import java.util.ArrayList;
 public class FacebookTimelineFragment extends BaseToroFragment
     implements FacebookPlaylistFragment.Callback, BigPlayerFragment.Callback {
 
-  private static final String TAG = "Toro:Fb:Timeline";
+  private static final String TAG = "ToroLib:FbTimeline";
 
-  static final String ARGS_PLAYBACK_STATES = "toro:fb:timeline:playback:states";
-  static final String ARGS_PLAYBACK_LATEST = "toro:fb:timeline:playback:latest";
+  private static final String ARGS_PLAYBACK_STATES = "toro:fb:timeline:playback:states";
+  private static final String ARGS_PLAYBACK_LATEST = "toro:fb:timeline:playback:latest";
+  // true if is in playlist mode, false otherwise
+  private static final String ARGS_PLAYBACK_MODE = "toro:fb:timeline:playback:mode";
 
   public static FacebookTimelineFragment newInstance() {
     Bundle args = new Bundle();
@@ -70,8 +69,8 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
-  LinearLayoutManager layoutManager;
-  boolean isActive = false;
+  boolean isActive = true;
+  boolean playlistMode = false;
 
   BigPlayerFragment bigPlayerFragment;
   private WindowManager windowManager;
@@ -94,7 +93,8 @@ public class FacebookTimelineFragment extends BaseToroFragment
     unbinder = ButterKnife.bind(this, view);
 
     adapter = new TimelineAdapter();
-    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
@@ -154,12 +154,12 @@ public class FacebookTimelineFragment extends BaseToroFragment
     }
 
     outState.putParcelableArrayList(ARGS_PLAYBACK_STATES, adapter.getPlaybackStates());
-    Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
+    outState.putBoolean(ARGS_PLAYBACK_MODE, playlistMode);
   }
 
-  @Override public void onViewStateRestored(@Nullable Bundle state) {
+  @SuppressWarnings("Duplicates") @Override
+  public void onViewStateRestored(@Nullable Bundle state) {
     super.onViewStateRestored(state);
-    Log.d(TAG, "onViewStateRestored() called with: state = [" + state + "]");
     ArrayList<PlaybackState> savedStates;
     if (state != null
         && state.containsKey(ARGS_PLAYBACK_STATES)
@@ -170,8 +170,15 @@ public class FacebookTimelineFragment extends BaseToroFragment
       }
     }
 
+    this.playlistMode = state != null && state.getBoolean(ARGS_PLAYBACK_MODE);
+
     if (bigPlayerFragment != null) {
       bigPlayerFragment.dismissAllowingStateLoss();
+    }
+
+    if (this.playlistMode) {
+      // playlist is showing, just return
+      return;
     }
 
     if (windowManager.getDefaultDisplay().getRotation() % 180 == 0) {
@@ -187,8 +194,8 @@ public class FacebookTimelineFragment extends BaseToroFragment
       }
 
       VideoItem videoItem = latestState.videoItem;
-      bigPlayerFragment = BigPlayerFragment.newInstance(videoItem.getVideoUrl(),
-          latestState.playbackState);
+      bigPlayerFragment =
+          BigPlayerFragment.newInstance(videoItem.getVideoUrl(), latestState.playbackState);
       bigPlayerFragment.setTargetFragment(this, 2000);
       bigPlayerFragment.show(getChildFragmentManager(), BigPlayerFragment.TAG);
     }
@@ -208,11 +215,16 @@ public class FacebookTimelineFragment extends BaseToroFragment
   }
 
   @Override public void onPlaylistAttached() {
-    Toro.unregister(mRecyclerView);
+    playlistMode = true;
+    // on orientation change, this call will happened before recyclerview is created
+    if (mRecyclerView != null) {
+      Toro.unregister(mRecyclerView);
+    }
   }
 
   @Override
   public void onPlaylistDetached(VideoItem baseItem, @NonNull PlaybackState state, int order) {
+    playlistMode = false;
     adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), order),
         state.getPosition(), state.getDuration());
 
@@ -230,50 +242,15 @@ public class FacebookTimelineFragment extends BaseToroFragment
   }
 
   @Override public void onBigPlayerAttached() {
-    Toro.unregister(mRecyclerView);
+    if (mRecyclerView != null) {
+      Toro.unregister(mRecyclerView);
+    }
   }
 
   @Override public void onBigPlayerDetached(@NonNull PlaybackState state) {
-    Log.d(TAG, "onBigPlayerDetached() called with: state = [" + state + "]");
-    Log.i(TAG, "onBigPlayerDetached: " + mRecyclerView + " | " + adapter);
     if (adapter != null) {
       adapter.savePlaybackState(state.getMediaId(), state.getPosition(), state.getDuration());
     }
   }
 
-  // save latest playback item if there is
-  static class SavedPlayback implements Parcelable {
-
-    final VideoItem videoItem;
-    final PlaybackState playbackState;
-
-    public SavedPlayback(VideoItem videoItem, PlaybackState playbackState) {
-      this.videoItem = videoItem;
-      this.playbackState = playbackState;
-    }
-
-    protected SavedPlayback(Parcel in) {
-      videoItem = in.readParcelable(VideoItem.class.getClassLoader());
-      playbackState = in.readParcelable(PlaybackState.class.getClassLoader());
-    }
-
-    @Override public void writeToParcel(Parcel dest, int flags) {
-      dest.writeParcelable(videoItem, flags);
-      dest.writeParcelable(playbackState, flags);
-    }
-
-    @Override public int describeContents() {
-      return 0;
-    }
-
-    public static final Creator<SavedPlayback> CREATOR = new Creator<SavedPlayback>() {
-      @Override public SavedPlayback createFromParcel(Parcel in) {
-        return new SavedPlayback(in);
-      }
-
-      @Override public SavedPlayback[] newArray(int size) {
-        return new SavedPlayback[size];
-      }
-    };
-  }
 }

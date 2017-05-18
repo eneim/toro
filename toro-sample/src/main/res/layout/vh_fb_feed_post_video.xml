@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
-        android:minHeight="192dp"
+        android:minHeight="200dp"
         app:resize_mode="fixed_width"
         />
 
