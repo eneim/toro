@@ -18,10 +18,11 @@ package im.ene.toro;
 
 /**
  * @author eneim.
+ * @hide
  * @since 5/14/17.
  */
 
-public class Log {
+public final class Log {
 
   private Log() {
     throw new RuntimeException("Meh!");

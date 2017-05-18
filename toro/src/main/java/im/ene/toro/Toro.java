@@ -33,7 +33,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.os.Build.VERSION.SDK_INT;
 
@@ -49,8 +48,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   static final String TAG = "ToroLib";
 
   public static final double DEFAULT_OFFSET = 0.75;
-
-  private static AtomicInteger attachCount = new AtomicInteger();
 
   /**
    * Stop playback strategy
@@ -94,7 +91,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
    */
   @Deprecated public static void attach(@NonNull Activity activity) {
     init(activity.getApplication());
-    attachCount.incrementAndGet();
   }
 
   /**
@@ -108,7 +104,9 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         if (sInstance == null) {
           sInstance = new Toro();
           application.registerActivityLifecycleCallbacks(sInstance);
-          application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
+          if (BuildConfig.DEBUG) {
+            application.registerActivityLifecycleCallbacks(new LifeCycleDebugger());
+          }
         }
       }
     }
@@ -214,7 +212,8 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     if (manager != null) {
       if (manager.getPlayer() != null) {
         final ToroPlayer player = manager.getPlayer();
-        manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(), player.getDuration());
+        manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
+            player.getDuration());
         manager.pausePlayback();
         manager.setPlayer(null);
       }
@@ -270,7 +269,7 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   }
 
   // Experiment
-  @Deprecated public static boolean isResting() {
+  @SuppressWarnings("WeakerAccess") public static boolean isResting() {
     return getStrategy() == REST;
   }
 
