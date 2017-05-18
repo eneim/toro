@@ -231,8 +231,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
         e.printStackTrace();
       }
     }
-
-    manager.onUnregistered();
   }
 
   @SuppressWarnings("WeakerAccess") //
@@ -240,18 +238,6 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
   @Nullable //
   public static PlayerManager getManager(ViewParent viewParent) {
     return viewParent instanceof RecyclerView ? sInstance.managers.get(viewParent) : null;
-  }
-
-  static PlayerManager getManager(ToroPlayer player) {
-    PlayerManager manager = null;
-    for (PlayerManager playerManager : sInstance.managers.values()) {
-      if (player == playerManager.getPlayer()) {
-        manager = playerManager;
-        break;
-      }
-    }
-
-    return manager;
   }
 
   public static void resume() {

@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static im.ene.toro.Toro.TAG;
-
 /**
  * Created by eneim on 1/31/16.
  *

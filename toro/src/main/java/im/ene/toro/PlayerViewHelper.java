@@ -87,7 +87,7 @@ public abstract class PlayerViewHelper {
    * Callback from {@link RecyclerView.Adapter#onViewDetachedFromWindow(RecyclerView.ViewHolder)}
    */
   @CallSuper public void onDetachedFromWindow() {
-    PlayerManager manager = Toro.getManager(player);
+    PlayerManager manager = Toro.getManager(itemView.getParent());
     // Manually save Video state
     if (manager != null) {
       if (player.isPlaying()) {
@@ -123,10 +123,6 @@ public abstract class PlayerViewHelper {
   @SuppressWarnings("WeakerAccess") @Nullable
   protected final PlayerManager getPlayerManager(ViewParent parent) {
     return Toro.getManager(parent);
-  }
-
-  @Nullable protected final PlayerManager getPlayerManager() {
-    return Toro.getManager(player);
   }
 
   /**
