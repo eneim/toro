@@ -20,6 +20,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,11 +54,12 @@ import java.util.ArrayList;
  */
 
 public class FacebookTimelineFragment extends BaseToroFragment
-    implements FacebookPlaylistFragment.Callback {
+    implements FacebookPlaylistFragment.Callback, BigPlayerFragment.Callback {
 
   private static final String TAG = "Toro:Fb:Timeline";
 
   static final String ARGS_PLAYBACK_STATES = "toro:fb:timeline:playback:states";
+  static final String ARGS_PLAYBACK_LATEST = "toro:fb:timeline:playback:latest";
 
   public static FacebookTimelineFragment newInstance() {
     Bundle args = new Bundle();
@@ -70,9 +73,15 @@ public class FacebookTimelineFragment extends BaseToroFragment
   LinearLayoutManager layoutManager;
   boolean isActive = false;
 
-  private DisplayOrientationDetector mDisplayOrientationDetector;
+  BigPlayerFragment bigPlayerFragment;
+  private WindowManager windowManager;
 
-  Unbinder unbinder;
+  private Unbinder unbinder;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+  }
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -89,16 +98,6 @@ public class FacebookTimelineFragment extends BaseToroFragment
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
-
-    mDisplayOrientationDetector = new DisplayOrientationDetector(getContext()) {
-      @Override public void onDisplayOrientationChanged(int displayOrientation) {
-        FacebookTimelineFragment.this.onDisplayOrientationChanged(displayOrientation);
-      }
-    };
-
-    WindowManager windowManager =
-        (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-    mDisplayOrientationDetector.enable(windowManager.getDefaultDisplay());
 
     adapter.setOnItemClickListener(new TimelineAdapter.ItemClickListener() {
       @Override protected void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
@@ -145,6 +144,13 @@ public class FacebookTimelineFragment extends BaseToroFragment
     if (player != null) {
       adapter.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
           player.getDuration());
+      outState.putParcelable(ARGS_PLAYBACK_LATEST,  //
+          new SavedPlayback(  //
+              (VideoItem) adapter.getItem(player.getPlayOrder()).getEmbedItem(),
+              new PlaybackState(player.getMediaId(), player.getDuration(),
+                  player.getCurrentPosition())  //
+          ) //
+      );
     }
 
     outState.putParcelableArrayList(ARGS_PLAYBACK_STATES, adapter.getPlaybackStates());
@@ -163,16 +169,42 @@ public class FacebookTimelineFragment extends BaseToroFragment
             playbackState.getDuration());
       }
     }
-    Toro.register(mRecyclerView);
+
+    if (bigPlayerFragment != null) {
+      bigPlayerFragment.dismissAllowingStateLoss();
+    }
+
+    if (windowManager.getDefaultDisplay().getRotation() % 180 == 0) {
+      Toro.register(mRecyclerView);
+    } else {
+      // in landscape
+      SavedPlayback latestState = state != null && state.containsKey(ARGS_PLAYBACK_LATEST)
+          ? (SavedPlayback) state.getParcelable(ARGS_PLAYBACK_LATEST) : null;
+
+      if (latestState == null) {
+        Toro.register(mRecyclerView);
+        return;
+      }
+
+      VideoItem videoItem = latestState.videoItem;
+      bigPlayerFragment = BigPlayerFragment.newInstance(videoItem.getVideoUrl(),
+          latestState.playbackState);
+      bigPlayerFragment.setTargetFragment(this, 2000);
+      bigPlayerFragment.show(getChildFragmentManager(), BigPlayerFragment.TAG);
+    }
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    mDisplayOrientationDetector.disable();
     Toro.unregister(mRecyclerView);
     if (unbinder != null) {
       unbinder.unbind();
     }
+  }
+
+  @Override public void onDetach() {
+    super.onDetach();
+    windowManager = null;
   }
 
   @Override public void onPlaylistAttached() {
@@ -197,32 +229,51 @@ public class FacebookTimelineFragment extends BaseToroFragment
     isActive = false;
   }
 
-  BigPlayerFragment bigPlayerFragment;
+  @Override public void onBigPlayerAttached() {
+    Toro.unregister(mRecyclerView);
+  }
 
-  // grab current player and open a full-screen player for it.
-  void onDisplayOrientationChanged(int displayOrientation) {
-    //if (adapter.getPlayer() == null) {
-    //  return;
-    //}
-    //
-    //if (displayOrientation == 270 || displayOrientation == 90) {
-    //  if (bigPlayerFragment == null) {
-    //    VideoItem videoItem =
-    //        (VideoItem) adapter.getItem(adapter.getPlayer().getPlayOrder()).getEmbedItem();
-    //    bigPlayerFragment = BigPlayerFragment.newInstance(videoItem.getVideoUrl(),
-    //        adapter.getPlayer().getCurrentPosition());
-    //    bigPlayerFragment.setTargetFragment(this, 2000);
-    //    bigPlayerFragment.show(getChildFragmentManager(), BigPlayerFragment.TAG);
-    //  }
-    //} else {
-    //  if (bigPlayerFragment != null) {
-    //    bigPlayerFragment.dismissAllowingStateLoss();
-    //    bigPlayerFragment = null;
-    //  }
-    //}
+  @Override public void onBigPlayerDetached(@NonNull PlaybackState state) {
+    Log.d(TAG, "onBigPlayerDetached() called with: state = [" + state + "]");
+    Log.i(TAG, "onBigPlayerDetached: " + mRecyclerView + " | " + adapter);
+    if (adapter != null) {
+      adapter.savePlaybackState(state.getMediaId(), state.getPosition(), state.getDuration());
+    }
+  }
 
-    Log.d(TAG, "onDisplayOrientationChanged() called with: displayOrientation = ["
-        + displayOrientation
-        + "]");
+  // save latest playback item if there is
+  static class SavedPlayback implements Parcelable {
+
+    final VideoItem videoItem;
+    final PlaybackState playbackState;
+
+    public SavedPlayback(VideoItem videoItem, PlaybackState playbackState) {
+      this.videoItem = videoItem;
+      this.playbackState = playbackState;
+    }
+
+    protected SavedPlayback(Parcel in) {
+      videoItem = in.readParcelable(VideoItem.class.getClassLoader());
+      playbackState = in.readParcelable(PlaybackState.class.getClassLoader());
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+      dest.writeParcelable(videoItem, flags);
+      dest.writeParcelable(playbackState, flags);
+    }
+
+    @Override public int describeContents() {
+      return 0;
+    }
+
+    public static final Creator<SavedPlayback> CREATOR = new Creator<SavedPlayback>() {
+      @Override public SavedPlayback createFromParcel(Parcel in) {
+        return new SavedPlayback(in);
+      }
+
+      @Override public SavedPlayback[] newArray(int size) {
+        return new SavedPlayback[size];
+      }
+    };
   }
 }

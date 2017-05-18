@@ -27,10 +27,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.PlaybackState;
 import im.ene.toro.exoplayer2.ExoPlayerHelper;
 import im.ene.toro.exoplayer2.ExoPlayerView;
 import im.ene.toro.sample.R;
@@ -44,14 +46,14 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
 
   public static final String TAG = "Toro:Fb:BigPlayer";
 
-  static final String ARG_MEDIA_URL = "toro:fb:big:player:media:url";
-  static final String ARG_MEDIA_POSITION = "toro:fb:big:player:media:position";
+  private static final String ARG_MEDIA_URL = "toro:fb:player:media:url";
+  private static final String ARG_MEDIA_STATE = "toro:fb:player:media:state";
 
-  public static BigPlayerFragment newInstance(String url, long position) {
+  public static BigPlayerFragment newInstance(String url, PlaybackState playbackState) {
     BigPlayerFragment fragment = new BigPlayerFragment();
     Bundle args = new Bundle();
     args.putString(ARG_MEDIA_URL, url);
-    args.putLong(ARG_MEDIA_POSITION, position);
+    args.putParcelable(ARG_MEDIA_STATE, playbackState);
     fragment.setArguments(args);
     return fragment;
   }
@@ -65,17 +67,18 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
   }
 
   private String mediaUrl;
-  private long startPosition;
-  ExoPlayerView playerView;
+  private PlaybackState initState;
+  @SuppressWarnings("WeakerAccess") ExoPlayerView playerView;
 
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
       mediaUrl = getArguments().getString(ARG_MEDIA_URL, null);
-      startPosition = getArguments().getLong(ARG_MEDIA_POSITION);
+      initState = getArguments().getParcelable(ARG_MEDIA_STATE);
     }
 
     if (mediaUrl == null) {
+      // TODO show some Toast maybe?
       dismissAllowingStateLoss();
     }
   }
@@ -88,6 +91,7 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    // be careful
     playerView = (ExoPlayerView) view;
   }
 
@@ -109,37 +113,47 @@ public class BigPlayerFragment extends AppCompatDialogFragment {
         playerView.getHandler(), null);
 
     try {
-      playerView.setResumePosition(startPosition);
+      playerView.setResumePosition(initState.getPosition());
       playerView.setMediaSource(mediaSource, true);
     } catch (ParserException e) {
       e.printStackTrace();
     }
   }
 
-  Callback callback;
+  private WindowManager windowManager;
+  private Callback callback;
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
+    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    if (windowManager.getDefaultDisplay().getRotation() % 180 == 0) {
+      dismissAllowingStateLoss();
+      return;
+    }
+
     if (getTargetFragment() instanceof Callback) {
       this.callback = (Callback) getTargetFragment();
     }
 
     if (this.callback != null) {
-      callback.onBigPlayerAttach();
+      callback.onBigPlayerAttached();
     }
   }
 
   @Override public void onDetach() {
     super.onDetach();
     if (this.callback != null) {
-      callback.onBigPlayerDetach();
+      PlaybackState state = new PlaybackState(initState.getMediaId(), initState.getDuration(),
+          playerView.getCurrentPosition());
+      callback.onBigPlayerDetached(state);
     }
+    this.windowManager = null;
   }
 
   public interface Callback {
 
-    void onBigPlayerAttach();
+    void onBigPlayerAttached();
 
-    void onBigPlayerDetach();
+    void onBigPlayerDetached(@NonNull PlaybackState playbackState);
   }
 }
