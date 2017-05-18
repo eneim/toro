@@ -2,6 +2,32 @@
 
 ### 2.3.0 (2017/05/18)
 
+**Internal update**
+
+- ExoPlayer version up to 2.4.0, using full module set.
+- Add PlayerManager#savePlaybackState, PlayerManager#restorePlaybackState, PlayerManager#getPlaybackState, PlayerManager#getPlaybackStates.
+- **PlaybackState** implement *Parcelable* to help saving/restoring states in Activity/Fragment recreation.
+- Add **ExoPlayerView** and ViewHolders built around it. **ExoPlayerView** use official **SimpleExoPlayerView** with some improvement. ViewHolders use this also need to provide a **MediaSource**. Util class *ExoPlayerHelper* is added to help building **MediaSource** easily.
+- Demo apps is updated with removing the use of deprecated classes.
+- ***Facebook sample** is updated with fine-crafted Full screen playback.*
+- Many other small updates.
+
+**Bug Fixes**
+
+- Fix #186: Single item list now plays video correctly, sample added to demo app.
+- Fix #193: NPE when unregistering RecyclerView.
+- Fix #190: Updating ExoPlayer also fix this issue of NoClassDefFoundError of AdaptiveVideoTrackSelection.
+- Fix #183: Now loop playback will work correctly. Also it is not recommended when using with LoopMediaSource.
+- Fix #174: A trick to work around this rare state.
+- Fix #167.
+
+Maybe more issues are fixed along with this release.
+
+**Deprecated**
+
+- *Toro#attach(Activity)* and *Toro#detach(Activity)* are now deprecated. Using registering directly (View context must be an Activity).
+- ExoVideoView and those ViewHolder built around it are deprecated. Use **ExoPlayerView** and the ViewHolders built around it.
+- Deprecate *PlayerManager#saveVideoState*, *PlayerManager#restoreVideoState*, *PlayerManager#getSavedState*. These methods will be removed in next big release.
 
 ### 2.2.0 (2017/03/05)
 
