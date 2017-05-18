@@ -16,6 +16,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -50,9 +51,11 @@
     <im.ene.toro.exoplayer2.ExoPlayerView
         android:id="@+id/video"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_gravity="center"
+        android:minHeight="200dp"
+        app:resize_mode="fixed_width"
         />
 
     <ImageView
@@ -82,11 +85,11 @@
         android:background="#80000000"
         android:gravity="center"
         android:includeFontPadding="false"
+        android:maxLines="1"
         android:paddingBottom="4dp"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
         android:paddingTop="4dp"
-        android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="@android:color/white"
         />

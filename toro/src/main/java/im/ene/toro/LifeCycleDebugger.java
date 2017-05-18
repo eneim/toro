@@ -19,7 +19,6 @@ package im.ene.toro;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * Created by eneim on 1/20/17.

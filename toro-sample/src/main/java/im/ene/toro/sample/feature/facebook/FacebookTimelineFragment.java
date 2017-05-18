@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample.feature.facebook;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +27,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
+import android.view.WindowManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -34,15 +35,15 @@ import com.google.android.exoplayer2.C;
 import im.ene.toro.PlaybackState;
 import im.ene.toro.Toro;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroStrategy;
 import im.ene.toro.sample.BaseToroFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.feature.facebook.bigplayer.BigPlayerFragment;
 import im.ene.toro.sample.feature.facebook.playlist.FacebookPlaylistFragment;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineAdapter;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem;
 import im.ene.toro.sample.feature.facebook.timeline.TimelineItem.VideoItem;
 import im.ene.toro.sample.util.DemoUtil;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * @author eneim.
@@ -50,9 +51,14 @@ import java.util.List;
  */
 
 public class FacebookTimelineFragment extends BaseToroFragment
-    implements FacebookPlaylistFragment.Callback {
+    implements FacebookPlaylistFragment.Callback, BigPlayerFragment.Callback {
 
-  private static final String TAG = "FbTimeline";
+  private static final String TAG = "ToroLib:FbTimeline";
+
+  private static final String ARGS_PLAYBACK_STATES = "toro:fb:timeline:playback:states";
+  private static final String ARGS_PLAYBACK_LATEST = "toro:fb:timeline:playback:latest";
+  // true if is in playlist mode, false otherwise
+  private static final String ARGS_PLAYBACK_MODE = "toro:fb:timeline:playback:mode";
 
   public static FacebookTimelineFragment newInstance() {
     Bundle args = new Bundle();
@@ -63,10 +69,18 @@ public class FacebookTimelineFragment extends BaseToroFragment
 
   @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
   TimelineAdapter adapter;
-  private RecyclerView.LayoutManager layoutManager;
-  boolean isActive = false;
+  boolean isActive = true;
+  boolean playlistMode = false;
 
-  Unbinder unbinder;
+  BigPlayerFragment bigPlayerFragment;
+  private WindowManager windowManager;
+
+  private Unbinder unbinder;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+  }
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -79,36 +93,11 @@ public class FacebookTimelineFragment extends BaseToroFragment
     unbinder = ButterKnife.bind(this, view);
 
     adapter = new TimelineAdapter();
-    layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    LinearLayoutManager layoutManager =
+        new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     mRecyclerView.setHasFixedSize(false);
     mRecyclerView.setLayoutManager(layoutManager);
     mRecyclerView.setAdapter(adapter);
-
-    final ToroStrategy oldStrategy = Toro.getStrategy();
-    final int firstVideoPosition = adapter.firstVideoPosition();
-
-    Toro.setStrategy(new ToroStrategy() {
-      boolean isFirstPlayerDone = firstVideoPosition != -1; // Valid first position only
-
-      @Override public String getDescription() {
-        return "First video plays first";
-      }
-
-      @Override public ToroPlayer findBestPlayer(List<ToroPlayer> candidates) {
-        return oldStrategy.findBestPlayer(candidates);
-      }
-
-      @Override public boolean allowsToPlay(ToroPlayer player, ViewParent parent) {
-        boolean allowToPlay = (isFirstPlayerDone || player.getPlayOrder() == firstVideoPosition)  //
-            && oldStrategy.allowsToPlay(player, parent);
-
-        // A work-around to keep track of first video on top.
-        if (player.getPlayOrder() == firstVideoPosition) {
-          isFirstPlayerDone = true;
-        }
-        return allowToPlay;
-      }
-    });
 
     adapter.setOnItemClickListener(new TimelineAdapter.ItemClickListener() {
       @Override protected void onOgpItemClick(RecyclerView.ViewHolder viewHolder, View view,
@@ -147,8 +136,69 @@ public class FacebookTimelineFragment extends BaseToroFragment
             FacebookPlaylistFragment.class.getSimpleName());
       }
     });
+  }
 
-    Toro.register(mRecyclerView);
+  @Override public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    ToroPlayer player = adapter.getPlayer();
+    if (player != null) {
+      adapter.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
+          player.getDuration());
+      outState.putParcelable(ARGS_PLAYBACK_LATEST,  //
+          new SavedPlayback(  //
+              (VideoItem) adapter.getItem(player.getPlayOrder()).getEmbedItem(),
+              new PlaybackState(player.getMediaId(), player.getDuration(),
+                  player.getCurrentPosition())  //
+          ) //
+      );
+    }
+
+    outState.putParcelableArrayList(ARGS_PLAYBACK_STATES, adapter.getPlaybackStates());
+    outState.putBoolean(ARGS_PLAYBACK_MODE, playlistMode);
+  }
+
+  @SuppressWarnings("Duplicates") @Override
+  public void onViewStateRestored(@Nullable Bundle state) {
+    super.onViewStateRestored(state);
+    ArrayList<PlaybackState> savedStates;
+    if (state != null
+        && state.containsKey(ARGS_PLAYBACK_STATES)
+        && (savedStates = state.getParcelableArrayList(ARGS_PLAYBACK_STATES)) != null) {
+      for (PlaybackState playbackState : savedStates) {
+        adapter.savePlaybackState(playbackState.getMediaId(), playbackState.getPosition(),
+            playbackState.getDuration());
+      }
+    }
+
+    this.playlistMode = state != null && state.getBoolean(ARGS_PLAYBACK_MODE);
+
+    if (bigPlayerFragment != null) {
+      bigPlayerFragment.dismissAllowingStateLoss();
+    }
+
+    if (this.playlistMode) {
+      // playlist is showing, just return
+      return;
+    }
+
+    if (windowManager.getDefaultDisplay().getRotation() % 180 == 0) {
+      Toro.register(mRecyclerView);
+    } else {
+      // in landscape
+      SavedPlayback latestState = state != null && state.containsKey(ARGS_PLAYBACK_LATEST)
+          ? (SavedPlayback) state.getParcelable(ARGS_PLAYBACK_LATEST) : null;
+
+      if (latestState == null) {
+        Toro.register(mRecyclerView);
+        return;
+      }
+
+      VideoItem videoItem = latestState.videoItem;
+      bigPlayerFragment =
+          BigPlayerFragment.newInstance(videoItem.getVideoUrl(), latestState.playbackState);
+      bigPlayerFragment.setTargetFragment(this, 2000);
+      bigPlayerFragment.show(getChildFragmentManager(), BigPlayerFragment.TAG);
+    }
   }
 
   @Override public void onDestroyView() {
@@ -159,12 +209,22 @@ public class FacebookTimelineFragment extends BaseToroFragment
     }
   }
 
+  @Override public void onDetach() {
+    super.onDetach();
+    windowManager = null;
+  }
+
   @Override public void onPlaylistAttached() {
-    Toro.unregister(mRecyclerView);
+    playlistMode = true;
+    // on orientation change, this call will happened before recyclerview is created
+    if (mRecyclerView != null) {
+      Toro.unregister(mRecyclerView);
+    }
   }
 
   @Override
   public void onPlaylistDetached(VideoItem baseItem, @NonNull PlaybackState state, int order) {
+    playlistMode = false;
     adapter.savePlaybackState(DemoUtil.genVideoId(baseItem.getVideoUrl(), order),
         state.getPosition(), state.getDuration());
 
@@ -180,4 +240,17 @@ public class FacebookTimelineFragment extends BaseToroFragment
   @Override protected void dispatchFragmentInactive() {
     isActive = false;
   }
+
+  @Override public void onBigPlayerAttached() {
+    if (mRecyclerView != null) {
+      Toro.unregister(mRecyclerView);
+    }
+  }
+
+  @Override public void onBigPlayerDetached(@NonNull PlaybackState state) {
+    if (adapter != null) {
+      adapter.savePlaybackState(state.getMediaId(), state.getPosition(), state.getDuration());
+    }
+  }
+
 }

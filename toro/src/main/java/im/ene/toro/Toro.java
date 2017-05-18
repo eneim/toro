@@ -211,21 +211,25 @@ public final class Toro implements Application.ActivityLifecycleCallbacks {
     OnScrollListenerImpl listener = sInstance.listeners.remove(view);
     PlayerManager manager = sInstance.managers.remove(view);
     MediaDataObserver observer = sInstance.observers.remove(manager);
-    if (manager.getPlayer() != null) {
-      final ToroPlayer player = manager.getPlayer();
-      manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(),
-          player.getDuration());
-      manager.pausePlayback();
-      manager.setPlayer(null);
+    if (manager != null) {
+      if (manager.getPlayer() != null) {
+        final ToroPlayer player = manager.getPlayer();
+        manager.savePlaybackState(player.getMediaId(), player.getCurrentPosition(), player.getDuration());
+        manager.pausePlayback();
+        manager.setPlayer(null);
+      }
+
+      manager.onUnregistered();
     }
 
-    manager.onUnregistered();
     view.removeOnScrollListener(listener);
 
-    try {
-      observer.remove();
-    } catch (Exception e) {
-      e.printStackTrace();
+    if (observer != null) {
+      try {
+        observer.remove();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
 
