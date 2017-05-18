@@ -67,7 +67,7 @@ allprojects {
 
 ```groovy
 ext {
-	toroVersion = '2.2.0'
+	toroVersion = '2.3.0'
 }
 
 dependencies {
@@ -88,7 +88,7 @@ dependencies {
   compile "im.ene.toro2:toro-ext-exoplayer:${toroVersion}"
   
   // include extension for Legacy MediaPlayer (Toro is included already)
-  compile "im.ene.toro2:oro-ext-mediaplayer:${toroVersion}"
+  compile "im.ene.toro2:toro-ext-mediaplayer:${toroVersion}"
 }
 ```
 
@@ -112,7 +112,7 @@ Latest version is always visible here: [![Download](https://api.bintray.com/pack
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-### Hall of Fames
+### Hall of Fame
 
 *Use Toro in your App? <a href="mailto:nam@ene.im?subject=Hi Nam">Email me</a> to get promoted here.*
 
