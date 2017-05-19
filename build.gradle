@@ -16,7 +16,7 @@ buildscript {
 }
 
 ext {
-  libraryVersion = '2.3.0'
+  libraryVersion = '3.0.0-SNAPSHOT'
   androidVersion = 25
   buildToolVersion = '25.0.3'
   supportLibraryVersion = '25.3.1'
