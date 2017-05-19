@@ -42,7 +42,7 @@
 
     <meta-data
         android:name="io.fabric.ApiKey"
-        android:value="${fabric_api_key}"/>
+        android:value="8c53011c1d70b7dc905a4f2bc691e297e1187ad2"/>
   </application>
 
 </manifest>
