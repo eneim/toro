@@ -1,14 +1,27 @@
 # Toro 
+
+> ***Video list auto playback made simple, specially built for RecyclerView***
+
+<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512"><img src="/art/web_hi_res_512.png" width="256"></a>
+
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 
-[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) <a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro%3A2.1.0"><img src="https://img.shields.io/badge/Methods and size-core: 250 | deps: 9441 | 28 KB-e91e63.svg"/></a>
+[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
-<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512"><img src="/art/web_hi_res_512.png" width="256"></a>
+<a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro%3A2.2.0"><img src="https://img.shields.io/badge/Toro | Methods and size-core: 326 | deps: 10993 | 32 KB-e91e63.svg"/></a>
 
-> ***Video list auto playback made simple, specially built for RecyclerView***
+<a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro-extended%3A2.2.0"><img src="https://img.shields.io/badge/Toro Extended | Methods and size-core: 186 | deps: 17172 | 17 KB-e91e63.svg"/></a>
+
+<a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro-ext-exoplayer2%3A2.2.0"><img src="https://img.shields.io/badge/Toro ExoPlayer 2 Extension | Methods and size-core: 321 | deps: 16851 | 31 KB-e91e63.svg"/></a>
+
+<a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro-ext-exoplayer%3A2.2.0"><img src="https://img.shields.io/badge/Toro ExoPlayer (1) Extension | Methods and size-core: 412 | deps: 15350 | 50 KB-e91e63.svg"/></a>
+
+<a href="http://www.methodscount.com/?lib=im.ene.toro2%3Atoro-ext-mediaplayer%3A2.2.0"><img src="https://img.shields.io/badge/Toro Legacy MediaPlayer | Methods and size-core: 69 | deps: 11319 | 7 KB-e91e63.svg"/></a>
+
+**!IMPORTANT: Method Count is based on 2.2.0 (due to some unknown issue, MethoudCount server doesn't process 2.3.0 ...)**
 
 ## Menu
 
