@@ -33,11 +33,11 @@
 - [5. Customize Toro for your own favor](#5-customize-toro-for-your-own-favor)
 - [6. Hall of Fame](#6-hall-of-fame)
 
-## 0. Latest Version:  [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion) ([back to top](#menu))
+## 0. Latest Version:  [ ![Download](https://api.bintray.com/packages/eneim/Toro/toro/images/download.svg) ](https://bintray.com/eneim/Toro/toro/_latestVersion)
 
 See [CHANGELOG.md](CHANGELOG.md) for more information.
 
-## 1. Main features ([back to top](#menu))
+## 1. Main features
 
 - Auto start media playback after RecyclerView layout has been laid out.
 - Auto start/pause/resume media base on RecyclerView scroll state.
@@ -56,13 +56,13 @@ See [CHANGELOG.md](CHANGELOG.md) for more information.
 
 **See [Wiki](https://github.com/eneim/Toro/wiki) for more details.**
 
-## 2. Toro in Action ([back to top](#menu))
+## 2. Toro in Action
 
 | | |
 |---|------|
 | <img src="/art/sample_6.gif" width="648"> | <img src="/art/sample_1.gif" width="162"> <img src="/art/sample_2.gif" width="162"> <img src="/art/sample_3.gif" width="162"> <img src="/art/sample_4.gif" width="162"> <img src="/art/sample_5.gif" width="162"> <img src="/art/sample_7.gif" width="162"> |
 
-## 3. How to use ([back to top](#menu))
+## 3. How to use
 
 ##### 0. Pre-requirement
 
@@ -120,7 +120,7 @@ Latest version is always visible here: [![Download](https://api.bintray.com/pack
 
 ##### 4. Core concepts and components of **Toro**: see [Wiki](https://github.com/eneim/Toro/wiki)
 
-## 4. How to contribute to Toro ([back to top](#menu))
+## 4. How to contribute to Toro
 
 - Issue report and PRs are welcome.
 
@@ -128,7 +128,7 @@ Latest version is always visible here: [![Download](https://api.bintray.com/pack
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-## 5. Customize Toro for your own favor ([back to top](#menu))
+## 5. Customize Toro for your own favor
 
 Toro is licensed under Apache License 2.0, so you are free to clone and modify it. Here is how:
 
@@ -141,7 +141,7 @@ Please note that, sample App uses Fabric to catch crash at runtime, so you must 
 
 ##### 4. If you are cloning this on CI server, make sure to provide it a valid **gradle.properties** file at compile time.
 
-## 6. Hall of Fame ([back to top](#menu))
+## 6. Hall of Fame
 
 *Use Toro in your App? <a href="mailto:nam@ene.im?subject=Hi Nam">Email me</a> with your **App name/link** to get promoted here.*
 
