@@ -23,3 +23,15 @@
 /toro-sample/google-services.json
 /toro-sample/fabric.properties
 /gradle.properties
+/.idea/markdown-exported-files.xml
+toro-ext-exoplayer/libs/
+toro-ext-exoplayer/src/main/res/drawable/
+toro-ext-exoplayer/src/main/res/layout/
+toro-ext-exoplayer2/libs/
+toro-ext-exoplayer2/src/main/res/drawable/
+toro-ext-mediaplayer/libs/
+toro-ext-mediaplayer/src/main/res/drawable/
+toro-extended/libs/
+toro-extended/src/main/res/drawable/
+toro-sample/libs/
+toro-sample/src/test/
