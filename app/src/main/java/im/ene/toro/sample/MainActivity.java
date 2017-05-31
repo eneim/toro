@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,8 @@ import im.ene.toro.ToroUtil;
 import im.ene.toro.widget.Container;
 
 public class MainActivity extends AppCompatActivity {
+
+  private static final String TAG = "ToroLib:Sample";
 
   ToroHelper helper;
   @BindView(R.id.recycler_view) Container container;
@@ -89,12 +92,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override public boolean wantsToPlay() {
       ViewParent parent = itemView.getParent();
-      return parent != null && parent instanceof Container && //
-          ToroUtil.visibleAreaOffset(container, (Container) parent) >= 0.75;
+      float visible = parent != null && parent instanceof Container ? //
+          ToroUtil.visibleAreaOffset(indicator, (Container) parent) : 0;
+      Log.i(TAG, getAdapterPosition() + " | " + visible);
+      return visible >= 0.75;
     }
   }
 
   private static class SimpleAdapter extends RecyclerView.Adapter<ItemPlayer> {
+
+    SimpleAdapter() {
+    }
 
     @Override public ItemPlayer onCreateViewHolder(ViewGroup parent, int viewType) {
       View view = LayoutInflater.from(parent.getContext())

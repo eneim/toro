@@ -48,7 +48,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:minHeight="96dp"
+        android:minHeight="140dp"
+        android:background="#80ff0000"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         />
   </LinearLayout>
