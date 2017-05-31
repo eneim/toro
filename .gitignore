@@ -7,3 +7,17 @@
 /build
 /captures
 .externalNativeBuild
+/toro/build/
+/.idea/compiler.xml
+/.idea/gradle.xml
+/.idea/runConfigurations.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/app/src/androidTest/
+/app/proguard-rules.pro
+/app/src/test/
+/app/build/
+/app/libs/
+/toro/src/test/
+/toro/libs/
+/gradle.properties
