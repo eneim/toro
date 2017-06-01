@@ -30,7 +30,7 @@ public final class ToroHelper {
   private Strategy strategy;
   private Container container;
 
-  public ToroHelper(@NonNull PlayerManager manager) {
+  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager manager) {
     this(manager, null);
   }
 
@@ -40,7 +40,7 @@ public final class ToroHelper {
     this.container = null;
   }
 
-  public void setStrategy(@NonNull Strategy strategy) {
+  @SuppressWarnings("unused") public void setStrategy(@NonNull Strategy strategy) {
     //noinspection ConstantConditions
     if (strategy == null) {
       throw new IllegalArgumentException("Strategy must not be null");

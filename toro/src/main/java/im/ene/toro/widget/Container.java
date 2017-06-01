@@ -168,7 +168,18 @@ public class Container extends RecyclerView {
   }
 
   public void setManager(@Nullable PlayerManager manager) {
+    if (this.manager == manager) return;
+    if (this.manager != null) {
+      for (Player player : this.manager.getPlayers()) {
+        player.pause();
+      }
+      this.manager.getPlayers().clear();
+    }
+
     this.manager = manager;
+    if (this.manager != null) {
+      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+    }
   }
 
   public void setStrategy(@NonNull Strategy strategy) {
