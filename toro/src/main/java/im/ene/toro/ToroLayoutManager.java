@@ -20,7 +20,7 @@ package im.ene.toro;
  * @author eneim | 5/31/17.
  */
 
-public interface LayoutManager {
+public interface ToroLayoutManager {
 
   int getFirstVisibleItemPosition();
 

@@ -29,6 +29,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
 import im.ene.toro.PlayerManager;
 import im.ene.toro.Strategy;
+import im.ene.toro.ToroLayoutManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -126,11 +127,9 @@ public class Container extends RecyclerView {
       if (lastVisiblePositions.length > 0) {
         lastVisiblePosition = lastVisiblePositions[0];
       }
-    } else if (layoutManager instanceof im.ene.toro.LayoutManager) {
-      firstVisiblePosition =
-          ((im.ene.toro.LayoutManager) layoutManager).getFirstVisibleItemPosition();
-      lastVisiblePosition =
-          ((im.ene.toro.LayoutManager) layoutManager).getLastVisibleItemPosition();
+    } else if (layoutManager instanceof ToroLayoutManager) {
+      firstVisiblePosition = ((ToroLayoutManager) layoutManager).getFirstVisibleItemPosition();
+      lastVisiblePosition = ((ToroLayoutManager) layoutManager).getLastVisibleItemPosition();
     }
 
     if (firstVisiblePosition <= lastVisiblePosition /* protect the 'for' loop */ &&  //
