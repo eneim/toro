@@ -48,7 +48,10 @@ public class DefaultPlayerManager implements PlayerManager {
     this(1);
   }
 
-  @Override public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
+  @Override
+  public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
+    //noinspection ConstantConditions
+    if (selector == null) return;
     // from current player list:
     // 1. find those are allowed to play
     // 2. among them, use Selector to select a subset then for each of them start the playback
@@ -60,6 +63,11 @@ public class DefaultPlayerManager implements PlayerManager {
     });
 
     source.except(Ix.from(selector.select(source.toList(), this.playerCount))
+        .filter(new IxPredicate<Player>() {
+          @Override public boolean test(Player player) {
+            return !player.isPlaying();
+          }
+        })
         .doOnNext(new IxConsumer<Player>() {
           @Override public void accept(Player player) {
             player.play();
@@ -72,15 +80,15 @@ public class DefaultPlayerManager implements PlayerManager {
         }).subscribe();
   }
 
-  @Override public boolean attachPlayer(Player player) {
+  @Override public boolean attachPlayer(@NonNull Player player) {
     return players.add(player);
   }
 
-  @Override public boolean detachPlayer(Player player) {
+  @Override public boolean detachPlayer(@NonNull Player player) {
     return players.remove(player);
   }
 
-  @Override public boolean manages(Player player) {
+  @Override public boolean manages(@NonNull Player player) {
     return players.contains(player);
   }
 

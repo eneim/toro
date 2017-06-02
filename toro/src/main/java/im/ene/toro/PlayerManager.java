@@ -35,12 +35,12 @@ public interface PlayerManager {
   void updatePlayback(@NonNull Container container, @NonNull Selector selector);
 
   // Call before player starts playback
-  boolean attachPlayer(Player player);
+  boolean attachPlayer(@NonNull Player player);
 
   // Call after player pauses or stops playback
-  boolean detachPlayer(Player player);
+  boolean detachPlayer(@NonNull Player player);
 
-  boolean manages(Player player);
+  boolean manages(@NonNull Player player);
 
   @NonNull Collection<Player> getPlayers();
 }

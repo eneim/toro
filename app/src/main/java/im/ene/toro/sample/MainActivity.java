@@ -31,6 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.DefaultPlayerManager;
 import im.ene.toro.Player;
+import im.ene.toro.Selector;
 import im.ene.toro.ToroHelper;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.widget.Container;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     container.setLayoutManager(layoutManager);
 
-    helper = new ToroHelper(new DefaultPlayerManager());
+    helper = new ToroHelper(new DefaultPlayerManager(), Selector.DEFAULT);
     helper.registerContainer(container);
   }
 
