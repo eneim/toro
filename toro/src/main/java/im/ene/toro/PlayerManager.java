@@ -17,13 +17,21 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import java.util.List;
+import im.ene.toro.widget.Container;
+import java.util.Collection;
 
 /**
  * @author eneim | 5/31/17.
+ *
+ *         Logic: collect all Players those "wantsToPlay()", then internally decide if we allow each
+ *         of them to play or not.
  */
 
 public interface PlayerManager {
+
+  String TAG = "ToroLib:PlayerManager";
+
+  void apply(@NonNull Container container, @NonNull Selector selector);
 
   // Call before player starts playback
   boolean attachPlayer(Player player);
@@ -33,5 +41,5 @@ public interface PlayerManager {
 
   boolean manages(Player player);
 
-  @NonNull List<Player> getPlayers();
+  @NonNull Collection<Player> getPlayers();
 }

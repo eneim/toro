@@ -31,10 +31,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.DefaultPlayerManager;
 import im.ene.toro.Player;
-import im.ene.toro.Strategy;
 import im.ene.toro.ToroHelper;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.widget.Container;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     container.setLayoutManager(layoutManager);
 
-    helper = new ToroHelper(new DefaultPlayerManager(), Strategy.DEFAULT);
+    helper = new ToroHelper(new DefaultPlayerManager());
     helper.registerContainer(container);
   }
 
@@ -76,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
     @NonNull @Override public View getPlayerView() {
       return container;
+    }
+
+    @Override public boolean prepare() {
+      indicator.setText("PREPARED");
+      return true;
+    }
+
+    @Override public void release() {
+      indicator.setText("RELEASED");
     }
 
     @Override public void play() {
@@ -95,6 +104,14 @@ public class MainActivity extends AppCompatActivity {
       float visible = parent != null && parent instanceof Container ? //
           ToroUtil.visibleAreaOffset(indicator, (Container) parent) : 0;
       return visible >= 0.75;
+    }
+
+    @Override public int getPlayOrder() {
+      return getAdapterPosition();
+    }
+
+    @Override public String toString() {
+      return String.format(Locale.getDefault(), "Player{%d}", getAdapterPosition()) + isPlaying();
     }
   }
 

@@ -16,23 +16,13 @@
 
 package im.ene.toro;
 
-import im.ene.toro.widget.Container;
-
 /**
- * @author eneim | 5/31/17.
+ * @author eneim | 6/2/17.
  */
 
-public interface Strategy {
+class Compat {
 
-  boolean allowsToPlay(Player player, Container container);
-
-  Strategy DEFAULT = new Strategy() {
-    @Override public boolean allowsToPlay(Player player, Container container) {
-      //noinspection ConstantConditions
-      if (player.getPlayerView() == null) {
-        throw new NullPointerException("Player must have a View.");
-      }
-      return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
-    }
-  };
+  static int compare(int x, int y) {
+    return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  }
 }

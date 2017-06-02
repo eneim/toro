@@ -17,8 +17,14 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import java.util.ArrayList;
-import java.util.List;
+import im.ene.toro.widget.Container;
+import ix.Ix;
+import ix.IxConsumer;
+import ix.IxPredicate;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @author eneim | 5/31/17.
@@ -26,7 +32,47 @@ import java.util.List;
 
 public class DefaultPlayerManager implements PlayerManager {
 
-  private final List<Player> players = new ArrayList<>();
+  private final SortedSet<Player> players = new TreeSet<>(new Comparator<Player>() {
+    @Override public int compare(Player o1, Player o2) {
+      return Compat.compare(o1.getPlayOrder(), o2.getPlayOrder());
+    }
+  });
+
+  private final int maxParallelPlayerCount;
+
+  public DefaultPlayerManager(int maxParallelPlayerCount) {
+    this.maxParallelPlayerCount = maxParallelPlayerCount;
+  }
+
+  public DefaultPlayerManager() {
+    this(1);
+  }
+
+  @Override public void apply(@NonNull final Container container, @NonNull Selector selector) {
+    // from current player list:
+    // 1. find those are allowed to play
+    // 2. among them, use Selector to select a subset then for each of them start the playback
+    // if it is not playing, and pause the playback for others.
+    Ix<Player> source = Ix.from(this.players).filter(new IxPredicate<Player>() {
+      @Override public boolean test(Player player) {
+        return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
+      }
+    });
+
+    final Collection<Player> playable = selector.select(source.toList(), maxParallelPlayerCount);
+
+    Ix.from(source.toList()).except(playable).subscribe(new IxConsumer<Player>() {
+      @Override public void accept(Player player) {
+        player.pause();
+      }
+    });
+
+    Ix.from(playable).subscribe(new IxConsumer<Player>() {
+      @Override public void accept(Player player) {
+        player.play();
+      }
+    });
+  }
 
   @Override public boolean attachPlayer(Player player) {
     return players.add(player);
@@ -40,7 +86,7 @@ public class DefaultPlayerManager implements PlayerManager {
     return players.contains(player);
   }
 
-  @NonNull @Override public List<Player> getPlayers() {
+  @NonNull @Override public Collection<Player> getPlayers() {
     return this.players;
   }
 }

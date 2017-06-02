@@ -27,6 +27,10 @@ public interface Player {
 
   @NonNull View getPlayerView();
 
+  boolean prepare();
+
+  void release();
+
   /**
    * Start playback or resume from a pausing state.
    */
@@ -46,4 +50,10 @@ public interface Player {
   boolean isPlaying();
 
   boolean wantsToPlay();
+
+  /**
+   *
+   * @return prefer playback order in list. Can be customized.
+   */
+  int getPlayOrder();
 }

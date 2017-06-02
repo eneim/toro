@@ -18,7 +18,6 @@ package im.ene.toro.widget;
 
 import android.content.Context;
 import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +27,7 @@ import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
 import im.ene.toro.PlayerManager;
-import im.ene.toro.Strategy;
+import im.ene.toro.Selector;
 import im.ene.toro.ToroLayoutManager;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,8 +39,10 @@ import java.util.List;
 
 public class Container extends RecyclerView {
 
+  private static final String TAG = "ToroLib:Container";
+
   PlayerManager manager;
-  Strategy strategy;
+  Selector selector;
 
   public Container(Context context) {
     this(context, null);
@@ -68,9 +69,10 @@ public class Container extends RecyclerView {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          if (player.wantsToPlay() && strategy.allowsToPlay(player, Container.this)) {
+          if (player.wantsToPlay()) {
             if (manager.attachPlayer(player)) {
-              player.play();
+              player.prepare();
+              manager.apply(Container.this, Selector.DEFAULT);
             }
           }
         }
@@ -89,18 +91,19 @@ public class Container extends RecyclerView {
     if (manager.manages(player)) {
       manager.detachPlayer(player);
     }
+    player.release();
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
     if (state != SCROLL_STATE_IDLE) return;
-    if (manager == null || strategy == null) return;
+    if (manager == null) return;
 
     final List<Player> currentPlayers = new ArrayList<>(manager.getPlayers());
     int count = currentPlayers.size();
     for (int i = count - 1; i >= 0; i--) {
       Player player = currentPlayers.get(i);
-      if (!player.wantsToPlay() || !strategy.allowsToPlay(player, this)) {
+      if (!player.wantsToPlay()) {
         player.pause();
         manager.detachPlayer(player);
       }
@@ -140,31 +143,24 @@ public class Container extends RecyclerView {
         if (holder != null && holder instanceof Player) {
           Player candidate = (Player) holder;
           // check candidate's condition
-          if (candidate.wantsToPlay() && this.strategy.allowsToPlay(candidate, this)) {
-            // Have a new candidate who can play
+          if (candidate.wantsToPlay()) {
             if (!manager.manages(candidate)) {
-              manager.attachPlayer(candidate);
+              if (manager.attachPlayer(candidate)) {
+                candidate.prepare();
+              }
             }
           }
         }
       }
     }
 
-    List<Player> players = manager.getPlayers();
-    if (players.isEmpty()) return;
-    for (Player player : players) {
-      player.play();
-    }
+    manager.apply(this, Selector.DEFAULT);
   }
 
   //////
 
   @Nullable public PlayerManager getManager() {
     return manager;
-  }
-
-  public Strategy getStrategy() {
-    return strategy;
   }
 
   public void setManager(@Nullable PlayerManager manager) {
@@ -182,10 +178,14 @@ public class Container extends RecyclerView {
     }
   }
 
-  public void setStrategy(@NonNull Strategy strategy) {
-    if (this.strategy == strategy) return;
-    this.strategy = strategy;
-    if (this.manager != null) {
+  @Nullable public Selector getSelector() {
+    return selector;
+  }
+
+  public void setSelector(@Nullable Selector selector) {
+    if (this.selector == selector) return;
+    this.selector = selector;
+    if (this.selector != null) {
       this.onScrollStateChanged(SCROLL_STATE_IDLE);
     }
   }

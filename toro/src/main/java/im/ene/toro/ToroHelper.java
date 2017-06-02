@@ -27,37 +27,19 @@ import im.ene.toro.widget.Container;
 public final class ToroHelper {
 
   @NonNull private final PlayerManager manager;
-  private Strategy strategy;
+  @Nullable private Selector selector;
   private Container container;
 
-  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager manager) {
+  public ToroHelper(@NonNull PlayerManager manager) {
     this(manager, null);
   }
 
-  public ToroHelper(@NonNull PlayerManager manager, Strategy strategy) {
+  public ToroHelper(@NonNull PlayerManager manager, @Nullable Selector selector) {
     this.manager = manager;
-    this.strategy = strategy;
-    this.container = null;
-  }
-
-  @SuppressWarnings("unused") public void setStrategy(@NonNull Strategy strategy) {
-    //noinspection ConstantConditions
-    if (strategy == null) {
-      throw new IllegalArgumentException("Strategy must not be null");
-    }
-    if (this.strategy == strategy) return;
-    this.strategy = strategy;
-    if (this.container != null) {
-      this.container.setStrategy(this.strategy);
-    }
+    this.selector = selector;
   }
 
   public void registerContainer(@Nullable Container container) {
-    if (this.strategy == null) {
-      throw new IllegalStateException(
-          "It is required to have a Strategy before registering any Container.");
-    }
-
     if (this.container == container) return;
     if (this.container != null) {
       this.container.setManager(null);
@@ -69,8 +51,24 @@ public final class ToroHelper {
         throw new IllegalStateException(
             "This Container has already been registered to another Helper.");
       }
-      this.container.setStrategy(this.strategy);
+      this.container.setSelector(this.selector);
       this.container.setManager(this.manager);
     }
+  }
+
+  public void setSelector(@Nullable Selector selector) {
+    if (this.selector == selector) return;
+    this.selector = selector;
+    if (this.container != null) {
+      this.container.setSelector(this.selector);
+    }
+  }
+
+  @Nullable public Selector getSelector() {
+    return selector;
+  }
+
+  @NonNull public PlayerManager getManager() {
+    return manager;
   }
 }
