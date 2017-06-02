@@ -28,6 +28,10 @@ public interface Strategy {
 
   Strategy DEFAULT = new Strategy() {
     @Override public boolean allowsToPlay(Player player, Container container) {
+      //noinspection ConstantConditions
+      if (player.getPlayerView() == null) {
+        throw new NullPointerException("Player must have a View.");
+      }
       return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
     }
   };
