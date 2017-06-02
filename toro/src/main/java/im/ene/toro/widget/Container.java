@@ -150,8 +150,9 @@ public class Container extends RecyclerView {
       }
     }
 
-    if (manager.getPlayers().isEmpty()) return;
-    for (Player player : manager.getPlayers()) {
+    List<Player> players = manager.getPlayers();
+    if (players.isEmpty()) return;
+    for (Player player : players) {
       player.play();
     }
   }

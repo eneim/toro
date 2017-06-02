@@ -21,7 +21,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
       ViewParent parent = itemView.getParent();
       float visible = parent != null && parent instanceof Container ? //
           ToroUtil.visibleAreaOffset(indicator, (Container) parent) : 0;
-      Log.i(TAG, getAdapterPosition() + " | " + visible);
       return visible >= 0.75;
     }
   }
