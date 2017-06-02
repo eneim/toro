@@ -72,7 +72,7 @@ public class Container extends RecyclerView {
           if (player.wantsToPlay()) {
             if (manager.attachPlayer(player)) {
               player.prepare();
-              manager.apply(Container.this, Selector.DEFAULT);
+              manager.updatePlayback(Container.this, Selector.DEFAULT);
             }
           }
         }
@@ -154,7 +154,7 @@ public class Container extends RecyclerView {
       }
     }
 
-    manager.apply(this, Selector.DEFAULT);
+    manager.updatePlayback(this, Selector.DEFAULT);
   }
 
   //////

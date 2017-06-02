@@ -48,7 +48,7 @@ public class DefaultPlayerManager implements PlayerManager {
     this(1);
   }
 
-  @Override public void apply(@NonNull final Container container, @NonNull Selector selector) {
+  @Override public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
     // from current player list:
     // 1. find those are allowed to play
     // 2. among them, use Selector to select a subset then for each of them start the playback
