@@ -63,14 +63,9 @@ public class DefaultPlayerManager implements PlayerManager {
     });
 
     source.except(Ix.from(selector.select(source.toList(), this.playerCount))
-        .filter(new IxPredicate<Player>() {
-          @Override public boolean test(Player player) {
-            return !player.isPlaying();
-          }
-        })
         .doOnNext(new IxConsumer<Player>() {
           @Override public void accept(Player player) {
-            player.play();
+            if (!player.isPlaying()) player.play();
           }
         })) //
         .doOnNext(new IxConsumer<Player>() {

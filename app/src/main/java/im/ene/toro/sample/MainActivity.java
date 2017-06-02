@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     container.setLayoutManager(layoutManager);
 
-    helper = new ToroHelper(new DefaultPlayerManager(), Selector.DEFAULT);
+    helper = new ToroHelper(new DefaultPlayerManager(2), Selector.DEFAULT);
     helper.registerContainer(container);
   }
 
