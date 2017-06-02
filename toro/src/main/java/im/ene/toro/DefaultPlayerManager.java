@@ -38,10 +38,10 @@ public class DefaultPlayerManager implements PlayerManager {
     }
   });
 
-  private final int maxParallelPlayerCount;
+  private final int playerCount;
 
-  public DefaultPlayerManager(int maxParallelPlayerCount) {
-    this.maxParallelPlayerCount = maxParallelPlayerCount;
+  public DefaultPlayerManager(int playerCount) {
+    this.playerCount = playerCount;
   }
 
   public DefaultPlayerManager() {
@@ -53,25 +53,23 @@ public class DefaultPlayerManager implements PlayerManager {
     // 1. find those are allowed to play
     // 2. among them, use Selector to select a subset then for each of them start the playback
     // if it is not playing, and pause the playback for others.
-    Ix<Player> source = Ix.from(this.players).filter(new IxPredicate<Player>() {
+    final Ix<Player> source = Ix.from(players).filter(new IxPredicate<Player>() {
       @Override public boolean test(Player player) {
         return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
       }
     });
 
-    final Collection<Player> playable = selector.select(source.toList(), maxParallelPlayerCount);
-
-    Ix.from(source.toList()).except(playable).subscribe(new IxConsumer<Player>() {
-      @Override public void accept(Player player) {
-        player.pause();
-      }
-    });
-
-    Ix.from(playable).subscribe(new IxConsumer<Player>() {
-      @Override public void accept(Player player) {
-        player.play();
-      }
-    });
+    source.except(Ix.from(selector.select(source.toList(), this.playerCount))
+        .doOnNext(new IxConsumer<Player>() {
+          @Override public void accept(Player player) {
+            player.play();
+          }
+        })) //
+        .doOnNext(new IxConsumer<Player>() {
+          @Override public void accept(Player player) {
+            player.pause();
+          }
+        }).subscribe();
   }
 
   @Override public boolean attachPlayer(Player player) {
