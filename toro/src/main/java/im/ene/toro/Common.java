@@ -16,19 +16,21 @@
 
 package im.ene.toro;
 
-import im.ene.toro.widget.Container;
+import java.util.Comparator;
 
 /**
- * @author eneim | 5/31/17.
+ * @author eneim | 6/2/17.
  */
 
-public interface Strategy {
+class Common {
 
-  boolean allowsToPlay(Player player, Container container);
+  @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
+    return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  }
 
-  Strategy DEFAULT = new Strategy() {
-    @Override public boolean allowsToPlay(Player player, Container container) {
-      return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
+  static Comparator<Player> ORDER_COMPARATOR = new Comparator<Player>() {
+    @Override public int compare(Player o1, Player o2) {
+      return Common.compare(o1.getPlayOrder(), o2.getPlayOrder());
     }
   };
 }

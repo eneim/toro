@@ -18,6 +18,8 @@ package im.ene.toro;
 
 import android.support.annotation.NonNull;
 import android.view.View;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
 
 /**
  * @author eneim | 5/31/17.
@@ -26,6 +28,14 @@ import android.view.View;
 public interface Player {
 
   @NonNull View getPlayerView();
+
+  /**
+   * {@link ExoPlayer} should call {@link ExoPlayer#prepare(MediaSource)} here, and not start
+   * playback when ready
+   */
+  boolean prepare();
+
+  void release();
 
   /**
    * Start playback or resume from a pausing state.
@@ -46,4 +56,9 @@ public interface Player {
   boolean isPlaying();
 
   boolean wantsToPlay();
+
+  /**
+   * @return prefer playback order in list. Can be customized.
+   */
+  int getPlayOrder();
 }

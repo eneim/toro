@@ -17,8 +17,14 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import java.util.ArrayList;
-import java.util.List;
+import android.util.Log;
+import im.ene.toro.widget.Container;
+import ix.Ix;
+import ix.IxConsumer;
+import ix.IxPredicate;
+import java.util.Collection;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @author eneim | 5/31/17.
@@ -26,21 +32,67 @@ import java.util.List;
 
 public class DefaultPlayerManager implements PlayerManager {
 
-  private final List<Player> players = new ArrayList<>();
+  private final SortedSet<Player> players = new TreeSet<>(Common.ORDER_COMPARATOR);
 
-  @Override public boolean attachPlayer(Player player) {
+  private final int playerCount;
+
+  public DefaultPlayerManager(int playerCount) {
+    this.playerCount = playerCount;
+  }
+
+  @SuppressWarnings("unused") public DefaultPlayerManager() {
+    this(1);
+  }
+
+  @Override
+  public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
+    Log.i(TAG, "updatePlayback: " + container);
+    if (BuildConfig.DEBUG) {
+      //noinspection ConstantConditions
+      if (selector == null) {
+        throw new IllegalArgumentException("Selector must not be null");
+      }
+    }
+
+    if (this.players.isEmpty()) return;
+    // from current player list:
+    // 1. find those are allowed to play
+    // 2. among them, use Selector to select a subset then for each of them start the playback
+    // if it is not playing, and pause the playback for others.
+    final Ix<Player> source = Ix.from(players).filter(new IxPredicate<Player>() {
+      @Override public boolean test(Player player) {
+        return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
+      }
+    });
+
+    source.except(Ix.from(selector.select(source.toList(), this.playerCount))
+        .doOnNext(new IxConsumer<Player>() {
+          @Override public void accept(Player player) {
+            if (!player.isPlaying()) player.play();
+          }
+        })) //
+        .doOnNext(new IxConsumer<Player>() {
+          @Override public void accept(Player player) {
+            if (player.isPlaying()) player.pause();
+          }
+        }).subscribe();
+  }
+
+  @Override public boolean attachPlayer(@NonNull Player player) {
+    Log.d(TAG, "attachPlayer() called with: player = [" + player + "]");
     return players.add(player);
   }
 
-  @Override public boolean detachPlayer(Player player) {
+  @Override public boolean detachPlayer(@NonNull Player player) {
+    Log.d(TAG, "detachPlayer() called with: player = [" + player + "]");
     return players.remove(player);
   }
 
-  @Override public boolean manages(Player player) {
+  @Override public boolean manages(@NonNull Player player) {
     return players.contains(player);
   }
 
-  @NonNull @Override public List<Player> getPlayers() {
+  @NonNull @Override public Collection<Player> getPlayers() {
     return this.players;
   }
 }

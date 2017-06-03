@@ -19,7 +19,7 @@ package im.ene.toro.sample;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,14 +32,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.DefaultPlayerManager;
 import im.ene.toro.Player;
-import im.ene.toro.Strategy;
+import im.ene.toro.Selector;
 import im.ene.toro.ToroHelper;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.widget.Container;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-  private static final String TAG = "ToroLib:Sample";
+  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Sample";
 
   ToroHelper helper;
   @BindView(R.id.recycler_view) Container container;
@@ -51,31 +52,51 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView.Adapter adapter = new SimpleAdapter();
     container.setAdapter(adapter);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+      @Override public int getSpanSize(int position) {
+        return position % 4 == 0 || position % 4 == 3 ? 2 : 1;
+      }
+    });
+
     container.setLayoutManager(layoutManager);
 
-    helper = new ToroHelper(new DefaultPlayerManager(), Strategy.DEFAULT);
+    helper = new ToroHelper(new DefaultPlayerManager(2), Selector.DEFAULT);
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
     helper.registerContainer(container);
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    helper.registerContainer(null);
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    helper.registerContainer(null);
+    Log.w(TAG, "onDestroy() called");
+    container.setAdapter(null);
   }
 
-  static class ItemPlayer extends RecyclerView.ViewHolder implements Player {
+  static class PlayerViewHolder extends BaseViewHolder implements Player {
 
-    @BindView(R.id.item_container) LinearLayout container;
-    @BindView(R.id.text_content) TextView content;
-    @BindView(R.id.text_indicator) TextView indicator;
-
-    ItemPlayer(View itemView) {
+    PlayerViewHolder(View itemView) {
       super(itemView);
-      ButterKnife.bind(this, itemView);
     }
 
     @NonNull @Override public View getPlayerView() {
       return container;
+    }
+
+    @Override public boolean prepare() {
+      indicator.setText("PREPARED");
+      return true;
+    }
+
+    @Override public void release() {
+      indicator.setText("RELEASED");
     }
 
     @Override public void play() {
@@ -94,25 +115,55 @@ public class MainActivity extends AppCompatActivity {
       ViewParent parent = itemView.getParent();
       float visible = parent != null && parent instanceof Container ? //
           ToroUtil.visibleAreaOffset(indicator, (Container) parent) : 0;
-      Log.i(TAG, getAdapterPosition() + " | " + visible);
       return visible >= 0.75;
+    }
+
+    @Override public int getPlayOrder() {
+      return getAdapterPosition();
+    }
+
+    @Override public String toString() {
+      return String.format(Locale.getDefault(), "Player{%d}", getAdapterPosition()) + isPlaying();
     }
   }
 
-  private static class SimpleAdapter extends RecyclerView.Adapter<ItemPlayer> {
+  static class BaseViewHolder extends RecyclerView.ViewHolder {
+
+    @BindView(R.id.item_container) LinearLayout container;
+    @BindView(R.id.text_content) TextView content;
+    @BindView(R.id.text_indicator) TextView indicator;
+
+    BaseViewHolder(View itemView) {
+      super(itemView);
+      ButterKnife.bind(this, itemView);
+    }
+  }
+
+  private static class SimpleAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+
+    final int TYPE_BASE = 1;
+    final int TYPE_PLAYER = 2;
 
     SimpleAdapter() {
     }
 
-    @Override public ItemPlayer onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      if (viewType != TYPE_BASE && viewType != TYPE_PLAYER) {
+        throw new IllegalArgumentException("Un-supported viewType: " + viewType);
+      }
+
       View view = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.vh_simple_player, parent, false);
-      return new ItemPlayer(view);
+      return viewType == TYPE_BASE ? new BaseViewHolder(view) : new PlayerViewHolder(view);
     }
 
-    @Override public void onBindViewHolder(ItemPlayer holder, int position) {
+    @Override public void onBindViewHolder(BaseViewHolder holder, int position) {
       holder.content.setText("POS: " + (position + 1));
-      holder.indicator.setText("BOUND");
+      holder.indicator.setText("^＿^!");
+    }
+
+    @Override public int getItemViewType(int position) {
+      return position % 4 == 0 || position % 4 == 3 ? TYPE_PLAYER : TYPE_BASE;
     }
 
     @Override public int getItemCount() {

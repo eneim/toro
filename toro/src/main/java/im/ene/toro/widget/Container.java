@@ -18,17 +18,18 @@ package im.ene.toro.widget;
 
 import android.content.Context;
 import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
 import im.ene.toro.PlayerManager;
-import im.ene.toro.Strategy;
+import im.ene.toro.Selector;
+import im.ene.toro.ToroLayoutManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,8 +40,10 @@ import java.util.List;
 
 public class Container extends RecyclerView {
 
+  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
+
   PlayerManager manager;
-  Strategy strategy;
+  Selector selector;
 
   public Container(Context context) {
     this(context, null);
@@ -56,20 +59,22 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    if (manager == null) return;
+    Log.d(TAG, "onChildAttachedToWindow() called with: child = [" + child + "]");
+    if (manager == null || selector == null) return;
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
-    final Player player = (Player) holder;
 
+    final Player player = (Player) holder;
     if (manager.manages(player)) {
-      player.play();
+      if (!player.isPlaying()) player.play();
     } else {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          if (player.wantsToPlay() && strategy.allowsToPlay(player, Container.this)) {
+          if (player.wantsToPlay()) {
+            player.prepare();
             if (manager.attachPlayer(player)) {
-              player.play();
+              manager.updatePlayback(Container.this, Container.this.selector);
             }
           }
         }
@@ -79,27 +84,31 @@ public class Container extends RecyclerView {
 
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
-    if (manager == null) return;
+    Log.e(TAG, "onChildDetachedFromWindow() called with: child = [" + child + "]");
+    if (manager == null || selector == null) return;
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
 
     final Player player = (Player) holder;
-    player.pause();
+    if (player.isPlaying()) player.pause();
     if (manager.manages(player)) {
-      manager.detachPlayer(player);
+      if (manager.detachPlayer(player)) {
+        manager.updatePlayback(this, this.selector);
+      }
     }
+    player.release();
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
     if (state != SCROLL_STATE_IDLE) return;
-    if (manager == null || strategy == null) return;
+    if (manager == null || this.selector == null) return;
 
     final List<Player> currentPlayers = new ArrayList<>(manager.getPlayers());
     int count = currentPlayers.size();
     for (int i = count - 1; i >= 0; i--) {
       Player player = currentPlayers.get(i);
-      if (!player.wantsToPlay() || !strategy.allowsToPlay(player, this)) {
+      if (!player.wantsToPlay()) {
         player.pause();
         manager.detachPlayer(player);
       }
@@ -126,11 +135,9 @@ public class Container extends RecyclerView {
       if (lastVisiblePositions.length > 0) {
         lastVisiblePosition = lastVisiblePositions[0];
       }
-    } else if (layoutManager instanceof im.ene.toro.LayoutManager) {
-      firstVisiblePosition =
-          ((im.ene.toro.LayoutManager) layoutManager).getFirstVisibleItemPosition();
-      lastVisiblePosition =
-          ((im.ene.toro.LayoutManager) layoutManager).getLastVisibleItemPosition();
+    } else if (layoutManager instanceof ToroLayoutManager) {
+      firstVisiblePosition = ((ToroLayoutManager) layoutManager).getFirstVisibleItemPosition();
+      lastVisiblePosition = ((ToroLayoutManager) layoutManager).getLastVisibleItemPosition();
     }
 
     if (firstVisiblePosition <= lastVisiblePosition /* protect the 'for' loop */ &&  //
@@ -141,30 +148,24 @@ public class Container extends RecyclerView {
         if (holder != null && holder instanceof Player) {
           Player candidate = (Player) holder;
           // check candidate's condition
-          if (candidate.wantsToPlay() && this.strategy.allowsToPlay(candidate, this)) {
-            // Have a new candidate who can play
+          if (candidate.wantsToPlay()) {
             if (!manager.manages(candidate)) {
-              manager.attachPlayer(candidate);
+              if (manager.attachPlayer(candidate)) {
+                candidate.prepare();
+              }
             }
           }
         }
       }
     }
 
-    if (manager.getPlayers().isEmpty()) return;
-    for (Player player : manager.getPlayers()) {
-      player.play();
-    }
+    manager.updatePlayback(this, selector);
   }
 
   //////
 
   @Nullable public PlayerManager getManager() {
     return manager;
-  }
-
-  public Strategy getStrategy() {
-    return strategy;
   }
 
   public void setManager(@Nullable PlayerManager manager) {
@@ -177,16 +178,16 @@ public class Container extends RecyclerView {
     }
 
     this.manager = manager;
-    if (this.manager != null) {
-      this.onScrollStateChanged(SCROLL_STATE_IDLE);
-    }
+    this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  public void setStrategy(@NonNull Strategy strategy) {
-    if (this.strategy == strategy) return;
-    this.strategy = strategy;
-    if (this.manager != null) {
-      this.onScrollStateChanged(SCROLL_STATE_IDLE);
-    }
+  @SuppressWarnings("unused") @Nullable public Selector getSelector() {
+    return selector;
+  }
+
+  public void setSelector(@Nullable Selector selector) {
+    if (this.selector == selector) return;
+    this.selector = selector;
+    this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 }

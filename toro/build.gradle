@@ -48,4 +48,6 @@ dependencies {
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
   compile "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"
+
+  compile 'com.github.akarnokd:ixjava:1.0.0-RC5'
 }
