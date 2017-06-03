@@ -23,6 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
@@ -39,7 +40,7 @@ import java.util.List;
 
 public class Container extends RecyclerView {
 
-  private static final String TAG = "ToroLib:Container";
+  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
 
   PlayerManager manager;
   Selector selector;
@@ -58,21 +59,22 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    if (manager == null) return;
+    Log.d(TAG, "onChildAttachedToWindow() called with: child = [" + child + "]");
+    if (manager == null || selector == null) return;
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
-    final Player player = (Player) holder;
 
+    final Player player = (Player) holder;
     if (manager.manages(player)) {
-      player.play();
+      if (!player.isPlaying()) player.play();
     } else {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           if (player.wantsToPlay()) {
+            player.prepare();
             if (manager.attachPlayer(player)) {
-              player.prepare();
-              manager.updatePlayback(Container.this, selector);
+              manager.updatePlayback(Container.this, Container.this.selector);
             }
           }
         }
@@ -82,14 +84,17 @@ public class Container extends RecyclerView {
 
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
-    if (manager == null) return;
+    Log.e(TAG, "onChildDetachedFromWindow() called with: child = [" + child + "]");
+    if (manager == null || selector == null) return;
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
 
     final Player player = (Player) holder;
-    player.pause();
+    if (player.isPlaying()) player.pause();
     if (manager.manages(player)) {
-      manager.detachPlayer(player);
+      if (manager.detachPlayer(player)) {
+        manager.updatePlayback(this, this.selector);
+      }
     }
     player.release();
   }
@@ -97,7 +102,7 @@ public class Container extends RecyclerView {
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
     if (state != SCROLL_STATE_IDLE) return;
-    if (manager == null) return;
+    if (manager == null || this.selector == null) return;
 
     final List<Player> currentPlayers = new ArrayList<>(manager.getPlayers());
     int count = currentPlayers.size();
@@ -173,20 +178,16 @@ public class Container extends RecyclerView {
     }
 
     this.manager = manager;
-    if (this.manager != null) {
-      this.onScrollStateChanged(SCROLL_STATE_IDLE);
-    }
+    this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  @Nullable public Selector getSelector() {
+  @SuppressWarnings("unused") @Nullable public Selector getSelector() {
     return selector;
   }
 
   public void setSelector(@Nullable Selector selector) {
     if (this.selector == selector) return;
     this.selector = selector;
-    if (this.selector != null) {
-      this.onScrollStateChanged(SCROLL_STATE_IDLE);
-    }
+    this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 }

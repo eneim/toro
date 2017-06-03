@@ -16,13 +16,21 @@
 
 package im.ene.toro;
 
+import java.util.Comparator;
+
 /**
  * @author eneim | 6/2/17.
  */
 
-class Compat {
+class Common {
 
-  static int compare(int x, int y) {
+  @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
   }
+
+  static Comparator<Player> ORDER_COMPARATOR = new Comparator<Player>() {
+    @Override public int compare(Player o1, Player o2) {
+      return Common.compare(o1.getPlayOrder(), o2.getPlayOrder());
+    }
+  };
 }

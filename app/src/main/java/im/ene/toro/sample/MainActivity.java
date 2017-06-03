@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +40,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-  private static final String TAG = "ToroLib:Sample";
+  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Sample";
 
   ToroHelper helper;
   @BindView(R.id.recycler_view) Container container;
@@ -61,12 +62,22 @@ public class MainActivity extends AppCompatActivity {
     container.setLayoutManager(layoutManager);
 
     helper = new ToroHelper(new DefaultPlayerManager(2), Selector.DEFAULT);
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
     helper.registerContainer(container);
+  }
+
+  @Override protected void onStop() {
+    super.onStop();
+    helper.registerContainer(null);
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    helper.registerContainer(null);
+    Log.w(TAG, "onDestroy() called");
+    container.setAdapter(null);
   }
 
   static class PlayerViewHolder extends BaseViewHolder implements Player {

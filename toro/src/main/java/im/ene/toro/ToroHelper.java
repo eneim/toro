@@ -18,6 +18,7 @@ package im.ene.toro;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import im.ene.toro.widget.Container;
 
 /**
@@ -26,11 +27,13 @@ import im.ene.toro.widget.Container;
 
 public final class ToroHelper {
 
+  private static final String TAG = "ToroLib:Helper";
+
   @NonNull private final PlayerManager manager;
   @Nullable private Selector selector;
   private Container container;
 
-  public ToroHelper(@NonNull PlayerManager manager) {
+  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager manager) {
     this(manager, null);
   }
 
@@ -40,6 +43,7 @@ public final class ToroHelper {
   }
 
   public void registerContainer(@Nullable Container container) {
+    Log.e(TAG, "registerContainer() called with: container = [" + container + "]");
     if (this.container == container) return;
     if (this.container != null) {
       this.container.setManager(null);

@@ -24,13 +24,14 @@ import java.util.Collection;
  * @author eneim | 5/31/17.
  *
  *         Logic: collect all Players those "wantsToPlay()", then internally decide if we allow
- *         each
- *         of them to play or not.
+ *         each of them to play or not.
+ *
+ *         All managed players must return {@code true} from {@link Player#wantsToPlay()}
  */
 
 public interface PlayerManager {
 
-  String TAG = "ToroLib:PlayerManager";
+  @SuppressWarnings("unused") String TAG = "ToroLib:PlayerManager";
 
   void updatePlayback(@NonNull Container container, @NonNull Selector selector);
 

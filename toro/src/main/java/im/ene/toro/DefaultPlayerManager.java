@@ -17,12 +17,12 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import im.ene.toro.widget.Container;
 import ix.Ix;
 import ix.IxConsumer;
 import ix.IxPredicate;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -32,11 +32,7 @@ import java.util.TreeSet;
 
 public class DefaultPlayerManager implements PlayerManager {
 
-  private final SortedSet<Player> players = new TreeSet<>(new Comparator<Player>() {
-    @Override public int compare(Player o1, Player o2) {
-      return Compat.compare(o1.getPlayOrder(), o2.getPlayOrder());
-    }
-  });
+  private final SortedSet<Player> players = new TreeSet<>(Common.ORDER_COMPARATOR);
 
   private final int playerCount;
 
@@ -44,14 +40,21 @@ public class DefaultPlayerManager implements PlayerManager {
     this.playerCount = playerCount;
   }
 
-  public DefaultPlayerManager() {
+  @SuppressWarnings("unused") public DefaultPlayerManager() {
     this(1);
   }
 
   @Override
   public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
-    //noinspection ConstantConditions
-    if (selector == null) return;
+    Log.i(TAG, "updatePlayback: " + container);
+    if (BuildConfig.DEBUG) {
+      //noinspection ConstantConditions
+      if (selector == null) {
+        throw new IllegalArgumentException("Selector must not be null");
+      }
+    }
+
+    if (this.players.isEmpty()) return;
     // from current player list:
     // 1. find those are allowed to play
     // 2. among them, use Selector to select a subset then for each of them start the playback
@@ -70,16 +73,18 @@ public class DefaultPlayerManager implements PlayerManager {
         })) //
         .doOnNext(new IxConsumer<Player>() {
           @Override public void accept(Player player) {
-            player.pause();
+            if (player.isPlaying()) player.pause();
           }
         }).subscribe();
   }
 
   @Override public boolean attachPlayer(@NonNull Player player) {
+    Log.d(TAG, "attachPlayer() called with: player = [" + player + "]");
     return players.add(player);
   }
 
   @Override public boolean detachPlayer(@NonNull Player player) {
+    Log.d(TAG, "detachPlayer() called with: player = [" + player + "]");
     return players.remove(player);
   }
 
