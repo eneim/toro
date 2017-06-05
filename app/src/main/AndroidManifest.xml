@@ -18,6 +18,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="im.ene.toro.sample">
 
+  <uses-permission android:name="android.permission.INTERNET"/>
+
   <application
       android:name=".ToroDemoApplication"
       android:allowBackup="false"

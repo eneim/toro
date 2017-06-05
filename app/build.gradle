@@ -50,6 +50,10 @@ dependencies {
 
   compile project(':toro')
 
+  compile "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
+
   compile 'com.jakewharton:butterknife:8.5.1'
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 

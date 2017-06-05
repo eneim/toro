@@ -47,10 +47,20 @@
         android:id="@+id/text_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#e5e5e5"
         android:gravity="center"
         android:minHeight="120dp"
-        android:background="#e5e5e5"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        />
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        app:resize_mode="fixed_width"
+        app:surface_type="surface_view"
+        app:use_controller="false"
         />
   </LinearLayout>
 

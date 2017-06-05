@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -31,11 +32,15 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.DefaultPlayerManager;
+import im.ene.toro.ExoPlayerHelper;
 import im.ene.toro.Player;
 import im.ene.toro.Selector;
 import im.ene.toro.ToroHelper;
 import im.ene.toro.ToroUtil;
+import im.ene.toro.sample.common.MediaUrls;
 import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     GridLayoutManager layoutManager = new GridLayoutManager(this, 1 /* change this for testing */);
     // container.setItemAnimator(null); // un-comment to test non-animator case
     container.setLayoutManager(layoutManager);
-    helper = new ToroHelper(new DefaultPlayerManager(2), Selector.DEFAULT);
+    helper = new ToroHelper(new DefaultPlayerManager(1), Selector.DEFAULT);
   }
 
   @Override protected void onStart() {
@@ -107,40 +112,63 @@ public class MainActivity extends AppCompatActivity {
 
   static class PlayerViewHolder extends BaseViewHolder implements Player {
 
+    private ExoPlayerHelper helper;
+
     PlayerViewHolder(View itemView) {
       super(itemView);
+      playerView.setVisibility(View.VISIBLE);
+      indicator.setVisibility(View.GONE);
     }
 
     @NonNull @Override public View getPlayerView() {
-      return container;
+      return playerView;
     }
 
     @Override public boolean prepare() {
+      if (helper == null) {
+        helper = new ExoPlayerHelper(this.playerView);
+      }
+
+      try {
+        helper.prepare(Uri.parse(MediaUrls.MP4_HEVC_AVSep_3840x2160_8Mbps));
+      } catch (ParserException e) {
+        e.printStackTrace();
+      }
+
       indicator.setText("PREPARED");
       return true;
     }
 
     @Override public void release() {
       indicator.setText("RELEASED");
+      if (helper != null) {
+        helper.release();
+        helper = null;
+      }
     }
 
     @Override public void play() {
       indicator.setText("PLAY");
+      if (helper != null) {
+        helper.play();
+      }
     }
 
     @Override public void pause() {
       indicator.setText("PAUSE");
+      if (helper != null) helper.pause();
     }
 
     @Override public boolean isPlaying() {
-      return "PLAY".equals(indicator.getText().toString());
+      return playerView.getPlayer() != null && playerView.getPlayer().getPlayWhenReady();
+      // return "PLAY".equals(indicator.getText());
     }
 
     @Override public boolean wantsToPlay() {
       ViewParent parent = itemView.getParent();
       float visible = parent != null && parent instanceof Container ? //
-          ToroUtil.visibleAreaOffset(indicator, (Container) parent) : 0;
-      return visible >= 0.75;
+          ToroUtil.visibleAreaOffset(playerView, (Container) parent) : 0;
+      return visible >= 0.85;
     }
 
     @Override public int getPlayOrder() {
@@ -158,10 +186,13 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.item_container) LinearLayout container;
     @BindView(R.id.text_content) TextView content;
     @BindView(R.id.text_indicator) TextView indicator;
+    @BindView(R.id.player) SimpleExoPlayerView playerView;
 
     BaseViewHolder(View itemView) {
       super(itemView);
       ButterKnife.bind(this, itemView);
+      playerView.setVisibility(View.GONE);
+      indicator.setVisibility(View.VISIBLE);
     }
   }
 
@@ -248,6 +279,13 @@ public class MainActivity extends AppCompatActivity {
     void insert() {
       items.add("INSERTED: " + items.size());
       notifyItemInserted(items.size());
+    }
+
+    @Override public void onViewDetachedFromWindow(BaseViewHolder holder) {
+      super.onViewDetachedFromWindow(holder);
+      if (holder instanceof PlayerViewHolder) {
+        ((PlayerViewHolder) holder).release();
+      }
     }
   }
 }

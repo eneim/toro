@@ -114,10 +114,11 @@ public class Container extends RecyclerView {
     final Player player = (Player) holder;
     if (player.isPlaying()) player.pause();
     if (manager.manages(player)) {
-      if (manager.detachPlayer(player)) {
-        dispatchUpdateOnAnimationFinished();
-      }
+      manager.detachPlayer(player);
     }
+    // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
+    // sometime it happens after all Animation, but we also need to update playback here.
+    dispatchUpdateOnAnimationFinished();
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
