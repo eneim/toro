@@ -83,13 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
     adapter = new SimpleAdapter();
     container.setAdapter(adapter);
-    GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
-    //layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-    //  @Override public int getSpanSize(int position) {
-    //    return position % 4 == 0 || position % 4 == 3 ? 2 : 1;
-    //  }
-    //});
-
+    GridLayoutManager layoutManager = new GridLayoutManager(this, 1 /* change this for testing */);
+    // container.setItemAnimator(null); // un-comment to test non-animator case
     container.setLayoutManager(layoutManager);
     helper = new ToroHelper(new DefaultPlayerManager(2), Selector.DEFAULT);
   }
