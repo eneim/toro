@@ -16,6 +16,10 @@
 
 package im.ene.toro;
 
+import android.graphics.Rect;
+import android.support.annotation.NonNull;
+import android.view.View;
+import im.ene.toro.widget.Container;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,7 +29,7 @@ import java.util.List;
  * @author eneim | 6/2/17.
  */
 
-public final class Common {
+final class Common {
 
   @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
@@ -46,4 +50,26 @@ public final class Common {
       return Common.compare(o1.getPlayOrder(), o2.getPlayOrder());
     }
   };
+
+  static boolean doAllowsToPlay(@NonNull View videoView, @NonNull Container parent) {
+    Rect windowRect = new Rect();
+    Rect parentRect = new Rect();
+    // 1. Get Window's vision from parent
+    parent.getWindowVisibleDisplayFrame(windowRect);
+    // 2. Get parent's global rect
+    parent.getGlobalVisibleRect(parentRect, null);
+    // 3. Get player global rect
+    Rect videoRect = new Rect();
+    // Headache !!!
+    int[] screenLoc = new int[2];
+    videoView.getLocationOnScreen(screenLoc);
+    videoRect.left += screenLoc[0];
+    videoRect.right += screenLoc[0] + videoView.getWidth();
+    videoRect.top += screenLoc[1];
+    videoRect.bottom += screenLoc[1] + videoView.getHeight();
+
+    // Condition: window manages parent, and parent manages Video or parent intersects Video
+    return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
+        || parentRect.intersect(videoRect));
+  }
 }

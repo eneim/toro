@@ -60,7 +60,7 @@ public class DefaultPlayerManager implements PlayerManager {
     // if it is not playing, and pause the playback for others.
     final Ix<Player> source = Ix.from(players).filter(new IxPredicate<Player>() {
       @Override public boolean test(Player player) {
-        return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
+        return Common.doAllowsToPlay(player.getPlayerView(), container);
       }
     }).orderBy(Common.ORDER_COMPARATOR);
 
