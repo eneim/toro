@@ -23,8 +23,7 @@ import ix.Ix;
 import ix.IxConsumer;
 import ix.IxPredicate;
 import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 /**
  * @author eneim | 5/31/17.
@@ -32,7 +31,7 @@ import java.util.TreeSet;
 
 public class DefaultPlayerManager implements PlayerManager {
 
-  private final SortedSet<Player> players = new TreeSet<>(Common.ORDER_COMPARATOR);
+  private final HashSet<Player> players = new HashSet<>();
 
   private final int playerCount;
 
@@ -46,7 +45,7 @@ public class DefaultPlayerManager implements PlayerManager {
 
   @Override
   public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
-    Log.i(TAG, "updatePlayback: " + container);
+    Log.e(TAG, "updatePlayback: " + this.players);
     if (BuildConfig.DEBUG) {
       //noinspection ConstantConditions
       if (selector == null) {
@@ -63,7 +62,7 @@ public class DefaultPlayerManager implements PlayerManager {
       @Override public boolean test(Player player) {
         return ToroUtil.doAllowsToPlay(player.getPlayerView(), container);
       }
-    });
+    }).orderBy(Common.ORDER_COMPARATOR);
 
     source.except(Ix.from(selector.select(source.toList(), this.playerCount))
         .doOnNext(new IxConsumer<Player>() {

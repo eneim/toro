@@ -16,16 +16,29 @@
 
 package im.ene.toro;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author eneim | 6/2/17.
  */
 
-class Common {
+public final class Common {
 
   @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  }
+
+  static long max(Long... numbers) {
+    List<Long> list = Arrays.asList(numbers);
+    return Collections.<Long>max(list);
+  }
+
+  static long min(Long... numbers) {
+    List<Long> list = Arrays.asList(numbers);
+    return Collections.<Long>min(list);
   }
 
   static Comparator<Player> ORDER_COMPARATOR = new Comparator<Player>() {
