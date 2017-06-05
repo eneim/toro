@@ -125,14 +125,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override public boolean prepare() {
+      Log.w(TAG, "prepare() called, helper: " + helper);
       if (helper == null) {
         helper = new ExoPlayerHelper(this.playerView);
-      }
-
-      try {
-        helper.prepare(Uri.parse(MediaUrls.MP4_HEVC_AVSep_3840x2160_8Mbps));
-      } catch (ParserException e) {
-        e.printStackTrace();
+        try {
+          helper.prepare(Uri.parse(MediaUrls.MP4_HEVC_AVSep_3840x2160_8Mbps));
+        } catch (ParserException e) {
+          e.printStackTrace();
+        }
       }
 
       indicator.setText("PREPARED");

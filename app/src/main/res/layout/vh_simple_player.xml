@@ -57,9 +57,9 @@
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="200dp"
+        android:minHeight="222dp"
         app:resize_mode="fixed_width"
-        app:surface_type="surface_view"
+        app:surface_type="texture_view"
         app:use_controller="false"
         />
   </LinearLayout>
