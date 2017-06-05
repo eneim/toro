@@ -30,37 +30,67 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import im.ene.toro.DefaultPlayerManager;
 import im.ene.toro.Player;
 import im.ene.toro.Selector;
 import im.ene.toro.ToroHelper;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.widget.Container;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+
+import static java.lang.String.format;
 
 public class MainActivity extends AppCompatActivity {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroLib:Sample";
 
   ToroHelper helper;
+  SimpleAdapter adapter;
   @BindView(R.id.recycler_view) Container container;
+
+  @OnClick(R.id.button_change_all) void changeAll() {
+    adapter.changeAll();
+  }
+
+  @OnClick(R.id.button_change) void change() {
+    adapter.change();
+  }
+
+  @OnClick(R.id.button_move) void move() {
+    adapter.move();
+  }
+
+  @OnClick(R.id.button_swap) void swap() {
+    adapter.swap();
+  }
+
+  @OnClick(R.id.button_insert) void insert() {
+    adapter.insert();
+  }
+
+  @OnClick(R.id.button_remove) void remove() {
+    adapter.remove();
+  }
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
-    RecyclerView.Adapter adapter = new SimpleAdapter();
+    adapter = new SimpleAdapter();
     container.setAdapter(adapter);
-    GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
-    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-      @Override public int getSpanSize(int position) {
-        return position % 4 == 0 || position % 4 == 3 ? 2 : 1;
-      }
-    });
+    GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+    //layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+    //  @Override public int getSpanSize(int position) {
+    //    return position % 4 == 0 || position % 4 == 3 ? 2 : 1;
+    //  }
+    //});
 
     container.setLayoutManager(layoutManager);
-
     helper = new ToroHelper(new DefaultPlayerManager(2), Selector.DEFAULT);
   }
 
@@ -123,7 +153,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override public String toString() {
-      return String.format(Locale.getDefault(), "Player{%d}", getAdapterPosition()) + isPlaying();
+      return format(Locale.getDefault(), "Player{%d}{%d}", getAdapterPosition(), hashCode())
+          + isPlaying();
     }
   }
 
@@ -144,7 +175,12 @@ public class MainActivity extends AppCompatActivity {
     final int TYPE_BASE = 1;
     final int TYPE_PLAYER = 2;
 
+    private final List<String> items = new ArrayList<>();
+
     SimpleAdapter() {
+      for (int i = 0; i < 6; i++) {
+        items.add("INIT:" + i);
+      }
     }
 
     @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -158,16 +194,65 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override public void onBindViewHolder(BaseViewHolder holder, int position) {
-      holder.content.setText("POS: " + (position + 1));
+      holder.content.setText(items.get(position));
       holder.indicator.setText("^＿^!");
     }
 
     @Override public int getItemViewType(int position) {
-      return position % 4 == 0 || position % 4 == 3 ? TYPE_PLAYER : TYPE_BASE;
+      return TYPE_PLAYER;
     }
 
     @Override public int getItemCount() {
-      return Integer.MAX_VALUE;
+      // return Integer.MAX_VALUE;
+      return items.size();
+    }
+
+    void changeAll() {
+      notifyDataSetChanged();
+    }
+
+    void change() {
+      int pos = (int) (Math.random() * items.size());
+      items.set(pos, "CHANGED:" + pos);
+      Log.d(TAG, format(Locale.getDefault(), "change: %d", pos));
+      notifyItemChanged(pos);
+    }
+
+    void move() {
+      int pos = (int) (Math.random() * items.size());
+      int type = getItemViewType(pos);
+      String item = items.remove(pos);
+      int pos2 = pos;
+      while (pos2 == pos) {
+        pos2 = (int) (Math.random() * items.size());
+      }
+      items.add(pos2, item);
+      Log.d(TAG, format(Locale.getDefault(), "move: %d --> %d, type = %d", pos, pos2, type));
+      notifyItemMoved(pos, pos2);
+    }
+
+    void swap() {
+      int pos1 = (int) (Math.random() * items.size());
+      int pos2 = pos1;
+      while (pos2 == pos1) {
+        pos2 = (int) (Math.random() * items.size());
+      }
+      Collections.swap(items, pos1, pos2);
+      Log.d(TAG, format(Locale.getDefault(), "swap: %d <--> %d", pos1, pos2));
+      notifyItemChanged(pos1);
+      notifyItemChanged(pos2);
+    }
+
+    void remove() {
+      int pos1 = (int) (Math.random() * items.size());
+      items.remove(pos1);
+      Log.d(TAG, format(Locale.getDefault(), "remove: %d", pos1));
+      notifyItemRemoved(pos1);
+    }
+
+    void insert() {
+      items.add("INSERTED: " + items.size());
+      notifyItemInserted(items.size());
     }
   }
 }

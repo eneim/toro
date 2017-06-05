@@ -18,6 +18,7 @@ package im.ene.toro;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import ix.Ix;
 import java.util.Collection;
 
@@ -26,6 +27,8 @@ import java.util.Collection;
  */
 
 public interface Selector {
+
+  String TAG = "ToroLib:Selector";
 
   @NonNull Collection<Player> select(@NonNull Collection<Player> items, int limit);
 
@@ -37,6 +40,7 @@ public interface Selector {
   Selector DEFAULT = new Selector() {
     @NonNull @Override
     public Collection<Player> select(@NonNull Collection<Player> items, int limit) {
+      Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).take(limit).toList();
     }
 
@@ -48,6 +52,7 @@ public interface Selector {
   Selector DEFAULT_REVERSE = new Selector() {
     @NonNull @Override
     public Collection<Player> select(@NonNull Collection<Player> items, int limit) {
+      Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).takeLast(limit).toList();
     }
 
