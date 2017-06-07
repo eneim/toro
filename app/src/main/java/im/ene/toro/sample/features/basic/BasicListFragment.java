@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import im.ene.toro.ToroHelper;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.common.ContentAdapter;
+import im.ene.toro.sample.common.EndlessRecyclerView;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.widget.Container;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -53,8 +55,9 @@ public class BasicListFragment extends BaseFragment {
   @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout refreshLayout;
   @BindView(R.id.recycler_view) Container container;
   ContentAdapter adapter;
-  RecyclerView.LayoutManager layoutManager;
+  LinearLayoutManager layoutManager;
   ToroHelper toroHelper;
+  RecyclerView.OnScrollListener infiniteScrollListener;
 
   @SuppressWarnings("SpellCheckingInspection")  //
   final CompositeDisposable disposibles = new CompositeDisposable();
@@ -81,6 +84,16 @@ public class BasicListFragment extends BaseFragment {
       dispatchLoadData(false);
     });
 
+    infiniteScrollListener = new EndlessRecyclerView(layoutManager, DataSource.getInstance()) {
+      @Override public void onLoadMore() {
+        if (refreshLayout != null) {
+          refreshLayout.setRefreshing(true);
+        }
+        dispatchLoadData(true);
+      }
+    };
+    container.addOnScrollListener(infiniteScrollListener);
+
     toroHelper = new ToroHelper(new DefaultPlayerManager(1));
     toroHelper.registerContainer(container);
   }
@@ -101,8 +114,8 @@ public class BasicListFragment extends BaseFragment {
   }
 
   void dispatchLoadData(boolean loadMore) {
-    disposibles.add(DataSource.getInstance()
-        .getFromCloud(loadMore, 20)
+    DataSource.getInstance()
+        .getFromCloud(20)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnComplete(() -> {
@@ -110,12 +123,13 @@ public class BasicListFragment extends BaseFragment {
             refreshLayout.setRefreshing(false);
           }
         })
-        .subscribe(entities -> adapter.addMany(!loadMore, entities)));
+        .doOnSubscribe(disposibles::add)
+        .subscribe(entities -> adapter.addMany(!loadMore, entities));
   }
 
   @Override public void onDestroyView() {
     disposibles.clear();  // clear but not dispose, by intent
-    container.setAdapter(null);
+    // container.setAdapter(null);
     toroHelper.registerContainer(null);
     // base (super) class will unbind all view, so this super call must be called lastly.
     super.onDestroyView();

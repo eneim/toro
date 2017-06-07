@@ -17,10 +17,12 @@
 package im.ene.toro.sample.data;
 
 import io.reactivex.Observable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author eneim | 6/7/17.
@@ -44,11 +46,13 @@ public final class DataSource {
 
   private final List<Entity> entities = new CopyOnWriteArrayList<>();
   private final Random random = new Random();
+  @SuppressWarnings("WeakerAccess") final AtomicBoolean loading = new AtomicBoolean(false);
 
-  public Observable<List<Entity>> getFromCloud(boolean loadMore, int count) {
+  public Observable<List<Entity>> getFromCloud(int count) {
     // the following codes are not wrapped by RxJava, user has the responsibility to execute this
     // method in io thread.
-    if (!loadMore) entities.clear();
+    loading.set(true);
+    List<Entity> entities = new ArrayList<>();
     int urlCount = MediaUrl.values().length;
     if (count > 0) {
       int mediaIdx = 0;
@@ -61,11 +65,17 @@ public final class DataSource {
       }
     }
     // use delay operator to simulate real API call.
-    return Observable.just(entities).delay(1000, TimeUnit.MILLISECONDS);
+    return Observable.just(entities)
+        .delay(1000, TimeUnit.MILLISECONDS)
+        .doOnNext(entities1 -> loading.set(false));
   }
 
   // just use to sync with Adapter data. real-world practice should not use this.
   public List<Entity> getEntities() {
     return entities;
+  }
+
+  public boolean isLoading() {
+    return this.loading.get();
   }
 }
