@@ -76,7 +76,7 @@ class MediaViewHolder extends BaseViewHolder implements Player {
     return playerView;
   }
 
-  @Override public PlayerState getCurrentState() {
+  @NonNull @Override public PlayerState getCurrentState() {
     PlayerState state = new PlayerState();
     if (helper != null) state = helper.getPlayerState();
     return state;
