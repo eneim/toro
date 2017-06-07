@@ -48,9 +48,10 @@ public final class DataSource {
   private final Random random = new Random();
   @SuppressWarnings("WeakerAccess") final AtomicBoolean loading = new AtomicBoolean(false);
 
-  public Observable<List<Entity>> getFromCloud(int count) {
+  public Observable<List<Entity>> getFromCloud(boolean loadMore, int count) {
     // the following codes are not wrapped by RxJava, user has the responsibility to execute this
     // method in io thread.
+    if (!loadMore) this.entities.clear();
     loading.set(true);
     List<Entity> entities = new ArrayList<>();
     int urlCount = MediaUrl.values().length;
@@ -65,9 +66,10 @@ public final class DataSource {
       }
     }
     // use delay operator to simulate real API call.
-    return Observable.just(entities)
-        .delay(1000, TimeUnit.MILLISECONDS)
-        .doOnNext(entities1 -> loading.set(false));
+    return Observable.just(entities).delay(1000, TimeUnit.MILLISECONDS).doOnNext(items -> {
+      this.entities.addAll(items);
+      loading.set(false);
+    });
   }
 
   // just use to sync with Adapter data. real-world practice should not use this.

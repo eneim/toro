@@ -74,6 +74,7 @@ public class BasicListFragment extends BaseFragment {
     adapter = new ContentAdapter();
     layoutManager =
         new GridLayoutManager(getContext(), getResources().getInteger(R.integer.grid_span));
+    layoutManager.setRecycleChildrenOnDetach(true);
     adapter.addMany(true, DataSource.getInstance().getEntities());
 
     container.setAdapter(adapter);
@@ -93,9 +94,7 @@ public class BasicListFragment extends BaseFragment {
       }
     };
     container.addOnScrollListener(infiniteScrollListener);
-
-    toroHelper = new ToroHelper(new DefaultPlayerManager(1));
-    toroHelper.registerContainer(container);
+    toroHelper = new ToroHelper(new DefaultPlayerManager(1), Selector.DEFAULT);
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
@@ -105,17 +104,17 @@ public class BasicListFragment extends BaseFragment {
 
   @Override public void onStart() {
     super.onStart();
-    toroHelper.setSelector(Selector.DEFAULT);
+    toroHelper.registerContainer(container);
   }
 
   @Override public void onStop() {
     super.onStop();
-    toroHelper.setSelector(Selector.NONE);
+    toroHelper.registerContainer(null);
   }
 
   void dispatchLoadData(boolean loadMore) {
     DataSource.getInstance()
-        .getFromCloud(20)
+        .getFromCloud(loadMore, 20)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnComplete(() -> {
@@ -129,9 +128,9 @@ public class BasicListFragment extends BaseFragment {
 
   @Override public void onDestroyView() {
     disposibles.clear();  // clear but not dispose, by intent
+    // if you set your layoutManager to recycle child when RecyclerView is detached, this is optional.
     // container.setAdapter(null);
-    toroHelper.registerContainer(null);
-    // base (super) class will unbind all view, so this super call must be called lastly.
+    // base (super) class will unbind all view here, so this super call must be called last.
     super.onDestroyView();
   }
 

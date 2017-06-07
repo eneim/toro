@@ -137,20 +137,6 @@ public class Container extends RecyclerView {
     player.release();
   }
 
-  @Override
-  protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
-    super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
-    Log.w(TAG, "onOverScrolled() called with: scrollX = ["
-        + scrollX
-        + "], scrollY = ["
-        + scrollY
-        + "], clampedX = ["
-        + clampedX
-        + "], clampedY = ["
-        + clampedY
-        + "]");
-  }
-
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
     if (state != SCROLL_STATE_IDLE) return;
@@ -328,8 +314,6 @@ public class Container extends RecyclerView {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public static class ContainerState extends AbsSavedState {
-
-
 
     protected ContainerState(Parcelable superState) {
       super(superState);
