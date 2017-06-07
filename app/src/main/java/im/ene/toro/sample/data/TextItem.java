@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common;
+package im.ene.toro.sample.data;
 
 /**
- * @author eneim | 6/6/17.
- *         Sources:
- *
- *         http://docs.evostream.com/sample_content/table_of_contents
+ * @author eneim | 6/7/17.
  */
 
-public class MediaUrls {
+public class TextItem implements Entity {
 
-  public static final String MP4_BUNNY_720 = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+  private final String content = "# About GitHub Wikis\n"
+      + "> Just as writing good code and great tests are important, excellent documentation helps others use and extend your project.\n"
+      + "\n"
+      + "> Every GitHub repository comes equipped with a section for hosting documentation, called a wiki.";
 
-  public static final String HLS_BUNNY_240 =
-      "http://docs.evostream.com/sample_content/assets/hls-bunny-166/playlist.m3u8";
+  TextItem() {
+  }
 
-  public static final String MP4_HEVC_AVSep_3840x2160_8Mbps =
-      "http://docs.evostream.com/sample_content/assets/sintel1m720p.mp4";
+  @Override public String toString() {
+    return "TextItem{" + hashCode() + "}";
+  }
+
+  public String getContent() {
+    return content;
+  }
 }

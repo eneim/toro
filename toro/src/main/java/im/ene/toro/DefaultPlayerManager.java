@@ -62,7 +62,7 @@ public class DefaultPlayerManager implements PlayerManager {
       @Override public boolean test(Player player) {
         return Common.doAllowsToPlay(player.getPlayerView(), container);
       }
-    }).orderBy(Common.ORDER_COMPARATOR);
+    });
 
     source.except(Ix.from(selector.select(source.toList(), this.playerCount))
         .doOnNext(new IxConsumer<Player>() {

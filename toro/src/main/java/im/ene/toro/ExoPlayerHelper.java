@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -63,6 +64,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.media.DrmMedia;
+import im.ene.toro.media.PlayerState;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.UUID;
@@ -71,33 +73,47 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
 
 /**
  * @author eneim | 6/5/17.
+ *
+ *         A helper class, dedicated to {@link SimpleExoPlayerView}.
  */
 
-public class ExoPlayerHelper {
+public final class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
+  @SuppressWarnings("WeakerAccess") //
   @NonNull final SimpleExoPlayerView playerView;
-
-  @DefaultRenderersFactory.ExtensionRendererMode private final int extensionMode;
-
-  private Handler mainHandler;
-  DefaultTrackSelector trackSelector;
-  boolean needRetrySource;
-  private boolean shouldAutoPlay;
-  private int resumeWindow;
-  private long resumePosition;
-
-  MediaSource mediaSource;
+  @SuppressWarnings("WeakerAccess") //
+  final PlayerState playerState;  // instance is unchanged, but inner fields are changable.
+  @SuppressWarnings("WeakerAccess") //
+  @DefaultRenderersFactory.ExtensionRendererMode  //
+  final int extensionMode;
 
   private SimpleExoPlayer player;
+  private Handler mainHandler;
   private ComponentListener componentListener;
+  private boolean shouldAutoPlay;
 
-  @SuppressWarnings("WeakerAccess") //
-  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
-      @DefaultRenderersFactory.ExtensionRendererMode int extensionMode) {
+  @SuppressWarnings("WeakerAccess") DefaultTrackSelector trackSelector;
+  @SuppressWarnings("WeakerAccess") MediaSource mediaSource;
+  @SuppressWarnings("WeakerAccess") boolean needRetrySource;
+  @SuppressWarnings("WeakerAccess") EventListener eventListener;
+
+  @SuppressWarnings("WeakerAccess")
+  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, int extensionMode,
+      PlayerState playerState) {
     this.playerView = playerView;
     this.extensionMode = extensionMode;
+    this.playerState = playerState;
+  }
+
+  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, PlayerState playerState) {
+    this(playerView, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, playerState);
+  }
+
+  @SuppressWarnings("WeakerAccess")
+  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, int extensionMode) {
+    this(playerView, extensionMode, new PlayerState());
   }
 
   @SuppressWarnings("unused") //
@@ -171,9 +187,9 @@ public class ExoPlayerHelper {
     }
 
     if (needNewPlayer || needRetrySource) {
-      boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
+      boolean haveResumePosition = playerState.getResumeWindow() != C.INDEX_UNSET;
       if (haveResumePosition) {
-        player.seekTo(resumeWindow, resumePosition);
+        player.seekTo(playerState.getResumeWindow(), playerState.getResumePosition());
       }
       player.prepare(mediaSource, !haveResumePosition, false);
       needRetrySource = false;
@@ -184,9 +200,9 @@ public class ExoPlayerHelper {
     if (player != null) {
       shouldAutoPlay = player.getPlayWhenReady();
       updateResumePosition();
-      playerView.setPlayer(null);
       player.removeListener(componentListener);
       player.release();
+      playerView.setPlayer(null);
       player = null;
       trackSelector = null;
     }
@@ -199,6 +215,15 @@ public class ExoPlayerHelper {
     }
   }
 
+  public PlayerState getPlayerState() {
+    updateResumePosition();
+    return new PlayerState(playerState.getResumeWindow(), playerState.getResumePosition());
+  }
+
+  public void setEventListener(EventListener eventListener) {
+    this.eventListener = eventListener;
+  }
+
   public void play() {
     if (player != null) player.setPlayWhenReady(true);
   }
@@ -207,48 +232,68 @@ public class ExoPlayerHelper {
     if (player != null) player.setPlayWhenReady(false);
   }
 
+  public boolean isPlaying() {
+    return this.player != null && this.player.getPlayWhenReady();
+  }
+
   public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
     if (player != null) player.setVolume(volume);
   }
 
+  public SimpleExoPlayer getPlayer() {
+    return player;
+  }
+
   void updateResumePosition() {
-    resumeWindow = player.getCurrentWindowIndex();
-    resumePosition =
-        player.isCurrentWindowSeekable() ? Math.max(0, player.getCurrentPosition()) : C.TIME_UNSET;
+    playerState.setResumeWindow(player.getCurrentWindowIndex());
+    playerState.setResumePosition(
+        player.isCurrentWindowSeekable() ? Math.max(0, player.getCurrentPosition()) : C.TIME_UNSET);
   }
 
   void clearResumePosition() {
-    resumeWindow = C.INDEX_UNSET;
-    resumePosition = C.TIME_UNSET;
+    playerState.reset();
   }
 
-  private class ComponentListener implements SimpleExoPlayer.EventListener {
+  private class ComponentListener implements ExoPlayer.EventListener {
 
     ComponentListener() {
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-      // Do nothing
+      Log.d(TAG, "onTimelineChanged() called with: timeline = ["
+          + timeline
+          + "], manifest = ["
+          + manifest
+          + "]");
+      if (eventListener != null) eventListener.onTimelineChanged(timeline, manifest);
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+      Log.d(TAG, "onTracksChanged() called with: trackGroups = ["
+          + trackGroups
+          + "], trackSelections = ["
+          + trackSelections
+          + "]");
       MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
           trackSelector.getCurrentMappedTrackInfo();
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(playerView.getContext(), R.string.error_unsupported_video, Toast.LENGTH_SHORT).show();
+          Toast.makeText(playerView.getContext(), R.string.error_unsupported_video,
+              Toast.LENGTH_SHORT).show();
         }
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(playerView.getContext(), R.string.error_unsupported_audio, Toast.LENGTH_SHORT).show();
+          Toast.makeText(playerView.getContext(), R.string.error_unsupported_audio,
+              Toast.LENGTH_SHORT).show();
         }
       }
+      if (eventListener != null) eventListener.onTracksChanged(trackGroups, trackSelections);
     }
 
     @Override public void onLoadingChanged(boolean isLoading) {
-      // Do nothing
+      if (eventListener != null) eventListener.onLoadingChanged(isLoading);
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -257,6 +302,7 @@ public class ExoPlayerHelper {
           + "], playbackState = ["
           + playbackState
           + "]");
+      if (eventListener != null) eventListener.onPlayerStateChanged(playWhenReady, playbackState);
     }
 
     @Override public void onPlayerError(ExoPlaybackException e) {
@@ -299,6 +345,8 @@ public class ExoPlayerHelper {
       } else {
         updateResumePosition();
       }
+
+      if (eventListener != null) eventListener.onPlayerError(e);
     }
 
     @Override public void onPositionDiscontinuity() {
@@ -308,12 +356,13 @@ public class ExoPlayerHelper {
         // which they seek.
         updateResumePosition();
       }
+
+      if (eventListener != null) eventListener.onPositionDiscontinuity();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters parameters) {
-      // TODO implement this if need
-      Log.d("ToroLib:ExoPlayerView",
-          "onPlaybackParametersChanged() called with: parameters = [" + parameters + "]");
+      Log.d(TAG, "onPlaybackParametersChanged() called with: parameters = [" + parameters + "]");
+      if (eventListener != null) eventListener.onPlaybackParametersChanged(parameters);
     }
   }
 
@@ -423,6 +472,39 @@ public class ExoPlayerHelper {
         } catch (RuntimeException e) {
           throw new ParserException("Unsupported drm type: " + typeString);
         }
+    }
+  }
+
+  // Adapter for original EventListener
+  public static class EventListener implements ExoPlayer.EventListener {
+
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+    }
+
+    @Override public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override public void onPositionDiscontinuity() {
+
+    }
+
+    @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
     }
   }
 }

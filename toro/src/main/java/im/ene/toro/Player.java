@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import im.ene.toro.media.PlayerState;
 
 /**
  * @author eneim | 5/31/17.
@@ -29,11 +30,13 @@ public interface Player {
 
   @NonNull View getPlayerView();
 
+  @NonNull PlayerState getCurrentState();
+
   /**
    * {@link ExoPlayer} should call {@link ExoPlayer#prepare(MediaSource)} here, and not start
    * playback when ready
    */
-  boolean prepare();
+  boolean prepare(@NonNull PlayerState playerState);
 
   void release();
 
@@ -46,12 +49,6 @@ public interface Player {
    * Pause current playback.
    */
   void pause();
-
-  /**
-   * Stop current playback. Next time this player call {@link #play()} it should start from the
-   * beginning.
-   */
-  // void stop();
 
   boolean isPlaying();
 

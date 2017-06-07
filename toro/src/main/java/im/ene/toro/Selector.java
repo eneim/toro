@@ -22,6 +22,8 @@ import android.util.Log;
 import ix.Ix;
 import java.util.Collection;
 
+import static java.util.Collections.emptyList;
+
 /**
  * @author eneim | 6/2/17.
  */
@@ -35,13 +37,13 @@ public interface Selector {
   /**
    * @return The Selector that has opposite selecting logic.
    */
-  @Nullable Selector mirror();
+  @SuppressWarnings("unused") @Nullable Selector mirror();
 
   Selector DEFAULT = new Selector() {
     @NonNull @Override
     public Collection<Player> select(@NonNull Collection<Player> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
-      return Ix.from(items).take(limit).toList();
+      return Ix.from(items).orderBy(Common.ORDER_COMPARATOR).take(limit).toList();
     }
 
     @Override public Selector mirror() {
@@ -58,6 +60,17 @@ public interface Selector {
 
     @Nullable @Override public Selector mirror() {
       return DEFAULT;
+    }
+  };
+
+  Selector NONE = new Selector() {
+    @NonNull @Override
+    public Collection<Player> select(@NonNull Collection<Player> items, int limit) {
+      return emptyList();
+    }
+
+    @Nullable @Override public Selector mirror() {
+      return this;
     }
   };
 }

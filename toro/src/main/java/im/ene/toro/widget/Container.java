@@ -19,9 +19,12 @@ package im.ene.toro.widget;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
+import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -32,8 +35,10 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
 import im.ene.toro.PlayerManager;
+import im.ene.toro.PlayerStateManager;
 import im.ene.toro.Selector;
 import im.ene.toro.ToroLayoutManager;
+import im.ene.toro.media.PlayerState;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,8 +53,9 @@ public class Container extends RecyclerView {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
 
-  PlayerManager manager;
-  Selector selector;
+  PlayerManager playerManager;
+  Selector playerSelector;
+  PlayerStateManager playerStateManager;
   Handler animatorFinishHandler;
 
   public Container(Context context) {
@@ -82,57 +88,81 @@ public class Container extends RecyclerView {
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
     Log.d(TAG, "onChildAttachedToWindow() called with: child = [" + child + "]");
-    if (manager == null || selector == null) return;
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
-
     final Player player = (Player) holder;
-    if (manager.manages(player)) {
-      if (!player.isPlaying()) player.play();
-    } else {
-      child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-        @Override public void onGlobalLayout() {
-          child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          if (player.wantsToPlay()) {
-            player.prepare();
-            if (manager.attachPlayer(player)) {
-              dispatchUpdateOnAnimationFinished();
+    if (this.playerStateManager != null) {
+      this.playerStateManager.getPlayerState(player.getPlayOrder());
+    }
+
+    if (playerManager != null) {
+      if (playerManager.manages(player)) {
+        if (!player.isPlaying()) player.play();
+      } else {
+        child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+          @Override public void onGlobalLayout() {
+            child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            if (player.wantsToPlay()) {
+              player.prepare(playerStateManager != null ?  //
+                  playerStateManager.getPlayerState(player.getPlayOrder()) : new PlayerState());
+              if (playerManager.attachPlayer(player)) {
+                dispatchUpdateOnAnimationFinished();
+              }
             }
           }
-        }
-      });
+        });
+      }
     }
   }
 
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
     Log.e(TAG, "onChildDetachedFromWindow() called with: child = [" + child + "]");
-    if (manager == null || selector == null) return;
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
-
     final Player player = (Player) holder;
-    if (player.isPlaying()) player.pause();
-    if (manager.manages(player)) {
-      manager.detachPlayer(player);
+    if (this.playerStateManager != null) {
+      this.playerStateManager.savePlayerState(player.getPlayOrder(), player.getCurrentState());
+    }
+
+    if (playerManager != null) {
+      if (player.isPlaying()) player.pause();
+      if (playerManager.manages(player)) {
+        playerManager.detachPlayer(player);
+      }
     }
     // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
     // sometime it happens after all Animation, but we also need to update playback here.
     dispatchUpdateOnAnimationFinished();
+    player.release();
+  }
+
+  @Override
+  protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
+    super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+    Log.w(TAG, "onOverScrolled() called with: scrollX = ["
+        + scrollX
+        + "], scrollY = ["
+        + scrollY
+        + "], clampedX = ["
+        + clampedX
+        + "], clampedY = ["
+        + clampedY
+        + "]");
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
     if (state != SCROLL_STATE_IDLE) return;
-    if (manager == null || this.selector == null || getChildCount() == 0) return;
+    if (playerManager == null || this.playerSelector == null || getChildCount() == 0) return;
 
-    final List<Player> currentPlayers = new ArrayList<>(manager.getPlayers());
+    final List<Player> currentPlayers = new ArrayList<>(playerManager.getPlayers());
     int count = currentPlayers.size();
     for (int i = count - 1; i >= 0; i--) {
       Player player = currentPlayers.get(i);
       if (!player.wantsToPlay()) {
         player.pause();
-        manager.detachPlayer(player);
+        playerManager.detachPlayer(player);
       }
     }
 
@@ -171,9 +201,10 @@ public class Container extends RecyclerView {
           Player candidate = (Player) holder;
           // check candidate's condition
           if (candidate.wantsToPlay()) {
-            if (!manager.manages(candidate)) {
-              if (manager.attachPlayer(candidate)) {
-                candidate.prepare();
+            if (!playerManager.manages(candidate)) {
+              if (playerManager.attachPlayer(candidate)) {
+                candidate.prepare(playerStateManager != null ? playerStateManager.getPlayerState(
+                    candidate.getPlayOrder()) : new PlayerState());
               }
             }
           }
@@ -181,37 +212,37 @@ public class Container extends RecyclerView {
       }
     }
 
-    manager.updatePlayback(this, selector);
+    playerManager.updatePlayback(this, playerSelector);
   }
 
   ////// Manager and Selector stuff
 
-  @Nullable public PlayerManager getManager() {
-    return manager;
+  @Nullable public PlayerManager getPlayerManager() {
+    return playerManager;
   }
 
-  public void setManager(@Nullable PlayerManager manager) {
-    if (this.manager == manager) return;
-    if (this.manager != null) {
-      for (Player player : this.manager.getPlayers()) {
+  public void setPlayerManager(@Nullable PlayerManager playerManager) {
+    if (this.playerManager == playerManager) return;
+    if (this.playerManager != null) {
+      for (Player player : this.playerManager.getPlayers()) {
         player.pause();
       }
-      this.manager.getPlayers().clear();
+      this.playerManager.getPlayers().clear();
     }
 
-    this.manager = manager;
-    if (this.manager == null || this.selector == null) return;
+    this.playerManager = playerManager;
+    if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
   @SuppressWarnings("unused") @Nullable public Selector getSelector() {
-    return selector;
+    return playerSelector;
   }
 
-  public void setSelector(@Nullable Selector selector) {
-    if (this.selector == selector) return;
-    this.selector = selector;
-    if (this.manager == null || this.selector == null) return;
+  public void setSelector(@Nullable Selector playerSelector) {
+    if (this.playerSelector == playerSelector) return;
+    this.playerSelector = playerSelector;
+    if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
@@ -257,6 +288,9 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
+      if (adapter instanceof PlayerStateManager) {
+        this.playerStateManager = (PlayerStateManager) adapter;
+      }
     }
     super.setAdapter(wrapper);
   }
@@ -271,6 +305,9 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
+      if (adapter instanceof PlayerStateManager) {
+        this.playerStateManager = (PlayerStateManager) adapter;
+      }
     }
     super.swapAdapter(wrapper, removeAndRecycleExistingViews);
   }
@@ -281,28 +318,68 @@ public class Container extends RecyclerView {
         ((AdapterWrapper) adapter).origin : adapter;
   }
 
+  @Override protected Parcelable onSaveInstanceState() {
+    return super.onSaveInstanceState();
+  }
+
+  @Override protected void onRestoreInstanceState(Parcelable state) {
+    super.onRestoreInstanceState(state);
+  }
+
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  public static class ContainerState extends AbsSavedState {
+
+
+
+    protected ContainerState(Parcelable superState) {
+      super(superState);
+    }
+  }
+
   private class ToroDataObserver extends AdapterDataObserver {
 
     ToroDataObserver() {
     }
 
     @Override public void onChanged() {
+      // call this to trigger update for all players
+      if (playerStateManager != null) playerStateManager.onMediaChange(-1, -1);
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeChanged(int positionStart, int itemCount) {
+      if (playerStateManager != null) {
+        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
+          playerStateManager.onMediaChange(order, order);
+        }
+      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeInserted(int positionStart, int itemCount) {
+      if (playerStateManager != null) {
+        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
+          playerStateManager.onMediaChange(order, order);
+        }
+      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
+      if (playerStateManager != null) {
+        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
+          playerStateManager.onMediaChange(order, order);
+        }
+      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
+      if (playerStateManager != null) {
+        for (int order = fromPosition, total = fromPosition + itemCount; order < total; order++) {
+          playerStateManager.onMediaChange(order, order);
+        }
+      }
       dispatchUpdateOnAnimationFinished();
     }
   }
