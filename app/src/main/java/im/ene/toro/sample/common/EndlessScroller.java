@@ -19,21 +19,22 @@ package im.ene.toro.sample.common;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import im.ene.toro.sample.data.DataSource;
 
 /**
  * @author eneim | 6/7/17.
  */
 
-public abstract class EndlessRecyclerView extends RecyclerView.OnScrollListener {
+public abstract class EndlessScroller extends RecyclerView.OnScrollListener {
 
   // The minimum number of items remaining before we should loading more.
   private static final int VISIBLE_THRESHOLD = 5;
 
-  private final LinearLayoutManager layoutManager;
+  private final RecyclerView.LayoutManager layoutManager;
   private final DataSource dataLoading;
 
-  public EndlessRecyclerView(@NonNull LinearLayoutManager layoutManager,
+  protected EndlessScroller(@NonNull RecyclerView.LayoutManager layoutManager,
       @NonNull DataSource dataLoading) {
     this.layoutManager = layoutManager;
     this.dataLoading = dataLoading;
@@ -45,7 +46,12 @@ public abstract class EndlessRecyclerView extends RecyclerView.OnScrollListener 
 
     final int visibleItemCount = recyclerView.getChildCount();
     final int totalItemCount = layoutManager.getItemCount();
-    final int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+    final int firstVisibleItem = layoutManager instanceof LinearLayoutManager
+        ? ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition()
+        : layoutManager instanceof StaggeredGridLayoutManager ? //
+            ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(
+                new int[((StaggeredGridLayoutManager) layoutManager).getSpanCount() + 1])[0]
+            : (layoutManager.getItemCount() - layoutManager.getChildCount());
 
     if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + VISIBLE_THRESHOLD)) {
       onLoadMore();

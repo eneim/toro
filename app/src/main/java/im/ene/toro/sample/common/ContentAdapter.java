@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import im.ene.toro.sample.data.Entity;
 import im.ene.toro.sample.data.MediaItem;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -61,12 +62,29 @@ public class ContentAdapter extends RecyclerView.Adapter<BaseViewHolder> {
   public void addMany(boolean reset, @NonNull List<Entity> entities) {
     if (reset) {
       this.entities.clear();
-      notifyDataSetChanged();
+      notifyItemRangeRemoved(0, entities.size());
     }
 
     int oldCount = this.entities.size();
     if (this.entities.addAll(entities)) {
       notifyItemRangeInserted(oldCount, entities.size());
     }
+  }
+
+  /// Item Move
+
+  public boolean onItemMoved(int fromPos, int toPos) {
+    if (fromPos == toPos) return false;
+    if (fromPos < toPos) {
+      for (int i = fromPos; i < toPos; i++) {
+        Collections.swap(this.entities, i, i + 1);
+      }
+    } else {
+      for (int i = fromPos; i > toPos; i--) {
+        Collections.swap(this.entities, i, i - 1);
+      }
+    }
+    notifyItemMoved(fromPos, toPos);
+    return true;
   }
 }

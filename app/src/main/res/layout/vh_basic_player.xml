@@ -21,7 +21,7 @@
     android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
+    android:layout_margin="4dp"
     app:cardBackgroundColor="@color/cardview_light_background"
     app:cardCornerRadius="0dp"
     app:cardElevation="2dp"
@@ -56,7 +56,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:minHeight="@dimen/video_min_height"
+        android:minHeight="112dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_content"
@@ -75,9 +75,10 @@
           android:layout_gravity="bottom|end"
           android:layout_margin="4dp"
           android:background="#80000000"
+          android:maxLines="1"
           android:padding="4dp"
           android:textAllCaps="true"
-          android:textAppearance="@style/TextAppearance.AppCompat.Small"
+          android:textAppearance="@style/DebugText"
           android:textColor="#FFFF00"
           />
 
@@ -88,9 +89,10 @@
           android:layout_gravity="top|end"
           android:layout_margin="4dp"
           android:background="#80000000"
+          android:maxLines="3"
           android:padding="4dp"
           android:textAllCaps="true"
-          android:textAppearance="@style/TextAppearance.AppCompat.Small"
+          android:textAppearance="@style/DebugText"
           android:textColor="#FFFF00"
           />
     </com.google.android.exoplayer2.ui.SimpleExoPlayerView>

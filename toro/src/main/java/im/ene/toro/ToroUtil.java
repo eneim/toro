@@ -19,9 +19,7 @@ package im.ene.toro;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
-import im.ene.toro.widget.Container;
 
 /**
  * @author eneim | 5/31/17.
@@ -33,23 +31,16 @@ public final class ToroUtil {
     throw new RuntimeException("Meh!");
   }
 
-  private static Rect getVideoRect(View playerView) {
+  private static Rect getViewRect(View view) {
     Rect rect = new Rect();
     Point offset = new Point();
-    playerView.getGlobalVisibleRect(rect, offset);
+    view.getGlobalVisibleRect(rect, offset);
     return rect;
   }
 
-  @Nullable private static Rect getRecyclerViewRect(@NonNull Container parent) {
-    Rect rect = new Rect();
-    Point offset = new Point();
-    parent.getGlobalVisibleRect(rect, offset);
-    return rect;
-  }
-
-  public static float visibleAreaOffset(View playerView, Container parent) {
-    Rect videoRect = getVideoRect(playerView);
-    Rect parentRect = getRecyclerViewRect(parent);
+  public static float visibleAreaOffset(@NonNull View playerView, @NonNull View container) {
+    Rect videoRect = getViewRect(playerView);
+    Rect parentRect = getViewRect(container);
 
     if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
       int visibleArea = videoRect.height() * videoRect.width();

@@ -32,6 +32,7 @@ public final class DataSource {
 
   private volatile static DataSource singleton;
 
+  // Singleton, for use in this demo. may not good for real practice
   public static DataSource getInstance() {
     if (singleton == null) {
       synchronized (DataSource.class) {

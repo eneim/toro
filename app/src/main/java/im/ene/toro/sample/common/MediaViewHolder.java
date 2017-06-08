@@ -90,7 +90,7 @@ class MediaViewHolder extends BaseViewHolder implements Player {
         helper.setEventListener(new ExoPlayerHelper.EventListener() {
           @SuppressLint("SetTextI18n") @Override
           public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            state.setText("STATE: " + playbackState + ", PLAY_WHEN_READY: " + playWhenReady);
+            state.setText("STATE: " + playbackState + ", PWR: " + playWhenReady);
             if (playbackState >= 2) {
               if (helper != null && helper.getPlayer() != null) {
                 Format[] formats = getCurrentFormats(helper.getPlayer());

@@ -56,6 +56,10 @@ public final class ToroHelper {
         throw new IllegalStateException(
             "This Container has already been registered to another Helper.");
       }
+      this.container.getItemAnimator().setMoveDuration(1000);
+      this.container.getItemAnimator().setAddDuration(1000);
+      this.container.getItemAnimator().setRemoveDuration(1000);
+      this.container.getItemAnimator().setChangeDuration(1000);
       this.container.setSelector(this.selector);
       this.container.setPlayerManager(this.manager);
     }

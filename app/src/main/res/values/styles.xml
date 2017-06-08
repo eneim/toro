@@ -24,6 +24,10 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
+  <style name="DebugText" parent="Widget.AppCompat.Button.Small">
+    <item name="android:textSize">10sp</item>
+  </style>
+
   <integer name="grid_span">1</integer>
 
 </resources>

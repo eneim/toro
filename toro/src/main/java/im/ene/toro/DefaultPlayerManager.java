@@ -64,7 +64,7 @@ public class DefaultPlayerManager implements PlayerManager {
       }
     });
 
-    source.except(Ix.from(selector.select(source.toList(), this.playerCount))
+    source.except(Ix.from(selector.select(container, source.toList(), this.playerCount))
         .doOnNext(new IxConsumer<Player>() {
           @Override public void accept(Player player) {
             if (!player.isPlaying()) player.play();
