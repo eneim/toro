@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.data;
 
-import android.os.Bundle;
-import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.features.Deck;
-import im.ene.toro.sample.features.basic.BasicListFragment;
+/**
+ * @author eneim | 6/7/17.
+ */
 
-public class MainActivity extends BaseActivity {
+public class TextItem implements Entity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      try {
-        Deck.present(this, BasicListFragment.class);
-      } catch (Deck.ToroDemoException e) {
-        e.printStackTrace();
-        if (e.getCause() != null) e.getCause().printStackTrace();
-      }
-    }
+  private final String content = "# About GitHub Wikis\n"
+      + "> Just as writing good code and great tests are important, excellent documentation helps others use and extend your project.\n"
+      + "\n"
+      + "> Every GitHub repository comes equipped with a section for hosting documentation, called a wiki.";
+
+  TextItem() {
+  }
+
+  @Override public String toString() {
+    return "TextItem{" + hashCode() + "}";
+  }
+
+  public String getContent() {
+    return content;
   }
 }

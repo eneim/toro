@@ -37,6 +37,7 @@ public final class ToroHelper {
     this(manager, null);
   }
 
+  @SuppressWarnings("WeakerAccess")
   public ToroHelper(@NonNull PlayerManager manager, @Nullable Selector selector) {
     this.manager = manager;
     this.selector = selector;
@@ -46,17 +47,21 @@ public final class ToroHelper {
     Log.e(TAG, "registerContainer() called with: container = [" + container + "]");
     if (this.container == container) return;
     if (this.container != null) {
-      this.container.setManager(null);
+      this.container.setPlayerManager(null);
     }
 
     this.container = container;
     if (this.container != null) {
-      if (this.container.getManager() != null) {
+      if (this.container.getPlayerManager() != null) {
         throw new IllegalStateException(
             "This Container has already been registered to another Helper.");
       }
+      this.container.getItemAnimator().setMoveDuration(1000);
+      this.container.getItemAnimator().setAddDuration(1000);
+      this.container.getItemAnimator().setRemoveDuration(1000);
+      this.container.getItemAnimator().setChangeDuration(1000);
       this.container.setSelector(this.selector);
-      this.container.setManager(this.manager);
+      this.container.setPlayerManager(this.manager);
     }
   }
 

@@ -15,6 +15,7 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
   compileSdkVersion 25
@@ -35,6 +36,11 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 }
 
 dependencies {
@@ -50,8 +56,20 @@ dependencies {
 
   compile project(':toro')
 
+  // additional dependencies.
+  compile "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
+
   compile 'com.jakewharton:butterknife:8.5.1'
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+  // rxJava 2
+  compile("io.reactivex.rxjava2:rxandroid:2.0.1", {
+    exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
+  })
+  compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+  compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
 
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'

@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.data;
 
-import android.os.Bundle;
-import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.features.Deck;
-import im.ene.toro.sample.features.basic.BasicListFragment;
+/**
+ * @author eneim | 6/7/17.
+ *
+ *         Base entity, to simulate the real use case of having data entity on the backend.
+ */
 
-public class MainActivity extends BaseActivity {
+public interface Entity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      try {
-        Deck.present(this, BasicListFragment.class);
-      } catch (Deck.ToroDemoException e) {
-        e.printStackTrace();
-        if (e.getCause() != null) e.getCause().printStackTrace();
-      }
-    }
-  }
 }

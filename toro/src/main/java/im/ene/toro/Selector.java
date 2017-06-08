@@ -19,8 +19,12 @@ package im.ene.toro;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import ix.Ix;
 import java.util.Collection;
+import java.util.Comparator;
+
+import static java.util.Collections.emptyList;
 
 /**
  * @author eneim | 6/2/17.
@@ -30,34 +34,63 @@ public interface Selector {
 
   String TAG = "ToroLib:Selector";
 
-  @NonNull Collection<Player> select(@NonNull Collection<Player> items, int limit);
+  @NonNull Collection<Player> select(@NonNull View container, //
+      @NonNull Collection<Player> items, int limit);
 
   /**
    * @return The Selector that has opposite selecting logic.
    */
-  @Nullable Selector mirror();
+  @SuppressWarnings("unused") @Nullable Selector reverse();
 
   Selector DEFAULT = new Selector() {
-    @NonNull @Override
-    public Collection<Player> select(@NonNull Collection<Player> items, int limit) {
+    @NonNull @Override public Collection<Player> select(@NonNull View container, //
+        @NonNull Collection<Player> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
-      return Ix.from(items).take(limit).toList();
+      return Ix.from(items).orderBy(Common.ORDER_COMPARATOR).take(limit).toList();
     }
 
-    @Override public Selector mirror() {
+    @Override public Selector reverse() {
       return DEFAULT_REVERSE;
     }
   };
 
   Selector DEFAULT_REVERSE = new Selector() {
-    @NonNull @Override
-    public Collection<Player> select(@NonNull Collection<Player> items, int limit) {
+    @NonNull @Override public Collection<Player> select(@NonNull View container, //
+        @NonNull Collection<Player> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).takeLast(limit).toList();
     }
 
-    @Nullable @Override public Selector mirror() {
+    @Nullable @Override public Selector reverse() {
       return DEFAULT;
+    }
+  };
+
+  @SuppressWarnings("unused") Selector BY_AREA = new Selector() {
+    @NonNull @Override public Collection<Player> select(@NonNull final View container,
+        @NonNull Collection<Player> items, int limit) {
+      return Ix.from(items).orderBy(new Comparator<Player>() {
+        @Override public int compare(Player o1, Player o2) {
+          return Float.compare( //
+              ToroUtil.visibleAreaOffset(o1.getPlayerView(), container),
+              ToroUtil.visibleAreaOffset(o2.getPlayerView(), container));
+        }
+      }).take(limit).toList();
+    }
+
+    @Nullable @Override public Selector reverse() {
+      return this;  // FIXME return proper reverse selector.
+    }
+  };
+
+  @SuppressWarnings("unused") Selector NONE = new Selector() {
+    @NonNull @Override public Collection<Player> select(@NonNull View container, //
+        @NonNull Collection<Player> items, int limit) {
+      return emptyList();
+    }
+
+    @Nullable @Override public Selector reverse() {
+      return this;
     }
   };
 }
