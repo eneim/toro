@@ -22,9 +22,11 @@ package im.ene.toro.sample.data;
 
 public class MediaItem implements Entity {
 
+  private final long index;
   private final MediaUrl mediaUrl;
 
-  public MediaItem(MediaUrl mediaUrl) {
+  public MediaItem(long index, MediaUrl mediaUrl) {
+    this.index = index;
     this.mediaUrl = mediaUrl;
   }
 
@@ -32,7 +34,11 @@ public class MediaItem implements Entity {
     return mediaUrl;
   }
 
+  @Override public long getIndex() {
+    return index;
+  }
+
   @Override public String toString() {
-    return "MediaItem{" + hashCode() + "}_" + "url=" + mediaUrl + '}';
+    return "MediaItem{" + "index=" + index + ", url=" + mediaUrl + '}';
   }
 }

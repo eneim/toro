@@ -27,7 +27,14 @@ public class TextItem implements Entity {
       + "\n"
       + "> Every GitHub repository comes equipped with a section for hosting documentation, called a wiki.";
 
-  TextItem() {
+  private final long index;
+
+  public TextItem(long index) {
+    this.index = index;
+  }
+
+  @Override public long getIndex() {
+    return index;
   }
 
   @Override public String toString() {

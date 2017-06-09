@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -31,13 +32,13 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.ExoPlayerHelper;
 import im.ene.toro.Player;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlayerState;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaItem;
 import im.ene.toro.widget.Container;
+import im.ene.toro.widget.ExoPlayerHelper;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,15 +46,15 @@ import java.util.List;
  * @author eneim | 6/6/17.
  */
 
-class MediaViewHolder extends BaseViewHolder implements Player {
+public class MediaViewHolder extends BaseViewHolder implements Player {
 
   static final int LAYOUT_RES = R.layout.vh_basic_player;
 
-  @Nullable ExoPlayerHelper helper;
+  @SuppressWarnings("WeakerAccess") @Nullable ExoPlayerHelper helper;
   @Nullable private Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
-  @BindView(R.id.text_content) TextView content;
+  public @BindView(R.id.text_content) Button content;
   @BindView(R.id.player_state) TextView state;
   @BindView(R.id.player_format) TextView format;
 
