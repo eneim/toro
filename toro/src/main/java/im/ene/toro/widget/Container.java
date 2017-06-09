@@ -268,7 +268,7 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
-      if (adapter instanceof PlayerStateManager) {
+      if (adapter instanceof PlayerStateManager && this.playerStateManager == null) {
         this.playerStateManager = (PlayerStateManager) adapter;
       }
     }
@@ -285,7 +285,7 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
-      if (adapter instanceof PlayerStateManager) {
+      if (adapter instanceof PlayerStateManager && this.playerStateManager == null) {
         this.playerStateManager = (PlayerStateManager) adapter;
       }
     }
