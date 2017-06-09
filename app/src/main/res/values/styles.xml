@@ -29,5 +29,5 @@
   </style>
 
   <integer name="grid_span">1</integer>
-
+  <integer name="staggered_grid_span">2</integer>
 </resources>
