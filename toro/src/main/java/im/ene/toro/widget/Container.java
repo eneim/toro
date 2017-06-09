@@ -23,8 +23,6 @@ import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
-import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -87,13 +85,9 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    Log.d(TAG, "onChildAttachedToWindow() called with: child = [" + child + "]");
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
     final Player player = (Player) holder;
-    if (this.playerStateManager != null) {
-      this.playerStateManager.getPlayerState(player.getPlayOrder());
-    }
 
     if (playerManager != null) {
       if (playerManager.manages(player)) {
@@ -117,7 +111,6 @@ public class Container extends RecyclerView {
 
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
-    Log.e(TAG, "onChildDetachedFromWindow() called with: child = [" + child + "]");
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
     final Player player = (Player) holder;
@@ -134,6 +127,7 @@ public class Container extends RecyclerView {
     // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
     // sometime it happens after all Animation, but we also need to update playback here.
     dispatchUpdateOnAnimationFinished();
+    // finally release the player
     player.release();
   }
 
@@ -203,11 +197,11 @@ public class Container extends RecyclerView {
 
   ////// Manager and Selector stuff
 
-  @Nullable public PlayerManager getPlayerManager() {
+  @Nullable PlayerManager getPlayerManager() {
     return playerManager;
   }
 
-  public void setPlayerManager(@Nullable PlayerManager playerManager) {
+  void setPlayerManager(@Nullable PlayerManager playerManager) {
     if (this.playerManager == playerManager) return;
     if (this.playerManager != null) {
       for (Player player : this.playerManager.getPlayers()) {
@@ -221,11 +215,11 @@ public class Container extends RecyclerView {
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  @SuppressWarnings("unused") @Nullable public Selector getSelector() {
+  @Nullable Selector getSelector() {
     return playerSelector;
   }
 
-  public void setSelector(@Nullable Selector playerSelector) {
+  void setSelector(@Nullable Selector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     if (this.playerManager == null || this.playerSelector == null) return;
@@ -305,19 +299,13 @@ public class Container extends RecyclerView {
   }
 
   @Override protected Parcelable onSaveInstanceState() {
+    Log.w(TAG, "onSaveInstanceState() called");
     return super.onSaveInstanceState();
   }
 
   @Override protected void onRestoreInstanceState(Parcelable state) {
+    Log.w(TAG, "onRestoreInstanceState() called with: state = [" + state + "]");
     super.onRestoreInstanceState(state);
-  }
-
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
-  public static class ContainerState extends AbsSavedState {
-
-    protected ContainerState(Parcelable superState) {
-      super(superState);
-    }
   }
 
   private class ToroDataObserver extends AdapterDataObserver {
@@ -326,44 +314,23 @@ public class Container extends RecyclerView {
     }
 
     @Override public void onChanged() {
-      // call this to trigger update for all players
-      if (playerStateManager != null) playerStateManager.onMediaChange(-1, -1);
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeChanged(int positionStart, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeInserted(int positionStart, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
 
+    // FIXME 2017/06/08 For now we can ignore the itemCount value.
     @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = fromPosition, total = fromPosition + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
   }

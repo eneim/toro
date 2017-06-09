@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import im.ene.toro.widget.Container;
+import im.ene.toro.PlayerManager;
+import im.ene.toro.Selector;
 
 /**
  * @author eneim | 5/31/17.
@@ -56,10 +57,6 @@ public final class ToroHelper {
         throw new IllegalStateException(
             "This Container has already been registered to another Helper.");
       }
-      this.container.getItemAnimator().setMoveDuration(1000);
-      this.container.getItemAnimator().setAddDuration(1000);
-      this.container.getItemAnimator().setRemoveDuration(1000);
-      this.container.getItemAnimator().setChangeDuration(1000);
       this.container.setSelector(this.selector);
       this.container.setPlayerManager(this.manager);
     }
