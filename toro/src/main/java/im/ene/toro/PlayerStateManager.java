@@ -16,6 +16,8 @@
 
 package im.ene.toro;
 
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import im.ene.toro.media.PlayerState;
 
 /**
@@ -24,11 +26,7 @@ import im.ene.toro.media.PlayerState;
 
 public interface PlayerStateManager {
 
-  void savePlayerState(int order, PlayerState playerState);
+  void savePlayerState(@IntRange(from = -1) int order, @NonNull PlayerState playerState);
 
-  PlayerState getPlayerState(int order);
-
-  // on data change, and so on.
-  // TODO make this done
-  void onMediaChange(int fromPos, int toPos);
+  @NonNull PlayerState getPlayerState(@IntRange(from = -1) int order);
 }

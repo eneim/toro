@@ -36,6 +36,10 @@ public class PlayerState {
     this(C.INDEX_UNSET, C.TIME_UNSET);
   }
 
+  public PlayerState(PlayerState other) {
+    this(other.getResumeWindow(), other.getResumePosition());
+  }
+
   public int getResumeWindow() {
     return resumeWindow;
   }

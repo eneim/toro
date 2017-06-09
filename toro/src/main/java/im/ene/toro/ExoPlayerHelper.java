@@ -84,7 +84,7 @@ public final class ExoPlayerHelper {
   @SuppressWarnings("WeakerAccess") //
   @NonNull final SimpleExoPlayerView playerView;
   @SuppressWarnings("WeakerAccess") //
-  final PlayerState playerState;  // instance is unchanged, but inner fields are changable.
+  final PlayerState playerState;  // instance is unchanged, but inner fields are changeable.
   @SuppressWarnings("WeakerAccess") //
   @DefaultRenderersFactory.ExtensionRendererMode  //
   final int extensionMode;
@@ -215,7 +215,7 @@ public final class ExoPlayerHelper {
     }
   }
 
-  public PlayerState getPlayerState() {
+  @NonNull public PlayerState getPlayerState() {
     updateResumePosition();
     return new PlayerState(playerState.getResumeWindow(), playerState.getResumePosition());
   }
