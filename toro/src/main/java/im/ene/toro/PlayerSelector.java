@@ -30,7 +30,7 @@ import static java.util.Collections.emptyList;
  * @author eneim | 6/2/17.
  */
 
-public interface Selector {
+public interface PlayerSelector {
 
   String TAG = "ToroLib:Selector";
 
@@ -38,35 +38,35 @@ public interface Selector {
       @NonNull Collection<Player> items, int limit);
 
   /**
-   * @return The Selector that has opposite selecting logic.
+   * @return The PlayerSelector that has opposite selecting logic.
    */
-  @SuppressWarnings("unused") @Nullable Selector reverse();
+  @SuppressWarnings("unused") @Nullable PlayerSelector reverse();
 
-  Selector DEFAULT = new Selector() {
+  PlayerSelector DEFAULT = new PlayerSelector() {
     @NonNull @Override public Collection<Player> select(@NonNull View container, //
         @NonNull Collection<Player> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).orderBy(Common.ORDER_COMPARATOR).take(limit).toList();
     }
 
-    @Override public Selector reverse() {
+    @Override public PlayerSelector reverse() {
       return DEFAULT_REVERSE;
     }
   };
 
-  Selector DEFAULT_REVERSE = new Selector() {
+  PlayerSelector DEFAULT_REVERSE = new PlayerSelector() {
     @NonNull @Override public Collection<Player> select(@NonNull View container, //
         @NonNull Collection<Player> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).takeLast(limit).toList();
     }
 
-    @Nullable @Override public Selector reverse() {
+    @Nullable @Override public PlayerSelector reverse() {
       return DEFAULT;
     }
   };
 
-  @SuppressWarnings("unused") Selector BY_AREA = new Selector() {
+  @SuppressWarnings("unused") PlayerSelector BY_AREA = new PlayerSelector() {
     @NonNull @Override public Collection<Player> select(@NonNull final View container,
         @NonNull Collection<Player> items, int limit) {
       return Ix.from(items).orderBy(new Comparator<Player>() {
@@ -78,18 +78,18 @@ public interface Selector {
       }).take(limit).toList();
     }
 
-    @Nullable @Override public Selector reverse() {
+    @Nullable @Override public PlayerSelector reverse() {
       return this;  // FIXME return proper reverse selector.
     }
   };
 
-  @SuppressWarnings("unused") Selector NONE = new Selector() {
+  @SuppressWarnings("unused") PlayerSelector NONE = new PlayerSelector() {
     @NonNull @Override public Collection<Player> select(@NonNull View container, //
         @NonNull Collection<Player> items, int limit) {
       return emptyList();
     }
 
-    @Nullable @Override public Selector reverse() {
+    @Nullable @Override public PlayerSelector reverse() {
       return this;
     }
   };

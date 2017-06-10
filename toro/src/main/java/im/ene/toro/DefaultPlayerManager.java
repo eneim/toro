@@ -44,19 +44,19 @@ public class DefaultPlayerManager implements PlayerManager {
   }
 
   @Override
-  public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
+  public void updatePlayback(@NonNull final Container container, @NonNull PlayerSelector selector) {
     Log.e(TAG, "updatePlayback: " + this.players);
     if (BuildConfig.DEBUG) {
       //noinspection ConstantConditions
       if (selector == null) {
-        throw new IllegalArgumentException("Selector must not be null");
+        throw new IllegalArgumentException("PlayerSelector must not be null");
       }
     }
 
     if (this.players.isEmpty()) return;
     // from current player list:
     // 1. find those are allowed to play
-    // 2. among them, use Selector to select a subset then for each of them start the playback
+    // 2. among them, use PlayerSelector to select a subset then for each of them start the playback
     // if it is not playing, and pause the playback for others.
     final Ix<Player> source = Ix.from(players).filter(new IxPredicate<Player>() {
       @Override public boolean test(Player player) {

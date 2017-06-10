@@ -33,8 +33,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
 import im.ene.toro.PlayerManager;
+import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
-import im.ene.toro.Selector;
 import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.media.PlayerState;
 import java.lang.ref.WeakReference;
@@ -52,7 +52,7 @@ public class Container extends RecyclerView {
   @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
 
   PlayerManager playerManager;
-  Selector playerSelector;
+  PlayerSelector playerSelector;
   PlayerStateManager playerStateManager;
   Handler animatorFinishHandler;
 
@@ -195,7 +195,7 @@ public class Container extends RecyclerView {
     playerManager.updatePlayback(this, playerSelector);
   }
 
-  ////// Manager and Selector stuff
+  ////// Manager and PlayerSelector stuff
 
   @Nullable PlayerManager getPlayerManager() {
     return playerManager;
@@ -215,11 +215,11 @@ public class Container extends RecyclerView {
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  @Nullable Selector getSelector() {
+  @Nullable PlayerSelector getPlayerSelector() {
     return playerSelector;
   }
 
-  void setSelector(@Nullable Selector playerSelector) {
+  void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     if (this.playerManager == null || this.playerSelector == null) return;
