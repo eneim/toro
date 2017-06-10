@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.persist;
+package im.ene.toro.sample.features.stateful;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

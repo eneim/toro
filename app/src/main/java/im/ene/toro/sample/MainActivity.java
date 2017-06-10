@@ -19,7 +19,7 @@ package im.ene.toro.sample;
 import android.os.Bundle;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.sample.features.Deck;
-import im.ene.toro.sample.features.persist.StatefulPlaylistFragment;
+import im.ene.toro.sample.features.stateful.StatefulPlaylistFragment;
 
 public class MainActivity extends BaseActivity {
 

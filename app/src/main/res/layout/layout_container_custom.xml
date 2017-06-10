@@ -22,7 +22,7 @@
     android:layout_height="match_parent"
     >
 
-  <im.ene.toro.sample.features.persist.MyContainer
+  <im.ene.toro.sample.features.stateful.MyContainer
       android:id="@+id/recycler_view"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
