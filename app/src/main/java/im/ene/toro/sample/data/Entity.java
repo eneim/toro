@@ -24,4 +24,5 @@ package im.ene.toro.sample.data;
 
 public interface Entity {
 
+  long getIndex();
 }

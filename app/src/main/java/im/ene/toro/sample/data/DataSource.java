@@ -54,21 +54,22 @@ public final class DataSource {
     // method in io thread.
     if (!loadMore) this.entities.clear();
     loading.set(true);
-    List<Entity> entities = new ArrayList<>();
+    List<Entity> items = new ArrayList<>();
     int urlCount = MediaUrl.values().length;
+    int offset = this.entities.size();
     if (count > 0) {
       int mediaIdx = 0;
       for (int i = 0; i < count; i++) {
         if (random.nextFloat() < 0.65 /* magic number */) {
-          entities.add(new MediaItem(MediaUrl.values()[mediaIdx++ % urlCount]));
+          items.add(new MediaItem(offset + i, MediaUrl.values()[mediaIdx++ % urlCount]));
         } else {
-          entities.add(new TextItem());
+          items.add(new TextItem(offset + i));
         }
       }
     }
     // use delay operator to simulate real API call.
-    return Observable.just(entities).delay(1000, TimeUnit.MILLISECONDS).doOnNext(items -> {
-      this.entities.addAll(items);
+    return Observable.just(items).delay(1000, TimeUnit.MILLISECONDS).doOnNext(list -> {
+      this.entities.addAll(list);
       loading.set(false);
     });
   }

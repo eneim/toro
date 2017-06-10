@@ -35,13 +35,14 @@
       android:orientation="vertical"
       >
 
-    <TextView
+    <Button
         android:id="@+id/text_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="start"
         android:maxLines="2"
         android:padding="4dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textAppearance="@style/DebugText"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -49,6 +50,7 @@
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1"
         tools:text="@string/app_name"
+        style="?attr/buttonBarButtonStyle"
         />
 
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
@@ -56,7 +58,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:minHeight="112dp"
+        android:minHeight="@dimen/video_min_height"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_content"

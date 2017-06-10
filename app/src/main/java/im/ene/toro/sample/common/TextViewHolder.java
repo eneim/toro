@@ -41,8 +41,8 @@ class TextViewHolder extends BaseViewHolder {
 
   @Override
   public void bind(@NonNull RecyclerView.Adapter adapter, Object item, List<Object> payloads) {
-    if (item instanceof TextItem) {
-      content.setText(((TextItem) item).getContent());
+    if (item != null && item instanceof TextItem) {
+      content.setText(item.toString());
     }
   }
 }

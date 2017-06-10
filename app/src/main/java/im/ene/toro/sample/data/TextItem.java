@@ -22,12 +22,12 @@ package im.ene.toro.sample.data;
 
 public class TextItem implements Entity {
 
+  private final long index;
+
   private final String content = "# About GitHub Wikis\n"
       + "> Just as writing good code and great tests are important, excellent documentation helps others use and extend your project.\n"
       + "\n"
       + "> Every GitHub repository comes equipped with a section for hosting documentation, called a wiki.";
-
-  private final long index;
 
   public TextItem(long index) {
     this.index = index;
@@ -38,7 +38,7 @@ public class TextItem implements Entity {
   }
 
   @Override public String toString() {
-    return "TextItem{" + hashCode() + "}";
+    return "TextItem{" + "index=" + index + ", content='" + content + '\'' + '}';
   }
 
   public String getContent() {

@@ -19,15 +19,20 @@ package im.ene.toro.widget;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.os.ParcelableCompat;
+import android.support.v4.os.ParcelableCompatCreatorCallbacks;
+import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -37,9 +42,14 @@ import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.media.PlayerState;
+import ix.Ix;
+import ix.IxConsumer;
+import ix.IxFunction;
+import ix.IxPredicate;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -299,13 +309,101 @@ public class Container extends RecyclerView {
   }
 
   @Override protected Parcelable onSaveInstanceState() {
-    Log.w(TAG, "onSaveInstanceState() called");
-    return super.onSaveInstanceState();
+    Parcelable superState = super.onSaveInstanceState();
+    final Collection<Integer> savedOrders;
+    if (playerManager == null || playerStateManager == null) return superState;
+    if ((savedOrders = playerStateManager.getSavedOrders()) == null) return superState;
+    // Process saving playback state from here since Client wants this.
+    final SparseArray<PlayerState> states = new SparseArray<>();
+    // I wish I could use Retrolambda here ...
+    Ix.from(savedOrders).except(  // using except operator
+        // First, save state of currently playing players, using their current states.
+        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<Player>() {
+          @Override public boolean test(Player player) {
+            return player.isPlaying();
+          }
+        }).doOnNext(new IxConsumer<Player>() {
+          @Override public void accept(Player player) {
+            states.put(player.getPlayOrder(), player.getCurrentState());
+          }
+        }).map(new IxFunction<Player, Integer>() {
+          @Override public Integer apply(Player player) {
+            return player.getPlayOrder();
+          }
+        }))
+        // Now remaining orders contain only players those are not playing -> get state from cache.
+        .foreach(new IxConsumer<Integer>() {
+          @Override public void accept(Integer integer) {
+            states.put(integer, playerStateManager.getPlayerState(integer));
+          }
+        });
+
+    // FIXME save a whole bunch of stuff to restore on config change doesn't smell good for perf.
+    // Client must consider this behavior using PlayerStateManager implement.
+    PlayerViewState playerViewState = new PlayerViewState(superState);
+    playerViewState.statesCache = states;
+    return playerViewState;
   }
 
   @Override protected void onRestoreInstanceState(Parcelable state) {
-    Log.w(TAG, "onRestoreInstanceState() called with: state = [" + state + "]");
-    super.onRestoreInstanceState(state);
+    if (!(state instanceof PlayerViewState)) {
+      super.onRestoreInstanceState(state);
+      return;
+    }
+
+    PlayerViewState viewState = (PlayerViewState) state;
+    super.onRestoreInstanceState(viewState.getSuperState());
+    SparseArray<?> saveStates = viewState.statesCache;
+    if (playerStateManager != null && saveStates.size() > 0) {
+      for (int i = 0; i < saveStates.size(); i++) {
+        int order = saveStates.keyAt(i);
+        PlayerState playerState = (PlayerState) saveStates.get(order);
+        playerStateManager.savePlayerState(order, playerState);
+      }
+    }
+  }
+
+  @SuppressWarnings("WeakerAccess") //
+  public static class PlayerViewState extends AbsSavedState {
+
+    SparseArray<?> statesCache;
+
+    /**
+     * Called by onSaveInstanceState
+     */
+    PlayerViewState(Parcelable superState) {
+      super(superState);
+    }
+
+    /**
+     * called by CREATOR
+     */
+    PlayerViewState(Parcel in, ClassLoader loader) {
+      super(in, loader);
+      statesCache = in.readSparseArray(loader);
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+      super.writeToParcel(dest, flags);
+      //noinspection unchecked
+      dest.writeSparseArray((SparseArray<Object>) statesCache);
+    }
+
+    public static final Creator<PlayerViewState> CREATOR =
+        ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlayerViewState>() {
+          @Override public PlayerViewState createFromParcel(Parcel in, ClassLoader loader) {
+            return new PlayerViewState(in, loader);
+          }
+
+          @Override public PlayerViewState[] newArray(int size) {
+            return new PlayerViewState[size];
+          }
+        });
+
+    @Override public String toString() {
+      // "The shorter the better, the String is." - Oda
+      return "Cache{" + "states=" + statesCache + '}';
+    }
   }
 
   private class ToroDataObserver extends AdapterDataObserver {

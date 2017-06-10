@@ -32,13 +32,13 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import im.ene.toro.ExoPlayerHelper;
 import im.ene.toro.Player;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlayerState;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaItem;
 import im.ene.toro.widget.Container;
-import im.ene.toro.ExoPlayerHelper;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,16 +60,13 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
 
   MediaViewHolder(View itemView) {
     super(itemView);
-    // ButterKnife.bind(this, itemView);  --> handled at parent class.
   }
 
   @Override
   public void bind(@NonNull RecyclerView.Adapter adapter, Object item, List<Object> payloads) {
     if (item != null && item instanceof MediaItem) {
       mediaUri = ((MediaItem) item).getMediaUrl().getUri();
-      if (mediaUri != null) {
-        content.setText(((MediaItem) item).getMediaUrl().name() + " | " + mediaUri.toString());
-      }
+      content.setText(item.toString());
     }
   }
 
@@ -99,8 +96,8 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
               }
             }
 
-            // boolean screenOn = playbackState >= 2 && playbackState <= 3;
-            // playerView.setKeepScreenOn(screenOn);
+            boolean screenOn = playbackState >= 2 && playbackState <= 3;
+            playerView.setKeepScreenOn(screenOn);
           }
 
           @SuppressLint("SetTextI18n") @Override
