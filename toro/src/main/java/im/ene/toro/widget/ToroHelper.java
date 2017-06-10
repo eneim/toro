@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import im.ene.toro.widget.Container;
+import im.ene.toro.PlayerManager;
+import im.ene.toro.PlayerSelector;
 
 /**
  * @author eneim | 5/31/17.
@@ -29,25 +29,25 @@ public final class ToroHelper {
 
   private static final String TAG = "ToroLib:Helper";
 
-  @NonNull private final PlayerManager manager;
-  @Nullable private Selector selector;
+  @NonNull private final PlayerManager playerManager;
+  @Nullable private PlayerSelector playerSelector;  // changeable on demand.
   private Container container;
 
-  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager manager) {
-    this(manager, null);
+  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager playerManager) {
+    this(playerManager, null);
   }
 
   @SuppressWarnings("WeakerAccess")
-  public ToroHelper(@NonNull PlayerManager manager, @Nullable Selector selector) {
-    this.manager = manager;
-    this.selector = selector;
+  public ToroHelper(@NonNull PlayerManager playerManager, @Nullable PlayerSelector playerSelector) {
+    this.playerManager = playerManager;
+    this.playerSelector = playerSelector;
   }
 
   public void registerContainer(@Nullable Container container) {
-    Log.e(TAG, "registerContainer() called with: container = [" + container + "]");
     if (this.container == container) return;
     if (this.container != null) {
       this.container.setPlayerManager(null);
+      this.container.setPlayerSelector(null);
     }
 
     this.container = container;
@@ -56,28 +56,24 @@ public final class ToroHelper {
         throw new IllegalStateException(
             "This Container has already been registered to another Helper.");
       }
-      this.container.getItemAnimator().setMoveDuration(1000);
-      this.container.getItemAnimator().setAddDuration(1000);
-      this.container.getItemAnimator().setRemoveDuration(1000);
-      this.container.getItemAnimator().setChangeDuration(1000);
-      this.container.setSelector(this.selector);
-      this.container.setPlayerManager(this.manager);
+      this.container.setPlayerSelector(this.playerSelector);
+      this.container.setPlayerManager(this.playerManager);
     }
   }
 
-  public void setSelector(@Nullable Selector selector) {
-    if (this.selector == selector) return;
-    this.selector = selector;
+  public void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
+    if (this.playerSelector == playerSelector) return;
+    this.playerSelector = playerSelector;
     if (this.container != null) {
-      this.container.setSelector(this.selector);
+      this.container.setPlayerSelector(this.playerSelector);
     }
   }
 
-  @Nullable public Selector getSelector() {
-    return selector;
+  @Nullable public PlayerSelector getPlayerSelector() {
+    return playerSelector;
   }
 
-  @NonNull public PlayerManager getManager() {
-    return manager;
+  @NonNull public PlayerManager getPlayerManager() {
+    return playerManager;
   }
 }

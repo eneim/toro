@@ -29,5 +29,5 @@
   </style>
 
   <integer name="grid_span">1</integer>
-
+  <string name="layout_manager">android.support.v7.widget.GridLayoutManager</string>
 </resources>

@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.basic;
+package im.ene.toro.sample.features.stateful;
 
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
 import im.ene.toro.DefaultPlayerManager;
 import im.ene.toro.PlayerSelector;
-import im.ene.toro.widget.ToroHelper;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.EndlessScroller;
 import im.ene.toro.sample.data.DataSource;
-import im.ene.toro.widget.Container;
+import im.ene.toro.widget.ToroHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -47,22 +44,21 @@ import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
 import static android.support.v7.widget.helper.ItemTouchHelper.UP;
 
 /**
- * @author eneim | 6/6/17.
+ * @author eneim | 6/8/17.
  */
 
-public class BasicListFragment extends BaseFragment {
+public class StatefulPlaylistFragment extends BaseFragment {
 
-  @SuppressWarnings("unused") public static BasicListFragment newInstance() {
+  @SuppressWarnings("unused") public static StatefulPlaylistFragment newInstance() {
     Bundle args = new Bundle();
-    BasicListFragment fragment = new BasicListFragment();
+    StatefulPlaylistFragment fragment = new StatefulPlaylistFragment();
     fragment.setArguments(args);
     return fragment;
   }
 
   @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout refreshLayout;
-  @BindView(R.id.recycler_view) Container container;
+  @BindView(R.id.recycler_view) MyContainer container;
   ContentAdapter adapter;
-  RecyclerView.LayoutManager layoutManager;
   ToroHelper toroHelper;
   ItemTouchHelper touchHelper;
   RecyclerView.OnScrollListener infiniteScrollListener;
@@ -73,48 +69,49 @@ public class BasicListFragment extends BaseFragment {
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
-    return inflater.inflate(R.layout.layout_container_basic, container, false);
+    return inflater.inflate(R.layout.layout_container_custom, container, false);
+  }
+
+  int getInteger(@IntegerRes int intRes) {
+    return getResources().getInteger(intRes);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
-
-    adapter = new ContentAdapter();
-    layoutManager =
-        // new GridLayoutManager(getContext(), getResources().getInteger(R.integer.grid_span));
-        new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-    // layoutManager.setRecycleChildrenOnDetach(true);
-    adapter.addMany(true, DataSource.getInstance().getEntities());
+    adapter = new StatefulContentAdapter();
+    if (bundle != null) adapter.addMany(true, DataSource.getInstance().getEntities());  // restore.
 
     container.setAdapter(adapter);
-    container.setLayoutManager(layoutManager);
-
     refreshLayout.setOnRefreshListener(() -> {
       refreshLayout.setRefreshing(true);
       dispatchLoadData(false);
     });
 
-    infiniteScrollListener = new EndlessScroller(layoutManager, DataSource.getInstance()) {
-      @Override public void onLoadMore() {
-        if (refreshLayout != null) {
-          refreshLayout.setRefreshing(true);
-        }
-        dispatchLoadData(true);
-      }
-    };
+    infiniteScrollListener =
+        new EndlessScroller(container.getLayoutManager(), DataSource.getInstance()) {
+          @Override public void onLoadMore() {
+            if (refreshLayout != null) {
+              refreshLayout.setRefreshing(true);
+            }
+            dispatchLoadData(true);
+          }
+        };
     container.addOnScrollListener(infiniteScrollListener);
 
-    touchHelper = new ItemTouchHelper(new SimpleCallback(UP | DOWN | LEFT | RIGHT, 0) {
-      @Override
-      public boolean onMove(RecyclerView recyclerView, ViewHolder viewHolder, ViewHolder target) {
-        return adapter.onItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-      }
+    touchHelper =
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(UP | DOWN | LEFT | RIGHT, 0) {
+          @Override
+          public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+              RecyclerView.ViewHolder target) {
+            return adapter.onItemMoved(viewHolder.getAdapterPosition(),
+                target.getAdapterPosition());
+          }
 
-      @Override public void onSwiped(ViewHolder viewHolder, int direction) {
-        // do nothing.
-      }
-    });
-    toroHelper = new ToroHelper(new DefaultPlayerManager(1), PlayerSelector.DEFAULT);
+          @Override public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            // do nothing.
+          }
+        });
+    toroHelper = new ToroHelper(new DefaultPlayerManager(1, true), PlayerSelector.DEFAULT);
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
@@ -154,7 +151,8 @@ public class BasicListFragment extends BaseFragment {
     // In case of LinearLayoutManager, setting it to "recycler child on detach" will also detach
     // children Views properly, so this setup is optional.
     // See: https://github.com/airbnb/epoxy/wiki/Avoiding-Memory-Leaks for more information.
-    // Otherwise (using StaggeredGridLayoutManager or custom LayoutManager), it is recommended to have this setup to clear View cache.
+    // Otherwise (using StaggeredGridLayoutManager or custom LayoutManager), it is recommended to
+    // have this setup to clear View cache.
     container.setAdapter(null);
     // BaseFragment (super) class will unbind all views here, so this super call must be called last.
     super.onDestroyView();
@@ -166,6 +164,5 @@ public class BasicListFragment extends BaseFragment {
     toroHelper = null;
     touchHelper = null;
     adapter = null;
-    layoutManager = null;
   }
 }

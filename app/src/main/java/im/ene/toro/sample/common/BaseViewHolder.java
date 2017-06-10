@@ -30,7 +30,7 @@ import java.util.List;
  * @author eneim | 6/6/17.
  */
 
-abstract class BaseViewHolder extends RecyclerView.ViewHolder {
+public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
 
   static BaseViewHolder createViewHolder(ViewGroup parent, int type) {
     LayoutInflater inflater = LayoutInflater.from(parent.getContext());

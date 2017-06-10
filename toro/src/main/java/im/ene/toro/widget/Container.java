@@ -19,29 +19,37 @@ package im.ene.toro.widget;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
+import android.support.v4.os.ParcelableCompat;
+import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.Player;
 import im.ene.toro.PlayerManager;
+import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
-import im.ene.toro.Selector;
 import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.media.PlayerState;
+import ix.Ix;
+import ix.IxConsumer;
+import ix.IxFunction;
+import ix.IxPredicate;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +62,7 @@ public class Container extends RecyclerView {
   @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
 
   PlayerManager playerManager;
-  Selector playerSelector;
+  PlayerSelector playerSelector;
   PlayerStateManager playerStateManager;
   Handler animatorFinishHandler;
 
@@ -87,13 +95,9 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    Log.d(TAG, "onChildAttachedToWindow() called with: child = [" + child + "]");
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
     final Player player = (Player) holder;
-    if (this.playerStateManager != null) {
-      this.playerStateManager.getPlayerState(player.getPlayOrder());
-    }
 
     if (playerManager != null) {
       if (playerManager.manages(player)) {
@@ -104,7 +108,7 @@ public class Container extends RecyclerView {
             child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if (player.wantsToPlay()) {
               player.prepare(playerStateManager != null ?  //
-                  playerStateManager.getPlayerState(player.getPlayOrder()) : new PlayerState());
+                  playerStateManager.getPlayerState(player.getPlayerOrder()) : new PlayerState());
               if (playerManager.attachPlayer(player)) {
                 dispatchUpdateOnAnimationFinished();
               }
@@ -117,12 +121,11 @@ public class Container extends RecyclerView {
 
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
-    Log.e(TAG, "onChildDetachedFromWindow() called with: child = [" + child + "]");
     ViewHolder holder = getChildViewHolder(child);
     if (!(holder instanceof Player)) return;
     final Player player = (Player) holder;
     if (this.playerStateManager != null) {
-      this.playerStateManager.savePlayerState(player.getPlayOrder(), player.getCurrentState());
+      this.playerStateManager.savePlayerState(player.getPlayerOrder(), player.getCurrentState());
     }
 
     if (playerManager != null) {
@@ -134,6 +137,7 @@ public class Container extends RecyclerView {
     // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
     // sometime it happens after all Animation, but we also need to update playback here.
     dispatchUpdateOnAnimationFinished();
+    // finally release the player
     player.release();
   }
 
@@ -190,7 +194,7 @@ public class Container extends RecyclerView {
             if (!playerManager.manages(candidate)) {
               if (playerManager.attachPlayer(candidate)) {
                 candidate.prepare(playerStateManager != null ? playerStateManager.getPlayerState(
-                    candidate.getPlayOrder()) : new PlayerState());
+                    candidate.getPlayerOrder()) : new PlayerState());
               }
             }
           }
@@ -201,13 +205,13 @@ public class Container extends RecyclerView {
     playerManager.updatePlayback(this, playerSelector);
   }
 
-  ////// Manager and Selector stuff
+  ////// Manager and PlayerSelector stuff
 
-  @Nullable public PlayerManager getPlayerManager() {
+  @Nullable PlayerManager getPlayerManager() {
     return playerManager;
   }
 
-  public void setPlayerManager(@Nullable PlayerManager playerManager) {
+  void setPlayerManager(@Nullable PlayerManager playerManager) {
     if (this.playerManager == playerManager) return;
     if (this.playerManager != null) {
       for (Player player : this.playerManager.getPlayers()) {
@@ -221,11 +225,7 @@ public class Container extends RecyclerView {
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  @SuppressWarnings("unused") @Nullable public Selector getSelector() {
-    return playerSelector;
-  }
-
-  public void setSelector(@Nullable Selector playerSelector) {
+  void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     if (this.playerManager == null || this.playerSelector == null) return;
@@ -274,7 +274,7 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
-      if (adapter instanceof PlayerStateManager) {
+      if (adapter instanceof PlayerStateManager && this.playerStateManager == null) {
         this.playerStateManager = (PlayerStateManager) adapter;
       }
     }
@@ -291,7 +291,7 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
-      if (adapter instanceof PlayerStateManager) {
+      if (adapter instanceof PlayerStateManager && this.playerStateManager == null) {
         this.playerStateManager = (PlayerStateManager) adapter;
       }
     }
@@ -305,18 +305,100 @@ public class Container extends RecyclerView {
   }
 
   @Override protected Parcelable onSaveInstanceState() {
-    return super.onSaveInstanceState();
+    Parcelable superState = super.onSaveInstanceState();
+    final Collection<Integer> savedOrders;
+    if (playerManager == null || playerStateManager == null) return superState;
+    if ((savedOrders = playerStateManager.getSavedPlayerOrders()) == null) return superState;
+    // Process saving playback state from here since Client wants this.
+    final SparseArray<PlayerState> states = new SparseArray<>();
+    // I wish I could use Retrolambda here ...
+    Ix.from(savedOrders).except(  // using except operator
+        // First, save state of currently playing players, using their current states.
+        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<Player>() {
+          @Override public boolean test(Player player) {
+            return player.isPlaying();
+          }
+        }).doOnNext(new IxConsumer<Player>() {
+          @Override public void accept(Player player) {
+            states.put(player.getPlayerOrder(), player.getCurrentState());
+          }
+        }).map(new IxFunction<Player, Integer>() {
+          @Override public Integer apply(Player player) {
+            return player.getPlayerOrder();
+          }
+        }))
+        // Now remaining orders contain only players those are not playing -> get state from cache.
+        .foreach(new IxConsumer<Integer>() {
+          @Override public void accept(Integer integer) {
+            states.put(integer, playerStateManager.getPlayerState(integer));
+          }
+        });
+
+    // FIXME save a whole bunch of stuff to restore on config change doesn't smell good for perf.
+    // Client must consider this behavior using PlayerStateManager implement.
+    PlayerViewState playerViewState = new PlayerViewState(superState);
+    playerViewState.statesCache = states;
+    return playerViewState;
   }
 
   @Override protected void onRestoreInstanceState(Parcelable state) {
-    super.onRestoreInstanceState(state);
+    if (!(state instanceof PlayerViewState)) {
+      super.onRestoreInstanceState(state);
+      return;
+    }
+
+    PlayerViewState viewState = (PlayerViewState) state;
+    super.onRestoreInstanceState(viewState.getSuperState());
+    SparseArray<?> saveStates = viewState.statesCache;
+    if (playerStateManager != null && saveStates.size() > 0) {
+      for (int i = 0; i < saveStates.size(); i++) {
+        int order = saveStates.keyAt(i);
+        PlayerState playerState = (PlayerState) saveStates.get(order);
+        playerStateManager.savePlayerState(order, playerState);
+      }
+    }
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
-  public static class ContainerState extends AbsSavedState {
+  @SuppressWarnings("WeakerAccess") //
+  public static class PlayerViewState extends AbsSavedState {
 
-    protected ContainerState(Parcelable superState) {
+    SparseArray<?> statesCache;
+
+    /**
+     * Called by onSaveInstanceState
+     */
+    PlayerViewState(Parcelable superState) {
       super(superState);
+    }
+
+    /**
+     * called by CREATOR
+     */
+    PlayerViewState(Parcel in, ClassLoader loader) {
+      super(in, loader);
+      statesCache = in.readSparseArray(loader);
+    }
+
+    @Override public void writeToParcel(Parcel dest, int flags) {
+      super.writeToParcel(dest, flags);
+      //noinspection unchecked
+      dest.writeSparseArray((SparseArray<Object>) statesCache);
+    }
+
+    public static final Creator<PlayerViewState> CREATOR =
+        ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlayerViewState>() {
+          @Override public PlayerViewState createFromParcel(Parcel in, ClassLoader loader) {
+            return new PlayerViewState(in, loader);
+          }
+
+          @Override public PlayerViewState[] newArray(int size) {
+            return new PlayerViewState[size];
+          }
+        });
+
+    @Override public String toString() {
+      // "The shorter the better, the String is." - Oda
+      return "Cache{" + "states=" + statesCache + '}';
     }
   }
 
@@ -326,44 +408,23 @@ public class Container extends RecyclerView {
     }
 
     @Override public void onChanged() {
-      // call this to trigger update for all players
-      if (playerStateManager != null) playerStateManager.onMediaChange(-1, -1);
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeChanged(int positionStart, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeInserted(int positionStart, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
 
     @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = positionStart, total = positionStart + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
 
+    // FIXME 2017/06/08 For now we can ignore the itemCount value.
     @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-      if (playerStateManager != null) {
-        for (int order = fromPosition, total = fromPosition + itemCount; order < total; order++) {
-          playerStateManager.onMediaChange(order, order);
-        }
-      }
       dispatchUpdateOnAnimationFinished();
     }
   }

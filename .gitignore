@@ -17,7 +17,7 @@
 /app/proguard-rules.pro
 /app/src/test/
 /app/build/
-/app/libs/
+!/app/libs/
 /toro/src/test/
 /toro/libs/
 /gradle.properties

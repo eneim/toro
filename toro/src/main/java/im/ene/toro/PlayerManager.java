@@ -33,7 +33,7 @@ public interface PlayerManager {
 
   @SuppressWarnings("unused") String TAG = "ToroLib:PlayerManager";
 
-  void updatePlayback(@NonNull Container container, @NonNull Selector selector);
+  void updatePlayback(@NonNull Container container, @NonNull PlayerSelector selector);
 
   // Call before player starts playback
   boolean attachPlayer(@NonNull Player player);

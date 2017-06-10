@@ -32,31 +32,45 @@ import java.util.HashSet;
 public class DefaultPlayerManager implements PlayerManager {
 
   private final HashSet<Player> players = new HashSet<>();
-
   private final int playerCount;
 
-  public DefaultPlayerManager(int playerCount) {
+  private boolean saveLiveStates = false;
+
+  public DefaultPlayerManager(int playerCount, boolean saveLiveStates) {
     this.playerCount = playerCount;
+    this.saveLiveStates = saveLiveStates;
+  }
+
+  public DefaultPlayerManager(int playerCount) {
+    this(playerCount, false);
   }
 
   @SuppressWarnings("unused") public DefaultPlayerManager() {
     this(1);
   }
 
+  public boolean isSaveLiveStates() {
+    return saveLiveStates;
+  }
+
+  public void setSaveLiveStates(boolean saveLiveStates) {
+    this.saveLiveStates = saveLiveStates;
+  }
+
   @Override
-  public void updatePlayback(@NonNull final Container container, @NonNull Selector selector) {
+  public void updatePlayback(@NonNull final Container container, @NonNull PlayerSelector selector) {
     Log.e(TAG, "updatePlayback: " + this.players);
     if (BuildConfig.DEBUG) {
       //noinspection ConstantConditions
       if (selector == null) {
-        throw new IllegalArgumentException("Selector must not be null");
+        throw new IllegalArgumentException("PlayerSelector must not be null");
       }
     }
 
     if (this.players.isEmpty()) return;
     // from current player list:
     // 1. find those are allowed to play
-    // 2. among them, use Selector to select a subset then for each of them start the playback
+    // 2. among them, use PlayerSelector to select a subset then for each of them start the playback
     // if it is not playing, and pause the playback for others.
     final Ix<Player> source = Ix.from(players).filter(new IxPredicate<Player>() {
       @Override public boolean test(Player player) {

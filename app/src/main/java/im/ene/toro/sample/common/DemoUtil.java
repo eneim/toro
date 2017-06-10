@@ -14,31 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.data;
+package im.ene.toro.sample.common;
 
 /**
- * @author eneim | 6/7/17.
+ * @author eneim | 6/8/17.
  */
 
-public class MediaItem implements Entity {
+public class DemoUtil {
 
-  private final long index;
-  private final MediaUrl mediaUrl;
-
-  public MediaItem(long index, MediaUrl mediaUrl) {
-    this.index = index;
-    this.mediaUrl = mediaUrl;
+  public static int compare(int x, int y) {
+    return (x < y) ? -1 : ((x == y) ? 0 : 1);
   }
 
-  public MediaUrl getMediaUrl() {
-    return mediaUrl;
-  }
-
-  @Override public long getIndex() {
-    return index;
-  }
-
-  @Override public String toString() {
-    return "Media{" + "index=" + index + ", url=" + mediaUrl.toString() + '}';
+  public static int compare(long x, long y) {
+    return (x < y) ? -1 : ((x == y) ? 0 : 1);
   }
 }

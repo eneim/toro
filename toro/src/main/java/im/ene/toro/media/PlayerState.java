@@ -16,13 +16,17 @@
 
 package im.ene.toro.media;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v4.os.ParcelableCompat;
+import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import com.google.android.exoplayer2.C;
 
 /**
  * @author eneim | 6/6/17.
  */
 
-public class PlayerState {
+public class PlayerState implements Parcelable {
 
   private int resumeWindow;
   private long resumePosition;
@@ -35,6 +39,35 @@ public class PlayerState {
   public PlayerState() {
     this(C.INDEX_UNSET, C.TIME_UNSET);
   }
+
+  public PlayerState(PlayerState other) {
+    this(other.getResumeWindow(), other.getResumePosition());
+  }
+
+  protected PlayerState(Parcel in) {
+    resumeWindow = in.readInt();
+    resumePosition = in.readLong();
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeInt(resumeWindow);
+    dest.writeLong(resumePosition);
+  }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  public static final Creator<PlayerState> CREATOR =
+      ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlayerState>() {
+        @Override public PlayerState createFromParcel(Parcel in, ClassLoader loader) {
+          return new PlayerState(in);
+        }
+
+        @Override public PlayerState[] newArray(int size) {
+          return new PlayerState[size];
+        }
+      });
 
   public int getResumeWindow() {
     return resumeWindow;
@@ -76,4 +109,6 @@ public class PlayerState {
     result = 31 * result + (int) (resumePosition ^ (resumePosition >>> 32));
     return result;
   }
+
+  public static PlayerState INIT_STATE = new PlayerState();
 }

@@ -42,4 +42,8 @@ public enum MediaUrl {
   public Uri getUri() {
     return Uri.parse(this.url);
   }
+
+  @Override public String toString() {
+    return name() + "{" + url + "}";
+  }
 }

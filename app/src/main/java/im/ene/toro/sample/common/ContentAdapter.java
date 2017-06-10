@@ -35,7 +35,7 @@ public class ContentAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
   static final int TYPE_TEXT = 2 << 1;   // non-trivial type, just for fun
 
-  private final List<Entity> entities = new ArrayList<>();
+  protected final List<Entity> entities = new ArrayList<>();
 
   @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     return BaseViewHolder.createViewHolder(parent, viewType);
@@ -59,16 +59,20 @@ public class ContentAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     return entities.size();
   }
 
-  public void addMany(boolean reset, @NonNull List<Entity> entities) {
+  public void addMany(boolean reset, @NonNull List<Entity> items) {
     if (reset) {
-      this.entities.clear();
-      notifyItemRangeRemoved(0, entities.size());
+      notifyItemRangeRemoved(0, this.entities.size());
+      this.entities.clear();  // clear after the notify
     }
 
-    int oldCount = this.entities.size();
-    if (this.entities.addAll(entities)) {
-      notifyItemRangeInserted(oldCount, entities.size());
+    int oldCount = getItemCount();
+    if (this.entities.addAll(items)) {
+      notifyItemRangeInserted(oldCount, items.size());
     }
+  }
+
+  protected final Entity getItem(int position) {
+    return this.entities.get(position);
   }
 
   /// Item Move

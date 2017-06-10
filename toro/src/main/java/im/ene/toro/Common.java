@@ -47,7 +47,7 @@ final class Common {
 
   static Comparator<Player> ORDER_COMPARATOR = new Comparator<Player>() {
     @Override public int compare(Player o1, Player o2) {
-      return Common.compare(o1.getPlayOrder(), o2.getPlayOrder());
+      return Common.compare(o1.getPlayerOrder(), o2.getPlayerOrder());
     }
   };
 

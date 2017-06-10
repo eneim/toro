@@ -23,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -45,30 +46,27 @@ import java.util.List;
  * @author eneim | 6/6/17.
  */
 
-class MediaViewHolder extends BaseViewHolder implements Player {
+public class MediaViewHolder extends BaseViewHolder implements Player {
 
   static final int LAYOUT_RES = R.layout.vh_basic_player;
 
-  @Nullable ExoPlayerHelper helper;
+  @SuppressWarnings("WeakerAccess") @Nullable ExoPlayerHelper helper;
   @Nullable private Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
-  @BindView(R.id.text_content) TextView content;
+  public @BindView(R.id.text_content) Button content;
   @BindView(R.id.player_state) TextView state;
   @BindView(R.id.player_format) TextView format;
 
   MediaViewHolder(View itemView) {
     super(itemView);
-    // ButterKnife.bind(this, itemView);  --> handled at parent class.
   }
 
   @Override
   public void bind(@NonNull RecyclerView.Adapter adapter, Object item, List<Object> payloads) {
     if (item != null && item instanceof MediaItem) {
       mediaUri = ((MediaItem) item).getMediaUrl().getUri();
-      if (mediaUri != null) {
-        content.setText(((MediaItem) item).getMediaUrl().name() + " | " + mediaUri.toString());
-      }
+      content.setText(item.toString());
     }
   }
 
@@ -98,8 +96,8 @@ class MediaViewHolder extends BaseViewHolder implements Player {
               }
             }
 
-            // boolean screenOn = playbackState >= 2 && playbackState <= 3;
-            // playerView.setKeepScreenOn(screenOn);
+            boolean screenOn = playbackState >= 2 && playbackState <= 3;
+            playerView.setKeepScreenOn(screenOn);
           }
 
           @SuppressLint("SetTextI18n") @Override
@@ -160,7 +158,7 @@ class MediaViewHolder extends BaseViewHolder implements Player {
     return visible >= 0.85;
   }
 
-  @Override public int getPlayOrder() {
+  @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }
 
