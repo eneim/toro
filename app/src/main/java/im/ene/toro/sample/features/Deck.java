@@ -25,7 +25,9 @@ import java.lang.reflect.Method;
  * @author eneim | 6/6/17.
  */
 
-public class Deck {
+public final class Deck {
+
+  private Deck() {}
 
   public static void present(FragmentActivity activity, Class<?> fragmentClass)
       throws ToroDemoException {
