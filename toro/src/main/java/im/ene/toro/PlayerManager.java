@@ -17,9 +17,6 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.SparseArray;
-import im.ene.toro.media.PlayerState;
 import im.ene.toro.widget.Container;
 import java.util.Collection;
 
@@ -47,8 +44,4 @@ public interface PlayerManager {
   boolean manages(@NonNull Player player);
 
   @NonNull Collection<Player> getPlayers();
-
-  // return null if client doesn't support/want to save/restore playback state on config change
-  // note that this will ask Container to save a bunch of parcelable, it may not good for performance.
-  @Nullable SparseArray<PlayerState> getPlayingPlayerStates();
 }

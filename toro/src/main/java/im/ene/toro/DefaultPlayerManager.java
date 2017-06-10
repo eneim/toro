@@ -17,10 +17,7 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.util.SparseArray;
-import im.ene.toro.media.PlayerState;
 import im.ene.toro.widget.Container;
 import ix.Ix;
 import ix.IxConsumer;
@@ -106,21 +103,6 @@ public class DefaultPlayerManager implements PlayerManager {
 
   @Override public boolean manages(@NonNull Player player) {
     return players.contains(player);
-  }
-
-  @Nullable @Override public final SparseArray<PlayerState> getPlayingPlayerStates() {
-    if (!saveLiveStates) return null;
-    final SparseArray<PlayerState> liveStateCache = new SparseArray<>();
-    Ix.from(this.players).filter(new IxPredicate<Player>() {
-      @Override public boolean test(Player player) {
-        return player.getPlayOrder() >= 0;
-      }
-    }).foreach(new IxConsumer<Player>() {
-      @Override public void accept(Player player) {
-        liveStateCache.put(player.getPlayOrder(), player.getCurrentState());
-      }
-    });
-    return liveStateCache;
   }
 
   @NonNull @Override public Collection<Player> getPlayers() {

@@ -34,5 +34,5 @@ public interface PlayerStateManager {
 
   // return null if client doesn't support/want to save/restore playback state on config change
   // note that this will ask Container to save a bunch of parcelable, it may not good for performance.
-  @Nullable Collection<Integer> getSavedOrders();
+  @Nullable Collection<Integer> getSavedPlayerOrders();
 }

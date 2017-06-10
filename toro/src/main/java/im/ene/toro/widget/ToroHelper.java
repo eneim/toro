@@ -18,7 +18,6 @@ package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import im.ene.toro.PlayerManager;
 import im.ene.toro.PlayerSelector;
 
@@ -30,25 +29,25 @@ public final class ToroHelper {
 
   private static final String TAG = "ToroLib:Helper";
 
-  @NonNull private final PlayerManager manager;
-  @Nullable private PlayerSelector selector;
+  @NonNull private final PlayerManager playerManager;
+  @Nullable private PlayerSelector playerSelector;  // changeable on demand.
   private Container container;
 
-  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager manager) {
-    this(manager, null);
+  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager playerManager) {
+    this(playerManager, null);
   }
 
   @SuppressWarnings("WeakerAccess")
-  public ToroHelper(@NonNull PlayerManager manager, @Nullable PlayerSelector selector) {
-    this.manager = manager;
-    this.selector = selector;
+  public ToroHelper(@NonNull PlayerManager playerManager, @Nullable PlayerSelector playerSelector) {
+    this.playerManager = playerManager;
+    this.playerSelector = playerSelector;
   }
 
   public void registerContainer(@Nullable Container container) {
-    Log.e(TAG, "registerContainer() called with: container = [" + container + "]");
     if (this.container == container) return;
     if (this.container != null) {
       this.container.setPlayerManager(null);
+      this.container.setPlayerSelector(null);
     }
 
     this.container = container;
@@ -57,24 +56,24 @@ public final class ToroHelper {
         throw new IllegalStateException(
             "This Container has already been registered to another Helper.");
       }
-      this.container.setPlayerSelector(this.selector);
-      this.container.setPlayerManager(this.manager);
+      this.container.setPlayerSelector(this.playerSelector);
+      this.container.setPlayerManager(this.playerManager);
     }
   }
 
-  public void setSelector(@Nullable PlayerSelector selector) {
-    if (this.selector == selector) return;
-    this.selector = selector;
+  public void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
+    if (this.playerSelector == playerSelector) return;
+    this.playerSelector = playerSelector;
     if (this.container != null) {
-      this.container.setPlayerSelector(this.selector);
+      this.container.setPlayerSelector(this.playerSelector);
     }
   }
 
-  @Nullable public PlayerSelector getSelector() {
-    return selector;
+  @Nullable public PlayerSelector getPlayerSelector() {
+    return playerSelector;
   }
 
-  @NonNull public PlayerManager getManager() {
-    return manager;
+  @NonNull public PlayerManager getPlayerManager() {
+    return playerManager;
   }
 }

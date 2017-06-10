@@ -19,6 +19,7 @@ package im.ene.toro;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -26,6 +27,8 @@ import android.view.View;
  */
 
 public final class ToroUtil {
+
+  private static final String TAG = "ToroLib:Util";
 
   private ToroUtil() {
     throw new RuntimeException("Meh!");
@@ -42,12 +45,13 @@ public final class ToroUtil {
     Rect videoRect = getViewRect(playerView);
     Rect parentRect = getViewRect(container);
 
+    float percent = 0.f;
     if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
       int visibleArea = videoRect.height() * videoRect.width();
       int viewArea = playerView.getWidth() * playerView.getHeight();
-      return viewArea <= 0.f ? 1.f : visibleArea / (float) viewArea;
-    } else {
-      return 0.f;
+      percent = viewArea <= 0.f ? 1.f : visibleArea / (float) viewArea;
     }
+    if (BuildConfig.DEBUG) Log.i(TAG, "visibleAreaOffset: " + percent);
+    return percent;
   }
 }

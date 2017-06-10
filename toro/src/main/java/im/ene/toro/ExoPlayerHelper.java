@@ -101,19 +101,20 @@ public final class ExoPlayerHelper {
 
   @SuppressWarnings("WeakerAccess")
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, int extensionMode,
-      PlayerState playerState) {
+      PlayerState playerState, boolean shouldAutoPlay) {
     this.playerView = playerView;
     this.extensionMode = extensionMode;
     this.playerState = playerState;
+    this.shouldAutoPlay = shouldAutoPlay;
   }
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, PlayerState playerState) {
-    this(playerView, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, playerState);
+    this(playerView, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, playerState, false);
   }
 
   @SuppressWarnings("WeakerAccess")
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, int extensionMode) {
-    this(playerView, extensionMode, new PlayerState());
+    this(playerView, extensionMode, new PlayerState(), false);
   }
 
   @SuppressWarnings("unused") //

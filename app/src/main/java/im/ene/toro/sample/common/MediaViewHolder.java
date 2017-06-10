@@ -158,7 +158,7 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
     return visible >= 0.85;
   }
 
-  @Override public int getPlayOrder() {
+  @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }
 

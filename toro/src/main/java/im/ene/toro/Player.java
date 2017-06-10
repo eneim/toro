@@ -57,5 +57,5 @@ public interface Player {
   /**
    * @return prefer playback order in list. Can be customized.
    */
-  int getPlayOrder();
+  int getPlayerOrder();
 }

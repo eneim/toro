@@ -76,7 +76,7 @@ class StatefulContentAdapter extends ContentAdapter implements PlayerStateManage
   }
 
   // TODO return null if client doesn't want to save playback states on config change.
-  @Nullable @Override public Collection<Integer> getSavedOrders() {
+  @Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
     return Ix.from(stateCache.keySet()).map(entities::indexOf).toList();
   }
 }

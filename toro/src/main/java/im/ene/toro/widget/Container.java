@@ -108,7 +108,7 @@ public class Container extends RecyclerView {
             child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if (player.wantsToPlay()) {
               player.prepare(playerStateManager != null ?  //
-                  playerStateManager.getPlayerState(player.getPlayOrder()) : new PlayerState());
+                  playerStateManager.getPlayerState(player.getPlayerOrder()) : new PlayerState());
               if (playerManager.attachPlayer(player)) {
                 dispatchUpdateOnAnimationFinished();
               }
@@ -125,7 +125,7 @@ public class Container extends RecyclerView {
     if (!(holder instanceof Player)) return;
     final Player player = (Player) holder;
     if (this.playerStateManager != null) {
-      this.playerStateManager.savePlayerState(player.getPlayOrder(), player.getCurrentState());
+      this.playerStateManager.savePlayerState(player.getPlayerOrder(), player.getCurrentState());
     }
 
     if (playerManager != null) {
@@ -194,7 +194,7 @@ public class Container extends RecyclerView {
             if (!playerManager.manages(candidate)) {
               if (playerManager.attachPlayer(candidate)) {
                 candidate.prepare(playerStateManager != null ? playerStateManager.getPlayerState(
-                    candidate.getPlayOrder()) : new PlayerState());
+                    candidate.getPlayerOrder()) : new PlayerState());
               }
             }
           }
@@ -223,10 +223,6 @@ public class Container extends RecyclerView {
     this.playerManager = playerManager;
     if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
-  }
-
-  @Nullable PlayerSelector getPlayerSelector() {
-    return playerSelector;
   }
 
   void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
@@ -312,7 +308,7 @@ public class Container extends RecyclerView {
     Parcelable superState = super.onSaveInstanceState();
     final Collection<Integer> savedOrders;
     if (playerManager == null || playerStateManager == null) return superState;
-    if ((savedOrders = playerStateManager.getSavedOrders()) == null) return superState;
+    if ((savedOrders = playerStateManager.getSavedPlayerOrders()) == null) return superState;
     // Process saving playback state from here since Client wants this.
     final SparseArray<PlayerState> states = new SparseArray<>();
     // I wish I could use Retrolambda here ...
@@ -324,11 +320,11 @@ public class Container extends RecyclerView {
           }
         }).doOnNext(new IxConsumer<Player>() {
           @Override public void accept(Player player) {
-            states.put(player.getPlayOrder(), player.getCurrentState());
+            states.put(player.getPlayerOrder(), player.getCurrentState());
           }
         }).map(new IxFunction<Player, Integer>() {
           @Override public Integer apply(Player player) {
-            return player.getPlayOrder();
+            return player.getPlayerOrder();
           }
         }))
         // Now remaining orders contain only players those are not playing -> get state from cache.
