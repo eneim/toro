@@ -96,7 +96,7 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
               }
             }
 
-            boolean screenOn = playbackState >= 2 && playbackState <= 3;
+            boolean screenOn = playbackState >= 2 && playbackState <= 3 && playWhenReady;
             playerView.setKeepScreenOn(screenOn);
           }
 
