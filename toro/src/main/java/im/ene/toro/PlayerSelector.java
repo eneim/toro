@@ -40,7 +40,7 @@ public interface PlayerSelector {
   /**
    * @return The PlayerSelector that has opposite selecting logic.
    */
-  @SuppressWarnings("unused") @Nullable PlayerSelector reverse();
+  @Nullable PlayerSelector reverse();
 
   PlayerSelector DEFAULT = new PlayerSelector() {
     @NonNull @Override public Collection<Player> select(@NonNull View container, //

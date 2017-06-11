@@ -26,25 +26,25 @@ import com.google.android.exoplayer2.C;
  * @author eneim | 6/6/17.
  */
 
-public class PlayerState implements Parcelable {
+public class PlaybackInfo implements Parcelable {
 
   private int resumeWindow;
   private long resumePosition;
 
-  public PlayerState(int resumeWindow, long resumePosition) {
+  public PlaybackInfo(int resumeWindow, long resumePosition) {
     this.resumeWindow = resumeWindow;
     this.resumePosition = resumePosition;
   }
 
-  public PlayerState() {
+  public PlaybackInfo() {
     this(C.INDEX_UNSET, C.TIME_UNSET);
   }
 
-  public PlayerState(PlayerState other) {
+  public PlaybackInfo(PlaybackInfo other) {
     this(other.getResumeWindow(), other.getResumePosition());
   }
 
-  protected PlayerState(Parcel in) {
+  protected PlaybackInfo(Parcel in) {
     resumeWindow = in.readInt();
     resumePosition = in.readLong();
   }
@@ -58,14 +58,14 @@ public class PlayerState implements Parcelable {
     return 0;
   }
 
-  public static final Creator<PlayerState> CREATOR =
-      ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlayerState>() {
-        @Override public PlayerState createFromParcel(Parcel in, ClassLoader loader) {
-          return new PlayerState(in);
+  public static final Creator<PlaybackInfo> CREATOR =
+      ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlaybackInfo>() {
+        @Override public PlaybackInfo createFromParcel(Parcel in, ClassLoader loader) {
+          return new PlaybackInfo(in);
         }
 
-        @Override public PlayerState[] newArray(int size) {
-          return new PlayerState[size];
+        @Override public PlaybackInfo[] newArray(int size) {
+          return new PlaybackInfo[size];
         }
       });
 
@@ -96,9 +96,9 @@ public class PlayerState implements Parcelable {
 
   @Override public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof PlayerState)) return false;
+    if (!(o instanceof PlaybackInfo)) return false;
 
-    PlayerState that = (PlayerState) o;
+    PlaybackInfo that = (PlaybackInfo) o;
 
     if (resumeWindow != that.resumeWindow) return false;
     return resumePosition == that.resumePosition;
@@ -110,5 +110,5 @@ public class PlayerState implements Parcelable {
     return result;
   }
 
-  public static PlayerState INIT_STATE = new PlayerState();
+  public static PlaybackInfo INIT_STATE = new PlaybackInfo();
 }

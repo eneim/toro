@@ -41,7 +41,7 @@ import im.ene.toro.PlayerManager;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroLayoutManager;
-import im.ene.toro.media.PlayerState;
+import im.ene.toro.media.PlaybackInfo;
 import ix.Ix;
 import ix.IxConsumer;
 import ix.IxFunction;
@@ -108,7 +108,7 @@ public class Container extends RecyclerView {
             child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if (player.wantsToPlay()) {
               player.prepare(playerStateManager != null ?  //
-                  playerStateManager.getPlayerState(player.getPlayerOrder()) : new PlayerState());
+                  playerStateManager.getPlaybackInfo(player.getPlayerOrder()) : new PlaybackInfo());
               if (playerManager.attachPlayer(player)) {
                 dispatchUpdateOnAnimationFinished();
               }
@@ -125,7 +125,8 @@ public class Container extends RecyclerView {
     if (!(holder instanceof Player)) return;
     final Player player = (Player) holder;
     if (this.playerStateManager != null) {
-      this.playerStateManager.savePlayerState(player.getPlayerOrder(), player.getCurrentState());
+      this.playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
+          player.getCurrentPlaybackInfo());
     }
 
     if (playerManager != null) {
@@ -193,8 +194,8 @@ public class Container extends RecyclerView {
           if (candidate.wantsToPlay()) {
             if (!playerManager.manages(candidate)) {
               if (playerManager.attachPlayer(candidate)) {
-                candidate.prepare(playerStateManager != null ? playerStateManager.getPlayerState(
-                    candidate.getPlayerOrder()) : new PlayerState());
+                candidate.prepare(playerStateManager != null ? playerStateManager.getPlaybackInfo(
+                    candidate.getPlayerOrder()) : new PlaybackInfo());
               }
             }
           }
@@ -310,7 +311,7 @@ public class Container extends RecyclerView {
     if (playerManager == null || playerStateManager == null) return superState;
     if ((savedOrders = playerStateManager.getSavedPlayerOrders()) == null) return superState;
     // Process saving playback state from here since Client wants this.
-    final SparseArray<PlayerState> states = new SparseArray<>();
+    final SparseArray<PlaybackInfo> states = new SparseArray<>();
     // I wish I could use Retrolambda here ...
     Ix.from(savedOrders).except(  // using except operator
         // First, save state of currently playing players, using their current states.
@@ -320,7 +321,7 @@ public class Container extends RecyclerView {
           }
         }).doOnNext(new IxConsumer<Player>() {
           @Override public void accept(Player player) {
-            states.put(player.getPlayerOrder(), player.getCurrentState());
+            states.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
           }
         }).map(new IxFunction<Player, Integer>() {
           @Override public Integer apply(Player player) {
@@ -330,7 +331,7 @@ public class Container extends RecyclerView {
         // Now remaining orders contain only players those are not playing -> get state from cache.
         .foreach(new IxConsumer<Integer>() {
           @Override public void accept(Integer integer) {
-            states.put(integer, playerStateManager.getPlayerState(integer));
+            states.put(integer, playerStateManager.getPlaybackInfo(integer));
           }
         });
 
@@ -353,8 +354,8 @@ public class Container extends RecyclerView {
     if (playerStateManager != null && saveStates.size() > 0) {
       for (int i = 0; i < saveStates.size(); i++) {
         int order = saveStates.keyAt(i);
-        PlayerState playerState = (PlayerState) saveStates.get(order);
-        playerStateManager.savePlayerState(order, playerState);
+        PlaybackInfo playbackInfo = (PlaybackInfo) saveStates.get(order);
+        playerStateManager.savePlaybackInfo(order, playbackInfo);
       }
     }
   }

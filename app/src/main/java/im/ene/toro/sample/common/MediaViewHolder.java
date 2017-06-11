@@ -35,7 +35,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ExoPlayerHelper;
 import im.ene.toro.Player;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.media.PlayerState;
+import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaItem;
 import im.ene.toro.widget.Container;
@@ -58,6 +58,32 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
   @BindView(R.id.player_state) TextView state;
   @BindView(R.id.player_format) TextView format;
 
+  private ExoPlayerHelper.EventListener eventListener = new ExoPlayerHelper.EventListener() {
+    @SuppressLint("SetTextI18n") @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+      state.setText("STATE: " + playbackState + ", PWR: " + playWhenReady);
+      if (playbackState >= 2) {
+        if (helper != null && helper.getPlayer() != null) {
+          Format[] formats = getCurrentFormats(helper.getPlayer());
+          format.setText(formats != null ? Arrays.toString(formats) : "Format: NULL");
+        }
+      }
+
+      boolean screenOn = playbackState >= 2 && playbackState <= 3 && playWhenReady;
+      playerView.setKeepScreenOn(screenOn);
+    }
+
+    @SuppressLint("SetTextI18n") @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+      if (helper == null || helper.getPlayer() == null) return;
+      int state = helper.getPlayer().getPlaybackState();
+      if (state >= 2) {
+        Format[] formats = getCurrentFormats(helper.getPlayer());
+        format.setText(formats != null ? Arrays.toString(formats) : "Format: NULL");
+      }
+    }
+  };
+
   MediaViewHolder(View itemView) {
     super(itemView);
   }
@@ -74,45 +100,19 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
     return playerView;
   }
 
-  @NonNull @Override public PlayerState getCurrentState() {
-    PlayerState state = new PlayerState();
-    if (helper != null) state = helper.getPlayerState();
+  @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
+    PlaybackInfo state = new PlaybackInfo();
+    if (helper != null) state = helper.getPlaybackInfo();
     return state;
   }
 
-  @Override public boolean prepare(@NonNull PlayerState playerState) {
+  @Override public boolean prepare(@NonNull PlaybackInfo playbackInfo) {
     boolean handled;
     if (helper == null) {
       if (mediaUri != null) {
-        helper = new ExoPlayerHelper(playerView, playerState);
-        helper.setEventListener(new ExoPlayerHelper.EventListener() {
-          @SuppressLint("SetTextI18n") @Override
-          public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            state.setText("STATE: " + playbackState + ", PWR: " + playWhenReady);
-            if (playbackState >= 2) {
-              if (helper != null && helper.getPlayer() != null) {
-                Format[] formats = getCurrentFormats(helper.getPlayer());
-                format.setText(formats != null ? Arrays.toString(formats) : "Format: NULL");
-              }
-            }
-
-            boolean screenOn = playbackState >= 2 && playbackState <= 3 && playWhenReady;
-            playerView.setKeepScreenOn(screenOn);
-          }
-
-          @SuppressLint("SetTextI18n") @Override
-          public void onTracksChanged(TrackGroupArray trackGroups,
-              TrackSelectionArray trackSelections) {
-            int state = helper != null && helper.getPlayer() != null ?  //
-                helper.getPlayer().getPlaybackState() : -1;
-            if (state >= 2) {
-              if (helper != null && helper.getPlayer() != null) {
-                Format[] formats = getCurrentFormats(helper.getPlayer());
-                format.setText(formats != null ? Arrays.toString(formats) : "Format: NULL");
-              }
-            }
-          }
-        });
+        helper = new ExoPlayerHelper(playerView);
+        helper.setPlaybackInfo(playbackInfo);
+        helper.addEventListener(eventListener);
 
         try {
           helper.prepare(this.mediaUri);
@@ -133,7 +133,7 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
 
   @Override public void release() {
     if (helper != null) {
-      helper.setEventListener(null);
+      helper.removeEventListener(eventListener);
       helper.release();
       helper = null;
     }

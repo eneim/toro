@@ -19,7 +19,7 @@ package im.ene.toro;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import im.ene.toro.media.PlayerState;
+import im.ene.toro.media.PlaybackInfo;
 import java.util.Collection;
 
 /**
@@ -28,9 +28,9 @@ import java.util.Collection;
 
 public interface PlayerStateManager {
 
-  void savePlayerState(@IntRange(from = -1) int order, @NonNull PlayerState playerState);
+  void savePlaybackInfo(@IntRange(from = -1) int order, @NonNull PlaybackInfo playbackInfo);
 
-  @NonNull PlayerState getPlayerState(@IntRange(from = -1) int order);
+  @NonNull PlaybackInfo getPlaybackInfo(@IntRange(from = -1) int order);
 
   // return null if client doesn't support/want to save/restore playback state on config change
   // note that this will ask Container to save a bunch of parcelable, it may not good for performance.

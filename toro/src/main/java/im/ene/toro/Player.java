@@ -20,7 +20,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import im.ene.toro.media.PlayerState;
+import im.ene.toro.media.PlaybackInfo;
 
 /**
  * @author eneim | 5/31/17.
@@ -30,13 +30,13 @@ public interface Player {
 
   @NonNull View getPlayerView();
 
-  @NonNull PlayerState getCurrentState();
+  @NonNull PlaybackInfo getCurrentPlaybackInfo();
 
   /**
    * {@link ExoPlayer} should call {@link ExoPlayer#prepare(MediaSource)} here, and not start
    * playback when ready
    */
-  boolean prepare(@NonNull PlayerState playerState);
+  boolean prepare(@NonNull PlaybackInfo playbackInfo);
 
   void release();
 
@@ -58,4 +58,15 @@ public interface Player {
    * @return prefer playback order in list. Can be customized.
    */
   int getPlayerOrder();
+
+  interface EventListener {
+
+    void onBuffering(); // ExoPlayer state: 2
+
+    void onPlaying(); // ExoPlayer state: 3, play flag: true
+
+    void onPaused();  // ExoPlayer state: 3, play flag: false
+
+    void onCompleted(); // ExoPlayer state: 4
+  }
 }
