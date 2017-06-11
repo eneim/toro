@@ -31,7 +31,7 @@ import java.util.List;
 
 class TextViewHolder extends BaseViewHolder {
 
-  static final int LAYOUT_RES = R.layout.vh_basic_text;
+  static final int LAYOUT_RES = R.layout.vh_text_basic;
 
   @BindView(R.id.text_content) TextView content;
 

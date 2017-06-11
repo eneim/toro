@@ -34,8 +34,8 @@ public interface PlayerSelector {
 
   String TAG = "ToroLib:Selector";
 
-  @NonNull Collection<Player> select(@NonNull View container, //
-      @NonNull Collection<Player> items, int limit);
+  @NonNull Collection<ToroPlayer> select(@NonNull View container, //
+      @NonNull Collection<ToroPlayer> items, int limit);
 
   /**
    * @return The PlayerSelector that has opposite selecting logic.
@@ -43,8 +43,8 @@ public interface PlayerSelector {
   @Nullable PlayerSelector reverse();
 
   PlayerSelector DEFAULT = new PlayerSelector() {
-    @NonNull @Override public Collection<Player> select(@NonNull View container, //
-        @NonNull Collection<Player> items, int limit) {
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
+        @NonNull Collection<ToroPlayer> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).orderBy(Common.ORDER_COMPARATOR).take(limit).toList();
     }
@@ -55,8 +55,8 @@ public interface PlayerSelector {
   };
 
   PlayerSelector DEFAULT_REVERSE = new PlayerSelector() {
-    @NonNull @Override public Collection<Player> select(@NonNull View container, //
-        @NonNull Collection<Player> items, int limit) {
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
+        @NonNull Collection<ToroPlayer> items, int limit) {
       Log.w(TAG, "select() called with: items = [" + items + "], limit = [" + limit + "]");
       return Ix.from(items).takeLast(limit).toList();
     }
@@ -67,10 +67,10 @@ public interface PlayerSelector {
   };
 
   @SuppressWarnings("unused") PlayerSelector BY_AREA = new PlayerSelector() {
-    @NonNull @Override public Collection<Player> select(@NonNull final View container,
-        @NonNull Collection<Player> items, int limit) {
-      return Ix.from(items).orderBy(new Comparator<Player>() {
-        @Override public int compare(Player o1, Player o2) {
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull final View container,
+        @NonNull Collection<ToroPlayer> items, int limit) {
+      return Ix.from(items).orderBy(new Comparator<ToroPlayer>() {
+        @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
           return Float.compare( //
               ToroUtil.visibleAreaOffset(o1.getPlayerView(), container),
               ToroUtil.visibleAreaOffset(o2.getPlayerView(), container));
@@ -84,8 +84,8 @@ public interface PlayerSelector {
   };
 
   @SuppressWarnings("unused") PlayerSelector NONE = new PlayerSelector() {
-    @NonNull @Override public Collection<Player> select(@NonNull View container, //
-        @NonNull Collection<Player> items, int limit) {
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
+        @NonNull Collection<ToroPlayer> items, int limit) {
       return emptyList();
     }
 

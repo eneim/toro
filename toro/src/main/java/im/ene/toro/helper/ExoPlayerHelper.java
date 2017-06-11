@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.helper;
 
 import android.content.Context;
 import android.net.Uri;
@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import android.text.TextUtils;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
@@ -64,6 +65,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.R;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
 import java.net.CookieManager;
@@ -506,33 +508,47 @@ public final class ExoPlayerHelper {
   // Adapter for original EventListener
   public static class EventListener implements ExoPlayer.EventListener {
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
+    private ExoPlayer.EventListener delegate;
 
+    public EventListener(ExoPlayer.EventListener delegate) {
+      this.delegate = delegate;
+    }
+
+    public EventListener() {
+      this.delegate = null;
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY) void setDelegate(ExoPlayer.EventListener delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
+      if (this.delegate != null) this.delegate.onTimelineChanged(timeline, manifest);
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
+      if (this.delegate != null) this.delegate.onTracksChanged(trackGroups, trackSelections);
     }
 
     @Override public void onLoadingChanged(boolean isLoading) {
-
+      if (this.delegate != null) this.delegate.onLoadingChanged(isLoading);
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+      if (this.delegate != null) this.delegate.onPlayerStateChanged(playWhenReady, playbackState);
     }
 
     @Override public void onPlayerError(ExoPlaybackException error) {
-
+      if (this.delegate != null) this.delegate.onPlayerError(error);
     }
 
     @Override public void onPositionDiscontinuity() {
-
+      if (this.delegate != null) this.delegate.onPositionDiscontinuity();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
+      if (this.delegate != null) this.delegate.onPlaybackParametersChanged(playbackParameters);
     }
   }
 }

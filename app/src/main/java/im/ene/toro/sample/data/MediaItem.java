@@ -16,6 +16,8 @@
 
 package im.ene.toro.sample.data;
 
+import com.google.android.exoplayer2.util.Util;
+
 /**
  * @author eneim | 6/7/17.
  */
@@ -32,6 +34,10 @@ public class MediaItem implements Entity {
 
   public MediaUrl getMediaUrl() {
     return mediaUrl;
+  }
+
+  public int inferContentType() {
+    return Util.inferContentType(this.mediaUrl.getUri());
   }
 
   @Override public long getIndex() {

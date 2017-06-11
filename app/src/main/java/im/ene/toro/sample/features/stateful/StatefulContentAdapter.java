@@ -24,7 +24,7 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.common.BaseViewHolder;
 import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.DemoUtil;
-import im.ene.toro.sample.common.MediaViewHolder;
+import im.ene.toro.sample.common.SimpleExoPlayerViewHolder;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.sample.data.Entity;
 import ix.Ix;
@@ -45,8 +45,8 @@ class StatefulContentAdapter extends ContentAdapter implements PlayerStateManage
 
   @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     BaseViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-    if (viewHolder instanceof MediaViewHolder) {
-      ((MediaViewHolder) viewHolder).content.setOnClickListener(v -> {
+    if (viewHolder instanceof SimpleExoPlayerViewHolder) {
+      ((SimpleExoPlayerViewHolder) viewHolder).content.setOnClickListener(v -> {
         int pos = viewHolder.getAdapterPosition();
         if (pos >= 0) {
           entities.remove(pos);

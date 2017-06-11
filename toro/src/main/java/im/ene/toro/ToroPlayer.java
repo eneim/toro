@@ -20,13 +20,15 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import im.ene.toro.media.MediaPlayer;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.widget.Container;
 
 /**
  * @author eneim | 5/31/17.
  */
 
-public interface Player {
+public interface ToroPlayer extends MediaPlayer {
 
   @NonNull View getPlayerView();
 
@@ -35,22 +37,16 @@ public interface Player {
   /**
    * {@link ExoPlayer} should call {@link ExoPlayer#prepare(MediaSource)} here, and not start
    * playback when ready
+   *
+   * @param container the RecyclerView contains this Player.
+   * @param playbackInfo initialize info for the preparation.
    */
-  boolean prepare(@NonNull PlaybackInfo playbackInfo);
+  void prepare(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
 
+  /**
+   * Tear down all the setup. This should release all player instances.
+   */
   void release();
-
-  /**
-   * Start playback or resume from a pausing state.
-   */
-  void play();
-
-  /**
-   * Pause current playback.
-   */
-  void pause();
-
-  boolean isPlaying();
 
   boolean wantsToPlay();
 
@@ -67,6 +63,6 @@ public interface Player {
 
     void onPaused();  // ExoPlayer state: 3, play flag: false
 
-    void onCompleted(); // ExoPlayer state: 4
+    void onCompleted(Container container, ToroPlayer player); // ExoPlayer state: 4
   }
 }

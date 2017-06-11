@@ -28,13 +28,13 @@ import android.widget.TextView;
 import butterknife.BindView;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.ExoPlayerHelper;
-import im.ene.toro.Player;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
+import im.ene.toro.helper.ExoPlayerHelper;
+import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaItem;
@@ -46,11 +46,13 @@ import java.util.List;
  * @author eneim | 6/6/17.
  */
 
-public class MediaViewHolder extends BaseViewHolder implements Player {
+public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPlayer {
 
-  static final int LAYOUT_RES = R.layout.vh_basic_player;
+  private static final String TAG = "Toro:VH:ExoPlayer";
 
-  @SuppressWarnings("WeakerAccess") @Nullable ExoPlayerHelper helper;
+  static final int LAYOUT_RES = R.layout.vh_exoplayer_basic;
+
+  @SuppressWarnings("WeakerAccess") @Nullable SimpleExoPlayerViewHelper helper;
   @Nullable private Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
@@ -84,7 +86,7 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
     }
   };
 
-  MediaViewHolder(View itemView) {
+  SimpleExoPlayerViewHolder(View itemView) {
     super(itemView);
   }
 
@@ -106,35 +108,28 @@ public class MediaViewHolder extends BaseViewHolder implements Player {
     return state;
   }
 
-  @Override public boolean prepare(@NonNull PlaybackInfo playbackInfo) {
-    boolean handled;
+  @Override public void prepare(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       if (mediaUri != null) {
-        helper = new ExoPlayerHelper(playerView);
-        helper.setPlaybackInfo(playbackInfo);
-        helper.addEventListener(eventListener);
-
+        helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+        helper.setEventListener(eventListener);
         try {
-          helper.prepare(this.mediaUri);
-          handled = true;
-        } catch (ParserException e) {
+          helper.initialize(playbackInfo);
+        } catch (Exception e) {
           e.printStackTrace();
-          handled = false;
         }
-      } else {
-        handled = false;
       }
-    } else {
-      handled = true;
     }
-
-    return handled;
   }
 
   @Override public void release() {
     if (helper != null) {
-      helper.removeEventListener(eventListener);
-      helper.release();
+      helper.setEventListener(null);
+      try {
+        helper.cancel();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       helper = null;
     }
   }

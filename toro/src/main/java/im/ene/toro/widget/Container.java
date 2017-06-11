@@ -31,12 +31,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import im.ene.toro.Player;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.PlayerManager;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
@@ -47,7 +46,6 @@ import ix.IxConsumer;
 import ix.IxFunction;
 import ix.IxPredicate;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -96,8 +94,8 @@ public class Container extends RecyclerView {
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
     ViewHolder holder = getChildViewHolder(child);
-    if (!(holder instanceof Player)) return;
-    final Player player = (Player) holder;
+    if (!(holder instanceof ToroPlayer)) return;
+    final ToroPlayer player = (ToroPlayer) holder;
 
     if (playerManager != null) {
       if (playerManager.manages(player)) {
@@ -107,8 +105,8 @@ public class Container extends RecyclerView {
           @Override public void onGlobalLayout() {
             child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if (player.wantsToPlay()) {
-              player.prepare(playerStateManager != null ?  //
-                  playerStateManager.getPlaybackInfo(player.getPlayerOrder()) : new PlaybackInfo());
+              player.prepare(Container.this, playerStateManager == null ? new PlaybackInfo()
+                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder()));
               if (playerManager.attachPlayer(player)) {
                 dispatchUpdateOnAnimationFinished();
               }
@@ -122,8 +120,8 @@ public class Container extends RecyclerView {
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
     ViewHolder holder = getChildViewHolder(child);
-    if (!(holder instanceof Player)) return;
-    final Player player = (Player) holder;
+    if (!(holder instanceof ToroPlayer)) return;
+    final ToroPlayer player = (ToroPlayer) holder;
     if (this.playerStateManager != null) {
       this.playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
           player.getCurrentPlaybackInfo());
@@ -147,15 +145,16 @@ public class Container extends RecyclerView {
     if (state != SCROLL_STATE_IDLE) return;
     if (playerManager == null || this.playerSelector == null || getChildCount() == 0) return;
 
-    final List<Player> currentPlayers = new ArrayList<>(playerManager.getPlayers());
-    int count = currentPlayers.size();
-    for (int i = count - 1; i >= 0; i--) {
-      Player player = currentPlayers.get(i);
-      if (!player.wantsToPlay()) {
+    Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
+      @Override public boolean test(ToroPlayer player) {
+        return !player.wantsToPlay();
+      }
+    }).foreach(new IxConsumer<ToroPlayer>() {
+      @Override public void accept(ToroPlayer player) {
         player.pause();
         playerManager.detachPlayer(player);
       }
-    }
+    });
 
     int firstVisiblePosition = NO_POSITION;
     int lastVisiblePosition = NO_POSITION;
@@ -188,14 +187,14 @@ public class Container extends RecyclerView {
       for (int i = firstVisiblePosition; i <= lastVisiblePosition; i++) {
         // Detected a view holder for media player
         RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(i);
-        if (holder != null && holder instanceof Player) {
-          Player candidate = (Player) holder;
+        if (holder != null && holder instanceof ToroPlayer) {
+          ToroPlayer candidate = (ToroPlayer) holder;
           // check candidate's condition
           if (candidate.wantsToPlay()) {
             if (!playerManager.manages(candidate)) {
               if (playerManager.attachPlayer(candidate)) {
-                candidate.prepare(playerStateManager != null ? playerStateManager.getPlaybackInfo(
-                    candidate.getPlayerOrder()) : new PlaybackInfo());
+                candidate.prepare(this, playerStateManager == null ? new PlaybackInfo()
+                    : playerStateManager.getPlaybackInfo(candidate.getPlayerOrder()));
               }
             }
           }
@@ -215,10 +214,10 @@ public class Container extends RecyclerView {
   void setPlayerManager(@Nullable PlayerManager playerManager) {
     if (this.playerManager == playerManager) return;
     if (this.playerManager != null) {
-      for (Player player : this.playerManager.getPlayers()) {
+      for (ToroPlayer player : this.playerManager.getPlayers()) {
         player.pause();
       }
-      this.playerManager.getPlayers().clear();
+      this.playerManager.clear();
     }
 
     this.playerManager = playerManager;
@@ -315,16 +314,16 @@ public class Container extends RecyclerView {
     // I wish I could use Retrolambda here ...
     Ix.from(savedOrders).except(  // using except operator
         // First, save state of currently playing players, using their current states.
-        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<Player>() {
-          @Override public boolean test(Player player) {
+        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
+          @Override public boolean test(ToroPlayer player) {
             return player.isPlaying();
           }
-        }).doOnNext(new IxConsumer<Player>() {
-          @Override public void accept(Player player) {
+        }).doOnNext(new IxConsumer<ToroPlayer>() {
+          @Override public void accept(ToroPlayer player) {
             states.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
           }
-        }).map(new IxFunction<Player, Integer>() {
-          @Override public Integer apply(Player player) {
+        }).map(new IxFunction<ToroPlayer, Integer>() {
+          @Override public Integer apply(ToroPlayer player) {
             return player.getPlayerOrder();
           }
         }))
@@ -525,7 +524,6 @@ public class Container extends RecyclerView {
     }
 
     @Override public boolean handleMessage(Message msg) {
-      Log.w(TAG, "handleMessage() called with: msg = [" + msg + "]");
       Container container = this.container.get();
       if (container != null) {
         container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);

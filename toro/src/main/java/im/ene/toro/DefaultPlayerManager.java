@@ -22,6 +22,7 @@ import im.ene.toro.widget.Container;
 import ix.Ix;
 import ix.IxConsumer;
 import ix.IxPredicate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -31,7 +32,7 @@ import java.util.HashSet;
 
 public class DefaultPlayerManager implements PlayerManager {
 
-  private final HashSet<Player> players = new HashSet<>();
+  private final HashSet<ToroPlayer> players = new HashSet<>();
   private final int playerCount;
 
   private boolean saveLiveStates = false;
@@ -72,40 +73,44 @@ public class DefaultPlayerManager implements PlayerManager {
     // 1. find those are allowed to play
     // 2. among them, use PlayerSelector to select a subset then for each of them start the playback
     // if it is not playing, and pause the playback for others.
-    final Ix<Player> source = Ix.from(players).filter(new IxPredicate<Player>() {
-      @Override public boolean test(Player player) {
+    final Ix<ToroPlayer> source = Ix.from(players).filter(new IxPredicate<ToroPlayer>() {
+      @Override public boolean test(ToroPlayer player) {
         return Common.doAllowsToPlay(player.getPlayerView(), container);
       }
     });
 
     source.except(Ix.from(selector.select(container, source.toList(), this.playerCount))
-        .doOnNext(new IxConsumer<Player>() {
-          @Override public void accept(Player player) {
+        .doOnNext(new IxConsumer<ToroPlayer>() {
+          @Override public void accept(ToroPlayer player) {
             if (!player.isPlaying()) player.play();
           }
         })) //
-        .doOnNext(new IxConsumer<Player>() {
-          @Override public void accept(Player player) {
+        .doOnNext(new IxConsumer<ToroPlayer>() {
+          @Override public void accept(ToroPlayer player) {
             if (player.isPlaying()) player.pause();
           }
         }).subscribe();
   }
 
-  @Override public boolean attachPlayer(@NonNull Player player) {
+  @Override public boolean attachPlayer(@NonNull ToroPlayer player) {
     Log.d(TAG, "attachPlayer() called with: player = [" + player + "]");
     return players.add(player);
   }
 
-  @Override public boolean detachPlayer(@NonNull Player player) {
+  @Override public boolean detachPlayer(@NonNull ToroPlayer player) {
     Log.d(TAG, "detachPlayer() called with: player = [" + player + "]");
     return players.remove(player);
   }
 
-  @Override public boolean manages(@NonNull Player player) {
+  @Override public boolean manages(@NonNull ToroPlayer player) {
     return players.contains(player);
   }
 
-  @NonNull @Override public Collection<Player> getPlayers() {
-    return this.players;
+  @NonNull @Override public Collection<ToroPlayer> getPlayers() {
+    return new ArrayList<>(this.players);
+  }
+
+  @Override public void clear() {
+    this.players.clear();
   }
 }

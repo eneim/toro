@@ -45,8 +45,8 @@ final class Common {
     return Collections.<Long>min(list);
   }
 
-  static Comparator<Player> ORDER_COMPARATOR = new Comparator<Player>() {
-    @Override public int compare(Player o1, Player o2) {
+  static Comparator<ToroPlayer> ORDER_COMPARATOR = new Comparator<ToroPlayer>() {
+    @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
       return Common.compare(o1.getPlayerOrder(), o2.getPlayerOrder());
     }
   };
