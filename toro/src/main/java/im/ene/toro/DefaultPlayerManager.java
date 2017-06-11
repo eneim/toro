@@ -17,7 +17,6 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import im.ene.toro.widget.Container;
 import ix.Ix;
 import ix.IxConsumer;
@@ -35,36 +34,20 @@ public class DefaultPlayerManager implements PlayerManager {
   private final HashSet<ToroPlayer> players = new HashSet<>();
   private final int playerCount;
 
-  private boolean saveLiveStates = false;
-
-  public DefaultPlayerManager(int playerCount, boolean saveLiveStates) {
-    this.playerCount = playerCount;
-    this.saveLiveStates = saveLiveStates;
-  }
-
   public DefaultPlayerManager(int playerCount) {
-    this(playerCount, false);
+    this.playerCount = playerCount;
   }
 
   @SuppressWarnings("unused") public DefaultPlayerManager() {
     this(1);
   }
 
-  public boolean isSaveLiveStates() {
-    return saveLiveStates;
-  }
-
-  public void setSaveLiveStates(boolean saveLiveStates) {
-    this.saveLiveStates = saveLiveStates;
-  }
-
   @Override
   public void updatePlayback(@NonNull final Container container, @NonNull PlayerSelector selector) {
-    Log.e(TAG, "updatePlayback: " + this.players);
     if (BuildConfig.DEBUG) {
       //noinspection ConstantConditions
       if (selector == null) {
-        throw new IllegalArgumentException("PlayerSelector must not be null");
+        throw new IllegalArgumentException("PlayerSelector is Null.");
       }
     }
 
@@ -93,12 +76,10 @@ public class DefaultPlayerManager implements PlayerManager {
   }
 
   @Override public boolean attachPlayer(@NonNull ToroPlayer player) {
-    Log.d(TAG, "attachPlayer() called with: player = [" + player + "]");
     return players.add(player);
   }
 
   @Override public boolean detachPlayer(@NonNull ToroPlayer player) {
-    Log.d(TAG, "detachPlayer() called with: player = [" + player + "]");
     return players.remove(player);
   }
 

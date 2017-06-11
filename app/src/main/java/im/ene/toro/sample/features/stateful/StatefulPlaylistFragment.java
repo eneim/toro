@@ -111,7 +111,7 @@ public class StatefulPlaylistFragment extends BaseFragment {
             // do nothing.
           }
         });
-    toroHelper = new ToroHelper(new DefaultPlayerManager(1, true), PlayerSelector.DEFAULT);
+    toroHelper = new ToroHelper(new DefaultPlayerManager(1), PlayerSelector.DEFAULT);
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
