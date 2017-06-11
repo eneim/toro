@@ -25,9 +25,6 @@ import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.LegacyVideoViewHelper;
@@ -145,18 +142,5 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
-  }
-
-  @Nullable static Format[] getCurrentFormats(@NonNull ExoPlayer player) {
-    Format[] formats = null;
-    TrackSelectionArray selectionArray = player.getCurrentTrackSelections();
-    if (selectionArray != null && selectionArray.length > 0) {
-      formats = new Format[selectionArray.length];
-      for (int i = 0; i < selectionArray.length; i++) {
-        if (selectionArray.get(i) != null) formats[i] = selectionArray.get(i).getSelectedFormat();
-      }
-    }
-
-    return formats;
   }
 }
