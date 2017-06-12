@@ -82,6 +82,8 @@ public class StatefulPlaylistFragment extends BaseFragment {
     if (bundle != null) adapter.addMany(true, DataSource.getInstance().getEntities());  // restore.
 
     container.setAdapter(adapter);
+    container.setMaxPlayerNumber(1);  // optional, 1 is by default.
+
     refreshLayout.setOnRefreshListener(() -> {
       refreshLayout.setRefreshing(true);
       dispatchLoadData(false);
@@ -111,25 +113,15 @@ public class StatefulPlaylistFragment extends BaseFragment {
             // do nothing.
           }
         });
-    toroHelper = new ToroHelper(new DefaultPlayerManager(1), PlayerSelector.DEFAULT);
+    toroHelper = new ToroHelper(new DefaultPlayerManager(), PlayerSelector.DEFAULT);
+    touchHelper.attachToRecyclerView(container);
+    toroHelper.registerContainer(container);
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
     super.onViewStateRestored(bundle);
     // Only fetch for completely new data if this Fragment is created from scratch.
     if (bundle == null) dispatchLoadData(false);
-  }
-
-  @Override public void onStart() {
-    super.onStart();
-    touchHelper.attachToRecyclerView(container);
-    toroHelper.registerContainer(container);
-  }
-
-  @Override public void onStop() {
-    super.onStop();
-    toroHelper.registerContainer(null);
-    touchHelper.attachToRecyclerView(null);
   }
 
   void dispatchLoadData(boolean loadMore) {
@@ -148,6 +140,8 @@ public class StatefulPlaylistFragment extends BaseFragment {
 
   @Override public void onDestroyView() {
     disposibles.clear();  // Clear but not dispose, by intent
+    toroHelper.registerContainer(null);
+    touchHelper.attachToRecyclerView(null);
     // In case of LinearLayoutManager, setting it to "recycler child on detach" will also detach
     // children Views properly, so this setup is optional.
     // See: https://github.com/airbnb/epoxy/wiki/Avoiding-Memory-Leaks for more information.

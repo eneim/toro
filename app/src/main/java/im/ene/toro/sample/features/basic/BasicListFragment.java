@@ -30,13 +30,13 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import im.ene.toro.DefaultPlayerManager;
 import im.ene.toro.PlayerSelector;
-import im.ene.toro.widget.ToroHelper;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.EndlessScroller;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.widget.Container;
+import im.ene.toro.widget.ToroHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -88,6 +88,7 @@ public class BasicListFragment extends BaseFragment {
 
     container.setAdapter(adapter);
     container.setLayoutManager(layoutManager);
+    container.setMaxPlayerNumber(1);  // optional, 1 is by default.
 
     refreshLayout.setOnRefreshListener(() -> {
       refreshLayout.setRefreshing(true);
@@ -114,25 +115,16 @@ public class BasicListFragment extends BaseFragment {
         // do nothing.
       }
     });
-    toroHelper = new ToroHelper(new DefaultPlayerManager(1), PlayerSelector.DEFAULT);
+    touchHelper.attachToRecyclerView(container);
+
+    toroHelper = new ToroHelper(new DefaultPlayerManager(), PlayerSelector.DEFAULT);
+    toroHelper.registerContainer(container);
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
     super.onViewStateRestored(bundle);
     // Only fetch for completely new data if this Fragment is created from scratch.
     if (bundle == null) dispatchLoadData(false);
-  }
-
-  @Override public void onStart() {
-    super.onStart();
-    touchHelper.attachToRecyclerView(container);
-    toroHelper.registerContainer(container);
-  }
-
-  @Override public void onStop() {
-    super.onStop();
-    toroHelper.registerContainer(null);
-    touchHelper.attachToRecyclerView(null);
   }
 
   void dispatchLoadData(boolean loadMore) {
@@ -151,6 +143,8 @@ public class BasicListFragment extends BaseFragment {
 
   @Override public void onDestroyView() {
     disposibles.clear();  // Clear but not dispose, by intent
+    toroHelper.registerContainer(null);
+    touchHelper.attachToRecyclerView(null);
     // In case of LinearLayoutManager, setting it to "recycler child on detach" will also detach
     // children Views properly, so this setup is optional.
     // See: https://github.com/airbnb/epoxy/wiki/Avoiding-Memory-Leaks for more information.

@@ -18,6 +18,7 @@ package im.ene.toro;
 
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.annotation.RestrictTo;
 import android.view.View;
 import im.ene.toro.widget.Container;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ import java.util.List;
  * @author eneim | 6/2/17.
  */
 
-final class Common {
+public final class Common {
 
   @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
@@ -51,7 +52,8 @@ final class Common {
     }
   };
 
-  static boolean doAllowsToPlay(@NonNull View videoView, @NonNull Container parent) {
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  public static boolean doAllowsToPlay(@NonNull View videoView, @NonNull Container parent) {
     Rect windowRect = new Rect();
     Rect parentRect = new Rect();
     // 1. Get Window's vision from parent

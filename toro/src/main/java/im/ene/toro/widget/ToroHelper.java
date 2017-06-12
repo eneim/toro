@@ -27,7 +27,7 @@ import im.ene.toro.PlayerSelector;
 
 public final class ToroHelper {
 
-  private static final String TAG = "ToroLib:Helper";
+  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Helper";
 
   @NonNull private final PlayerManager playerManager;
   @Nullable private PlayerSelector playerSelector;  // changeable on demand.

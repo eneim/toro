@@ -16,8 +16,8 @@
 
 package im.ene.toro;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import ix.Ix;
@@ -35,12 +35,13 @@ public interface PlayerSelector {
   String TAG = "ToroLib:Selector";
 
   @NonNull Collection<ToroPlayer> select(@NonNull View container, //
-      @NonNull Collection<ToroPlayer> items, int limit);
+      @NonNull Collection<ToroPlayer> items, @IntRange(from = 0) int limit);
 
   /**
-   * @return The PlayerSelector that has opposite selecting logic.
+   * @return The PlayerSelector that has opposite selecting logic. If there is no available one,
+   * return "this".
    */
-  @Nullable PlayerSelector reverse();
+  @NonNull PlayerSelector reverse();
 
   PlayerSelector DEFAULT = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
@@ -49,7 +50,7 @@ public interface PlayerSelector {
       return Ix.from(items).orderBy(Common.ORDER_COMPARATOR).take(limit).toList();
     }
 
-    @Override public PlayerSelector reverse() {
+    @NonNull @Override public PlayerSelector reverse() {
       return DEFAULT_REVERSE;
     }
   };
@@ -61,7 +62,7 @@ public interface PlayerSelector {
       return Ix.from(items).takeLast(limit).toList();
     }
 
-    @Nullable @Override public PlayerSelector reverse() {
+    @NonNull @Override public PlayerSelector reverse() {
       return DEFAULT;
     }
   };
@@ -78,7 +79,7 @@ public interface PlayerSelector {
       }).take(limit).toList();
     }
 
-    @Nullable @Override public PlayerSelector reverse() {
+    @NonNull @Override public PlayerSelector reverse() {
       return this;  // FIXME return proper reverse selector.
     }
   };
@@ -89,7 +90,7 @@ public interface PlayerSelector {
       return emptyList();
     }
 
-    @Nullable @Override public PlayerSelector reverse() {
+    @NonNull @Override public PlayerSelector reverse() {
       return this;
     }
   };

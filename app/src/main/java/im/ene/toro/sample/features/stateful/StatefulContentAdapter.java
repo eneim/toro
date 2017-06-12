@@ -29,6 +29,7 @@ import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.sample.data.Entity;
 import ix.Ix;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -56,6 +57,11 @@ class StatefulContentAdapter extends ContentAdapter implements PlayerStateManage
       });
     }
     return viewHolder;
+  }
+
+  @Override public void addMany(boolean reset, @NonNull List<Entity> items) {
+    if (reset) stateCache.clear();
+    super.addMany(reset, items);
   }
 
   @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {

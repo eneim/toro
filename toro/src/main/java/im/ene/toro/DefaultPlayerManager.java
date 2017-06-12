@@ -17,10 +17,6 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import im.ene.toro.widget.Container;
-import ix.Ix;
-import ix.IxConsumer;
-import ix.IxPredicate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,48 +28,6 @@ import java.util.HashSet;
 public class DefaultPlayerManager implements PlayerManager {
 
   private final HashSet<ToroPlayer> players = new HashSet<>();
-  private final int playerCount;
-
-  public DefaultPlayerManager(int playerCount) {
-    this.playerCount = playerCount;
-  }
-
-  @SuppressWarnings("unused") public DefaultPlayerManager() {
-    this(1);
-  }
-
-  @Override
-  public void updatePlayback(@NonNull final Container container, @NonNull PlayerSelector selector) {
-    if (BuildConfig.DEBUG) {
-      //noinspection ConstantConditions
-      if (selector == null) {
-        throw new IllegalArgumentException("PlayerSelector is Null.");
-      }
-    }
-
-    if (this.players.isEmpty()) return;
-    // from current player list:
-    // 1. find those are allowed to play
-    // 2. among them, use PlayerSelector to select a subset then for each of them start the playback
-    // if it is not playing, and pause the playback for others.
-    final Ix<ToroPlayer> source = Ix.from(players).filter(new IxPredicate<ToroPlayer>() {
-      @Override public boolean test(ToroPlayer player) {
-        return Common.doAllowsToPlay(player.getPlayerView(), container);
-      }
-    });
-
-    source.except(Ix.from(selector.select(container, source.toList(), this.playerCount))
-        .doOnNext(new IxConsumer<ToroPlayer>() {
-          @Override public void accept(ToroPlayer player) {
-            if (!player.isPlaying()) player.play();
-          }
-        })) //
-        .doOnNext(new IxConsumer<ToroPlayer>() {
-          @Override public void accept(ToroPlayer player) {
-            if (player.isPlaying()) player.pause();
-          }
-        }).subscribe();
-  }
 
   @Override public boolean attachPlayer(@NonNull ToroPlayer player) {
     return players.add(player);
@@ -94,4 +48,5 @@ public class DefaultPlayerManager implements PlayerManager {
   @Override public void clear() {
     this.players.clear();
   }
+
 }

@@ -17,7 +17,6 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import im.ene.toro.widget.Container;
 import java.util.Collection;
 
 /**
@@ -32,8 +31,6 @@ import java.util.Collection;
 public interface PlayerManager {
 
   @SuppressWarnings("unused") String TAG = "ToroLib:PlayerManager";
-
-  void updatePlayback(@NonNull Container container, @NonNull PlayerSelector selector);
 
   // Call before player starts playback
   boolean attachPlayer(@NonNull ToroPlayer player);

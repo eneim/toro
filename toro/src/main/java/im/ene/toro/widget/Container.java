@@ -17,6 +17,7 @@
 package im.ene.toro.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
@@ -31,15 +32,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import im.ene.toro.ToroPlayer;
+import im.ene.toro.Common;
 import im.ene.toro.PlayerManager;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
+import im.ene.toro.R;
 import im.ene.toro.ToroLayoutManager;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import ix.Ix;
 import ix.IxConsumer;
@@ -64,6 +68,8 @@ public class Container extends RecyclerView {
   PlayerStateManager playerStateManager;
   Handler animatorFinishHandler;
 
+  private int maxPlayerNumber = 1;  // changeable by attr as well as setter
+
   public Container(Context context) {
     this(context, null);
   }
@@ -74,6 +80,12 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Container);
+    try {
+      this.maxPlayerNumber = a.getInt(R.styleable.Container_max_player_number, 1);
+    } finally {
+      a.recycle();
+    }
   }
 
   @Override protected void onAttachedToWindow() {
@@ -88,6 +100,17 @@ public class Container extends RecyclerView {
     if (animatorFinishHandler != null) {
       animatorFinishHandler.removeCallbacksAndMessages(null);
       animatorFinishHandler = null;
+    }
+  }
+
+  public void setMaxPlayerNumber(int maxPlayerNumber) {
+    this.setMaxPlayerNumber(maxPlayerNumber, false);
+  }
+
+  public void setMaxPlayerNumber(int maxPlayerNumber, boolean immediately) {
+    this.maxPlayerNumber = maxPlayerNumber;
+    if (immediately) {
+      onScrollStateChanged(SCROLL_STATE_IDLE);
     }
   }
 
@@ -202,7 +225,28 @@ public class Container extends RecyclerView {
       }
     }
 
-    playerManager.updatePlayback(this, playerSelector);
+    Collection<ToroPlayer> players = playerManager.getPlayers();
+    if (players.isEmpty()) return;
+    final Ix<ToroPlayer> source = Ix.from(players).filter(new IxPredicate<ToroPlayer>() {
+      @Override public boolean test(ToroPlayer player) {
+        return Common.doAllowsToPlay(player.getPlayerView(), Container.this);
+      }
+    });
+
+    source.except(
+        // 1. ask selector to select players those can start playback.
+        Ix.from(this.playerSelector.select(this, source.toList(), maxPlayerNumber))
+            .doOnNext(new IxConsumer<ToroPlayer>() {
+              @Override public void accept(ToroPlayer player) {
+                if (!player.isPlaying()) player.play();
+              }
+            })
+        // 2. items from source except the items above come here, pause the players those should.
+    ).doOnNext(new IxConsumer<ToroPlayer>() {
+      @Override public void accept(ToroPlayer player) {
+        if (player.isPlaying()) player.pause();
+      }
+    }).subscribe();
   }
 
   ////// Manager and PlayerSelector stuff
@@ -304,7 +348,26 @@ public class Container extends RecyclerView {
         ((AdapterWrapper) adapter).origin : adapter;
   }
 
+  SparseArray<PlaybackInfo> tmpStates = null;
+
+  // In case user press "App Stack" button, this View's window will have visibility change from 0 -> 4 -> 8.
+  // When user is back from that state, the visibility changes from 8 -> 4 -> 0.
+  @Override protected void onWindowVisibilityChanged(int visibility) {
+    super.onWindowVisibilityChanged(visibility);
+    if (playerManager == null || playerStateManager == null) return;
+    if (visibility == View.VISIBLE && tmpStates != null && tmpStates.size() > 0) {
+      for (int i = 0; i < tmpStates.size(); i++) {
+        int order = tmpStates.keyAt(i);
+        PlaybackInfo playbackInfo = tmpStates.get(order);
+        playerStateManager.savePlaybackInfo(order, playbackInfo);
+      }
+      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+      tmpStates = null;
+    }
+  }
+
   @Override protected Parcelable onSaveInstanceState() {
+    Log.d(TAG, "onSaveInstanceState() called");
     Parcelable superState = super.onSaveInstanceState();
     final Collection<Integer> savedOrders;
     if (playerManager == null || playerStateManager == null) return superState;
@@ -321,6 +384,9 @@ public class Container extends RecyclerView {
         }).doOnNext(new IxConsumer<ToroPlayer>() {
           @Override public void accept(ToroPlayer player) {
             states.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+            player.pause();
+            playerManager.detachPlayer(player);
+            player.release();
           }
         }).map(new IxFunction<ToroPlayer, Integer>() {
           @Override public Integer apply(ToroPlayer player) {
@@ -338,6 +404,9 @@ public class Container extends RecyclerView {
     // Client must consider this behavior using PlayerStateManager implement.
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
+
+    // FIXME kind of dirty workaround.
+    tmpStates = states;
     return playerViewState;
   }
 

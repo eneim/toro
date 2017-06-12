@@ -77,8 +77,7 @@ public class LegacyVideoViewHelper extends PlayerViewHelper {
 
     this.playerView.setPlaybackEventListener(new ToroVideoView.PlaybackEventListener() {
       @Override public void onPlay() {
-        LegacyVideoViewHelper.super.onPlayerStateUpdated(
-            mediaPlayer != null && mediaPlayer.isPlaying(), 3);
+        LegacyVideoViewHelper.super.onPlayerStateUpdated(true, 3);
       }
 
       @Override public void onPause() {
