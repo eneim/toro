@@ -27,20 +27,21 @@ import java.lang.reflect.Method;
 
 public final class Deck {
 
-  private Deck() {}
+  private Deck() {
+  }
 
   public static void present(FragmentActivity activity, Class<?> fragmentClass)
       throws ToroDemoException {
-    Fragment fragment = null;
+    Fragment fragment;
     //noinspection TryWithIdenticalCatches
     try {
       //noinspection ConfusingArgumentToVarargsMethod
-      Method method = fragmentClass.getMethod("newInstance", null);
+      Method method = fragmentClass.getMethod("newInstance", null); // <-- must implement this method.
       //noinspection ConfusingArgumentToVarargsMethod
       fragment = (Fragment) method.invoke(null, null);
     } catch (NoSuchMethodException e) {
       e.printStackTrace();
-      activity.finish();
+      throw new ToroDemoException(e.getLocalizedMessage(), e);
     } catch (InvocationTargetException e) {
       e.printStackTrace();
       throw new ToroDemoException(e.getLocalizedMessage(), e);
@@ -50,10 +51,8 @@ public final class Deck {
     }
 
     if (fragment != null) {
-      activity.getSupportFragmentManager()
-          .beginTransaction()
-          .replace(android.R.id.content, fragment)
-          .commit();
+      activity.getSupportFragmentManager().beginTransaction() //
+          .replace(android.R.id.content, fragment).commit();
     } else {
       activity.finish();
     }

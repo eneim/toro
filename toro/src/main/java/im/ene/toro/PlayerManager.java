@@ -17,7 +17,6 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import im.ene.toro.widget.Container;
 import java.util.Collection;
 
 /**
@@ -26,22 +25,23 @@ import java.util.Collection;
  *         Logic: collect all Players those "wantsToPlay()", then internally decide if we allow
  *         each of them to play or not.
  *
- *         All managed players must return {@code true} from {@link Player#wantsToPlay()}
+ *         All managed players must return {@code true} from {@link ToroPlayer#wantsToPlay()}
  */
 
 public interface PlayerManager {
 
   @SuppressWarnings("unused") String TAG = "ToroLib:PlayerManager";
 
-  void updatePlayback(@NonNull Container container, @NonNull PlayerSelector selector);
-
   // Call before player starts playback
-  boolean attachPlayer(@NonNull Player player);
+  boolean attachPlayer(@NonNull ToroPlayer player);
 
   // Call after player pauses or stops playback
-  boolean detachPlayer(@NonNull Player player);
+  boolean detachPlayer(@NonNull ToroPlayer player);
 
-  boolean manages(@NonNull Player player);
+  boolean manages(@NonNull ToroPlayer player);
 
-  @NonNull Collection<Player> getPlayers();
+  void clear();
+
+  // TODO: implementation must return a copy of real data.
+  @NonNull Collection<ToroPlayer> getPlayers();
 }

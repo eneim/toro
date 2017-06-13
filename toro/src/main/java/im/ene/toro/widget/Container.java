@@ -17,6 +17,7 @@
 package im.ene.toro.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
@@ -36,18 +37,19 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import im.ene.toro.Player;
+import im.ene.toro.Common;
 import im.ene.toro.PlayerManager;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
+import im.ene.toro.R;
 import im.ene.toro.ToroLayoutManager;
-import im.ene.toro.media.PlayerState;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.media.PlaybackInfo;
 import ix.Ix;
 import ix.IxConsumer;
 import ix.IxFunction;
 import ix.IxPredicate;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -66,6 +68,8 @@ public class Container extends RecyclerView {
   PlayerStateManager playerStateManager;
   Handler animatorFinishHandler;
 
+  private int maxPlayerNumber = 1;  // changeable by attr as well as setter
+
   public Container(Context context) {
     this(context, null);
   }
@@ -76,6 +80,12 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Container);
+    try {
+      this.maxPlayerNumber = a.getInt(R.styleable.Container_max_player_number, 1);
+    } finally {
+      a.recycle();
+    }
   }
 
   @Override protected void onAttachedToWindow() {
@@ -93,11 +103,22 @@ public class Container extends RecyclerView {
     }
   }
 
+  public void setMaxPlayerNumber(int maxPlayerNumber) {
+    this.setMaxPlayerNumber(maxPlayerNumber, false);
+  }
+
+  public void setMaxPlayerNumber(int maxPlayerNumber, boolean immediately) {
+    this.maxPlayerNumber = maxPlayerNumber;
+    if (immediately) {
+      onScrollStateChanged(SCROLL_STATE_IDLE);
+    }
+  }
+
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
     ViewHolder holder = getChildViewHolder(child);
-    if (!(holder instanceof Player)) return;
-    final Player player = (Player) holder;
+    if (!(holder instanceof ToroPlayer)) return;
+    final ToroPlayer player = (ToroPlayer) holder;
 
     if (playerManager != null) {
       if (playerManager.manages(player)) {
@@ -107,8 +128,8 @@ public class Container extends RecyclerView {
           @Override public void onGlobalLayout() {
             child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             if (player.wantsToPlay()) {
-              player.prepare(playerStateManager != null ?  //
-                  playerStateManager.getPlayerState(player.getPlayerOrder()) : new PlayerState());
+              player.prepare(Container.this, playerStateManager == null ? new PlaybackInfo()
+                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder()));
               if (playerManager.attachPlayer(player)) {
                 dispatchUpdateOnAnimationFinished();
               }
@@ -122,10 +143,11 @@ public class Container extends RecyclerView {
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
     ViewHolder holder = getChildViewHolder(child);
-    if (!(holder instanceof Player)) return;
-    final Player player = (Player) holder;
+    if (!(holder instanceof ToroPlayer)) return;
+    final ToroPlayer player = (ToroPlayer) holder;
     if (this.playerStateManager != null) {
-      this.playerStateManager.savePlayerState(player.getPlayerOrder(), player.getCurrentState());
+      this.playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
+          player.getCurrentPlaybackInfo());
     }
 
     if (playerManager != null) {
@@ -146,15 +168,16 @@ public class Container extends RecyclerView {
     if (state != SCROLL_STATE_IDLE) return;
     if (playerManager == null || this.playerSelector == null || getChildCount() == 0) return;
 
-    final List<Player> currentPlayers = new ArrayList<>(playerManager.getPlayers());
-    int count = currentPlayers.size();
-    for (int i = count - 1; i >= 0; i--) {
-      Player player = currentPlayers.get(i);
-      if (!player.wantsToPlay()) {
+    Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
+      @Override public boolean test(ToroPlayer player) {
+        return !player.wantsToPlay();
+      }
+    }).foreach(new IxConsumer<ToroPlayer>() {
+      @Override public void accept(ToroPlayer player) {
         player.pause();
         playerManager.detachPlayer(player);
       }
-    }
+    });
 
     int firstVisiblePosition = NO_POSITION;
     int lastVisiblePosition = NO_POSITION;
@@ -187,14 +210,14 @@ public class Container extends RecyclerView {
       for (int i = firstVisiblePosition; i <= lastVisiblePosition; i++) {
         // Detected a view holder for media player
         RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(i);
-        if (holder != null && holder instanceof Player) {
-          Player candidate = (Player) holder;
+        if (holder != null && holder instanceof ToroPlayer) {
+          ToroPlayer candidate = (ToroPlayer) holder;
           // check candidate's condition
           if (candidate.wantsToPlay()) {
             if (!playerManager.manages(candidate)) {
               if (playerManager.attachPlayer(candidate)) {
-                candidate.prepare(playerStateManager != null ? playerStateManager.getPlayerState(
-                    candidate.getPlayerOrder()) : new PlayerState());
+                candidate.prepare(this, playerStateManager == null ? new PlaybackInfo()
+                    : playerStateManager.getPlaybackInfo(candidate.getPlayerOrder()));
               }
             }
           }
@@ -202,7 +225,28 @@ public class Container extends RecyclerView {
       }
     }
 
-    playerManager.updatePlayback(this, playerSelector);
+    Collection<ToroPlayer> players = playerManager.getPlayers();
+    if (players.isEmpty()) return;
+    final Ix<ToroPlayer> source = Ix.from(players).filter(new IxPredicate<ToroPlayer>() {
+      @Override public boolean test(ToroPlayer player) {
+        return Common.doAllowsToPlay(player.getPlayerView(), Container.this);
+      }
+    });
+
+    source.except(
+        // 1. ask selector to select players those can start playback.
+        Ix.from(this.playerSelector.select(this, source.toList(), maxPlayerNumber))
+            .doOnNext(new IxConsumer<ToroPlayer>() {
+              @Override public void accept(ToroPlayer player) {
+                if (!player.isPlaying()) player.play();
+              }
+            })
+        // 2. items from source except the items above come here, pause the players those should.
+    ).doOnNext(new IxConsumer<ToroPlayer>() {
+      @Override public void accept(ToroPlayer player) {
+        if (player.isPlaying()) player.pause();
+      }
+    }).subscribe();
   }
 
   ////// Manager and PlayerSelector stuff
@@ -214,10 +258,10 @@ public class Container extends RecyclerView {
   void setPlayerManager(@Nullable PlayerManager playerManager) {
     if (this.playerManager == playerManager) return;
     if (this.playerManager != null) {
-      for (Player player : this.playerManager.getPlayers()) {
+      for (ToroPlayer player : this.playerManager.getPlayers()) {
         player.pause();
       }
-      this.playerManager.getPlayers().clear();
+      this.playerManager.clear();
     }
 
     this.playerManager = playerManager;
@@ -304,33 +348,55 @@ public class Container extends RecyclerView {
         ((AdapterWrapper) adapter).origin : adapter;
   }
 
+  SparseArray<PlaybackInfo> tmpStates = null;
+
+  // In case user press "App Stack" button, this View's window will have visibility change from 0 -> 4 -> 8.
+  // When user is back from that state, the visibility changes from 8 -> 4 -> 0.
+  @Override protected void onWindowVisibilityChanged(int visibility) {
+    super.onWindowVisibilityChanged(visibility);
+    if (playerManager == null || playerStateManager == null) return;
+    if (visibility == View.VISIBLE && tmpStates != null && tmpStates.size() > 0) {
+      for (int i = 0; i < tmpStates.size(); i++) {
+        int order = tmpStates.keyAt(i);
+        PlaybackInfo playbackInfo = tmpStates.get(order);
+        playerStateManager.savePlaybackInfo(order, playbackInfo);
+      }
+      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+      tmpStates = null;
+    }
+  }
+
   @Override protected Parcelable onSaveInstanceState() {
+    Log.d(TAG, "onSaveInstanceState() called");
     Parcelable superState = super.onSaveInstanceState();
     final Collection<Integer> savedOrders;
     if (playerManager == null || playerStateManager == null) return superState;
     if ((savedOrders = playerStateManager.getSavedPlayerOrders()) == null) return superState;
     // Process saving playback state from here since Client wants this.
-    final SparseArray<PlayerState> states = new SparseArray<>();
+    final SparseArray<PlaybackInfo> states = new SparseArray<>();
     // I wish I could use Retrolambda here ...
     Ix.from(savedOrders).except(  // using except operator
         // First, save state of currently playing players, using their current states.
-        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<Player>() {
-          @Override public boolean test(Player player) {
+        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
+          @Override public boolean test(ToroPlayer player) {
             return player.isPlaying();
           }
-        }).doOnNext(new IxConsumer<Player>() {
-          @Override public void accept(Player player) {
-            states.put(player.getPlayerOrder(), player.getCurrentState());
+        }).doOnNext(new IxConsumer<ToroPlayer>() {
+          @Override public void accept(ToroPlayer player) {
+            states.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+            player.pause();
+            playerManager.detachPlayer(player);
+            player.release();
           }
-        }).map(new IxFunction<Player, Integer>() {
-          @Override public Integer apply(Player player) {
+        }).map(new IxFunction<ToroPlayer, Integer>() {
+          @Override public Integer apply(ToroPlayer player) {
             return player.getPlayerOrder();
           }
         }))
         // Now remaining orders contain only players those are not playing -> get state from cache.
         .foreach(new IxConsumer<Integer>() {
           @Override public void accept(Integer integer) {
-            states.put(integer, playerStateManager.getPlayerState(integer));
+            states.put(integer, playerStateManager.getPlaybackInfo(integer));
           }
         });
 
@@ -338,6 +404,9 @@ public class Container extends RecyclerView {
     // Client must consider this behavior using PlayerStateManager implement.
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
+
+    // FIXME kind of dirty workaround.
+    tmpStates = states;
     return playerViewState;
   }
 
@@ -353,8 +422,8 @@ public class Container extends RecyclerView {
     if (playerStateManager != null && saveStates.size() > 0) {
       for (int i = 0; i < saveStates.size(); i++) {
         int order = saveStates.keyAt(i);
-        PlayerState playerState = (PlayerState) saveStates.get(order);
-        playerStateManager.savePlayerState(order, playerState);
+        PlaybackInfo playbackInfo = (PlaybackInfo) saveStates.get(order);
+        playerStateManager.savePlaybackInfo(order, playbackInfo);
       }
     }
   }
@@ -524,7 +593,6 @@ public class Container extends RecyclerView {
     }
 
     @Override public boolean handleMessage(Message msg) {
-      Log.w(TAG, "handleMessage() called with: msg = [" + msg + "]");
       Container container = this.container.get();
       if (container != null) {
         container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);

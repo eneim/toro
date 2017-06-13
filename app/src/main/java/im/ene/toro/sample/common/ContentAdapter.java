@@ -31,9 +31,11 @@ import java.util.List;
 
 public class ContentAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-  static final int TYPE_MEDIA = 1 << 1;  // non-trivial type, just for fun
+  static final int TYPE_TEXT = 1 << 1;   // non-trivial type, just for fun
 
-  static final int TYPE_TEXT = 2 << 1;   // non-trivial type, just for fun
+  static final int TYPE_MEDIA = 1 << 2;  // non-trivial type, just for fun
+
+  static final int TYPE_MEDIA_MP4 = 1 << 3; // for VideoView sample.
 
   protected final List<Entity> entities = new ArrayList<>();
 

@@ -20,15 +20,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import im.ene.toro.PlayerStateManager;
-import im.ene.toro.media.PlayerState;
+import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.common.BaseViewHolder;
 import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.DemoUtil;
-import im.ene.toro.sample.common.MediaViewHolder;
+import im.ene.toro.sample.common.SimpleExoPlayerViewHolder;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.sample.data.Entity;
 import ix.Ix;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -40,13 +41,13 @@ class StatefulContentAdapter extends ContentAdapter implements PlayerStateManage
 
   private static final String TAG = "Toro:Adapter";
 
-  private final Map<Entity, PlayerState> stateCache =
+  private final Map<Entity, PlaybackInfo> stateCache =
       new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getIndex(), o2.getIndex()));
 
   @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     BaseViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
-    if (viewHolder instanceof MediaViewHolder) {
-      ((MediaViewHolder) viewHolder).content.setOnClickListener(v -> {
+    if (viewHolder instanceof SimpleExoPlayerViewHolder) {
+      ((SimpleExoPlayerViewHolder) viewHolder).content.setOnClickListener(v -> {
         int pos = viewHolder.getAdapterPosition();
         if (pos >= 0) {
           entities.remove(pos);
@@ -58,17 +59,22 @@ class StatefulContentAdapter extends ContentAdapter implements PlayerStateManage
     return viewHolder;
   }
 
-  @Override public void savePlayerState(int order, @NonNull PlayerState playerState) {
-    if (order >= 0) stateCache.put(getItem(order), playerState);
+  @Override public void addMany(boolean reset, @NonNull List<Entity> items) {
+    if (reset) stateCache.clear();
+    super.addMany(reset, items);
   }
 
-  @NonNull @Override public PlayerState getPlayerState(int order) {
+  @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+    if (order >= 0) stateCache.put(getItem(order), playbackInfo);
+  }
+
+  @NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
     Entity entity = order >= 0 ? super.getItem(order) : null;
-    PlayerState state = new PlayerState();
+    PlaybackInfo state = new PlaybackInfo();
     if (entity != null) {
       state = stateCache.get(entity);
       if (state == null) {
-        state = new PlayerState();
+        state = new PlaybackInfo();
         stateCache.put(entity, state);
       }
     }
