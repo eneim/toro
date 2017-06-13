@@ -45,6 +45,7 @@ dependencies {
   })
   testCompile 'junit:junit:4.12'
 
+  compile "com.android.support:support-fragment:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
   compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
   compile "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"
