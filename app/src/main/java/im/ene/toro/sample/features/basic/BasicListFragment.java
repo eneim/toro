@@ -129,7 +129,7 @@ public class BasicListFragment extends BaseFragment {
 
   void dispatchLoadData(boolean loadMore) {
     DataSource.getInstance()
-        .getFromCloud(loadMore, 8)
+        .getFromCloud(loadMore, 50)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnComplete(() -> {

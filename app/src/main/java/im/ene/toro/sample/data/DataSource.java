@@ -60,7 +60,7 @@ public final class DataSource {
     if (count > 0) {
       int mediaIdx = 0;
       for (int i = 0; i < count; i++) {
-        if (random.nextFloat() < 0.65 /* magic number */) {
+        if (random.nextFloat() < 0.95 /* magic number */) {
           items.add(new MediaItem(offset + i, MediaUrl.values()[mediaIdx++ % urlCount]));
         } else {
           items.add(new TextItem(offset + i));

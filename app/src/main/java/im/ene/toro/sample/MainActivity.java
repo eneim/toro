@@ -19,7 +19,7 @@ package im.ene.toro.sample;
 import android.os.Bundle;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.sample.features.Deck;
-import im.ene.toro.sample.features.stateful.StatefulPlaylistFragment;
+import im.ene.toro.sample.features.basic.BasicListFragment;
 
 public class MainActivity extends BaseActivity {
 
@@ -27,7 +27,7 @@ public class MainActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     if (savedInstanceState == null) {
       try {
-        Deck.present(this, StatefulPlaylistFragment.class);
+        Deck.present(this, BasicListFragment.class);
       } catch (Deck.ToroDemoException e) {
         e.printStackTrace();
         if (e.getCause() != null) e.getCause().printStackTrace();
