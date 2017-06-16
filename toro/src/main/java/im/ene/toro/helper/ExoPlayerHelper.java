@@ -405,12 +405,10 @@ public final class ExoPlayerHelper {
     DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
   }
 
-  @SuppressWarnings("unused") //
   public static MediaSource buildMediaSource(Context ctx, Uri uri) {
     return buildMediaSource(ctx, uri, buildDataSourceFactory(ctx, true), new Handler(), null);
   }
 
-  @SuppressWarnings("WeakerAccess")
   public static MediaSource buildMediaSource(Context context, Uri uri,
       DataSource.Factory mediaDataSourceFactory, Handler mainHandler, String overrideExtension) {
     int type = Util.inferContentType(
