@@ -14,4 +14,14 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':toro-extra'
+package im.ene.toro.extra;
+
+import im.ene.toro.PlayerManager;
+
+/**
+ * @author eneim | 6/16/17.
+ */
+
+public abstract class PlayerProvider extends PlayerManager {
+
+}

@@ -56,7 +56,7 @@ public class LegacyVideoViewHelper extends PlayerViewHelper {
     this.onPreparedListener = onPreparedListener;
   }
 
-  @Override public void initialize(@NonNull final PlaybackInfo playbackInfo) throws Exception {
+  @Override public void initialize(@NonNull final PlaybackInfo playbackInfo) {
     this.playerView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
       @Override public void onCompletion(MediaPlayer mp) {
         LegacyVideoViewHelper.super.onPlayerStateUpdated(mp != null && mp.isPlaying(), 4);
@@ -91,15 +91,15 @@ public class LegacyVideoViewHelper extends PlayerViewHelper {
     }
   }
 
-  @Override public void play() {
+  public void play() {
     this.playerView.start();
   }
 
-  @Override public void pause() {
+  public void pause() {
     this.playerView.pause();
   }
 
-  @Override public boolean isPlaying() {
+  public boolean isPlaying() {
     return this.playerView.isPlaying();
   }
 

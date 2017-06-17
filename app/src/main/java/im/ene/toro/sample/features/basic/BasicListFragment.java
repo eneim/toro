@@ -28,15 +28,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
-import im.ene.toro.DefaultPlayerManager;
-import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.EndlessScroller;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.widget.Container;
-import im.ene.toro.widget.ToroHelper;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -63,7 +60,6 @@ public class BasicListFragment extends BaseFragment {
   @BindView(R.id.recycler_view) Container container;
   ContentAdapter adapter;
   RecyclerView.LayoutManager layoutManager;
-  ToroHelper toroHelper;
   ItemTouchHelper touchHelper;
   RecyclerView.OnScrollListener infiniteScrollListener;
 
@@ -78,7 +74,6 @@ public class BasicListFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
-
     adapter = new ContentAdapter();
     layoutManager =
         // new GridLayoutManager(getContext(), getResources().getInteger(R.integer.grid_span));
@@ -88,7 +83,7 @@ public class BasicListFragment extends BaseFragment {
 
     container.setAdapter(adapter);
     container.setLayoutManager(layoutManager);
-    container.setMaxPlayerNumber(1);  // optional, 1 is by default.
+    container.setMaxPlayerNumber(2);  // optional, 1 is by default.
 
     refreshLayout.setOnRefreshListener(() -> {
       refreshLayout.setRefreshing(true);
@@ -116,9 +111,6 @@ public class BasicListFragment extends BaseFragment {
       }
     });
     touchHelper.attachToRecyclerView(container);
-
-    toroHelper = new ToroHelper(new DefaultPlayerManager(), PlayerSelector.DEFAULT);
-    toroHelper.registerContainer(container);
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
@@ -143,7 +135,6 @@ public class BasicListFragment extends BaseFragment {
 
   @Override public void onDestroyView() {
     disposibles.clear();  // Clear but not dispose, by intent
-    toroHelper.registerContainer(null);
     touchHelper.attachToRecyclerView(null);
     // In case of LinearLayoutManager, setting it to "recycler child on detach" will also detach
     // children Views properly, so this setup is optional.
@@ -157,7 +148,6 @@ public class BasicListFragment extends BaseFragment {
   @Override public void onDestroy() {
     super.onDestroy();
     // clean up
-    toroHelper = null;
     touchHelper = null;
     adapter = null;
     layoutManager = null;

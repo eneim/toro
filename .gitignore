@@ -21,3 +21,6 @@
 /toro/src/test/
 /toro/libs/
 /gradle.properties
+/toro-extra/libs/
+/toro-extra/src/test/
+/toro-extra/src/androidTest/

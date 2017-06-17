@@ -122,7 +122,9 @@ public final class ExoPlayerHelper {
 
   @SuppressWarnings("unused") //
   public void prepare(Uri media) throws ParserException {
-    mainHandler = new Handler();
+    if (this.mainHandler == null) {
+      this.mainHandler = new Handler();
+    }
     Context context = playerView.getContext();
     MediaSource mediaSource =
         buildMediaSource(context, media, buildDataSourceFactory(context, true), mainHandler, null);
@@ -180,18 +182,8 @@ public final class ExoPlayerHelper {
       player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
       player.addListener(componentListener);
 
-      playerView.setPlayer(player);
       player.setPlayWhenReady(shouldAutoPlay);
       needRetrySource = true;
-    }
-
-    if (needNewPlayer || needRetrySource) {
-      boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
-      if (haveResumePosition) {
-        player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
-      }
-      player.prepare(mediaSource, !haveResumePosition, false);
-      needRetrySource = false;
     }
   }
 
@@ -234,7 +226,18 @@ public final class ExoPlayerHelper {
   }
 
   public void play() {
-    if (player != null) player.setPlayWhenReady(true);
+    if (player != null) {
+      if (needRetrySource) {
+        playerView.setPlayer(player);
+        boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
+        if (haveResumePosition) {
+          player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+        }
+        player.prepare(mediaSource, !haveResumePosition, false);
+        needRetrySource = false;
+      }
+      player.setPlayWhenReady(true);
+    }
   }
 
   public void pause() {
@@ -258,6 +261,7 @@ public final class ExoPlayerHelper {
   }
 
   void updateResumePosition() {
+    if (player == null) return;
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
     playbackInfo.setResumePosition(
         player.isCurrentWindowSeekable() ? Math.max(0, player.getCurrentPosition()) : C.TIME_UNSET);

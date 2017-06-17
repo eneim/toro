@@ -41,7 +41,7 @@ public interface ToroPlayer extends MediaPlayer {
    * @param container the RecyclerView contains this Player.
    * @param playbackInfo initialize info for the preparation.
    */
-  void prepare(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
+  void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
 
   /**
    * Tear down all the setup. This should release all player instances.

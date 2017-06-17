@@ -93,17 +93,13 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
     return state;
   }
 
-  @Override public void prepare(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  @Override public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       if (mediaUri != null) {
         helper = new LegacyVideoViewHelper(container, this, mediaUri);
         helper.setOnPreparedListener(__ -> state.setText("PREPARED"));
         helper.addPlayerEventListener(eventListener);
-        try {
-          helper.initialize(playbackInfo);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+        helper.initialize(playbackInfo);
       }
     }
   }

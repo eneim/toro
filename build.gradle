@@ -42,7 +42,7 @@ ext {
   androidVersion = 25
   buildToolVersion = '25.0.3'
   supportLibraryVersion = '25.3.1'  // latest: 25.4.0 but there is no source code
-  exoPlayer2Version = 'r2.4.1'
+  exoPlayer2Version = 'r2.4.2'
   minSupportSDKVersion = 16
 }
 

@@ -60,7 +60,7 @@ public final class DataSource {
     if (count > 0) {
       int mediaIdx = 0;
       for (int i = 0; i < count; i++) {
-        if (random.nextFloat() < 0.95 /* magic number */) {
+        if (random.nextFloat() < 1.00 /* magic number */) {
           items.add(new MediaItem(offset + i, MediaUrl.values()[mediaIdx++ % urlCount]));
         } else {
           items.add(new TextItem(offset + i));
@@ -68,10 +68,9 @@ public final class DataSource {
       }
     }
     // use delay operator to simulate real API call.
-    return Observable.just(items).delay(1000, TimeUnit.MILLISECONDS).doOnNext(list -> {
-      this.entities.addAll(list);
-      loading.set(false);
-    });
+    Observable<List<Entity>> promise = Observable.just(items);
+    if (loadMore) promise = promise.delay(1000, TimeUnit.MILLISECONDS);
+    return promise.doOnNext(this.entities::addAll).doOnComplete(() -> loading.set(false));
   }
 
   // just use to sync with Adapter data. real-world practice should not use this.

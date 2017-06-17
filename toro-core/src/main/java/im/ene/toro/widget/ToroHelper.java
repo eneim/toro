@@ -29,17 +29,11 @@ public final class ToroHelper {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroLib:Helper";
 
-  @NonNull private final PlayerManager playerManager;
+  @NonNull private final PlayerManager playerManager = new PlayerManager();
   @Nullable private PlayerSelector playerSelector;  // changeable on demand.
   private Container container;
 
-  @SuppressWarnings("unused") public ToroHelper(@NonNull PlayerManager playerManager) {
-    this(playerManager, null);
-  }
-
-  @SuppressWarnings("WeakerAccess")
-  public ToroHelper(@NonNull PlayerManager playerManager, @Nullable PlayerSelector playerSelector) {
-    this.playerManager = playerManager;
+  public ToroHelper(@Nullable PlayerSelector playerSelector) {
     this.playerSelector = playerSelector;
   }
 

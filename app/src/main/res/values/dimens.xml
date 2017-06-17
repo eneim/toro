@@ -16,5 +16,5 @@
   -->
 
 <resources>
-  <dimen name="video_min_height">222dp</dimen>
+  <dimen name="video_min_height">96dp</dimen>
 </resources>

@@ -21,7 +21,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import im.ene.toro.Cancellable;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.media.MediaPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
  * @author eneim | 6/11/17.
  */
 
-public abstract class PlayerViewHelper implements MediaPlayer, Handler.Callback, Cancellable {
+public abstract class PlayerViewHelper implements Handler.Callback, Cancellable {
 
   protected static final String TAG = "ToroLib:ViewHelper";
 
@@ -59,7 +58,7 @@ public abstract class PlayerViewHelper implements MediaPlayer, Handler.Callback,
     }
   }
 
-  public abstract void initialize(@NonNull PlaybackInfo playbackInfo) throws Exception;
+  public abstract void initialize(@NonNull PlaybackInfo playbackInfo);
 
   public abstract PlaybackInfo getPlaybackInfo();
 

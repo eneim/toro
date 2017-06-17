@@ -53,7 +53,7 @@ public final class Common {
   };
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
-  public static boolean doAllowsToPlay(@NonNull View videoView, @NonNull Container parent) {
+  public static boolean allowsToPlay(@NonNull View videoView, @NonNull Container parent) {
     Rect windowRect = new Rect();
     Rect parentRect = new Rect();
     // 1. Get Window's vision from parent

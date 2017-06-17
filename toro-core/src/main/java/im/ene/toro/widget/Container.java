@@ -32,7 +32,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +48,6 @@ import ix.Ix;
 import ix.IxConsumer;
 import ix.IxFunction;
 import ix.IxPredicate;
-import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +55,8 @@ import java.util.List;
 
 /**
  * @author eneim | 5/31/17.
+ *
+ *         A RecyclerView that contains many {@link ToroPlayer}s.
  */
 
 public class Container extends RecyclerView {
@@ -86,6 +86,11 @@ public class Container extends RecyclerView {
     } finally {
       a.recycle();
     }
+
+    // FIXME consider to remove these lines
+    // Setup here so we have tool for state save/restore stuff.
+    setPlayerSelector(PlayerSelector.DEFAULT);
+    setPlayerManager(new PlayerManager());
   }
 
   @Override protected void onAttachedToWindow() {
@@ -100,6 +105,20 @@ public class Container extends RecyclerView {
     if (animatorFinishHandler != null) {
       animatorFinishHandler.removeCallbacksAndMessages(null);
       animatorFinishHandler = null;
+    }
+
+    Collection<ToroPlayer> players = playerManager != null ? playerManager.getPlayers() : null;
+    if (players != null && !players.isEmpty()) {
+      Ix.from(players).doOnNext(new IxConsumer<ToroPlayer>() {
+        @Override public void accept(ToroPlayer player) {
+          if (player.isPlaying()) playerManager.pause(player);
+          playerManager.release(player);
+        }
+      }).doOnCompleted(new Runnable() {
+        @Override public void run() {
+          playerManager.clear();
+        }
+      }).subscribe();
     }
   }
 
@@ -116,49 +135,57 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
+    if (playerManager == null) return;
+
     ViewHolder holder = getChildViewHolder(child);
-    if (!(holder instanceof ToroPlayer)) return;
+    if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
 
-    if (playerManager != null) {
-      if (playerManager.manages(player)) {
-        if (!player.isPlaying()) player.play();
-      } else {
-        child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-          @Override public void onGlobalLayout() {
-            child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            if (player.wantsToPlay()) {
-              player.prepare(Container.this, playerStateManager == null ? new PlaybackInfo()
-                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder()));
-              if (playerManager.attachPlayer(player)) {
-                dispatchUpdateOnAnimationFinished();
-              }
+    if (playerManager.manages(player)) {
+      // Only if container is in idle state and player is not playing.
+      if (getScrollState() == 0 && !player.isPlaying()) playerManager.play(player);
+    } else {
+      child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+        @Override public void onGlobalLayout() {
+          child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
+            if (playerManager.attachPlayer(player)) {
+              PlaybackInfo info = playerStateManager == null ? new PlaybackInfo()
+                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder());
+              playerManager.initialize(player, Container.this, info);
+              dispatchUpdateOnAnimationFinished(false);
             }
           }
-        });
-      }
+        }
+      });
     }
   }
 
   @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
     ViewHolder holder = getChildViewHolder(child);
-    if (!(holder instanceof ToroPlayer)) return;
+    if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
+    // save playback info
     if (this.playerStateManager != null) {
       this.playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
           player.getCurrentPlaybackInfo());
     }
 
-    if (playerManager != null) {
-      if (player.isPlaying()) player.pause();
-      if (playerManager.manages(player)) {
-        playerManager.detachPlayer(player);
+    boolean playerManaged = playerManager != null && playerManager.manages(player);
+    if (player.isPlaying()) {
+      if (!playerManaged) {
+        throw new IllegalStateException(
+            "Player is playing while it is not in managed state: " + player);
       }
+      playerManager.pause(player);
+    }
+    if (playerManaged) {
+      playerManager.detachPlayer(player);
     }
     // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
     // sometime it happens after all Animation, but we also need to update playback here.
-    dispatchUpdateOnAnimationFinished();
+    dispatchUpdateOnAnimationFinished(true);
     // finally release the player
     player.release();
   }
@@ -168,14 +195,20 @@ public class Container extends RecyclerView {
     if (state != SCROLL_STATE_IDLE) return;
     if (playerManager == null || this.playerSelector == null || getChildCount() == 0) return;
 
+    // When settled down, remove players those are not allowed to player anymore.
     Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
       @Override public boolean test(ToroPlayer player) {
-        return !player.wantsToPlay();
+        return !Common.allowsToPlay(player.getPlayerView(), Container.this);
       }
     }).foreach(new IxConsumer<ToroPlayer>() {
       @Override public void accept(ToroPlayer player) {
-        player.pause();
+        if (playerStateManager != null) {
+          playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
+              player.getCurrentPlaybackInfo());
+        }
+        if (player.isPlaying()) playerManager.pause(player);
         playerManager.detachPlayer(player);
+        player.release();
       }
     });
 
@@ -211,13 +244,15 @@ public class Container extends RecyclerView {
         // Detected a view holder for media player
         RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(i);
         if (holder != null && holder instanceof ToroPlayer) {
-          ToroPlayer candidate = (ToroPlayer) holder;
+          ToroPlayer player = (ToroPlayer) holder;
           // check candidate's condition
-          if (candidate.wantsToPlay()) {
-            if (!playerManager.manages(candidate)) {
-              if (playerManager.attachPlayer(candidate)) {
-                candidate.prepare(this, playerStateManager == null ? new PlaybackInfo()
-                    : playerStateManager.getPlaybackInfo(candidate.getPlayerOrder()));
+          if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
+            if (!playerManager.manages(player)) {
+              if (playerManager.attachPlayer(player)) {
+                playerManager.initialize(player, Container.this,  //
+                    playerStateManager == null ? new PlaybackInfo()
+                        : playerStateManager.getPlaybackInfo(player.getPlayerOrder())  //
+                );
               }
             }
           }
@@ -225,55 +260,64 @@ public class Container extends RecyclerView {
       }
     }
 
-    Collection<ToroPlayer> players = playerManager.getPlayers();
-    if (players.isEmpty()) return;
-    final Ix<ToroPlayer> source = Ix.from(players).filter(new IxPredicate<ToroPlayer>() {
+    final Collection<ToroPlayer> sources = playerManager.getPlayers();
+    if (sources.isEmpty()) return;
+    final Ix<ToroPlayer> candidates = Ix.from(sources).filter(new IxPredicate<ToroPlayer>() {
       @Override public boolean test(ToroPlayer player) {
-        return Common.doAllowsToPlay(player.getPlayerView(), Container.this);
+        return player.wantsToPlay();
       }
     });
 
-    source.except(
+    Ix.from(sources).except(
         // 1. ask selector to select players those can start playback.
-        Ix.from(this.playerSelector.select(this, source.toList(), maxPlayerNumber))
+        Ix.from(this.playerSelector.select(this, candidates, maxPlayerNumber))  //
             .doOnNext(new IxConsumer<ToroPlayer>() {
               @Override public void accept(ToroPlayer player) {
-                if (!player.isPlaying()) player.play();
+                if (!player.isPlaying()) playerManager.play(player);
               }
             })
         // 2. items from source except the items above come here, pause the players those should.
     ).doOnNext(new IxConsumer<ToroPlayer>() {
       @Override public void accept(ToroPlayer player) {
-        if (player.isPlaying()) player.pause();
+        if (player.isPlaying()) playerManager.pause(player);
       }
     }).subscribe();
   }
 
   ////// Manager and PlayerSelector stuff
 
-  @Nullable PlayerManager getPlayerManager() {
+  @Nullable public PlayerManager getPlayerManager() {
     return playerManager;
   }
 
-  void setPlayerManager(@Nullable PlayerManager playerManager) {
-    if (this.playerManager == playerManager) return;
+  public void setPlayerManager(@Nullable PlayerManager manager) {
+    if (this.playerManager == manager) return;
     if (this.playerManager != null) {
-      for (ToroPlayer player : this.playerManager.getPlayers()) {
-        player.pause();
-      }
-      this.playerManager.clear();
+      Ix.from(this.playerManager.getPlayers()).doOnNext(new IxConsumer<ToroPlayer>() {
+        @Override public void accept(ToroPlayer player) {
+          if (player.isPlaying()) playerManager.pause(player);
+        }
+      }).doOnCompleted(new Runnable() {
+        @Override public void run() {
+          playerManager.clear();
+        }
+      }).subscribe();
     }
 
-    this.playerManager = playerManager;
+    this.playerManager = manager;
     if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
+  public void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
+  }
+
+  @Nullable public PlayerSelector getPlayerSelector() {
+    return playerSelector;
   }
 
   ////// Handle update after data change animation
@@ -290,17 +334,19 @@ public class Container extends RecyclerView {
         animator.getChangeDuration());
   }
 
-  void dispatchUpdateOnAnimationFinished() {
+  void dispatchUpdateOnAnimationFinished(boolean immediate) {
+    if (animatorFinishHandler == null) return;
+    final long duration = immediate ? 50 : getMaxAnimationDuration();
     if (getItemAnimator() != null) {
       getItemAnimator().isRunning(new ItemAnimator.ItemAnimatorFinishedListener() {
         @Override public void onAnimationsFinished() {
           animatorFinishHandler.removeCallbacksAndMessages(null);
-          animatorFinishHandler.sendEmptyMessageDelayed(-1, getMaxAnimationDuration());
+          animatorFinishHandler.sendEmptyMessageDelayed(-1, duration);
         }
       });
     } else {
       animatorFinishHandler.removeCallbacksAndMessages(null);
-      animatorFinishHandler.sendEmptyMessageDelayed(-1, getMaxAnimationDuration());
+      animatorFinishHandler.sendEmptyMessageDelayed(-1, duration);
     }
   }
 
@@ -348,6 +394,8 @@ public class Container extends RecyclerView {
         ((AdapterWrapper) adapter).origin : adapter;
   }
 
+  // Temporary save current playback infos when the App is stopped but not re-created
+  // (User press App Stack for example).
   SparseArray<PlaybackInfo> tmpStates = null;
 
   // In case user press "App Stack" button, this View's window will have visibility change from 0 -> 4 -> 8.
@@ -367,40 +415,46 @@ public class Container extends RecyclerView {
   }
 
   @Override protected Parcelable onSaveInstanceState() {
-    Log.d(TAG, "onSaveInstanceState() called");
     Parcelable superState = super.onSaveInstanceState();
-    final Collection<Integer> savedOrders;
     if (playerManager == null || playerStateManager == null) return superState;
-    if ((savedOrders = playerStateManager.getSavedPlayerOrders()) == null) return superState;
+    final Collection<Integer> savedOrders = playerStateManager.getSavedPlayerOrders();
+    if (savedOrders == null) return superState;
     // Process saving playback state from here since Client wants this.
     final SparseArray<PlaybackInfo> states = new SparseArray<>();
+
+    Collection<ToroPlayer> source = playerManager.getPlayers();
+
     // I wish I could use Retrolambda here ...
     Ix.from(savedOrders).except(  // using except operator
-        // First, save state of currently playing players, using their current states.
-        Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
+        Ix.from(source).filter(new IxPredicate<ToroPlayer>() {
           @Override public boolean test(ToroPlayer player) {
             return player.isPlaying();
-          }
-        }).doOnNext(new IxConsumer<ToroPlayer>() {
-          @Override public void accept(ToroPlayer player) {
-            states.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-            player.pause();
-            playerManager.detachPlayer(player);
-            player.release();
           }
         }).map(new IxFunction<ToroPlayer, Integer>() {
           @Override public Integer apply(ToroPlayer player) {
             return player.getPlayerOrder();
           }
-        }))
-        // Now remaining orders contain only players those are not playing -> get state from cache.
-        .foreach(new IxConsumer<Integer>() {
-          @Override public void accept(Integer integer) {
-            states.put(integer, playerStateManager.getPlaybackInfo(integer));
-          }
-        });
+        })  //
+    ).doOnNext(new IxConsumer<Integer>() {
+      @Override public void accept(Integer integer) {
+        states.put(integer, playerStateManager.getPlaybackInfo(integer));
+      }
+    }).subscribe();
 
-    // FIXME save a whole bunch of stuff to restore on config change doesn't smell good for perf.
+    Ix.from(source).doOnNext(new IxConsumer<ToroPlayer>() {
+      @Override public void accept(ToroPlayer player) {
+        if (player.isPlaying()) {
+          states.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          playerManager.pause(player);
+        }
+      }
+    }).doOnNext(new IxConsumer<ToroPlayer>() {
+      @Override public void accept(ToroPlayer player) {
+        playerManager.detachPlayer(player);
+        player.release();
+      }
+    }).subscribe();
+
     // Client must consider this behavior using PlayerStateManager implement.
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
@@ -419,7 +473,7 @@ public class Container extends RecyclerView {
     PlayerViewState viewState = (PlayerViewState) state;
     super.onRestoreInstanceState(viewState.getSuperState());
     SparseArray<?> saveStates = viewState.statesCache;
-    if (playerStateManager != null && saveStates.size() > 0) {
+    if (playerStateManager != null && saveStates != null && saveStates.size() > 0) {
       for (int i = 0; i < saveStates.size(); i++) {
         int order = saveStates.keyAt(i);
         PlaybackInfo playbackInfo = (PlaybackInfo) saveStates.get(order);
@@ -477,24 +531,23 @@ public class Container extends RecyclerView {
     }
 
     @Override public void onChanged() {
-      dispatchUpdateOnAnimationFinished();
+      dispatchUpdateOnAnimationFinished(true);
     }
 
     @Override public void onItemRangeChanged(int positionStart, int itemCount) {
-      dispatchUpdateOnAnimationFinished();
+      dispatchUpdateOnAnimationFinished(false);
     }
 
     @Override public void onItemRangeInserted(int positionStart, int itemCount) {
-      dispatchUpdateOnAnimationFinished();
+      dispatchUpdateOnAnimationFinished(false);
     }
 
     @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
-      dispatchUpdateOnAnimationFinished();
+      dispatchUpdateOnAnimationFinished(false);
     }
 
-    // FIXME 2017/06/08 For now we can ignore the itemCount value.
     @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
-      dispatchUpdateOnAnimationFinished();
+      dispatchUpdateOnAnimationFinished(false);
     }
   }
 
@@ -586,18 +639,14 @@ public class Container extends RecyclerView {
 
   private static class AnimatorHelper implements Handler.Callback {
 
-    @NonNull private final WeakReference<Container> container;
+    @NonNull private final Container container;
 
-    AnimatorHelper(Container container) {
-      this.container = new WeakReference<>(container);
+    AnimatorHelper(@NonNull Container container) {
+      this.container = container;
     }
 
     @Override public boolean handleMessage(Message msg) {
-      Container container = this.container.get();
-      if (container != null) {
-        container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);
-      }
-
+      this.container.onScrollStateChanged(SCROLL_STATE_IDLE);
       return true;
     }
   }

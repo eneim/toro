@@ -108,16 +108,13 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
     return state;
   }
 
-  @Override public void prepare(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  @Override
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       if (mediaUri != null) {
         helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
         helper.setEventListener(eventListener);
-        try {
-          helper.initialize(playbackInfo);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+        helper.initialize(playbackInfo);
       }
     }
   }
@@ -168,5 +165,9 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
     }
 
     return formats;
+  }
+
+  @Override public String toString() {
+    return "Player{" + hashCode() + " " + getAdapterPosition() + " " + isPlaying() + "}";
   }
 }
