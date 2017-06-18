@@ -81,6 +81,13 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
  *         A helper class, dedicated to {@link SimpleExoPlayerView}.
  */
 
+/*
+  TODO add the following option, maybe?
+
+  1. [2017/06/17] Reset position after END state?
+
+ */
+
 @SuppressWarnings("WeakerAccess") //
 public final class ExoPlayerHelper {
 
@@ -91,10 +98,10 @@ public final class ExoPlayerHelper {
   @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
   @ExtensionRendererMode final int extensionMode;
 
-  private SimpleExoPlayer player;
+  SimpleExoPlayer player;
   private Handler mainHandler;
-  private ComponentListener componentListener;
-  private boolean shouldAutoPlay;
+  ComponentListener componentListener;
+  boolean shouldAutoPlay;
 
   DefaultTrackSelector trackSelector;
   MediaSource mediaSource;
@@ -318,6 +325,13 @@ public final class ExoPlayerHelper {
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+      if (playbackState == ExoPlayer.STATE_ENDED) {
+        if (player != null) {
+          player.setPlayWhenReady(false);
+          player.seekTo(0); // reset playback position for current window
+        }
+      }
+
       int count;
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {

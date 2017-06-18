@@ -28,6 +28,6 @@
     <item name="android:textSize">10sp</item>
   </style>
 
-  <integer name="grid_span">2</integer>
-  <string name="layout_manager">android.support.v7.widget.StaggeredGridLayoutManager</string>
+  <integer name="grid_span">1</integer>
+  <string name="layout_manager">android.support.v7.widget.GridLayoutManager</string>
 </resources>
