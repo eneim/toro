@@ -27,7 +27,7 @@ import im.ene.toro.sample.common.DemoUtil;
 import im.ene.toro.sample.common.SimpleExoPlayerViewHolder;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.sample.data.Entity;
-import ix.Ix;
+import io.reactivex.Observable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +83,6 @@ class StatefulContentAdapter extends ContentAdapter implements PlayerStateManage
 
   // TODO return null if client doesn't want to save playback states on config change.
   @Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
-    return Ix.from(stateCache.keySet()).map(entities::indexOf).toList();
+    return Observable.just(stateCache.keySet()).map(entities::indexOf).toList().blockingGet();
   }
 }

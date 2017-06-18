@@ -16,6 +16,6 @@
   -->
 
 <resources>
-  <integer name="grid_span">2</integer>
-  <string name="layout_manager">android.support.v7.widget.StaggeredGridLayoutManager</string>
+  <integer name="grid_span">3</integer>
+  <string name="layout_manager">android.support.v7.widget.GridLayoutManager</string>
 </resources>

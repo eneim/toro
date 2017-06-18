@@ -45,7 +45,8 @@ android {
 
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
-  compile project(':toro')
+  compile project(':toro-core')
+  compile project(':toro-extra')
 
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'
@@ -57,6 +58,9 @@ dependencies {
   compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
   // additional dependencies.
+  compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
+  compile "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"
+
   compile "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
   compile "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
   compile "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
