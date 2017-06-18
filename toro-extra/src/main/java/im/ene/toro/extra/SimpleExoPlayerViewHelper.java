@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.helper;
+package im.ene.toro.extra;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -30,7 +30,7 @@ import im.ene.toro.widget.Container;
  * @author eneim | 6/11/17.
  */
 
-public class SimpleExoPlayerViewHelper extends PlayerViewHelper {
+public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
 
   private final ExoPlayerHelper.EventListener internalListener =
       new ExoPlayerHelper.EventListener() {
@@ -78,7 +78,7 @@ public class SimpleExoPlayerViewHelper extends PlayerViewHelper {
     return this.helper.isPlaying();
   }
 
-  @Override public PlaybackInfo getPlaybackInfo() {
+  @Override public PlaybackInfo updatePlaybackInfo() {
     return this.helper.getPlaybackInfo();
   }
 

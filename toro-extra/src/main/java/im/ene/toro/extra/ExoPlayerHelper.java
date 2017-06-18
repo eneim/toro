@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.helper;
+package im.ene.toro.extra;
 
 import android.content.Context;
 import android.net.Uri;
@@ -65,7 +65,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.R;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
 import java.net.CookieManager;
@@ -84,7 +83,7 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
 /*
   TODO add the following option, maybe?
 
-  1. [2017/06/17] Reset position after END state?
+  1. [2017/06/17] Reset position after END playerState?
 
  */
 
@@ -390,7 +389,7 @@ public final class ExoPlayerHelper {
 
     @Override public void onPositionDiscontinuity() {
       if (needRetrySource) {
-        // This will only occur if the user has performed a seek whilst in the error state. Update the
+        // This will only occur if the user has performed a seek whilst in the error playerState. Update the
         // resume position so that if the user then retries, playback will resume from the position to
         // which they seek.
         updateResumePosition();

@@ -41,9 +41,16 @@ dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
   provided project(':toro-core')
 
-  compile "com.google.android.exoplayer:extension-okhttp:${rootProject.ext.exoPlayer2Version}"
-  compile "com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14"
-  compile "com.danikula:videocache:2.7.0"
+  provided "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
+  provided "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"
+
+  provided "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
+  provided "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
+  provided "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
+
+  provided "com.google.android.exoplayer:extension-okhttp:${rootProject.ext.exoPlayer2Version}"
+  provided "com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14"
+  provided "com.danikula:videocache:2.7.0"
 
   androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
     exclude group: 'com.android.support', module: 'support-annotations'

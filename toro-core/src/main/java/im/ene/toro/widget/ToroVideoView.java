@@ -22,6 +22,9 @@ import android.widget.VideoView;
 
 /**
  * @author eneim | 6/11/17.
+ *
+ *         A simple wrapper on top of {@link VideoView} to catch the start/pause actions.
+ *         {@inheritDoc}
  */
 
 public class ToroVideoView extends VideoView {
@@ -38,6 +41,9 @@ public class ToroVideoView extends VideoView {
     super(context, attrs, defStyleAttr);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override public void start() {
     super.start();
     if (this.playbackEventListener != null) {
@@ -45,6 +51,9 @@ public class ToroVideoView extends VideoView {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override public void pause() {
     super.pause();
     if (this.playbackEventListener != null) {
@@ -52,6 +61,9 @@ public class ToroVideoView extends VideoView {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override public void resume() {
     super.resume();
     if (this.playbackEventListener != null) {
@@ -67,8 +79,14 @@ public class ToroVideoView extends VideoView {
 
   public interface PlaybackEventListener {
 
+    /**
+     * Called when this VideoView is started from external request.
+     */
     void onPlay();
 
+    /**
+     * Called when this VideoView is paused from external request.
+     */
     void onPause();
   }
 }

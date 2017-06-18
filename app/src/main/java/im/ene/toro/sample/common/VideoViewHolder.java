@@ -27,7 +27,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.helper.LegacyVideoViewHelper;
+import im.ene.toro.extra.LegacyVideoViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaItem;
@@ -41,7 +41,7 @@ import java.util.List;
 
 public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
-  private static final String TAG = "Toro:VH:ExoPlayer";
+  private static final String TAG = "Toro:VH:VideoView";
 
   static final int LAYOUT_RES = R.layout.vh_videoview_basic;
 
@@ -89,7 +89,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
     PlaybackInfo state = new PlaybackInfo();
-    if (helper != null) state = helper.getPlaybackInfo();
+    if (helper != null) state = helper.updatePlaybackInfo();
     return state;
   }
 
@@ -138,5 +138,9 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
+  }
+
+  @Override public String toString() {
+    return "Legacy{" + hashCode() + " " + getAdapterPosition() + " " + isPlaying() + "}";
   }
 }

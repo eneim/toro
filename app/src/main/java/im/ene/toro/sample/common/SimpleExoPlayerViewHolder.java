@@ -33,8 +33,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.helper.ExoPlayerHelper;
-import im.ene.toro.helper.SimpleExoPlayerViewHelper;
+import im.ene.toro.extra.ExoPlayerHelper;
+import im.ene.toro.extra.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaItem;
@@ -104,7 +104,7 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
     PlaybackInfo state = new PlaybackInfo();
-    if (helper != null) state = helper.getPlaybackInfo();
+    if (helper != null) state = helper.updatePlaybackInfo();
     return state;
   }
 
@@ -168,6 +168,6 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
   }
 
   @Override public String toString() {
-    return "Player{" + hashCode() + " " + getAdapterPosition() + " " + isPlaying() + "}";
+    return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + " " + isPlaying() + "}";
   }
 }
