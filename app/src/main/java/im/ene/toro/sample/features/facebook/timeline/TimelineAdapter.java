@@ -36,6 +36,7 @@ import java.util.TreeMap;
  * @author eneim | 6/18/17.
  */
 
+@SuppressWarnings({ "unused", "WeakerAccess" }) //
 public class TimelineAdapter extends RecyclerView.Adapter<TimelineViewHolder>
     implements PlayerStateManager {
 
