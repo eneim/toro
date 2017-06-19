@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.features.facebook.core;
 
-import android.app.Application;
-import com.squareup.leakcanary.LeakCanary;
+import android.support.v7.app.AppCompatDialogFragment;
+import im.ene.toro.sample.R;
 
 /**
- * @author eneim | 6/5/17.
+ * @author eneim | 6/18/17.
+ *
+ *         A default full screen dialog fragment with black background.
+ *         See {@link R.style#Toro_Theme_Board}.
  */
 
-public class ToroDemoApplication extends Application {
+public abstract class FullscreenDialogFragment extends AppCompatDialogFragment {
 
-  @Override public void onCreate() {
-    super.onCreate();
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return;
-    }
-    LeakCanary.install(this);
+  @Override public int getTheme() {
+    return R.style.Toro_Theme_Board;
   }
 }

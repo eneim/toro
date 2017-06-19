@@ -109,6 +109,4 @@ public class PlaybackInfo implements Parcelable {
     result = 31 * result + (int) (resumePosition ^ (resumePosition >>> 32));
     return result;
   }
-
-  public static PlaybackInfo INIT_STATE = new PlaybackInfo();
 }

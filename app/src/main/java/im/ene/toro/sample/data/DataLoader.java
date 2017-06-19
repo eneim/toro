@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common;
-
-import im.ene.toro.sample.ToroDemo;
-import java.util.Date;
+package im.ene.toro.sample.data;
 
 /**
- * @author eneim | 6/8/17.
+ * @author eneim | 6/18/17.
  */
 
-public class DemoUtil {
+public interface DataLoader {
 
-  public static int compare(int x, int y) {
-    return (x < y) ? -1 : ((x == y) ? 0 : 1);
-  }
-
-  public static int compare(long x, long y) {
-    return (x < y) ? -1 : ((x == y) ? 0 : 1);
-  }
-
-  public static String getRelativeTimeString(long time) {
-    return ToroDemo.getApp().getPrettyTime().format(new Date(time));
-  }
+  boolean isLoading();
 }

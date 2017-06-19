@@ -15,6 +15,16 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <dimen name="video_min_height">231dp</dimen>
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+  <im.ene.toro.widget.Container
+      android:id="@+id/recycler_view"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
+
+</FrameLayout>

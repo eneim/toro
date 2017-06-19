@@ -20,7 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import im.ene.toro.sample.data.DataSource;
+import im.ene.toro.sample.data.DataLoader;
 
 /**
  * @author eneim | 6/7/17.
@@ -32,17 +32,17 @@ public abstract class EndlessScroller extends RecyclerView.OnScrollListener {
   private static final int VISIBLE_THRESHOLD = 5;
 
   private final RecyclerView.LayoutManager layoutManager;
-  private final DataSource dataLoading;
+  private final DataLoader dataLoader;
 
   protected EndlessScroller(@NonNull RecyclerView.LayoutManager layoutManager,
-      @NonNull DataSource dataLoading) {
+      @NonNull DataLoader dataLoader) {
     this.layoutManager = layoutManager;
-    this.dataLoading = dataLoading;
+    this.dataLoader = dataLoader;
   }
 
   @Override public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
     // bail out if scrolling upward or already loading data
-    if (dy < 0 || dataLoading.isLoading()) return;
+    if (dy < 0 || dataLoader.isLoading()) return;
 
     final int visibleItemCount = recyclerView.getChildCount();
     final int totalItemCount = layoutManager.getItemCount();

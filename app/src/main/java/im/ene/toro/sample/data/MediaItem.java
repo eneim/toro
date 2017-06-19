@@ -22,7 +22,7 @@ import com.google.android.exoplayer2.util.Util;
  * @author eneim | 6/7/17.
  */
 
-public class MediaItem implements Entity {
+public class MediaItem implements MediaEntity {
 
   private final long index;
   private final MediaUrl mediaUrl;
@@ -32,7 +32,7 @@ public class MediaItem implements Entity {
     this.mediaUrl = mediaUrl;
   }
 
-  public MediaUrl getMediaUrl() {
+  @Override public MediaUrl getMediaUrl() {
     return mediaUrl;
   }
 

@@ -364,9 +364,6 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
-      if (adapter instanceof PlayerStateManager && this.playerStateManager == null) {
-        this.playerStateManager = (PlayerStateManager) adapter;
-      }
     }
     super.setAdapter(wrapper);
   }
@@ -381,9 +378,6 @@ public class Container extends RecyclerView {
     if (adapter != null) {
       wrapper = new AdapterWrapper(adapter, dataObserver);
       wrapper.register();
-      if (adapter instanceof PlayerStateManager && this.playerStateManager == null) {
-        this.playerStateManager = (PlayerStateManager) adapter;
-      }
     }
     super.swapAdapter(wrapper, removeAndRecycleExistingViews);
   }
@@ -392,6 +386,10 @@ public class Container extends RecyclerView {
     Adapter adapter = super.getAdapter();
     return adapter != null && adapter instanceof AdapterWrapper ? //
         ((AdapterWrapper) adapter).origin : adapter;
+  }
+
+  public void setPlayerStateManager(PlayerStateManager playerStateManager) {
+    this.playerStateManager = playerStateManager;
   }
 
   // Temporary save current playback infos when the App is stopped but not re-created

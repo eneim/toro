@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common;
+package im.ene.toro.sample.features.facebook.data;
 
-import im.ene.toro.sample.ToroDemo;
-import java.util.Date;
+import im.ene.toro.sample.data.Entity;
 
 /**
- * @author eneim | 6/8/17.
+ * @author eneim | 6/18/17.
  */
 
-public class DemoUtil {
+public abstract class FbItem implements Entity {
 
-  public static int compare(int x, int y) {
-    return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  public final FbUser author;
+  public final long index;
+  public final long timeStamp;
+
+  public FbItem(FbUser author, long index, long timeStamp) {
+    this.author = author;
+    this.index = index;
+    this.timeStamp = timeStamp;
   }
 
-  public static int compare(long x, long y) {
-    return (x < y) ? -1 : ((x == y) ? 0 : 1);
-  }
-
-  public static String getRelativeTimeString(long time) {
-    return ToroDemo.getApp().getPrettyTime().format(new Date(time));
+  @Override public long getIndex() {
+    return index;
   }
 }

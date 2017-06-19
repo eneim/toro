@@ -191,6 +191,16 @@ public final class ExoPlayerHelper {
       player.setPlayWhenReady(shouldAutoPlay);
       needRetrySource = true;
     }
+
+    if (needNewPlayer || needRetrySource) {
+      playerView.setPlayer(player);
+      boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
+      if (haveResumePosition) {
+        player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+      }
+      player.prepare(mediaSource, !haveResumePosition, false);
+      needRetrySource = false;
+    }
   }
 
   public void release() {
@@ -233,15 +243,6 @@ public final class ExoPlayerHelper {
 
   public void play() {
     if (player != null) {
-      if (needRetrySource) {
-        playerView.setPlayer(player);
-        boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
-        if (haveResumePosition) {
-          player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
-        }
-        player.prepare(mediaSource, !haveResumePosition, false);
-        needRetrySource = false;
-      }
       player.setPlayWhenReady(true);
     }
   }
@@ -324,6 +325,8 @@ public final class ExoPlayerHelper {
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+      boolean screenOn = isPlaying() && (playbackState >= 2 || playbackState <= 3);
+      playerView.setKeepScreenOn(screenOn);
       if (playbackState == ExoPlayer.STATE_ENDED) {
         if (player != null) {
           player.setPlayWhenReady(false);

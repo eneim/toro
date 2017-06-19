@@ -30,7 +30,7 @@ import im.ene.toro.ToroUtil;
 import im.ene.toro.extra.LegacyVideoViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.MediaItem;
+import im.ene.toro.sample.data.MediaEntity;
 import im.ene.toro.widget.Container;
 import im.ene.toro.widget.ToroVideoView;
 import java.util.List;
@@ -77,8 +77,8 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override
   public void bind(@NonNull RecyclerView.Adapter adapter, Object item, List<Object> payloads) {
-    if (item != null && item instanceof MediaItem) {
-      mediaUri = ((MediaItem) item).getMediaUrl().getUri();
+    if (item != null && item instanceof MediaEntity) {
+      mediaUri = ((MediaEntity) item).getMediaUrl().getUri();
       content.setText(item.toString());
     }
   }
@@ -131,9 +131,11 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override public boolean wantsToPlay() {
     ViewParent parent = itemView.getParent();
-    float visible = parent != null && parent instanceof Container ? //
-        ToroUtil.visibleAreaOffset(playerView, (Container) parent) : 0;
-    return visible >= 0.85;
+    float offset = 0;
+    if (parent != null && parent instanceof View) {
+      offset = ToroUtil.visibleAreaOffset(playerView, (View) parent);
+    }
+    return offset >= 0.85;
   }
 
   @Override public int getPlayerOrder() {

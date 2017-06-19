@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common;
-
-import im.ene.toro.sample.ToroDemo;
-import java.util.Date;
+package im.ene.toro.sample.features.facebook.data;
 
 /**
- * @author eneim | 6/8/17.
+ * @author eneim | 6/18/17.
  */
 
-public class DemoUtil {
+public class FbUser {
 
-  public static int compare(int x, int y) {
-    return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  public final String userName;
+  public final String userProfile;
+  public final String userIcon;
+
+  public FbUser(String userName, String userProfile, String userIcon) {
+    this.userName = userName;
+    this.userProfile = userProfile;
+    this.userIcon = userIcon;
   }
 
-  public static int compare(long x, long y) {
-    return (x < y) ? -1 : ((x == y) ? 0 : 1);
-  }
+  private static FbUser DEFAULT =
+      new FbUser("Toro Creator", "A good guy", "file:///android_asset/profile.jpg");
 
-  public static String getRelativeTimeString(long time) {
-    return ToroDemo.getApp().getPrettyTime().format(new Date(time));
+  public static FbUser getUser() {
+    return DEFAULT;
   }
 }
