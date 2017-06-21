@@ -26,7 +26,7 @@ import im.ene.toro.sample.R;
  *         See {@link R.style#Toro_Theme_Board}.
  */
 
-public abstract class FullscreenDialogFragment extends AppCompatDialogFragment {
+public abstract class BlackBoardDialogFragment extends AppCompatDialogFragment {
 
   @Override public int getTheme() {
     return R.style.Toro_Theme_Board;

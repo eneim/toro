@@ -93,7 +93,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineViewHolder>
     return Integer.MAX_VALUE;
   }
 
-  private FbItem getItem(int position) {
+  public FbItem getItem(int position) {
     if (position >= items.size()) {
       items.add(FbVideo.getItem(position, position, initTimeStamp + position * 60_000));
     }

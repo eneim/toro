@@ -133,6 +133,18 @@ public class Container extends RecyclerView {
     }
   }
 
+  /**
+   * Get current active players (players those are playing), sorted by Player order.
+   * @return
+   */
+  @NonNull public List<ToroPlayer> getActivePlayers() {
+    return Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
+      @Override public boolean test(ToroPlayer player) {
+        return player.isPlaying();
+      }
+    }).orderBy(Common.ORDER_COMPARATOR).toList();
+  }
+
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
     if (playerManager == null) return;

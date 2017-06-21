@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.features.facebook.core.FullscreenDialogFragment;
+import im.ene.toro.sample.features.facebook.core.BlackBoardDialogFragment;
 import im.ene.toro.sample.features.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 
@@ -38,7 +38,7 @@ import im.ene.toro.widget.Container;
  * @author eneim | 6/19/17.
  */
 
-public class MoreVideosFragment extends FullscreenDialogFragment {
+public class MoreVideosFragment extends BlackBoardDialogFragment {
 
   public interface Callback {
 

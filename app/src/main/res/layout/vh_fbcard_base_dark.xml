@@ -90,7 +90,7 @@
           android:visibility="gone"
           app:resize_mode="fixed_width"
           app:surface_type="texture_view"
-          app:use_controller="false"
+          app:use_controller="true"
           >
         <TextView
             android:id="@+id/player_state"
