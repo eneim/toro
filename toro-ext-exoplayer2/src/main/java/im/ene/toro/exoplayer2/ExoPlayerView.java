@@ -428,4 +428,8 @@ public class ExoPlayerView extends FrameLayout implements ExoPlayer.EventListene
   @Override public String toString() {
     return "ExoPlayerView@" + hashCode();
   }
+
+  public SimpleExoPlayerView getPlayerView() {
+    return playerView;
+  }
 }
