@@ -93,6 +93,7 @@ public final class ExoPlayerHelper {
   private static final String TAG = "ToroLib:ExoPlayer";
 
   @NonNull final SimpleExoPlayerView playerView;
+  final Context context;  // will obtain from playerView context.
   // instance is unchanged, but inner fields are changeable.
   @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
   @ExtensionRendererMode final int extensionMode;
@@ -109,6 +110,7 @@ public final class ExoPlayerHelper {
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, int mode, boolean autoPlay) {
     this.playerView = playerView;
+    this.context = playerView.getContext().getApplicationContext();
     this.extensionMode = mode;
     this.shouldAutoPlay = autoPlay;
   }
@@ -124,6 +126,12 @@ public final class ExoPlayerHelper {
   public void setPlaybackInfo(@NonNull PlaybackInfo state) {
     this.playbackInfo.setResumeWindow(state.getResumeWindow());
     this.playbackInfo.setResumePosition(state.getResumePosition());
+    if (player != null) {
+      boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
+      if (haveResumePosition) {
+        player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+      }
+    }
   }
 
   @SuppressWarnings("unused") //
@@ -131,7 +139,6 @@ public final class ExoPlayerHelper {
     if (this.mainHandler == null) {
       this.mainHandler = new Handler();
     }
-    Context context = playerView.getContext();
     MediaSource mediaSource =
         buildMediaSource(context, media, buildDataSourceFactory(context, true), mainHandler, null);
     prepare(mediaSource);
@@ -152,7 +159,6 @@ public final class ExoPlayerHelper {
       componentListener = new ComponentListener();
     }
 
-    final Context context = playerView.getContext();
     this.player = playerView.getPlayer();
     boolean needNewPlayer = player == null;
     if (needNewPlayer) {
@@ -298,13 +304,11 @@ public final class ExoPlayerHelper {
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
             == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(playerView.getContext(), R.string.error_unsupported_video,
-              Toast.LENGTH_SHORT).show();
+          Toast.makeText(context, R.string.error_unsupported_video, Toast.LENGTH_SHORT).show();
         }
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
             == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(playerView.getContext(), R.string.error_unsupported_audio,
-              Toast.LENGTH_SHORT).show();
+          Toast.makeText(context, R.string.error_unsupported_audio, Toast.LENGTH_SHORT).show();
         }
       }
       int count;
@@ -344,7 +348,6 @@ public final class ExoPlayerHelper {
 
     @Override public void onPlayerError(ExoPlaybackException e) {
       String errorString = null;
-      Context context = playerView.getContext();
       if (e.type == ExoPlaybackException.TYPE_RENDERER) {
         Exception cause = e.getRendererException();
         if (cause instanceof MediaCodecRenderer.DecoderInitializationException) {

@@ -16,6 +16,8 @@
 
 package im.ene.toro.sample.features.facebook.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import im.ene.toro.sample.data.MediaEntity;
 import im.ene.toro.sample.data.MediaItem;
 import im.ene.toro.sample.data.MediaUrl;
@@ -24,7 +26,7 @@ import im.ene.toro.sample.data.MediaUrl;
  * @author eneim | 6/18/17.
  */
 
-public class FbVideo extends FbItem implements MediaEntity {
+public class FbVideo extends FbItem implements MediaEntity, Parcelable {
 
   public final MediaItem mediaItem;
 
@@ -37,9 +39,39 @@ public class FbVideo extends FbItem implements MediaEntity {
     return this.mediaItem.getMediaUrl();
   }
 
+  @Override public String toString() {
+    return "FbVideo{" + "media=" + mediaItem.getMediaUrl().name() + '}';
+  }
+
   public static FbVideo getItem(int index, int urlIdx, long timeStamp) {
     int urlCount = MediaUrl.values().length;
     return new FbVideo(FbUser.getUser(), index, timeStamp,
         new MediaItem(index, MediaUrl.values()[urlIdx % urlCount]));
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeParcelable(this.author, flags);
+    dest.writeLong(this.index);
+    dest.writeLong(this.timeStamp);
+    dest.writeParcelable(this.mediaItem, flags);
+  }
+
+  protected FbVideo(Parcel in) {
+    super(in.readParcelable(FbUser.class.getClassLoader()), in.readLong(), in.readLong());
+    this.mediaItem = in.readParcelable(MediaItem.class.getClassLoader());
+  }
+
+  public static final Creator<FbVideo> CREATOR = new Creator<FbVideo>() {
+    @Override public FbVideo createFromParcel(Parcel source) {
+      return new FbVideo(source);
+    }
+
+    @Override public FbVideo[] newArray(int size) {
+      return new FbVideo[size];
+    }
+  };
 }

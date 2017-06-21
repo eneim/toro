@@ -16,11 +16,14 @@
 
 package im.ene.toro.sample.features.facebook.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * @author eneim | 6/18/17.
  */
 
-public class FbUser {
+public class FbUser implements Parcelable {
 
   public final String userName;
   public final String userProfile;
@@ -38,4 +41,30 @@ public class FbUser {
   public static FbUser getUser() {
     return DEFAULT;
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(this.userName);
+    dest.writeString(this.userProfile);
+    dest.writeString(this.userIcon);
+  }
+
+  protected FbUser(Parcel in) {
+    this.userName = in.readString();
+    this.userProfile = in.readString();
+    this.userIcon = in.readString();
+  }
+
+  public static final Creator<FbUser> CREATOR = new Creator<FbUser>() {
+    @Override public FbUser createFromParcel(Parcel source) {
+      return new FbUser(source);
+    }
+
+    @Override public FbUser[] newArray(int size) {
+      return new FbUser[size];
+    }
+  };
 }

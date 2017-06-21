@@ -23,6 +23,8 @@ import ix.Ix;
 import java.util.Collection;
 import java.util.Comparator;
 
+import static im.ene.toro.Common.ORDER_COMPARATOR;
+import static im.ene.toro.Common.ORDER_COMPARATOR_REVERSE;
 import static java.util.Collections.emptyList;
 
 /**
@@ -45,7 +47,7 @@ public interface PlayerSelector {
   PlayerSelector DEFAULT = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
         @NonNull Iterable<ToroPlayer> items, int limit) {
-      return Ix.from(items).orderBy(Common.ORDER_COMPARATOR).take(limit).toList();
+      return Ix.from(items).orderBy(ORDER_COMPARATOR).take(limit).toList();
     }
 
     @NonNull @Override public PlayerSelector reverse() {
@@ -56,7 +58,7 @@ public interface PlayerSelector {
   PlayerSelector DEFAULT_REVERSE = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
         @NonNull Iterable<ToroPlayer> items, int limit) {
-      return Ix.from(items).takeLast(limit).toList();
+      return Ix.from(items).orderBy(ORDER_COMPARATOR_REVERSE).take(limit).toList();
     }
 
     @NonNull @Override public PlayerSelector reverse() {

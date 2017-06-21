@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,21 +32,21 @@ import java.util.HashSet;
  *         All managed players must return {@code true} from {@link ToroPlayer#wantsToPlay()}
  */
 
-public class PlayerManager {
+final class PlayerManager {
 
-  @SuppressWarnings("unused") String TAG = "ToroLib:PlayerManager";
+  @SuppressWarnings("unused") private static String TAG = "ToroLib:PlayerManager";
 
   private final HashSet<ToroPlayer> players = new HashSet<>();
 
-  public boolean attachPlayer(@NonNull ToroPlayer player) {
+  boolean attachPlayer(@NonNull ToroPlayer player) {
     return players.add(player);
   }
 
-  public boolean detachPlayer(@NonNull ToroPlayer player) {
+  boolean detachPlayer(@NonNull ToroPlayer player) {
     return players.remove(player);
   }
 
-  public boolean manages(@NonNull ToroPlayer player) {
+  boolean manages(@NonNull ToroPlayer player) {
     return players.contains(player);
   }
 
@@ -56,38 +55,28 @@ public class PlayerManager {
    *
    * @return a non null collection of Players those are allowed to play by Container.
    */
-  @NonNull public Collection<ToroPlayer> getPlayers() {
+  @NonNull Collection<ToroPlayer> getPlayers() {
     return new ArrayList<>(this.players);
   }
 
   public void initialize(@NonNull ToroPlayer player, @NonNull Container container,
       @NonNull PlaybackInfo playbackInfo) {
     player.initialize(container, playbackInfo);
-    Log.d(TAG, "initialize() called with: player = ["
-        + player
-        + "], container = ["
-        + container
-        + "], playbackInfo = ["
-        + playbackInfo
-        + "]");
   }
 
   public void play(@NonNull ToroPlayer player) {
     player.play();
-    Log.d(TAG, "play() called with: player = [" + player + "]");
   }
 
   public void pause(@NonNull ToroPlayer player) {
     player.pause();
-    Log.d(TAG, "pause() called with: player = [" + player + "]");
   }
 
   public void release(@NonNull ToroPlayer player) {
     player.release();
-    Log.d(TAG, "release() called with: player = [" + player + "]");
   }
 
-  public void clear() {
+  void clear() {
     this.players.clear();
   }
 }

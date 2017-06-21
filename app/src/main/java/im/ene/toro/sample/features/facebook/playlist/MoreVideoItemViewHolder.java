@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.timeline;
+package im.ene.toro.sample.features.facebook.playlist;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -30,10 +35,10 @@ import im.ene.toro.extra.ExoPlayerHelper;
 import im.ene.toro.extra.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.ToroDemo;
 import im.ene.toro.sample.common.DemoUtil;
-import im.ene.toro.sample.data.MediaEntity;
 import im.ene.toro.sample.data.MediaUrl;
-import im.ene.toro.sample.features.facebook.data.FbItem;
+import im.ene.toro.sample.features.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 import java.util.List;
 
@@ -42,11 +47,17 @@ import java.util.List;
  */
 
 @SuppressWarnings("WeakerAccess") //
-public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroPlayer {
+public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+
+  static final int LAYOUT_RES = R.layout.vh_fbcard_base_dark;
 
   @Nullable SimpleExoPlayerViewHelper helper;
   @Nullable private Uri mediaUri;
 
+  @BindView(R.id.fb_user_icon) ImageView userIcon;
+  @BindView(R.id.fb_user_name) TextView userName;
+  @BindView(R.id.fb_user_profile) TextView userProfile;
+  @BindView(R.id.fb_item_middle) FrameLayout container;
   @BindView(R.id.fb_video_player) SimpleExoPlayerView playerView;
   @BindView(R.id.player_state) TextView state;
 
@@ -57,21 +68,17 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
     }
   };
 
-  TimelineVideoViewHolder(View itemView) {
+  MoreVideoItemViewHolder(View itemView) {
     super(itemView);
+    ButterKnife.bind(this, itemView);
     playerView.setVisibility(View.VISIBLE);
   }
 
-  @Override public void setClickListener(View.OnClickListener clickListener) {
-    super.setClickListener(clickListener);
-    container.setOnClickListener(clickListener);
-    userIcon.setOnClickListener(clickListener);
-  }
-
-  @Override void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
-    super.bind(adapter, item, payloads);
-    if (item != null && item instanceof MediaEntity) {
-      MediaUrl url = ((MediaEntity) item).getMediaUrl();
+  void bind(MoreVideosAdapter adapter, FbVideo item, List<Object> payloads) {
+    if (item != null) {
+      userName.setText(item.author.userName);
+      Glide.with(ToroDemo.getApp()).load(item.author.userIcon).into(userIcon);
+      MediaUrl url = item.getMediaUrl();
       mediaUri = url.getUri();
       userProfile.setText(DemoUtil.getRelativeTimeString(item.timeStamp) + "・" + url.name());
     }

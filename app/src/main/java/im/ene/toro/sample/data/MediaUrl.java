@@ -24,12 +24,12 @@ import android.net.Uri;
 
 public enum MediaUrl {
   // DASH_H265_TEARS("https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd", 2.4f), //
+  WEBM_BUNNY("http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm", 1.7777777778f),  //
   MP4_BUNNY_432("http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps_768x432_1500k.mp4",
       1.7777777778f),  //
   HLS_BUNNY_240("http://docs.evostream.com/sample_content/assets/hls-bunny-166/playlist.m3u8",
       1.7777777778f), //
   DASH_BUNNY_FULL("http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps.mpd", 1.7777777778f),  //
-  WEBM_BUNNY("http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm", 1.7777777778f)  //
   ;
 
   private final String url;

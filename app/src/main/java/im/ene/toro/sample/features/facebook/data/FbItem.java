@@ -37,4 +37,8 @@ public abstract class FbItem implements Entity {
   @Override public long getIndex() {
     return index;
   }
+
+  @Override public String toString() {
+    return "FbItem{" + "author=" + author + ", index=" + index + ", timeStamp=" + timeStamp + '}';
+  }
 }

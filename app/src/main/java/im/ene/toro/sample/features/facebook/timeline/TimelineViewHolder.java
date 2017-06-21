@@ -67,6 +67,10 @@ public class TimelineViewHolder extends RecyclerView.ViewHolder {
     ButterKnife.bind(this, itemView);
   }
 
+  public void setClickListener(View.OnClickListener clickListener) {
+    this.itemView.setOnClickListener(clickListener);
+  }
+
   void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
     userName.setText(item.author.userName);
     userProfile.setText(DemoUtil.getRelativeTimeString(item.timeStamp));
