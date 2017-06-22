@@ -17,7 +17,6 @@
 package im.ene.toro.sample.features.facebook.core;
 
 import android.graphics.Point;
-import android.util.Log;
 import android.view.Display;
 
 /**
@@ -31,10 +30,12 @@ public class ScreenHelper {
   private ScreenHelper() {
   }
 
+  // If current window has the horizontal edge longer than vertical edge, it is a hint to
+  // switch to big player.
+  // Of course if there is no available resource to play, we just ignore it.
   public static boolean shouldUseBigPlayer(Display display) {
     Point displaySize = new Point();
     display.getSize(displaySize);
-    Log.i(TAG, "shouldUseBigPlayer: " + displaySize);
     return displaySize.x >= displaySize.y;
   }
 }

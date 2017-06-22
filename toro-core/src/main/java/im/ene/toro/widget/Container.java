@@ -25,8 +25,6 @@ import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,12 +61,12 @@ public class Container extends RecyclerView {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
 
-  final PlayerManager playerManager;
-  PlayerSelector playerSelector;
-  PlayerStateManager playerStateManager;
-  Handler animatorFinishHandler;
+  final PlayerManager playerManager;  // never null
+  PlayerSelector playerSelector;  // null = do nothing
+  PlayerStateManager playerStateManager;  // null = no position cache
+  Handler animatorFinishHandler;  // null = detached ...
 
-  private int maxPlayerNumber = 1;  // changeable by attr as well as setter
+  private int maxPlayerNumber = 1;  // changeable by attr or setter
 
   public Container(Context context) {
     this(context, null);
@@ -87,7 +85,6 @@ public class Container extends RecyclerView {
       a.recycle();
     }
 
-    // FIXME consider to remove these lines
     // Setup here so we have tool for state save/restore stuff.
     setPlayerSelector(PlayerSelector.DEFAULT);
     this.playerManager = new PlayerManager();
@@ -135,8 +132,8 @@ public class Container extends RecyclerView {
 
   /**
    * Get current active players (players those are playing), sorted by Player order.
-   * @return
    */
+  // TODO make this unmodifiable?
   @NonNull public List<ToroPlayer> getActivePlayers() {
     return Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
       @Override public boolean test(ToroPlayer player) {
@@ -473,7 +470,7 @@ public class Container extends RecyclerView {
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
 
-    // FIXME kind of dirty workaround.
+    // To remind that this method was called
     tmpStates = states;
     return playerViewState;
   }
@@ -516,6 +513,10 @@ public class Container extends RecyclerView {
       statesCache = in.readSparseArray(loader);
     }
 
+    PlayerViewState(Parcel in) {
+      super(in);
+    }
+
     @Override public void writeToParcel(Parcel dest, int flags) {
       super.writeToParcel(dest, flags);
       //noinspection unchecked
@@ -523,15 +524,19 @@ public class Container extends RecyclerView {
     }
 
     public static final Creator<PlayerViewState> CREATOR =
-        ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlayerViewState>() {
+        new ClassLoaderCreator<PlayerViewState>() {
           @Override public PlayerViewState createFromParcel(Parcel in, ClassLoader loader) {
             return new PlayerViewState(in, loader);
+          }
+
+          @Override public PlayerViewState createFromParcel(Parcel source) {
+            return new PlayerViewState(source);
           }
 
           @Override public PlayerViewState[] newArray(int size) {
             return new PlayerViewState[size];
           }
-        });
+        };
 
     @Override public String toString() {
       // "The shorter the better, the String is." - Oda

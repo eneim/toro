@@ -20,7 +20,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +56,7 @@ import java.util.TreeMap;
     return position;
   }
 
-  private FbVideo getItem(@IntRange(from = 0) int position) {
+  public FbVideo getItem(@IntRange(from = 0) int position) {
     if (position == 0) return baseItem;
     int posInList = position - 1; // shift by 1.
     if (posInList >= items.size()) {
@@ -87,11 +86,6 @@ import java.util.TreeMap;
       new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getIndex(), o2.getIndex()));
 
   @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-    Log.d("Toro:TimelineFragment", "savePlaybackInfo() called with: order = ["
-        + order
-        + "], playbackInfo = ["
-        + playbackInfo
-        + "]");
     if (order >= 0) stateCache.put(getItem(order), playbackInfo);
   }
 

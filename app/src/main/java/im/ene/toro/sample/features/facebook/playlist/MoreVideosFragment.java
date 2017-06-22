@@ -20,31 +20,39 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import im.ene.toro.PlayerSelector;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.features.facebook.core.BlackBoardDialogFragment;
+import im.ene.toro.sample.features.facebook.core.ScreenHelper;
 import im.ene.toro.sample.features.facebook.data.FbVideo;
+import im.ene.toro.sample.features.facebook.player.BigPlayerFragment;
 import im.ene.toro.widget.Container;
+import java.util.List;
 
 /**
  * @author eneim | 6/19/17.
  */
 
-public class MoreVideosFragment extends BlackBoardDialogFragment {
+public class MoreVideosFragment extends BlackBoardDialogFragment implements BigPlayerFragment.Callback {
 
   public interface Callback {
 
-    void onPlaylistViewCreated();
+    void onPlaylistCreated();
 
-    void onPlaylistViewDestroyed(int basePosition, FbVideo baseItem, PlaybackInfo latestInfo);
+    void onPlaylistDestroyed(int basePosition, FbVideo baseItem, PlaybackInfo latestInfo);
   }
 
   public static final String TAG = "Toro:Fb:MoreVideos";
@@ -52,6 +60,13 @@ public class MoreVideosFragment extends BlackBoardDialogFragment {
   private static final String ARG_EXTRA_PLAYBACK_INFO = "fb:more_videos:playback_info";
   private static final String ARG_EXTRA_BASE_FB_VIDEO = "fb:more_videos:base_video";
   private static final String ARG_EXTRA_BASE_ORDER = "fb:more_videos:base_order";
+
+  // Save stuff for big player
+  private static final String STATE_KEY_FB_VIDEO = "fb:timeline:list:state:video";
+  private static final String STATE_KEY_ACTIVE_ORDER = "fb:timeline:list:state:order";
+  private static final String STATE_KEY_PLAYBACK_STATE = "fb:timeline:list:state:playback_info";
+
+  private static final String STATE_KEY_BIG_PLAYER_BUNDLE = "fb:timeline:list:state:player:bundle";
 
   // We use FbVideo as Parcelable, in real life, it should be retrieved from Database.
   public static MoreVideosFragment newInstance(int position, @NonNull FbVideo video,
@@ -71,8 +86,12 @@ public class MoreVideosFragment extends BlackBoardDialogFragment {
 
   private Callback callback;
 
+  // Orientation helper stuff
+  private WindowManager windowManager;
+
   @Override public void onAttach(Context context) {
     super.onAttach(context);
+    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     if (getParentFragment() != null && getParentFragment() instanceof Callback) {
       this.callback = (Callback) getParentFragment();
     }
@@ -80,6 +99,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment {
 
   @Override public void onDetach() {
     super.onDetach();
+    windowManager = null;
     callback = null;
   }
 
@@ -113,7 +133,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment {
     unbinder = ButterKnife.bind(this, view);
 
     if (callback != null) {
-      callback.onPlaylistViewCreated();
+      callback.onPlaylistCreated();
     }
 
     layoutManager = new LinearLayoutManager(getContext());
@@ -122,15 +142,93 @@ public class MoreVideosFragment extends BlackBoardDialogFragment {
     adapter.savePlaybackInfo(0, baseInfo);
     container.setAdapter(adapter);
     container.setPlayerStateManager(adapter);
+
+    selector = container.getPlayerSelector();
+  }
+
+  @Override public void onViewStateRestored(@Nullable Bundle bundle) {
+    super.onViewStateRestored(bundle);
+    if (bundle == null) {
+      // User come here from first place, we keep current behaviour.
+      return;
+    }
+    Bundle playerBundle = bundle.getBundle(STATE_KEY_BIG_PLAYER_BUNDLE);
+    if (playerBundle != null) {
+      int order = playerBundle.getInt(BigPlayerFragment.BUNDLE_KEY_ORDER);
+      PlaybackInfo info = playerBundle.getParcelable(BigPlayerFragment.BUNDLE_KEY_INFO);
+      if (info == null) info = new PlaybackInfo();
+      this.adapter.savePlaybackInfo(order, info);
+    }
+    // Bundle != null, which is a hint that we come here from a orientation change.
+    if (ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
+      // Device in landscape mode. Here we use PlayerSelector.NONE to disable the auto playback.
+      container.setPlayerSelector(PlayerSelector.NONE);
+      // Since we come here from a orientation change, if previous state (portrait mode),
+      // there was a on-playing Player, we should have a saved state of latest playback.
+      // Let's retrieve it and then do stuff.
+
+      // 1. Obtain the Video object and its order.
+      FbVideo video = bundle.getParcelable(STATE_KEY_FB_VIDEO); // can be null.
+      int order = bundle.getInt(STATE_KEY_ACTIVE_ORDER);
+      if (video != null) {
+        // 2. Get saved playback info. We know the adapter is also a state manager though.
+        PlaybackInfo info = bundle.getParcelable(STATE_KEY_PLAYBACK_STATE);
+        // 3. Prepare video Uri, open a full screen playback dialog.
+        BigPlayerFragment playerFragment = BigPlayerFragment.newInstance(order, video, info);
+        playerFragment.show(getChildFragmentManager(), BigPlayerFragment.FRAGMENT_TAG);
+      }
+    }
+  }
+
+  // Memo: This method is called before child Fragment's onSaveInstanceState.
+  @Override public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    // If there is DialogFragment showing, we save stuff from it.
+    Fragment playerFragment =
+        getChildFragmentManager().findFragmentByTag(BigPlayerFragment.FRAGMENT_TAG);
+    if (playerFragment != null && playerFragment instanceof BigPlayerFragment) {
+      Bundle playerBundle = ((BigPlayerFragment) playerFragment).getCurrentState();
+      outState.putBundle(STATE_KEY_BIG_PLAYER_BUNDLE, playerBundle);
+    }
+
+    // Save stuff here.
+    List<ToroPlayer> activePlayers = container.getActivePlayers();
+    if (activePlayers.isEmpty()) return;
+    ToroPlayer firstPlayer = activePlayers.get(0);  // get the first one only.
+    // We will store the Media object, playback state.
+    FbVideo item = adapter.getItem(firstPlayer.getPlayerOrder());
+    if (item == null) {
+      if (BuildConfig.DEBUG) {  // debug only.
+        throw new IllegalStateException("Video is null for active Player: " + firstPlayer);
+      }
+    }
+
+    outState.putInt(STATE_KEY_ACTIVE_ORDER, firstPlayer.getPlayerOrder());
+    outState.putParcelable(STATE_KEY_FB_VIDEO, item);
+    outState.putParcelable(STATE_KEY_PLAYBACK_STATE, firstPlayer.getCurrentPlaybackInfo());
   }
 
   @Override public void onDestroyView() {
     if (callback != null && adapter != null) {
-      callback.onPlaylistViewDestroyed(baseOrder, baseVideo, adapter.getPlaybackInfo(0));
+      callback.onPlaylistDestroyed(baseOrder, baseVideo, adapter.getPlaybackInfo(0));
     }
     unbinder.unbind();
     adapter = null;
     layoutManager = null;
+    selector = null;
     super.onDestroyView();
+  }
+
+  // Implement BigPlayerFragment callback
+
+  PlayerSelector selector;  // backup current selector.
+
+  @Override public void onBigPlayerCreated() {
+    container.setPlayerSelector(PlayerSelector.NONE);
+  }
+
+  @Override public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
+    adapter.savePlaybackInfo(videoOrder, latestInfo);
+    container.setPlayerSelector(selector);
   }
 }

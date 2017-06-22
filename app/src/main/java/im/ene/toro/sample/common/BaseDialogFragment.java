@@ -17,11 +17,13 @@
 package im.ene.toro.sample.common;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,28 +36,28 @@ import im.ene.toro.sample.BuildConfig;
  * @author eneim | 6/6/17.
  */
 
-public class BaseFragment extends Fragment {
+public class BaseDialogFragment extends AppCompatDialogFragment {
 
   private static final boolean D = BuildConfig.DEBUG;
 
-  protected String TAG = "Toro:BaseFragment";
+  protected String TAG = "Toro:BaseDialogFragment";
 
   @Override public void onCreate(@Nullable Bundle bundle) {
     super.onCreate(bundle);
-    if (D) Log.wtf(TAG, "onCreate() called with: bundle = [" + bundle + "]");
+    if (D) Log.d(TAG, "onCreate() called with: bundle = [" + bundle + "]");
   }
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
     TAG = "Toro:" + getClass().getSimpleName();
-    if (D) Log.wtf(TAG, "onAttach() called with: context = [" + context + "]");
+    if (D) Log.d(TAG, "onAttach() called with: context = [" + context + "]");
   }
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     if (D) {
-      Log.wtf(TAG, "onCreateView() called with: inflater = ["
+      Log.d(TAG, "onCreateView() called with: inflater = ["
           + inflater
           + "], container = ["
           + container
@@ -71,66 +73,71 @@ public class BaseFragment extends Fragment {
   @CallSuper @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     if (D) {
-      Log.wtf(TAG, "onViewCreated() called with: view = [" + view + "], bundle = [" + bundle + "]");
+      Log.d(TAG, "onViewCreated() called with: view = [" + view + "], bundle = [" + bundle + "]");
     }
     unbinder = ButterKnife.bind(this, view);
   }
 
   @Override public void onActivityCreated(@Nullable Bundle bundle) {
     super.onActivityCreated(bundle);
-    if (D) Log.wtf(TAG, "onActivityCreated() called with: bundle = [" + bundle + "]");
+    if (D) Log.d(TAG, "onActivityCreated() called with: bundle = [" + bundle + "]");
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
     super.onViewStateRestored(bundle);
-    if (D) Log.wtf(TAG, "onViewStateRestored() called with: bundle = [" + bundle + "]");
+    if (D) Log.d(TAG, "onViewStateRestored() called with: bundle = [" + bundle + "]");
   }
 
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (D) Log.wtf(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
+    if (D) Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
   }
 
   @Override public void onStart() {
     super.onStart();
-    if (D) Log.wtf(TAG, "onStart() called");
+    if (D) Log.d(TAG, "onStart() called");
   }
 
   @Override public void onResume() {
     super.onResume();
-    if (D) Log.wtf(TAG, "onResume() called");
+    if (D) Log.d(TAG, "onResume() called");
   }
 
   @Override public void onPause() {
     super.onPause();
-    if (D) Log.wtf(TAG, "onPause() called");
+    if (D) Log.d(TAG, "onPause() called");
   }
 
   @Override public void onStop() {
     super.onStop();
-    if (D) Log.wtf(TAG, "onStop() called");
+    if (D) Log.d(TAG, "onStop() called");
   }
 
   @Override public void onDestroyView() {
     super.onDestroyView();
-    if (D) Log.wtf(TAG, "onDestroyView() called");
+    if (D) Log.d(TAG, "onDestroyView() called");
     if (unbinder != null) unbinder.unbind();
   }
 
   @Override public void onDetach() {
     super.onDetach();
-    if (D) Log.wtf(TAG, "onDetach() called");
+    if (D) Log.d(TAG, "onDetach() called");
   }
 
   @Override public void onDestroy() {
     super.onDestroy();
-    if (D) Log.wtf(TAG, "onDestroy() called");
+    if (D) Log.d(TAG, "onDestroy() called");
+  }
+
+  @Override public void onDismiss(DialogInterface dialog) {
+    super.onDismiss(dialog);
+    if (D) Log.d(TAG, "onDismiss() called with: dialog = [" + dialog + "]");
   }
 
   @Override public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
     super.onMultiWindowModeChanged(isInMultiWindowMode);
     if (D) {
-      Log.wtf(TAG, "onMultiWindowModeChanged() called with: isInMultiWindowMode = ["
+      Log.d(TAG, "onMultiWindowModeChanged() called with: isInMultiWindowMode = ["
           + isInMultiWindowMode
           + "]");
     }
@@ -139,7 +146,7 @@ public class BaseFragment extends Fragment {
   @Override public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
     super.onPictureInPictureModeChanged(isInPictureInPictureMode);
     if (D) {
-      Log.wtf(TAG, "onPictureInPictureModeChanged() called with: isInPictureInPictureMode = ["
+      Log.d(TAG, "onPictureInPictureModeChanged() called with: isInPictureInPictureMode = ["
           + isInPictureInPictureMode
           + "]");
     }
@@ -148,7 +155,7 @@ public class BaseFragment extends Fragment {
   @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (D) {
-      Log.wtf(TAG, "onActivityResult() called with: requestCode = ["
+      Log.d(TAG, "onActivityResult() called with: requestCode = ["
           + requestCode
           + "], resultCode = ["
           + resultCode

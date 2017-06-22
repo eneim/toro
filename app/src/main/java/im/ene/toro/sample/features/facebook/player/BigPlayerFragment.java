@@ -22,14 +22,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
@@ -48,20 +47,21 @@ import im.ene.toro.sample.features.facebook.data.FbVideo;
 // TODO: from multi window mode to normal mode --> how the "state saving" flow goes?
 public class BigPlayerFragment extends BlackBoardDialogFragment {
 
+  public static final String FRAGMENT_TAG = "Toro:BigPlayerFragment";
+
   public interface Callback {
 
-    void onPlayerViewCreated();
+    void onBigPlayerCreated();
 
-    void onPlayerViewDestroyed(int order, FbVideo baseItem, PlaybackInfo latestInfo);
+    void onBigPlayerDestroyed(int order, FbVideo baseItem, PlaybackInfo latestInfo);
   }
-
-  public static final String TAG = "Toro:Fb:BigPlayer";
 
   private static final String ARG_KEY_VIDEO_ITEM = "fb:player:video_item";
   private static final String ARG_KEY_VIDEO_ORDER = "fb:player:video:order";
   private static final String ARG_KEY_INIT_INFO = "fb:player:init_info";
 
-  public static BigPlayerFragment newInstance(int order, @NonNull FbVideo video, PlaybackInfo info) {
+  public static BigPlayerFragment newInstance(int order, @NonNull FbVideo video,
+      PlaybackInfo info) {
     BigPlayerFragment fragment = new BigPlayerFragment();
     Bundle args = new Bundle();
     args.putInt(ARG_KEY_VIDEO_ORDER, order);
@@ -77,20 +77,14 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   private WindowManager windowManager;
   private Callback callback;
 
+  private int videoOrder;
+  private FbVideo videoItem;
+  private PlaybackInfo playbackInfo;
+
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    // on orientation change, by default Android system will try to retain the view hierarchy.
-    // so, it will try to destroy this dialog-fragment, and recreate it on new orientation with a
-    // saved state.
-
-    // here, we dispatch the orientation check, if we found that it is in portrait mode, we immediately
-    // dismiss the dialog to prevent it from showing unexpectedly.
-    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    if (!ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
-      dismissAllowingStateLoss();
-      return;
-    }
-
+    this.TAG = "Toro:Fb:BigPlayer";
+    Log.d(TAG, "onAttach() called with: context = [" + context + "]");
     if (getParentFragment() != null && getParentFragment() instanceof Callback) {
       this.callback = (Callback) getParentFragment();
     }
@@ -102,20 +96,27 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     windowManager = null;
   }
 
-  private int videoOrder;
-  private FbVideo videoItem;
-  private PlaybackInfo playbackInfo;
-
   @Override public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    if (getArguments() != null) {
-      videoItem = getArguments().getParcelable(ARG_KEY_VIDEO_ITEM);
-      playbackInfo = getArguments().getParcelable(ARG_KEY_INIT_INFO);
-      videoOrder = getArguments().getInt(ARG_KEY_VIDEO_ORDER);
+    Bundle bundle = savedInstanceState;
+    if (bundle == null) bundle = getArguments();
+    if (bundle != null) {
+      videoItem = bundle.getParcelable(ARG_KEY_VIDEO_ITEM);
+      playbackInfo = bundle.getParcelable(ARG_KEY_INIT_INFO);
+      videoOrder = bundle.getInt(ARG_KEY_VIDEO_ORDER);
     }
-
     if (videoItem == null) throw new IllegalArgumentException("Require a Video item.");
     if (playbackInfo == null) playbackInfo = new PlaybackInfo();
+    // on orientation change, by default Android system will try to retain the view hierarchy.
+    // so, it will try to destroy this dialog-fragment, and recreate it on new orientation with a
+    // saved state.
+
+    // here, we dispatch the orientation check, if we found that it is in portrait mode, we immediately
+    // dismiss the dialog to prevent it from showing unexpectedly.
+    windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    if (!ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
+      dismissAllowingStateLoss();
+    }
   }
 
   @Nullable @Override
@@ -124,15 +125,13 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     return inflater.inflate(R.layout.layout_facebook_player, container, false);
   }
 
-  Unbinder unbinder;
   @BindView(R.id.big_player) SimpleExoPlayerView playerView;
   ExoPlayerHelper playerHelper;
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    unbinder = ButterKnife.bind(this, view);
     if (callback != null) {
-      callback.onPlayerViewCreated();
+      callback.onBigPlayerCreated();
     }
     playerView.setKeepScreenOn(true);
     Point windowSize = new Point();
@@ -162,8 +161,8 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
 
         int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            // | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // un-comment for 100% full screen.
+            // | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  // un-comment for 100% full screen.
             | immersiveStickyFrag;
         decorView.setSystemUiVisibility(uiOptions);
       }
@@ -190,15 +189,38 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     if (playerHelper != null) playerHelper.pause();
   }
 
-  @Override public void onDestroyView() {
-    if (callback != null && playerHelper != null) {
-      callback.onPlayerViewDestroyed(videoOrder, videoItem, playerHelper.getPlaybackInfo());
-    }
+  @Override public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt(ARG_KEY_VIDEO_ORDER, videoOrder);
+    outState.putParcelable(ARG_KEY_VIDEO_ITEM, videoItem);
+    if (playerHelper != null) playbackInfo = playerHelper.getPlaybackInfo();
+    outState.putParcelable(ARG_KEY_INIT_INFO, playbackInfo);
+  }
 
+  @Override public void onDestroyView() {
     if (playerHelper != null) {
+      playbackInfo = playerHelper.getPlaybackInfo();
       playerHelper.release();
+      playerHelper = null;
     }
-    unbinder.unbind();
+    if (callback != null) {
+      callback.onBigPlayerDestroyed(videoOrder, videoItem, playbackInfo);
+    }
     super.onDestroyView();
+  }
+
+  // Public API
+  public static final String BUNDLE_KEY_VIDEO = "fb:player:bundle:video";
+  public static final String BUNDLE_KEY_ORDER = "fb:player:bundle:order";
+  public static final String BUNDLE_KEY_INFO = "fb:player:bundle:info";
+
+  public Bundle getCurrentState() {
+    PlaybackInfo info = playbackInfo;
+    if (playerHelper != null) info = playerHelper.getPlaybackInfo();
+    Bundle bundle = new Bundle();
+    bundle.putParcelable(BUNDLE_KEY_VIDEO, videoItem);
+    bundle.putInt(BUNDLE_KEY_ORDER, videoOrder);
+    bundle.putParcelable(BUNDLE_KEY_INFO, info);
+    return bundle;
   }
 }

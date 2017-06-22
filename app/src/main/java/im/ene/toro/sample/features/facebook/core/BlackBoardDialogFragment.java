@@ -16,8 +16,8 @@
 
 package im.ene.toro.sample.features.facebook.core;
 
-import android.support.v7.app.AppCompatDialogFragment;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.common.BaseDialogFragment;
 
 /**
  * @author eneim | 6/18/17.
@@ -26,7 +26,7 @@ import im.ene.toro.sample.R;
  *         See {@link R.style#Toro_Theme_Board}.
  */
 
-public abstract class BlackBoardDialogFragment extends AppCompatDialogFragment {
+public abstract class BlackBoardDialogFragment extends BaseDialogFragment {
 
   @Override public int getTheme() {
     return R.style.Toro_Theme_Board;
