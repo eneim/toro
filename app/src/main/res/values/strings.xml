@@ -14,6 +14,9 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="app_name">ToroV3-Draft</string>
+<resources>
+  <string name="app_name">Toro V3</string>
+  <string name="fb_button_like">Like</string>
+  <string name="fb_button_comment">Comment</string>
+  <string name="fb_button_share">Share</string>
 </resources>

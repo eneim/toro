@@ -37,7 +37,7 @@ import im.ene.toro.extra.ExoPlayerHelper;
 import im.ene.toro.extra.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.MediaItem;
+import im.ene.toro.sample.data.MediaEntity;
 import im.ene.toro.widget.Container;
 import java.util.Arrays;
 import java.util.List;
@@ -45,14 +45,14 @@ import java.util.List;
 /**
  * @author eneim | 6/6/17.
  */
-
+@SuppressWarnings({ "WeakerAccess", "unused" })
 public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPlayer {
 
   private static final String TAG = "Toro:VH:ExoPlayer";
 
   static final int LAYOUT_RES = R.layout.vh_exoplayer_basic;
 
-  @SuppressWarnings("WeakerAccess") @Nullable SimpleExoPlayerViewHelper helper;
+  @Nullable SimpleExoPlayerViewHelper helper;
   @Nullable private Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
@@ -92,8 +92,8 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
 
   @Override
   public void bind(@NonNull RecyclerView.Adapter adapter, Object item, List<Object> payloads) {
-    if (item != null && item instanceof MediaItem) {
-      mediaUri = ((MediaItem) item).getMediaUrl().getUri();
+    if (item != null && item instanceof MediaEntity) {
+      mediaUri = ((MediaEntity) item).getMediaUrl().getUri();
       content.setText(item.toString());
     }
   }
@@ -145,9 +145,11 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
 
   @Override public boolean wantsToPlay() {
     ViewParent parent = itemView.getParent();
-    float visible = parent != null && parent instanceof Container ? //
-        ToroUtil.visibleAreaOffset(playerView, (Container) parent) : 0;
-    return visible >= 0.85;
+    float offset = 0;
+    if (parent != null && parent instanceof View) {
+      offset = ToroUtil.visibleAreaOffset(playerView, (View) parent);
+    }
+    return offset >= 0.85;
   }
 
   @Override public int getPlayerOrder() {

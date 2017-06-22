@@ -136,20 +136,9 @@ public class BasicListFragment extends BaseFragment {
   @Override public void onDestroyView() {
     disposibles.clear();  // Clear but not dispose, by intent
     touchHelper.attachToRecyclerView(null);
-    // In case of LinearLayoutManager, setting it to "recycler child on detach" will also detach
-    // children Views properly, so this setup is optional.
-    // See: https://github.com/airbnb/epoxy/wiki/Avoiding-Memory-Leaks for more information.
-    // Otherwise (using StaggeredGridLayoutManager or custom LayoutManager), it is recommended to have this setup to clear View cache.
-    container.setAdapter(null);
-    // BaseFragment (super) class will unbind all views here, so this super call must be called last.
-    super.onDestroyView();
-  }
-
-  @Override public void onDestroy() {
-    super.onDestroy();
-    // clean up
     touchHelper = null;
     adapter = null;
     layoutManager = null;
+    super.onDestroyView();
   }
 }

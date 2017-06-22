@@ -14,24 +14,28 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.features.facebook.core;
 
-import android.app.Application;
-import com.squareup.leakcanary.LeakCanary;
+import android.graphics.Point;
+import android.view.Display;
 
 /**
- * @author eneim | 6/5/17.
+ * @author eneim | 6/21/17.
  */
 
-public class ToroDemoApplication extends Application {
+public class ScreenHelper {
 
-  @Override public void onCreate() {
-    super.onCreate();
-    if (LeakCanary.isInAnalyzerProcess(this)) {
-      // This process is dedicated to LeakCanary for heap analysis.
-      // You should not init your app in this process.
-      return;
-    }
-    LeakCanary.install(this);
+  private static final String TAG = "Toro:Fb:Screen";
+
+  private ScreenHelper() {
+  }
+
+  // If current window has the horizontal edge longer than vertical edge, it is a hint to
+  // switch to big player.
+  // Of course if there is no available resource to play, we just ignore it.
+  public static boolean shouldUseBigPlayer(Display display) {
+    Point displaySize = new Point();
+    display.getSize(displaySize);
+    return displaySize.x >= displaySize.y;
   }
 }

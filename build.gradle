@@ -23,7 +23,7 @@ buildscript {
 
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.3'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.0'
     classpath 'me.tatarka:gradle-retrolambda:3.6.1'
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
@@ -34,14 +34,18 @@ allprojects {
   repositories {
     jcenter()
     google()
+    maven {
+      name 'glide-snapshot'
+      url 'http://oss.sonatype.org/content/repositories/snapshots'
+    }
   }
 }
 
 ext {
   libraryVersion = '3.0.0-A1'
-  androidVersion = 25
-  buildToolVersion = '25.0.3'
-  supportLibraryVersion = '25.3.1'  // latest: 25.4.0 but there is no source code
+  androidVersion = 26
+  buildToolVersion = '26.0.0'
+  supportLibraryVersion = '26.0.0-beta2'  // latest: 25.4.0 but there is no source code
   exoPlayer2Version = 'r2.4.2'
   minSupportSDKVersion = 16
 }

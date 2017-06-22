@@ -16,13 +16,15 @@
 
 package im.ene.toro.sample.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.android.exoplayer2.util.Util;
 
 /**
  * @author eneim | 6/7/17.
  */
 
-public class MediaItem implements Entity {
+public class MediaItem implements MediaEntity, Parcelable {
 
   private final long index;
   private final MediaUrl mediaUrl;
@@ -32,7 +34,7 @@ public class MediaItem implements Entity {
     this.mediaUrl = mediaUrl;
   }
 
-  public MediaUrl getMediaUrl() {
+  @Override public MediaUrl getMediaUrl() {
     return mediaUrl;
   }
 
@@ -47,4 +49,29 @@ public class MediaItem implements Entity {
   @Override public String toString() {
     return "Media{" + "index=" + index + ", url=" + mediaUrl.toString() + '}';
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeLong(this.index);
+    dest.writeSerializable(this.mediaUrl == null ? -1 : this.mediaUrl.ordinal());
+  }
+
+  protected MediaItem(Parcel in) {
+    this.index = in.readLong();
+    int tmpMediaUrl = in.readInt();
+    this.mediaUrl = tmpMediaUrl == -1 ? null : MediaUrl.values()[tmpMediaUrl];
+  }
+
+  public static final Creator<MediaItem> CREATOR = new Creator<MediaItem>() {
+    @Override public MediaItem createFromParcel(Parcel source) {
+      return new MediaItem(source);
+    }
+
+    @Override public MediaItem[] newArray(int size) {
+      return new MediaItem[size];
+    }
+  };
 }

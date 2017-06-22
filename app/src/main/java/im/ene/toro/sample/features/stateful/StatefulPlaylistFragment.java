@@ -133,13 +133,8 @@ public class StatefulPlaylistFragment extends BaseFragment {
   @Override public void onDestroyView() {
     disposibles.clear();  // Clear but not dispose, by intent
     touchHelper.attachToRecyclerView(null);
-    super.onDestroyView();
-  }
-
-  @Override public void onDestroy() {
-    super.onDestroy();
-    // clean up
     touchHelper = null;
     adapter = null;
+    super.onDestroyView();
   }
 }

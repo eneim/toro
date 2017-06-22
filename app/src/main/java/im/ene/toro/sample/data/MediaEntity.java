@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extra;
-
-import im.ene.toro.PlayerManager;
+package im.ene.toro.sample.data;
 
 /**
- * @author eneim | 6/16/17.
+ * @author eneim | 6/18/17.
  */
 
-public abstract class PlayerProvider extends PlayerManager {
+public interface MediaEntity extends Entity {
 
+  MediaUrl getMediaUrl();
 }

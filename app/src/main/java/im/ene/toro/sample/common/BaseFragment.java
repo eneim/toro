@@ -42,7 +42,6 @@ public class BaseFragment extends Fragment {
 
   @Override public void onCreate(@Nullable Bundle bundle) {
     super.onCreate(bundle);
-    TAG = "Toro:" + getClass().getSimpleName();
     if (D) Log.wtf(TAG, "onCreate() called with: bundle = [" + bundle + "]");
   }
 

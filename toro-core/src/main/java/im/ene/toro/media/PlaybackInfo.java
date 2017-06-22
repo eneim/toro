@@ -18,8 +18,6 @@ package im.ene.toro.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import com.google.android.exoplayer2.C;
 
 /**
@@ -58,16 +56,19 @@ public class PlaybackInfo implements Parcelable {
     return 0;
   }
 
-  public static final Creator<PlaybackInfo> CREATOR =
-      ParcelableCompat.newCreator(new ParcelableCompatCreatorCallbacks<PlaybackInfo>() {
-        @Override public PlaybackInfo createFromParcel(Parcel in, ClassLoader loader) {
-          return new PlaybackInfo(in);
-        }
+  public static final Creator<PlaybackInfo> CREATOR = new ClassLoaderCreator<PlaybackInfo>() {
+    @Override public PlaybackInfo createFromParcel(Parcel source, ClassLoader loader) {
+      return new PlaybackInfo(source);
+    }
 
-        @Override public PlaybackInfo[] newArray(int size) {
-          return new PlaybackInfo[size];
-        }
-      });
+    @Override public PlaybackInfo createFromParcel(Parcel source) {
+      return new PlaybackInfo(source);
+    }
+
+    @Override public PlaybackInfo[] newArray(int size) {
+      return new PlaybackInfo[size];
+    }
+  };
 
   public int getResumeWindow() {
     return resumeWindow;
@@ -109,6 +110,4 @@ public class PlaybackInfo implements Parcelable {
     result = 31 * result + (int) (resumePosition ^ (resumePosition >>> 32));
     return result;
   }
-
-  public static PlaybackInfo INIT_STATE = new PlaybackInfo();
 }

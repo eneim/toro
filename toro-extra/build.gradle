@@ -39,7 +39,7 @@ android {
 
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])
-  provided project(':toro-core')
+  compile project(':toro-core')
 
   provided "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
   provided "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"

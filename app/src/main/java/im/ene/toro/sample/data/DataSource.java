@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author eneim | 6/7/17.
  */
 
-public final class DataSource {
+public final class DataSource implements DataLoader {
 
   private volatile static DataSource singleton;
 
@@ -78,6 +78,7 @@ public final class DataSource {
     return entities;
   }
 
+  @Override
   public boolean isLoading() {
     return this.loading.get();
   }
