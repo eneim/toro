@@ -32,6 +32,8 @@ import java.util.List;
 
 public final class Common {
 
+  private static final String TAG = "ToroLib:Common";
+
   @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
   }
@@ -46,14 +48,14 @@ public final class Common {
     return Collections.<Long>min(list);
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @RestrictTo(RestrictTo.Scope.LIBRARY) //
   public static Comparator<ToroPlayer> ORDER_COMPARATOR = new Comparator<ToroPlayer>() {
     @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
       return Common.compare(o1.getPlayerOrder(), o2.getPlayerOrder());
     }
   };
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @RestrictTo(RestrictTo.Scope.LIBRARY) //
   public static Comparator<ToroPlayer> ORDER_COMPARATOR_REVERSE = new Comparator<ToroPlayer>() {
     @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
       return Common.compare(o2.getPlayerOrder(), o1.getPlayerOrder());
@@ -66,20 +68,21 @@ public final class Common {
     Rect parentRect = new Rect();
     // 1. Get Window's vision from parent
     parent.getWindowVisibleDisplayFrame(windowRect);
+    int[] loc = new int[2];
+    parent.getLocationOnScreen(loc);
+
     // 2. Get parent's global rect
-    parent.getGlobalVisibleRect(parentRect, null);
+    parent.getGlobalVisibleRect(parentRect);
+    parentRect.offsetTo(loc[0], loc[1]);
+
     // 3. Get player global rect
     Rect videoRect = new Rect();
-    // Headache !!!
     int[] screenLoc = new int[2];
     videoView.getLocationOnScreen(screenLoc);
-    videoRect.left += screenLoc[0];
-    videoRect.right += screenLoc[0] + videoView.getWidth();
-    videoRect.top += screenLoc[1];
-    videoRect.bottom += screenLoc[1] + videoView.getHeight();
+    videoView.getGlobalVisibleRect(videoRect);
+    videoRect.offsetTo(screenLoc[0], screenLoc[1]);
 
-    // Condition: window manages parent, and parent manages Video or parent intersects Video
-    return windowRect.contains(parentRect) && (parentRect.contains(videoRect)
-        || parentRect.intersect(videoRect));
+    return (windowRect.contains(videoRect) || windowRect.intersect(videoRect))
+        && (parentRect.contains(videoRect) || parentRect.intersect(videoRect));
   }
 }
