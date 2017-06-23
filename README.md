@@ -2,7 +2,7 @@
 
 > ***Video list auto playback made simple, specially built for RecyclerView***
 
-<a href="https://www.iconfinder.com/icons/1105270/brand_connect_shape_square_icon#size=512"><img src="/art/web_hi_res_512.png" width="256"></a>
+<img src="/extra/web_hi_res_512.png" width="256">
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
