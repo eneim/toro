@@ -81,7 +81,7 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
  *         A helper class, dedicated to {@link SimpleExoPlayerView}.
  */
 
-@SuppressWarnings("WeakerAccess") //
+@SuppressWarnings({ "WeakerAccess", "unused" }) //
 public final class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";

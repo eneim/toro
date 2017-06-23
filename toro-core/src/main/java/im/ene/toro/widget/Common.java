@@ -14,56 +14,43 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.widget;
 
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.view.View;
-import im.ene.toro.widget.Container;
-import java.util.Arrays;
-import java.util.Collections;
+import im.ene.toro.ToroPlayer;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author eneim | 6/2/17.
  */
 
-public final class Common {
+@SuppressWarnings({ "unused", "WeakerAccess" }) final class Common {
 
   private static final String TAG = "ToroLib:Common";
 
-  @SuppressWarnings("WeakerAccess") static int compare(int x, int y) {
+  static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
   }
 
-  static long max(Long... numbers) {
-    List<Long> list = Arrays.asList(numbers);
-    return Collections.<Long>max(list);
-  }
-
-  static long min(Long... numbers) {
-    List<Long> list = Arrays.asList(numbers);
-    return Collections.<Long>min(list);
-  }
-
   @RestrictTo(RestrictTo.Scope.LIBRARY) //
-  public static Comparator<ToroPlayer> ORDER_COMPARATOR = new Comparator<ToroPlayer>() {
+  static Comparator<ToroPlayer> ORDER_COMPARATOR = new Comparator<ToroPlayer>() {
     @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
       return Common.compare(o1.getPlayerOrder(), o2.getPlayerOrder());
     }
   };
 
   @RestrictTo(RestrictTo.Scope.LIBRARY) //
-  public static Comparator<ToroPlayer> ORDER_COMPARATOR_REVERSE = new Comparator<ToroPlayer>() {
+  static Comparator<ToroPlayer> ORDER_COMPARATOR_REVERSE = new Comparator<ToroPlayer>() {
     @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
       return Common.compare(o2.getPlayerOrder(), o1.getPlayerOrder());
     }
   };
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
-  public static boolean allowsToPlay(@NonNull View videoView, @NonNull Container parent) {
+  static boolean allowsToPlay(@NonNull View videoView, @NonNull Container parent) {
     Rect windowRect = new Rect();
     Rect parentRect = new Rect();
     // 1. Get Window's vision from parent
