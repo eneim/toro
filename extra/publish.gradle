@@ -14,4 +14,20 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core'
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+  artifactId = releaseArtifact  // library
+  description = releaseDescription  // by library
+  repoName = releaseRepoName  // by library
+  userOrg = releaseUserOrg  // shared
+  groupId = releaseGroupId  // shared
+  version = releaseVersion  // shared
+  website = releaseWebsite  // shared
+  licences = releaseLicense // shared
+
+  bintrayUser = bintray_user
+  bintrayKey = bintray_apikey
+
+  // dryRun = false
+}

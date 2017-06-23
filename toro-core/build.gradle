@@ -49,4 +49,17 @@ dependencies {
   compile 'com.github.akarnokd:ixjava:1.0.0-RC5'
 
   provided "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
+  provided ("com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}") {
+    exclude group: 'com.android.support', module: 'support-annotations'
+  }
+  provided "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
+  provided "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
+  provided "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
 }
+
+ext {
+  releaseArtifact = 'toro'
+  releaseDescription = 'The Toro core library.'
+}
+
+apply from: '../extra/publish.gradle'

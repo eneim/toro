@@ -27,7 +27,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.extra.LegacyVideoViewHelper;
+import im.ene.toro.helper.LegacyVideoViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaEntity;

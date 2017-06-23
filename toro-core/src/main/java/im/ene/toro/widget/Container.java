@@ -132,6 +132,8 @@ public class Container extends RecyclerView {
 
   /**
    * Get current active players (players those are playing), sorted by Player order.
+   *
+   * @return list of playing players. Empty list if there is no available player.
    */
   // TODO make this unmodifiable?
   @NonNull public List<ToroPlayer> getActivePlayers() {

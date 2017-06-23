@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extra;
+package im.ene.toro.helper;
 
 import android.os.Handler;
 import android.os.Message;
