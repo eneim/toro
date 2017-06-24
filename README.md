@@ -23,6 +23,7 @@
 - Customizable playback component: either MediaPlayer or ExoPlayer will work. Toro comes with default helper classes to support these 2.
 - Customizable player selector: custom the selection of the player to start, among many other players.
   - Which in turn support single/multiple players.
+- First class Support ExoPlayer 2 and MediaPlayer (by Helper classes). 
 
 ### Demo
 
@@ -30,7 +31,7 @@
 
 ### Getting start
 
-Update module build.gradle.
+1. Update module build.gradle.
 
 ```groovy
 ext {
@@ -46,7 +47,9 @@ dependencies {
 }
 ```
 
-Using ```Container``` in place of Video list. Below: a simple Container with default max simultaneous players count to 1.
+2. Using ```Container``` in place of Video list. 
+
+Below: a simple Container with default max simultaneous players count to 1.
 
 ```xml
 <im.ene.toro.widget.Container
@@ -57,7 +60,7 @@ Using ```Container``` in place of Video list. Below: a simple Container with def
       />
 ```
 
-Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
+3. Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
 
 ```kotlin
 // Better naming after import
@@ -87,9 +90,7 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
     this.mediaUri = uri
   }
 
-  override fun getPlayerView(): View {
-    return playerView
-  }
+  override fun getPlayerView() = playerView!!
 
   override fun getCurrentPlaybackInfo(): PlaybackInfo {
     return playerViewHelper?.updatePlaybackInfo() ?: PlaybackInfo()
@@ -110,9 +111,7 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
     playerViewHelper?.pause()
   }
 
-  override fun isPlaying(): Boolean {
-    return playerViewHelper != null && playerViewHelper!!.isPlaying
-  }
+  override fun isPlaying() = playerViewHelper != null && playerViewHelper!!.isPlaying
 
   override fun release() {
     try {
@@ -132,15 +131,29 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
     return offset >= 0.85
   }
 
-  override fun getPlayerOrder(): Int {
-    return adapterPosition
-  }
+  override fun getPlayerOrder() = adapterPosition
 }
 ```
 
-Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
+More advance View holder implementations as well as Java version can be found in **app** module.
 
-That's all.
+4. Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
+
+That's all. Your View should be ready to play.
+
+### Contribution & Donation
+
+- Issue report and Pull Requests are welcome. Please follow issue format for quick response.
+
+- For Pull Requests, this project uses 2-space indent and **no** Hungarian naming convention.
+
+- Also you can **buy me some coffee** for shorter update cycle ...
+
+<a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
+### Hall of Fame
+
+> Email to nam@ene.im with the description of your App using Toro to list it here.
 
 ### License
 

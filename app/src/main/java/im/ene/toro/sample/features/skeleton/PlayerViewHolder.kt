@@ -54,9 +54,7 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
     this.mediaUri = uri
   }
 
-  override fun getPlayerView(): View {
-    return playerView
-  }
+  override fun getPlayerView() = playerView!!
 
   override fun getCurrentPlaybackInfo(): PlaybackInfo {
     return playerViewHelper?.updatePlaybackInfo() ?: PlaybackInfo()
@@ -77,9 +75,7 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
     playerViewHelper?.pause()
   }
 
-  override fun isPlaying(): Boolean {
-    return playerViewHelper != null && playerViewHelper!!.isPlaying
-  }
+  override fun isPlaying() = playerViewHelper != null && playerViewHelper!!.isPlaying
 
   override fun release() {
     try {
@@ -99,7 +95,5 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
     return offset >= 0.85
   }
 
-  override fun getPlayerOrder(): Int {
-    return adapterPosition
-  }
+  override fun getPlayerOrder() = adapterPosition
 }
