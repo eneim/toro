@@ -14,7 +14,7 @@
 * [Features](#features)
 * [Demo](#demo)
 * [Getting start](#getting-start)
-* [Advance usage and class documentation](#advance-usage-and-class-documentation)
+* [Advance usage and class documentation](#advance-usage-and-class-documentation-i-need-your-request-to-update-this-list)
 * [Contribution & Donation](#contribution--donation)
 * [Hall of Fame](#hall-of-fame)
 * [License](#license)
