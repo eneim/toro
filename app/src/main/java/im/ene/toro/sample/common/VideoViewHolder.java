@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * @author eneim | 6/6/17.
  */
-
+// Unused
 public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   private static final String TAG = "Toro:VH:VideoView";
@@ -95,13 +95,11 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
-      if (mediaUri != null) {
-        helper = new LegacyVideoViewHelper(container, this, mediaUri);
-        helper.setOnPreparedListener(__ -> state.setText("PREPARED"));
-        helper.addPlayerEventListener(eventListener);
-        helper.initialize(playbackInfo);
-      }
+      helper = new LegacyVideoViewHelper(container, this, mediaUri);
+      helper.setOnPreparedListener(__ -> state.setText("PREPARED"));
+      helper.addPlayerEventListener(eventListener);
     }
+    helper.initialize(playbackInfo);
   }
 
   @Override public void release() {

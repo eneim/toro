@@ -30,7 +30,6 @@
       android:orientation="vertical"
       android:padding="4dp"
       app:layoutManager="@string/layout_manager"
-      app:max_player_number="1"
       app:spanCount="@integer/grid_span"
       />
 </android.support.v4.widget.SwipeRefreshLayout>

@@ -46,8 +46,8 @@ public class ToroVideoView extends VideoView {
    */
   @Override public void start() {
     super.start();
-    if (this.playbackEventListener != null) {
-      this.playbackEventListener.onPlay();
+    if (this.playerEventListener != null) {
+      this.playerEventListener.onPlay();
     }
   }
 
@@ -56,8 +56,8 @@ public class ToroVideoView extends VideoView {
    */
   @Override public void pause() {
     super.pause();
-    if (this.playbackEventListener != null) {
-      this.playbackEventListener.onPause();
+    if (this.playerEventListener != null) {
+      this.playerEventListener.onPause();
     }
   }
 
@@ -66,18 +66,18 @@ public class ToroVideoView extends VideoView {
    */
   @Override public void resume() {
     super.resume();
-    if (this.playbackEventListener != null) {
-      this.playbackEventListener.onPlay();
+    if (this.playerEventListener != null) {
+      this.playerEventListener.onPlay();
     }
   }
 
-  private PlaybackEventListener playbackEventListener;
+  private PlayerEventListener playerEventListener;
 
-  public void setPlaybackEventListener(PlaybackEventListener playbackEventListener) {
-    this.playbackEventListener = playbackEventListener;
+  public void setPlayerEventListener(PlayerEventListener playerEventListener) {
+    this.playerEventListener = playerEventListener;
   }
 
-  public interface PlaybackEventListener {
+  public interface PlayerEventListener {
 
     /**
      * Called when this VideoView is started from external request.

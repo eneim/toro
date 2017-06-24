@@ -45,10 +45,6 @@ public abstract class BaseViewHolder extends RecyclerView.ViewHolder {
         view = inflater.inflate(TextViewHolder.LAYOUT_RES, parent, false);
         viewHolder = new TextViewHolder(view);
         break;
-      case ContentAdapter.TYPE_MEDIA_MP4:
-        view = inflater.inflate(VideoViewHolder.LAYOUT_RES, parent, false);
-        viewHolder = new VideoViewHolder(view);
-        break;
       default:
         throw new IllegalArgumentException("Un-supported view type: " + type);
     }
