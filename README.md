@@ -144,7 +144,7 @@ That's all. Your View should be ready to play.
 
 1. Enable playback position save/restore: using ```PlayerStateManager```
 
-The usage is simple: create a class implementing ```PlayerStateManager```, then set it to the Container using ```Container#setPlayerStateManager(PlayerStateManager)```. Sample code can be found in ```app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java```. Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
+The implementation is simple: create a class implementing ```PlayerStateManager```, then set it to the Container using ```Container#setPlayerStateManager(PlayerStateManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
 
 Below is an example using TreeMap to cache playback state (copied from the file above)
 
