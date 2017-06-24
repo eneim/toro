@@ -30,12 +30,15 @@ import im.ene.toro.helper.ExoPlayerHelper;
 import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.common.DemoUtil;
 import im.ene.toro.sample.data.MediaEntity;
 import im.ene.toro.sample.data.MediaUrl;
 import im.ene.toro.sample.features.facebook.data.FbItem;
 import im.ene.toro.widget.Container;
 import java.util.List;
+import java.util.Locale;
+
+import static im.ene.toro.sample.common.DemoUtil.getRelativeTimeString;
+import static java.lang.String.format;
 
 /**
  * @author eneim | 6/18/17.
@@ -53,7 +56,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   private ExoPlayerHelper.EventListener listener = new ExoPlayerHelper.EventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
-      state.setText("STATE: " + playbackState + "・PWR: " + playWhenReady);
+      state.setText(format(Locale.getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
     }
   };
 
@@ -64,7 +67,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override public void setClickListener(View.OnClickListener clickListener) {
     super.setClickListener(clickListener);
-    container.setOnClickListener(clickListener);
+    playerView.setOnClickListener(clickListener);
     userIcon.setOnClickListener(clickListener);
   }
 
@@ -73,7 +76,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
     if (item != null && item instanceof MediaEntity) {
       MediaUrl url = ((MediaEntity) item).getMediaUrl();
       mediaUri = url.getUri();
-      userProfile.setText(DemoUtil.getRelativeTimeString(item.timeStamp) + "・" + url.name());
+      userProfile.setText(format("%s・%s", getRelativeTimeString(item.timeStamp), url.name()));
     }
   }
 

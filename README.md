@@ -80,7 +80,7 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
         LAYOUT_RES, parent, false))
   }
 
-  internal var playerView = itemView.findViewById<SimpleExoPlayerView>(R.id.player)
+  internal var playerView = itemView.findViewById(R.id.player)
   internal var playerViewHelper: SimpleExoPlayerViewHelper? = null
   internal lateinit var mediaUri: Uri
 
