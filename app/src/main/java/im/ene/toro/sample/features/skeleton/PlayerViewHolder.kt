@@ -30,17 +30,12 @@ import im.ene.toro.widget.Container
 // Better naming after import
 import android.view.LayoutInflater.from as inflater
 
-/**
- * @author eneim (6/24/17).
- */
-
 class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroPlayer {
 
   companion object {
-    // Used by Adapter to create layout
     internal val LAYOUT_RES = R.layout.vh_skeleton_exoplayer
 
-    // Static call from Adapter to create this ViewHolder
+    // Static Factory method for Adapter to create this ViewHolder
     fun createNew(parent: ViewGroup) = PlayerViewHolder(inflater(parent.context).inflate(
         LAYOUT_RES, parent, false))
   }

@@ -14,6 +14,10 @@
 * [Features](#features)
 * [Demo](#demo)
 * [Getting start](#getting-start)
+* [Advance usage and class documentation](#advance-usage-and-class-documentation)
+* [Contribution & Donation](#contribution--donation)
+* [Hall of Fame](#hall-of-fame)
+* [License](#license)
 
 ### Features
 
@@ -53,11 +57,11 @@ Below: a simple Container with default max simultaneous players count to 1.
 
 ```xml
 <im.ene.toro.widget.Container
-      android:id="@+id/recycler_view"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:max_player_number="1"
-      />
+  android:id="@+id/recycler_view"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  app:max_player_number="1"
+/>
 ```
 
 3. Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
@@ -66,17 +70,12 @@ Below: a simple Container with default max simultaneous players count to 1.
 // Better naming after import
 import android.view.LayoutInflater.from as inflater
 
-/**
- * @author eneim (6/24/17).
- */
-
 class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroPlayer {
 
   companion object {
-    // Used by Adapter to create layout
     internal val LAYOUT_RES = R.layout.vh_skeleton_exoplayer
 
-    // Static call from Adapter to create this ViewHolder
+    // Static Factory method for Adapter to create this ViewHolder
     fun createNew(parent: ViewGroup) = PlayerViewHolder(inflater(parent.context).inflate(
         LAYOUT_RES, parent, false))
   }
@@ -135,11 +134,15 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
 }
 ```
 
-More advance View holder implementations as well as Java version can be found in **app** module.
+More advanced View holder implementations as well as Java version can be found in **app** module.
 
 4. Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
 
 That's all. Your View should be ready to play.
+
+### Advance usage and class documentation
+
+> Website goes here.
 
 ### Contribution & Donation
 
