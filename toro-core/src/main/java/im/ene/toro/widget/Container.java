@@ -17,7 +17,6 @@
 package im.ene.toro.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
@@ -25,6 +24,7 @@ import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,14 +35,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.PlayerStateManager;
-import im.ene.toro.R;
 import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
-import ix.Ix;
-import ix.IxConsumer;
-import ix.IxFunction;
-import ix.IxPredicate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,20 +47,41 @@ import java.util.List;
 /**
  * @author eneim | 5/31/17.
  *
- *         A RecyclerView that contains many {@link ToroPlayer}s.
+ *         A special {@link RecyclerView} that is empowered to control the {@link ToroPlayer}s.
+ *
+ *         A client wish to have the power of this library should replace the normal use of {@link
+ *         RecyclerView} with this {@link Container}.
+ *
+ *         By default, a {@link Container} listen to Children's attach/detach events as well as its
+ *         own attach/detach/scroll event, to manage {@link ToroPlayer} using a {@link
+ *         PlayerManager}.
+ *         *
+ *         By default, {@link Container} doesn't support playback position saving/restoring. This
+ *         is because {@link Container} has no idea about the uniqueness of media those are being
+ *         played. This can be archive by supplying it with a valid {@link PlayerStateManager}. A
+ *         {@link PlayerStateManager} will help providing the uniqness of Medias by which it can
+ *         correctly save/restore the playback state of a specific media item. Setup this can be
+ *         done using {@link Container#setPlayerStateManager(PlayerStateManager)}.
+ *
+ *         {@link Container} can also use various {@link PlayerSelector} to have its own behaviour.
+ *         By default, it uses {@link PlayerSelector#DEFAULT}. Custom {@link PlayerSelector} can be
+ *         set via {@link Container#setPlayerSelector(PlayerSelector)}.
+ *
+ *         Last but not least, {@link Container} plays well with {@link Adapter}'s {@link
+ *         AdapterDataObserver}. With this support, {@link Container} will correctly respond to
+ *         data
+ *         change events, animations and so on to update the playback behavior.
  */
 
 @SuppressWarnings("unused") //
 public class Container extends RecyclerView {
 
-  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Container";
+  private static final String TAG = "ToroLib:Container";
 
   final PlayerManager playerManager;  // never null
   PlayerSelector playerSelector;  // null = do nothing
   PlayerStateManager playerStateManager;  // null = no position cache
   Handler animatorFinishHandler;  // null = detached ...
-
-  private int maxPlayerNumber = 1;  // changeable by attr or setter
 
   public Container(Context context) {
     this(context, null);
@@ -76,70 +93,49 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Container);
-    try {
-      this.maxPlayerNumber = a.getInt(R.styleable.Container_max_player_number, 1);
-    } finally {
-      a.recycle();
-    }
-
     // Setup here so we have tool for state save/restore stuff.
     setPlayerSelector(PlayerSelector.DEFAULT);
     this.playerManager = new PlayerManager();
   }
 
-  @Override protected void onAttachedToWindow() {
+  @CallSuper @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
     if (animatorFinishHandler == null) {
       animatorFinishHandler = new Handler(new AnimatorHelper(this));
     }
   }
 
-  @Override protected void onDetachedFromWindow() {
+  @CallSuper @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     if (animatorFinishHandler != null) {
       animatorFinishHandler.removeCallbacksAndMessages(null);
       animatorFinishHandler = null;
     }
 
-    Collection<ToroPlayer> players = playerManager != null ? playerManager.getPlayers() : null;
+    List<ToroPlayer> players = playerManager != null ? playerManager.getPlayers() : null;
     if (players != null && !players.isEmpty()) {
-      Ix.from(players).doOnNext(new IxConsumer<ToroPlayer>() {
-        @Override public void accept(ToroPlayer player) {
-          if (player.isPlaying()) playerManager.pause(player);
-          playerManager.release(player);
-        }
-      }).doOnCompleted(new Runnable() {
-        @Override public void run() {
-          playerManager.clear();
-        }
-      }).subscribe();
-    }
-  }
-
-  public void setMaxPlayerNumber(int maxPlayerNumber) {
-    this.setMaxPlayerNumber(maxPlayerNumber, false);
-  }
-
-  public void setMaxPlayerNumber(int maxPlayerNumber, boolean immediately) {
-    this.maxPlayerNumber = maxPlayerNumber;
-    if (immediately) {
-      onScrollStateChanged(SCROLL_STATE_IDLE);
+      for (int i = players.size() - 1; i >= 0; i--) {
+        ToroPlayer player = players.get(i);
+        if (player.isPlaying()) playerManager.pause(player);
+        playerManager.release(player);
+      }
+      playerManager.clear();
     }
   }
 
   /**
-   * Get current active players (players those are playing), sorted by Player order.
+   * Get current active players (players those are playing), sorted by Player order obtained from
+   * {@link ToroPlayer#getPlayerOrder()}.
    *
    * @return list of playing players. Empty list if there is no available player.
    */
-  // TODO make this unmodifiable?
   @NonNull public List<ToroPlayer> getActivePlayers() {
-    return Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
-      @Override public boolean test(ToroPlayer player) {
-        return player.isPlaying();
-      }
-    }).orderBy(Common.ORDER_COMPARATOR).toList();
+    List<ToroPlayer> players = new ArrayList<>();
+    for (ToroPlayer player : playerManager.getPlayers()) {
+      if (player.isPlaying()) players.add(player);
+    }
+    Collections.sort(players, Common.ORDER_COMPARATOR);
+    return Collections.unmodifiableList(players);
   }
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
@@ -170,7 +166,7 @@ public class Container extends RecyclerView {
     }
   }
 
-  @Override public void onChildDetachedFromWindow(View child) {
+  @CallSuper @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
     ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
@@ -204,24 +200,20 @@ public class Container extends RecyclerView {
     if (state != SCROLL_STATE_IDLE) return;
     if (playerManager == null || this.playerSelector == null || getChildCount() == 0) return;
 
-    // When settled down, remove players those are not allowed to player anymore.
-    Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
-      @Override public boolean test(ToroPlayer player) {
-        return !Common.allowsToPlay(player.getPlayerView(), Container.this);
-      }
-    }).doOnNext(new IxConsumer<ToroPlayer>() {
-      @Override public void accept(ToroPlayer player) {
-        if (player.isPlaying()) {
-          if (playerStateManager != null) {
-            playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-                player.getCurrentPlaybackInfo());
-          }
-          playerManager.pause(player);
+    List<ToroPlayer> players = playerManager.getPlayers();
+    for (int i = 0; i < players.size(); i++) {
+      ToroPlayer player = players.get(i);
+      if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;
+      if (player.isPlaying()) {
+        if (playerStateManager != null) {
+          playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
+              player.getCurrentPlaybackInfo());
         }
-        playerManager.detachPlayer(player);
-        player.release();
+        playerManager.pause(player);
       }
-    }).subscribe();
+      playerManager.detachPlayer(player);
+      player.release();
+    }
 
     int firstVisiblePosition = NO_POSITION;
     int lastVisiblePosition = NO_POSITION;
@@ -272,44 +264,43 @@ public class Container extends RecyclerView {
       }
     }
 
-    final Collection<ToroPlayer> sources = playerManager.getPlayers();
-    if (sources.isEmpty()) return;
-    final Ix<ToroPlayer> candidates = Ix.from(sources).filter(new IxPredicate<ToroPlayer>() {
-      @Override public boolean test(ToroPlayer player) {
-        return player.wantsToPlay();
-      }
-    });
+    final List<ToroPlayer> source = playerManager.getPlayers();
+    int count = source.size();
+    if (count < 1) return;
 
-    Ix.from(sources).except(
-        // 1. ask selector to select players those can start playback.
-        Ix.from(this.playerSelector.select(this, candidates, maxPlayerNumber))  //
-            .doOnNext(new IxConsumer<ToroPlayer>() {
-              @Override public void accept(ToroPlayer player) {
-                if (!player.isPlaying()) playerManager.play(player);
-              }
-            })
-        // 2. items from source except the items above come here, pause the players those should.
-    ).doOnNext(new IxConsumer<ToroPlayer>() {
-      @Override public void accept(ToroPlayer player) {
-        if (player.isPlaying()) {
-          if (playerStateManager != null) {
-            playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-                player.getCurrentPlaybackInfo());
-          }
-          playerManager.pause(player);
+    List<ToroPlayer> candidates = new ArrayList<>();
+    for (int i = 0; i < count; i++) {
+      ToroPlayer player = source.get(i);
+      if (player.wantsToPlay()) candidates.add(player);
+    }
+    Collections.sort(candidates, Common.ORDER_COMPARATOR);
+
+    Collection<ToroPlayer> toPlay = playerSelector.select(this, candidates);
+    for (ToroPlayer player : toPlay) {
+      if (!player.isPlaying()) playerManager.play(player);
+    }
+
+    source.removeAll(toPlay);
+
+    for (ToroPlayer player : source) {
+      if (player.isPlaying()) {
+        if (playerStateManager != null) {
+          playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
+              player.getCurrentPlaybackInfo());
         }
+        playerManager.pause(player);
       }
-    }).subscribe();
+    }
   }
 
-  public void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
+  public final void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
-  @Nullable public PlayerSelector getPlayerSelector() {
+  @Nullable public final PlayerSelector getPlayerSelector() {
     return playerSelector;
   }
 
@@ -395,22 +386,19 @@ public class Container extends RecyclerView {
 
   // In case user press "App Stack" button, this View's window will have visibility change from 0 -> 4 -> 8.
   // When user is back from that state, the visibility changes from 8 -> 4 -> 0.
-  @Override protected void onWindowVisibilityChanged(int visibility) {
+  @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
     super.onWindowVisibilityChanged(visibility);
     if (playerManager == null || playerStateManager == null) return;
 
     if (visibility == View.GONE) {
+      List<ToroPlayer> players = playerManager.getPlayers();
       // if onSaveInstanceState is called before, source will contain no item, just fine.
-      Ix.from(playerManager.getPlayers()).filter(new IxPredicate<ToroPlayer>() {
-        @Override public boolean test(ToroPlayer player) {
-          return player.isPlaying();
-        }
-      }).foreach(new IxConsumer<ToroPlayer>() {
-        @Override public void accept(ToroPlayer player) {
+      for (ToroPlayer player : players) {
+        if (player.isPlaying()) {
           playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
               player.getCurrentPlaybackInfo());
         }
-      });
+      }
     } else if (visibility == View.VISIBLE) {
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
@@ -432,39 +420,27 @@ public class Container extends RecyclerView {
     // Process saving playback state from here since Client wants this.
     final SparseArray<PlaybackInfo> states = new SparseArray<>();
 
-    Collection<ToroPlayer> source = playerManager.getPlayers();
+    List<ToroPlayer> source = playerManager.getPlayers();
+    List<Integer> playingOrders = new ArrayList<>();
+    for (ToroPlayer player : source) {
+      if (player.isPlaying()) playingOrders.add(player.getPlayerOrder());
+    }
+    savedOrders.removeAll(playingOrders);
 
-    Ix.from(savedOrders).except(  // using except operator
-        Ix.from(source).filter(new IxPredicate<ToroPlayer>() {
-          @Override public boolean test(ToroPlayer player) {
-            return player.isPlaying();
-          }
-        }).map(new IxFunction<ToroPlayer, Integer>() {
-          @Override public Integer apply(ToroPlayer player) {
-            return player.getPlayerOrder();
-          }
-        })  //
-    ).doOnNext(new IxConsumer<Integer>() {
-      @Override public void accept(Integer integer) {
-        states.put(integer, playerStateManager.getPlaybackInfo(integer));
-      }
-    }).subscribe();
+    for (Integer order : savedOrders) {
+      states.put(order, playerStateManager.getPlaybackInfo(order));
+    }
 
-    Ix.from(source).doOnNext(new IxConsumer<ToroPlayer>() {
-      @Override public void accept(ToroPlayer player) {
-        if (player.isPlaying()) {
-          PlaybackInfo info = player.getCurrentPlaybackInfo();
-          playerStateManager.savePlaybackInfo(player.getPlayerOrder(), info);
-          states.put(player.getPlayerOrder(), info);
-          playerManager.pause(player);
-        }
+    for (ToroPlayer player : source) {
+      if (player.isPlaying()) {
+        PlaybackInfo info = player.getCurrentPlaybackInfo();
+        playerStateManager.savePlaybackInfo(player.getPlayerOrder(), info);
+        states.put(player.getPlayerOrder(), info);
+        playerManager.pause(player);
       }
-    }).doOnNext(new IxConsumer<ToroPlayer>() {
-      @Override public void accept(ToroPlayer player) {
-        playerManager.detachPlayer(player);
-        player.release();
-      }
-    }).subscribe();
+      playerManager.detachPlayer(player);
+      player.release();
+    }
 
     // Client must consider this behavior using PlayerStateManager implement.
     PlayerViewState playerViewState = new PlayerViewState(superState);
@@ -493,6 +469,7 @@ public class Container extends RecyclerView {
     }
   }
 
+  @RestrictTo(RestrictTo.Scope.LIBRARY) //
   @SuppressWarnings("WeakerAccess") //
   public static class PlayerViewState extends AbsSavedState {
 
@@ -539,7 +516,7 @@ public class Container extends RecyclerView {
         };
 
     @Override public String toString() {
-      // "The shorter the better, the String is." - Oda
+      // "The shorter the better, the String is." - ???
       return "Cache{" + "states=" + statesCache + '}';
     }
   }

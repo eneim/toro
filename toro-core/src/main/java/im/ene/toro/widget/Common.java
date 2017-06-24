@@ -25,9 +25,12 @@ import java.util.Comparator;
 
 /**
  * @author eneim | 6/2/17.
+ *
+ *         A hub for internal convenient methods.
  */
 
-@SuppressWarnings({ "unused", "WeakerAccess" }) final class Common {
+@SuppressWarnings({ "unused", "WeakerAccess" }) //
+final class Common {
 
   private static final String TAG = "ToroLib:Common";
 

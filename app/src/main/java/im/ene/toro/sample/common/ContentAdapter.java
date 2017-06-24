@@ -19,7 +19,6 @@ package im.ene.toro.sample.common;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
-import com.google.android.exoplayer2.C;
 import im.ene.toro.sample.data.Entity;
 import im.ene.toro.sample.data.MediaItem;
 import java.util.ArrayList;
@@ -35,8 +34,6 @@ public class ContentAdapter extends RecyclerView.Adapter<BaseViewHolder> {
   static final int TYPE_TEXT = 1 << 1;   // non-trivial type, just for fun
 
   static final int TYPE_MEDIA = 1 << 2;  // non-trivial type, just for fun
-
-  static final int TYPE_MEDIA_MP4 = 1 << 3; // for VideoView sample.
 
   protected final List<Entity> entities = new ArrayList<>();
 
@@ -55,8 +52,7 @@ public class ContentAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
   @Override public int getItemViewType(int position) {
     Entity item = this.entities.get(position);
-    return item instanceof MediaItem ? (((MediaItem) item).inferContentType() == C.TYPE_OTHER
-        ? TYPE_MEDIA_MP4 : TYPE_MEDIA) : TYPE_TEXT;
+    return item instanceof MediaItem ? TYPE_MEDIA : TYPE_TEXT;
   }
 
   @Override public int getItemCount() {

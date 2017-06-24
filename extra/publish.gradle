@@ -29,5 +29,5 @@ publish {
   bintrayUser = bintray_user
   bintrayKey = bintray_apikey
 
-  dryRun = false
+  // dryRun = false
 }

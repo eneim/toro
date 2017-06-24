@@ -122,7 +122,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
         return true;  // to prevent the system error dialog.
       }
     });
-    this.playerView.setPlaybackEventListener(new ToroVideoView.PlaybackEventListener() {
+    this.playerView.setPlayerEventListener(new ToroVideoView.PlayerEventListener() {
       @Override public void onPlay() {
         playWhenReady = true;
         onPlayerStateUpdated(playWhenReady, playerState);
@@ -166,7 +166,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   @Override public void cancel() throws Exception {
     this.playerView.setOnCompletionListener(null);
     this.playerView.setOnPreparedListener(null);
-    this.playerView.setPlaybackEventListener(null);
+    this.playerView.setPlayerEventListener(null);
     this.playerView.setOnErrorListener(null);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       this.playerView.setOnInfoListener(null);

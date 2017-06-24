@@ -79,8 +79,6 @@ public class StatefulPlaylistFragment extends BaseFragment {
     if (bundle != null) adapter.addMany(true, DataSource.getInstance().getEntities());  // restore.
 
     container.setAdapter(adapter);
-    container.setMaxPlayerNumber(2);  // optional, 1 is by default.
-
     refreshLayout.setOnRefreshListener(() -> {
       refreshLayout.setRefreshing(true);
       dispatchLoadData(false);

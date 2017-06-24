@@ -16,40 +16,73 @@
 
 package im.ene.toro.widget;
 
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.view.View;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import ix.Ix;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
-import static im.ene.toro.widget.Common.ORDER_COMPARATOR;
-import static im.ene.toro.widget.Common.ORDER_COMPARATOR_REVERSE;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * @author eneim | 6/2/17.
+ *
+ *         PlayerSelector is a convenient class to help selecting the players to start Media
+ *         playback.
+ *
+ *         On specific event of RecyclerView, such as Child view attached/detached, scroll, the
+ *         collection of players those are available for a playback will change. PlayerSelecter is
+ *         used to select a specific number of players from that updated Collection to start a new
+ *         playback or pause an old playback if the corresponding Player is not selected anymore.
+ *
+ *         Client should implement a custom PlayerSelecter and set it to the Container for expected
+ *         behaviour. By default, Toro comes with linear selection implementation (the Selector
+ *         that
+ *         will iterate over the Collection and select the players from top to bottom until a
+ *         certain condition is fullfilled, for example the maximum of player count is reached).
+ *
+ *         Custom Selector can have more complicated selecting logics, for example: among 2n + 1
+ *         playable widgets, select n players in the middles ...
  */
 
+@SuppressWarnings("unused") //
 public interface PlayerSelector {
 
   String TAG = "ToroLib:Selector";
 
-  @NonNull Collection<ToroPlayer> select(@NonNull View container, //
-      @NonNull Iterable<ToroPlayer> items, @IntRange(from = 0) int limit);
+  /**
+   * Select a collection of {@link ToroPlayer}s to start a playback (if there is non-playing) item.
+   * Playing item are also selected.
+   *
+   * @param container current {@link Container} that holds the players.
+   * @param items a mutable collection of candidate {@link ToroPlayer}s, which are the players
+   * those can start a playback. Items are sorted in order obtained from {@link
+   * ToroPlayer#getPlayerOrder()}.
+   * @return the collection of {@link ToroPlayer}s to start a playback. An on-going playback can be
+   * selected, but it will keep playing.
+   */
+  @NonNull Collection<ToroPlayer> select(@NonNull View container, @NonNull List<ToroPlayer> items);
 
   /**
-   * @return The PlayerSelector that has opposite selecting logic. If there is no available one,
+   * The 'reverse' selector of this selector, which can help to select the reversed collection of
+   * that expected by this selector.
+   * For example: this selector will select the first playable {@link ToroPlayer} from top, so the
+   * 'reverse' selector will select the last playable {@link ToroPlayer} from top.
+   *
+   * @return The PlayerSelector that has opposite selecting logic. If there is no special one,
    * return "this".
    */
   @NonNull PlayerSelector reverse();
 
   PlayerSelector DEFAULT = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
-        @NonNull Iterable<ToroPlayer> items, int limit) {
-      return Ix.from(items).orderBy(ORDER_COMPARATOR).take(limit).toList();
+        @NonNull List<ToroPlayer> items) {
+      int count = items.size();
+      return count > 0 ? singletonList(items.get(0)) : Collections.<ToroPlayer>emptyList();
     }
 
     @NonNull @Override public PlayerSelector reverse() {
@@ -59,8 +92,9 @@ public interface PlayerSelector {
 
   PlayerSelector DEFAULT_REVERSE = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
-        @NonNull Iterable<ToroPlayer> items, int limit) {
-      return Ix.from(items).orderBy(ORDER_COMPARATOR_REVERSE).take(limit).toList();
+        @NonNull List<ToroPlayer> items) {
+      int count = items.size();
+      return count > 0 ? singletonList(items.get(count - 1)) : Collections.<ToroPlayer>emptyList();
     }
 
     @NonNull @Override public PlayerSelector reverse() {
@@ -70,14 +104,17 @@ public interface PlayerSelector {
 
   @SuppressWarnings("unused") PlayerSelector BY_AREA = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull final View container,
-        @NonNull Iterable<ToroPlayer> items, int limit) {
-      return Ix.from(items).orderBy(new Comparator<ToroPlayer>() {
+        @NonNull List<ToroPlayer> items) {
+      int count = items.size();
+      Collections.sort(items, new Comparator<ToroPlayer>() {
         @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
           return Float.compare( //
               ToroUtil.visibleAreaOffset(o1.getPlayerView(), container),
               ToroUtil.visibleAreaOffset(o2.getPlayerView(), container));
         }
-      }).take(limit).toList();
+      });
+
+      return count > 0 ? singletonList(items.get(0)) : Collections.<ToroPlayer>emptyList();
     }
 
     @NonNull @Override public PlayerSelector reverse() {
@@ -87,7 +124,7 @@ public interface PlayerSelector {
 
   @SuppressWarnings("unused") PlayerSelector NONE = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
-        @NonNull Iterable<ToroPlayer> items, int limit) {
+        @NonNull List<ToroPlayer> items) {
       return emptyList();
     }
 

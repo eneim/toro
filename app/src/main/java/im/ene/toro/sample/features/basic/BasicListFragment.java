@@ -17,26 +17,33 @@
 package im.ene.toro.sample.features.basic;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.support.v7.widget.helper.ItemTouchHelper.SimpleCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.EndlessScroller;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.widget.Container;
+import im.ene.toro.widget.PlayerSelector;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static android.support.v7.widget.helper.ItemTouchHelper.DOWN;
 import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
@@ -58,8 +65,9 @@ public class BasicListFragment extends BaseFragment {
 
   @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout refreshLayout;
   @BindView(R.id.recycler_view) Container container;
+
   ContentAdapter adapter;
-  RecyclerView.LayoutManager layoutManager;
+  GridLayoutManager layoutManager;
   ItemTouchHelper touchHelper;
   RecyclerView.OnScrollListener infiniteScrollListener;
 
@@ -75,15 +83,18 @@ public class BasicListFragment extends BaseFragment {
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     adapter = new ContentAdapter();
-    layoutManager =
-        // new GridLayoutManager(getContext(), getResources().getInteger(R.integer.grid_span));
-        new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-    // layoutManager.setRecycleChildrenOnDetach(true);
+    layoutManager = new GridLayoutManager(getContext(), 2);
+    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+      @Override public int getSpanSize(int position) {
+        return position % 3 == 2 ? 2 : 1;
+      }
+    });
+
     adapter.addMany(true, DataSource.getInstance().getEntities());
 
     container.setAdapter(adapter);
     container.setLayoutManager(layoutManager);
-    container.setMaxPlayerNumber(2);  // optional, 1 is by default.
+    // container.setMaxPlayerNumber(2);  // optional, 1 is by default.
 
     refreshLayout.setOnRefreshListener(() -> {
       refreshLayout.setRefreshing(true);
@@ -99,6 +110,35 @@ public class BasicListFragment extends BaseFragment {
       }
     };
     container.addOnScrollListener(infiniteScrollListener);
+
+    // A custom Selector to work with Grid span: even row will has 2 Videos while odd row has one Video.
+    // This selector will select all videos available for each row, which will make the number of Players varies.
+    PlayerSelector selector = new PlayerSelector() {
+      @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container,
+          @NonNull List<ToroPlayer> items) {
+        List<ToroPlayer> toSelect;
+        int count = items.size();
+        if (count < 1) {
+          toSelect = Collections.emptyList();
+        } else {
+          int firstOrder = items.get(0).getPlayerOrder();
+          int span = layoutManager.getSpanSizeLookup().getSpanSize(firstOrder);
+          count = Math.min(count, layoutManager.getSpanCount() / span);
+          toSelect = new ArrayList<>();
+          for (int i = 0; i < count; i++) {
+            toSelect.add(items.get(i));
+          }
+        }
+
+        return toSelect;
+      }
+
+      @NonNull @Override public PlayerSelector reverse() {
+        return this;
+      }
+    };
+
+    container.setPlayerSelector(selector);
 
     touchHelper = new ItemTouchHelper(new SimpleCallback(UP | DOWN | LEFT | RIGHT, 0) {
       @Override

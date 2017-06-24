@@ -17,25 +17,28 @@
 package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
+import android.view.View;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author eneim | 5/31/17.
  *
- *         Logic: collect all Players those "wantsToPlay()", then internally decide if we allow
- *         each of them to play or not.
+ *         Manage the collection of {@link ToroPlayer}s for a specific {@link Container}.
  *
- *         All managed players must return {@code true} from {@link ToroPlayer#wantsToPlay()}
+ *         Task: collect all Players in which "{@link Common#allowsToPlay(View, Container)}"
+ *         returns true, then initialize them.
  */
 
+@SuppressWarnings({ "unused", "UnusedReturnValue" }) //
 final class PlayerManager {
 
-  @SuppressWarnings("unused") private static String TAG = "ToroLib:PlayerManager";
+  private static String TAG = "ToroLib:PlayerManager";
 
+  // Make sure each ToroPlayer will occurs only once in this Manager.
   private final HashSet<ToroPlayer> players = new HashSet<>();
 
   boolean attachPlayer(@NonNull ToroPlayer player) {
@@ -51,28 +54,28 @@ final class PlayerManager {
   }
 
   /**
-   * Return a collection of Players those are allowed to play by Container.
+   * Return a Copy of the collection of players this manager is managing.
    *
-   * @return a non null collection of Players those are allowed to play by Container.
+   * @return a non null collection of Players those a managed.
    */
-  @NonNull Collection<ToroPlayer> getPlayers() {
+  @NonNull List<ToroPlayer> getPlayers() {
     return new ArrayList<>(this.players);
   }
 
-  public void initialize(@NonNull ToroPlayer player, @NonNull Container container,
+  void initialize(@NonNull ToroPlayer player, @NonNull Container container,
       @NonNull PlaybackInfo playbackInfo) {
     player.initialize(container, playbackInfo);
   }
 
-  public void play(@NonNull ToroPlayer player) {
+  void play(@NonNull ToroPlayer player) {
     player.play();
   }
 
-  public void pause(@NonNull ToroPlayer player) {
+  void pause(@NonNull ToroPlayer player) {
     player.pause();
   }
 
-  public void release(@NonNull ToroPlayer player) {
+  void release(@NonNull ToroPlayer player) {
     player.release();
   }
 
