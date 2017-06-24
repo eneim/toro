@@ -15,8 +15,10 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <color name="colorPrimary">#0288d1</color>
-  <color name="colorPrimaryDark">#005b9f</color>
-  <color name="colorAccent">#d32f2f</color>
-</resources>
+<com.google.android.exoplayer2.ui.SimpleExoPlayerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/player"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="200dp"
+    >
+</com.google.android.exoplayer2.ui.SimpleExoPlayerView>
