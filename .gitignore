@@ -27,3 +27,9 @@
 /extra/*.jar
 /app/.classpath
 /app/.project
+/.project
+/.settings/
+/toro-core/.settings/
+/toro-core/.project
+/toro-core/.classpath
+/app/.settings/
