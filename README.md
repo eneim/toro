@@ -59,76 +59,81 @@ Using ```Container``` in place of Video list. Below: a simple Container with def
 
 Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
 
-```java
-public class PlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+```kotlin
+// Better naming after import
+import android.view.LayoutInflater.from as inflater
 
-  static final int LAYOUT_RES = R.layout.vh_skeleton_exoplayer;
+/**
+ * @author eneim (6/24/17).
+ */
 
-  SimpleExoPlayerView playerView;
-  SimpleExoPlayerViewHelper playerViewHelper;
-  Uri mediaUri;
+class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroPlayer {
 
-  public PlayerViewHolder(View itemView) {
-    super(itemView);
-    playerView = itemView.findViewById(R.id.player);
+  companion object {
+    // Used by Adapter to create layout
+    internal val LAYOUT_RES = R.layout.vh_skeleton_exoplayer
+
+    // Static call from Adapter to create this ViewHolder
+    fun createNew(parent: ViewGroup) = PlayerViewHolder(inflater(parent.context).inflate(
+        LAYOUT_RES, parent, false))
   }
+
+  internal var playerView = itemView.findViewById<SimpleExoPlayerView>(R.id.player)
+  internal var playerViewHelper: SimpleExoPlayerViewHelper? = null
+  internal lateinit var mediaUri: Uri
 
   // Called by Adapter to pass a valid media uri here.
-  public void bind(Uri uri) {
-    this.mediaUri = uri;
+  fun bind(uri: Uri) {
+    this.mediaUri = uri
   }
 
-  @NonNull @Override public View getPlayerView() {
-    return this.playerView;
+  override fun getPlayerView(): View {
+    return playerView
   }
 
-  @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
-    PlaybackInfo info = new PlaybackInfo();
-    return playerViewHelper != null ? playerViewHelper.updatePlaybackInfo() : info;
+  override fun getCurrentPlaybackInfo(): PlaybackInfo {
+    return playerViewHelper?.updatePlaybackInfo() ?: PlaybackInfo()
   }
 
-  @Override
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
     if (playerViewHelper == null) {
-      playerViewHelper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+      playerViewHelper = SimpleExoPlayerViewHelper(container, this, mediaUri)
     }
-    playerViewHelper.initialize(playbackInfo);
+    playerViewHelper!!.initialize(playbackInfo)
   }
 
-  @Override public void play() {
-    playerViewHelper.play();
+  override fun play() {
+    playerViewHelper?.play()
   }
 
-  @Override public void pause() {
-    playerViewHelper.pause();
+  override fun pause() {
+    playerViewHelper?.pause()
   }
 
-  @Override public boolean isPlaying() {
-    return playerViewHelper != null && playerViewHelper.isPlaying();
+  override fun isPlaying(): Boolean {
+    return playerViewHelper != null && playerViewHelper!!.isPlaying
   }
 
-  @Override public void release() {
-    if (playerViewHelper != null) {
-      try {
-        playerViewHelper.cancel();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      playerViewHelper = null;
+  override fun release() {
+    try {
+      playerViewHelper?.cancel()
+    } catch (e: Exception) {
+      e.printStackTrace()
     }
+    playerViewHelper = null
   }
 
-  @Override public boolean wantsToPlay() {
-    ViewParent parent = itemView.getParent();
-    float offset = 0;
-    if (parent != null && parent instanceof View) {
-      offset = ToroUtil.visibleAreaOffset(playerView, (View) parent);
+  override fun wantsToPlay(): Boolean {
+    val parent = itemView.parent
+    var offset = 0f
+    if (parent is View) {
+      offset = ToroUtil.visibleAreaOffset(playerView, parent)
     }
-    return offset >= 0.85;
+    return offset >= 0.85
   }
 
-  @Override public int getPlayerOrder() {
-    return getAdapterPosition();
+  override fun getPlayerOrder(): Int {
+    return adapterPosition
   }
 }
 ```
