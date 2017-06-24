@@ -73,4 +73,4 @@ ext {
   releaseDescription = 'The Toro core library.'
 }
 
-apply from: '../extra/publish.gradle'
+apply from: '../.script/publish.gradle'
