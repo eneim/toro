@@ -24,4 +24,39 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
+  <style name="AppTheme.NoActionBar">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
+
+  <style name="DebugText" parent="Widget.AppCompat.Button.Small">
+    <item name="android:textSize">10sp</item>
+  </style>
+
+  <style name="Facebook.Button.Feed" parent="android:Widget">
+    <item name="android:gravity">center</item>
+    <item name="android:clickable">true</item>
+    <item name="android:background">?attr/selectableItemBackground</item>
+    <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+  </style>
+
+  <style name="DimmedTextButton" parent="Facebook.Button.Feed">
+    <item name="android:textColor">#e5e5e5</item>
+  </style>
+
+  <style name="Toro.Dialog.Fullscreen" parent="Theme.AppCompat.Light.DialogWhenLarge">
+    <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
+  </style>
+
+  <style name="Toro.Dialog.Fullscreen.NoTitle">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
+
+  <style name="Toro.Theme.Board" parent="Toro.Dialog.Fullscreen.NoTitle">
+    <item name="android:windowBackground">@android:color/black</item>
+  </style>
+
+  <integer name="grid_span">1</integer>
+  <string name="layout_manager">android.support.v7.widget.GridLayoutManager</string>
 </resources>

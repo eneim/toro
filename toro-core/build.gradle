@@ -46,6 +46,31 @@ dependencies {
   testCompile 'junit:junit:4.12'
 
   compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-  compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
-  compile "com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}"
+  compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+
+  provided ("com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}") {
+    transitive = false
+  }
+
+  provided ("com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}") {
+    transitive = false
+  }
+  provided ("com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}") {
+    transitive = false
+  }
+
+  provided ("com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}") {
+    transitive = false
+  }
+
+  provided ("com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}") {
+    transitive = false
+  }
 }
+
+ext {
+  releaseArtifact = 'toro'
+  releaseDescription = 'The Toro core library.'
+}
+
+apply from: '../extra/publish.gradle'

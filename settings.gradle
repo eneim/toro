@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-include ':app', ':toro'
+include ':app', ':toro-core'

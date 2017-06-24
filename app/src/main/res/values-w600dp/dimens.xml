@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2017 Nam Nguyen, nam@ene.im
   ~
@@ -15,5 +16,5 @@
   -->
 
 <resources>
-  <string name="app_name">Toro</string>
+  <dimen name="video_min_height">112dp</dimen>
 </resources>

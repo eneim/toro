@@ -16,13 +16,22 @@
 
 package im.ene.toro.sample;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import im.ene.toro.sample.common.BaseActivity;
+import im.ene.toro.sample.features.Deck;
+import im.ene.toro.sample.features.basic.BasicListFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
+    if (savedInstanceState == null) {
+      try {
+        Deck.present(this, BasicListFragment.class);
+      } catch (Deck.ToroDemoException e) {
+        e.printStackTrace();
+        if (e.getCause() != null) e.getCause().printStackTrace();
+      }
+    }
   }
 }
