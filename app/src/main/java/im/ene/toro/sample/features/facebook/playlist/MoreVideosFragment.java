@@ -30,7 +30,7 @@ import android.view.WindowManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import im.ene.toro.PlayerSelector;
+import im.ene.toro.widget.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.BuildConfig;

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extra;
+package im.ene.toro.helper;
 
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import im.ene.toro.Cancellable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
@@ -100,13 +99,6 @@ import java.util.ArrayList;
 
   // Mimic ExoPlayer
   protected final void onPlayerStateUpdated(boolean playWhenReady, @State int playbackState) {
-    Log.w(TAG, "state update called with: player = ["
-        + player
-        + "], playWhenReady = ["
-        + playWhenReady
-        + "], playbackState = ["
-        + playbackState
-        + "]");
     handler.obtainMessage(playbackState, playWhenReady).sendToTarget();
   }
 

@@ -95,7 +95,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineViewHolder>
 
   public FbItem getItem(int position) {
     if (position >= items.size()) {
-      items.add(FbVideo.getItem(position, position, initTimeStamp + position * 60_000));
+      for (int i = items.size(); i <= position; i++) {
+        items.add(FbVideo.getItem(i, i, initTimeStamp + i * 60_000));
+      }
     }
 
     return items.get(position);

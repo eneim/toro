@@ -34,8 +34,6 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import im.ene.toro.Common;
-import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
 import im.ene.toro.R;
 import im.ene.toro.ToroLayoutManager;
@@ -132,6 +130,8 @@ public class Container extends RecyclerView {
 
   /**
    * Get current active players (players those are playing), sorted by Player order.
+   *
+   * @return list of playing players. Empty list if there is no available player.
    */
   // TODO make this unmodifiable?
   @NonNull public List<ToroPlayer> getActivePlayers() {

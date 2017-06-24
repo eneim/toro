@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.extra;
+package im.ene.toro.helper;
 
 import android.content.Context;
 import android.net.Uri;
@@ -65,6 +65,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.R;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
 import java.net.CookieManager;
@@ -80,14 +81,7 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
  *         A helper class, dedicated to {@link SimpleExoPlayerView}.
  */
 
-/*
-  TODO add the following option, maybe?
-
-  1. [2017/06/17] Reset position after END playerState?
-
- */
-
-@SuppressWarnings("WeakerAccess") //
+@SuppressWarnings({ "WeakerAccess", "unused" }) //
 public final class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";

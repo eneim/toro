@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.widget;
 
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.view.View;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import ix.Ix;
 import java.util.Collection;
 import java.util.Comparator;
 
-import static im.ene.toro.Common.ORDER_COMPARATOR;
-import static im.ene.toro.Common.ORDER_COMPARATOR_REVERSE;
+import static im.ene.toro.widget.Common.ORDER_COMPARATOR;
+import static im.ene.toro.widget.Common.ORDER_COMPARATOR_REVERSE;
 import static java.util.Collections.emptyList;
 
 /**

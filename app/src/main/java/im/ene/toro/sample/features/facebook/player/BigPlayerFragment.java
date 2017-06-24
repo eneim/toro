@@ -33,7 +33,7 @@ import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.extra.ExoPlayerHelper;
+import im.ene.toro.helper.ExoPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.features.facebook.core.BlackBoardDialogFragment;
