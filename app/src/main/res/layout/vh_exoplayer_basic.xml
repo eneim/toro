@@ -62,7 +62,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_content"
-        app:resize_mode="fixed_width"
+        app:resize_mode="fixed_height"
         app:surface_type="texture_view"
         app:use_controller="false"
         tools:layout_constraintLeft_creator="1"

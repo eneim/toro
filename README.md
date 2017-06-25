@@ -14,7 +14,7 @@
 * [Features](#features)
 * [Demo](#demo)
 * [Getting start](#getting-start)
-* [Advance usage and class documentation](#advance-usage-and-class-documentation)
+* [Advance usage and class documentation](#advance-usage-and-class-documentation-i-need-your-request-to-update-this-list)
 * [Contribution & Donation](#contribution--donation)
 * [Hall of Fame](#hall-of-fame)
 * [License](#license)
@@ -29,9 +29,9 @@
   - Which in turn support single/multiple players.
 - First class Support ExoPlayer 2 and MediaPlayer (by Helper classes). 
 
-### Demo
+### Demo (Youtube Video)
 
-> Youtube link comes here.
+[![](https://img.youtube.com/vi/rSAGaNM2_t8/0.jpg)](https://www.youtube.com/watch?v=rSAGaNM2_t8)
 
 ### Getting start
 
@@ -80,7 +80,7 @@ class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Toro
         LAYOUT_RES, parent, false))
   }
 
-  internal var playerView = itemView.findViewById<SimpleExoPlayerView>(R.id.player)
+  internal var playerView = itemView.findViewById(R.id.player)
   internal var playerViewHelper: SimpleExoPlayerViewHelper? = null
   internal lateinit var mediaUri: Uri
 
@@ -140,9 +140,100 @@ More advanced View holder implementations as well as Java version can be found i
 
 That's all. Your View should be ready to play.
 
-### Advance usage and class documentation
+### Advance usage and class documentation (I need your request to update this list)
 
-> Website goes here.
+1. Enable playback position save/restore: using ```PlayerStateManager```
+
+The implementation is simple: create a class implementing ```PlayerStateManager```, then set it to the Container using ```Container#setPlayerStateManager(PlayerStateManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
+
+Below is an example using TreeMap to cache playback state (copied from the file above)
+
+```java
+// Implement the PlayerStateManager;
+
+private final Map<FbItem, PlaybackInfo> stateCache =
+    new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getIndex(), o2.getIndex()));
+
+@Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+  if (order >= 0) stateCache.put(getItem(order), playbackInfo);
+}
+
+@NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
+  FbItem entity = order >= 0 ? getItem(order) : null;
+  PlaybackInfo state = new PlaybackInfo();
+  if (entity != null) {
+    state = stateCache.get(entity);
+    if (state == null) {
+      state = new PlaybackInfo();
+      stateCache.put(entity, state);
+    }
+  }
+  return state;
+}
+
+// TODO return null if client doesn't want to save playback states on config change.
+@Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
+  return Observable.fromIterable(stateCache.keySet()).map(items::indexOf).toList().blockingGet();
+}
+```
+
+2. Multiple simultaneous playback
+
+*Playing multiple Videos at once is considered bad practice*. It is a heavy power consuming task and also unfriendly to hardware. In fact, each device has its own limitation of multiple decoding ability, so developer must be aware of what you are doing. I don't officially support this behaviour. Developer should own the video source to optimize the video for this purpose.
+
+To be able to have more than one Video play at the same time, developer must use a custom ```PlayerSelector```. This can also provide a powerful control to number of playback in a dynamic way.
+
+Below is an example using GridLayoutManager and custom PlayerSelector to have a fun multiple playback.
+
+```java
+layoutManager = new GridLayoutManager(getContext(), 2);
+layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+  @Override public int getSpanSize(int position) {
+    return position % 3 == 2 ? 2 : 1;
+  }
+});
+
+// A custom Selector to work with Grid span: even row will has 2 Videos while odd row has one Video.
+// This selector will select all videos available for each row, which will make the number of Players varies.
+PlayerSelector selector = new PlayerSelector() {
+  @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container,
+      @NonNull List<ToroPlayer> items) {
+    List<ToroPlayer> toSelect;
+    int count = items.size();
+    if (count < 1) {
+      toSelect = Collections.emptyList();
+    } else {
+      int firstOrder = items.get(0).getPlayerOrder();
+      int span = layoutManager.getSpanSizeLookup().getSpanSize(firstOrder);
+      count = Math.min(count, layoutManager.getSpanCount() / span);
+      toSelect = new ArrayList<>();
+      for (int i = 0; i < count; i++) {
+        toSelect.add(items.get(i));
+      }
+    }
+
+    return toSelect;
+  }
+
+  @NonNull @Override public PlayerSelector reverse() {
+    return this;
+  }
+};
+
+container.setPlayerSelector(selector);
+```
+
+Behaviour: 
+
+![](/extra/demo-player-selector.gif)
+
+3. Enable/Disable the autoplay on demand.
+
+To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Container. To enable it again, just use a Selector that actually select the player. There is ```PlayerSelector.DEFAULT``` built-in.
+
+4. Save/Restore playback info on config change.
+
+By default, Container cannot save/restore the playback info on config change. To support this, it requires a ```PlayerStateManager``` whose ```getSavedPlayerOrders()``` returns a non-null collection of Integers. The example above also demonstrate this implementation.
 
 ### Contribution & Donation
 

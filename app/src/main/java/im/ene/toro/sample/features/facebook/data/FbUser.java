@@ -36,7 +36,7 @@ public class FbUser implements Parcelable {
   }
 
   private static FbUser DEFAULT =
-      new FbUser("Toro Creator", "A good guy", "file:///android_asset/profile.jpg");
+      new FbUser("eneim", "Toro Creator, a good guy", "file:///android_asset/profile.jpg");
 
   public static FbUser getUser() {
     return DEFAULT;

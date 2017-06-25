@@ -16,12 +16,15 @@
 
 package im.ene.toro.sample.features.facebook.playlist;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewParent;
+import android.view.ViewPropertyAnimator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,11 +39,14 @@ import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.ToroDemo;
-import im.ene.toro.sample.common.DemoUtil;
 import im.ene.toro.sample.data.MediaUrl;
 import im.ene.toro.sample.features.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 import java.util.List;
+
+import static im.ene.toro.sample.common.DemoUtil.getRelativeTimeString;
+import static java.lang.String.format;
+import static java.util.Locale.getDefault;
 
 /**
  * @author eneim | 6/18/17.
@@ -60,11 +66,12 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
   @BindView(R.id.fb_item_middle) FrameLayout container;
   @BindView(R.id.fb_video_player) SimpleExoPlayerView playerView;
   @BindView(R.id.player_state) TextView state;
+  @BindView(R.id.over_lay) View overLay;
 
   private ExoPlayerHelper.EventListener listener = new ExoPlayerHelper.EventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
-      state.setText("STATE: " + playbackState + "・PWR: " + playWhenReady);
+      state.setText(format(getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
     }
   };
 
@@ -72,15 +79,17 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
     super(itemView);
     ButterKnife.bind(this, itemView);
     playerView.setVisibility(View.VISIBLE);
+    playerView.setUseController(false);
   }
 
+  @SuppressWarnings("SameParameterValue") //
   void bind(MoreVideosAdapter adapter, FbVideo item, List<Object> payloads) {
     if (item != null) {
       userName.setText(item.author.userName);
       Glide.with(ToroDemo.getApp()).load(item.author.userIcon).into(userIcon);
       MediaUrl url = item.getMediaUrl();
       mediaUri = url.getUri();
-      userProfile.setText(DemoUtil.getRelativeTimeString(item.timeStamp) + "・" + url.name());
+      userProfile.setText(format("%s・%s", getRelativeTimeString(item.timeStamp), url.name()));
     }
   }
 
@@ -101,11 +110,31 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
     helper.initialize(playbackInfo);
   }
 
+  ViewPropertyAnimator onPlayAnimator;
+  ViewPropertyAnimator onPauseAnimator;
+  int animatorDuration = 300;
+
   @Override public void play() {
+    playerView.setUseController(true);
+    if (onPlayAnimator != null) onPlayAnimator.cancel();
+    onPlayAnimator = overLay.animate().alpha(0.0f).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationCancel(Animator animation) {
+        animation.end();
+      }
+    }).setDuration(animatorDuration);
+    onPlayAnimator.start();
     if (helper != null) helper.play();
   }
 
   @Override public void pause() {
+    playerView.setUseController(false);
+    if (onPauseAnimator != null) onPauseAnimator.cancel();
+    onPauseAnimator = overLay.animate().alpha(1.0f).setListener(new AnimatorListenerAdapter() {
+      @Override public void onAnimationCancel(Animator animation) {
+        animation.end();
+      }
+    }).setDuration(animatorDuration);
+    onPauseAnimator.start();
     if (helper != null) helper.pause();
   }
 
@@ -114,6 +143,11 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
   }
 
   @Override public void release() {
+    if (onPlayAnimator != null) onPlayAnimator.cancel();
+    if (onPauseAnimator != null) onPauseAnimator.cancel();
+    onPlayAnimator = null;
+    onPauseAnimator = null;
+
     if (helper != null) {
       helper.setEventListener(null);
       try {

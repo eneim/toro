@@ -61,7 +61,7 @@ import java.util.TreeMap;
     int posInList = position - 1; // shift by 1.
     if (posInList >= items.size()) {
       for (int i = items.size(); i <= posInList; i++) {
-        items.add(FbVideo.getItem(i, i, initTimeStamp + i * 60_000));
+        items.add(FbVideo.getItem(i + 1, i + 1, initTimeStamp + (i + 1) * 60_000));
       }
     }
 
