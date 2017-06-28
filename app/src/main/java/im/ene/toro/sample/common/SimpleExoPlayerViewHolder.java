@@ -109,7 +109,7 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
   }
 
   @Override
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
       if (mediaUri != null) {
         helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);

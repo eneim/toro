@@ -85,11 +85,11 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
-    return helper != null ? helper.updatePlaybackInfo() : new PlaybackInfo();
+    return helper != null ? helper.getLatestPlaybackInfo() : new PlaybackInfo();
   }
 
   @Override
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
       helper.setEventListener(listener);
