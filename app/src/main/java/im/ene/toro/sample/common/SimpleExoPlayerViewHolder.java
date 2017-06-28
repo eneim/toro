@@ -104,7 +104,7 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
     PlaybackInfo state = new PlaybackInfo();
-    if (helper != null) state = helper.updatePlaybackInfo();
+    if (helper != null) state = helper.getLatestPlaybackInfo();
     return state;
   }
 
