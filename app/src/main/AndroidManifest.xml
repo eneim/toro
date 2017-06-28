@@ -30,6 +30,11 @@
     <activity
         android:name=".MainActivity"
         android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
+    <activity
+        android:name=".legacy.LegacyDemoActivity"
+        android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
