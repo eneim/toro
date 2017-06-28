@@ -34,6 +34,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.ToroPlayer;
@@ -155,7 +156,7 @@ public class Container extends RecyclerView {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
             if (playerManager.attachPlayer(player)) {
-              PlaybackInfo info = playerStateManager == null ? new PlaybackInfo()
+              PlaybackInfo info = playerStateManager == null ? null
                   : playerStateManager.getPlaybackInfo(player.getPlayerOrder());
               playerManager.initialize(player, Container.this, info);
               dispatchUpdateOnAnimationFinished(false);
@@ -255,7 +256,7 @@ public class Container extends RecyclerView {
             }
             if (!player.isPlaying()) {
               playerManager.initialize(player, Container.this,
-                  playerStateManager == null ? new PlaybackInfo()
+                  playerStateManager == null ? null
                       : playerStateManager.getPlaybackInfo(player.getPlayerOrder()) //
               );
             }
