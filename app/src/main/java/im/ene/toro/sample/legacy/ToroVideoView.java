@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.widget;
+package im.ene.toro.sample.legacy;
 
 import android.content.Context;
 import android.util.AttributeSet;
