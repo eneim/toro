@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro.widget;
+package im.ene.toro;
 
 import android.support.annotation.NonNull;
 import android.view.View;
-import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroUtil;
+import im.ene.toro.widget.Container;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;

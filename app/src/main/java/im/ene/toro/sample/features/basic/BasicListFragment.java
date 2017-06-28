@@ -36,7 +36,7 @@ import im.ene.toro.sample.common.ContentAdapter;
 import im.ene.toro.sample.common.EndlessScroller;
 import im.ene.toro.sample.data.DataSource;
 import im.ene.toro.widget.Container;
-import im.ene.toro.widget.PlayerSelector;
+import im.ene.toro.PlayerSelector;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
