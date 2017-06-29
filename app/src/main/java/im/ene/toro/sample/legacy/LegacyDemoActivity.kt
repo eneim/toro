@@ -17,7 +17,9 @@
 package im.ene.toro.sample.legacy
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.TextView
 import im.ene.toro.sample.R
 import im.ene.toro.sample.common.BaseActivity
 import im.ene.toro.widget.Container
@@ -34,16 +36,43 @@ class LegacyDemoActivity : BaseActivity() {
   var adapter: VideoListAdapter? = null
   var layoutManager: LinearLayoutManager? = null
 
+  var statusDebug: TextView? = null
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_legacy)
     container = findViewById(R.id.player_container)
+    statusDebug = findViewById(R.id.status_debug)
 
     adapter = VideoListAdapter()
     layoutManager = LinearLayoutManager(this)
 
     container!!.layoutManager = layoutManager
     container!!.adapter = adapter
+  }
+
+  internal var handler = Handler(Handler.Callback {
+    val player = container?.activePlayers!!.elementAtOrNull(0)
+    if (player != null) {
+      statusDebug?.text = "Order: ${player.playerOrder}, Pos: ${player.currentPlaybackInfo.resumePosition}"
+    }
+    return@Callback true
+  })
+
+  override fun onStart() {
+    super.onStart()
+    val runnableCode = object : Runnable {
+      override fun run() {
+        handler.obtainMessage().sendToTarget()
+        handler.postDelayed(this, 500)
+      }
+    }
+    handler.postDelayed(runnableCode, 500)
+  }
+
+  override fun onStop() {
+    super.onStop()
+    handler.removeCallbacksAndMessages(null)
   }
 
   override fun onDestroy() {
