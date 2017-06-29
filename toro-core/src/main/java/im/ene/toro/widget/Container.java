@@ -24,7 +24,6 @@ import android.os.Parcelable;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RestrictTo;
 import android.support.v4.view.AbsSavedState;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -265,9 +264,8 @@ public class Container extends RecyclerView {
               playerManager.attachPlayer(player);
             }
             if (!player.isPlaying()) {
-              playerManager.initialize(player, Container.this,
-                  playerStateManager == null ? null
-                      : playerStateManager.getPlaybackInfo(player.getPlayerOrder()) //
+              playerManager.initialize(player, Container.this, playerStateManager == null ? null
+                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder()) //
               );
             }
           }
@@ -304,6 +302,12 @@ public class Container extends RecyclerView {
     }
   }
 
+  /**
+   * Setup a {@link PlayerSelector}. Set a {@code null} {@link PlayerSelector} will stop all
+   * playback.
+   *
+   * @param playerSelector new {@link PlayerSelector} for this {@link Container}.
+   */
   public final void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
@@ -311,6 +315,11 @@ public class Container extends RecyclerView {
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
+  /**
+   * Get current {@link PlayerSelector}. Can be {@code null}.
+   *
+   * @return current {@link #playerSelector}
+   */
   @Nullable public final PlayerSelector getPlayerSelector() {
     return playerSelector;
   }
@@ -347,8 +356,22 @@ public class Container extends RecyclerView {
 
   ////// Adapter Data Observer setup
 
+  /**
+   * See {@link ToroDataObserver}
+   */
   final ToroDataObserver dataObserver = new ToroDataObserver();
 
+  /**
+   * {@inheritDoc}
+   *
+   * We need to wrap the Adapter using {@link AdapterWrapper} to be able to use {@link
+   * ToroDataObserver}. The reason is we also need to unregister the {@link ToroDataObserver} after
+   * that. The design of {@link Adapter} will throw an {@link Exception} if we unregister a
+   * non-registered Observer. A wrapper will make sure the safety of register/unregister steps.
+   *
+   * See {@link Adapter#registerAdapterDataObserver(AdapterDataObserver)}
+   * See {@link Adapter#unregisterAdapterDataObserver(AdapterDataObserver)}
+   */
   @Override public void setAdapter(Adapter adapter) {
     Adapter oldAdapter = getAdapter();
     if (oldAdapter != null && oldAdapter instanceof AdapterWrapper) {
@@ -363,6 +386,11 @@ public class Container extends RecyclerView {
     super.setAdapter(wrapper);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * See {@link Container#setAdapter(Adapter)}
+   */
   @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
     Adapter oldAdapter = getAdapter();
     if (oldAdapter != null && oldAdapter instanceof AdapterWrapper) {
@@ -377,26 +405,52 @@ public class Container extends RecyclerView {
     super.swapAdapter(wrapper, removeAndRecycleExistingViews);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * If we have wrapper the original {@link Adapter}, we unwrap it here and return the original one.
+   */
   @Override public Adapter getAdapter() {
     Adapter adapter = super.getAdapter();
     return adapter != null && adapter instanceof AdapterWrapper ? //
         ((AdapterWrapper) adapter).origin : adapter;
   }
 
+  /**
+   * Set a {@link PlayerStateManager} to this {@link Container}. A {@link PlayerStateManager} will
+   * allow this {@link Container} to save/restore {@link PlaybackInfo} on various states or life
+   * cycle events. Setting a {@code null} {@link PlayerStateManager} will remove that ability.
+   * {@link Container} doesn't have a non-null {@link PlayerStateManager} by default.
+   *
+   * @param playerStateManager The {@link PlayerStateManager} to set to the {@link Container}.
+   */
   public final void setPlayerStateManager(@Nullable PlayerStateManager playerStateManager) {
     this.playerStateManager = playerStateManager;
   }
 
+  /**
+   * Get current {@link PlayerStateManager} of the {@link Container}.
+   *
+   * @return current {@link PlayerStateManager} of the {@link Container}. Can be {@code null}.
+   */
   @Nullable public final PlayerStateManager getPlayerStateManager() {
     return playerStateManager;
   }
 
-  // Temporary save current playback infos when the App is stopped but not re-created
-  // (User press App Stack for example).
+  /**
+   * Temporary save current playback infos when the App is stopped but not re-created. (For example:
+   * User press App Stack). If not {@code null} then user is back from a living-but-stopped state.
+   */
   SparseArray<PlaybackInfo> tmpStates = null;
 
-  // In case user press "App Stack" button, this View's window will have visibility change from 0 -> 4 -> 8.
-  // When user is back from that state, the visibility changes from 8 -> 4 -> 0.
+  /**
+   * {@inheritDoc}
+   *
+   * In case user press "App Stack" button, this View's window will have visibility change from
+   * {@link #VISIBLE} -> {@link #INVISIBLE} -> {@link #GONE}. When user is back from that state,
+   * the visibility changes from {@link #GONE} -> {@link #INVISIBLE} -> {@link #VISIBLE}. A proper
+   * playback needs to handle this case too.
+   */
   @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
     super.onWindowVisibilityChanged(visibility);
     if (playerManager == null || playerStateManager == null) return;
@@ -423,6 +477,9 @@ public class Container extends RecyclerView {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
     if (playerManager == null || playerStateManager == null) return superState;
@@ -462,6 +519,9 @@ public class Container extends RecyclerView {
     return playerViewState;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override protected void onRestoreInstanceState(Parcelable state) {
     if (!(state instanceof PlayerViewState)) {
       super.onRestoreInstanceState(state);
@@ -480,7 +540,12 @@ public class Container extends RecyclerView {
     }
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) //
+  /**
+   * Store the array of {@link PlaybackInfo} of recently cached playback. This state will be used
+   * only when {@link #playerStateManager} is not {@code null}. Extension of {@link Container} must
+   * also have its own version of {@link SavedState} which extends this {@link PlayerViewState} as
+   * well.
+   */
   @SuppressWarnings("WeakerAccess") //
   public static class PlayerViewState extends AbsSavedState {
 
@@ -494,7 +559,7 @@ public class Container extends RecyclerView {
     }
 
     /**
-     * called by CREATOR
+     * Called by CREATOR
      */
     PlayerViewState(Parcel in, ClassLoader loader) {
       super(in, loader);
@@ -532,6 +597,10 @@ public class Container extends RecyclerView {
     }
   }
 
+  /**
+   * A custom {@link AdapterDataObserver} to watch the data changes in the original {@link Adapter}.
+   * Toro needs to watch those event to update all the corresponding changes in playback order.
+   */
   private class ToroDataObserver extends AdapterDataObserver {
 
     ToroDataObserver() {
@@ -558,6 +627,11 @@ public class Container extends RecyclerView {
     }
   }
 
+  /**
+   * A wrapper for original {@link Adapter} which adds a custom {@link AdapterDataObserver} to
+   * watch the data changes in the original {@link Adapter}. Toro needs to watch those event to
+   * update all the corresponding changes in playback order.
+   */
   private static class AdapterWrapper extends Adapter {
 
     final Adapter origin;
@@ -644,6 +718,10 @@ public class Container extends RecyclerView {
     }
   }
 
+  /**
+   * A {@link Handler.Callback} that will fake a scroll with {@link #SCROLL_STATE_IDLE} to refresh
+   * all the playback.
+   */
   private static class AnimatorHelper implements Handler.Callback {
 
     @NonNull private final Container container;
