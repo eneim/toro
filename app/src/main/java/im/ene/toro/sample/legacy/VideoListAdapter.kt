@@ -21,11 +21,12 @@ import android.view.ViewGroup
 
 /**
  * @author eneim (6/26/17).
+ *
  */
 class VideoListAdapter : RecyclerView.Adapter<VideoViewHolder>() {
 
   override fun onBindViewHolder(holder: VideoViewHolder?, position: Int) {
-    holder?.bind(VideoData.newInstance(position))
+    holder?.bind(VideoData.newItem(position))
   }
 
   override fun getItemCount() = Int.MAX_VALUE

@@ -21,7 +21,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
@@ -36,17 +35,19 @@ import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
  * @author eneim | 6/11/17.
  *
  *         Helper class for {@link ToroVideoView}. This class makes the playback using {@link
- *         ToroVideoView} easier.
+ *         ToroVideoView} easier by wrapping all necessary components and functionality.
  */
 
-@SuppressWarnings({ "WeakerAccess", "ConstantConditions" }) //
+@SuppressWarnings({ "WeakerAccess", "ConstantConditions", "unused" }) //
 public class LegacyVideoViewHelper extends ToroPlayerHelper {
+
+  private static final String TAG = "Toro:Helper:Legacy";
 
   final PlaybackInfo playbackInfo = new PlaybackInfo();
   @NonNull final ToroVideoView playerView;
   @NonNull final Uri mediaUri;
 
-  MediaPlayer mediaPlayer;  // obtain in onPrepared, free at release.
+  MediaPlayer mediaPlayer;  // obtain from onPrepared, free at release.
   MediaPlayer.OnCompletionListener onCompletionListener;
   MediaPlayer.OnPreparedListener onPreparedListener;
 
@@ -78,6 +79,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
     }
 
+    // On Complete event, we reset the player, re-prepare the VideoView so that it can be re-used.
     this.playerView.setOnCompletionListener(mp -> {
       playerState = State.STATE_END;
       onPlayerStateUpdated(playWhenReady, playerState);
@@ -91,6 +93,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       playWhenReady = false;  // !!Keeping playWhenReady as true will make a loop playback.
       playerView.setVideoURI(mediaUri);
     });
+
     this.playerView.setOnPreparedListener(mp -> {
       playerState = State.STATE_READY;
       onPlayerStateUpdated(playWhenReady, playerState);
@@ -101,6 +104,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       }
       if (playWhenReady) play();
     });
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       this.playerView.setOnInfoListener((mp, what, extra) -> {
         boolean handled;
@@ -122,9 +126,11 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
         return handled;
       });
     }
+
     this.playerView.setOnErrorListener((mp, what, extra) -> {
-      return true;  // to prevent the system error dialog.
+      return true;  // prevent the system error dialog.
     });
+
     this.playerView.setPlayerEventListener(new ToroVideoView.PlayerEventListener() {
       @Override public void onPlay() {
         playWhenReady = true;
@@ -144,7 +150,6 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   }
 
   @Override public void play() {
-    Log.w(TAG, "play: " + this.playbackInfo.getResumePosition());
     this.playerView.start();
   }
 
@@ -154,7 +159,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   }
 
   @Override public boolean isPlaying() {
-    return playWhenReady || this.playerView.isPlaying();
+    return playWhenReady || this.playerView.isPlaying(); // is actually playing or is buffering
   }
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
@@ -163,14 +168,11 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   }
 
   void updateResumePosition() {
-    boolean success = false;
     try {
       if (mediaPlayer != null) playbackInfo.setResumePosition(mediaPlayer.getCurrentPosition());
-      success = true;
     } catch (IllegalStateException er) {
       er.printStackTrace();
     }
-    Log.i(TAG, "updateResumePosition: " + success);
   }
 
   @Override public void cancel() throws Exception {

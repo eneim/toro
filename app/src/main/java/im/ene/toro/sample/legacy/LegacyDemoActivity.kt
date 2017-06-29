@@ -24,6 +24,9 @@ import im.ene.toro.widget.Container
 
 /**
  * @author eneim (6/26/17).
+ *
+ *  Demo using Android official [android.widget.VideoView]. In which we will use [ToroVideoView]
+ *  which is an extension of [android.widget.VideoView] to provide on top of it an "event listener".
  */
 class LegacyDemoActivity : BaseActivity() {
 

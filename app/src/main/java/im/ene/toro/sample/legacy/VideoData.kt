@@ -25,6 +25,6 @@ data class VideoData(val mediaUri: Uri, val index: Int) {
 
   companion object {
     val MP4_BUNNY = "http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps_768x432_1500k.mp4"
-    fun newInstance(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
+    fun newItem(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
   }
 }
