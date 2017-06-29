@@ -38,8 +38,11 @@ public interface ToroPlayer {
   @NonNull PlaybackInfo getCurrentPlaybackInfo();
 
   /**
-   * {@link ExoPlayer} should call {@link ExoPlayer#prepare(MediaSource)} here, and not start
-   * playback when ready
+   * Initialize resource for the incoming playback. After this point, {@link ToroPlayer} should be
+   * able to start the playback at anytime in the future (This doesn't mean that any call to {@link
+   * ToroPlayer#play()} will start the playback immediately. It can start buffering enough resource
+   * before any rendering). {@link ExoPlayer} should call {@link ExoPlayer#prepare(MediaSource)}
+   * here, and not start playback when ready.
    *
    * @param container the RecyclerView contains this Player.
    * @param playbackInfo initialize info for the preparation.
@@ -70,6 +73,9 @@ public interface ToroPlayer {
    */
   int getPlayerOrder();
 
+  /**
+   * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
+   */
   interface EventListener {
 
     void onBuffering(); // ExoPlayer state: 2
@@ -81,6 +87,7 @@ public interface ToroPlayer {
     void onCompleted(Container container, ToroPlayer player); // ExoPlayer state: 4
   }
 
+  // Adapt from ExoPlayer.
   @SuppressWarnings("UnnecessaryInterfaceModifier") @Retention(RetentionPolicy.SOURCE)  //
   @IntDef({ State.STATE_IDLE, State.STATE_BUFFERING, State.STATE_READY, State.STATE_END })  //
   public @interface State {

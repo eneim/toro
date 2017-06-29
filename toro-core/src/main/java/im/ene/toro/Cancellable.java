@@ -18,6 +18,8 @@ package im.ene.toro;
 
 /**
  * @author eneim | 6/11/17.
+ *
+ *         Interface for anything that can cancel whatever it is running. Adapt from RxJava2.
  */
 
 public interface Cancellable {

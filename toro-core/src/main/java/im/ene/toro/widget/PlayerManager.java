@@ -39,7 +39,7 @@ final class PlayerManager {
 
   private static String TAG = "ToroLib:PlayerManager";
 
-  // Make sure each ToroPlayer will occurs only once in this Manager.
+  // Make sure each ToroPlayer will present only once in this Manager.
   private final HashSet<ToroPlayer> players = new HashSet<>();
 
   boolean attachPlayer(@NonNull ToroPlayer player) {
