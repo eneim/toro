@@ -18,6 +18,7 @@ package im.ene.toro.helper;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -56,7 +57,7 @@ public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     this.internalListener.setDelegate(eventListener);
   }
 
-  @Override public void initialize(@NonNull PlaybackInfo playbackInfo) {
+  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
     this.helper.addEventListener(internalListener);
     this.helper.setPlaybackInfo(playbackInfo);
     try {
@@ -66,19 +67,19 @@ public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     }
   }
 
-  public void play() {
+  @Override public void play() {
     this.helper.play();
   }
 
-  public void pause() {
+  @Override public void pause() {
     this.helper.pause();
   }
 
-  public boolean isPlaying() {
+  @Override public boolean isPlaying() {
     return this.helper.isPlaying();
   }
 
-  @Override public PlaybackInfo updatePlaybackInfo() {
+  @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     return this.helper.getPlaybackInfo();
   }
 

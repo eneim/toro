@@ -117,9 +117,12 @@ public final class ExoPlayerHelper {
     this(playerView, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
   }
 
-  public void setPlaybackInfo(@NonNull PlaybackInfo state) {
-    this.playbackInfo.setResumeWindow(state.getResumeWindow());
-    this.playbackInfo.setResumePosition(state.getResumePosition());
+  public void setPlaybackInfo(@Nullable PlaybackInfo state) {
+    if (state != null) {
+      this.playbackInfo.setResumeWindow(state.getResumeWindow());
+      this.playbackInfo.setResumePosition(state.getResumePosition());
+    }
+
     if (player != null) {
       boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
       if (haveResumePosition) {

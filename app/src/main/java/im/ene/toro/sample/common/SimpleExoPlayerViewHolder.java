@@ -104,12 +104,12 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
     PlaybackInfo state = new PlaybackInfo();
-    if (helper != null) state = helper.updatePlaybackInfo();
+    if (helper != null) state = helper.getLatestPlaybackInfo();
     return state;
   }
 
   @Override
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
       if (mediaUri != null) {
         helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);

@@ -27,12 +27,12 @@ import android.widget.TextView;
 import butterknife.BindView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.helper.LegacyVideoViewHelper;
+import im.ene.toro.sample.legacy.LegacyVideoViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaEntity;
 import im.ene.toro.widget.Container;
-import im.ene.toro.widget.ToroVideoView;
+import im.ene.toro.sample.legacy.ToroVideoView;
 import java.util.List;
 
 /**
@@ -89,11 +89,11 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
     PlaybackInfo state = new PlaybackInfo();
-    if (helper != null) state = helper.updatePlaybackInfo();
+    if (helper != null) state = helper.getLatestPlaybackInfo();
     return state;
   }
 
-  @Override public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  @Override public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new LegacyVideoViewHelper(container, this, mediaUri);
       helper.setOnPreparedListener(__ -> state.setText("PREPARED"));
