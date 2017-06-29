@@ -58,19 +58,19 @@ final class Common {
     Rect parentRect = new Rect();
     // 1. Get Window's vision from parent
     parent.getWindowVisibleDisplayFrame(windowRect);
-    int[] loc = new int[2];
-    parent.getLocationOnScreen(loc);
+    int[] parentLoc = new int[2];
+    parent.getLocationOnScreen(parentLoc);
 
     // 2. Get parent's global rect
     parent.getGlobalVisibleRect(parentRect);
-    parentRect.offsetTo(loc[0], loc[1]);
+    parentRect.offsetTo(parentLoc[0], parentLoc[1]);
 
     // 3. Get player global rect
     Rect videoRect = new Rect();
-    int[] screenLoc = new int[2];
-    videoView.getLocationOnScreen(screenLoc);
+    int[] videoLoc = new int[2];
+    videoView.getLocationOnScreen(videoLoc);
     videoView.getGlobalVisibleRect(videoRect);
-    videoRect.offsetTo(screenLoc[0], screenLoc[1]);
+    videoRect.offsetTo(videoLoc[0], videoLoc[1]);
 
     return (windowRect.contains(videoRect) || windowRect.intersect(videoRect))
         && (parentRect.contains(videoRect) || parentRect.intersect(videoRect));

@@ -34,6 +34,7 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import im.ene.toro.BuildConfig;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroLayoutManager;
@@ -74,7 +75,7 @@ import java.util.List;
  *         change events, animations and so on to update the playback behavior.
  */
 
-@SuppressWarnings("unused") //
+@SuppressWarnings({ "unused", "ConstantConditions" }) //
 public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
@@ -146,6 +147,15 @@ public class Container extends RecyclerView {
     ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
+    final View playerView = player.getPlayerView();
+    if (playerView == null) {
+      // TODO make this in production
+      if (BuildConfig.DEBUG) {
+        throw new NullPointerException("Expected non-null playerView, found null for: " + player);
+      }
+
+      return;
+    }
 
     if (playerManager.manages(player)) {
       // Only if container is in idle state and player is not playing.
@@ -154,7 +164,7 @@ public class Container extends RecyclerView {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
+          if (Common.allowsToPlay(playerView, Container.this)) {
             if (playerManager.attachPlayer(player)) {
               PlaybackInfo info = playerStateManager == null ? null
                   : playerStateManager.getPlaybackInfo(player.getPlayerOrder());

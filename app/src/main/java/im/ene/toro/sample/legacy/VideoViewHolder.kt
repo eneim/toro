@@ -74,7 +74,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
     val parent = itemView.parent
     var offset = 0f
     if (parent != null && parent is View) {
-      offset = ToroUtil.visibleAreaOffset(playerView, parent)
+      offset = ToroUtil.visibleAreaOffset(videoView, parent)
     }
     return offset >= 0.85
   }
