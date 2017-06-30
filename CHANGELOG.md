@@ -15,6 +15,10 @@ Changelog
 
 - Move ```PlayerSelector``` from ```im.ene.toro.widget``` to ```im.ene.toro```.
 
+- Method name change: ```ToroPlayerHelper#updatePlaybackInfo``` becomes ```ToroPlayerHelper#getLatestPlaybackInfo```.
+
+- All initialize method now requires a Nullable PlaybackInfo (was Nonnull).
+
 #### Update
 
 - Add demo for ```VideoView```.

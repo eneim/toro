@@ -34,7 +34,7 @@ import java.util.ArrayList;
  *         playback state to the player if there is any {@link ToroPlayer.EventListener}
  *         registered. It also requests the initialization for the Player.
  *
- *         See also {@link SimpleExoPlayerViewHelper}, {@link LegacyVideoViewHelper}
+ *         See also {@link SimpleExoPlayerViewHelper}.
  */
 
 @SuppressWarnings("WeakerAccess") public abstract class ToroPlayerHelper implements Cancellable {
