@@ -58,7 +58,8 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   @BindView(R.id.player) SimpleExoPlayerView playerView;
 
   SimpleExoPlayerViewHolder(View itemView) {
-    super(itemView);
+    super(itemView);
+    ButterKnife.bind(this, itemView);
   }
 
   @Override
