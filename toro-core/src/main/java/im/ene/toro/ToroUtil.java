@@ -19,7 +19,6 @@ package im.ene.toro;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -51,7 +50,6 @@ public final class ToroUtil {
       int viewArea = playerView.getWidth() * playerView.getHeight();
       percent = viewArea <= 0.f ? 1.f : visibleArea / (float) viewArea;
     }
-    if (BuildConfig.DEBUG) Log.i(TAG, "visibleAreaOffset: " + percent);
     return percent;
   }
 }

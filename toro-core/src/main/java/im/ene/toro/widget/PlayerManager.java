@@ -17,6 +17,7 @@
 package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -38,7 +39,7 @@ final class PlayerManager {
 
   private static String TAG = "ToroLib:PlayerManager";
 
-  // Make sure each ToroPlayer will occurs only once in this Manager.
+  // Make sure each ToroPlayer will present only once in this Manager.
   private final HashSet<ToroPlayer> players = new HashSet<>();
 
   boolean attachPlayer(@NonNull ToroPlayer player) {
@@ -63,7 +64,7 @@ final class PlayerManager {
   }
 
   void initialize(@NonNull ToroPlayer player, @NonNull Container container,
-      @NonNull PlaybackInfo playbackInfo) {
+      @Nullable PlaybackInfo playbackInfo) {
     player.initialize(container, playbackInfo);
   }
 

@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.sample.legacy
+
+import android.net.Uri
 
 /**
- * @author eneim | 6/11/17.
- *
- *         Interface for anything that can cancel whatever it is running. Adapt from RxJava2.
+ * @author eneim (6/26/17).
  */
+data class VideoData(val mediaUri: Uri, val index: Int) {
 
-public interface Cancellable {
-
-  void cancel() throws Exception;
+  companion object {
+    val MP4_BUNNY = "http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps_768x432_1500k.mp4"
+    fun newItem(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
+  }
 }

@@ -30,12 +30,22 @@
     <activity
         android:name=".MainActivity"
         android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
+    <activity
+        android:name=".legacy.LegacyDemoActivity"
+        android:theme="@style/AppTheme.NoActionBar">
+    </activity>
+
+    <activity-alias
+        android:name="Launch"
+        android:targetActivity=".MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
-    </activity>
+    </activity-alias>
   </application>
 
 </manifest>

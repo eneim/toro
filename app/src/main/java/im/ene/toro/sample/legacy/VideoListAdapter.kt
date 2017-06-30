@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.sample.legacy
+
+import android.support.v7.widget.RecyclerView
+import android.view.ViewGroup
 
 /**
- * @author eneim | 6/11/17.
+ * @author eneim (6/26/17).
  *
- *         Interface for anything that can cancel whatever it is running. Adapt from RxJava2.
  */
+class VideoListAdapter : RecyclerView.Adapter<VideoViewHolder>() {
 
-public interface Cancellable {
+  override fun onBindViewHolder(holder: VideoViewHolder?, position: Int) {
+    holder?.bind(VideoData.newItem(position))
+  }
 
-  void cancel() throws Exception;
+  override fun getItemCount() = Int.MAX_VALUE
+
+  override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) = //
+      VideoViewHolder.newInstance(parent!!)
 }
