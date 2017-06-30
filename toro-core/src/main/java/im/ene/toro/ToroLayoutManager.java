@@ -45,12 +45,12 @@ import im.ene.toro.widget.Container;
 public interface ToroLayoutManager {
 
   /**
-   * Return the Adapter position of the first visible {@link RecyclerView.ViewHolder}.
+   * @return The Adapter position of the first visible {@link RecyclerView.ViewHolder}.
    */
   int getFirstVisibleItemPosition();
 
   /**
-   * Return the Adapter position of the last visible {@link RecyclerView.ViewHolder}.
+   * @return The Adapter position of the last visible {@link RecyclerView.ViewHolder}.
    */
   int getLastVisibleItemPosition();
 }

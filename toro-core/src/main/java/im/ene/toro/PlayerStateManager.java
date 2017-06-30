@@ -65,6 +65,8 @@ public interface PlayerStateManager {
    *
    * An implementation of {@link PlayerStateManager} that returns {@code null} from this will
    * disable the ability to save/restore {@link PlaybackInfo}, but not the resuming behaviour.
+   *
+   * @return A list of playback order of {@link ToroPlayer} whose {@link PlaybackInfo} are managed.
    */
   @Nullable Collection<Integer> getSavedPlayerOrders();
 }

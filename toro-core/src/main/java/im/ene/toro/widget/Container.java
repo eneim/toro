@@ -447,8 +447,8 @@ public class Container extends RecyclerView {
    * {@inheritDoc}
    *
    * In case user press "App Stack" button, this View's window will have visibility change from
-   * {@link #VISIBLE} -> {@link #INVISIBLE} -> {@link #GONE}. When user is back from that state,
-   * the visibility changes from {@link #GONE} -> {@link #INVISIBLE} -> {@link #VISIBLE}. A proper
+   * {@link #VISIBLE} to {@link #INVISIBLE} to {@link #GONE}. When user is back from that state,
+   * the visibility changes from {@link #GONE} to {@link #INVISIBLE} to {@link #VISIBLE}. A proper
    * playback needs to handle this case too.
    */
   @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
