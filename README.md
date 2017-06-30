@@ -6,7 +6,7 @@
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
+ [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 [![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
 ### Menu
@@ -37,9 +37,12 @@
 
 1. Update module build.gradle.
 
+Latest version:
+ [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)
+ 
 ```groovy
 ext {
-  toroVersion = '3.0.0-alpha1'
+  toroVersion = '3.0.0-alpha2'
   // below: other dependencies' versions maybe
 }
 
@@ -235,13 +238,17 @@ To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Contai
 
 By default, Container cannot save/restore the playback info on config change. To support this, it requires a ```PlayerStateManager``` whose ```getSavedPlayerOrders()``` returns a non-null collection of Integers. The example above also demonstrate this implementation.
 
-### Contribution & Donation
+### Contribution
+
+- Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` before any build.
 
 - Issue report and Pull Requests are welcome. Please follow issue format for quick response.
 
 - For Pull Requests, this project uses 2-space indent and **no** Hungarian naming convention.
 
-- Also you can **buy me some coffee** for shorter update cycle ...
+### Donation
+
+- You can always **buy me some coffee** for shorter update cycle ...
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
