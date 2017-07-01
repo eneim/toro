@@ -25,15 +25,15 @@ import android.view.ViewGroup;
  * @author eneim (7/1/17).
  */
 
-public class BasicListAdapter extends RecyclerView.Adapter<SimpleExoPlayerViewHolder> {
+public class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
 
-  @Override public SimpleExoPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public BasicPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
-        .inflate(SimpleExoPlayerViewHolder.LAYOUT_RES, parent, false);
-    return new SimpleExoPlayerViewHolder(view);
+        .inflate(BasicPlayerViewHolder.LAYOUT_RES, parent, false);
+    return new BasicPlayerViewHolder(view);
   }
 
-  @Override public void onBindViewHolder(SimpleExoPlayerViewHolder holder, int position) {
+  @Override public void onBindViewHolder(BasicPlayerViewHolder holder, int position) {
     holder.bind(VideoData.Companion.newItem(position));
   }
 

@@ -33,7 +33,7 @@ import im.ene.toro.widget.Container;
 
 public class BasicListFragment extends BaseFragment {
 
-  public static BasicListFragment newInstance() {
+  @SuppressWarnings("unused") public static BasicListFragment newInstance() {
     Bundle args = new Bundle();
     BasicListFragment fragment = new BasicListFragment();
     fragment.setArguments(args);
@@ -60,7 +60,7 @@ public class BasicListFragment extends BaseFragment {
   }
 
   @Override public void onDestroy() {
-    layoutManager =  null;
+    layoutManager = null;
     adapter = null;
     super.onDestroy();
   }

@@ -149,11 +149,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
 
     if (helper != null) {
       helper.setEventListener(null);
-      try {
-        helper.cancel();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      helper.release();
       helper = null;
     }
   }

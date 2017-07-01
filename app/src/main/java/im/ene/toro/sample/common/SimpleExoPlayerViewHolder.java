@@ -121,11 +121,7 @@ public class SimpleExoPlayerViewHolder extends BaseViewHolder implements ToroPla
   @Override public void release() {
     if (helper != null) {
       helper.setEventListener(null);
-      try {
-        helper.cancel();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      helper.release();
       helper = null;
     }
   }

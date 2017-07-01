@@ -87,9 +87,9 @@ public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     return this.helper.getPlayer();
   }
 
-  @Override public void cancel() throws Exception {
+  @Override public void release() {
     this.helper.removeEventListener(internalListener);
     this.helper.release();
-    super.cancel();
+    super.release();
   }
 }

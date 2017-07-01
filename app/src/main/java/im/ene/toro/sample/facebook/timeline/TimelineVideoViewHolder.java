@@ -111,11 +111,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   @Override public void release() {
     if (helper != null) {
       helper.setEventListener(null);
-      try {
-        helper.cancel();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      helper.release();
       helper = null;
     }
   }

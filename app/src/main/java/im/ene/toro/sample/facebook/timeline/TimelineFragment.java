@@ -147,7 +147,7 @@ public class TimelineFragment extends BaseFragment
     }
   }
 
-  // Memo: This method is called before child Fragment's onSaveInstanceState.
+  // Memo: This method is called before children Fragments' onSaveInstanceState.
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     // If there is DialogFragment showing, we save stuff from it here.

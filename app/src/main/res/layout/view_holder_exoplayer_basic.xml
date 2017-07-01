@@ -30,25 +30,10 @@
       android:id="@+id/player"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:minHeight="300dp"
+      android:minHeight="@dimen/video_min_height"
       app:resize_mode="fixed_width"
       app:surface_type="texture_view"
       app:use_controller="false"
-      >
-
-    <TextView
-        android:id="@+id/player_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="4dp"
-        android:background="#80000000"
-        android:maxLines="1"
-        android:padding="4dp"
-        android:textAllCaps="true"
-        android:textAppearance="@style/DebugText"
-        android:textColor="#FFFF00"
-        />
-  </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+      />
 
 </android.support.v7.widget.CardView>

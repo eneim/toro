@@ -66,7 +66,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
   override fun isPlaying() = playerHelper != null && playerHelper!!.isPlaying
 
   override fun release() {
-    playerHelper?.cancel()
+    playerHelper?.release()
     playerHelper = null
   }
 

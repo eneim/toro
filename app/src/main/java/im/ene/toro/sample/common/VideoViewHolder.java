@@ -105,11 +105,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
     if (helper != null) {
       helper.setOnPreparedListener(null);
       helper.removePlayerEventListener(eventListener);
-      try {
-        helper.cancel();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      helper.release();
       helper = null;
     }
   }
