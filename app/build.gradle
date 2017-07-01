@@ -106,6 +106,7 @@ dependencies {
   compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
   compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
+  compile 'com.google.android:flexbox:0.3.0'
   // compile 'com.android.support:multidex:1.0.1'
 }
 

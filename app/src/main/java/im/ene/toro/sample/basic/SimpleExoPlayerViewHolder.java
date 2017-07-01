@@ -14,73 +14,49 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.timeline;
+package im.ene.toro.sample.basic;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.helper.ExoPlayerHelper;
 import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.MediaEntity;
-import im.ene.toro.sample.data.MediaUrl;
-import im.ene.toro.sample.features.facebook.data.FbItem;
 import im.ene.toro.widget.Container;
-import java.util.List;
-import java.util.Locale;
-
-import static im.ene.toro.sample.common.DemoUtil.getRelativeTimeString;
-import static java.lang.String.format;
 
 /**
- * @author eneim | 6/18/17.
+ * @author eneim (7/1/17).
  */
 
 @SuppressWarnings("WeakerAccess") //
-public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroPlayer {
+public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
-  @Nullable SimpleExoPlayerViewHelper helper;
-  @Nullable private Uri mediaUri;
+  private static final String TAG = "Toro:Holder:ExoPlayer";
 
-  @BindView(R.id.fb_video_player) SimpleExoPlayerView playerView;
-  @BindView(R.id.player_state) TextView state;
+  static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
 
-  private ExoPlayerHelper.EventListener listener = new ExoPlayerHelper.EventListener() {
-    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      super.onPlayerStateChanged(playWhenReady, playbackState);
-      state.setText(format(Locale.getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
-    }
-  };
+  SimpleExoPlayerViewHelper helper;
+  Uri mediaUri;
 
-  TimelineVideoViewHolder(View itemView) {
+  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player_state) TextView playerState;
+
+  public SimpleExoPlayerViewHolder(View itemView) {
     super(itemView);
-    playerView.setVisibility(View.VISIBLE);
-  }
-
-  @Override public void setClickListener(View.OnClickListener clickListener) {
-    super.setClickListener(clickListener);
-    playerView.setOnClickListener(clickListener);
-    userIcon.setOnClickListener(clickListener);
-  }
-
-  @Override void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
-    super.bind(adapter, item, payloads);
-    if (item != null && item instanceof MediaEntity) {
-      MediaUrl url = ((MediaEntity) item).getMediaUrl();
-      mediaUri = url.getUri();
-      userProfile.setText(format("%s・%s", getRelativeTimeString(item.timeStamp), url.name()));
-    }
+    ButterKnife.bind(this, itemView);
   }
 
   @NonNull @Override public View getPlayerView() {
-    return this.playerView;
+    return playerView;
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
@@ -91,7 +67,6 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
-      helper.setEventListener(listener);
     }
     helper.initialize(playbackInfo);
   }
@@ -109,8 +84,8 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   }
 
   @Override public void release() {
+    Log.d(TAG, "release() called: " + getAdapterPosition());
     if (helper != null) {
-      helper.setEventListener(null);
       try {
         helper.cancel();
       } catch (Exception e) {
@@ -126,5 +101,13 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
+  }
+
+  @Override public String toString() {
+    return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
+  }
+
+  void bind(VideoData videoData) {
+    this.mediaUri = videoData.getMediaUri();
   }
 }

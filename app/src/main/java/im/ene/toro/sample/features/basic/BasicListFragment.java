@@ -114,7 +114,7 @@ public class BasicListFragment extends BaseFragment {
     // A custom Selector to work with Grid span: even row will has 2 Videos while odd row has one Video.
     // This selector will select all videos available for each row, which will make the number of Players varies.
     PlayerSelector selector = new PlayerSelector() {
-      @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container,
+      @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container,
           @NonNull List<ToroPlayer> items) {
         List<ToroPlayer> toSelect;
         int count = items.size();

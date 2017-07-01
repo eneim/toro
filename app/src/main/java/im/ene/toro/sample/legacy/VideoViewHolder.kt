@@ -71,12 +71,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
   }
 
   override fun wantsToPlay(): Boolean {
-    val parent = itemView.parent
-    var offset = 0f
-    if (parent != null && parent is View) {
-      offset = ToroUtil.visibleAreaOffset(videoView, parent)
-    }
-    return offset >= 0.85
+    return ToroUtil.visibleAreaOffset(this, itemView.parent) >= 0.85
   }
 
   override fun getPlayerOrder() = adapterPosition

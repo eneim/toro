@@ -21,18 +21,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.TextView;
 import butterknife.BindView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.sample.legacy.LegacyVideoViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.data.MediaEntity;
-import im.ene.toro.widget.Container;
+import im.ene.toro.sample.legacy.LegacyVideoViewHelper;
 import im.ene.toro.sample.legacy.ToroVideoView;
+import im.ene.toro.widget.Container;
 import java.util.List;
 
 /**
@@ -128,12 +127,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @Override public boolean wantsToPlay() {
-    ViewParent parent = itemView.getParent();
-    float offset = 0;
-    if (parent != null && parent instanceof View) {
-      offset = ToroUtil.visibleAreaOffset(playerView, (View) parent);
-    }
-    return offset >= 0.85;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
   }
 
   @Override public int getPlayerOrder() {

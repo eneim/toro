@@ -16,6 +16,7 @@
 
 package im.ene.toro.widget;
 
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
@@ -54,25 +55,6 @@ final class Common {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   static boolean allowsToPlay(@NonNull View videoView, @NonNull Container parent) {
-    Rect windowRect = new Rect();
-    Rect parentRect = new Rect();
-    // 1. Get Window's vision from parent
-    parent.getWindowVisibleDisplayFrame(windowRect);
-    int[] parentLoc = new int[2];
-    parent.getLocationOnScreen(parentLoc);
-
-    // 2. Get parent's global rect
-    parent.getGlobalVisibleRect(parentRect);
-    parentRect.offsetTo(parentLoc[0], parentLoc[1]);
-
-    // 3. Get player global rect
-    Rect videoRect = new Rect();
-    int[] videoLoc = new int[2];
-    videoView.getLocationOnScreen(videoLoc);
-    videoView.getGlobalVisibleRect(videoRect);
-    videoRect.offsetTo(videoLoc[0], videoLoc[1]);
-
-    return (windowRect.contains(videoRect) || windowRect.intersect(videoRect))
-        && (parentRect.contains(videoRect) || parentRect.intersect(videoRect));
+    return videoView.getGlobalVisibleRect(new Rect(), new Point());
   }
 }

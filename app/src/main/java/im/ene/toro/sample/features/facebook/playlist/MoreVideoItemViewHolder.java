@@ -23,7 +23,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewParent;
 import android.view.ViewPropertyAnimator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -160,12 +159,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
   }
 
   @Override public boolean wantsToPlay() {
-    ViewParent parent = itemView.getParent();
-    float offset = 0;
-    if (parent != null && parent instanceof View) {
-      offset = ToroUtil.visibleAreaOffset(playerView, (View) parent);
-    }
-    return offset >= 0.85;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
   }
 
   @Override public int getPlayerOrder() {
