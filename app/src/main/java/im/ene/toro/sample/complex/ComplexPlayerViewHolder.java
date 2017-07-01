@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.basic;
+package im.ene.toro.sample.complex;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -23,12 +23,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.basic.VideoData;
 import im.ene.toro.widget.Container;
 
 /**
@@ -36,18 +38,18 @@ import im.ene.toro.widget.Container;
  */
 
 @SuppressWarnings("WeakerAccess") //
-public class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+public class ComplexPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
   private static final String TAG = "Toro:Holder:ExoPlayer";
 
-  static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
+  static final int LAYOUT_RES = R.layout.view_holder_exoplayer_complex;
 
   SimpleExoPlayerViewHelper helper;
   Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
 
-  public BasicPlayerViewHolder(View itemView) {
+  public ComplexPlayerViewHolder(View itemView) {
     super(itemView);
     ButterKnife.bind(this, itemView);
   }
@@ -99,7 +101,13 @@ public class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements To
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
-  void bind(VideoData videoData) {
+  void bind(VideoData videoData, int position) {
+    if (position % 3 == 0) {
+      playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
+    } else {
+      playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
+    }
+
     this.mediaUri = videoData.getMediaUri();
   }
 }

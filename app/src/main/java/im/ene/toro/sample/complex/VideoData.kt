@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.complex
 
-import android.os.Bundle;
-import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.complex.ComplexListFragment;
+import android.net.Uri
 
-public class MainActivity extends BaseActivity {
+/**
+ * @author eneim (6/26/17).
+ */
+data class VideoData(val mediaUri: Uri, val index: Int) {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      try {
-        Deck.present(this, ComplexListFragment.class);
-      } catch (Deck.ToroDemoException e) {
-        e.printStackTrace();
-        if (e.getCause() != null) e.getCause().printStackTrace();
-      }
-    }
+  companion object {
+    val MP4_BUNNY = "file:///android_asset/big_buck_bunny.mp4"
+    fun newItem(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
   }
 }

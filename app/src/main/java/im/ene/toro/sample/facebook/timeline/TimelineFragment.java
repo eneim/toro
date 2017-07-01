@@ -83,7 +83,7 @@ public class TimelineFragment extends BaseFragment
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
-    return inflater.inflate(R.layout.layout_container_facebook, container, false);
+    return inflater.inflate(R.layout.fragment_facebook_timeline, container, false);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {

@@ -15,21 +15,24 @@
   ~ limitations under the License.
   -->
 
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe_refresh_layout"
+    android:id="@+id/card"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    app:cardBackgroundColor="@color/cardview_dark_background"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="1dp"
     >
 
-  <im.ene.toro.sample.features.stateful.MyContainer
-      android:id="@+id/recycler_view"
+  <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+      android:id="@+id/player"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:clipToPadding="false"
-      android:orientation="vertical"
-      android:padding="4dp"
-      app:layoutManager="@string/layout_manager"
-      app:spanCount="@integer/grid_span"
+      android:layout_height="180dp"
+      app:resize_mode="fixed_height"
+      app:surface_type="texture_view"
+      app:use_controller="false"
       />
-</android.support.v4.widget.SwipeRefreshLayout>
+
+</android.support.v7.widget.CardView>

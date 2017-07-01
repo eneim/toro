@@ -126,7 +126,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.layout_container_facebook_morevideos, container, false);
+    return inflater.inflate(R.layout.fragment_facebook_morevideos, container, false);
   }
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
