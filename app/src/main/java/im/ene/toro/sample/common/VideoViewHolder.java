@@ -28,7 +28,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.MediaEntity;
+import im.ene.toro.sample.common.data.MediaEntity;
 import im.ene.toro.sample.legacy.LegacyVideoViewHelper;
 import im.ene.toro.sample.legacy.ToroVideoView;
 import im.ene.toro.widget.Container;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.playlist;
+package im.ene.toro.sample.facebook.playlist;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -35,10 +35,10 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.features.facebook.core.BlackBoardDialogFragment;
-import im.ene.toro.sample.features.facebook.core.ScreenHelper;
-import im.ene.toro.sample.features.facebook.data.FbVideo;
-import im.ene.toro.sample.features.facebook.player.BigPlayerFragment;
+import im.ene.toro.sample.facebook.player.BigPlayerFragment;
+import im.ene.toro.sample.facebook.core.BlackBoardDialogFragment;
+import im.ene.toro.sample.facebook.core.ScreenHelper;
+import im.ene.toro.sample.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 import java.util.List;
 
@@ -46,7 +46,8 @@ import java.util.List;
  * @author eneim | 6/19/17.
  */
 
-public class MoreVideosFragment extends BlackBoardDialogFragment implements BigPlayerFragment.Callback {
+public class MoreVideosFragment extends BlackBoardDialogFragment implements
+    BigPlayerFragment.Callback {
 
   public interface Callback {
 

@@ -14,23 +14,13 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample;
+package im.ene.toro.sample.common.data;
 
-import android.os.Bundle;
-import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.facebook.timeline.TimelineFragment;
+/**
+ * @author eneim | 6/18/17.
+ */
 
-public class MainActivity extends BaseActivity {
+public interface MediaEntity extends Entity {
 
-  @Override protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      try {
-        Deck.present(this, TimelineFragment.class);
-      } catch (Deck.ToroDemoException e) {
-        e.printStackTrace();
-        if (e.getCause() != null) e.getCause().printStackTrace();
-      }
-    }
-  }
+  MediaUrl getMediaUrl();
 }

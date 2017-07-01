@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.data;
+package im.ene.toro.sample.facebook.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import im.ene.toro.sample.data.MediaEntity;
-import im.ene.toro.sample.data.MediaItem;
-import im.ene.toro.sample.data.MediaUrl;
+import im.ene.toro.sample.common.data.MediaEntity;
+import im.ene.toro.sample.common.data.MediaItem;
+import im.ene.toro.sample.common.data.MediaUrl;
 
 /**
  * @author eneim | 6/18/17.

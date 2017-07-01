@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.timeline;
+package im.ene.toro.sample.facebook.timeline;
 
-import im.ene.toro.sample.data.DataLoader;
-import im.ene.toro.sample.data.Entity;
-import im.ene.toro.sample.features.facebook.data.FbVideo;
+import im.ene.toro.sample.common.data.DataLoader;
+import im.ene.toro.sample.common.data.Entity;
+import im.ene.toro.sample.facebook.data.FbVideo;
 import io.reactivex.Observable;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

@@ -20,7 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import im.ene.toro.sample.data.DataLoader;
+import im.ene.toro.sample.common.data.DataLoader;
 
 /**
  * @author eneim | 6/7/17.

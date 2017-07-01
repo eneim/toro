@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.data;
+package im.ene.toro.sample.common.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

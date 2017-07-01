@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features;
+package im.ene.toro.sample;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;

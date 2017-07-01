@@ -36,7 +36,7 @@ import im.ene.toro.helper.ExoPlayerHelper;
 import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.MediaEntity;
+import im.ene.toro.sample.common.data.MediaEntity;
 import im.ene.toro.widget.Container;
 import java.util.Arrays;
 import java.util.List;

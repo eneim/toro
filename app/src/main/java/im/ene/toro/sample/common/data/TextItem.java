@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.data;
-
-import im.ene.toro.sample.data.Entity;
+package im.ene.toro.sample.common.data;
 
 /**
- * @author eneim | 6/18/17.
+ * @author eneim | 6/7/17.
  */
 
-public abstract class FbItem implements Entity {
+public class TextItem implements Entity {
 
-  public final FbUser author;
-  public final long index;
-  public final long timeStamp;
+  private final long index;
 
-  public FbItem(FbUser author, long index, long timeStamp) {
-    this.author = author;
+  private final String content = "# About GitHub Wikis\n"
+      + "> Just as writing good code and great tests are important, excellent documentation helps others use and extend your project.\n"
+      + "\n"
+      + "> Every GitHub repository comes equipped with a section for hosting documentation, called a wiki.";
+
+  public TextItem(long index) {
     this.index = index;
-    this.timeStamp = timeStamp;
   }
 
   @Override public long getIndex() {
@@ -39,6 +38,10 @@ public abstract class FbItem implements Entity {
   }
 
   @Override public String toString() {
-    return "FbItem{" + "author=" + author + ", index=" + index + ", timeStamp=" + timeStamp + '}';
+    return "TextItem{" + "index=" + index + ", content='" + content + '\'' + '}';
+  }
+
+  public String getContent() {
+    return content;
   }
 }

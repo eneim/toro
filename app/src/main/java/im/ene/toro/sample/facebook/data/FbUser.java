@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.data;
+package im.ene.toro.sample.facebook.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;

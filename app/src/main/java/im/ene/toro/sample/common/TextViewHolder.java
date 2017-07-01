@@ -22,7 +22,7 @@ import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.data.TextItem;
+import im.ene.toro.sample.common.data.TextItem;
 import java.util.List;
 
 /**

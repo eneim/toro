@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.timeline;
+package im.ene.toro.sample.facebook.timeline;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -35,11 +35,11 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
-import im.ene.toro.sample.features.facebook.core.ScreenHelper;
-import im.ene.toro.sample.features.facebook.data.FbItem;
-import im.ene.toro.sample.features.facebook.data.FbVideo;
-import im.ene.toro.sample.features.facebook.player.BigPlayerFragment;
-import im.ene.toro.sample.features.facebook.playlist.MoreVideosFragment;
+import im.ene.toro.sample.facebook.player.BigPlayerFragment;
+import im.ene.toro.sample.facebook.core.ScreenHelper;
+import im.ene.toro.sample.facebook.data.FbItem;
+import im.ene.toro.sample.facebook.data.FbVideo;
+import im.ene.toro.sample.facebook.playlist.MoreVideosFragment;
 import im.ene.toro.widget.Container;
 import java.util.List;
 

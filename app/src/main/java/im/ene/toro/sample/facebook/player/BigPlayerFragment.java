@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.player;
+package im.ene.toro.sample.facebook.player;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -36,9 +36,9 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.helper.ExoPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.features.facebook.core.BlackBoardDialogFragment;
-import im.ene.toro.sample.features.facebook.core.ScreenHelper;
-import im.ene.toro.sample.features.facebook.data.FbVideo;
+import im.ene.toro.sample.facebook.core.BlackBoardDialogFragment;
+import im.ene.toro.sample.facebook.core.ScreenHelper;
+import im.ene.toro.sample.facebook.data.FbVideo;
 
 /**
  * @author eneim | 6/21/17.

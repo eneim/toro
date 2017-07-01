@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.timeline;
+package im.ene.toro.sample.facebook.timeline;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +29,7 @@ import com.bumptech.glide.Glide;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.ToroDemo;
 import im.ene.toro.sample.common.DemoUtil;
-import im.ene.toro.sample.features.facebook.data.FbItem;
+import im.ene.toro.sample.facebook.data.FbItem;
 import java.util.List;
 
 /**

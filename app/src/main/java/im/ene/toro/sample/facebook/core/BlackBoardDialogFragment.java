@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.data;
+package im.ene.toro.sample.facebook.core;
+
+import im.ene.toro.sample.R;
+import im.ene.toro.sample.common.BaseDialogFragment;
 
 /**
- * @author eneim | 6/7/17.
+ * @author eneim | 6/18/17.
  *
- *         Base entity, to simulate the real use case of having data entity on the backend.
+ *         A default full screen dialog fragment with black background.
+ *         See {@link R.style#Toro_Theme_Board}.
  */
 
-public interface Entity {
+public abstract class BlackBoardDialogFragment extends BaseDialogFragment {
 
-  long getIndex();
+  @Override public int getTheme() {
+    return R.style.Toro_Theme_Board;
+  }
 }

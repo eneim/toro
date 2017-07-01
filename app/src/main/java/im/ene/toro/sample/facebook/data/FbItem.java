@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.features.facebook.core;
+package im.ene.toro.sample.facebook.data;
 
-import android.graphics.Point;
-import android.view.Display;
+import im.ene.toro.sample.common.data.Entity;
 
 /**
- * @author eneim | 6/21/17.
+ * @author eneim | 6/18/17.
  */
 
-public class ScreenHelper {
+public abstract class FbItem implements Entity {
 
-  private static final String TAG = "Toro:Fb:Screen";
+  public final FbUser author;
+  public final long index;
+  public final long timeStamp;
 
-  private ScreenHelper() {
+  public FbItem(FbUser author, long index, long timeStamp) {
+    this.author = author;
+    this.index = index;
+    this.timeStamp = timeStamp;
   }
 
-  // If current window has the horizontal edge longer than vertical edge, it is a hint to
-  // switch to big player.
-  // Of course if there is no available resource to play, we just ignore it.
-  public static boolean shouldUseBigPlayer(Display display) {
-    Point displaySize = new Point();
-    display.getSize(displaySize);
-    return displaySize.x >= displaySize.y;
+  @Override public long getIndex() {
+    return index;
+  }
+
+  @Override public String toString() {
+    return "FbItem{" + "author=" + author + ", index=" + index + ", timeStamp=" + timeStamp + '}';
   }
 }
