@@ -17,6 +17,7 @@
 package im.ene.toro.sample.complex;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -70,7 +71,7 @@ public class ComplexListFragment extends BaseFragment {
     container.setAdapter(adapter);
 
     // Custom player selector for a complicated playback in grid
-    PlayerSelector selector = new PlayerSelector() {
+    activeSelector = new PlayerSelector() {
       @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container,
           @NonNull List<ToroPlayer> items) {
         List<ToroPlayer> toSelect;
@@ -94,13 +95,50 @@ public class ComplexListFragment extends BaseFragment {
         return this;
       }
     };
-    container.setPlayerSelector(selector);
+
+    if (viewPagerMode) {
+      if (getUserVisibleHint()) {
+        selector = activeSelector;
+      } else {
+        selector = PlayerSelector.NONE;
+      }
+      container.setPlayerSelector(null);
+      // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
+      // which will cause our setup doesn't work well. We need a delay to make things work.
+      handler.postDelayed(() -> {
+        if (container != null) container.setPlayerSelector(selector);
+      }, 200);
+    } else {
+      container.setPlayerSelector(activeSelector);
+    }
   }
 
-  @Override public void onDestroy() {
+  @Override public void onDestroyView() {
+    handler.removeCallbacksAndMessages(null);
     layoutManager = null;
     adapter = null;
     container.setPlayerSelector(null);
-    super.onDestroy();
+    activeSelector = null;
+    selector = null;
+    super.onDestroyView();
+  }
+
+  PlayerSelector activeSelector = PlayerSelector.DEFAULT;
+  PlayerSelector selector;
+  final Handler handler = new Handler();  // post a delay due to the visibility change
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (!isVisibleToUser) {
+      selector = PlayerSelector.NONE;
+    } else {
+      selector = activeSelector;
+    }
+
+    // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
+    // which will cause our setup doesn't work well. We need a delay to make things work.
+    handler.postDelayed(() -> {
+      if (container != null) container.setPlayerSelector(selector);
+    }, 200);
   }
 }

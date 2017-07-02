@@ -18,6 +18,11 @@ package im.ene.toro.sample;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import im.ene.toro.sample.basic.BasicListFragment;
+import im.ene.toro.sample.complex.ComplexListFragment;
+import im.ene.toro.sample.facebook.timeline.TimelineFragment;
+import im.ene.toro.sample.intro.IntroFragment;
+import im.ene.toro.sample.nested.NestedListFragment;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -36,7 +41,8 @@ public final class Deck {
     //noinspection TryWithIdenticalCatches
     try {
       //noinspection ConfusingArgumentToVarargsMethod
-      Method method = fragmentClass.getMethod("newInstance", null); // <-- must implement this method.
+      Method method =
+          fragmentClass.getMethod("newInstance", null); // <-- must implement this method.
       //noinspection ConfusingArgumentToVarargsMethod
       fragment = (Fragment) method.invoke(null, null);
     } catch (NoSuchMethodException e) {
@@ -68,11 +74,60 @@ public final class Deck {
     }
   }
 
+  public static Fragment createFragment(Class<?> fragmentClass) throws ToroDemoException {
+    Fragment fragment;
+    //noinspection TryWithIdenticalCatches
+    try {
+      //noinspection ConfusingArgumentToVarargsMethod
+      Method method =
+          fragmentClass.getMethod("newInstance", null); // <-- must implement this method.
+      //noinspection ConfusingArgumentToVarargsMethod
+      fragment = (Fragment) method.invoke(null, null);
+    } catch (NoSuchMethodException e) {
+      e.printStackTrace();
+      throw new ToroDemoException(e.getLocalizedMessage(), e);
+    } catch (InvocationTargetException e) {
+      e.printStackTrace();
+      throw new ToroDemoException(e.getLocalizedMessage(), e);
+    } catch (IllegalAccessException e) {
+      e.printStackTrace();
+      throw new ToroDemoException(e.getLocalizedMessage(), e);
+    }
+
+    return fragment;
+  }
+
   // naming this exception by intent, for log filtering purpose.
   @SuppressWarnings("WeakerAccess") public static class ToroDemoException extends Exception {
 
     public ToroDemoException(String message, Throwable cause) {
       super(message, cause);
+    }
+  }
+
+  //// For ViewPager
+
+  enum Slide {
+    INTRO("Intro", IntroFragment.class),  //
+    BASIC("Basic", BasicListFragment.class), //
+    TIMELINE("Timeline", TimelineFragment.class), //
+    NESTED("Nested Container", NestedListFragment.class),  //
+    COMPLEX("Complex Grid", ComplexListFragment.class)  //
+    ;
+    private final String title;
+    private final Class<?> fragmentClass;
+
+    Slide(String title, Class<?> fragmentClass) {
+      this.title = title;
+      this.fragmentClass = fragmentClass;
+    }
+
+    public String getTitle() {
+      return title;
+    }
+
+    public Class<?> getFragmentClass() {
+      return fragmentClass;
     }
   }
 }

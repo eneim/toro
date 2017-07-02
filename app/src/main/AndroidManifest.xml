@@ -27,18 +27,39 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
+
     <activity
         android:name=".MainActivity"
-        android:theme="@style/AppTheme.NoActionBar">
-    </activity>
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
 
     <activity
         android:name=".legacy.LegacyDemoActivity"
-        android:theme="@style/AppTheme.NoActionBar">
-    </activity>
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <activity
+        android:name=".nested.NestedListActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <activity
+        android:name=".facebook.FacebookDemoActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <activity
+        android:name=".complex.ComplexListActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <activity
+        android:name=".basic.BasicListActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
 
     <activity-alias
-        android:name="Launch"
+        android:name=".Launch"
         android:targetActivity=".MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -46,6 +67,7 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity-alias>
+
   </application>
 
 </manifest>

@@ -15,10 +15,11 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <!--<dimen name="video_min_height">184dp</dimen>-->
-  <dimen name="video_min_height">231dp</dimen>
-  <dimen name="app_bar_height">180dp</dimen>
-  <dimen name="fab_margin">16dp</dimen>
-  <dimen name="text_margin">16dp</dimen>
-</resources>
+<android.support.v7.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:padding="8dp"
+    />

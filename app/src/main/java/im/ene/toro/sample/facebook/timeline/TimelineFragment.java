@@ -18,6 +18,7 @@ package im.ene.toro.sample.facebook.timeline;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -35,10 +36,10 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
-import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.sample.facebook.core.ScreenHelper;
 import im.ene.toro.sample.facebook.data.FbItem;
 import im.ene.toro.sample.facebook.data.FbVideo;
+import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.sample.facebook.playlist.MoreVideosFragment;
 import im.ene.toro.widget.Container;
 import java.util.List;
@@ -75,7 +76,7 @@ public class TimelineFragment extends BaseFragment
   @Override public void onAttach(Context context) {
     super.onAttach(context);
     // !IMPORTANT: don't remove these lines.
-    this.TAG = "Toro:Fb:Timeline";
+    this.TAG = "Toro:Fb:TimelineFragment";
     Log.wtf(TAG, "onAttach() called with: context = [" + context + "]");
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
   }
@@ -105,7 +106,18 @@ public class TimelineFragment extends BaseFragment
       }
     };
     adapter.setCallback(adapterCallback);
-    selector = container.getPlayerSelector(); // save for later use.
+
+    // FIXME Only use the following workaround when using this Fragment in ViewPager.
+    if (viewPagerMode) {
+      container.setPlayerSelector(null);
+      // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
+      // which will cause our setup doesn't work well. We need a delay to make things work.
+      handler.postDelayed(() -> {
+        if (container != null) container.setPlayerSelector(selector);
+      }, 200);
+    } else {
+      container.setPlayerSelector(selector);
+    }
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
@@ -184,17 +196,17 @@ public class TimelineFragment extends BaseFragment
   }
 
   @Override public void onDestroyView() {
+    handler.removeCallbacksAndMessages(null);
     adapter.setCallback(null);
     adapterCallback = null;
     adapter = null;
     layoutManager = null;
-    selector = null;
     super.onDestroyView();
   }
 
   // Implement MoreVideosFragment callback
 
-  PlayerSelector selector;  // backup current selector.
+  PlayerSelector selector = PlayerSelector.DEFAULT;  // backup current selector.
 
   @Override public void onPlaylistCreated() {
     container.setPlayerSelector(PlayerSelector.NONE);
@@ -216,5 +228,24 @@ public class TimelineFragment extends BaseFragment
   public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
     adapter.savePlaybackInfo(videoOrder, latestInfo);
     container.setPlayerSelector(selector);
+  }
+
+  // Deal with setUserVisibleHint
+  final Handler handler = new Handler();  // post a delay due to the visibility change
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    Log.d(TAG, "setUserVisibleHint() called with: isVisibleToUser = [" + isVisibleToUser + "]");
+    super.setUserVisibleHint(isVisibleToUser);
+    if (isVisibleToUser) {
+      selector = PlayerSelector.DEFAULT;
+    } else {
+      selector = PlayerSelector.NONE;
+    }
+
+    // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
+    // which will cause our setup doesn't work well. We need a delay to make things work.
+    handler.postDelayed(() -> {
+      if (container != null) container.setPlayerSelector(selector);
+    }, 200);
   }
 }
