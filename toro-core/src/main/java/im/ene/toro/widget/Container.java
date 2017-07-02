@@ -33,7 +33,6 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import im.ene.toro.BuildConfig;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroLayoutManager;
@@ -79,7 +78,7 @@ public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
 
-  final PlayerManager playerManager;  // never null
+  @NonNull final PlayerManager playerManager = new PlayerManager();  // never null
   PlayerSelector playerSelector;  // null = do nothing
   PlayerStateManager playerStateManager;  // null = no position cache
   Handler animatorFinishHandler;  // null = detached ...
@@ -96,7 +95,6 @@ public class Container extends RecyclerView {
     super(context, attrs, defStyle);
     // Setup here so we have tool for state save/restore stuff.
     setPlayerSelector(PlayerSelector.DEFAULT);
-    this.playerManager = new PlayerManager();
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
@@ -113,8 +111,8 @@ public class Container extends RecyclerView {
       animatorFinishHandler = null;
     }
 
-    List<ToroPlayer> players = playerManager != null ? playerManager.getPlayers() : null;
-    if (players != null && !players.isEmpty()) {
+    List<ToroPlayer> players = playerManager.getPlayers();
+    if (!players.isEmpty()) {
       for (int i = players.size() - 1; i >= 0; i--) {
         ToroPlayer player = players.get(i);
         if (player.isPlaying()) playerManager.pause(player);
@@ -141,19 +139,12 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    if (playerManager == null) return;
-
     ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
     final View playerView = player.getPlayerView();
     if (playerView == null) {
-      // TODO make this in production
-      if (BuildConfig.DEBUG) {
-        throw new NullPointerException("Expected non-null playerView, found null for: " + player);
-      }
-
-      return;
+      throw new NullPointerException("Expected non-null playerView, found null for: " + player);
     }
 
     if (playerManager.manages(player)) {
@@ -182,7 +173,7 @@ public class Container extends RecyclerView {
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
 
-    boolean playerManaged = playerManager != null && playerManager.manages(player);
+    boolean playerManaged = playerManager.manages(player);
     if (player.isPlaying()) {
       if (!playerManaged) {
         throw new IllegalStateException(
@@ -208,7 +199,7 @@ public class Container extends RecyclerView {
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
     if (state != SCROLL_STATE_IDLE) return;
-    if (playerManager == null || this.playerSelector == null || getChildCount() == 0) return;
+    if (getChildCount() == 0) return;
 
     List<ToroPlayer> players = playerManager.getPlayers();
     for (int i = 0; i < players.size(); i++) {
@@ -284,7 +275,8 @@ public class Container extends RecyclerView {
     }
     Collections.sort(candidates, Common.ORDER_COMPARATOR);
 
-    Collection<ToroPlayer> toPlay = playerSelector.select(this, candidates);
+    Collection<ToroPlayer> toPlay = playerSelector != null ? playerSelector.select(this, candidates)
+        : Collections.<ToroPlayer>emptyList();
     for (ToroPlayer player : toPlay) {
       if (!player.isPlaying()) playerManager.play(player);
     }
@@ -311,7 +303,6 @@ public class Container extends RecyclerView {
   public final void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
-    if (this.playerManager == null || this.playerSelector == null) return;
     this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
@@ -373,7 +364,7 @@ public class Container extends RecyclerView {
    * See {@link Adapter#unregisterAdapterDataObserver(AdapterDataObserver)}
    */
   @Override public void setAdapter(Adapter adapter) {
-    Adapter oldAdapter = getAdapter();
+    Adapter oldAdapter = super.getAdapter();
     if (oldAdapter != null && oldAdapter instanceof AdapterWrapper) {
       ((AdapterWrapper) oldAdapter).unregister();
     }
@@ -392,7 +383,7 @@ public class Container extends RecyclerView {
    * See {@link Container#setAdapter(Adapter)}
    */
   @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
-    Adapter oldAdapter = getAdapter();
+    Adapter oldAdapter = super.getAdapter();
     if (oldAdapter != null && oldAdapter instanceof AdapterWrapper) {
       ((AdapterWrapper) oldAdapter).unregister();
     }
@@ -453,27 +444,28 @@ public class Container extends RecyclerView {
    */
   @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
     super.onWindowVisibilityChanged(visibility);
-    if (playerManager == null || playerStateManager == null) return;
-
     if (visibility == View.GONE) {
       List<ToroPlayer> players = playerManager.getPlayers();
       // if onSaveInstanceState is called before, source will contain no item, just fine.
       for (ToroPlayer player : players) {
         if (player.isPlaying()) {
-          playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-              player.getCurrentPlaybackInfo());
+          if (playerStateManager != null) {
+            playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
+                player.getCurrentPlaybackInfo());
+          }
+          player.pause();
         }
       }
     } else if (visibility == View.VISIBLE) {
-      if (tmpStates != null && tmpStates.size() > 0) {
+      if (playerStateManager != null && tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
           playerStateManager.savePlaybackInfo(order, playbackInfo);
         }
-        this.onScrollStateChanged(SCROLL_STATE_IDLE);
       }
       tmpStates = null;
+      this.onScrollStateChanged(SCROLL_STATE_IDLE);
     }
   }
 
@@ -482,9 +474,9 @@ public class Container extends RecyclerView {
    */
   @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
-    if (playerManager == null || playerStateManager == null) return superState;
+    if (playerStateManager == null) return superState;
     final Collection<Integer> savedOrders = playerStateManager.getSavedPlayerOrders();
-    if (savedOrders == null) return superState;
+    if (savedOrders == null || savedOrders.isEmpty()) return superState;
     // Process saving playback state from here since Client wants this.
     final SparseArray<PlaybackInfo> states = new SparseArray<>();
 

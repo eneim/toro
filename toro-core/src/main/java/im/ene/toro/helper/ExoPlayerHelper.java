@@ -271,7 +271,7 @@ public final class ExoPlayerHelper {
   }
 
   void updateResumePosition() {
-    if (player == null) return;
+    if (player == null || player.getPlaybackState() == 1) return;
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
     playbackInfo.setResumePosition(
         player.isCurrentWindowSeekable() ? Math.max(0, player.getCurrentPosition()) : C.TIME_UNSET);
