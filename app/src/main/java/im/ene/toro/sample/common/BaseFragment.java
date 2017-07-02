@@ -40,6 +40,13 @@ public class BaseFragment extends Fragment {
 
   protected String TAG = "Toro:BaseFragment";
 
+  /// The following flag is used for Fragment that is inside a ViewPager. Default is false.
+  protected boolean viewPagerMode = false;
+
+  public void setViewPagerMode(boolean viewPagerMode) {
+    this.viewPagerMode = viewPagerMode;
+  }
+
   @Override public void onCreate(@Nullable Bundle bundle) {
     super.onCreate(bundle);
     if (D) Log.wtf(TAG, "onCreate() called with: bundle = [" + bundle + "]");

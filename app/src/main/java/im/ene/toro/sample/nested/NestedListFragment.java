@@ -17,6 +17,7 @@
 package im.ene.toro.sample.nested;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
@@ -24,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
+import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
@@ -63,11 +65,43 @@ import im.ene.toro.widget.Container;
     adapter = new NestedListAdapter();
     container.setAdapter(adapter);
     container.setPlayerStateManager(adapter);
+
+    // FIXME Only use the following workaround when using this Fragment in ViewPager.
+    if (viewPagerMode) {
+      container.setPlayerSelector(null);
+      // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
+      // which will cause our setup doesn't work well. We need a delay to make things work.
+      handler.postDelayed(() -> {
+        if (container != null) container.setPlayerSelector(selector);
+      }, 200);
+    } else {
+      container.setPlayerSelector(selector);
+    }
   }
 
-  @Override public void onDestroy() {
+  @Override public void onDestroyView() {
+    handler.removeCallbacksAndMessages(null);
     layoutManager = null;
     adapter = null;
-    super.onDestroy();
+    selector = null;
+    super.onDestroyView();
+  }
+
+  PlayerSelector selector = PlayerSelector.DEFAULT; // visible to user by default.
+  final Handler handler = new Handler();  // post a delay due to the visibility change
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (isVisibleToUser) {
+      selector = PlayerSelector.DEFAULT;
+    } else {
+      selector = PlayerSelector.NONE;
+    }
+
+    // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
+    // which will cause our setup doesn't work well. We need a delay to make things work.
+    handler.postDelayed(() -> {
+      if (container != null) container.setPlayerSelector(selector);
+    }, 200);
   }
 }
