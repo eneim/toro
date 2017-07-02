@@ -18,8 +18,7 @@ package im.ene.toro.sample;
 
 import android.os.Bundle;
 import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.features.Deck;
-import im.ene.toro.sample.features.facebook.timeline.TimelineFragment;
+import im.ene.toro.sample.complex.ComplexListFragment;
 
 public class MainActivity extends BaseActivity {
 
@@ -27,7 +26,7 @@ public class MainActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     if (savedInstanceState == null) {
       try {
-        Deck.present(this, TimelineFragment.class);
+        Deck.present(this, ComplexListFragment.class);
       } catch (Deck.ToroDemoException e) {
         e.printStackTrace();
         if (e.getCause() != null) e.getCause().printStackTrace();

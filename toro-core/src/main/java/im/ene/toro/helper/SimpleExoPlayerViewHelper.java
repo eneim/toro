@@ -26,12 +26,16 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author eneim | 6/11/17.
+ *
+ *         Extension of {@link ToroPlayerHelper}, aims to support {@link ExoPlayer} via its
+ *         components {@link SimpleExoPlayer} and {@link SimpleExoPlayerView}.
  */
 
-public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
+public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
 
   private final ExoPlayerHelper.EventListener internalListener =
       new ExoPlayerHelper.EventListener() {
@@ -41,6 +45,7 @@ public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
         }
       };
 
+  private final AtomicInteger counter = new AtomicInteger(0); // initialize count
   private final ExoPlayerHelper helper;
   private final Uri mediaUri;
 
@@ -57,14 +62,22 @@ public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     this.internalListener.setDelegate(eventListener);
   }
 
+  /**
+   * {@inheritDoc}
+   *
+   * @param playbackInfo the initial playback info. {@code null} if no such info available.
+   */
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
-    this.helper.addEventListener(internalListener);
-    this.helper.setPlaybackInfo(playbackInfo);
-    try {
-      this.helper.prepare(this.mediaUri);
-    } catch (ParserException e) {
-      e.printStackTrace();
+    if (counter.getAndIncrement() == 0) { // prevent the multiple time init
+      this.helper.addEventListener(internalListener);
+      try {
+        this.helper.prepare(this.mediaUri);
+      } catch (ParserException e) {
+        e.printStackTrace();
+      }
     }
+
+    this.helper.setPlaybackInfo(playbackInfo);
   }
 
   @Override public void play() {
@@ -87,9 +100,10 @@ public class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     return this.helper.getPlayer();
   }
 
-  @Override public void cancel() throws Exception {
+  @Override public void release() {
+    counter.set(0); // reset
     this.helper.removeEventListener(internalListener);
     this.helper.release();
-    super.cancel();
+    super.release();
   }
 }

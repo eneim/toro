@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import im.ene.toro.Cancellable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.media.PlaybackInfo;
@@ -37,7 +36,8 @@ import java.util.ArrayList;
  *         See also {@link SimpleExoPlayerViewHelper}.
  */
 
-@SuppressWarnings("WeakerAccess") public abstract class ToroPlayerHelper implements Cancellable {
+@SuppressWarnings("WeakerAccess") //
+public abstract class ToroPlayerHelper {
 
   protected static final String TAG = "ToroLib:ViewHelper";
 
@@ -125,7 +125,7 @@ import java.util.ArrayList;
     handler.obtainMessage(playbackState, playWhenReady).sendToTarget();
   }
 
-  @Override public void cancel() throws Exception {
+  public void release() {
     handler.removeCallbacksAndMessages(null);
   }
 }
