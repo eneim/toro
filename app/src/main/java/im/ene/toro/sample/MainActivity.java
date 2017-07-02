@@ -49,6 +49,7 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
 
     pageChangeListener = new PageChangeHelper() {
       int lastPage = -1;
+
       @Override void dispatchCurrentPageChanged(int currentPage) {
         if (lastPage != currentPage) {
           lastPage = currentPage;
@@ -106,7 +107,7 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
 
     private static final int MSG_LAYOUT_STABLE = -100;  // Negative, to prevent conflict
 
-    private boolean firstScroll = true;
+    private boolean firstLayout = true;
     private int currentPage = -1;
 
     private Handler handler = new Handler(msg -> {
@@ -116,10 +117,12 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-      if (firstScroll) {
+      if (firstLayout) {
         currentPage = position;
         handler.removeMessages(MSG_LAYOUT_STABLE);
-        firstScroll = false;
+        firstLayout = false;
+        // only called once, at first scroll (first layout)
+        handler.sendMessage(handler.obtainMessage(MSG_LAYOUT_STABLE, currentPage, 0));
       }
     }
 
