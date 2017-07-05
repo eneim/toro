@@ -24,27 +24,26 @@ import im.ene.toro.sample.common.MediaUrl;
  * @author eneim | 6/18/17.
  */
 
-public class FbVideo extends FbItem implements MediaEntity, Parcelable {
+public class FbVideo extends FbItem implements Parcelable {
 
-  public final MediaItem mediaItem;
+  public final MediaUrl mediaUrl;
 
-  public FbVideo(FbUser author, long index, long timeStamp, MediaItem mediaItem) {
+  public FbVideo(FbUser author, long index, long timeStamp, MediaUrl mediaUrl) {
     super(author, index, timeStamp);
-    this.mediaItem = mediaItem;
+    this.mediaUrl = mediaUrl;
   }
 
-  @Override public MediaUrl getMediaUrl() {
-    return this.mediaItem.getMediaUrl();
+  public MediaUrl getMediaUrl() {
+    return this.mediaUrl;
   }
 
   @Override public String toString() {
-    return "FbVideo{" + "media=" + mediaItem.getMediaUrl().name() + '}';
+    return "FbVideo{" + "media=" + mediaUrl.name() + '}';
   }
 
   public static FbVideo getItem(int index, int urlIdx, long timeStamp) {
     int urlCount = MediaUrl.values().length;
-    return new FbVideo(FbUser.getUser(), index, timeStamp,
-        new MediaItem(index, MediaUrl.values()[urlIdx % urlCount]));
+    return new FbVideo(FbUser.getUser(), index, timeStamp, MediaUrl.values()[urlIdx % urlCount]);
   }
 
   @Override public int describeContents() {
@@ -52,19 +51,22 @@ public class FbVideo extends FbItem implements MediaEntity, Parcelable {
   }
 
   @Override public void writeToParcel(Parcel dest, int flags) {
-    dest.writeParcelable(this.author, flags);
-    dest.writeLong(this.index);
-    dest.writeLong(this.timeStamp);
-    dest.writeParcelable(this.mediaItem, flags);
+    super.writeToParcel(dest, flags);
+    dest.writeInt(this.mediaUrl == null ? -1 : this.mediaUrl.ordinal());
   }
 
-  private FbVideo(Parcel in) {
-    super(in.readParcelable(FbUser.class.getClassLoader()), in.readLong(), in.readLong());
-    this.mediaItem = in.readParcelable(MediaItem.class.getClassLoader());
+  protected FbVideo(Parcel in) {
+    super(in);
+    int tmpMediaUrl = in.readInt();
+    this.mediaUrl = tmpMediaUrl == -1 ? null : MediaUrl.values()[tmpMediaUrl];
   }
 
-  public static final Creator<FbVideo> CREATOR = new Creator<FbVideo>() {
+  public static final Creator<FbVideo> CREATOR = new ClassLoaderCreator<FbVideo>() {
     @Override public FbVideo createFromParcel(Parcel source) {
+      return new FbVideo(source);
+    }
+
+    @Override public FbVideo createFromParcel(Parcel source, ClassLoader loader) {
       return new FbVideo(source);
     }
 

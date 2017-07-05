@@ -85,7 +85,7 @@ import java.util.TreeMap;
   // Implement the PlayerStateManager;
 
   private final Map<FbVideo, PlaybackInfo> stateCache =
-      new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getIndex(), o2.getIndex()));
+      new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getTimeStamp(), o2.getTimeStamp()));
 
   @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
     if (order >= 0) stateCache.put(getItem(order), playbackInfo);
@@ -104,7 +104,6 @@ import java.util.TreeMap;
     return state;
   }
 
-  // TODO return null if client doesn't want to save playback states on config change.
   @Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
     return Observable.fromIterable(stateCache.keySet()).map(items::indexOf).toList().blockingGet();
   }

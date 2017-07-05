@@ -29,9 +29,9 @@ import im.ene.toro.helper.ExoPlayerHelper;
 import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.facebook.data.MediaEntity;
 import im.ene.toro.sample.common.MediaUrl;
 import im.ene.toro.sample.facebook.data.FbItem;
+import im.ene.toro.sample.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 import java.util.List;
 import java.util.Locale;
@@ -72,8 +72,8 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
     super.bind(adapter, item, payloads);
-    if (item != null && item instanceof MediaEntity) {
-      MediaUrl url = ((MediaEntity) item).getMediaUrl();
+    if (item != null && item instanceof FbVideo) {
+      MediaUrl url = ((FbVideo) item).getMediaUrl();
       mediaUri = url.getUri();
       userProfile.setText(format("%s・%s", getRelativeTimeString(item.timeStamp), url.name()));
     }
