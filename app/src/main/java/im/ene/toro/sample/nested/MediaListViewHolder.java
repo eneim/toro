@@ -24,15 +24,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerSelector;
-import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
@@ -40,8 +39,6 @@ import im.ene.toro.widget.Container;
 import io.reactivex.Observable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author eneim (7/1/17).
@@ -68,7 +65,7 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
     MediaList mediaList = (MediaList) item;
     Adapter adapter = new Adapter(mediaList);
     container.setAdapter(adapter);
-    container.setPlayerStateManager(new StateManager(mediaList));
+    container.setCacheManager(new StateManager(mediaList));
     snapHelper.attachToRecyclerView(container);
   }
 
@@ -81,23 +78,21 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
-    PlayerStateManager stateManager = container.getPlayerStateManager();
-    Collection<Integer> cached = stateManager != null ? stateManager.getSavedPlayerOrders() : null;
-    Log.i(TAG, "getCurrentPlaybackInfo: " + cached);
-    if (cached == null || cached.size() == 0) {
+    Collection<Integer> cached = container.getSavedPlayerOrders();
+    if (cached.isEmpty()) {
       return new PlaybackInfo();
     } else {
       SparseArray<PlaybackInfo> infos = new SparseArray<>();
       ExtraPlaybackInfo info = new ExtraPlaybackInfo(infos);
 
-      List<ToroPlayer> activePlayers = container.getActivePlayers();
+      List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
       Observable.fromIterable(activePlayers).doOnNext(player -> {
         infos.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         cached.remove(player.getPlayerOrder());
       }).subscribe();
 
       Observable.fromIterable(cached).doOnNext( //
-          integer -> infos.put(integer, stateManager.getPlaybackInfo(integer))  //
+          integer -> infos.put(integer, container.getPlaybackInfo(integer))  //
       ).doOnComplete(() -> {
         if (activePlayers.size() >= 1) {
           info.setResumeWindow(activePlayers.get(0).getPlayerOrder());
@@ -109,16 +104,13 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
-    PlayerStateManager stateManager = this.container.getPlayerStateManager();
-    if (stateManager == null) return;
-
     if (playbackInfo != null && playbackInfo instanceof ExtraPlaybackInfo) {
       //noinspection unchecked
       SparseArray<PlaybackInfo> cache = ((ExtraPlaybackInfo) playbackInfo).actualInfo;
       if (cache != null) {
         for (int i = 0; i < cache.size(); i++) {
           int key = cache.keyAt(i);
-          stateManager.savePlaybackInfo(key, cache.get(key));
+          this.container.savePlaybackInfo(key, cache.get(key));
         }
       }
       this.initPosition = playbackInfo.getResumeWindow();
@@ -136,7 +128,7 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @Override public boolean isPlaying() {
-    return this.container.getActivePlayers().size() > 0;
+    return this.container.filterBy(Container.Filter.PLAYING).size() > 0;
   }
 
   @Override public void release() {
@@ -189,7 +181,7 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
     }
   }
 
-  static class StateManager implements PlayerStateManager {
+  static class StateManager implements CacheManager {
 
     final MediaList mediaList;
 
@@ -197,28 +189,12 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
       this.mediaList = mediaList;
     }
 
-    private final Map<Integer, PlaybackInfo> stateCache = new TreeMap<>(Integer::compareTo);
-
-    @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-      if (order >= 0) stateCache.put(order, playbackInfo);
-      Log.w(TAG, "SAVE: " + order + " | " + stateCache);
+    @NonNull @Override public Object getKeyForOrder(int order) {
+      return this.mediaList.get(order);
     }
 
-    @NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
-      Integer item = order >= 0 ? order : null;
-      PlaybackInfo state = new PlaybackInfo();
-      if (item != null) {
-        state = stateCache.get(item);
-        if (state == null) {
-          state = new PlaybackInfo();
-          stateCache.put(item, state);
-        }
-      }
-      return state;
-    }
-
-    @Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
-      return Observable.fromIterable(stateCache.keySet()).toList().blockingGet();
+    @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
+      return key instanceof Content.Media ? this.mediaList.indexOf(key) : null;
     }
   }
 

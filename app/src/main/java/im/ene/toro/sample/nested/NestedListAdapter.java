@@ -22,20 +22,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.PlayerStateManager;
-import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.sample.common.DemoUtil;
-import io.reactivex.Observable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import im.ene.toro.CacheManager;
 
 /**
  * @author eneim (7/1/17).
  */
 
 public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
-    implements PlayerStateManager {
+    implements CacheManager {
 
   private final int MEDIA_LIST_POSITION = 3;
 
@@ -78,26 +72,11 @@ public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
 
   //// State manager
 
-  private final Map<Integer, PlaybackInfo> stateCache = new TreeMap<>(DemoUtil::compare);
-
-  @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-    if (order >= 0) stateCache.put(order, playbackInfo);
+  @NonNull @Override public Object getKeyForOrder(int order) {
+    return order;
   }
 
-  @NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
-    Integer entity = order >= 0 ? order : null;
-    PlaybackInfo state = new PlaybackInfo();
-    if (entity != null) {
-      state = stateCache.get(entity);
-      if (state == null) {
-        state = new PlaybackInfo();
-        stateCache.put(entity, state);
-      }
-    }
-    return state;
-  }
-
-  @Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
-    return Observable.fromIterable(stateCache.keySet()).toList().blockingGet();
+  @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
+    return key instanceof Integer ? (Integer) key : null;
   }
 }

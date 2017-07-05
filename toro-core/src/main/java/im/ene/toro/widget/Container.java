@@ -33,8 +33,8 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerSelector;
-import im.ene.toro.PlayerStateManager;
 import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -42,35 +42,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author eneim | 5/31/17.
  *
- *         A special {@link RecyclerView} that is empowered to control the {@link ToroPlayer}s.
+ *         A custom {@link RecyclerView} that is capable of managing and controling the
+ *         {@link ToroPlayer}s' playback behaviour.
  *
- *         A client wish to have the power of this library should replace the normal use of {@link
- *         RecyclerView} with this {@link Container}.
+ *         A client wish to have the auto playback behaviour should replace the normal use of
+ *         {@link RecyclerView} with {@link Container}.
  *
- *         By default, a {@link Container} listen to Children's attach/detach events as well as its
- *         own attach/detach/scroll event, to manage {@link ToroPlayer} using a {@link
- *         PlayerManager}.
- *         *
  *         By default, {@link Container} doesn't support playback position saving/restoring. This
- *         is because {@link Container} has no idea about the uniqueness of media those are being
- *         played. This can be archive by supplying it with a valid {@link PlayerStateManager}. A
- *         {@link PlayerStateManager} will help providing the uniqness of Medias by which it can
- *         correctly save/restore the playback state of a specific media item. Setup this can be
- *         done using {@link Container#setPlayerStateManager(PlayerStateManager)}.
+ *         is because {@link Container} has no idea about the uniqueness of media content those are
+ *         being played. This can be archived by supplying {@link Container} with a valid {@link
+ *         CacheManager}. A {@link CacheManager} will help providing the uniqness of Medias by
+ *         which it can correctly save/restore the playback state of a specific media item. Setup
+ *         this can be done using {@link Container#setCacheManager(CacheManager)}.
  *
- *         {@link Container} can also use various {@link PlayerSelector} to have its own behaviour.
- *         By default, it uses {@link PlayerSelector#DEFAULT}. Custom {@link PlayerSelector} can be
- *         set via {@link Container#setPlayerSelector(PlayerSelector)}.
- *
- *         Last but not least, {@link Container} plays well with {@link Adapter}'s {@link
- *         AdapterDataObserver}. With this support, {@link Container} will correctly respond to
- *         data
- *         change events, animations and so on to update the playback behavior.
+ *         {@link Container} uses {@link PlayerSelector} to control the {@link ToroPlayer}. A
+ *         {@link PlayerSelector} will be asked to select which {@link ToroPlayer} to start
+ *         playback, and those are not selected will be paused. By default, it uses {@link
+ *         PlayerSelector#DEFAULT}. Custom {@link PlayerSelector} can be set via {@link
+ *         Container#setPlayerSelector(PlayerSelector)}.
  */
 
 @SuppressWarnings({ "unused", "ConstantConditions" }) //
@@ -78,10 +74,9 @@ public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
 
-  @NonNull final PlayerManager playerManager = new PlayerManager();  // never null
-  PlayerSelector playerSelector;  // null = do nothing
-  PlayerStateManager playerStateManager;  // null = no position cache
-  Handler animatorFinishHandler;  // null = detached ...
+  final PlayerManager playerManager = new PlayerManager();  // never null
+  /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;  // null = do nothing
+  /* package */ Handler animatorFinishHandler;  // null = Container is detached ...
 
   public Container(Context context) {
     this(context, null);
@@ -93,8 +88,6 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    // Setup here so we have tool for state save/restore stuff.
-    setPlayerSelector(PlayerSelector.DEFAULT);
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
@@ -123,18 +116,19 @@ public class Container extends RecyclerView {
   }
 
   /**
-   * Get current active players (players those are playing), sorted by Player order obtained from
-   * {@link ToroPlayer#getPlayerOrder()}.
+   * Filter current managed {@link ToroPlayer}s using {@link Filter}. Result is sorted by Player
+   * order obtained from {@link ToroPlayer#getPlayerOrder()}.
    *
-   * @return list of playing players. Empty list if there is no available player.
+   * @param filter the {@link Filter} to a {@link ToroPlayer}.
+   * @return list of players accepted by {@link Filter}. Empty list if there is no available player.
    */
-  @NonNull public List<ToroPlayer> getActivePlayers() {
-    List<ToroPlayer> players = new ArrayList<>();
+  @NonNull public List<ToroPlayer> filterBy(Filter filter) {
+    List<ToroPlayer> result = new ArrayList<>();
     for (ToroPlayer player : playerManager.getPlayers()) {
-      if (player.isPlaying()) players.add(player);
+      if (filter.accept(player)) result.add(player);
     }
-    Collections.sort(players, Common.ORDER_COMPARATOR);
-    return Collections.unmodifiableList(players);
+    Collections.sort(result, Common.ORDER_COMPARATOR);
+    return Collections.unmodifiableList(result);
   }
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
@@ -156,8 +150,7 @@ public class Container extends RecyclerView {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           if (Common.allowsToPlay(playerView, Container.this)) {
             if (playerManager.attachPlayer(player)) {
-              PlaybackInfo info = playerStateManager == null ? null
-                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder());
+              PlaybackInfo info = Container.this.getPlaybackInfo(player.getPlayerOrder());
               playerManager.initialize(player, Container.this, info);
               dispatchUpdateOnAnimationFinished(false);
             }
@@ -180,10 +173,7 @@ public class Container extends RecyclerView {
             "Player is playing while it is not in managed state: " + player);
       }
       // save playback info
-      if (this.playerStateManager != null) {
-        this.playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-            player.getCurrentPlaybackInfo());
-      }
+      this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
       playerManager.pause(player);
     }
     if (playerManaged) {
@@ -206,10 +196,7 @@ public class Container extends RecyclerView {
       ToroPlayer player = players.get(i);
       if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;
       if (player.isPlaying()) {
-        if (playerStateManager != null) {
-          playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-              player.getCurrentPlaybackInfo());
-        }
+        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
       }
       playerManager.detachPlayer(player);
@@ -255,9 +242,7 @@ public class Container extends RecyclerView {
               playerManager.attachPlayer(player);
             }
             if (!player.isPlaying()) {
-              playerManager.initialize(player, Container.this, playerStateManager == null ? null
-                  : playerStateManager.getPlaybackInfo(player.getPlayerOrder()) //
-              );
+              playerManager.initialize(player, this, this.getPlaybackInfo(player.getPlayerOrder()));
             }
           }
         }
@@ -285,10 +270,7 @@ public class Container extends RecyclerView {
 
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
-        if (playerStateManager != null) {
-          playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-              player.getCurrentPlaybackInfo());
-        }
+        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
       }
     }
@@ -407,25 +389,82 @@ public class Container extends RecyclerView {
         ((AdapterWrapper) adapter).origin : adapter;
   }
 
+  //// PlaybackInfo Cache implementation
+  private CacheManager cacheManager = null; // null by default
+  private Map<Object, PlaybackInfo> infoCache = new LinkedHashMap<>();
+
   /**
-   * Set a {@link PlayerStateManager} to this {@link Container}. A {@link PlayerStateManager} will
-   * allow this {@link Container} to save/restore {@link PlaybackInfo} on various states or life
-   * cycle events. Setting a {@code null} {@link PlayerStateManager} will remove that ability.
-   * {@link Container} doesn't have a non-null {@link PlayerStateManager} by default.
+   * Save {@link PlaybackInfo} for the current {@link ToroPlayer} of a specific order.
    *
-   * @param playerStateManager The {@link PlayerStateManager} to set to the {@link Container}.
+   * @param order order of the {@link ToroPlayer}.
+   * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
    */
-  public final void setPlayerStateManager(@Nullable PlayerStateManager playerStateManager) {
-    this.playerStateManager = playerStateManager;
+  public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+    if (cacheManager == null || order < 0) return;
+    Object key = cacheManager.getKeyForOrder(order);
+    if (key != null) infoCache.put(key, playbackInfo);
   }
 
   /**
-   * Get current {@link PlayerStateManager} of the {@link Container}.
+   * Get the cached {@link PlaybackInfo} at a specific order.
    *
-   * @return current {@link PlayerStateManager} of the {@link Container}. Can be {@code null}.
+   * @param order order of the {@link ToroPlayer} to get the cached {@link PlaybackInfo}.
+   * @return cached {@link PlaybackInfo} if available, a new one if there is no cached one.
    */
-  @Nullable public final PlayerStateManager getPlayerStateManager() {
-    return playerStateManager;
+  @NonNull public PlaybackInfo getPlaybackInfo(int order) {
+    if (cacheManager == null || order < 0) return new PlaybackInfo();
+
+    Object key = cacheManager.getKeyForOrder(order);
+    if (key == null) return new PlaybackInfo();
+    PlaybackInfo info = infoCache.get(key);
+    if (info == null) {
+      info = new PlaybackInfo();
+      infoCache.put(key, info);
+    }
+
+    return info;
+  }
+
+  /**
+   * Get current list of {@link ToroPlayer}s' orders whose {@link PlaybackInfo} are cached.
+   * Returning an empty list will disable the save/restore of player's position.
+   *
+   * @return list of {@link ToroPlayer}s' orders.
+   */
+  @NonNull public List<Integer> getSavedPlayerOrders() {
+    List<Integer> orders = new ArrayList<>();
+    if (cacheManager == null) return orders;
+    for (Object key : infoCache.keySet()) {
+      Integer order = cacheManager.getOrderForKey(key);
+      if (order != null) orders.add(order);
+    }
+    return orders;
+  }
+
+  /**
+   * Set a {@link CacheManager} to this {@link Container}. A {@link CacheManager} will
+   * allow this {@link Container} to save/restore {@link PlaybackInfo} on various states or life
+   * cycle events. Setting a {@code null} {@link CacheManager} will remove that ability.
+   * {@link Container} doesn't have a non-null {@link CacheManager} by default.
+   *
+   * Setting this while there is a {@code non-null} {@link CacheManager} available will clear
+   * current {@link PlaybackInfo} cache.
+   *
+   * @param cacheManager The {@link CacheManager} to set to the {@link Container}.
+   */
+  public final void setCacheManager(@Nullable CacheManager cacheManager) {
+    if (this.cacheManager == cacheManager) return;
+    this.infoCache.clear();
+    this.cacheManager = cacheManager;
+  }
+
+  /**
+   * Get current {@link CacheManager} of the {@link Container}.
+   *
+   * @return current {@link CacheManager} of the {@link Container}. Can be {@code null}.
+   */
+  @Nullable public final CacheManager getCacheManager() {
+    return cacheManager;
   }
 
   /**
@@ -449,19 +488,16 @@ public class Container extends RecyclerView {
       // if onSaveInstanceState is called before, source will contain no item, just fine.
       for (ToroPlayer player : players) {
         if (player.isPlaying()) {
-          if (playerStateManager != null) {
-            playerStateManager.savePlaybackInfo(player.getPlayerOrder(),
-                player.getCurrentPlaybackInfo());
-          }
+          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
           player.pause();
         }
       }
     } else if (visibility == View.VISIBLE) {
-      if (playerStateManager != null && tmpStates != null && tmpStates.size() > 0) {
+      if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
-          playerStateManager.savePlaybackInfo(order, playbackInfo);
+          this.savePlaybackInfo(order, playbackInfo);
         }
       }
       tmpStates = null;
@@ -474,9 +510,8 @@ public class Container extends RecyclerView {
    */
   @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
-    if (playerStateManager == null) return superState;
-    final Collection<Integer> savedOrders = playerStateManager.getSavedPlayerOrders();
-    if (savedOrders == null || savedOrders.isEmpty()) return superState;
+    final Collection<Integer> savedOrders = this.getSavedPlayerOrders();
+    if (savedOrders.isEmpty()) return superState;
     // Process saving playback state from here since Client wants this.
     final SparseArray<PlaybackInfo> states = new SparseArray<>();
 
@@ -488,13 +523,13 @@ public class Container extends RecyclerView {
     savedOrders.removeAll(playingOrders);
 
     for (Integer order : savedOrders) {
-      states.put(order, playerStateManager.getPlaybackInfo(order));
+      states.put(order, this.getPlaybackInfo(order));
     }
 
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
         PlaybackInfo info = player.getCurrentPlaybackInfo();
-        playerStateManager.savePlaybackInfo(player.getPlayerOrder(), info);
+        this.savePlaybackInfo(player.getPlayerOrder(), info);
         states.put(player.getPlayerOrder(), info);
         playerManager.pause(player);
       }
@@ -502,7 +537,7 @@ public class Container extends RecyclerView {
       player.release();
     }
 
-    // Client must consider this behavior using PlayerStateManager implement.
+    // Client must consider this behavior using CacheManager implement.
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
 
@@ -523,18 +558,18 @@ public class Container extends RecyclerView {
     PlayerViewState viewState = (PlayerViewState) state;
     super.onRestoreInstanceState(viewState.getSuperState());
     SparseArray<?> saveStates = viewState.statesCache;
-    if (playerStateManager != null && saveStates != null && saveStates.size() > 0) {
+    if (saveStates != null && saveStates.size() > 0) {
       for (int i = 0; i < saveStates.size(); i++) {
         int order = saveStates.keyAt(i);
         PlaybackInfo playbackInfo = (PlaybackInfo) saveStates.get(order);
-        playerStateManager.savePlaybackInfo(order, playbackInfo);
+        this.savePlaybackInfo(order, playbackInfo);
       }
     }
   }
 
   /**
    * Store the array of {@link PlaybackInfo} of recently cached playback. This state will be used
-   * only when {@link #playerStateManager} is not {@code null}. Extension of {@link Container} must
+   * only when {@link #cacheManager} is not {@code null}. Extension of {@link Container} must
    * also have its own version of {@link SavedState} which extends this {@link PlayerViewState} as
    * well.
    */
@@ -726,5 +761,28 @@ public class Container extends RecyclerView {
       this.container.onScrollStateChanged(SCROLL_STATE_IDLE);
       return true;
     }
+  }
+
+  /**
+   * An utility interface, used by {@link Container} to filter for {@link ToroPlayer}.
+   */
+  public interface Filter {
+
+    /**
+     * Check a {@link ToroPlayer} for a filter condition.
+     *
+     * @param player the {@link ToroPlayer} to check.
+     * @return {@code true} if this accepts the {@link ToroPlayer}, {@code false} otherwise.
+     */
+    boolean accept(@NonNull ToroPlayer player);
+
+    /**
+     * A built-in {@link Filter} that accepts only {@link ToroPlayer} that is playing.
+     */
+    Filter PLAYING = new Filter() {
+      @Override public boolean accept(@NonNull ToroPlayer player) {
+        return player.isPlaying();
+      }
+    };
   }
 }
