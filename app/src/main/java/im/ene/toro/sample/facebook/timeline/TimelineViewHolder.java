@@ -27,7 +27,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.ToroDemo;
 import im.ene.toro.sample.common.DemoUtil;
 import im.ene.toro.sample.facebook.data.FbItem;
 import java.util.List;
@@ -74,7 +73,7 @@ public class TimelineViewHolder extends RecyclerView.ViewHolder {
   void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
     userName.setText(item.author.userName);
     userProfile.setText(DemoUtil.getRelativeTimeString(item.timeStamp));
-    Glide.with(ToroDemo.getApp()).load(item.author.userIcon).into(userIcon);
+    Glide.with(itemView).load(item.author.userIcon).into(userIcon);
   }
 
   void onRecycled() {

@@ -29,6 +29,7 @@ import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
+import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim (7/1/17).
@@ -50,15 +51,18 @@ import im.ene.toro.widget.Container;
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
-    return inflater.inflate(R.layout.fragment_basic, container, false);
+    return inflater.inflate(R.layout.fragment_nested_list, container, false);
   }
 
+  @BindView(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
   @BindView(R.id.player_container) Container container;
   LinearLayoutManager layoutManager;
   NestedListAdapter adapter;
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
+    toolbarLayout.setTitle(getString(R.string.title_nested_list));
+
     layoutManager = new LinearLayoutManager(getContext());
     container.setLayoutManager(layoutManager);
     layoutManager.setItemPrefetchEnabled(true);

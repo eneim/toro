@@ -15,15 +15,49 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/app_bar"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/app_bar_height"
+      android:fitsSystemWindows="true"
+      android:theme="@style/AppTheme.AppBarOverlay"
+      >
+
+    <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        app:contentScrim="?attr/colorPrimary"
+        app:expandedTitleMarginBottom="24dp"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:maxLines="4"
+        app:toolbarId="@+id/toolbar"
+        >
+
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          app:layout_collapseMode="pin"
+          app:popupTheme="@style/AppTheme.PopupOverlay"
+          />
+
+    </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
+  </android.support.design.widget.AppBarLayout>
 
   <im.ene.toro.widget.Container
       android:id="@+id/player_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
       />
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

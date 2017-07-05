@@ -23,11 +23,12 @@ import android.view.Display;
  * @author eneim | 6/21/17.
  */
 
-public class ScreenHelper {
+@SuppressWarnings("unused") public class ScreenHelper {
 
   private static final String TAG = "Toro:Fb:Screen";
 
   private ScreenHelper() {
+    throw new RuntimeException("Meh!");
   }
 
   // If current window has the horizontal edge longer than vertical edge, it is a hint to

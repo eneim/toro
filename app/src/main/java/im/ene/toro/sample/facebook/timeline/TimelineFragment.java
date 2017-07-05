@@ -23,7 +23,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +42,7 @@ import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.sample.facebook.playlist.MoreVideosFragment;
 import im.ene.toro.widget.Container;
 import java.util.List;
+import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim | 6/18/17.
@@ -65,9 +65,10 @@ public class TimelineFragment extends BaseFragment
   }
 
   // View setup
+  @BindView(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
   @BindView(R.id.recycler_view) Container container;
+  LinearLayoutManager layoutManager;
   TimelineAdapter adapter;
-  RecyclerView.LayoutManager layoutManager;
   TimelineAdapter.Callback adapterCallback;
 
   // Orientation helper stuff
@@ -89,6 +90,8 @@ public class TimelineFragment extends BaseFragment
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
+    toolbarLayout.setTitle(getString(R.string.title_timeline));
+
     adapter = new TimelineAdapter(System.currentTimeMillis());
     layoutManager = new LinearLayoutManager(getContext());
     container.setAdapter(adapter);
@@ -230,7 +233,7 @@ public class TimelineFragment extends BaseFragment
     container.setPlayerSelector(selector);
   }
 
-  // Deal with setUserVisibleHint
+  // Deal with setUserVisibleHint/ViewPager
   final Handler handler = new Handler();  // post a delay due to the visibility change
 
   @Override public void setUserVisibleHint(boolean isVisibleToUser) {

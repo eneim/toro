@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim (7/1/17).
@@ -51,15 +52,18 @@ public class ComplexListFragment extends BaseFragment {
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
-    return inflater.inflate(R.layout.fragment_basic, container, false);
+    return inflater.inflate(R.layout.fragment_complex, container, false);
   }
 
+  @BindView(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
   @BindView(R.id.player_container) Container container;
   GridLayoutManager layoutManager;
   ComplexListAdapter adapter;
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
+    toolbarLayout.setTitle(getString(R.string.title_complex_grid));
+
     layoutManager = new GridLayoutManager(getContext(), 2);
     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override public int getSpanSize(int position) {
