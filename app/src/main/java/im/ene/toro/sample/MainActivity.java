@@ -18,8 +18,7 @@ package im.ene.toro.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -32,40 +31,24 @@ import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.intro.IntroFragment;
 
-import static android.support.v4.view.ViewPager.SCROLL_STATE_IDLE;
-
 public class MainActivity extends BaseActivity implements IntroFragment.Callback {
 
-  @BindView(R.id.toolbar) Toolbar toolbar;
-  @BindView(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
+  @BindView(R.id.tab_layout) TabLayout tabLayout;
   @BindView(R.id.pager) ViewPager viewPager;
-  ViewPager.OnPageChangeListener pageChangeListener;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
     ButterKnife.bind(this);
-    setSupportActionBar(toolbar);
 
-    pageChangeListener = new PageChangeHelper() {
-      int lastPage = -1;
-
-      @Override void dispatchCurrentPageChanged(int currentPage) {
-        if (lastPage != currentPage) {
-          lastPage = currentPage;
-          toolbarLayout.setTitle(Deck.Slide.values()[lastPage].getTitle());
-        }
-      }
-    };
-
-    viewPager.addOnPageChangeListener(pageChangeListener);
     HomePagerAdapter adapter = new HomePagerAdapter(getSupportFragmentManager());
     viewPager.setAdapter(adapter);
+    tabLayout.setupWithViewPager(viewPager);
   }
 
-  @Override protected void onDestroy() {
-    super.onDestroy();
-    viewPager.removeOnPageChangeListener(pageChangeListener);
+  @Override public void onToolbarCreated(Toolbar toolbar) {
+    setSupportActionBar(toolbar);
+    setTitle(R.string.app_name);
   }
 
   @Override public void onDemoClick(View view, IntroFragment.Demo demo) {
@@ -81,16 +64,14 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
     }
 
     @Override public Fragment getItem(int position) {
-      Fragment fragment;
+      Fragment fragment = IntroFragment.newInstance();
       try {
         fragment = Deck.createFragment(Deck.Slide.values()[position].getFragmentClass());
       } catch (Deck.ToroDemoException e) {
         e.printStackTrace();
-        fragment = IntroFragment.newInstance();
       }
-      if (fragment instanceof BaseFragment) {
-        ((BaseFragment) fragment).setViewPagerMode(true);
-      }
+
+      if (fragment instanceof BaseFragment) ((BaseFragment) fragment).setViewPagerMode(true);
       return fragment;
     }
 
@@ -99,47 +80,7 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
     }
 
     @Override public CharSequence getPageTitle(int position) {
-      return Deck.Slide.values()[position].getTitle();
+      return "";
     }
-  }
-
-  static abstract class PageChangeHelper extends ViewPager.SimpleOnPageChangeListener {
-
-    private static final int MSG_LAYOUT_STABLE = -100;  // Negative, to prevent conflict
-
-    private boolean firstLayout = true;
-    private int currentPage = -1;
-
-    private Handler handler = new Handler(msg -> {
-      dispatchCurrentPageChanged(msg.arg1);
-      return true;
-    });
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-      if (firstLayout) {
-        currentPage = position;
-        handler.removeMessages(MSG_LAYOUT_STABLE);
-        firstLayout = false;
-        // only called once, at first scroll (first layout)
-        handler.sendMessage(handler.obtainMessage(MSG_LAYOUT_STABLE, currentPage, 0));
-      }
-    }
-
-    @Override public void onPageSelected(int position) {
-      if (currentPage != position) {
-        currentPage = position;
-        handler.removeMessages(MSG_LAYOUT_STABLE);
-      }
-    }
-
-    @Override public void onPageScrollStateChanged(int state) {
-      super.onPageScrollStateChanged(state);
-      if (state == SCROLL_STATE_IDLE) {
-        handler.sendMessage(handler.obtainMessage(MSG_LAYOUT_STABLE, currentPage, 0));
-      }
-    }
-
-    abstract void dispatchCurrentPageChanged(int currentPage);
   }
 }

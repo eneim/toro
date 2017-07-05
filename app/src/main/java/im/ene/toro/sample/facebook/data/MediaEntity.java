@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common.data;
+package im.ene.toro.sample.facebook.data;
+
+import im.ene.toro.sample.common.MediaUrl;
 
 /**
  * @author eneim | 6/18/17.
  */
 
-public interface DataLoader {
+public interface MediaEntity extends Entity {
 
-  boolean isLoading();
+  MediaUrl getMediaUrl();
 }

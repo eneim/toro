@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common.data;
+package im.ene.toro.sample.common;
 
 import android.net.Uri;
 

@@ -28,6 +28,7 @@ import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
+import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim (7/1/17).
@@ -48,15 +49,17 @@ public class BasicListFragment extends BaseFragment {
     return inflater.inflate(R.layout.fragment_basic, container, false);
   }
 
+  @BindView(R.id.toolbar_layout) CollapsingToolbarLayout toolbarLayout;
   @BindView(R.id.player_container) Container container;
   LinearLayoutManager layoutManager;
   BasicListAdapter adapter;
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
+    toolbarLayout.setTitle(getString(R.string.title_demo_basic));
+
     layoutManager = new LinearLayoutManager(getContext());
     container.setLayoutManager(layoutManager);
-
     adapter = new BasicListAdapter();
     container.setAdapter(adapter);
 

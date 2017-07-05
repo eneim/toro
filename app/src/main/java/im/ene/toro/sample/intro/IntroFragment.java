@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,7 @@ public class IntroFragment extends BaseFragment {
     return fragment;
   }
 
+  @BindView(R.id.toolbar) Toolbar toolbar;
   @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
   Callback callback;
@@ -67,6 +69,7 @@ public class IntroFragment extends BaseFragment {
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
+    if (callback != null) callback.onToolbarCreated(toolbar);
     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
     recyclerView.setLayoutManager(layoutManager);
     DemoAdapter adapter = new DemoAdapter();
@@ -161,6 +164,8 @@ public class IntroFragment extends BaseFragment {
   }
 
   public interface Callback {
+
+    void onToolbarCreated(Toolbar toolbar);
 
     void onDemoClick(View view, Demo demo);
   }

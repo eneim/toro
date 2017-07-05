@@ -38,7 +38,7 @@ import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.ToroDemo;
-import im.ene.toro.sample.common.data.MediaUrl;
+import im.ene.toro.sample.common.MediaUrl;
 import im.ene.toro.sample.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 import java.util.List;

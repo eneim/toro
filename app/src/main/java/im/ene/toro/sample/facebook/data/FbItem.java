@@ -16,8 +16,6 @@
 
 package im.ene.toro.sample.facebook.data;
 
-import im.ene.toro.sample.common.data.Entity;
-
 /**
  * @author eneim | 6/18/17.
  */

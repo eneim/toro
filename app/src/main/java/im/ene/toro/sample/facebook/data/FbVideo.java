@@ -18,9 +18,7 @@ package im.ene.toro.sample.facebook.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import im.ene.toro.sample.common.data.MediaEntity;
-import im.ene.toro.sample.common.data.MediaItem;
-import im.ene.toro.sample.common.data.MediaUrl;
+import im.ene.toro.sample.common.MediaUrl;
 
 /**
  * @author eneim | 6/18/17.
@@ -60,7 +58,7 @@ public class FbVideo extends FbItem implements MediaEntity, Parcelable {
     dest.writeParcelable(this.mediaItem, flags);
   }
 
-  protected FbVideo(Parcel in) {
+  private FbVideo(Parcel in) {
     super(in.readParcelable(FbUser.class.getClassLoader()), in.readLong(), in.readLong());
     this.mediaItem = in.readParcelable(MediaItem.class.getClassLoader());
   }

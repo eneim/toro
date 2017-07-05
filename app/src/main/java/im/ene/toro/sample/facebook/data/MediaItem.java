@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.common.data;
+package im.ene.toro.sample.facebook.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.sample.common.MediaUrl;
 
 /**
  * @author eneim | 6/7/17.

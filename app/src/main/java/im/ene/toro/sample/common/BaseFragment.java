@@ -40,10 +40,13 @@ public class BaseFragment extends Fragment {
 
   protected String TAG = "Toro:BaseFragment";
 
-  /// The following flag is used for Fragment that is inside a ViewPager. Default is false.
+  /**
+   * The following flag is used for {@link Fragment} that is inside a ViewPager.
+   * Default is {@code false}.
+   */
   protected boolean viewPagerMode = false;
 
-  public void setViewPagerMode(boolean viewPagerMode) {
+  @SuppressWarnings("SameParameterValue") public void setViewPagerMode(boolean viewPagerMode) {
     this.viewPagerMode = viewPagerMode;
   }
 

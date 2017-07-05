@@ -76,6 +76,10 @@ dependencies {
   compile "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support.constraint:constraint-layout:1.1.0-beta1"
 
+  compile ('net.opacapp:multiline-collapsingtoolbar:1.4.0') {
+    transitive = false
+  }
+
   // additional dependencies.
   compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
   compile ("com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}") {
