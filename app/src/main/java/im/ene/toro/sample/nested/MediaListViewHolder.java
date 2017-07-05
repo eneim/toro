@@ -24,6 +24,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ import java.util.List;
  *         This {@link RecyclerView.ViewHolder} will contain a {@link Container}.
  */
 
+@SuppressWarnings("unused") //
 public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
 
   private static final String TAG = "Toro:Nested";
@@ -65,7 +67,9 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
     MediaList mediaList = (MediaList) item;
     Adapter adapter = new Adapter(mediaList);
     container.setAdapter(adapter);
-    container.setCacheManager(new StateManager(mediaList));
+    if (container.getCacheManager() == null) {
+      container.setCacheManager(new StateManager(mediaList));
+    }
     snapHelper.attachToRecyclerView(container);
   }
 
@@ -104,6 +108,7 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+    Log.i(TAG, "initialize: " + playbackInfo);
     if (playbackInfo != null && playbackInfo instanceof ExtraPlaybackInfo) {
       //noinspection unchecked
       SparseArray<PlaybackInfo> cache = ((ExtraPlaybackInfo) playbackInfo).actualInfo;
