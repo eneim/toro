@@ -784,5 +784,15 @@ public class Container extends RecyclerView {
         return player.isPlaying();
       }
     };
+
+    /**
+     * A built-in {@link Filter} that accepts only {@link ToroPlayer} that is managed by Container.
+     * Actually any {@link ToroPlayer} to be filtered is already managed.
+     */
+    Filter MANAGING = new Filter() {
+      @Override public boolean accept(@NonNull ToroPlayer player) {
+        return true;
+      }
+    };
   }
 }

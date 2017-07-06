@@ -48,7 +48,7 @@ import java.util.List;
  */
 
 @SuppressWarnings("unused") //
-public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
+class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
 
   private static final String TAG = "Toro:Nested";
 
@@ -138,6 +138,15 @@ public class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
 
   @Override public void release() {
     this.container.setPlayerSelector(PlayerSelector.NONE);
+    // release here
+    List<ToroPlayer> managed = this.container.filterBy(Container.Filter.MANAGING);
+    for (ToroPlayer player : managed) {
+      if (player.isPlaying()) {
+        this.container.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+        player.pause();
+      }
+      player.release();
+    }
   }
 
   @Override public boolean wantsToPlay() {
