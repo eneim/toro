@@ -26,7 +26,7 @@ import im.ene.toro.sample.basic.VideoData;
  * @author eneim (7/1/17).
  */
 
-public class ComplexListAdapter extends RecyclerView.Adapter<ComplexPlayerViewHolder> {
+class ComplexListAdapter extends RecyclerView.Adapter<ComplexPlayerViewHolder> {
 
   @Override public ComplexPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())

@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentActivity;
 import im.ene.toro.sample.basic.BasicListFragment;
 import im.ene.toro.sample.complex.ComplexListFragment;
 import im.ene.toro.sample.facebook.timeline.TimelineFragment;
+import im.ene.toro.sample.flexible.FlexibleListFragment;
 import im.ene.toro.sample.intro.IntroFragment;
 import im.ene.toro.sample.nested.NestedListFragment;
 import java.lang.reflect.InvocationTargetException;
@@ -112,7 +113,8 @@ public final class Deck {
     BASIC("Basic", BasicListFragment.class), //
     TIMELINE("Timeline", TimelineFragment.class), //
     NESTED("Nested Container", NestedListFragment.class),  //
-    COMPLEX("Complex Grid", ComplexListFragment.class)  //
+    COMPLEX("Complex Grid", ComplexListFragment.class), //
+    FLEXIBLE("Flexible Grid", FlexibleListFragment.class)  //
     ;
     private final String title;
     private final Class<?> fragmentClass;

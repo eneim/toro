@@ -54,6 +54,11 @@
         android:theme="@style/AppTheme.NoActionBar"/>
 
     <activity
+        android:name=".flexible.FlexibleListActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <activity
         android:name=".basic.BasicListActivity"
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.NoActionBar"/>

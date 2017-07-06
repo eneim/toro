@@ -47,8 +47,6 @@ import java.util.LinkedHashMap;
    */
   @Nullable Object getKeyForOrder(@IntRange(from = 0) int order);
 
-  // return null will ignore cache for this key.
-
   /**
    * Get the order of a specific key value. Returning a {@code null} order value here will tell
    * {@link Container} to ignore this key's cache order.

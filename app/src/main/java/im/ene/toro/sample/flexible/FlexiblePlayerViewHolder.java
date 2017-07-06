@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.basic;
+package im.ene.toro.sample.flexible;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -23,6 +23,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -35,19 +36,19 @@ import im.ene.toro.widget.Container;
  * @author eneim (7/1/17).
  */
 
-@SuppressWarnings({ "WeakerAccess", "unused" }) //
-class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+@SuppressWarnings("WeakerAccess") //
+public class FlexiblePlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
-  private static final String TAG = "Toro:Basic:Holder";
+  private static final String TAG = "Toro:Flex:Holder";
 
-  static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
+  static final int LAYOUT_RES = R.layout.view_holder_exoplayer_flexible;
 
   SimpleExoPlayerViewHelper helper;
   Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
 
-  public BasicPlayerViewHolder(View itemView) {
+  public FlexiblePlayerViewHolder(View itemView) {
     super(itemView);
     ButterKnife.bind(this, itemView);
   }
@@ -99,7 +100,13 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
-  void bind(VideoData videoData) {
-    this.mediaUri = videoData.getMediaUri();
+  void bind(Content.Media media, int position) {
+    if (position % 3 == 0) {
+      playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
+    } else {
+      playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
+    }
+
+    this.mediaUri = media.mediaUri;
   }
 }

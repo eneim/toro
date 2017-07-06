@@ -25,7 +25,7 @@ import android.view.ViewGroup;
  * @author eneim (7/1/17).
  */
 
-public class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
+class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
 
   @Override public BasicPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())

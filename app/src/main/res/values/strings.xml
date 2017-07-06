@@ -26,6 +26,7 @@
   <string name="title_timeline">Using Toro to mimic Facebook Timeline, and more</string>
   <string name="title_nested_list">Nested Container: a Container as child of another Container</string>
   <string name="title_complex_grid">Grid Container with custom number of active Players</string>
+  <string name="title_flexible_grid">Same as Complex Grid, with item drag&amp;drop ability</string>
 
   <string name="title_legacy">Demo using official VideoView, considered Legacy playback API</string>
 </resources>
