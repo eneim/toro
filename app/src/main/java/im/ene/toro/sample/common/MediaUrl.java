@@ -23,14 +23,9 @@ import android.net.Uri;
  */
 
 public enum MediaUrl {
-  MP4_BUNNY_432("http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps_768x432_1500k.mp4",
-      1.7777777778f),  //
-  HLS_BUNNY_240("http://docs.evostream.com/sample_content/assets/hls-bunny-166/playlist.m3u8",
-      1.7777777778f), //
-  WEBM_BUNNY("http://clips.vorwaerts-gmbh.de/big_buck_bunny.webm", 1.7777777778f),  //
-  DASH_H265_TEARS("https://storage.googleapis.com/wvmedia/clear/hevc/tears/tears.mpd", 2.24f), //
-  // MP4_SQUARE("file:///android_asset/square.mp4", 1.00f),
-  DASH_BUNNY_FULL("http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps.mpd", 1.7777777778f),  //
+  TEARS_OF_STEEL("file:///android_asset/tos.mp4", 2.4f), //
+  BIG_BUCK_BUNNY("file:///android_asset/bbb.mp4", 1.7777777778f),  //
+  COSMOS_LAUNDROMATY("file:///android_asset/cosmos.mp4", 2.4f),  //
   ;
 
   private final String url;

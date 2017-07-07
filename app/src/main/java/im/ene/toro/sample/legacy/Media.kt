@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.complex
+package im.ene.toro.sample.legacy
 
 import android.net.Uri
 
 /**
- * @author eneim (6/26/17).
+ * @author eneim (7/7/17).
  */
-data class VideoData(val mediaUri: Uri, val index: Int) {
+data class Media(val index: Int, val mediaUri: Uri) {
 
   companion object {
-    val MP4_BUNNY = "file:///android_asset/bbb.mp4"
-    fun newItem(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
+    internal fun getItem(index: Int): Media {
+      return Media(index,
+          Uri.parse("http://dash.edgesuite.net/akamai/bbb_30fps/bbb_30fps_768x432_1500k.mp4"))
+    }
   }
 }

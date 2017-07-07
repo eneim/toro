@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.nested;
+package im.ene.toro.sample.basic;
 
 import android.net.Uri;
 

@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.basic
+package im.ene.toro.sample.legacy
 
-import android.net.Uri
+import java.util.*
 
 /**
- * @author eneim (6/26/17).
+ * @author eneim (7/7/17).
  */
-data class VideoData(val mediaUri: Uri, val index: Int) {
+class MediaList : ArrayList<Media>() {
 
-  companion object {
-    val MP4_BUNNY = "file:///android_asset/bbb.mp4"
-    fun newItem(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
+  override val size: Int
+    get() = Int.MAX_VALUE
+
+  override fun indexOf(element: Media): Int {
+    return element.index
+  }
+
+  override fun get(index: Int): Media {
+    return Media.getItem(index)
   }
 }

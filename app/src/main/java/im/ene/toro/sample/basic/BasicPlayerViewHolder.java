@@ -99,7 +99,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
-  void bind(VideoData videoData) {
-    this.mediaUri = videoData.getMediaUri();
+  void bind(Content.Media media) {
+    this.mediaUri = media.mediaUri;
   }
 }
