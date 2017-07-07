@@ -74,6 +74,12 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
     }
   };
 
+  private EventListener eventListener;
+
+  public void setEventListener(EventListener eventListener) {
+    this.eventListener = eventListener;
+  }
+
   MoreVideoItemViewHolder(View itemView) {
     super(itemView);
     ButterKnife.bind(this, itemView);
@@ -105,6 +111,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
     if (helper == null) {
       helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
       helper.setEventListener(listener);
+      helper.addPlayerEventListener(eventListener);
     }
     helper.initialize(playbackInfo);
   }
@@ -149,6 +156,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
 
     if (helper != null) {
       helper.setEventListener(null);
+      helper.removePlayerEventListener(eventListener);
       helper.release();
       helper = null;
     }

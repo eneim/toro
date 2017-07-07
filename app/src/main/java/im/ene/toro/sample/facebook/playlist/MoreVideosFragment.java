@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,19 +36,21 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.sample.facebook.core.BlackBoardDialogFragment;
 import im.ene.toro.sample.facebook.core.ScreenHelper;
 import im.ene.toro.sample.facebook.data.FbVideo;
+import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.widget.Container;
+import io.reactivex.Observable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author eneim | 6/19/17.
  */
 
-public class MoreVideosFragment extends BlackBoardDialogFragment implements
-    BigPlayerFragment.Callback {
+public class MoreVideosFragment extends BlackBoardDialogFragment
+    implements BigPlayerFragment.Callback {
 
   public interface Callback {
 
@@ -137,12 +140,33 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
       callback.onPlaylistCreated();
     }
 
-    layoutManager = new LinearLayoutManager(getContext());
+    layoutManager = new LinearLayoutManager(getContext()) {
+      @Override
+      public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
+          int position) {
+        LinearSmoothScroller linearSmoothScroller =
+            new SnapTopLinearSmoothScroller(recyclerView.getContext());
+        linearSmoothScroller.setTargetPosition(position);
+        super.startSmoothScroll(linearSmoothScroller);
+      }
+    };
+
     container.setLayoutManager(layoutManager);
     adapter = new MoreVideosAdapter(baseVideo, baseVideo.timeStamp);
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
     container.savePlaybackInfo(0, baseInfo);
+
+    adapter.setOnCompleteCallback(new MoreVideosAdapter.OnCompleteCallback() {
+      @Override void onCompletePlayback(Container container, ToroPlayer player) {
+        int position = adapter.findNextPlayerPosition(player.getPlayerOrder());
+        //noinspection Convert2MethodRef
+        Observable.just(container)
+            .delay(300, TimeUnit.MICROSECONDS)
+            .filter(c -> c != null)
+            .subscribe(cc -> cc.smoothScrollToPosition(position));
+      }
+    });
 
     selector = container.getPlayerSelector();
   }
@@ -228,7 +252,8 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
     container.setPlayerSelector(PlayerSelector.NONE);
   }
 
-  @Override public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
+  @Override
+  public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
     container.savePlaybackInfo(videoOrder, latestInfo);
     container.setPlayerSelector(selector);
   }

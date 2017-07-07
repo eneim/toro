@@ -24,7 +24,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.CacheManager;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.sample.facebook.data.FbVideo;
+import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +40,12 @@ import java.util.List;
   @NonNull private final FbVideo baseItem;
   private final long initTimeStamp;
   private final List<FbVideo> items = new ArrayList<>();
+
+  OnCompleteCallback onCompleteCallback;
+
+  public void setOnCompleteCallback(OnCompleteCallback onCompleteCallback) {
+    this.onCompleteCallback = onCompleteCallback;
+  }
 
   public MoreVideosAdapter(@NonNull FbVideo baseItem, long initTimeStamp) {
     super();
@@ -65,7 +73,26 @@ import java.util.List;
   @Override public MoreVideoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(MoreVideoItemViewHolder.LAYOUT_RES, parent, false);
-    return new MoreVideoItemViewHolder(view);
+    MoreVideoItemViewHolder viewHolder = new MoreVideoItemViewHolder(view);
+    viewHolder.setEventListener(new ToroPlayer.EventListener() {
+      @Override public void onBuffering() {
+
+      }
+
+      @Override public void onPlaying() {
+
+      }
+
+      @Override public void onPaused() {
+
+      }
+
+      @Override public void onCompleted(Container container, ToroPlayer player) {
+        if (onCompleteCallback != null) onCompleteCallback.onCompletePlayback(container, player);
+      }
+    });
+
+    return viewHolder;
   }
 
   @Override public void onBindViewHolder(MoreVideoItemViewHolder holder, int position) {
@@ -84,5 +111,15 @@ import java.util.List;
 
   @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
     return key instanceof FbVideo ? items.indexOf(key) : null;
+  }
+
+  // on complete stuff
+  int findNextPlayerPosition(int base) {
+    return base + 1;
+  }
+
+  static abstract class OnCompleteCallback {
+
+    abstract void onCompletePlayback(Container container, ToroPlayer player);
   }
 }
