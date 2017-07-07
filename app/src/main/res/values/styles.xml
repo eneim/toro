@@ -18,10 +18,6 @@
 
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat">
-    <!-- Customize your theme here. -->
-    <!--<item name="colorPrimary">@color/colorPrimary</item>-->
-    <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-    <!--<item name="colorAccent">@color/colorAccent</item>-->
   </style>
 
   <style name="AppTheme.NoActionBar">
@@ -65,7 +61,10 @@
   <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
   <!-- Theme for the custom activity -->
-  <style name="AppTheme.Custom" parent="Theme.AppCompat.NoActionBar">
+  <style name="AppTheme.NoActionBar.Translucent">
 
+  </style>
+
+  <style name="AppTheme.Custom" parent="AppTheme.NoActionBar.Translucent">
   </style>
 </resources>

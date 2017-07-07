@@ -21,44 +21,11 @@
     android:layout_height="match_parent"
     >
 
-  <LinearLayout
-      android:id="@+id/top_intro"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentTop="true"
-      android:background="@color/cardview_dark_background"
-      android:gravity="center_vertical"
-      android:minHeight="?attr/actionBarSize"
-      android:orientation="horizontal"
-      android:paddingEnd="@dimen/toolbar_right"
-      android:paddingLeft="@dimen/custom_card_left"
-      android:paddingRight="@dimen/toolbar_right"
-      android:paddingStart="@dimen/custom_card_left"
-      >
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/app_name"
-        android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
-        />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/button_open_demos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/more_demos"
-        />
-  </LinearLayout>
-
   <android.support.v4.widget.Space
       android:id="@+id/dummy_space"
       android:layout_width="match_parent"
       android:layout_height="12dp"
-      android:layout_below="@id/top_intro"
+      android:layout_alignParentTop="true"
       />
 
   <im.ene.toro.widget.Container

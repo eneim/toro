@@ -16,8 +16,9 @@
 
 package im.ene.toro.sample.custom;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -28,9 +29,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 import butterknife.BindView;
-import butterknife.OnClick;
 import com.ramotion.cardslider.CardSnapHelper;
-import im.ene.toro.sample.MainActivity;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
@@ -55,14 +54,24 @@ import im.ene.toro.widget.Container;
   static final int[] contents =
       { R.string.license_tos, R.string.license_bbb, R.string.license_cosmos };
 
+  private Callback callback;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    if (context instanceof Callback) {
+      this.callback = (Callback) context;
+    }
+  }
+
+  @Override public void onDetach() {
+    super.onDetach();
+    this.callback = null;
+  }
+
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_custom_layouts, container, false);
-  }
-
-  @OnClick(R.id.button_open_demos) void openDemos() {
-    startActivity(new Intent(getContext(), MainActivity.class));
   }
 
   @BindView(R.id.text_content) TextView textView;
@@ -113,11 +122,23 @@ import im.ene.toro.widget.Container;
     });
   }
 
+  @Override public void onViewStateRestored(@Nullable Bundle bundle) {
+    super.onViewStateRestored(bundle);
+    if (this.callback != null) {
+      this.callback.onContainerAvailable(container);
+    }
+  }
+
   @Override public void onDestroyView() {
     snapHelper.attachToRecyclerView(null);
     container.removeOnScrollListener(onScrollListener);
     layoutManager = null;
     adapter = null;
     super.onDestroyView();
+  }
+
+  public interface Callback {
+
+    void onContainerAvailable(@NonNull Container container);
   }
 }

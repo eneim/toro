@@ -16,6 +16,10 @@
 
 <resources>
   <string name="app_name">ToroV3 Demos</string>
+
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
+
   <string name="fb_button_like">Like</string>
   <string name="fb_button_comment">Comment</string>
   <string name="fb_button_share">Share</string>
@@ -71,4 +75,6 @@
   </string>
 
   <string name="more_demos">More demos</string>
+  <string name="lib_name">eneim/toro</string>
+  <string name="lib_description">Video list auto playback made simple, specially built for RecyclerView</string>
 </resources>
