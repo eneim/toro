@@ -15,7 +15,7 @@
   -->
 
 <resources>
-  <string name="app_name">ToroV3 Demos</string>
+  <string name="app_name">Toro demos</string>
 
   <string name="navigation_drawer_open">Open navigation drawer</string>
   <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -74,7 +74,7 @@
     ]]>
   </string>
 
-  <string name="more_demos">More demos</string>
+  <string name="more_demos">Open demos</string>
   <string name="lib_name">eneim/toro</string>
   <string name="lib_description">Video list auto playback made simple, specially built for RecyclerView</string>
   <string name="lib_info_version">Latest: 3.0.0, Android: 16+ (4.1+)</string>

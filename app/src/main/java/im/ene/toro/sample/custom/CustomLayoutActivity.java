@@ -84,9 +84,6 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
     navView.inflateHeaderView(R.layout.widget_hom_nav_header_2);
     ButterKnife.<TextView>findById(navView.getHeaderView(3), R.id.text_content).setText(
         Html.fromHtml(getString(R.string.lib_info_license)));
-    navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
-    ButterKnife.<TextView>findById(navView.getHeaderView(4), R.id.text_content).setText(
-        R.string.app_info_used_lib);
 
     setupDemoButton();
 
