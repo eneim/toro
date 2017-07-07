@@ -43,15 +43,21 @@ public abstract class ToroPlayerHelper {
 
   private final Handler handler = new Handler(new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
-      if (eventListeners == null || eventListeners.isEmpty()) return false;
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
         case State.STATE_BUFFERING /* ExoPlayer.STATE_BUFFERING */:
+          internalListener.onBuffering();
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onBuffering();
           }
           return true;
         case State.STATE_READY /*  ExoPlayer.STATE_READY */:
+          if (playWhenReady) {
+            internalListener.onPlaying();
+          } else {
+            internalListener.onPaused();
+          }
+
           for (ToroPlayer.EventListener callback : eventListeners) {
             if (playWhenReady) {
               callback.onPlaying();
@@ -61,6 +67,7 @@ public abstract class ToroPlayerHelper {
           }
           return true;
         case State.STATE_END /* ExoPlayer.STATE_ENDED */:
+          internalListener.onCompleted(container, player);
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onCompleted(container, player);
           }
@@ -74,7 +81,24 @@ public abstract class ToroPlayerHelper {
   @NonNull final Container container;
   @NonNull final ToroPlayer player;
 
-  ArrayList<ToroPlayer.EventListener> eventListeners;
+  final ArrayList<ToroPlayer.EventListener> eventListeners = new ArrayList<>();
+  final ToroPlayer.EventListener internalListener = new ToroPlayer.EventListener() {
+    @Override public void onBuffering() {
+      // do nothing
+    }
+
+    @Override public void onPlaying() {
+      // do nothing
+    }
+
+    @Override public void onPaused() {
+      // do nothing
+    }
+
+    @Override public void onCompleted(Container container, ToroPlayer player) {
+      container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+    }
+  };
 
   public ToroPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player) {
     this.container = container;
@@ -83,14 +107,11 @@ public abstract class ToroPlayerHelper {
 
   @SuppressWarnings("ConstantConditions")
   public final void addPlayerEventListener(@NonNull ToroPlayer.EventListener eventListener) {
-    if (this.eventListeners == null) {
-      this.eventListeners = new ArrayList<>();
-    }
     if (eventListener != null) this.eventListeners.add(eventListener);
   }
 
   public final void removePlayerEventListener(ToroPlayer.EventListener eventListener) {
-    if (this.eventListeners != null && eventListener != null) {
+    if (eventListener != null) {
       this.eventListeners.remove(eventListener);
     }
   }

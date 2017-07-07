@@ -30,7 +30,6 @@ import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.basic.VideoData;
 import im.ene.toro.widget.Container;
 
 /**
@@ -101,13 +100,13 @@ public class ComplexPlayerViewHolder extends RecyclerView.ViewHolder implements 
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
-  void bind(VideoData videoData, int position) {
+  void bind(Content.Media media, int position) {
     if (position % 3 == 0) {
       playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
     } else {
       playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
     }
 
-    this.mediaUri = videoData.getMediaUri();
+    this.mediaUri = media.mediaUri;
   }
 }

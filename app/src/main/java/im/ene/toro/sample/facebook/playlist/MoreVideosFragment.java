@@ -140,9 +140,9 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
     layoutManager = new LinearLayoutManager(getContext());
     container.setLayoutManager(layoutManager);
     adapter = new MoreVideosAdapter(baseVideo, baseVideo.timeStamp);
-    adapter.savePlaybackInfo(0, baseInfo);
     container.setAdapter(adapter);
-    container.setPlayerStateManager(adapter);
+    container.setCacheManager(adapter);
+    container.savePlaybackInfo(0, baseInfo);
 
     selector = container.getPlayerSelector();
   }
@@ -158,7 +158,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
       int order = playerBundle.getInt(BigPlayerFragment.BUNDLE_KEY_ORDER);
       PlaybackInfo info = playerBundle.getParcelable(BigPlayerFragment.BUNDLE_KEY_INFO);
       if (info == null) info = new PlaybackInfo();
-      this.adapter.savePlaybackInfo(order, info);
+      this.container.savePlaybackInfo(order, info);
     }
     // Bundle != null, which is a hint that we come here from a orientation change.
     if (ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
@@ -193,7 +193,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
     }
 
     // Save stuff here.
-    List<ToroPlayer> activePlayers = container.getActivePlayers();
+    List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
     if (activePlayers.isEmpty()) return;
     ToroPlayer firstPlayer = activePlayers.get(0);  // get the first one only.
     // We will store the Media object, playback state.
@@ -211,7 +211,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
 
   @Override public void onDestroyView() {
     if (callback != null && adapter != null) {
-      callback.onPlaylistDestroyed(baseOrder, baseVideo, adapter.getPlaybackInfo(0));
+      callback.onPlaylistDestroyed(baseOrder, baseVideo, container.getPlaybackInfo(0));
     }
     unbinder.unbind();
     adapter = null;
@@ -229,7 +229,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment implements
   }
 
   @Override public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
-    adapter.savePlaybackInfo(videoOrder, latestInfo);
+    container.savePlaybackInfo(videoOrder, latestInfo);
     container.setPlayerSelector(selector);
   }
 }

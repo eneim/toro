@@ -33,6 +33,7 @@ import im.ene.toro.sample.basic.BasicListActivity;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.complex.ComplexListActivity;
 import im.ene.toro.sample.facebook.FacebookDemoActivity;
+import im.ene.toro.sample.flexible.FlexibleListActivity;
 import im.ene.toro.sample.legacy.LegacyDemoActivity;
 import im.ene.toro.sample.nested.NestedListActivity;
 
@@ -143,8 +144,9 @@ public class IntroFragment extends BaseFragment {
     TIMELINE("Facebook Timeline Demo", FacebookDemoActivity.class), //
     NESTED("Nested Container Demo", NestedListActivity.class),  //
     COMPLEX("Complicated Grid Demo", ComplexListActivity.class),  //
+    FLEXIBLE("Flexible Grid Demo", FlexibleListActivity.class),  //
+    // CUSTOM("Custom Layout Demo", CustomLayoutActivity.class),  // This is the launch Activity
     LEGACY("Legacy VideoView Demo", LegacyDemoActivity.class) //
-    // TODO custom layout manager
     ;
     private final String title;
     private final Class<?> activityClass;

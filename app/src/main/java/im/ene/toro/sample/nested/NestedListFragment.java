@@ -68,7 +68,7 @@ import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
     layoutManager.setItemPrefetchEnabled(true);
     adapter = new NestedListAdapter();
     container.setAdapter(adapter);
-    container.setPlayerStateManager(adapter);
+    container.setCacheManager(adapter);
 
     // FIXME Only use the following workaround when using this Fragment in ViewPager.
     if (viewPagerMode) {

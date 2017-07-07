@@ -96,7 +96,7 @@ public class TimelineFragment extends BaseFragment
     layoutManager = new LinearLayoutManager(getContext());
     container.setAdapter(adapter);
     container.setLayoutManager(layoutManager);
-    container.setPlayerStateManager(adapter);
+    container.setCacheManager(adapter);
     adapterCallback = new TimelineAdapter.Callback() {
       @Override void onItemClick(@NonNull TimelineViewHolder viewHolder, @NonNull View view,
           @NonNull FbItem item, int position) {
@@ -139,7 +139,7 @@ public class TimelineFragment extends BaseFragment
       int order = playerBundle.getInt(BigPlayerFragment.BUNDLE_KEY_ORDER);
       PlaybackInfo info = playerBundle.getParcelable(BigPlayerFragment.BUNDLE_KEY_INFO);
       if (info == null) info = new PlaybackInfo();
-      this.adapter.savePlaybackInfo(order, info);
+      this.container.savePlaybackInfo(order, info);
     }
     if (ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
       // Since we come here from a orientation change, if previous state (portrait mode),
@@ -174,7 +174,7 @@ public class TimelineFragment extends BaseFragment
     }
 
     // Save stuff here.
-    List<ToroPlayer> activePlayers = container.getActivePlayers();
+    List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
     if (activePlayers.isEmpty()) return;
     ToroPlayer firstPlayer = activePlayers.get(0);  // get the first one only.
     // We will store the Media object, playback state.
@@ -217,7 +217,7 @@ public class TimelineFragment extends BaseFragment
 
   @Override
   public void onPlaylistDestroyed(int basePosition, FbVideo baseItem, PlaybackInfo latestInfo) {
-    adapter.savePlaybackInfo(basePosition, latestInfo);
+    container.savePlaybackInfo(basePosition, latestInfo);
     container.setPlayerSelector(selector);
   }
 
@@ -229,7 +229,7 @@ public class TimelineFragment extends BaseFragment
 
   @Override
   public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
-    adapter.savePlaybackInfo(videoOrder, latestInfo);
+    container.savePlaybackInfo(videoOrder, latestInfo);
     container.setPlayerSelector(selector);
   }
 

@@ -23,23 +23,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.PlayerStateManager;
-import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.sample.common.DemoUtil;
+import im.ene.toro.CacheManager;
 import im.ene.toro.sample.facebook.data.FbVideo;
-import io.reactivex.Observable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * @author eneim | 6/19/17.
  */
 
 @SuppressWarnings("Range") public class MoreVideosAdapter
-    extends RecyclerView.Adapter<MoreVideoItemViewHolder> implements PlayerStateManager {
+    extends RecyclerView.Adapter<MoreVideoItemViewHolder> implements CacheManager {
 
   @NonNull private final FbVideo baseItem;
   private final long initTimeStamp;
@@ -82,29 +76,13 @@ import java.util.TreeMap;
     return Integer.MAX_VALUE;
   }
 
-  // Implement the PlayerStateManager;
+  // Implement the CacheManager;
 
-  private final Map<FbVideo, PlaybackInfo> stateCache =
-      new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getTimeStamp(), o2.getTimeStamp()));
-
-  @Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-    if (order >= 0) stateCache.put(getItem(order), playbackInfo);
+  @NonNull @Override public Object getKeyForOrder(int order) {
+    return getItem(order);
   }
 
-  @NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
-    FbVideo entity = order >= 0 ? getItem(order) : null;
-    PlaybackInfo state = new PlaybackInfo();
-    if (entity != null) {
-      state = stateCache.get(entity);
-      if (state == null) {
-        state = new PlaybackInfo();
-        stateCache.put(entity, state);
-      }
-    }
-    return state;
-  }
-
-  @Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
-    return Observable.fromIterable(stateCache.keySet()).map(items::indexOf).toList().blockingGet();
+  @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
+    return key instanceof FbVideo ? items.indexOf(key) : null;
   }
 }

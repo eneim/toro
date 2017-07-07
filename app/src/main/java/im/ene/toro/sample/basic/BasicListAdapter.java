@@ -25,7 +25,10 @@ import android.view.ViewGroup;
  * @author eneim (7/1/17).
  */
 
-public class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
+class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
+
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
+  private MediaList mediaList = new MediaList();
 
   @Override public BasicPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
@@ -34,10 +37,10 @@ public class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder
   }
 
   @Override public void onBindViewHolder(BasicPlayerViewHolder holder, int position) {
-    holder.bind(VideoData.Companion.newItem(position));
+    holder.bind(mediaList.get(position));
   }
 
   @Override public int getItemCount() {
-    return Integer.MAX_VALUE;
+    return mediaList.size();
   }
 }

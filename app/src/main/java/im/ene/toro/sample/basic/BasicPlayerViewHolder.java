@@ -35,10 +35,10 @@ import im.ene.toro.widget.Container;
  * @author eneim (7/1/17).
  */
 
-@SuppressWarnings("WeakerAccess") //
-public class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+@SuppressWarnings({ "WeakerAccess", "unused" }) //
+class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
-  private static final String TAG = "Toro:Holder:ExoPlayer";
+  private static final String TAG = "Toro:Basic:Holder";
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
 
@@ -99,7 +99,7 @@ public class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements To
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
-  void bind(VideoData videoData) {
-    this.mediaUri = videoData.getMediaUri();
+  void bind(Content.Media media) {
+    this.mediaUri = media.mediaUri;
   }
 }

@@ -25,11 +25,13 @@ import android.view.ViewGroup
  */
 class VideoListAdapter : RecyclerView.Adapter<VideoViewHolder>() {
 
+  val mediaList = MediaList()
+
   override fun onBindViewHolder(holder: VideoViewHolder?, position: Int) {
-    holder?.bind(VideoData.newItem(position))
+    holder?.bind(mediaList[position])
   }
 
-  override fun getItemCount() = Int.MAX_VALUE
+  override fun getItemCount() = mediaList.size
 
   override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) = //
       VideoViewHolder.newInstance(parent!!)

@@ -20,13 +20,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.sample.basic.VideoData;
 
 /**
  * @author eneim (7/1/17).
  */
 
-public class ComplexListAdapter extends RecyclerView.Adapter<ComplexPlayerViewHolder> {
+class ComplexListAdapter extends RecyclerView.Adapter<ComplexPlayerViewHolder> {
+
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
+  private MediaList mediaList = new MediaList();
 
   @Override public ComplexPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
@@ -35,10 +37,10 @@ public class ComplexListAdapter extends RecyclerView.Adapter<ComplexPlayerViewHo
   }
 
   @Override public void onBindViewHolder(ComplexPlayerViewHolder holder, int position) {
-    holder.bind(VideoData.Companion.newItem(position), position);
+    holder.bind(mediaList.get(position), position);
   }
 
   @Override public int getItemCount() {
-    return Integer.MAX_VALUE;
+    return mediaList.size();
   }
 }
