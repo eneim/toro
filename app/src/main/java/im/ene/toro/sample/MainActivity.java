@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_home);
+    setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
 
     HomePagerAdapter adapter = new HomePagerAdapter(getSupportFragmentManager());
