@@ -26,8 +26,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.PlayerSelector;
@@ -77,12 +79,21 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
 
     drawer.addDrawerListener(containerToggle);
 
+    navView.inflateHeaderView(R.layout.widget_space_4dp);
+    navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
+    navView.inflateHeaderView(R.layout.widget_hom_nav_header_2);
+    ButterKnife.<TextView>findById(navView.getHeaderView(3), R.id.text_content).setText(
+        Html.fromHtml(getString(R.string.lib_info_license)));
+    navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
+    ButterKnife.<TextView>findById(navView.getHeaderView(4), R.id.text_content).setText(
+        R.string.app_info_used_lib);
+
+    setupDemoButton();
+
     if (savedInstanceState == null) {
       CustomLayoutFragment fragment = CustomLayoutFragment.newInstance();
       getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
     }
-
-    setupDemoButton();
   }
 
   // It is said that this method should not be used at Application level.

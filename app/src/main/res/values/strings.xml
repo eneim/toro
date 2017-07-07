@@ -77,4 +77,19 @@
   <string name="more_demos">More demos</string>
   <string name="lib_name">eneim/toro</string>
   <string name="lib_description">Video list auto playback made simple, specially built for RecyclerView</string>
+  <string name="lib_info_version">Latest: 3.0.0, Android: 16+ (4.1+)</string>
+  <string name="lib_info_license">
+    <![CDATA[
+      <h3>License</h3>
+      <p>Copyright 2017 eneim@Eneim Labs, <a href="mailto:nam@ene.im">nam@ene.im</a></p>
+      <p>Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at</p>
+      <pre><code>   http://www.apache.org/licenses/LICENSE-2.0
+      </code></pre>
+    ]]>
+  </string>
+  <string name="app_info_used_lib">
+    Libraries used in this App
+  </string>
 </resources>

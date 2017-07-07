@@ -35,23 +35,11 @@
       android:layout_below="@id/dummy_space"
       />
 
-  <android.support.v4.widget.NestedScrollView
+  <android.support.v4.view.ViewPager
       android:id="@+id/place_holder"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:layout_alignParentBottom="true"
       android:layout_below="@id/player_container"
-      android:paddingBottom="16dp"
-      android:paddingEnd="@dimen/custom_card_left"
-      android:paddingLeft="@dimen/custom_card_left"
-      android:paddingRight="@dimen/custom_card_left"
-      android:paddingStart="@dimen/custom_card_left"
-      android:paddingTop="16dp"
-      >
-    <TextView
-        android:id="@+id/text_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-  </android.support.v4.widget.NestedScrollView>
+      />
 </RelativeLayout>

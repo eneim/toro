@@ -59,7 +59,7 @@
       android:layout_width="wrap_content"
       android:layout_height="match_parent"
       android:layout_gravity="start"
-      app:headerLayout="@layout/layout_hom_nav_header"
+      app:headerLayout="@layout/widget_hom_nav_header_0"
       >
   </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
