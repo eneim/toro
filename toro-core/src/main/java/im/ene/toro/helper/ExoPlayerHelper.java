@@ -231,11 +231,13 @@ public final class ExoPlayerHelper {
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
   }
 
-  public void addEventListener(ExoPlayer.EventListener eventListener) {
+  public void addEventListener(@NonNull ExoPlayer.EventListener eventListener) {
     if (this.eventListeners == null) {
       this.eventListeners = new ArrayList<>();
     }
-    this.eventListeners.add(eventListener);
+
+    //noinspection ConstantConditions
+    if (eventListener != null) this.eventListeners.add(eventListener);
   }
 
   public void removeEventListener(ExoPlayer.EventListener eventListener) {
