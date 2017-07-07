@@ -27,7 +27,6 @@
       android:layout_width="match_parent"
       android:layout_height="@dimen/app_bar_height"
       android:fitsSystemWindows="true"
-      android:theme="@style/AppTheme.AppBarOverlay"
       >
 
     <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
@@ -47,7 +46,6 @@
           android:layout_width="match_parent"
           android:layout_height="?attr/actionBarSize"
           app:layout_collapseMode="pin"
-          app:popupTheme="@style/AppTheme.PopupOverlay"
           />
 
     </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>

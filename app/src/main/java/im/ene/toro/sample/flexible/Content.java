@@ -24,7 +24,7 @@ import android.net.Uri;
 
 class Content {
 
-  static final String MP4_BUNNY = "file:///android_asset/big_buck_bunny.mp4";
+  static final String MP4_BUNNY = "file:///android_asset/bbb.mp4";
 
   public static class Media {
     final int index;

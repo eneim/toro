@@ -16,6 +16,7 @@
 
 package im.ene.toro.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +30,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -183,6 +185,7 @@ public class Container extends RecyclerView {
     // sometime it happens after all Animation, but we also need to update playback here.
     dispatchUpdateOnAnimationFinished(true);
     // finally release the player
+    // this player may not be managed so it should release by itself.
     player.release();
   }
 
@@ -483,13 +486,14 @@ public class Container extends RecyclerView {
    */
   @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
     super.onWindowVisibilityChanged(visibility);
+    Log.d(TAG, "onWindowVisibilityChanged() called with: visibility = [" + visibility + "]");
     if (visibility == View.GONE) {
       List<ToroPlayer> players = playerManager.getPlayers();
       // if onSaveInstanceState is called before, source will contain no item, just fine.
       for (ToroPlayer player : players) {
         if (player.isPlaying()) {
           this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-          player.pause();
+          playerManager.pause(player);
         }
       }
     } else if (visibility == View.VISIBLE) {
@@ -518,30 +522,37 @@ public class Container extends RecyclerView {
     List<ToroPlayer> source = playerManager.getPlayers();
     List<Integer> playingOrders = new ArrayList<>();
     for (ToroPlayer player : source) {
-      if (player.isPlaying()) playingOrders.add(player.getPlayerOrder());
+      if (player.isPlaying()) {
+        playingOrders.add(player.getPlayerOrder());
+
+        PlaybackInfo info = player.getCurrentPlaybackInfo();
+        this.savePlaybackInfo(player.getPlayerOrder(), info);
+        states.put(player.getPlayerOrder(), info);
+        playerManager.pause(player);
+      }
     }
+
     savedOrders.removeAll(playingOrders);
 
     for (Integer order : savedOrders) {
       states.put(order, this.getPlaybackInfo(order));
     }
 
-    for (ToroPlayer player : source) {
-      if (player.isPlaying()) {
-        PlaybackInfo info = player.getCurrentPlaybackInfo();
-        this.savePlaybackInfo(player.getPlayerOrder(), info);
-        states.put(player.getPlayerOrder(), info);
-        playerManager.pause(player);
+    boolean recreating =
+        getContext() instanceof Activity && ((Activity) getContext()).isChangingConfigurations();
+
+    if (recreating) { // release on recreation event only
+      for (ToroPlayer player : source) {
+        playerManager.release(player);
+        playerManager.detachPlayer(player);
       }
-      playerManager.detachPlayer(player);
-      player.release();
     }
 
     // Client must consider this behavior using CacheManager implement.
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
 
-    // To remind that this method was called
+    // To mark that this method was called
     tmpStates = states;
     return playerViewState;
   }

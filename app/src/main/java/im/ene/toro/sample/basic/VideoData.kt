@@ -24,7 +24,7 @@ import android.net.Uri
 data class VideoData(val mediaUri: Uri, val index: Int) {
 
   companion object {
-    val MP4_BUNNY = "file:///android_asset/big_buck_bunny.mp4"
+    val MP4_BUNNY = "file:///android_asset/bbb.mp4"
     fun newItem(index: Int) = VideoData(Uri.parse(MP4_BUNNY), index)
   }
 }
