@@ -62,14 +62,14 @@ Changelog
   Clicking to **OPEN DEMOS** will reveal more demonstrations as below. This demo also showcases the use of ``LoopingMediaSource`` using a custom ``ToroPlayerHelper`` and ``LoopingMediaSourceBuilder``.
   
   - **Basic**: using Toro with least effort. This shows how simple it is to get start with Toro. Also this sample does not support playback info save/restore.
-  
-  - **Facebook Timeline**: this demo uses Toro to mimic the behaviour of Facebook's timeline, with ``click to open playlist``, ``rotate to open current Video in full-screen``. It also surpass the default behavior by correctly handling the config changes and supporting Multi-Windows mode. This demo also showcases a custom use of ``ToroPlayer.EventListener`` to allow the playlist to automatically scroll to next player after completing the playback.
+  
+  - **Facebook Timeline**: this demo uses Toro to mimic the behaviour of Facebook's timeline, with ``click to open playlist``, ``rotate to open current Video in full-screen``. It also surpass the default behavior by correctly handling the config changes and supporting Multi-Windows mode. This demo also showcases a custom use of ``ToroPlayer.EventListener`` to allow the playlist to automatically scroll to next player after completing the playback.
   
   - **Nested Container**: this demo shows how to use a ``Container`` inside other ``Container``. The real use case of this is the suggested Video list for a specific Video (like Youtube).
   
   - **Complicated Grid (Complex Grid)**: this demo shows how to use Toro to control number of simultaneous players at one time. Again this is a power consumed feature and not recommended.
   
-  - **Flexible Grid**: this is the same as Complex Grid demo above, with the addition of ``drag/drop`` feature. This mimic the Toro's ability of supporting data changes.
+  - **Flexible Grid**: this is the same as Complex Grid demo above, with the addition of ``drag/drop`` feature. This represents the Toro's ability of supporting data changes.
   
   - **Legacy**: this demo shows how to use Toro with Android's default VideoView. In this package, there is a custom VideoView adding the ability to listen to ``play/pause`` event which is required in some cases.
   
