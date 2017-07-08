@@ -33,7 +33,8 @@ import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.helper.ExoPlayerHelper;
+import im.ene.toro.exoplayer.ExoPlayerHelper;
+import im.ene.toro.exoplayer.MediaSourceBuilder;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.facebook.core.BlackBoardDialogFragment;
@@ -147,7 +148,8 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
 
   @Override public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
-    if (windowManager.getDefaultDisplay().getRotation() % 180 != 0) {
+    int rotation = windowManager.getDefaultDisplay().getRotation();
+    if (rotation % 2 != 0) {
       // Only do this in landscape mode.
       Window window = getDialog().getWindow();
       if (window != null) {
@@ -175,7 +177,9 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
       playerHelper = new ExoPlayerHelper(playerView,  //
           DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, false);
       try {
-        playerHelper.prepare(videoItem.getMediaUrl().getUri());
+        MediaSourceBuilder sourceBuilder =
+            new MediaSourceBuilder(getContext(), videoItem.getMediaUrl().getUri());
+        playerHelper.prepare(sourceBuilder);
       } catch (ParserException e) {
         e.printStackTrace();
       }

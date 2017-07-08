@@ -28,7 +28,7 @@ import im.ene.toro.CacheManager;
  * @author eneim (7/1/17).
  */
 
-class CustomLayoutAdapter extends RecyclerView.Adapter<SimplePlayerViewHolder>
+class CustomLayoutAdapter extends RecyclerView.Adapter<CustomExoPlayerViewHolder>
     implements CacheManager {
 
   private final MediaList mediaList;
@@ -37,13 +37,13 @@ class CustomLayoutAdapter extends RecyclerView.Adapter<SimplePlayerViewHolder>
     this.mediaList = mediaList;
   }
 
-  @Override public SimplePlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public CustomExoPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
-        .inflate(SimplePlayerViewHolder.LAYOUT_RES, parent, false);
-    return new SimplePlayerViewHolder(view);
+        .inflate(CustomExoPlayerViewHolder.LAYOUT_RES, parent, false);
+    return new CustomExoPlayerViewHolder(view);
   }
 
-  @Override public void onBindViewHolder(SimplePlayerViewHolder holder, int position) {
+  @Override public void onBindViewHolder(CustomExoPlayerViewHolder holder, int position) {
     holder.bind(mediaList.get(position));
   }
 

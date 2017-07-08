@@ -32,8 +32,6 @@ import java.util.ArrayList;
  *         General helper class for a specific {@link ToroPlayer}. This class helps forwarding the
  *         playback state to the player if there is any {@link ToroPlayer.EventListener}
  *         registered. It also requests the initialization for the Player.
- *
- *         See also {@link SimpleExoPlayerViewHelper}.
  */
 
 @SuppressWarnings("WeakerAccess") //
@@ -78,8 +76,8 @@ public abstract class ToroPlayerHelper {
     }
   });
 
-  @NonNull final Container container;
-  @NonNull final ToroPlayer player;
+  @NonNull protected final Container container;
+  @NonNull protected final ToroPlayer player;
 
   final ArrayList<ToroPlayer.EventListener> eventListeners = new ArrayList<>();
   final ToroPlayer.EventListener internalListener = new ToroPlayer.EventListener() {
