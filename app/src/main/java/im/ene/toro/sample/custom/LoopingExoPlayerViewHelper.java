@@ -16,17 +16,16 @@
 
 package im.ene.toro.sample.custom;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.LoopingMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.helper.ExoPlayerHelper;
+import im.ene.toro.exoplayer.ExoPlayerHelper;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
@@ -39,28 +38,28 @@ import java.util.concurrent.atomic.AtomicInteger;
  *         components {@link SimpleExoPlayer} and {@link SimpleExoPlayerView}.
  */
 
-public final class CustomExoPlayerViewHelper extends ToroPlayerHelper {
+public final class LoopingExoPlayerViewHelper extends ToroPlayerHelper {
 
   private final ExoPlayerHelper.EventListener internalListener =
       new ExoPlayerHelper.EventListener() {
         @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-          CustomExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
+          LoopingExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
           super.onPlayerStateChanged(playWhenReady, playbackState);
         }
       };
 
   private final AtomicInteger counter = new AtomicInteger(0); // initialize count
   private final ExoPlayerHelper helper;
-  private final MediaSource mediaSource;
+  private final LoopingMediaSourceBuilder mediaSourceBuilder;
 
-  public CustomExoPlayerViewHelper(Container container, ToroPlayer player, Uri mediaUri) {
+  public LoopingExoPlayerViewHelper(Container container, ToroPlayer player, Uri mediaUri) {
     super(container, player);
     if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
       throw new IllegalArgumentException("Only SimpleExoPlayerView is supported.");
     }
-    this.helper = new ExoPlayerHelper((SimpleExoPlayerView) player.getPlayerView());
-    this.mediaSource =
-        ExoPlayerHelper.buildMediaSource(container.getContext().getApplicationContext(), mediaUri);
+    helper = new ExoPlayerHelper((SimpleExoPlayerView) player.getPlayerView());
+    Context context = container.getContext().getApplicationContext();
+    mediaSourceBuilder = new LoopingMediaSourceBuilder(context, mediaUri);
   }
 
   public final void setEventListener(ExoPlayer.EventListener eventListener) {
@@ -76,7 +75,7 @@ public final class CustomExoPlayerViewHelper extends ToroPlayerHelper {
     if (counter.getAndIncrement() == 0) { // prevent the multiple time init
       this.helper.addEventListener(internalListener);
       try {
-        this.helper.prepare(new LoopingMediaSource(this.mediaSource));
+        this.helper.prepare(mediaSourceBuilder);
       } catch (ParserException e) {
         e.printStackTrace();
       }
@@ -99,10 +98,6 @@ public final class CustomExoPlayerViewHelper extends ToroPlayerHelper {
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     return this.helper.getPlaybackInfo();
-  }
-
-  public SimpleExoPlayer getPlayer() {
-    return this.helper.getPlayer();
   }
 
   @Override public void release() {

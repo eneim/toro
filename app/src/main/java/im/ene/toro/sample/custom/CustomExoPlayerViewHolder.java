@@ -39,7 +39,7 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_custom;
 
-  CustomExoPlayerViewHelper helper;
+  LoopingExoPlayerViewHelper helper;
   Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
@@ -60,7 +60,7 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new CustomExoPlayerViewHelper(container, this, mediaUri);
+      helper = new LoopingExoPlayerViewHelper(container, this, mediaUri);
     }
     helper.initialize(playbackInfo);
   }

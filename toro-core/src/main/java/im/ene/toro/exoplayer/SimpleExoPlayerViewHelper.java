@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.helper;
+package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,7 +48,7 @@ public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
 
   private final AtomicInteger counter = new AtomicInteger(0); // initialize count
   private final ExoPlayerHelper helper;
-  private final Uri mediaUri;
+  private final MediaSourceBuilder mediaSourceBuilder;
 
   public SimpleExoPlayerViewHelper(Container container, ToroPlayer player, Uri mediaUri) {
     super(container, player);
@@ -55,7 +56,7 @@ public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
       throw new IllegalArgumentException("Only SimpleExoPlayerView is supported.");
     }
     this.helper = new ExoPlayerHelper((SimpleExoPlayerView) player.getPlayerView());
-    this.mediaUri = mediaUri;
+    this.mediaSourceBuilder = new MediaSourceBuilder(container.getContext(), mediaUri);
   }
 
   public final void setEventListener(ExoPlayer.EventListener eventListener) {
@@ -71,7 +72,7 @@ public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     if (counter.getAndIncrement() == 0) { // prevent the multiple time init
       this.helper.addEventListener(internalListener);
       try {
-        this.helper.prepare(this.mediaUri);
+        this.helper.prepare(this.mediaSourceBuilder);
       } catch (ParserException e) {
         e.printStackTrace();
       }
@@ -94,10 +95,6 @@ public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     return this.helper.getPlaybackInfo();
-  }
-
-  public SimpleExoPlayer getPlayer() {
-    return this.helper.getPlayer();
   }
 
   @Override public void release() {

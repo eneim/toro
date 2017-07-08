@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package im.ene.toro.helper;
+package im.ene.toro.exoplayer;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -32,6 +31,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -40,31 +40,23 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.R;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
 import java.net.CookieManager;
@@ -85,91 +77,83 @@ public final class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
-  @NonNull final SimpleExoPlayerView playerView;
-  final Context context;  // will obtain from playerView context.
   // instance is unchanged, but inner fields are changeable.
   @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
+
+  final Context context;  // will obtain from playerView context, should be Application context.
+  @NonNull final SimpleExoPlayerView playerView;
   @ExtensionRendererMode final int extensionMode;
+  final Handler mainHandler;
 
   SimpleExoPlayer player;
-  private Handler mainHandler;
   ComponentListener componentListener;
-  boolean shouldAutoPlay;
-
   DefaultTrackSelector trackSelector;
-  MediaSource mediaSource;
+
+  MediaSourceBuilder mediaSourceBuilder;
+  BandwidthMeter bandwidthMeter;
+
+  boolean shouldAutoPlay;
   boolean needRetrySource;
+
   ArrayList<ExoPlayer.EventListener> eventListeners;
 
-  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, int mode, boolean autoPlay) {
+  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
+      @ExtensionRendererMode int extensionMode, boolean playWhenReady) {
     this.playerView = playerView;
     this.context = playerView.getContext().getApplicationContext();
-    this.extensionMode = mode;
-    this.shouldAutoPlay = autoPlay;
+    this.extensionMode = extensionMode;
+    this.shouldAutoPlay = playWhenReady;
+    this.mainHandler = new Handler(Looper.myLooper());
   }
 
-  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView, @ExtensionRendererMode int mode) {
-    this(playerView, mode, false);
+  public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
+      @ExtensionRendererMode int extensionMode) {
+    this(playerView, extensionMode, false);
   }
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView) {
     this(playerView, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
   }
 
-  public void setPlaybackInfo(@Nullable PlaybackInfo state) {
-    if (state != null) {
-      this.playbackInfo.setResumeWindow(state.getResumeWindow());
-      this.playbackInfo.setResumePosition(state.getResumePosition());
+  public void setPlaybackInfo(@Nullable PlaybackInfo playbackInfo) {
+    if (playbackInfo != null) {
+      this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
+      this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
     }
 
     if (player != null) {
-      boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
+      boolean haveResumePosition = this.playbackInfo.getResumeWindow() != C.INDEX_UNSET;
       if (haveResumePosition) {
-        player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+        player.seekTo(this.playbackInfo.getResumeWindow(), this.playbackInfo.getResumePosition());
       }
     }
   }
 
-  @SuppressWarnings("unused") //
-  public void prepare(Uri media) throws ParserException {
-    if (this.mainHandler == null) {
-      this.mainHandler = new Handler();
-    }
-    MediaSource mediaSource =
-        buildMediaSource(context, media, buildDataSourceFactory(context, true), mainHandler, null);
-    prepare(mediaSource);
+  public void prepare(@NonNull MediaSourceBuilder mediaSourceBuilder) throws ParserException {
+    prepare(mediaSourceBuilder, new DefaultBandwidthMeter(mainHandler, null));
   }
 
-  @SuppressWarnings("WeakerAccess") //
-  public void prepare(MediaSource mediaSource) throws ParserException {
-    if (mediaSource == null) {
-      throw new IllegalStateException("MediaSource must not be null.");
+  public void prepare(@NonNull MediaSourceBuilder mediaSourceBuilder,
+      @Nullable BandwidthMeter bandwidthMeter) throws ParserException {
+    //noinspection ConstantConditions
+    if (mediaSourceBuilder == null) {
+      throw new IllegalArgumentException("MediaSourceBuilder must not be null.");
     }
-
-    this.mediaSource = mediaSource;
-    if (this.mainHandler == null) {
-      this.mainHandler = new Handler();
-    }
-
-    if (componentListener == null) {
-      componentListener = new ComponentListener();
-    }
-
-    this.player = playerView.getPlayer();
-    boolean needNewPlayer = player == null;
-    if (needNewPlayer) {
-      DrmMedia drmMedia = null;
-      if (mediaSource instanceof DrmMedia) {
-        drmMedia = (DrmMedia) mediaSource;
+    this.mediaSourceBuilder = mediaSourceBuilder;
+    DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
+    if (mediaSourceBuilder instanceof DrmMediaProvider) {
+      DrmMedia drmMedia = ((DrmMediaProvider) mediaSourceBuilder).getDrmMedia();
+      //noinspection ConstantConditions
+      if (drmMedia == null) {
+        throw new IllegalArgumentException("DrmMediaProvider must provide a non-null DrmMedia.");
       }
 
-      UUID drmSchemeUuid = drmMedia != null ? getDrmUuid(drmMedia.getType()) : null;
-      DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
+      UUID drmSchemeUuid = getDrmUuid(drmMedia.getType());
       if (drmSchemeUuid != null) {
         String drmLicenseUrl = drmMedia.getLicenseUrl();
         String[] keyRequestPropertiesArray = drmMedia.getKeyRequestPropertiesArray();
         try {
-          drmSessionManager = buildDrmSessionManager(context, drmSchemeUuid, drmLicenseUrl,
+          drmSessionManager = buildDrmSessionManager(drmSchemeUuid, drmLicenseUrl,  //
               keyRequestPropertiesArray, mainHandler);
         } catch (UnsupportedDrmException e) {
           int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
@@ -179,17 +163,35 @@ public final class ExoPlayerHelper {
           return;
         }
       }
+    }
 
+    prepare(mediaSourceBuilder.build(bandwidthMeter), bandwidthMeter, drmSessionManager);
+  }
+
+  @SuppressWarnings("ConstantConditions") //
+  void prepare(@NonNull MediaSource mediaSource, BandwidthMeter bandwidthMeter,
+      DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) throws ParserException {
+    if (mediaSource == null) {
+      throw new IllegalStateException("MediaSource must not be null.");
+    }
+
+    this.bandwidthMeter = bandwidthMeter;
+    if (componentListener == null) {
+      componentListener = new ComponentListener();
+    }
+
+    this.player = playerView.getPlayer();
+    boolean needNewPlayer = player == null;
+    if (needNewPlayer) {
       TrackSelection.Factory adaptiveTrackSelectionFactory =
-          new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
+          new AdaptiveTrackSelection.Factory(bandwidthMeter);
       trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
 
-      DefaultRenderersFactory renderersFactory =
+      RenderersFactory renderersFactory =
           new DefaultRenderersFactory(context, drmSessionManager, extensionMode);
 
       player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector);
       player.addListener(componentListener);
-
       player.setPlayWhenReady(shouldAutoPlay);
       needRetrySource = true;
     }
@@ -206,6 +208,8 @@ public final class ExoPlayerHelper {
   }
 
   public void release() {
+    mainHandler.removeCallbacksAndMessages(null);
+
     if (player != null) {
       shouldAutoPlay = player.getPlayWhenReady();
       updateResumePosition();
@@ -213,15 +217,12 @@ public final class ExoPlayerHelper {
       player.release();
       playerView.setPlayer(null);
       player = null;
-      trackSelector = null;
     }
 
-    mediaSource = null;
+    trackSelector = null;
+    mediaSourceBuilder = null;
+    bandwidthMeter = null;
     componentListener = null;
-    if (mainHandler != null) {
-      mainHandler.removeCallbacksAndMessages(null);
-      mainHandler = null;
-    }
   }
 
   @NonNull public PlaybackInfo getPlaybackInfo() {
@@ -246,9 +247,7 @@ public final class ExoPlayerHelper {
   }
 
   public void play() {
-    if (player != null) {
-      player.setPlayWhenReady(true);
-    }
+    if (player != null) player.setPlayWhenReady(true);
   }
 
   public void pause() {
@@ -265,10 +264,6 @@ public final class ExoPlayerHelper {
 
   public float getVolume() {
     return player != null ? player.getVolume() : 1 /* unity gain, default value */;
-  }
-
-  public SimpleExoPlayer getPlayer() {
-    return player;
   }
 
   void updateResumePosition() {
@@ -298,7 +293,8 @@ public final class ExoPlayerHelper {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-      MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+      MappedTrackInfo mappedTrackInfo =
+          trackSelector != null ? trackSelector.getCurrentMappedTrackInfo() : null;
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
             == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
@@ -376,7 +372,7 @@ public final class ExoPlayerHelper {
       if (isBehindLiveWindow(e)) {
         clearResumePosition();
         try {
-          prepare(ExoPlayerHelper.this.mediaSource);
+          prepare(ExoPlayerHelper.this.mediaSourceBuilder, ExoPlayerHelper.this.bandwidthMeter);
         } catch (ParserException e1) {
           e1.printStackTrace();
         }
@@ -418,38 +414,11 @@ public final class ExoPlayerHelper {
 
   //// static methods
 
-  private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
   private static final CookieManager DEFAULT_COOKIE_MANAGER;
 
   static {
     DEFAULT_COOKIE_MANAGER = new CookieManager();
     DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-  }
-
-  public static MediaSource buildMediaSource(Context ctx, Uri uri) {
-    return buildMediaSource(ctx, uri, buildDataSourceFactory(ctx, true), new Handler(), null);
-  }
-
-  public static MediaSource buildMediaSource(Context context, Uri uri,
-      DataSource.Factory mediaDataSourceFactory, Handler mainHandler, String overrideExtension) {
-    int type = Util.inferContentType(
-        !TextUtils.isEmpty(overrideExtension) ? "." + overrideExtension : uri.getLastPathSegment());
-    switch (type) {
-      case C.TYPE_SS:
-        return new SsMediaSource(uri, buildDataSourceFactory(context, false),
-            new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
-      case C.TYPE_DASH:
-        return new DashMediaSource(uri, buildDataSourceFactory(context, false),
-            new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mainHandler, null);
-      case C.TYPE_HLS:
-        return new HlsMediaSource(uri, mediaDataSourceFactory, mainHandler, null);
-      case C.TYPE_OTHER:
-        return new ExtractorMediaSource(uri, mediaDataSourceFactory, new DefaultExtractorsFactory(),
-            mainHandler, null);
-      default: {
-        throw new IllegalStateException("Unsupported type: " + type);
-      }
-    }
   }
 
   static boolean isBehindLiveWindow(ExoPlaybackException e) {
@@ -466,15 +435,14 @@ public final class ExoPlayerHelper {
     return false;
   }
 
-  @Nullable
-  private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(Context context,
-      UUID uuid, String licenseUrl, String[] keyRequestPropertiesArray, Handler mainHandler)
+  @Nullable DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager(UUID uuid,
+      String licenseUrl, String[] keyRequestPropertiesArray, Handler mainHandler)
       throws UnsupportedDrmException {
     if (Util.SDK_INT < 18) {
       return null;
     }
-    HttpMediaDrmCallback drmCallback =
-        new HttpMediaDrmCallback(licenseUrl, buildHttpDataSourceFactory(context, false));
+    HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl,
+        new DefaultHttpDataSourceFactory(Util.getUserAgent(context, ToroUtil.LIB_NAME), null));
     if (keyRequestPropertiesArray != null) {
       for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
         drmCallback.setKeyRequestProperty(keyRequestPropertiesArray[i],
@@ -483,30 +451,6 @@ public final class ExoPlayerHelper {
     }
     return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
         null, mainHandler, null);
-  }
-
-  @SuppressWarnings("WeakerAccess")
-  static HttpDataSource.Factory buildHttpDataSourceFactory(Context context,
-      DefaultBandwidthMeter bandwidthMeter) {
-    return new DefaultHttpDataSourceFactory(
-        Util.getUserAgent(context.getApplicationContext(), "Toro"), bandwidthMeter);
-  }
-
-  private static DataSource.Factory buildDataSourceFactory(Context context,
-      DefaultBandwidthMeter bandwidthMeter) {
-    return new DefaultDataSourceFactory(context, bandwidthMeter,
-        buildHttpDataSourceFactory(context, bandwidthMeter));
-  }
-
-  @SuppressWarnings("WeakerAccess")
-  static HttpDataSource.Factory buildHttpDataSourceFactory(Context context,
-      boolean useBandwidthMeter) {
-    return buildHttpDataSourceFactory(context, useBandwidthMeter ? BANDWIDTH_METER : null);
-  }
-
-  private static DataSource.Factory buildDataSourceFactory(Context context,
-      boolean useBandwidthMeter) {
-    return buildDataSourceFactory(context, useBandwidthMeter ? BANDWIDTH_METER : null);
   }
 
   private static UUID getDrmUuid(String typeString) throws ParserException {
