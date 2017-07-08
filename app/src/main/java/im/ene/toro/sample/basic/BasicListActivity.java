@@ -17,9 +17,12 @@
 package im.ene.toro.sample.basic;
 
 import android.os.Bundle;
-import im.ene.toro.sample.Deck;
+import android.support.v7.widget.LinearLayoutManager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.nested.NestedListFragment;
+import im.ene.toro.widget.Container;
 
 /**
  * @author eneim (7/2/17).
@@ -27,15 +30,24 @@ import im.ene.toro.sample.nested.NestedListFragment;
 
 public class BasicListActivity extends BaseActivity {
 
+  @BindView(R.id.player_container) Container container;
+  LinearLayoutManager layoutManager;
+  BasicListAdapter adapter;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
-      try {
-        Deck.present(this, BasicListFragment.class);
-      } catch (Deck.ToroDemoException e) {
-        e.printStackTrace();
-        if (e.getCause() != null) e.getCause().printStackTrace();
-      }
-    }
+    setContentView(R.layout.fragment_basic);
+    ButterKnife.bind(this);
+
+    layoutManager = new LinearLayoutManager(this);
+    container.setLayoutManager(layoutManager);
+    adapter = new BasicListAdapter();
+    container.setAdapter(adapter);
+  }
+
+  @Override protected void onDestroy() {
+    layoutManager = null;
+    adapter = null;
+    super.onDestroy();
   }
 }
