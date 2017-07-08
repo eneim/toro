@@ -88,7 +88,7 @@
           android:layout_height="wrap_content"
           android:minHeight="@dimen/video_min_height"
           android:visibility="gone"
-          app:resize_mode="fixed_width"
+          app:resize_mode="fixed_height"
           app:surface_type="texture_view"
           app:use_controller="false"
           >

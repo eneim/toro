@@ -15,81 +15,31 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-  <HorizontalScrollView
-      android:id="@+id/button_bar"
+  <android.support.design.widget.TabLayout
+      android:id="@+id/tab_layout"
       android:layout_width="match_parent"
-      android:layout_height="?attr/actionBarSize"
-      android:layout_alignParentBottom="true"
-      >
-    <LinearLayout
-        android:id="@+id/button_bar_container"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        >
+      android:layout_height="4dp"
+      android:layout_alignParentTop="true"
+      app:tabBackground="@color/cardview_dark_background"
+      app:tabGravity="fill"
+      app:tabIndicatorColor="#FFFF00"
+      app:tabIndicatorHeight="4dp"
+      app:tabMode="fixed"
+      />
 
-      <Button
-          android:id="@+id/button_change_all"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:minWidth="160dp"
-          android:text="Change All"
-          />
-
-      <Button
-          android:id="@+id/button_change"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:minWidth="160dp"
-          android:text="Change"
-          />
-
-      <Button
-          android:id="@+id/button_move"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:minWidth="160dp"
-          android:text="Move"
-          />
-
-      <Button
-          android:id="@+id/button_swap"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:minWidth="160dp"
-          android:text="Swap"
-          />
-
-      <Button
-          android:id="@+id/button_insert"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:minWidth="160dp"
-          android:text="Insert"
-          />
-
-      <Button
-          android:id="@+id/button_remove"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:minWidth="160dp"
-          android:text="Remove"
-          />
-    </LinearLayout>
-  </HorizontalScrollView>
-
-  <im.ene.toro.widget.Container
-      android:id="@+id/recycler_view"
+  <android.support.v4.view.ViewPager
+      android:id="@+id/pager"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_above="@id/button_bar"
-      android:layout_alignParentTop="true"
-      android:clipToPadding="false"
-      android:padding="4dp"
+      android:layout_alignParentBottom="true"
+      android:layout_below="@id/tab_layout"
       />
+
 </RelativeLayout>

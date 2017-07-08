@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import im.ene.toro.Cancellable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.media.PlaybackInfo;
@@ -33,25 +32,30 @@ import java.util.ArrayList;
  *         General helper class for a specific {@link ToroPlayer}. This class helps forwarding the
  *         playback state to the player if there is any {@link ToroPlayer.EventListener}
  *         registered. It also requests the initialization for the Player.
- *
- *         See also {@link SimpleExoPlayerViewHelper}.
  */
 
-@SuppressWarnings("WeakerAccess") public abstract class ToroPlayerHelper implements Cancellable {
+@SuppressWarnings("WeakerAccess") //
+public abstract class ToroPlayerHelper {
 
   protected static final String TAG = "ToroLib:ViewHelper";
 
   private final Handler handler = new Handler(new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
-      if (eventListeners == null || eventListeners.isEmpty()) return false;
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
         case State.STATE_BUFFERING /* ExoPlayer.STATE_BUFFERING */:
+          internalListener.onBuffering();
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onBuffering();
           }
           return true;
         case State.STATE_READY /*  ExoPlayer.STATE_READY */:
+          if (playWhenReady) {
+            internalListener.onPlaying();
+          } else {
+            internalListener.onPaused();
+          }
+
           for (ToroPlayer.EventListener callback : eventListeners) {
             if (playWhenReady) {
               callback.onPlaying();
@@ -61,6 +65,7 @@ import java.util.ArrayList;
           }
           return true;
         case State.STATE_END /* ExoPlayer.STATE_ENDED */:
+          internalListener.onCompleted(container, player);
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onCompleted(container, player);
           }
@@ -71,10 +76,27 @@ import java.util.ArrayList;
     }
   });
 
-  @NonNull final Container container;
-  @NonNull final ToroPlayer player;
+  @NonNull protected final Container container;
+  @NonNull protected final ToroPlayer player;
 
-  ArrayList<ToroPlayer.EventListener> eventListeners;
+  final ArrayList<ToroPlayer.EventListener> eventListeners = new ArrayList<>();
+  final ToroPlayer.EventListener internalListener = new ToroPlayer.EventListener() {
+    @Override public void onBuffering() {
+      // do nothing
+    }
+
+    @Override public void onPlaying() {
+      // do nothing
+    }
+
+    @Override public void onPaused() {
+      // do nothing
+    }
+
+    @Override public void onCompleted(Container container, ToroPlayer player) {
+      container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+    }
+  };
 
   public ToroPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player) {
     this.container = container;
@@ -83,14 +105,11 @@ import java.util.ArrayList;
 
   @SuppressWarnings("ConstantConditions")
   public final void addPlayerEventListener(@NonNull ToroPlayer.EventListener eventListener) {
-    if (this.eventListeners == null) {
-      this.eventListeners = new ArrayList<>();
-    }
     if (eventListener != null) this.eventListeners.add(eventListener);
   }
 
   public final void removePlayerEventListener(ToroPlayer.EventListener eventListener) {
-    if (this.eventListeners != null && eventListener != null) {
+    if (eventListener != null) {
       this.eventListeners.remove(eventListener);
     }
   }
@@ -125,7 +144,7 @@ import java.util.ArrayList;
     handler.obtainMessage(playbackState, playWhenReady).sendToTarget();
   }
 
-  @Override public void cancel() throws Exception {
+  public void release() {
     handler.removeCallbacksAndMessages(null);
   }
 }

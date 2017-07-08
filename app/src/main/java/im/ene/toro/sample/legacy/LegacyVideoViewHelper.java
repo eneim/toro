@@ -175,7 +175,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     }
   }
 
-  @Override public void cancel() throws Exception {
+  @Override public void release() {
     this.playerView.setOnCompletionListener(null);
     this.playerView.setOnPreparedListener(null);
     this.playerView.setPlayerEventListener(null);
@@ -186,6 +186,6 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     this.mediaPlayer = null;
     this.playerState = State.STATE_IDLE;
     this.playWhenReady = false;
-    super.cancel();
+    super.release();
   }
 }

@@ -18,14 +18,18 @@ package im.ene.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewParent;
+import im.ene.toro.widget.Container;
 
 /**
  * @author eneim | 5/31/17.
  */
 
-public final class ToroUtil {
+@SuppressWarnings("unused") public final class ToroUtil {
 
   private static final String TAG = "ToroLib:Util";
 
@@ -33,23 +37,33 @@ public final class ToroUtil {
     throw new RuntimeException("Meh!");
   }
 
-  private static Rect getViewRect(View view) {
-    Rect rect = new Rect();
-    Point offset = new Point();
-    view.getGlobalVisibleRect(rect, offset);
-    return rect;
-  }
+  public static final String LIB_NAME = "ToroLib, v3.0.0";
 
-  public static float visibleAreaOffset(@NonNull View playerView, @NonNull View container) {
-    Rect videoRect = getViewRect(playerView);
-    Rect parentRect = getViewRect(container);
+  /**
+   * Get the ratio in range of 0.0 ~ 1.0 of the visible area of a {@link ToroPlayer}'s playerView.
+   *
+   * @param player the {@link ToroPlayer} need to investigate.
+   * @param parent the {@link ViewParent} that holds the {@link ToroPlayer}. If {@code null} or
+   * not a {@link Container} then this method must returns 0.0f;
+   * @return the ratio value in range of 0.0 ~ 1.0 of the visible area.
+   */
+  @FloatRange(from = 0.0, to = 1.0) //
+  public static float visibleAreaOffset(@NonNull ToroPlayer player, @Nullable ViewParent parent) {
+    if (parent == null || !(parent instanceof Container)) return 0.0f;
 
-    float percent = 0.f;
-    if (parentRect != null && (parentRect.contains(videoRect) || parentRect.intersect(videoRect))) {
+    View playerView = player.getPlayerView();
+    Rect drawRect = new Rect();
+    playerView.getDrawingRect(drawRect);
+    int drawArea = drawRect.width() * drawRect.height();
+
+    Rect videoRect = new Rect();
+    boolean visible = playerView.getGlobalVisibleRect(videoRect, new Point());
+
+    float offset = 0.f;
+    if (visible && drawArea > 0) {
       int visibleArea = videoRect.height() * videoRect.width();
-      int viewArea = playerView.getWidth() * playerView.getHeight();
-      percent = viewArea <= 0.f ? 1.f : visibleArea / (float) viewArea;
+      offset = visibleArea / (float) drawArea;
     }
-    return percent;
+    return offset;
   }
 }

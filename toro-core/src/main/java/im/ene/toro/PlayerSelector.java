@@ -17,13 +17,13 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
-import android.view.View;
 import im.ene.toro.widget.Container;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static im.ene.toro.ToroUtil.visibleAreaOffset;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -64,7 +64,8 @@ public interface PlayerSelector {
    * @return the collection of {@link ToroPlayer}s to start a playback. An on-going playback can be
    * selected, but it will keep playing.
    */
-  @NonNull Collection<ToroPlayer> select(@NonNull View container, @NonNull List<ToroPlayer> items);
+  @NonNull Collection<ToroPlayer> select(@NonNull Container container,
+      @NonNull List<ToroPlayer> items);
 
   /**
    * The 'reverse' selector of this selector, which can help to select the reversed collection of
@@ -78,7 +79,7 @@ public interface PlayerSelector {
   @NonNull PlayerSelector reverse();
 
   PlayerSelector DEFAULT = new PlayerSelector() {
-    @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
         @NonNull List<ToroPlayer> items) {
       int count = items.size();
       return count > 0 ? singletonList(items.get(0)) : Collections.<ToroPlayer>emptyList();
@@ -90,7 +91,7 @@ public interface PlayerSelector {
   };
 
   PlayerSelector DEFAULT_REVERSE = new PlayerSelector() {
-    @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
         @NonNull List<ToroPlayer> items) {
       int count = items.size();
       return count > 0 ? singletonList(items.get(count - 1)) : Collections.<ToroPlayer>emptyList();
@@ -102,14 +103,12 @@ public interface PlayerSelector {
   };
 
   @SuppressWarnings("unused") PlayerSelector BY_AREA = new PlayerSelector() {
-    @NonNull @Override public Collection<ToroPlayer> select(@NonNull final View container,
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull final Container container,
         @NonNull List<ToroPlayer> items) {
       int count = items.size();
       Collections.sort(items, new Comparator<ToroPlayer>() {
         @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
-          return Float.compare( //
-              ToroUtil.visibleAreaOffset(o1.getPlayerView(), container),
-              ToroUtil.visibleAreaOffset(o2.getPlayerView(), container));
+          return Float.compare(visibleAreaOffset(o1, container), visibleAreaOffset(o2, container));
         }
       });
 
@@ -122,7 +121,7 @@ public interface PlayerSelector {
   };
 
   @SuppressWarnings("unused") PlayerSelector NONE = new PlayerSelector() {
-    @NonNull @Override public Collection<ToroPlayer> select(@NonNull View container, //
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
         @NonNull List<ToroPlayer> items) {
       return emptyList();
     }

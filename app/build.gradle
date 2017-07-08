@@ -76,6 +76,10 @@ dependencies {
   compile "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support.constraint:constraint-layout:1.1.0-beta1"
 
+  compile ('net.opacapp:multiline-collapsingtoolbar:1.4.0') {
+    transitive = false
+  }
+
   // additional dependencies.
   compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
   compile ("com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}") {
@@ -106,6 +110,10 @@ dependencies {
   compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
   compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
+  // some custom LayoutManager
+  compile 'com.google.android:flexbox:0.3.0'
+
+  // compile 'com.azoft.carousellayoutmanager:carousel:1.2.1'
   // compile 'com.android.support:multidex:1.0.1'
 }
 
