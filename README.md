@@ -27,7 +27,7 @@
 - Customizable playback component: either MediaPlayer or ExoPlayer will work. Toro comes with default helper classes to support these 2.
 - Customizable player selector: custom the selection of the player to start, among many other players.
   - Which in turn support single/multiple players.
-- First class Support ExoPlayer 2 and MediaPlayer (by Helper classes). 
+- First class Support ExoPlayer 2. 
 
 ### Demo (Youtube Video)
 
@@ -42,7 +42,7 @@ Latest version:
  
 ```groovy
 ext {
-  toroVersion = '3.0.0-alpha2'
+  toroVersion = '3.0.0-beta1'
   // below: other dependencies' versions maybe
 }
 
@@ -63,7 +63,6 @@ Below: a simple Container with default max simultaneous players count to 1.
   android:id="@+id/recycler_view"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  app:max_player_number="1"
 />
 ```
 
@@ -84,8 +83,8 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
     ButterKnife.bind(this, itemView);
   }
 
-  @Override
-  public void bind(@NonNull RecyclerView.Adapter adapter, Uri item, List<Object> payloads) {
+  // called from Adapter to setup the media
+  void bind(@NonNull RecyclerView.Adapter adapter, Uri item, List<Object> payloads) {
     if (item != null) {
       mediaUri = item;
     }
@@ -96,27 +95,20 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
-    PlaybackInfo state = new PlaybackInfo();
-    if (helper != null) state = helper.getLatestPlaybackInfo();
-    return state;
+    return helper != null ? helper.getLatestPlaybackInfo() : new PlaybackInfo();
   }
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
-      helper.setEventListener(eventListener);
     }
     helper.initialize(playbackInfo);
   }
 
   @Override public void release() {
     if (helper != null) {
-      try {
-        helper.cancel();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+      helper.release();
       helper = null;
     }
   }
@@ -134,12 +126,7 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   }
 
   @Override public boolean wantsToPlay() {
-    ViewParent parent = itemView.getParent();
-    float offset = 0;
-    if (parent != null && parent instanceof View) {
-      offset = ToroUtil.visibleAreaOffset(playerView, (View) parent);
-    }
-    return offset >= 0.85;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
   }
 
   @Override public int getPlayerOrder() {
@@ -148,7 +135,7 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 }
 ```
 
-More advanced View holder implementations as well as Java version can be found in **app** module.
+More advanced View holder implementations can be found in **app** module.
 
 4. Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
 
@@ -156,44 +143,13 @@ That's all. Your View should be ready to play.
 
 ### Advance usage and class documentation (I need your request to update this list)
 
-1. Enable playback position save/restore: using ```PlayerStateManager```
+1. Enable playback position save/restore: using ```CacheManager```
 
-The implementation is simple: create a class implementing ```PlayerStateManager```, then set it to the Container using ```Container#setPlayerStateManager(PlayerStateManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
-
-Below is an example using TreeMap to cache playback state (copied from the file above)
-
-```java
-// Implement the PlayerStateManager;
-
-private final Map<FbItem, PlaybackInfo> stateCache =
-    new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getIndex(), o2.getIndex()));
-
-@Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-  if (order >= 0) stateCache.put(getItem(order), playbackInfo);
-}
-
-@NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
-  FbItem entity = order >= 0 ? getItem(order) : null;
-  PlaybackInfo state = new PlaybackInfo();
-  if (entity != null) {
-    state = stateCache.get(entity);
-    if (state == null) {
-      state = new PlaybackInfo();
-      stateCache.put(entity, state);
-    }
-  }
-  return state;
-}
-
-// TODO return null if client doesn't want to save playback states on config change.
-@Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
-  return Observable.fromIterable(stateCache.keySet()).map(items::indexOf).toList().blockingGet();
-}
-```
+The implementation is simple: create a class implementing ```CacheManager```, then set it to the Container using ```Container#setCacheManager(CacheManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
 
 2. Multiple simultaneous playback
 
-*Playing multiple Videos at once is considered bad practice*. It is a heavy power consuming task and also unfriendly to hardware. In fact, each device has its own limitation of multiple decoding ability, so developer must be aware of what you are doing. I don't officially support this behaviour. Developer should own the video source to optimize the video for this purpose.
+***Playing multiple Videos at once is considered bad practice***. It is a heavy power consuming task and also unfriendly to hardware. In fact, each device has its own limitation of multiple decoding ability, so developer must be aware of what you are doing. I don't officially support this behaviour. Developer should own the video source to optimize the video for this purpose.
 
 To be able to have more than one Video play at the same time, developer must use a custom ```PlayerSelector```. This can also provide a powerful control to number of playback in a dynamic way.
 
@@ -245,13 +201,9 @@ Behaviour:
 
 To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Container. To enable it again, just use a Selector that actually select the player. There is ```PlayerSelector.DEFAULT``` built-in.
 
-4. Save/Restore playback info on config change.
-
-By default, Container cannot save/restore the playback info on config change. To support this, it requires a ```PlayerStateManager``` whose ```getSavedPlayerOrders()``` returns a non-null collection of Integers. The example above also demonstrate this implementation.
-
 ### Contribution
 
-- Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` before any build.
+- **IMPORTANT:** Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` before any build.
 
 - Issue report and Pull Requests are welcome. Please follow issue format for quick response.
 
