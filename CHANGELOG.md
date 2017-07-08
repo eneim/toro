@@ -30,6 +30,12 @@ Changelog
 
 - [Bug Fix] ``ToroPlayerHelper`` now has default ``ToroPlayer.EventListener`` to correctly handle the playback's complete event.
 
+- ``ExoPlayerHelper`` and other classes those supports ``ExoPlayer`` library are now re-located into ``exoplayer`` package.
+
+- ``MediaSourceBuilder`` class is added, provides the easy way to build up ``ExoPlayer``'s ``MediaSource``. Along with this, ``ExoPlayerHelper#prepare()`` methods will now accept ``MediaSourceBuilder`` and optional ``BandwidthMeter`` instead of current ``Uri`` or ``MediaSource``. This change will increases the flexibility for the users of this library.
+
+- Add ``DrmMediaProvider`` interface by which ``ExoPlayerHelper`` can know if application is using a Drm media or not.
+
 - [Bug Fix] ``ExoPlayerHelper`` will now correctly update resume position: it will not use Player's data if the Player is in IDLE state.
 
 - All method that add listener/callback will require a non-null parameter.
