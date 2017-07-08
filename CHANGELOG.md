@@ -59,11 +59,11 @@ Changelog
 - There are **7 + 1** demos at the moment, carefully implemented:
   
   - **Custom LayoutManager**: this is the entry point of Sample app, also shows the use of Toro using custom LayoutManager. 
-  Clicking to **OPEN DEMOS** will reveal more demonstrations as below.
+  Clicking to **OPEN DEMOS** will reveal more demonstrations as below. This demo also showcases the use of ``LoopingMediaSource`` using a custom ``ToroPlayerHelper`` and ``LoopingMediaSourceBuilder``.
   
   - **Basic**: using Toro with least effort. This shows how simple it is to get start with Toro. Also this sample does not support playback info save/restore.
   
-  - **Facebook Timeline**: this demo uses Toro to mimic the behaviour of Facebook's timeline, with ``click to open playlist``, ``rotate to open current Video in full-screen``. It also surpass the default behavior by correctly handling the config changes and supporting Multi-Windows mode.
+  - **Facebook Timeline**: this demo uses Toro to mimic the behaviour of Facebook's timeline, with ``click to open playlist``, ``rotate to open current Video in full-screen``. It also surpass the default behavior by correctly handling the config changes and supporting Multi-Windows mode. This demo also showcases a custom use of ``ToroPlayer.EventListener`` to allow the playlist to automatically scroll to next player after completing the playback.
   
   - **Nested Container**: this demo shows how to use a ``Container`` inside other ``Container``. The real use case of this is the suggested Video list for a specific Video (like Youtube).
   
