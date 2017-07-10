@@ -145,7 +145,7 @@ public class Container extends RecyclerView {
 
     if (playerManager.manages(player)) {
       // Only if container is in idle state and player is not playing.
-      if (getScrollState() == 0 && !player.isPlaying()) playerManager.play(player);
+      if (getScrollState() == SCROLL_STATE_IDLE && !player.isPlaying()) playerManager.play(player);
     } else {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
