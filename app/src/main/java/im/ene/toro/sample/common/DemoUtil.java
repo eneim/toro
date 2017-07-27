@@ -16,8 +16,9 @@
 
 package im.ene.toro.sample.common;
 
-import im.ene.toro.sample.ToroDemo;
 import java.util.Date;
+
+import static im.ene.toro.sample.ToroDemo.getApp;
 
 /**
  * @author eneim | 6/8/17.
@@ -34,6 +35,6 @@ public class DemoUtil {
   }
 
   public static String getRelativeTimeString(long time) {
-    return ToroDemo.getApp().getPrettyTime().format(new Date(time));
+    return getApp().getPrettyTime().format(new Date(time));
   }
 }

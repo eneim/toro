@@ -28,6 +28,8 @@ import java.lang.reflect.Method;
 
 /**
  * @author eneim | 6/6/17.
+ *
+ *         A "Deck" to "present" some demonstrations. Naming by the context, no big deal.
  */
 
 public final class Deck {
@@ -64,16 +66,17 @@ public final class Deck {
     }
   }
 
-  public static void present(FragmentActivity activity, String fragmentClassName)
-      throws ToroDemoException {
+  @SuppressWarnings("unused") //
+  public static void present(FragmentActivity activity, String clazz) throws ToroDemoException {
     try {
-      present(activity, Class.forName(fragmentClassName));
+      present(activity, Class.forName(clazz));
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
       throw new ToroDemoException(e.getLocalizedMessage(), e);
     }
   }
 
+  @SuppressWarnings("WeakerAccess") //
   public static Fragment createFragment(Class<?> fragmentClass) throws ToroDemoException {
     Fragment fragment;
     //noinspection TryWithIdenticalCatches
@@ -98,14 +101,15 @@ public final class Deck {
   }
 
   // naming this exception by intent, for log filtering purpose.
-  @SuppressWarnings("WeakerAccess") public static class ToroDemoException extends Exception {
+  @SuppressWarnings("WeakerAccess") //
+  public static class ToroDemoException extends Exception {
 
     public ToroDemoException(String message, Throwable cause) {
       super(message, cause);
     }
   }
 
-  //// For ViewPager
+  //// present the ViewPager
 
   enum Slide {
     INTRO("Intro", IntroFragment.class),  //
