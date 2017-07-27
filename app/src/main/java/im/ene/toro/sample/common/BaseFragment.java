@@ -42,7 +42,7 @@ public class BaseFragment extends Fragment {
 
   /**
    * The following flag is used for {@link Fragment} that is inside a ViewPager.
-   * Default is {@code false}.
+   * Default is {@code false} for non-ViewPager use.
    */
   protected boolean viewPagerMode = false;
 

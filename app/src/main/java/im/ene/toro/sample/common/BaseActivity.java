@@ -21,9 +21,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import im.ene.toro.sample.BuildConfig;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
 /**
  * @author eneim | 6/6/17.
@@ -34,21 +31,10 @@ public abstract class BaseActivity extends AppCompatActivity {
   private static boolean D = BuildConfig.DEBUG;
   protected String TAG = "Toro:BaseActivity";
 
-  private static final CookieManager DEFAULT_COOKIE_MANAGER;
-
-  static {
-    DEFAULT_COOKIE_MANAGER = new CookieManager();
-    DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-  }
-
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     TAG = "Toro:" + getClass().getSimpleName();
     if (D) Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
-
-    if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
-      CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
-    }
   }
 
   @Override protected void onPostCreate(@Nullable Bundle bundle) {

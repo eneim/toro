@@ -76,7 +76,7 @@ dependencies {
   compile "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
   compile "com.android.support.constraint:constraint-layout:1.1.0-beta1"
 
-  compile ('net.opacapp:multiline-collapsingtoolbar:1.4.0') {
+  compile ('net.opacapp:multiline-collapsingtoolbar:1.5.0') {
     transitive = false
   }
 
@@ -90,21 +90,21 @@ dependencies {
   compile "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
   compile "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
 
-  compile 'com.jakewharton:butterknife:8.5.1'
-  annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+  compile 'com.jakewharton:butterknife:8.7.0'
+  annotationProcessor 'com.jakewharton:butterknife-compiler:8.7.0'
 
   // rxJava 2
   compile("io.reactivex.rxjava2:rxandroid:2.0.1", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
-  compile 'io.reactivex.rxjava2:rxjava:2.1.1'
+  compile 'io.reactivex.rxjava2:rxjava:2.1.2'
 
   debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
   testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
-  compile 'com.github.bumptech.glide:glide:4.0.0-RC0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC0'
+  compile 'com.github.bumptech.glide:glide:4.0.0-RC1'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
 
   compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
   compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'

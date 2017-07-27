@@ -46,11 +46,13 @@ public class MainActivity extends BaseActivity implements IntroFragment.Callback
     tabLayout.setupWithViewPager(viewPager);
   }
 
+  // IntroFragment.Callback#onToolbarCreated
   @Override public void onToolbarCreated(Toolbar toolbar) {
     setSupportActionBar(toolbar);
     setTitle(R.string.app_name);
   }
 
+  // IntroFragment.Callback#onDemoClick
   @Override public void onDemoClick(View view, IntroFragment.Demo demo) {
     startActivity(new Intent(this, demo.getActivityClass()));
   }
