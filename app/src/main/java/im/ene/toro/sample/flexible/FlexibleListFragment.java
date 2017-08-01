@@ -134,7 +134,7 @@ public class FlexibleListFragment extends BaseFragment {
       handler.postDelayed(() -> {
         //noinspection ConstantConditions
         if (container != null) container.setPlayerSelector(selector);
-      }, 200);
+      }, 500);
     } else {
       container.setPlayerSelector(activeSelector);
     }
@@ -169,6 +169,6 @@ public class FlexibleListFragment extends BaseFragment {
     handler.postDelayed(() -> {
       //noinspection ConstantConditions
       if (container != null) container.setPlayerSelector(selector);
-    }, 200);
+    }, 500);
   }
 }

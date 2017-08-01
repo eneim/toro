@@ -71,6 +71,11 @@
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.NoActionBar"/>
 
+    <activity
+        android:name=".pagers.ManyPagersActivity"
+        android:launchMode="singleTop"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
     <activity-alias
         android:name=".Launch"
         android:targetActivity=".custom.CustomLayoutActivity">

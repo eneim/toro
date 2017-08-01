@@ -70,7 +70,7 @@ public class BasicListFragment extends BaseFragment {
       // which will cause our setup doesn't work well. We need a delay to make things work.
       handler.postDelayed(() -> {
         if (container != null) container.setPlayerSelector(selector);
-      }, 200);
+      }, 500);
     } else {
       // Normal case, just go forward.
       container.setPlayerSelector(selector);
@@ -100,6 +100,6 @@ public class BasicListFragment extends BaseFragment {
     // which will cause our setup doesn't work well. We need a delay to make things work.
     handler.postDelayed(() -> {
       if (container != null) container.setPlayerSelector(selector);
-    }, 200);
+    }, 500);
   }
 }
