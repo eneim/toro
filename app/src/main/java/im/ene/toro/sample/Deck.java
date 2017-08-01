@@ -111,7 +111,7 @@ public final class Deck {
 
   //// present the ViewPager
 
-  enum Slide {
+  public enum Slide {
     INTRO("Intro", IntroFragment.class),  //
     // CUSTOM("Custom", CustomLayoutFragment.class), // This is shown only by Activity
     BASIC("Basic", BasicListFragment.class), //

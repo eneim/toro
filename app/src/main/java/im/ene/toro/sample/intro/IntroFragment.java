@@ -36,6 +36,7 @@ import im.ene.toro.sample.facebook.FacebookDemoActivity;
 import im.ene.toro.sample.flexible.FlexibleListActivity;
 import im.ene.toro.sample.legacy.LegacyDemoActivity;
 import im.ene.toro.sample.nested.NestedListActivity;
+import im.ene.toro.sample.pagers.ManyPagersActivity;
 
 /**
  * @author eneim (7/2/17).
@@ -145,6 +146,7 @@ public class IntroFragment extends BaseFragment {
     NESTED("Nested Container Demo", NestedListActivity.class),  //
     COMPLEX("Complicated Grid Demo", ComplexListActivity.class),  //
     FLEXIBLE("Flexible Grid Demo", FlexibleListActivity.class),  //
+    MANY_PAGERS("ViewPagers in ViewPager Demo", ManyPagersActivity.class),  //
     // CUSTOM("Custom Layout Demo", CustomLayoutActivity.class),  // This is the launch Activity
     LEGACY("Legacy VideoView Demo", LegacyDemoActivity.class) //
     ;

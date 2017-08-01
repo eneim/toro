@@ -38,7 +38,10 @@ public class BaseFragment extends Fragment {
 
   private static final boolean D = BuildConfig.DEBUG;
 
-  protected String TAG = "Toro:BaseFragment";
+  // Save viewPagerMode flag on config change
+  private static final String STATE_VIEW_PAGER_MODE = "toro:fragment:state:view_pager_mode";
+
+  protected String TAG = "Toro:" + getClass().getSimpleName();
 
   /**
    * The following flag is used for {@link Fragment} that is inside a ViewPager.
@@ -57,7 +60,6 @@ public class BaseFragment extends Fragment {
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
-    TAG = "Toro:" + getClass().getSimpleName();
     if (D) Log.wtf(TAG, "onAttach() called with: context = [" + context + "]");
   }
 
@@ -84,6 +86,9 @@ public class BaseFragment extends Fragment {
       Log.wtf(TAG, "onViewCreated() called with: view = [" + view + "], bundle = [" + bundle + "]");
     }
     unbinder = ButterKnife.bind(this, view);
+    if (bundle != null && bundle.containsKey(STATE_VIEW_PAGER_MODE)) {
+      this.viewPagerMode = bundle.getBoolean(STATE_VIEW_PAGER_MODE);
+    }
   }
 
   @Override public void onActivityCreated(@Nullable Bundle bundle) {
@@ -99,6 +104,7 @@ public class BaseFragment extends Fragment {
   @Override public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     if (D) Log.wtf(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
+    outState.putBoolean(STATE_VIEW_PAGER_MODE, this.viewPagerMode);
   }
 
   @Override public void onStart() {
@@ -171,5 +177,12 @@ public class BaseFragment extends Fragment {
   @Override public void onAttachFragment(Fragment childFragment) {
     super.onAttachFragment(childFragment);
     if (D) Log.wtf(TAG, "onAttachFragment() called with: childFragment = [" + childFragment + "]");
+  }
+
+  @Override public void setUserVisibleHint(boolean isVisibleToUser) {
+    super.setUserVisibleHint(isVisibleToUser);
+    if (D) {
+      Log.d(TAG, "setUserVisibleHint() called with: isVisibleToUser = [" + isVisibleToUser + "]");
+    }
   }
 }
