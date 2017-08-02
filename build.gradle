@@ -46,7 +46,7 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.0.0-SNAPSHOT' // bintrayUpload will fail. change to 3.0.0 when ready
+    releaseVersion = '3.0.0'
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
   }
