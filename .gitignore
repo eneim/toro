@@ -33,3 +33,6 @@
 /toro-core/.project
 /toro-core/.classpath
 /app/.settings/
+/app-youtube/src/androidTest/
+/app-youtube/src/test/
+/app-youtube/build/

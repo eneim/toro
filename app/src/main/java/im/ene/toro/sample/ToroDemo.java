@@ -20,6 +20,9 @@ import android.app.Application;
 import android.content.res.Configuration;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import org.ocpsoft.prettytime.PrettyTime;
 
 /**
@@ -28,6 +31,13 @@ import org.ocpsoft.prettytime.PrettyTime;
 
 public class ToroDemo extends Application {
 
+  private static final CookieManager DEFAULT_COOKIE_MANAGER;
+
+  static {
+    DEFAULT_COOKIE_MANAGER = new CookieManager();
+    DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+  }
+
   private static ToroDemo singleton;
 
   @Override public void onCreate() {
@@ -35,6 +45,12 @@ public class ToroDemo extends Application {
     singleton = this;
     AndroidThreeTen.init(this);
     prettyTime = new PrettyTime();
+
+    // adopt from ExoPlayer demo.
+    if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
+      CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
+    }
+
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       // You should not init your app in this process.
@@ -46,7 +62,6 @@ public class ToroDemo extends Application {
   @Override public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     // locale changes and so on.
-    AndroidThreeTen.init(this);
     prettyTime = new PrettyTime();
   }
 
@@ -54,7 +69,7 @@ public class ToroDemo extends Application {
     return singleton;
   }
 
-  PrettyTime prettyTime;
+  private PrettyTime prettyTime;
 
   public PrettyTime getPrettyTime() {
     return prettyTime;

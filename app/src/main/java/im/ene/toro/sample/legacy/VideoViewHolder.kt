@@ -66,25 +66,24 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
   override fun isPlaying() = playerHelper != null && playerHelper!!.isPlaying
 
   override fun release() {
-    playerHelper?.cancel()
+    playerHelper?.release()
     playerHelper = null
   }
 
   override fun wantsToPlay(): Boolean {
-    val parent = itemView.parent
-    var offset = 0f
-    if (parent != null && parent is View) {
-      offset = ToroUtil.visibleAreaOffset(videoView, parent)
-    }
-    return offset >= 0.85
+    return ToroUtil.visibleAreaOffset(this, itemView.parent) >= 0.85
   }
 
   override fun getPlayerOrder() = adapterPosition
 
+  override fun onContainerScrollStateChange(container: Container?, newState: Int) {
+    // Do nothing
+  }
+
   // API to call from Adapter
-  fun bind(videoData: VideoData?) {
-    if (videoData != null) {
-      this.mediaUri = videoData.mediaUri
+  fun bind(media: Media?) {
+    if (media != null) {
+      this.mediaUri = media.mediaUri
     }
   }
 }

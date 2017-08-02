@@ -6,7 +6,7 @@
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
+ [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
 [![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
 ### Menu
@@ -27,7 +27,7 @@
 - Customizable playback component: either MediaPlayer or ExoPlayer will work. Toro comes with default helper classes to support these 2.
 - Customizable player selector: custom the selection of the player to start, among many other players.
   - Which in turn support single/multiple players.
-- First class Support ExoPlayer 2 and MediaPlayer (by Helper classes). 
+- First class Support ExoPlayer 2. 
 
 ### Demo (Youtube Video)
 
@@ -37,9 +37,12 @@
 
 1. Update module build.gradle.
 
+Latest version:
+ [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)
+ 
 ```groovy
 ext {
-  toroVersion = '3.0.0-alpha1'
+  toroVersion = '3.0.0-beta1'
   // below: other dependencies' versions maybe
 }
 
@@ -60,81 +63,79 @@ Below: a simple Container with default max simultaneous players count to 1.
   android:id="@+id/recycler_view"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  app:max_player_number="1"
 />
 ```
 
 3. Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
 
-```kotlin
-// Better naming after import
-import android.view.LayoutInflater.from as inflater
+```java
+public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
-class PlayerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroPlayer {
+  static final int LAYOUT_RES = R.layout.vh_exoplayer_basic;
 
-  companion object {
-    internal val LAYOUT_RES = R.layout.vh_skeleton_exoplayer
+  @Nullable SimpleExoPlayerViewHelper helper;
+  @Nullable private Uri mediaUri;
 
-    // Static Factory method for Adapter to create this ViewHolder
-    fun createNew(parent: ViewGroup) = PlayerViewHolder(inflater(parent.context).inflate(
-        LAYOUT_RES, parent, false))
+  @BindView(R.id.player) SimpleExoPlayerView playerView;
+
+  SimpleExoPlayerViewHolder(View itemView) {
+    super(itemView);
+    ButterKnife.bind(this, itemView);
   }
 
-  internal var playerView = itemView.findViewById(R.id.player)
-  internal var playerViewHelper: SimpleExoPlayerViewHelper? = null
-  internal lateinit var mediaUri: Uri
-
-  // Called by Adapter to pass a valid media uri here.
-  fun bind(uri: Uri) {
-    this.mediaUri = uri
-  }
-
-  override fun getPlayerView() = playerView!!
-
-  override fun getCurrentPlaybackInfo(): PlaybackInfo {
-    return playerViewHelper?.updatePlaybackInfo() ?: PlaybackInfo()
-  }
-
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
-    if (playerViewHelper == null) {
-      playerViewHelper = SimpleExoPlayerViewHelper(container, this, mediaUri)
+  // called from Adapter to setup the media
+  void bind(@NonNull RecyclerView.Adapter adapter, Uri item, List<Object> payloads) {
+    if (item != null) {
+      mediaUri = item;
     }
-    playerViewHelper!!.initialize(playbackInfo)
   }
 
-  override fun play() {
-    playerViewHelper?.play()
+  @NonNull @Override public View getPlayerView() {
+    return playerView;
   }
 
-  override fun pause() {
-    playerViewHelper?.pause()
+  @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
+    return helper != null ? helper.getLatestPlaybackInfo() : new PlaybackInfo();
   }
 
-  override fun isPlaying() = playerViewHelper != null && playerViewHelper!!.isPlaying
-
-  override fun release() {
-    try {
-      playerViewHelper?.cancel()
-    } catch (e: Exception) {
-      e.printStackTrace()
+  @Override
+  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+    if (helper == null) {
+      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
     }
-    playerViewHelper = null
+    helper.initialize(playbackInfo);
   }
 
-  override fun wantsToPlay(): Boolean {
-    val parent = itemView.parent
-    var offset = 0f
-    if (parent is View) {
-      offset = ToroUtil.visibleAreaOffset(playerView, parent)
+  @Override public void release() {
+    if (helper != null) {
+      helper.release();
+      helper = null;
     }
-    return offset >= 0.85
   }
 
-  override fun getPlayerOrder() = adapterPosition
+  @Override public void play() {
+    if (helper != null) helper.play();
+  }
+
+  @Override public void pause() {
+    if (helper != null) helper.pause();
+  }
+
+  @Override public boolean isPlaying() {
+    return helper != null && helper.isPlaying();
+  }
+
+  @Override public boolean wantsToPlay() {
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
+  }
+
+  @Override public int getPlayerOrder() {
+    return getAdapterPosition();
+  }
 }
 ```
 
-More advanced View holder implementations as well as Java version can be found in **app** module.
+More advanced View holder implementations can be found in **app** module.
 
 4. Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
 
@@ -142,44 +143,13 @@ That's all. Your View should be ready to play.
 
 ### Advance usage and class documentation (I need your request to update this list)
 
-1. Enable playback position save/restore: using ```PlayerStateManager```
+1. Enable playback position save/restore: using ```CacheManager```
 
-The implementation is simple: create a class implementing ```PlayerStateManager```, then set it to the Container using ```Container#setPlayerStateManager(PlayerStateManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
-
-Below is an example using TreeMap to cache playback state (copied from the file above)
-
-```java
-// Implement the PlayerStateManager;
-
-private final Map<FbItem, PlaybackInfo> stateCache =
-    new TreeMap<>((o1, o2) -> DemoUtil.compare(o1.getIndex(), o2.getIndex()));
-
-@Override public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-  if (order >= 0) stateCache.put(getItem(order), playbackInfo);
-}
-
-@NonNull @Override public PlaybackInfo getPlaybackInfo(int order) {
-  FbItem entity = order >= 0 ? getItem(order) : null;
-  PlaybackInfo state = new PlaybackInfo();
-  if (entity != null) {
-    state = stateCache.get(entity);
-    if (state == null) {
-      state = new PlaybackInfo();
-      stateCache.put(entity, state);
-    }
-  }
-  return state;
-}
-
-// TODO return null if client doesn't want to save playback states on config change.
-@Nullable @Override public Collection<Integer> getSavedPlayerOrders() {
-  return Observable.fromIterable(stateCache.keySet()).map(items::indexOf).toList().blockingGet();
-}
-```
+The implementation is simple: create a class implementing ```CacheManager```, then set it to the Container using ```Container#setCacheManager(CacheManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
 
 2. Multiple simultaneous playback
 
-*Playing multiple Videos at once is considered bad practice*. It is a heavy power consuming task and also unfriendly to hardware. In fact, each device has its own limitation of multiple decoding ability, so developer must be aware of what you are doing. I don't officially support this behaviour. Developer should own the video source to optimize the video for this purpose.
+***Playing multiple Videos at once is considered bad practice***. It is a heavy power consuming task and also unfriendly to hardware. In fact, each device has its own limitation of multiple decoding ability, so developer must be aware of what you are doing. I don't officially support this behaviour. Developer should own the video source to optimize the video for this purpose.
 
 To be able to have more than one Video play at the same time, developer must use a custom ```PlayerSelector```. This can also provide a powerful control to number of playback in a dynamic way.
 
@@ -231,17 +201,17 @@ Behaviour:
 
 To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Container. To enable it again, just use a Selector that actually select the player. There is ```PlayerSelector.DEFAULT``` built-in.
 
-4. Save/Restore playback info on config change.
+### Contribution
 
-By default, Container cannot save/restore the playback info on config change. To support this, it requires a ```PlayerStateManager``` whose ```getSavedPlayerOrders()``` returns a non-null collection of Integers. The example above also demonstrate this implementation.
-
-### Contribution & Donation
+- **IMPORTANT:** Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` before any build.
 
 - Issue report and Pull Requests are welcome. Please follow issue format for quick response.
 
 - For Pull Requests, this project uses 2-space indent and **no** Hungarian naming convention.
 
-- Also you can **buy me some coffee** for shorter update cycle ...
+### Donation
+
+- You can always **buy me some coffee** for shorter update cycle ...
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 

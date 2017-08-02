@@ -6,10 +6,79 @@ Changelog
 
 - Detail TBD
 
+3.0.0 Beta 1 (2017/07/07)
+-------------
+
+> 七夕だ、*make a wish*
+
+#### API Updates
+
+- ``VideoView`` support has been removed. An example of using it is added in Sample app.
+
+- ``ToroUtil#visibleAreaOffset(View, View)`` has become ``ToroUtil#visibleAreaOffset(ToroPlayer, ViewParent)``. This allows a more accurate calculation and less error prone usage.
+
+- ``PlayerStateManager`` is deprecated and **removed**. The reason is its implementation is not obvious to user as well as the common way to use this is to have a ``HashMap`` of ``PlaybackInfo``. So I include the implementation into ``Container`` itself.
+
+- ``CacheManager`` has been added, replace the ``PlayerStateManager``. This interface only asks for the Key of a ToroPlayer's cache, which will be easier to implement and understand. This interface also comes with default implementation, but it is highly recommended that users have their own implementation using the real dataset.
+
+- ``PlayerSelector#select(View container, List<ToroPlayer> items)`` has become ``PlayerSelector#select(Container container,
+ List<ToroPlayer> items)`` to ensure the type-safety of implementations.
+ 
+- ``Cancellable`` interface has been removed.
+
+- ``ToroPlayerHelper#cancel()`` is now ``ToroPlayerHelper#release()`` as ``Cancellable`` is removed.
+
+- [Bug Fix] ``ToroPlayerHelper`` now has default ``ToroPlayer.EventListener`` to correctly handle the playback's complete event.
+
+- ``ExoPlayerHelper`` and other classes those supports ``ExoPlayer`` library are now re-located into ``exoplayer`` package.
+
+- ``MediaSourceBuilder`` class is added, provides the easy way to build up ``ExoPlayer``'s ``MediaSource``. Along with this, ``ExoPlayerHelper#prepare()`` methods will now accept ``MediaSourceBuilder`` and optional ``BandwidthMeter`` instead of current ``Uri`` or ``MediaSource``. This change will increases the flexibility for the users of this library.
+
+- Add ``DrmMediaProvider`` interface by which ``ExoPlayerHelper`` can know if application is using a Drm media or not.
+
+- [Bug Fix] ``ExoPlayerHelper`` will now correctly update resume position: it will not use Player's data if the Player is in IDLE state.
+
+- All method that add listener/callback will require a non-null parameter.
+
+- [Bug Fix] ``SimpleExoPlayerViewHelper`` will now initialize at most once.
+
+- ``Container``'s internal implementation updates:
+  - No longer need null check for ``PlayerManager`` instance.
+  - ``Container#getActivePlayers()`` is removed, there is ``Container#filterBy(Filter)`` which is more powerful. ``Filter`` is a new interface that will check a ``ToroPlayer`` for some condition (Same as Java 8``Predicate`` interface).
+  - It will throw an NPE at runtime if ``ToroPlayer#getPlayerView()`` returns null.
+  - [Bug Fix] ``setAdapter`` and ``swapAdapter`` are now correctly using result from super class for the old Adapter before setting up the new one.
+  - ``Container#savePlaybackInfo(int, PlaybackInfo), Container#getPlaybackInfo(int), Container#getSavedPlayerOrders()`` are newly added to replace the old ``PlayerStateManager``. Those methods above are public.
+  - ``CacheManager`` setter/getter are added.
+
+- (Internal API) ``Common#allowsToPlay(View videoView, Container parent)`` is now less complicated and (hopefully) more comprehensive and correct.
+
+#### Sample app updates
+
+- Sample app is totally revised, in which each feature is implemented in its own package, without sharing any component with other, even the layout file. This allow users to be able to use it as-it, as well as confidently modify the code without harming other feature's implementation.
+
+- There are **7 + 1** demos at the moment, carefully implemented:
+  
+  - **Custom LayoutManager**: this is the entry point of Sample app, also shows the use of Toro using custom LayoutManager. 
+  Clicking to **OPEN DEMOS** will reveal more demonstrations as below. This demo also showcases the use of ``LoopingMediaSource`` using a custom ``ToroPlayerHelper`` and ``LoopingMediaSourceBuilder``.
+  
+  - **Basic**: using Toro with least effort. This shows how simple it is to get start with Toro. Also this sample does not support playback info save/restore.
+  
+  - **Facebook Timeline**: this demo uses Toro to mimic the behaviour of Facebook's timeline, with ``click to open playlist``, ``rotate to open current Video in full-screen``. It also surpass the default behavior by correctly handling the config changes and supporting Multi-Windows mode. This demo also showcases a custom use of ``ToroPlayer.EventListener`` to allow the playlist to automatically scroll to next player after completing the playback.
+  
+  - **Nested Container**: this demo shows how to use a ``Container`` inside other ``Container``. The real use case of this is the suggested Video list for a specific Video (like Youtube).
+  
+  - **Complicated Grid (Complex Grid)**: this demo shows how to use Toro to control number of simultaneous players at one time. Again this is a power consumed feature and not recommended.
+  
+  - **Flexible Grid**: this is the same as Complex Grid demo above, with the addition of ``drag/drop`` feature. This represents the Toro's ability of supporting data changes.
+  
+  - **Legacy**: this demo shows how to use Toro with Android's default VideoView. In this package, there is a custom VideoView adding the ability to listen to ``play/pause`` event which is required in some cases.
+  
+  - **ViewPager**: last but not least, this demo shows how to use Toro with many ``Container``s that are hosted by a ViewPager (each page is a ``Fragment`` having a ``Container``). The ``Activity`` lauched by clicking **OPEN DEMOS** is where the ``ViewPager`` is. So instead of clicking to button in first page to open a specific demo, swiping over the page will also reveal those demos. Note that: some of the demos will not appear in ``ViewPager`` demo due to technicle issue.
+
 3.0.0 alpha 2 (2017/06/30)
 -------------
 
-#### Changes
+#### API Updates
 
 - Drop support to ```VideoView``` (via ```ToroVideoView``` and ```LegacyVideoViewHelper```). User can find a demo of using VideoView in demo app, **legacy** package.
 
@@ -19,7 +88,7 @@ Changelog
 
 - All initialize method now requires a Nullable PlaybackInfo (was Nonnull).
 
-#### Update
+#### Sample app updates
 
 - Add demo for ```VideoView```.
 
@@ -58,7 +127,8 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   @BindView(R.id.player) SimpleExoPlayerView playerView;
 
   SimpleExoPlayerViewHolder(View itemView) {
-    super(itemView);
+    super(itemView);
+    ButterKnife.bind(this, itemView);
   }
 
   @Override

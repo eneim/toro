@@ -26,7 +26,7 @@ import im.ene.toro.sample.BuildConfig;
  * @author eneim | 6/6/17.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
   private static boolean D = BuildConfig.DEBUG;
   protected String TAG = "Toro:BaseActivity";

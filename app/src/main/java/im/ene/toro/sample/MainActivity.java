@@ -16,22 +16,73 @@
 
 package im.ene.toro.sample;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.features.Deck;
-import im.ene.toro.sample.features.facebook.timeline.TimelineFragment;
+import im.ene.toro.sample.common.BaseFragment;
+import im.ene.toro.sample.intro.IntroFragment;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements IntroFragment.Callback {
+
+  @BindView(R.id.tab_layout) TabLayout tabLayout;
+  @BindView(R.id.pager) ViewPager viewPager;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    if (savedInstanceState == null) {
+    setContentView(R.layout.activity_main);
+    ButterKnife.bind(this);
+
+    HomePagerAdapter adapter = new HomePagerAdapter(getSupportFragmentManager());
+    viewPager.setAdapter(adapter);
+    tabLayout.setupWithViewPager(viewPager);
+  }
+
+  // IntroFragment.Callback#onToolbarCreated
+  @Override public void onToolbarCreated(Toolbar toolbar) {
+    setSupportActionBar(toolbar);
+    setTitle(R.string.app_name);
+  }
+
+  // IntroFragment.Callback#onDemoClick
+  @Override public void onDemoClick(View view, IntroFragment.Demo demo) {
+    startActivity(new Intent(this, demo.getActivityClass()));
+  }
+
+  //// HomePagerAdapter
+
+  static class HomePagerAdapter extends FragmentStatePagerAdapter {
+
+    HomePagerAdapter(FragmentManager fm) {
+      super(fm);
+    }
+
+    @Override public Fragment getItem(int position) {
+      Fragment fragment = IntroFragment.newInstance();
       try {
-        Deck.present(this, TimelineFragment.class);
+        fragment = Deck.createFragment(Deck.Slide.values()[position].getFragmentClass());
       } catch (Deck.ToroDemoException e) {
         e.printStackTrace();
-        if (e.getCause() != null) e.getCause().printStackTrace();
       }
+
+      if (fragment instanceof BaseFragment) ((BaseFragment) fragment).setViewPagerMode(true);
+      return fragment;
+    }
+
+    @Override public int getCount() {
+      return Deck.Slide.values().length;
+    }
+
+    @Override public CharSequence getPageTitle(int position) {
+      return "";
     }
   }
 }

@@ -18,4 +18,16 @@
 <resources>
   <!--<dimen name="video_min_height">184dp</dimen>-->
   <dimen name="video_min_height">231dp</dimen>
+  <dimen name="app_bar_height">180dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
+  <dimen name="text_margin">16dp</dimen>
+
+  <dimen name="custom_item_width">256dp</dimen>
+  <dimen name="custom_item_height">144dp</dimen>
+  <dimen name="custom_container_height">144dp</dimen>
+  <dimen name="custom_card_left">56dp</dimen>
+  <dimen name="custom_card_gap">12dp</dimen>
+
+  <dimen name="toolbar_right">8dp</dimen>
+  <dimen name="button_height">40dp</dimen>
 </resources>

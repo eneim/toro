@@ -15,8 +15,81 @@
   -->
 
 <resources>
-  <string name="app_name">Toro V3</string>
+  <string name="app_name">Toro demos</string>
+
+  <string name="navigation_drawer_open">Open navigation drawer</string>
+  <string name="navigation_drawer_close">Close navigation drawer</string>
+
   <string name="fb_button_like">Like</string>
   <string name="fb_button_comment">Comment</string>
   <string name="fb_button_share">Share</string>
+
+  <string name="action_settings">Settings</string>
+
+  <string name="title_demo_basic">Basic Use of Toro</string>
+  <string name="title_timeline">Using Toro to mimic Facebook Timeline, and more</string>
+  <string name="title_custom_layout">Toro demo uses custom layout wraps CardSliderLayoutManager</string>
+  <string name="title_nested_list">Nested Container: a Container as child of another Container</string>
+  <string name="title_complex_grid">Grid Container with custom number of active Players</string>
+  <string name="title_flexible_grid">Same as Complex Grid, with item drag&amp;drop ability</string>
+
+  <string name="title_legacy">Demo using official VideoView, considered Legacy playback API</string>
+
+  <string name="license_bbb">
+    <![CDATA[
+      <h1><font color=#ffff00>Big Buck Bunny</font></h1>
+      <h2>License information</h2>
+      <p>The results of the Peach open movie project has been licensed under the
+      <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0</a> license.
+      This includes all the data we’ve published online and on the DVDs, and all of the contents on this website.
+      If any content on this site is not licensed as such, it will be clearly indicated.</p>
+      <p>In short, this means you can freely reuse and distribute this content, also commercially,
+      for as long you provide a proper attribution.</p>
+    ]]>
+  </string>
+
+  <string name="license_tos">
+    <![CDATA[
+      <h1><font color=#ffff00>Tears of Steel</font></h1>
+      <h2>License information</h2>
+      <p>The proceedings and results of the Mango Open Movie project are being licensed under the&nbsp;
+      <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0</a> license.
+      This includes all the data we publish on this website and which we’ll publish on the DVDs.
+      If any content on this site is not licensed as such, it will be clearly indicated.</p>
+      <p>In short, this means you can freely reuse and distribute this content, also commercially,
+      for as long you provide a proper attribution.</p>
+    ]]>
+  </string>
+
+  <string name="license_cosmos">
+    <![CDATA[
+      <h1><font color=#ffff00>Cosmos Laundromaty</font></h1>
+      <h2>License information</h2>
+      <p>The ongoing and final work of the Gooseberry Open Movie project is licensed under the&nbsp;
+      <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0</a>&nbsp;license.
+      This includes all the data we publish on this website and, ultimately, on the DVDs.
+      If any content on this site is not licensed as such, it will be clearly indicated.</p>
+      <p>In short, this means you can freely reuse and distribute this content, also commercially,
+      as long you include proper attribution.</p>
+    ]]>
+  </string>
+
+  <string name="more_demos">Open demos</string>
+  <string name="lib_name">eneim/toro</string>
+  <string name="lib_description">Video list auto playback made simple, specially built for RecyclerView</string>
+  <string name="lib_info_version">Latest: 3.0.0, Android: 16+ (4.1+)</string>
+  <string name="lib_info_license">
+    <![CDATA[
+      <h3>License</h3>
+      <p>Copyright 2017 eneim@Eneim Labs, <a href="mailto:nam@ene.im">nam@ene.im</a></p>
+      <p>Licensed under the Apache License, Version 2.0 (the "License");
+        you may not use this file except in compliance with the License.
+        You may obtain a copy of the License at</p>
+      <pre><code>   http://www.apache.org/licenses/LICENSE-2.0
+      </code></pre>
+    ]]>
+  </string>
+  <string name="app_info_used_lib">
+    Libraries used in this App
+  </string>
 </resources>
