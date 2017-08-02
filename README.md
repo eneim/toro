@@ -42,7 +42,7 @@ Latest version:
  
 ```groovy
 ext {
-  toroVersion = '3.0.0-beta1'
+  toroVersion = '3.0.0'
   // below: other dependencies' versions maybe
 }
 
