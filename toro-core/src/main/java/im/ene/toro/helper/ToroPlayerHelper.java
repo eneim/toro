@@ -103,6 +103,11 @@ public abstract class ToroPlayerHelper {
     this.player = player;
   }
 
+  // Hook into the scroll state change event. Called by the enclosing ToroPlayer.
+  public void onContainerScrollStateChange(int newState) {
+    // Do nothing, sub class can override this.
+  }
+
   @SuppressWarnings("ConstantConditions")
   public final void addPlayerEventListener(@NonNull ToroPlayer.EventListener eventListener) {
     if (eventListener != null) this.eventListeners.add(eventListener);

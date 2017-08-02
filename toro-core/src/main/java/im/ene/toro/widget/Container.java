@@ -277,6 +277,10 @@ public class Container extends RecyclerView {
         playerManager.pause(player);
       }
     }
+
+    for (ToroPlayer player : playerManager.getPlayers()) {
+      player.onContainerScrollStateChange(this, state);
+    }
   }
 
   /**
