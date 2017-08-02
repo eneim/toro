@@ -19,3 +19,5 @@ org.gradle.jvmargs=-Xmx1536m
 bintray_user=empty now
 bintray_apikey=empty now
 bintray_gpg_password=empty now
+
+youtube_apikey=your key here

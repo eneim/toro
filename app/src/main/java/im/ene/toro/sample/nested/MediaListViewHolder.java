@@ -168,6 +168,10 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
     return offset >= 0.85;
   }
 
+  @Override public void onContainerScrollStateChange(Container container, int newState) {
+    // Do nothing
+  }
+
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }

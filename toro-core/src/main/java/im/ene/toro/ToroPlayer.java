@@ -74,6 +74,14 @@ public interface ToroPlayer {
   int getPlayerOrder();
 
   /**
+   * Notify a Player about its {@link Container}'s scroll state change.
+   *
+   * @param container the {@link Container} that contains this player.
+   * @param newState new Scroll state of the Container.
+   */
+  void onContainerScrollStateChange(Container container, int newState);
+
+  /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
    */
   interface EventListener {

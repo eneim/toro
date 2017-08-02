@@ -92,6 +92,10 @@ public class ComplexPlayerViewHolder extends RecyclerView.ViewHolder implements 
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
   }
 
+  @Override public void onContainerScrollStateChange(Container container, int newState) {
+    // Do nothing
+  }
+
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }

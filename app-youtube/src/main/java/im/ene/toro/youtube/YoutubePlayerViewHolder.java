@@ -14,46 +14,43 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.basic;
+package im.ene.toro.youtube;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
 
 /**
- * @author eneim (7/1/17).
+ * @author eneim (8/1/17).
  */
 
-@SuppressWarnings({ "WeakerAccess", "unused" }) //
-class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
-  private static final String TAG = "Toro:Basic:Holder";
+  static final int LAYOUT_RES = R.layout.view_holder_youtube_player;
 
-  static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
+  private YoutubePlayerHelper helper;
+  private FragmentManager fragmentManager;
+  private String videoId;
 
-  SimpleExoPlayerViewHelper helper;
-  Uri mediaUri;
+  @SuppressWarnings("WeakerAccess") FrameLayout playerViewContainer;
+  @SuppressWarnings("WeakerAccess") TextView videoName;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
-
-  public BasicPlayerViewHolder(View itemView) {
+  YoutubePlayerViewHolder(View itemView) {
     super(itemView);
-    ButterKnife.bind(this, itemView);
+    playerViewContainer = itemView.findViewById(R.id.player_container);
+    videoName = itemView.findViewById(R.id.video_id);
   }
 
   @NonNull @Override public View getPlayerView() {
-    return playerView;
+    return playerViewContainer.getChildAt(0);
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
@@ -63,8 +60,9 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+      helper = new YoutubePlayerHelper(container, this, fragmentManager, videoId);
     }
+
     helper.initialize(playbackInfo);
   }
 
@@ -81,29 +79,25 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   }
 
   @Override public void release() {
-    if (helper != null) {
-      helper.release();
-      helper = null;
-    }
+    if (helper != null) helper.release();
+    helper = null;
   }
 
   @Override public boolean wantsToPlay() {
-    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
-  }
-
-  @Override public void onContainerScrollStateChange(Container container, int newState) {
-    // Do nothing
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.99;
   }
 
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }
 
-  @Override public String toString() {
-    return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
+  @Override public void onContainerScrollStateChange(Container container, int newState) {
+    if (helper != null) helper.onContainerScrollStateChange(newState);
   }
 
-  void bind(Content.Media media) {
-    this.mediaUri = media.mediaUri;
+  void bind(FragmentManager fragmentManager, String videoId) {
+    this.fragmentManager = fragmentManager;
+    this.videoId = videoId;
+    this.videoName.setText("Video: " + videoId);
   }
 }
