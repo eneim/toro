@@ -56,11 +56,9 @@ dependencies {
 
 2. Using ```Container``` in place of Video list. 
 
-Below: a simple Container with default max simultaneous players count to 1.
-
 ```xml
 <im.ene.toro.widget.Container
-  android:id="@+id/recycler_view"
+  android:id="@+id/my_fancy_videos"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
 />
