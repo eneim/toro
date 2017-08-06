@@ -196,7 +196,7 @@ import im.ene.toro.widget.Container;
     @Override public Object instantiateItem(ViewGroup container, int position) {
       View view = LayoutInflater.from(container.getContext())
           .inflate(R.layout.widget_custom_video_license_text, container, false);
-      TextView textView = view.findViewById(R.id.text_content);
+      TextView textView = (TextView) view.findViewById(R.id.text_content);
       textView.setText(
           Html.fromHtml(container.getContext().getString(contents[position % contents.length])));
       container.addView(view);

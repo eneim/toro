@@ -39,7 +39,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
         inflater(viewGroup.context).inflate(R.layout.view_holder_legacy_basic, viewGroup, false))
   }
 
-  var videoView: ToroVideoView = itemView.findViewById(R.id.video_view)
+  var videoView: ToroVideoView = itemView.findViewById(R.id.video_view) as ToroVideoView
   var mediaUri: Uri? = null
   var playerHelper: ToroPlayerHelper? = null
 

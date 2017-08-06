@@ -31,10 +31,10 @@ public class HomeActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
-    Toolbar toolbar = findViewById(R.id.toolbar);
+    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    container = findViewById(R.id.container);
+    container = (Container) findViewById(R.id.container);
     adapter = new YoutubeVideosAdapter(getSupportFragmentManager());
     container.setLayoutManager(new LinearLayoutManager(this));
     container.setAdapter(adapter);

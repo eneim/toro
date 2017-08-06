@@ -16,12 +16,14 @@
 
 package im.ene.toro.widget;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +49,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Context.POWER_SERVICE;
 
 /**
  * @author eneim | 5/31/17.
@@ -96,6 +100,13 @@ public class Container extends RecyclerView {
     super.onAttachedToWindow();
     if (animatorFinishHandler == null) {
       animatorFinishHandler = new Handler(new AnimatorHelper(this));
+    }
+
+    PowerManager powerManager = (PowerManager) getContext().getSystemService(POWER_SERVICE);
+    if (powerManager.isScreenOn()) {
+      this.screenState = View.SCREEN_STATE_ON;
+    } else {
+      this.screenState = View.SCREEN_STATE_OFF;
     }
   }
 
@@ -501,6 +512,45 @@ public class Container extends RecyclerView {
         }
       }
     } else if (visibility == View.VISIBLE) {
+      if (tmpStates != null && tmpStates.size() > 0) {
+        for (int i = 0; i < tmpStates.size(); i++) {
+          int order = tmpStates.keyAt(i);
+          PlaybackInfo playbackInfo = tmpStates.get(order);
+          this.savePlaybackInfo(order, playbackInfo);
+        }
+      }
+      tmpStates = null;
+      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+    }
+
+    dispatchPlayAbilityMayChange();
+  }
+
+  private int screenState;
+
+  @SuppressLint("WrongConstant") @Override public void onScreenStateChanged(int screenState) {
+    super.onScreenStateChanged(screenState);
+    this.screenState = screenState;
+    dispatchPlayAbilityMayChange();
+  }
+
+  @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
+    super.onWindowFocusChanged(hasWindowFocus);
+    dispatchPlayAbilityMayChange();
+  }
+
+  // Should play when:
+  // - Screen is ON, View is Focus
+  void dispatchPlayAbilityMayChange() {
+    if (screenState == SCREEN_STATE_OFF) {
+      List<ToroPlayer> players = playerManager.getPlayers();
+      for (ToroPlayer player : players) {
+        if (player.isPlaying()) {
+          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          playerManager.pause(player);
+        }
+      }
+    } else if (screenState == SCREEN_STATE_ON && hasFocus() && hasWindowFocus()) {
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);

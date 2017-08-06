@@ -39,8 +39,8 @@ class LegacyDemoActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_legacy)
-    container = findViewById(R.id.player_container)
-    toolbarLayout = findViewById(R.id.toolbar_layout)
+    container = findViewById(R.id.player_container) as Container
+    toolbarLayout = findViewById(R.id.toolbar_layout) as CollapsingToolbarLayout
     toolbarLayout!!.title = getString(R.string.title_legacy)
 
     adapter = VideoListAdapter()
