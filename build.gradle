@@ -46,7 +46,7 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.0.1-B1'
+    releaseVersion = '3.1.0-A1'
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
   }
@@ -56,7 +56,7 @@ ext {
   androidVersion = 26
   buildToolVersion = '26.0.1'
   supportLibraryVersion = '26.0.0'
-  exoPlayer2Version = 'r2.4.4'
+  exoPlayer2Version = 'r2.5.0-beta3'
   minSupportSDKVersion = 16
 }
 

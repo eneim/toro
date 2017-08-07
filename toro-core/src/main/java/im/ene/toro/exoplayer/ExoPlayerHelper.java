@@ -27,10 +27,10 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.DefaultRenderersFactory.ExtensionRendererMode;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
@@ -95,7 +95,7 @@ public final class ExoPlayerHelper {
   boolean shouldAutoPlay;
   boolean needRetrySource;
 
-  ArrayList<ExoPlayer.EventListener> eventListeners;
+  ArrayList<Player.EventListener> eventListeners;
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
       @ExtensionRendererMode int extensionMode, boolean playWhenReady) {
@@ -231,7 +231,7 @@ public final class ExoPlayerHelper {
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
   }
 
-  public void addEventListener(@NonNull ExoPlayer.EventListener eventListener) {
+  public void addEventListener(@NonNull Player.EventListener eventListener) {
     if (this.eventListeners == null) {
       this.eventListeners = new ArrayList<>();
     }
@@ -240,7 +240,7 @@ public final class ExoPlayerHelper {
     if (eventListener != null) this.eventListeners.add(eventListener);
   }
 
-  public void removeEventListener(ExoPlayer.EventListener eventListener) {
+  public void removeEventListener(Player.EventListener eventListener) {
     if (this.eventListeners != null && eventListener != null) {
       this.eventListeners.remove(eventListener);
     }
@@ -277,9 +277,13 @@ public final class ExoPlayerHelper {
     playbackInfo.reset();
   }
 
-  private class ComponentListener implements ExoPlayer.EventListener {
+  private class ComponentListener implements Player.EventListener {
 
     ComponentListener() {
+    }
+
+    @Override public void onRepeatModeChanged(int repeatMode) {
+
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -325,7 +329,7 @@ public final class ExoPlayerHelper {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       boolean screenOn = isPlaying() && (playbackState >= 2 || playbackState <= 3);
       playerView.setKeepScreenOn(screenOn);
-      if (playbackState == ExoPlayer.STATE_ENDED) {
+      if (playbackState == Player.STATE_ENDED) {
         if (player != null) {
           player.setPlayWhenReady(false);
           player.seekTo(0); // reset playback position for current window
@@ -469,11 +473,11 @@ public final class ExoPlayerHelper {
   }
 
   // Adapter for original EventListener
-  public static class EventListener implements ExoPlayer.EventListener {
+  public static class EventListener implements Player.EventListener {
 
-    private ExoPlayer.EventListener delegate;
+    private Player.EventListener delegate;
 
-    public EventListener(ExoPlayer.EventListener delegate) {
+    public EventListener(Player.EventListener delegate) {
       this.delegate = delegate;
     }
 
@@ -481,8 +485,12 @@ public final class ExoPlayerHelper {
       this.delegate = null;
     }
 
-    public void setDelegate(ExoPlayer.EventListener delegate) {
+    public void setDelegate(Player.EventListener delegate) {
       this.delegate = delegate;
+    }
+
+    @Override public void onRepeatModeChanged(int repeatMode) {
+
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
