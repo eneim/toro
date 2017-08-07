@@ -80,7 +80,7 @@ public final class ExoPlayerHelper {
   // instance is unchanged, but inner fields are changeable.
   @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
 
-  final Context context;  // will obtain from playerView context, should be Application context.
+  final Context context;  // Application context, will obtain from playerView context.
   @NonNull final SimpleExoPlayerView playerView;
   @ExtensionRendererMode final int extensionMode;
   final Handler mainHandler;

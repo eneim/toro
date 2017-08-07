@@ -16,7 +16,6 @@
 
 package im.ene.toro.widget;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
@@ -103,7 +102,7 @@ public class Container extends RecyclerView {
     }
 
     PowerManager powerManager = (PowerManager) getContext().getSystemService(POWER_SERVICE);
-    if (powerManager.isScreenOn()) {
+    if (powerManager.isScreenOn() /* new API call isInteractive() internally */) {
       this.screenState = View.SCREEN_STATE_ON;
     } else {
       this.screenState = View.SCREEN_STATE_OFF;
@@ -523,25 +522,41 @@ public class Container extends RecyclerView {
       this.onScrollStateChanged(SCROLL_STATE_IDLE);
     }
 
-    dispatchPlayAbilityMayChange();
+    dispatchScreenVisibilityMayChange();
   }
 
   private int screenState;
 
-  @SuppressLint("WrongConstant") @Override public void onScreenStateChanged(int screenState) {
+  @Override public void onScreenStateChanged(int screenState) {
     super.onScreenStateChanged(screenState);
     this.screenState = screenState;
-    dispatchPlayAbilityMayChange();
+    dispatchScreenVisibilityMayChange();
   }
 
   @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
     super.onWindowFocusChanged(hasWindowFocus);
-    dispatchPlayAbilityMayChange();
+    dispatchScreenVisibilityMayChange();
   }
 
-  // Should play when:
-  // - Screen is ON, View is Focus
-  void dispatchPlayAbilityMayChange() {
+  /**
+   * Called when:
+   * - Screen state changed.
+   * or - Window focus changed.
+   * or - Window visibility changed.
+   *
+   * For each of that change, Screen may be turned off or Window's focused state may change, this
+   * is to decide if Container should keep current playback state or change.
+   *
+   * !Discussion: In fact, we expect that: Container will be playing if the following conditions are
+   * all satisfied:
+   * - Current window is visible. (but not necessarily focused).
+   * - Container is visible in Window (partly is fine, we care about the Media itself).
+   * - Container is focused in Window. (so we don't screw up other component's focus).
+   *
+   * In lower API (eg: 16), {@link #getWindowVisibility()} always returns {@link #VISIBLE}, which
+   * cannot tell much. We need to investigate this flag in various APIs in various Scenarios.
+   */
+  private void dispatchScreenVisibilityMayChange() {
     if (screenState == SCREEN_STATE_OFF) {
       List<ToroPlayer> players = playerManager.getPlayers();
       for (ToroPlayer player : players) {
@@ -550,7 +565,13 @@ public class Container extends RecyclerView {
           playerManager.pause(player);
         }
       }
-    } else if (screenState == SCREEN_STATE_ON && hasFocus() && hasWindowFocus()) {
+    } else if (screenState == SCREEN_STATE_ON
+        && hasFocus()
+        // Container has focus in current Window
+        // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
+        // In that case, other triggered will supposed to be called and we are safe here. Need further investigation if need.
+        && hasWindowFocus()) {
+      // tmpStates may be consumed already, it there is a good reason for that, so no big deal.
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);

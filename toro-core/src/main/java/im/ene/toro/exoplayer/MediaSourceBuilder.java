@@ -43,7 +43,8 @@ import static im.ene.toro.ToroUtil.LIB_NAME;
  * @author eneim (7/8/17).
  */
 
-@SuppressWarnings({ "WeakerAccess", "unused" }) public class MediaSourceBuilder {
+@SuppressWarnings({ "WeakerAccess", "unused" }) //
+public class MediaSourceBuilder {
 
   private final Context context;
   private final Uri mediaUri;
