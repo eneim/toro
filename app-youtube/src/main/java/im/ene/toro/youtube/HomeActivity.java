@@ -19,7 +19,6 @@ package im.ene.toro.youtube;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import im.ene.toro.widget.Container;
 
@@ -31,10 +30,10 @@ public class HomeActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    container = (Container) findViewById(R.id.container);
+    container = findViewById(R.id.container);
     adapter = new YoutubeVideosAdapter(getSupportFragmentManager());
     container.setLayoutManager(new LinearLayoutManager(this));
     container.setAdapter(adapter);

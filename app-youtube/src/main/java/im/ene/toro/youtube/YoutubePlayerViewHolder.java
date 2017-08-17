@@ -45,8 +45,8 @@ public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements 
 
   YoutubePlayerViewHolder(View itemView) {
     super(itemView);
-    playerViewContainer = (FrameLayout) itemView.findViewById(R.id.player_container);
-    videoName = (TextView) itemView.findViewById(R.id.video_id);
+    playerViewContainer = itemView.findViewById(R.id.player_container);
+    videoName = itemView.findViewById(R.id.video_id);
   }
 
   @NonNull @Override public View getPlayerView() {
