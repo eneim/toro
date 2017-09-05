@@ -1,6 +1,18 @@
 Changelog
 ===========
 
+3.1.0 (2017/09/05)
+--------------
+
+#### API Updates
+
+- Inline documentation is improved.
+- ```ExoPlayer``` version is updated to 2.5.1 (**This version is not binary compatible with 2.4.x**).
+
+#### Bug fixes
+
+- Fix a bug where Container keeps playing while Device Screen is turned off.
+
 3.0.0 (2017/08/02)
 --------------
 
