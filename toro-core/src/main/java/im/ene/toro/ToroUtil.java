@@ -37,7 +37,7 @@ import im.ene.toro.widget.Container;
     throw new RuntimeException("Meh!");
   }
 
-  public static final String LIB_NAME = "ToroLib, v3.0.0";
+  public static final String LIB_NAME = BuildConfig.LIB_NAME;
 
   /**
    * Get the ratio in range of 0.0 ~ 1.0 of the visible area of a {@link ToroPlayer}'s playerView.

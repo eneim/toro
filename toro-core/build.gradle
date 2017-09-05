@@ -23,10 +23,11 @@ android {
   defaultConfig {
     minSdkVersion rootProject.ext.minSupportSDKVersion
     targetSdkVersion rootProject.ext.androidVersion
-    versionCode 1
-    versionName "1.0"
+    versionCode 310
+    versionName "v" + releaseVersion
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    buildConfigField("String", "LIB_NAME", "\"" + "ToroLib, v" + releaseVersion + "\"")
   }
 
   buildTypes {
