@@ -24,7 +24,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.0.0-alpha9'
+    classpath 'com.android.tools.build:gradle:3.0.0-beta4'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
     classpath 'me.tatarka:gradle-retrolambda:3.7.0'
     classpath "com.novoda:bintray-release:0.5.0"
@@ -46,7 +46,7 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.0.1-B1'
+    releaseVersion = '3.1.0'
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
   }
@@ -55,8 +55,8 @@ allprojects {
 ext {
   androidVersion = 26
   buildToolVersion = '26.0.1'
-  supportLibraryVersion = '26.0.0'
-  exoPlayer2Version = 'r2.4.4'
+  supportLibraryVersion = '26.0.1'
+  exoPlayer2Version = 'r2.5.1'
   minSupportSDKVersion = 16
 }
 
@@ -65,7 +65,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.1-rc-2'
+  gradleVersion = '4.1'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }

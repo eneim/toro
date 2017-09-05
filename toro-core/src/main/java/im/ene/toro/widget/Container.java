@@ -31,7 +31,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -500,7 +499,6 @@ public class Container extends RecyclerView {
    */
   @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
     super.onWindowVisibilityChanged(visibility);
-    Log.d(TAG, "onWindowVisibilityChanged() called with: visibility = [" + visibility + "]");
     if (visibility == View.GONE) {
       List<ToroPlayer> players = playerManager.getPlayers();
       // if onSaveInstanceState is called before, source will contain no item, just fine.
@@ -522,7 +520,7 @@ public class Container extends RecyclerView {
       this.onScrollStateChanged(SCROLL_STATE_IDLE);
     }
 
-    dispatchScreenVisibilityMayChange();
+    dispatchWindowVisibilityMayChange();
   }
 
   private int screenState;
@@ -530,12 +528,12 @@ public class Container extends RecyclerView {
   @Override public void onScreenStateChanged(int screenState) {
     super.onScreenStateChanged(screenState);
     this.screenState = screenState;
-    dispatchScreenVisibilityMayChange();
+    dispatchWindowVisibilityMayChange();
   }
 
   @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
     super.onWindowFocusChanged(hasWindowFocus);
-    dispatchScreenVisibilityMayChange();
+    dispatchWindowVisibilityMayChange();
   }
 
   /**
@@ -545,18 +543,18 @@ public class Container extends RecyclerView {
    * or - Window visibility changed.
    *
    * For each of that change, Screen may be turned off or Window's focused state may change, this
-   * is to decide if Container should keep current playback state or change.
+   * is to decide if Container should keep current playback state or change it.
    *
-   * !Discussion: In fact, we expect that: Container will be playing if the following conditions are
-   * all satisfied:
+   * <strong>Discussion</strong>: In fact, we expect that: Container will be playing if the
+   * following conditions are all satisfied:
    * - Current window is visible. (but not necessarily focused).
-   * - Container is visible in Window (partly is fine, we care about the Media itself).
+   * - Container is visible in Window (partly is fine, we care about the Media player).
    * - Container is focused in Window. (so we don't screw up other component's focus).
    *
    * In lower API (eg: 16), {@link #getWindowVisibility()} always returns {@link #VISIBLE}, which
    * cannot tell much. We need to investigate this flag in various APIs in various Scenarios.
    */
-  private void dispatchScreenVisibilityMayChange() {
+  private void dispatchWindowVisibilityMayChange() {
     if (screenState == SCREEN_STATE_OFF) {
       List<ToroPlayer> players = playerManager.getPlayers();
       for (ToroPlayer player : players) {
@@ -566,12 +564,13 @@ public class Container extends RecyclerView {
         }
       }
     } else if (screenState == SCREEN_STATE_ON
-        && hasFocus()
         // Container has focus in current Window
+        && hasFocus()
         // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
-        // In that case, other triggered will supposed to be called and we are safe here. Need further investigation if need.
+        // In that case, other triggers will supposed to be called and we are safe here.
+        // Need further investigation if need.
         && hasWindowFocus()) {
-      // tmpStates may be consumed already, it there is a good reason for that, so no big deal.
+      // tmpStates may be consumed already, if there is a good reason for that, so no big deal.
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
@@ -705,7 +704,7 @@ public class Container extends RecyclerView {
         };
 
     @Override public String toString() {
-      // "The shorter the better, the String is." - ???
+      // > "The shorter the better, the String is." - ???
       return "Cache{" + "states=" + statesCache + '}';
     }
   }
