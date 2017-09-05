@@ -18,7 +18,6 @@ package im.ene.toro.exoplayer;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -77,10 +76,9 @@ public final class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
-  // instance is unchanged, but inner fields are changeable.
-  @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
-
-  final Context context;  // Application context, will obtain from playerView context.
+  // Instance is unchanged, but inner fields are changeable.
+  final PlaybackInfo playbackInfo = new PlaybackInfo();
+  @NonNull final Context context;  // Application context, will obtain from playerView context.
   @NonNull final SimpleExoPlayerView playerView;
   @ExtensionRendererMode final int extensionMode;
   final Handler mainHandler;
@@ -103,7 +101,7 @@ public final class ExoPlayerHelper {
     this.context = playerView.getContext().getApplicationContext();
     this.extensionMode = extensionMode;
     this.shouldAutoPlay = playWhenReady;
-    this.mainHandler = new Handler(Looper.myLooper());
+    this.mainHandler = new Handler();
   }
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
@@ -490,7 +488,7 @@ public final class ExoPlayerHelper {
     }
 
     @Override public void onRepeatModeChanged(int repeatMode) {
-
+      if (this.delegate != null) this.delegate.onRepeatModeChanged(repeatMode);
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {

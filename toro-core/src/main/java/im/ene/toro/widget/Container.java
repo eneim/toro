@@ -543,12 +543,12 @@ public class Container extends RecyclerView {
    * or - Window visibility changed.
    *
    * For each of that change, Screen may be turned off or Window's focused state may change, this
-   * is to decide if Container should keep current playback state or change.
+   * is to decide if Container should keep current playback state or change it.
    *
-   * !Discussion: In fact, we expect that: Container will be playing if the following conditions are
-   * all satisfied:
+   * <strong>Discussion</strong>: In fact, we expect that: Container will be playing if the
+   * following conditions are all satisfied:
    * - Current window is visible. (but not necessarily focused).
-   * - Container is visible in Window (partly is fine, we care about the Media itself).
+   * - Container is visible in Window (partly is fine, we care about the Media player).
    * - Container is focused in Window. (so we don't screw up other component's focus).
    *
    * In lower API (eg: 16), {@link #getWindowVisibility()} always returns {@link #VISIBLE}, which
@@ -567,9 +567,10 @@ public class Container extends RecyclerView {
         // Container has focus in current Window
         && hasFocus()
         // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
-        // In that case, other triggers will supposed to be called and we are safe here. Need further investigation if need.
+        // In that case, other triggers will supposed to be called and we are safe here.
+        // Need further investigation if need.
         && hasWindowFocus()) {
-      // tmpStates may be consumed already, it there is a good reason for that, so no big deal.
+      // tmpStates may be consumed already, if there is a good reason for that, so no big deal.
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
@@ -703,7 +704,7 @@ public class Container extends RecyclerView {
         };
 
     @Override public String toString() {
-      // "The shorter the better, the String is." - ???
+      // > "The shorter the better, the String is." - ???
       return "Cache{" + "states=" + statesCache + '}';
     }
   }

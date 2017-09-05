@@ -19,8 +19,10 @@ package im.ene.toro.exoplayer;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -37,10 +39,16 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
+import static android.text.TextUtils.isEmpty;
 import static im.ene.toro.ToroUtil.LIB_NAME;
 
 /**
  * @author eneim (7/8/17).
+ *
+ *         Base class to build {@link MediaSource} that is to be used by {@link ExoPlayer}. Subclass
+ *         should implement {@link DrmMediaProvider} if DRM support is required.
+ *
+ *         See {@link DrmMediaProvider}.
  */
 
 @SuppressWarnings({ "WeakerAccess", "unused" }) //
@@ -48,13 +56,22 @@ public class MediaSourceBuilder {
 
   private final Context context;
   private final Uri mediaUri;
-  private final String overrideExtension;
+  private final String extension;
   private final Handler handler;
 
-  public MediaSourceBuilder(Context context, Uri mediaUri, String extension, Handler handler) {
+  /**
+   * Required constructor for a {@link MediaSourceBuilder}.
+   *
+   * @param context the Application context, used by {@link ExoPlayer} components.
+   * @param mediaUri the Uri of media content.
+   * @param extension expected extension of the media content.
+   * @param handler the {@link Handler} used by {@link ExoPlayer} components.
+   */
+  public MediaSourceBuilder(@NonNull Context context, @NonNull Uri mediaUri,
+      @Nullable String extension, @Nullable Handler handler) {
     this.context = context.getApplicationContext();
     this.mediaUri = mediaUri;
-    this.overrideExtension = extension;
+    this.extension = extension;
     this.handler = handler;
   }
 
@@ -83,8 +100,8 @@ public class MediaSourceBuilder {
 
     DataSource.Factory mediaDataSourceFactory = buildDataSourceFactory(transferListener);
 
-    int type = Util.inferContentType(!TextUtils.isEmpty(overrideExtension)  //
-        ? "." + overrideExtension : mediaUri.getLastPathSegment());
+    int type =
+        Util.inferContentType(isEmpty(extension) ? mediaUri.getLastPathSegment() : "." + extension);
     switch (type) {
       case C.TYPE_SS:
         return new SsMediaSource(mediaUri, buildDataSourceFactory(transferListener),
@@ -103,9 +120,8 @@ public class MediaSourceBuilder {
     }
   }
 
-  private DataSource.Factory buildDataSourceFactory(
-      TransferListener<? super DataSource> transferListener) {
-    return new DefaultDataSourceFactory(context, transferListener,
-        new DefaultHttpDataSourceFactory(Util.getUserAgent(context, LIB_NAME), transferListener));
+  private DataSource.Factory buildDataSourceFactory(TransferListener<? super DataSource> listener) {
+    return new DefaultDataSourceFactory(context, listener,
+        new DefaultHttpDataSourceFactory(Util.getUserAgent(context, LIB_NAME), listener));
   }
 }

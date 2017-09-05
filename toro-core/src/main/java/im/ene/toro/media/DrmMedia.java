@@ -16,8 +16,21 @@
 
 package im.ene.toro.media;
 
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import im.ene.toro.exoplayer.DrmMediaProvider;
+import im.ene.toro.exoplayer.ExoPlayerHelper;
+
 /**
  * @author eneim | 6/5/17.
+ *
+ *         A definition of DRM media type. Media that supports DRM should implement this to get
+ *         support from {@link ExoPlayer}.
+ *
+ *         See {@link DrmMediaProvider}.
+ *         See {@link ExoPlayerHelper#prepare(MediaSource, BandwidthMeter, DrmSessionManager)}.
  */
 
 public interface DrmMedia {
