@@ -62,53 +62,45 @@ android {
 }
 
 dependencies {
-  compile fileTree(include: ['*.jar'], dir: 'libs')
-  compile project(':toro-core')
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+  implementation project(':toro-core')
 
-  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
-  testCompile 'junit:junit:4.12'
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-  compile "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-  compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
-  compile "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
-  compile "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
-  compile "com.android.support.constraint:constraint-layout:1.1.0-beta1"
+  implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support.constraint:constraint-layout:1.1.0-beta1"
 
-  compile ('net.opacapp:multiline-collapsingtoolbar:1.5.0') {
+  implementation ('net.opacapp:multiline-collapsingtoolbar:1.5.0') {
     transitive = false
   }
 
   // additional dependencies.
-  compile "com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}"
-  compile ("com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}") {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  }
+  implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
 
-  compile "com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}"
-  compile "com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}"
-  compile "com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}"
-
-  compile 'com.jakewharton:butterknife:8.8.0'
+  implementation 'com.jakewharton:butterknife:8.8.0'
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
 
   // rxJava 2
-  compile("io.reactivex.rxjava2:rxandroid:2.0.1", {
+  implementation("io.reactivex.rxjava2:rxandroid:2.0.1", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
-  compile 'io.reactivex.rxjava2:rxjava:2.1.3'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
 
-  debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-  testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+  testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 
-  compile 'com.github.bumptech.glide:glide:4.0.0'
+  implementation 'com.github.bumptech.glide:glide:4.0.0'
   annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0'
 
-  compile 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
-  compile 'com.jakewharton.threetenabp:threetenabp:1.0.5'
-  compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+  implementation 'org.ocpsoft.prettytime:prettytime:4.0.1.Final'
+  implementation 'com.jakewharton.threetenabp:threetenabp:1.0.5'
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
   // some custom LayoutManager
   // compile 'com.google.android:flexbox:0.3.0'
