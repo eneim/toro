@@ -17,13 +17,10 @@
 package im.ene.toro.sample;
 
 import android.app.Application;
-import android.content.res.Configuration;
-import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.squareup.leakcanary.LeakCanary;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import org.ocpsoft.prettytime.PrettyTime;
 
 /**
  * @author eneim | 6/5/17.
@@ -43,9 +40,6 @@ public class ToroDemo extends Application {
   @Override public void onCreate() {
     super.onCreate();
     singleton = this;
-    AndroidThreeTen.init(this);
-    prettyTime = new PrettyTime();
-
     // adopt from ExoPlayer demo.
     if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
       CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
@@ -59,19 +53,7 @@ public class ToroDemo extends Application {
     LeakCanary.install(this);
   }
 
-  @Override public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    // locale changes and so on.
-    prettyTime = new PrettyTime();
-  }
-
   public static ToroDemo getApp() {
     return singleton;
-  }
-
-  private PrettyTime prettyTime;
-
-  public PrettyTime getPrettyTime() {
-    return prettyTime;
   }
 }

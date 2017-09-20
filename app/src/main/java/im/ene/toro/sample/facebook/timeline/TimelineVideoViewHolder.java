@@ -36,7 +36,7 @@ import im.ene.toro.widget.Container;
 import java.util.List;
 import java.util.Locale;
 
-import static im.ene.toro.sample.common.DemoUtil.getRelativeTimeString;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static java.lang.String.format;
 
 /**
@@ -75,7 +75,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
     if (item != null && item instanceof FbVideo) {
       MediaUrl url = ((FbVideo) item).getMediaUrl();
       mediaUri = url.getUri();
-      userProfile.setText(format("%s・%s", getRelativeTimeString(item.timeStamp), url.name()));
+      userProfile.setText(format("%s・%s", getRelativeTimeSpanString(item.timeStamp), url.name()));
     }
   }
 
