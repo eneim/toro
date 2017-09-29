@@ -38,8 +38,6 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.widget.Container;
 
-import static butterknife.ButterKnife.findById;
-
 /**
  * @author eneim (7/2/17).
  */
@@ -82,7 +80,7 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
     navView.inflateHeaderView(R.layout.widget_space_4dp);
     navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
     navView.inflateHeaderView(R.layout.widget_hom_nav_header_2);
-    ButterKnife.<TextView>findById(navView.getHeaderView(3), R.id.text_content).setText(
+    navView.getHeaderView(3).<TextView>findViewById(R.id.text_content).setText(
         Html.fromHtml(getString(R.string.lib_info_license)));
 
     setupDemoButton();
@@ -93,7 +91,7 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
     }
   }
 
-  // It is said that this method should not be used at Application level.
+  // It is said that this method should not be used at Application.
   // In fact, only here we can ensure that Activity's Views have finish the restore of its state if any.
   // In this case, the drawer will be re-open after recreation IF it was opened before. But before
   // this method is called (eg. onStart), state of navView is still 'closed' (drawer.isDrawerOpen(navView)
@@ -119,7 +117,7 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
   }
 
   private void setupDemoButton() {
-    View buttonContainer = findById(toolbar, R.id.home_toolbar_button);
+    View buttonContainer = toolbar.findViewById(R.id.home_toolbar_button);
     if (buttonContainer == null) {
       buttonContainer = LayoutInflater.from(toolbar.getContext())
           .inflate(R.layout.widget_toolbar_button, toolbar, false);
@@ -130,8 +128,8 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
       toolbar.addView(buttonContainer, params);
     }
 
-    findById(buttonContainer, R.id.button_open_demos).setOnClickListener(
-        __ -> startActivity(new Intent(this, MainActivity.class)));
+    buttonContainer.findViewById(R.id.button_open_demos)
+        .setOnClickListener(__ -> startActivity(new Intent(this, MainActivity.class)));
   }
 
   @Override public void onContainerAvailable(@NonNull Container container) {

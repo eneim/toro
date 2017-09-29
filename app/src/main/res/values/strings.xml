@@ -92,4 +92,6 @@
   <string name="app_info_used_lib">
     Libraries used in this App
   </string>
+
+  <string name="transition_name_single_player">Single Player Transition</string>
 </resources>

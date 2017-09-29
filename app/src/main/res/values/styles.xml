@@ -18,6 +18,7 @@
 
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat">
+    <item name="fontFamily">@font/fira_sans_medium</item>
   </style>
 
   <style name="AppTheme.NoActionBar">
