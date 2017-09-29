@@ -41,12 +41,19 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
   LoopingExoPlayerViewHelper helper;
   Uri mediaUri;
+  View.OnClickListener clickListener;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
 
   public CustomExoPlayerViewHolder(View itemView) {
     super(itemView);
     ButterKnife.bind(this, itemView);
+  }
+
+  public void setClickListener(View.OnClickListener clickListener) {
+    this.clickListener = clickListener;
+    itemView.setOnClickListener(clickListener);
+    playerView.setOnClickListener(clickListener);
   }
 
   @NonNull @Override public View getPlayerView() {
