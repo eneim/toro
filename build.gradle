@@ -24,7 +24,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.0.0-beta6'
+    classpath 'com.android.tools.build:gradle:3.0.0-beta7'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
     classpath 'me.tatarka:gradle-retrolambda:3.7.0'
     classpath "com.novoda:bintray-release:0.5.0"
@@ -54,7 +54,7 @@ allprojects {
 
 ext {
   androidVersion = 26
-  buildToolVersion = '26.0.1'
+  buildToolVersion = '26.0.2'
   supportLibraryVersion = '26.1.0'
   exoPlayer2Version = 'r2.5.3'
   minSupportSDKVersion = 16
