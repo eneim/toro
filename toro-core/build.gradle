@@ -23,10 +23,11 @@ android {
   defaultConfig {
     minSdkVersion rootProject.ext.minSupportSDKVersion
     targetSdkVersion rootProject.ext.androidVersion
-    versionCode 1
-    versionName "1.0"
+    versionCode 310
+    versionName "v" + releaseVersion
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    buildConfigField("String", "LIB_NAME", "\"" + "ToroLib, v" + releaseVersion + "\"")
   }
 
   buildTypes {
@@ -43,32 +44,16 @@ android {
 }
 
 dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
-  testCompile 'junit:junit:4.12'
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-  compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-  compile "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
 
-  provided ("com.google.android.exoplayer:exoplayer-core:${rootProject.ext.exoPlayer2Version}") {
-    transitive = false
-  }
-
-  provided ("com.google.android.exoplayer:exoplayer-ui:${rootProject.ext.exoPlayer2Version}") {
-    transitive = false
-  }
-  provided ("com.google.android.exoplayer:exoplayer-dash:${rootProject.ext.exoPlayer2Version}") {
-    transitive = false
-  }
-
-  provided ("com.google.android.exoplayer:exoplayer-hls:${rootProject.ext.exoPlayer2Version}") {
-    transitive = false
-  }
-
-  provided ("com.google.android.exoplayer:exoplayer-smoothstreaming:${rootProject.ext.exoPlayer2Version}") {
-    transitive = false
+  implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
+    exclude group: 'com.android.support'
   }
 }
 

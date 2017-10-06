@@ -18,11 +18,14 @@ package im.ene.toro.sample.custom;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.CacheManager;
+import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.sample.R;
 
 /**
  * @author eneim (7/1/17).
@@ -32,15 +35,32 @@ class CustomLayoutAdapter extends RecyclerView.Adapter<CustomExoPlayerViewHolder
     implements CacheManager {
 
   private final MediaList mediaList;
+  private final ItemClickListener itemClickListener;
 
-  CustomLayoutAdapter(MediaList mediaList) {
+  @Deprecated CustomLayoutAdapter(MediaList mediaList) {
     this.mediaList = mediaList;
+    this.itemClickListener = null;
+  }
+
+  CustomLayoutAdapter(MediaList mediaList, ItemClickListener itemClickListener) {
+    this.mediaList = mediaList;
+    this.itemClickListener = itemClickListener;
   }
 
   @Override public CustomExoPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(CustomExoPlayerViewHolder.LAYOUT_RES, parent, false);
-    return new CustomExoPlayerViewHolder(view);
+    CustomExoPlayerViewHolder viewHolder = new CustomExoPlayerViewHolder(view);
+    ViewCompat.setTransitionName(viewHolder.playerView,
+        parent.getContext().getString(R.string.transition_name_single_player));
+    viewHolder.setClickListener(v -> {
+      int pos = viewHolder.getAdapterPosition();
+      if (itemClickListener != null && pos != RecyclerView.NO_POSITION) {
+        itemClickListener.onItemClick(viewHolder.playerView, pos, mediaList.get(pos),
+            viewHolder.getCurrentPlaybackInfo());
+      }
+    });
+    return viewHolder;
   }
 
   @Override public void onBindViewHolder(CustomExoPlayerViewHolder holder, int position) {
@@ -57,5 +77,11 @@ class CustomLayoutAdapter extends RecyclerView.Adapter<CustomExoPlayerViewHolder
 
   @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
     return key instanceof Content.Media ? this.mediaList.indexOf(key) : null;
+  }
+
+  static abstract class ItemClickListener {
+
+    abstract void onItemClick(View view, int position, Content.Media media,
+        PlaybackInfo playbackInfo);
   }
 }

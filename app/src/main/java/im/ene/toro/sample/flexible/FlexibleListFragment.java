@@ -16,10 +16,15 @@
 
 package im.ene.toro.sample.flexible;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -27,8 +32,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
@@ -42,6 +51,7 @@ import static android.support.v7.widget.helper.ItemTouchHelper.DOWN;
 import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
 import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
 import static android.support.v7.widget.helper.ItemTouchHelper.UP;
+import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
 /**
  * @author eneim (7/6/17).
@@ -49,12 +59,17 @@ import static android.support.v7.widget.helper.ItemTouchHelper.UP;
 
 public class FlexibleListFragment extends BaseFragment {
 
+  static final int RQ_PLAYBACK_INFO = 100;
+
   public static FlexibleListFragment newInstance() {
     Bundle args = new Bundle();
     FlexibleListFragment fragment = new FlexibleListFragment();
     fragment.setArguments(args);
     return fragment;
   }
+
+  static final int[] contents =
+      { R.string.license_tos, R.string.license_bbb, R.string.license_cosmos };
 
   @Nullable @Override
   public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -79,7 +94,27 @@ public class FlexibleListFragment extends BaseFragment {
       }
     });
     container.setLayoutManager(layoutManager);
-    adapter = new FlexibleListAdapter();
+    adapter = new FlexibleListAdapter(new FlexibleListAdapter.ItemClickListener() {
+      @Override void onItemClick(View view, int position, Content.Media media, PlaybackInfo info) {
+        String content = getString(contents[position % contents.length]);
+        Point viewSize = new Point(view.getWidth(), view.getHeight());
+        Point videoSize = new Point(view.getWidth(), view.getHeight());
+        if (view instanceof SimpleExoPlayerView
+            && ((SimpleExoPlayerView) view).getPlayer() != null) {
+          SimpleExoPlayer player = ((SimpleExoPlayerView) view).getPlayer();
+          Format videoFormat = player.getVideoFormat();
+          if (videoFormat.width != Format.NO_VALUE && videoFormat.height != Format.NO_VALUE) {
+            videoSize.set(videoFormat.width, videoFormat.height);
+          }
+        }
+
+        Intent intent = createIntent(getContext(), position, media.mediaUri,  //
+            content, info, viewSize, videoSize, true);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+            makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
+        startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());
+      }
+    });
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
 
@@ -136,7 +171,8 @@ public class FlexibleListFragment extends BaseFragment {
         if (container != null) container.setPlayerSelector(selector);
       }, 500);
     } else {
-      container.setPlayerSelector(activeSelector);
+      selector = activeSelector;
+      container.setPlayerSelector(selector);
     }
   }
 
@@ -150,6 +186,19 @@ public class FlexibleListFragment extends BaseFragment {
     selector = null;
     itemTouchHelper = null;
     super.onDestroyView();
+  }
+
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == Activity.RESULT_OK && requestCode == RQ_PLAYBACK_INFO && data != null) {
+      PlaybackInfo info = data.getParcelableExtra(RESULT_EXTRA_PLAYBACK_INFO);
+      int order = data.getIntExtra(RESULT_EXTRA_PLAYER_ORDER, -1);
+      if (order >= 0 && container != null) {
+        container.setPlayerSelector(PlayerSelector.NONE);
+        container.savePlaybackInfo(order, info);
+        container.setPlayerSelector(selector);
+      }
+    }
   }
 
   PlayerSelector activeSelector = PlayerSelector.DEFAULT;

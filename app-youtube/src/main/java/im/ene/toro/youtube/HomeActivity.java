@@ -19,7 +19,6 @@ package im.ene.toro.youtube;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import im.ene.toro.widget.Container;
 

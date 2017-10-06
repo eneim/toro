@@ -16,13 +16,18 @@
 
 package im.ene.toro.sample.custom;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -33,10 +38,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import butterknife.BindView;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.ramotion.cardslider.CardSnapHelper;
+import im.ene.toro.PlayerSelector;
+import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
+
+import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
 /**
  * @author eneim (7/1/17).
@@ -47,6 +59,8 @@ import im.ene.toro.widget.Container;
  */
 
 @SuppressWarnings("unused") public class CustomLayoutFragment extends BaseFragment {
+
+  static final int RQ_PLAYBACK_INFO = 100;
 
   public static CustomLayoutFragment newInstance() {
     Bundle args = new Bundle();
@@ -84,6 +98,8 @@ import im.ene.toro.widget.Container;
   CustomLayoutAdapter adapter;
   LicensePagerAdapter pagerAdapter;
 
+  PlayerSelector selector = PlayerSelector.DEFAULT;  // backup current selector.
+
   private final CardSnapHelper snapHelper = new CardSnapHelper();
   private ViewPager.OnPageChangeListener pageChangeListener;
   private RecyclerView.OnScrollListener onScrollListener;
@@ -109,7 +125,27 @@ import im.ene.toro.widget.Container;
     container.addOnScrollListener(onScrollListener);
 
     MediaList mediaList = new MediaList();
-    adapter = new CustomLayoutAdapter(mediaList);
+    adapter = new CustomLayoutAdapter(mediaList, new CustomLayoutAdapter.ItemClickListener() {
+      @Override void onItemClick(View view, int position, Content.Media media, PlaybackInfo info) {
+        String content = getString(contents[position % contents.length]);
+        Point viewSize = new Point(view.getWidth(), view.getHeight());
+        Point videoSize = new Point(view.getWidth(), view.getHeight());
+        if (view instanceof SimpleExoPlayerView
+            && ((SimpleExoPlayerView) view).getPlayer() != null) {
+          SimpleExoPlayer player = ((SimpleExoPlayerView) view).getPlayer();
+          Format videoFormat = player.getVideoFormat();
+          if (videoFormat.width != Format.NO_VALUE && videoFormat.height != Format.NO_VALUE) {
+            videoSize.set(videoFormat.width, videoFormat.height);
+          }
+        }
+
+        Intent intent = createIntent(getContext(), position, media.mediaUri,  //
+            content, info, viewSize, videoSize, false);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+            makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
+        startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());
+      }
+    });
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
 
@@ -126,6 +162,7 @@ import im.ene.toro.widget.Container;
       }
     };
     viewPager.addOnPageChangeListener(pageChangeListener);
+    selector = container.getPlayerSelector();
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
@@ -144,6 +181,19 @@ import im.ene.toro.widget.Container;
     layoutManager = null;
     adapter = null;
     super.onDestroyView();
+  }
+
+  @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == Activity.RESULT_OK && requestCode == RQ_PLAYBACK_INFO && data != null) {
+      PlaybackInfo info = data.getParcelableExtra(RESULT_EXTRA_PLAYBACK_INFO);
+      int order = data.getIntExtra(RESULT_EXTRA_PLAYER_ORDER, -1);
+      if (order >= 0 && container != null) {
+        container.setPlayerSelector(PlayerSelector.NONE);
+        container.savePlaybackInfo(order, info);
+        container.setPlayerSelector(selector);
+      }
+    }
   }
 
   public interface Callback {

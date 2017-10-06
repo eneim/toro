@@ -16,10 +16,6 @@
 
 package im.ene.toro.sample.common;
 
-import java.util.Date;
-
-import static im.ene.toro.sample.ToroDemo.getApp;
-
 /**
  * @author eneim | 6/8/17.
  */
@@ -32,9 +28,5 @@ public class DemoUtil {
 
   public static int compare(long x, long y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
-  }
-
-  public static String getRelativeTimeString(long time) {
-    return getApp().getPrettyTime().format(new Date(time));
   }
 }

@@ -15,19 +15,12 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <style name="Toro.Theme.Board" parent="Toro.Dialog.Fullscreen.NoTitle">
-    <item name="android:statusBarColor">@android:color/black</item>
-    <item name="android:windowBackground">@android:color/black</item>
-  </style>
-
-  <style name="AppTheme.NoActionBar">
-    <item name="windowActionBar">false</item>
-    <item name="windowNoTitle">true</item>
-    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-  </style>
-
-  <style name="AppTheme.NoActionBar.Translucent">
-    <item name="android:statusBarColor">@android:color/black</item>
-  </style>
-</resources>
+<com.google.android.exoplayer2.ui.SimpleExoPlayerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    app:resize_mode="fixed_width"
+    />

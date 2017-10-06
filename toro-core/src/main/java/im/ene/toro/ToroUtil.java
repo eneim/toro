@@ -37,15 +37,15 @@ import im.ene.toro.widget.Container;
     throw new RuntimeException("Meh!");
   }
 
-  public static final String LIB_NAME = "ToroLib, v3.0.0";
+  public static final String LIB_NAME = BuildConfig.LIB_NAME;
 
   /**
-   * Get the ratio in range of 0.0 ~ 1.0 of the visible area of a {@link ToroPlayer}'s playerView.
+   * Get the ratio in range of 0.0 ~ 1.0 the visible area of a {@link ToroPlayer}'s playerView.
    *
    * @param player the {@link ToroPlayer} need to investigate.
    * @param parent the {@link ViewParent} that holds the {@link ToroPlayer}. If {@code null} or
    * not a {@link Container} then this method must returns 0.0f;
-   * @return the ratio value in range of 0.0 ~ 1.0 of the visible area.
+   * @return the value in range of 0.0 ~ 1.0 of the visible area.
    */
   @FloatRange(from = 0.0, to = 1.0) //
   public static float visibleAreaOffset(@NonNull ToroPlayer player, @Nullable ViewParent parent) {
@@ -56,12 +56,12 @@ import im.ene.toro.widget.Container;
     playerView.getDrawingRect(drawRect);
     int drawArea = drawRect.width() * drawRect.height();
 
-    Rect videoRect = new Rect();
-    boolean visible = playerView.getGlobalVisibleRect(videoRect, new Point());
+    Rect playerRect = new Rect();
+    boolean visible = playerView.getGlobalVisibleRect(playerRect, new Point());
 
     float offset = 0.f;
     if (visible && drawArea > 0) {
-      int visibleArea = videoRect.height() * videoRect.width();
+      int visibleArea = playerRect.height() * playerRect.width();
       offset = visibleArea / (float) drawArea;
     }
     return offset;

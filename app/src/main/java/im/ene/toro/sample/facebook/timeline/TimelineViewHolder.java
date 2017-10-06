@@ -27,9 +27,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.common.DemoUtil;
 import im.ene.toro.sample.facebook.data.FbItem;
 import java.util.List;
+
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 /**
  * @author eneim | 6/18/17.
@@ -72,7 +73,7 @@ public class TimelineViewHolder extends RecyclerView.ViewHolder {
 
   void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
     userName.setText(item.author.userName);
-    userProfile.setText(DemoUtil.getRelativeTimeString(item.timeStamp));
+    userProfile.setText(getRelativeTimeSpanString(item.timeStamp));
     Glide.with(itemView).load(item.author.userIcon).into(userIcon);
   }
 

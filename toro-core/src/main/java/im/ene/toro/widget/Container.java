@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,7 +31,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +47,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Context.POWER_SERVICE;
 
 /**
  * @author eneim | 5/31/17.
@@ -97,6 +99,13 @@ public class Container extends RecyclerView {
     if (animatorFinishHandler == null) {
       animatorFinishHandler = new Handler(new AnimatorHelper(this));
     }
+
+    PowerManager powerManager = (PowerManager) getContext().getSystemService(POWER_SERVICE);
+    if (powerManager.isScreenOn() /* new API calls isInteractive() internally */) {
+      this.screenState = View.SCREEN_STATE_ON;
+    } else {
+      this.screenState = View.SCREEN_STATE_OFF;
+    }
   }
 
   @CallSuper @Override protected void onDetachedFromWindow() {
@@ -108,7 +117,7 @@ public class Container extends RecyclerView {
 
     List<ToroPlayer> players = playerManager.getPlayers();
     if (!players.isEmpty()) {
-      for (int i = players.size() - 1; i >= 0; i--) {
+      for (int size = players.size(), i = size - 1; i >= 0; i--) {
         ToroPlayer player = players.get(i);
         if (player.isPlaying()) playerManager.pause(player);
         playerManager.release(player);
@@ -135,7 +144,7 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    ViewHolder holder = getChildViewHolder(child);
+    final ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
     final View playerView = player.getPlayerView();
@@ -195,7 +204,8 @@ public class Container extends RecyclerView {
     if (getChildCount() == 0) return;
 
     List<ToroPlayer> players = playerManager.getPlayers();
-    for (int i = 0; i < players.size(); i++) {
+    // 1. Find players those are not qualified to play anymore.
+    for (int i = 0, size = players.size(); i < size; i++) {
       ToroPlayer player = players.get(i);
       if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;
       if (player.isPlaying()) {
@@ -206,6 +216,7 @@ public class Container extends RecyclerView {
       player.release();
     }
 
+    // 2. Refresh the good players list.
     int firstVisiblePosition = NO_POSITION;
     int lastVisiblePosition = NO_POSITION;
 
@@ -239,11 +250,12 @@ public class Container extends RecyclerView {
         RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(i);
         if (holder != null && holder instanceof ToroPlayer) {
           ToroPlayer player = (ToroPlayer) holder;
-          // check candidate's condition
+          // Check candidate's condition
           if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
             if (!playerManager.manages(player)) {
               playerManager.attachPlayer(player);
             }
+            // Don't check the attach result, because the player may be managed already.
             if (!player.isPlaying()) {
               playerManager.initialize(player, this, this.getPlaybackInfo(player.getPlayerOrder()));
             }
@@ -254,7 +266,7 @@ public class Container extends RecyclerView {
 
     final List<ToroPlayer> source = playerManager.getPlayers();
     int count = source.size();
-    if (count < 1) return;
+    if (count < 1) return;  // No available player, return.
 
     List<ToroPlayer> candidates = new ArrayList<>();
     for (int i = 0; i < count; i++) {
@@ -490,7 +502,6 @@ public class Container extends RecyclerView {
    */
   @CallSuper @Override protected void onWindowVisibilityChanged(int visibility) {
     super.onWindowVisibilityChanged(visibility);
-    Log.d(TAG, "onWindowVisibilityChanged() called with: visibility = [" + visibility + "]");
     if (visibility == View.GONE) {
       List<ToroPlayer> players = playerManager.getPlayers();
       // if onSaveInstanceState is called before, source will contain no item, just fine.
@@ -501,6 +512,68 @@ public class Container extends RecyclerView {
         }
       }
     } else if (visibility == View.VISIBLE) {
+      if (tmpStates != null && tmpStates.size() > 0) {
+        for (int i = 0; i < tmpStates.size(); i++) {
+          int order = tmpStates.keyAt(i);
+          PlaybackInfo playbackInfo = tmpStates.get(order);
+          this.savePlaybackInfo(order, playbackInfo);
+        }
+      }
+      tmpStates = null;
+      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+    }
+
+    dispatchWindowVisibilityMayChange();
+  }
+
+  private int screenState;
+
+  @Override public void onScreenStateChanged(int screenState) {
+    super.onScreenStateChanged(screenState);
+    this.screenState = screenState;
+    dispatchWindowVisibilityMayChange();
+  }
+
+  @Override public void onWindowFocusChanged(boolean hasWindowFocus) {
+    super.onWindowFocusChanged(hasWindowFocus);
+    dispatchWindowVisibilityMayChange();
+  }
+
+  /**
+   * Called when:
+   * - Screen state changed.
+   * or - Window focus changed.
+   * or - Window visibility changed.
+   *
+   * For each of that change, Screen may be turned off or Window's focused state may change, this
+   * is to decide if Container should keep current playback state or change it.
+   *
+   * <strong>Discussion</strong>: In fact, we expect that: Container will be playing if the
+   * following conditions are all satisfied:
+   * - Current window is visible. (but not necessarily focused).
+   * - Container is visible in Window (partly is fine, we care about the Media player).
+   * - Container is focused in Window. (so we don't screw up other component's focus).
+   *
+   * In lower API (eg: 16), {@link #getWindowVisibility()} always returns {@link #VISIBLE}, which
+   * cannot tell much. We need to investigate this flag in various APIs in various Scenarios.
+   */
+  private void dispatchWindowVisibilityMayChange() {
+    if (screenState == SCREEN_STATE_OFF) {
+      List<ToroPlayer> players = playerManager.getPlayers();
+      for (ToroPlayer player : players) {
+        if (player.isPlaying()) {
+          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          playerManager.pause(player);
+        }
+      }
+    } else if (screenState == SCREEN_STATE_ON
+        // Container has focus in current Window
+        && hasFocus()
+        // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
+        // In that case, other triggers will supposed to be called and we are safe here.
+        // Need further investigation if need.
+        && hasWindowFocus()) {
+      // tmpStates may be consumed already, if there is a good reason for that, so no big deal.
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
@@ -634,7 +707,7 @@ public class Container extends RecyclerView {
         };
 
     @Override public String toString() {
-      // "The shorter the better, the String is." - ???
+      // > "The shorter the better, the String is." - ???
       return "Cache{" + "states=" + statesCache + '}';
     }
   }
@@ -784,7 +857,7 @@ public class Container extends RecyclerView {
   public interface Filter {
 
     /**
-     * Check a {@link ToroPlayer} for a filter condition.
+     * Check a {@link ToroPlayer} for a condition.
      *
      * @param player the {@link ToroPlayer} to check.
      * @return {@code true} if this accepts the {@link ToroPlayer}, {@code false} otherwise.

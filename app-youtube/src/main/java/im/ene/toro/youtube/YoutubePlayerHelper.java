@@ -39,7 +39,7 @@ import static im.ene.toro.youtube.BuildConfig.API_KEY;
  */
 
 @SuppressWarnings("WeakerAccess") //
-class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
+final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
 
   final FragmentManager fragmentManager;
   final PlaybackInfo playbackInfo = new PlaybackInfo();
@@ -132,8 +132,8 @@ class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
         // 1. Remove current fragment if there is one
         this.playerViewId = player.getPlayerView().getId();
         if (playerViewId != View.NO_ID) {
-          playerFragment = (YouTubePlayerSupportFragment) fragmentManager.findFragmentById(
-              playerViewId);
+          playerFragment =
+              (YouTubePlayerSupportFragment) fragmentManager.findFragmentById(playerViewId);
         }
         if (playerFragment != null) {
           fragmentManager.beginTransaction().remove(playerFragment).commitNowAllowingStateLoss();
@@ -143,7 +143,8 @@ class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
         playerViewId = ViewUtil.generateViewId();
         player.getPlayerView().setId(playerViewId);
         playerFragment = YouTubePlayerSupportFragment.newInstance();
-        fragmentManager.beginTransaction().replace(playerViewId, playerFragment).commitNowAllowingStateLoss();
+        fragmentManager.beginTransaction().replace(playerViewId, playerFragment)  //
+            .commitNowAllowingStateLoss();
         break;
       case MSG_PLAY:
         if (playerFragment == null || !playerFragment.isVisible()) break;
@@ -151,7 +152,7 @@ class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
           @Override
           public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
             YoutubePlayerHelper.this.youTubePlayer = player;
-            player.setShowFullscreenButton(false);  // may lead to weird behavior
+            player.setShowFullscreenButton(false);  // fullscreen requires more work ...
             player.loadVideo(videoId,
                 (int) YoutubePlayerHelper.this.playbackInfo.getResumePosition());
           }

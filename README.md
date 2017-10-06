@@ -31,7 +31,7 @@
 
 ### Demo (Youtube Video)
 
-[![](https://img.youtube.com/vi/rSAGaNM2_t8/0.jpg)](https://www.youtube.com/watch?v=rSAGaNM2_t8)
+[![](https://img.youtube.com/vi/gw0awL_89V4/0.jpg)](https://www.youtube.com/watch?v=gw0awL_89V4)
 
 ### Getting start
 
@@ -42,7 +42,7 @@ Latest version:
  
 ```groovy
 ext {
-  toroVersion = '3.0.0-beta1'
+  toroVersion = '3.0.0'
   // below: other dependencies' versions maybe
 }
 
@@ -56,11 +56,9 @@ dependencies {
 
 2. Using ```Container``` in place of Video list. 
 
-Below: a simple Container with default max simultaneous players count to 1.
-
 ```xml
 <im.ene.toro.widget.Container
-  android:id="@+id/recycler_view"
+  android:id="@+id/my_fancy_videos"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
 />

@@ -1,10 +1,48 @@
 Changelog
 ===========
 
-3.0.0 (release date TBD)
+3.1.1 (2017/10/06)
 --------------
 
-- Detail TBD
+#### Internal Updates
+
+- Inline documentation is improved. (I was bad at documenting things, sorry).
+- ```ExoPlayer``` version is updated to 2.5.3.
+
+#### Demo App Updates
+
+- Add demo with single player activity, where User can click to a Video to start a dedicated Player for it. Read source code for more information. 
+
+3.1.0 (2017/09/05)
+--------------
+
+#### API Updates
+
+- Inline documentation is improved.
+- ```ExoPlayer``` version is updated to 2.5.1 (**This version is not binary compatible with 2.4.x**).
+
+#### Bug fixes
+
+- Fix a bug where Container keeps playing while Device Screen is turned off.
+
+3.0.0 (2017/08/02)
+--------------
+
+#### API Updates
+
+- Add ```ToroPlayer#onContainerScrollStateChange``` to allow ToroPlayer to hook into Container scroll state change event.
+- Add ```ToroPlayerHelper#onContainerScrollStateChange``` which does nothing, so that sub class can used to provide helpful support for ToroPlayer.
+- ```ExoPlayer``` version is updated to 2.4.4
+
+#### Demo app update
+
+- Add **ViewPagers in ViewPager** demo, which demonstrates how to handle more complicated use case where user have ViewPager inside Fragment which in turns is inside another ViewPager. (The problem is when a ViewPager is shown to the user).
+
+- Add ```app-youtube``` module to show the use of toro with Youtube video, using Android Youtube Player API. To be able to build this module, user must provide a *youtube api key* to ```gradle.properties``` (see ```gradle.properties-sample``` for the key, replace the dummy key to the actual key, rename this file to ```gradle.properties``` as usual and build).
+
+#### Other update
+
+- **toro** now requires Android Studio 3.0 to develop.
 
 3.0.0 Beta 1 (2017/07/07)
 -------------

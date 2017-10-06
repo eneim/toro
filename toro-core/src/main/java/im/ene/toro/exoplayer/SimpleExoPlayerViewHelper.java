@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
@@ -59,7 +60,7 @@ public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     this.mediaSourceBuilder = new MediaSourceBuilder(container.getContext(), mediaUri);
   }
 
-  public final void setEventListener(ExoPlayer.EventListener eventListener) {
+  public final void setEventListener(Player.EventListener eventListener) {
     this.internalListener.setDelegate(eventListener);
   }
 

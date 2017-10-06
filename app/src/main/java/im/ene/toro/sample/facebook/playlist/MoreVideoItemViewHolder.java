@@ -37,13 +37,12 @@ import im.ene.toro.exoplayer.ExoPlayerHelper;
 import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.ToroDemo;
 import im.ene.toro.sample.common.MediaUrl;
 import im.ene.toro.sample.facebook.data.FbVideo;
 import im.ene.toro.widget.Container;
 import java.util.List;
 
-import static im.ene.toro.sample.common.DemoUtil.getRelativeTimeString;
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static java.lang.String.format;
 import static java.util.Locale.getDefault;
 
@@ -91,10 +90,10 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
   void bind(MoreVideosAdapter adapter, FbVideo item, List<Object> payloads) {
     if (item != null) {
       userName.setText(item.author.userName);
-      Glide.with(ToroDemo.getApp()).load(item.author.userIcon).into(userIcon);
+      Glide.with(itemView.getContext()).load(item.author.userIcon).into(userIcon);
       MediaUrl url = item.getMediaUrl();
       mediaUri = url.getUri();
-      userProfile.setText(format("%s・%s", getRelativeTimeString(item.timeStamp), url.name()));
+      userProfile.setText(format("%s・%s", getRelativeTimeSpanString(item.timeStamp), url.name()));
     }
   }
 

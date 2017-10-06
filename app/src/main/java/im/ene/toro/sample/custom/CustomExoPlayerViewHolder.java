@@ -28,6 +28,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.common.LoopingExoPlayerViewHelper;
 import im.ene.toro.widget.Container;
 
 /**
@@ -41,12 +42,19 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
   LoopingExoPlayerViewHelper helper;
   Uri mediaUri;
+  View.OnClickListener clickListener;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
 
   public CustomExoPlayerViewHolder(View itemView) {
     super(itemView);
     ButterKnife.bind(this, itemView);
+  }
+
+  public void setClickListener(View.OnClickListener clickListener) {
+    this.clickListener = clickListener;
+    itemView.setOnClickListener(clickListener);
+    playerView.setOnClickListener(clickListener);
   }
 
   @NonNull @Override public View getPlayerView() {

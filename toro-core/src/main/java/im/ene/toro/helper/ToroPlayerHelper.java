@@ -37,19 +37,19 @@ import java.util.ArrayList;
 @SuppressWarnings("WeakerAccess") //
 public abstract class ToroPlayerHelper {
 
-  protected static final String TAG = "ToroLib:ViewHelper";
+  protected static final String TAG = "ToroLib:PlayerHelper";
 
   private final Handler handler = new Handler(new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
-        case State.STATE_BUFFERING /* ExoPlayer.STATE_BUFFERING */:
+        case State.STATE_BUFFERING /* Player.STATE_BUFFERING */:
           internalListener.onBuffering();
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onBuffering();
           }
-          return true;
-        case State.STATE_READY /*  ExoPlayer.STATE_READY */:
+          break;
+        case State.STATE_READY /*  Player.STATE_READY */:
           if (playWhenReady) {
             internalListener.onPlaying();
           } else {
@@ -63,16 +63,17 @@ public abstract class ToroPlayerHelper {
               callback.onPaused();
             }
           }
-          return true;
-        case State.STATE_END /* ExoPlayer.STATE_ENDED */:
+          break;
+        case State.STATE_END /* Player.STATE_ENDED */:
           internalListener.onCompleted(container, player);
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onCompleted(container, player);
           }
-          return true;
+          break;
         default:
-          return false;
+          break;
       }
+      return true;
     }
   });
 

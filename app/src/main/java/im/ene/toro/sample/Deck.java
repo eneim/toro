@@ -23,8 +23,6 @@ import im.ene.toro.sample.complex.ComplexListFragment;
 import im.ene.toro.sample.flexible.FlexibleListFragment;
 import im.ene.toro.sample.intro.IntroFragment;
 import im.ene.toro.sample.nested.NestedListFragment;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * @author eneim | 6/6/17.
@@ -37,20 +35,12 @@ public final class Deck {
   private Deck() {
   }
 
-  public static void present(FragmentActivity activity, Class<?> fragmentClass)
+  public static void present(FragmentActivity activity, Class<? extends Fragment> fragmentClass)
       throws ToroDemoException {
     Fragment fragment;
-    //noinspection TryWithIdenticalCatches
     try {
-      //noinspection ConfusingArgumentToVarargsMethod
-      Method method =
-          fragmentClass.getMethod("newInstance", null); // <-- must implement this method.
-      //noinspection ConfusingArgumentToVarargsMethod
-      fragment = (Fragment) method.invoke(null, null);
-    } catch (NoSuchMethodException e) {
-      e.printStackTrace();
-      throw new ToroDemoException(e.getLocalizedMessage(), e);
-    } catch (InvocationTargetException e) {
+      fragment = fragmentClass.newInstance();
+    } catch (InstantiationException e) {
       e.printStackTrace();
       throw new ToroDemoException(e.getLocalizedMessage(), e);
     } catch (IllegalAccessException e) {
@@ -66,37 +56,19 @@ public final class Deck {
     }
   }
 
-  @SuppressWarnings("unused") //
-  public static void present(FragmentActivity activity, String clazz) throws ToroDemoException {
-    try {
-      present(activity, Class.forName(clazz));
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      throw new ToroDemoException(e.getLocalizedMessage(), e);
-    }
-  }
-
   @SuppressWarnings("WeakerAccess") //
-  public static Fragment createFragment(Class<?> fragmentClass) throws ToroDemoException {
+  public static Fragment createFragment(Class<? extends Fragment> fragmentClass)
+      throws ToroDemoException {
     Fragment fragment;
-    //noinspection TryWithIdenticalCatches
     try {
-      //noinspection ConfusingArgumentToVarargsMethod
-      Method method =
-          fragmentClass.getMethod("newInstance", null); // <-- must implement this method.
-      //noinspection ConfusingArgumentToVarargsMethod
-      fragment = (Fragment) method.invoke(null, null);
-    } catch (NoSuchMethodException e) {
-      e.printStackTrace();
-      throw new ToroDemoException(e.getLocalizedMessage(), e);
-    } catch (InvocationTargetException e) {
+      fragment = fragmentClass.newInstance();
+    } catch (InstantiationException e) {
       e.printStackTrace();
       throw new ToroDemoException(e.getLocalizedMessage(), e);
     } catch (IllegalAccessException e) {
       e.printStackTrace();
       throw new ToroDemoException(e.getLocalizedMessage(), e);
     }
-
     return fragment;
   }
 
@@ -121,9 +93,9 @@ public final class Deck {
     FLEXIBLE("Flexible Grid", FlexibleListFragment.class)  //
     ;
     private final String title;
-    private final Class<?> fragmentClass;
+    private final Class<? extends Fragment> fragmentClass;
 
-    Slide(String title, Class<?> fragmentClass) {
+    Slide(String title, Class<? extends Fragment> fragmentClass) {
       this.title = title;
       this.fragmentClass = fragmentClass;
     }
@@ -132,7 +104,7 @@ public final class Deck {
       return title;
     }
 
-    public Class<?> getFragmentClass() {
+    public Class<? extends Fragment> getFragmentClass() {
       return fragmentClass;
     }
   }
