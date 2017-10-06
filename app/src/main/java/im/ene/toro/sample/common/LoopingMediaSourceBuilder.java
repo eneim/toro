@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.custom;
+package im.ene.toro.sample.common;
 
 import android.content.Context;
 import android.net.Uri;
@@ -31,7 +31,7 @@ import im.ene.toro.exoplayer.MediaSourceBuilder;
 
 public class LoopingMediaSourceBuilder extends MediaSourceBuilder {
 
-  LoopingMediaSourceBuilder(Context context, Uri mediaUri) {
+  public LoopingMediaSourceBuilder(Context context, Uri mediaUri) {
     super(context, mediaUri);
   }
 

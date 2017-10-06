@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.custom;
+package im.ene.toro.sample.common;
 
 import android.content.Context;
 import android.net.Uri;

@@ -37,8 +37,6 @@ import java.util.List;
 @SuppressWarnings({ "unused", "UnusedReturnValue" }) //
 final class PlayerManager {
 
-  private static String TAG = "ToroLib:PlayerManager";
-
   // Make sure each ToroPlayer will present only once in this Manager.
   private final HashSet<ToroPlayer> players = new HashSet<>();
 
@@ -55,7 +53,7 @@ final class PlayerManager {
   }
 
   /**
-   * Return a Copy of the collection of players this manager is managing.
+   * Return a "Copy" of the collection of players this manager is managing.
    *
    * @return a non null collection of Players those a managed.
    */

@@ -101,7 +101,7 @@ public class Container extends RecyclerView {
     }
 
     PowerManager powerManager = (PowerManager) getContext().getSystemService(POWER_SERVICE);
-    if (powerManager.isScreenOn() /* new API call isInteractive() internally */) {
+    if (powerManager.isScreenOn() /* new API calls isInteractive() internally */) {
       this.screenState = View.SCREEN_STATE_ON;
     } else {
       this.screenState = View.SCREEN_STATE_OFF;
@@ -117,7 +117,7 @@ public class Container extends RecyclerView {
 
     List<ToroPlayer> players = playerManager.getPlayers();
     if (!players.isEmpty()) {
-      for (int i = players.size() - 1; i >= 0; i--) {
+      for (int size = players.size(), i = size - 1; i >= 0; i--) {
         ToroPlayer player = players.get(i);
         if (player.isPlaying()) playerManager.pause(player);
         playerManager.release(player);
@@ -144,7 +144,7 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    ViewHolder holder = getChildViewHolder(child);
+    final ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
     final View playerView = player.getPlayerView();
@@ -204,7 +204,8 @@ public class Container extends RecyclerView {
     if (getChildCount() == 0) return;
 
     List<ToroPlayer> players = playerManager.getPlayers();
-    for (int i = 0; i < players.size(); i++) {
+    // 1. Find players those are not qualified to play anymore.
+    for (int i = 0, size = players.size(); i < size; i++) {
       ToroPlayer player = players.get(i);
       if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;
       if (player.isPlaying()) {
@@ -215,6 +216,7 @@ public class Container extends RecyclerView {
       player.release();
     }
 
+    // 2. Refresh the good players list.
     int firstVisiblePosition = NO_POSITION;
     int lastVisiblePosition = NO_POSITION;
 
@@ -248,11 +250,12 @@ public class Container extends RecyclerView {
         RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(i);
         if (holder != null && holder instanceof ToroPlayer) {
           ToroPlayer player = (ToroPlayer) holder;
-          // check candidate's condition
+          // Check candidate's condition
           if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
             if (!playerManager.manages(player)) {
               playerManager.attachPlayer(player);
             }
+            // Don't check the attach result, because the player may be managed already.
             if (!player.isPlaying()) {
               playerManager.initialize(player, this, this.getPlaybackInfo(player.getPlayerOrder()));
             }
@@ -263,7 +266,7 @@ public class Container extends RecyclerView {
 
     final List<ToroPlayer> source = playerManager.getPlayers();
     int count = source.size();
-    if (count < 1) return;
+    if (count < 1) return;  // No available player, return.
 
     List<ToroPlayer> candidates = new ArrayList<>();
     for (int i = 0; i < count; i++) {
@@ -854,7 +857,7 @@ public class Container extends RecyclerView {
   public interface Filter {
 
     /**
-     * Check a {@link ToroPlayer} for a filter condition.
+     * Check a {@link ToroPlayer} for a condition.
      *
      * @param player the {@link ToroPlayer} to check.
      * @return {@code true} if this accepts the {@link ToroPlayer}, {@code false} otherwise.

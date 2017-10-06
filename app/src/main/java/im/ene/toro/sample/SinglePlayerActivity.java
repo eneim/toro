@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.custom;
+package im.ene.toro.sample;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
@@ -38,14 +37,14 @@ import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.exoplayer.ExoPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
+import im.ene.toro.sample.common.LoopingMediaSourceBuilder;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
-import static im.ene.toro.sample.custom.CustomLayoutFragment.RESULT_EXTRA_PLAYBACK_INFO;
-import static im.ene.toro.sample.custom.CustomLayoutFragment.RESULT_EXTRA_PLAYER_ORDER;
+import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYBACK_INFO;
+import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYER_ORDER;
 
 /**
  * @author eneim (9/20/17).
@@ -53,25 +52,27 @@ import static im.ene.toro.sample.custom.CustomLayoutFragment.RESULT_EXTRA_PLAYER
 
 public class SinglePlayerActivity extends BaseActivity {
 
-  static final String EXTRA_MEDIA_URI = "toro:demo:custom:player:uri";
-  static final String EXTRA_MEDIA_ORDER = "toro:demo:custom:player:order";
-  static final String EXTRA_MEDIA_DESCRIPTION = "toro:demo:custom:player:description";
-  static final String EXTRA_MEDIA_PLAYBACK_INFO = "toro:demo:custom:player:playback";
-  static final String EXTRA_MEDIA_PLAYER_SIZE = "toro:demo:custom:player:player_size";
-  static final String EXTRA_MEDIA_VIDEO_SIZE = "toro:demo:custom:player:video_size";
+  static final String EXTRA_MEDIA_URI = "toro:demo:custom:player:uri";  // Uri
+  static final String EXTRA_MEDIA_ORDER = "toro:demo:custom:player:order";  // int
+  static final String EXTRA_MEDIA_DESCRIPTION = "toro:demo:custom:player:description"; // String
+  static final String EXTRA_MEDIA_PLAYBACK_INFO = "toro:demo:custom:player:info"; // PlaybackInfo
+  static final String EXTRA_MEDIA_PLAYER_SIZE = "toro:demo:custom:player:player_size";  // Point
+  static final String EXTRA_MEDIA_VIDEO_SIZE = "toro:demo:custom:player:video_size";  // Point
+  static final String EXTRA_DEFAULT_FULLSCREEN = "toro:demo:custom:player:fullscreen";  // boolean
 
   static final String STATE_MEDIA_PLAYBACK_INFO = "todo:demo:player:state:playback";
 
-  public static Intent createIntent(Context base, int order, Content.Media media, String desc,
-      PlaybackInfo playbackInfo, Point playerSize, Point videoSize) {
+  public static Intent createIntent(Context base, int order, Uri media, String desc,
+      PlaybackInfo playbackInfo, Point playerSize, Point videoSize, boolean fullscreen) {
     Intent intent = new Intent(base, SinglePlayerActivity.class);
     Bundle extras = new Bundle();
     extras.putInt(EXTRA_MEDIA_ORDER, order);
     extras.putString(EXTRA_MEDIA_DESCRIPTION, desc);
-    extras.putParcelable(EXTRA_MEDIA_URI, media.mediaUri);
+    extras.putParcelable(EXTRA_MEDIA_URI, media);
     extras.putParcelable(EXTRA_MEDIA_PLAYBACK_INFO, playbackInfo);
     extras.putParcelable(EXTRA_MEDIA_PLAYER_SIZE, playerSize);
     extras.putParcelable(EXTRA_MEDIA_VIDEO_SIZE, videoSize);
+    extras.putBoolean(EXTRA_DEFAULT_FULLSCREEN, fullscreen);
     intent.putExtras(extras);
     return intent;
   }
@@ -82,6 +83,10 @@ public class SinglePlayerActivity extends BaseActivity {
   private String content;
   Point playerSize;
   Point videoSize;
+  // ONLY start with fullscreen on landscape mode or not.
+  // If true: this Activity starts in landscape mode, no changeable.
+  // If false: this Activity starts in current screen mode, changeable by user (eg: rotate device).
+  private boolean fullscreen;
 
   private ExoPlayerHelper playerHelper;
 
@@ -91,24 +96,9 @@ public class SinglePlayerActivity extends BaseActivity {
 
   @Override protected void onCreate(@Nullable Bundle state) {
     super.onCreate(state);
+    // Only request transition if this Activity start from zero (not re-created).
     if (state == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       getWindow().requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS);
-    }
-    Point windowSize = new Point();
-    getWindow().getWindowManager().getDefaultDisplay().getSize(windowSize);
-    boolean landscape = windowSize.y < windowSize.x;
-    // Dynamic layout based on Window size, not the actual device orientation.
-    if (landscape) {
-      setContentView(R.layout.activity_single_player_landscape);
-    } else {
-      setContentView(R.layout.activity_single_player);
-    }
-
-    ButterKnife.bind(this);
-    if (state == null) {
-      ViewCompat.setTransitionName(playerView, getString(R.string.transition_name_single_player));
-    } else {
-      ViewCompat.setTransitionName(playerView, getString(R.string.app_name));
     }
 
     Bundle extras = getIntent().getExtras();
@@ -119,6 +109,31 @@ public class SinglePlayerActivity extends BaseActivity {
       content = extras.getString(EXTRA_MEDIA_DESCRIPTION);
       playerSize = extras.getParcelable(EXTRA_MEDIA_PLAYER_SIZE);
       videoSize = extras.getParcelable(EXTRA_MEDIA_VIDEO_SIZE);
+      fullscreen = extras.getBoolean(EXTRA_DEFAULT_FULLSCREEN, false);
+    }
+
+    Point windowSize = new Point();
+    getWindow().getWindowManager().getDefaultDisplay().getSize(windowSize);
+    boolean landscape = windowSize.y < windowSize.x;
+
+    if (fullscreen) {
+      setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+      setContentView(R.layout.activity_single_player_landscape);
+      landscape = true;
+    } else {
+      // Dynamic layout based on Window size, not the actual device orientation.
+      if (landscape) {
+        setContentView(R.layout.activity_single_player_landscape);
+      } else {
+        setContentView(R.layout.activity_single_player);
+      }
+    }
+
+    ButterKnife.bind(this);
+    if (state == null) {
+      ViewCompat.setTransitionName(playerView, getString(R.string.transition_name_single_player));
+    } else {
+      ViewCompat.setTransitionName(playerView, getString(R.string.app_name));
     }
 
     // Optimize player view UI and resize mode.
@@ -203,21 +218,6 @@ public class SinglePlayerActivity extends BaseActivity {
       setResult(Activity.RESULT_OK, intent);
     }
     super.finish();
-  }
-
-  static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
-    int width = bm.getWidth();
-    int height = bm.getHeight();
-    float scaleWidth = ((float) newWidth) / width;
-    float scaleHeight = ((float) newHeight) / height;
-    // CREATE A MATRIX FOR THE MANIPULATION
-    Matrix matrix = new Matrix();
-    // RESIZE THE BIT MAP
-    matrix.postScale(scaleWidth, scaleHeight);
-    // "RECREATE" THE NEW BITMAP
-    Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
-    bm.recycle();
-    return resizedBitmap;
   }
 
   static boolean usableSize(Point size) {

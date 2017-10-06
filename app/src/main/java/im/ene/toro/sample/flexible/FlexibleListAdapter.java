@@ -18,11 +18,14 @@ package im.ene.toro.sample.flexible;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.CacheManager;
+import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.sample.R;
 
 /**
  * @author eneim (7/6/17).
@@ -33,11 +36,31 @@ class FlexibleListAdapter extends RecyclerView.Adapter<FlexiblePlayerViewHolder>
 
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
   private final MediaList items = new MediaList();
+  private final ItemClickListener itemClickListener;
+
+  @SuppressWarnings("WeakerAccess")
+  public FlexibleListAdapter(ItemClickListener itemClickListener) {
+    this.itemClickListener = itemClickListener;
+  }
+
+  @SuppressWarnings("unused") public FlexibleListAdapter() {
+    this.itemClickListener = null;
+  }
 
   @Override public FlexiblePlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(FlexiblePlayerViewHolder.LAYOUT_RES, parent, false);
-    return new FlexiblePlayerViewHolder(view);
+    FlexiblePlayerViewHolder viewHolder = new FlexiblePlayerViewHolder(view);
+    ViewCompat.setTransitionName(viewHolder.playerView,
+        parent.getContext().getString(R.string.transition_name_single_player));
+    viewHolder.setClickListener(v -> {
+      int pos = viewHolder.getAdapterPosition();
+      if (itemClickListener != null && pos != RecyclerView.NO_POSITION) {
+        itemClickListener.onItemClick(viewHolder.playerView, pos, items.get(pos),
+            viewHolder.getCurrentPlaybackInfo());
+      }
+    });
+    return viewHolder;
   }
 
   @Override public void onBindViewHolder(FlexiblePlayerViewHolder holder, int position) {
@@ -61,5 +84,11 @@ class FlexibleListAdapter extends RecyclerView.Adapter<FlexiblePlayerViewHolder>
 
   @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
     return key instanceof Content.Media ? items.indexOf(key) : null;
+  }
+
+  static abstract class ItemClickListener {
+
+    abstract void onItemClick(View view, int position, Content.Media media,
+        PlaybackInfo playbackInfo);
   }
 }

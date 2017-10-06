@@ -48,7 +48,7 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
 
-import static im.ene.toro.sample.custom.SinglePlayerActivity.createIntent;
+import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
 /**
  * @author eneim (7/1/17).
@@ -61,8 +61,6 @@ import static im.ene.toro.sample.custom.SinglePlayerActivity.createIntent;
 @SuppressWarnings("unused") public class CustomLayoutFragment extends BaseFragment {
 
   static final int RQ_PLAYBACK_INFO = 100;
-  static final String RESULT_EXTRA_PLAYER_ORDER = "toro:demo:custom:result:order";
-  static final String RESULT_EXTRA_PLAYBACK_INFO = "toro:demo:custom:result:playback";
 
   public static CustomLayoutFragment newInstance() {
     Bundle args = new Bundle();
@@ -141,8 +139,8 @@ import static im.ene.toro.sample.custom.SinglePlayerActivity.createIntent;
           }
         }
 
-        Intent intent =
-            createIntent(getContext(), position, media, content, info, viewSize, videoSize);
+        Intent intent = createIntent(getContext(), position, media.mediaUri,  //
+            content, info, viewSize, videoSize, true);
         ActivityOptionsCompat options = ActivityOptionsCompat.
             makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
         startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());

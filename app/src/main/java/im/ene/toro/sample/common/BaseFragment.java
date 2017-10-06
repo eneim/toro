@@ -43,6 +43,9 @@ public class BaseFragment extends Fragment {
 
   protected String TAG = "Toro:" + getClass().getSimpleName();
 
+  public static final String RESULT_EXTRA_PLAYER_ORDER = "toro:demo:player:result:order";
+  public static final String RESULT_EXTRA_PLAYBACK_INFO = "toro:demo:player:result:playback";
+
   /**
    * The following flag is used for {@link Fragment} that is inside a ViewPager.
    * Default is {@code false} for non-ViewPager use.

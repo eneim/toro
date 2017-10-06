@@ -19,6 +19,7 @@
   <!-- Base application theme. -->
   <style name="AppTheme" parent="Theme.AppCompat">
     <item name="fontFamily">@font/fira_sans_medium</item>
+    <item name="colorPrimaryDark">@android:color/black</item>
   </style>
 
   <style name="AppTheme.NoActionBar">
