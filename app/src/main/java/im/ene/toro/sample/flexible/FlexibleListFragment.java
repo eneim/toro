@@ -109,7 +109,7 @@ public class FlexibleListFragment extends BaseFragment {
         }
 
         Intent intent = createIntent(getContext(), position, media.mediaUri,  //
-            content, info, viewSize, videoSize, false);
+            content, info, viewSize, videoSize, true);
         ActivityOptionsCompat options = ActivityOptionsCompat.
             makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
         startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());

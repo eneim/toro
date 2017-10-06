@@ -1,6 +1,18 @@
 Changelog
 ===========
 
+3.1.1 (2017/10/06)
+--------------
+
+#### Internal Updates
+
+- Inline documentation is improved. (I was bad at documenting things, sorry).
+- ```ExoPlayer``` version is updated to 2.5.3.
+
+#### Demo App Updates
+
+- Add demo with single player activity, where User can click to a Video to start a dedicated Player for it. Read source code for more information. 
+
 3.1.0 (2017/09/05)
 --------------
 

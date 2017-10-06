@@ -140,7 +140,7 @@ import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
         }
 
         Intent intent = createIntent(getContext(), position, media.mediaUri,  //
-            content, info, viewSize, videoSize, true);
+            content, info, viewSize, videoSize, false);
         ActivityOptionsCompat options = ActivityOptionsCompat.
             makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
         startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());
