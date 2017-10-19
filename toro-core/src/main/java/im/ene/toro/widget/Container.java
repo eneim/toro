@@ -78,9 +78,9 @@ public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
 
-  final PlayerManager playerManager = new PlayerManager();  // never null
-  /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;  // null = do nothing
-  /* package */ Handler animatorFinishHandler;  // null = Container is detached ...
+  /* package */ final PlayerManager playerManager = new PlayerManager();  // never null
+  /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
+  /* package */ Handler animatorFinishHandler;  // null ~ Container is detached ...
 
   public Container(Context context) {
     this(context, null);
@@ -101,7 +101,7 @@ public class Container extends RecyclerView {
     }
 
     PowerManager powerManager = (PowerManager) getContext().getSystemService(POWER_SERVICE);
-    if (powerManager.isScreenOn() /* new API calls isInteractive() internally */) {
+    if (powerManager != null && powerManager.isScreenOn()) {
       this.screenState = View.SCREEN_STATE_ON;
     } else {
       this.screenState = View.SCREEN_STATE_OFF;
@@ -133,13 +133,13 @@ public class Container extends RecyclerView {
    * @param filter the {@link Filter} to a {@link ToroPlayer}.
    * @return list of players accepted by {@link Filter}. Empty list if there is no available player.
    */
-  @NonNull public List<ToroPlayer> filterBy(Filter filter) {
+  @NonNull public final List<ToroPlayer> filterBy(Filter filter) {
     List<ToroPlayer> result = new ArrayList<>();
     for (ToroPlayer player : playerManager.getPlayers()) {
       if (filter.accept(player)) result.add(player);
     }
     Collections.sort(result, Common.ORDER_COMPARATOR);
-    return Collections.unmodifiableList(result);
+    return result;
   }
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
@@ -204,7 +204,7 @@ public class Container extends RecyclerView {
     if (getChildCount() == 0) return;
 
     List<ToroPlayer> players = playerManager.getPlayers();
-    // 1. Find players those are not qualified to play anymore.
+    // 1. Find players those are managed but not qualified to play anymore.
     for (int i = 0, size = players.size(); i < size; i++) {
       ToroPlayer player = players.get(i);
       if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;

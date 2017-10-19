@@ -52,6 +52,7 @@ import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYER_ORDER;
 
 public class SinglePlayerActivity extends BaseActivity {
 
+  // TODO replace by one parcelable Object
   static final String EXTRA_MEDIA_URI = "toro:demo:custom:player:uri";  // Uri
   static final String EXTRA_MEDIA_ORDER = "toro:demo:custom:player:order";  // int
   static final String EXTRA_MEDIA_DESCRIPTION = "toro:demo:custom:player:description"; // String
