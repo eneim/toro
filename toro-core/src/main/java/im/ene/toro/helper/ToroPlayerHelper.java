@@ -153,4 +153,8 @@ public abstract class ToroPlayerHelper {
   public void release() {
     handler.removeCallbacksAndMessages(null);
   }
+
+  @Override public String toString() {
+    return "ToroPlayerHelper{" + "container=" + container + ", player=" + player + '}';
+  }
 }
