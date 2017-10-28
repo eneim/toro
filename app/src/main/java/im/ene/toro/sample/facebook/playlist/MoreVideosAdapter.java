@@ -88,7 +88,7 @@ import java.util.List;
       }
 
       @Override public void onCompleted(Container container, ToroPlayer player) {
-        if (onCompleteCallback != null) onCompleteCallback.onCompletePlayback(container, player);
+        if (onCompleteCallback != null) onCompleteCallback.onCompleted(container, player);
       }
     });
 
@@ -120,6 +120,6 @@ import java.util.List;
 
   static abstract class OnCompleteCallback {
 
-    abstract void onCompletePlayback(Container container, ToroPlayer player);
+    abstract void onCompleted(Container container, ToroPlayer player);
   }
 }

@@ -29,12 +29,11 @@ import java.util.ArrayList;
 /**
  * @author eneim | 6/11/17.
  *
- *         General helper class for a specific {@link ToroPlayer}. This class helps forwarding the
- *         playback state to the player if there is any {@link ToroPlayer.EventListener}
- *         registered. It also requests the initialization for the Player.
+ *         General interface for a helper class for a specific {@link ToroPlayer}. This class helps
+ *         forwarding the playback state to the {@link ToroPlayer} if there is any
+ *         {@link ToroPlayer.EventListener} registered. It also requests the initialization for the
+ *         Player.
  */
-
-@SuppressWarnings("WeakerAccess") //
 public abstract class ToroPlayerHelper {
 
   protected static final String TAG = "ToroLib:PlayerHelper";
@@ -43,7 +42,7 @@ public abstract class ToroPlayerHelper {
     @Override public boolean handleMessage(Message msg) {
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
-        case State.STATE_BUFFERING /* Player.STATE_BUFFERING */:
+        case State.STATE_BUFFERING /* exoplayer.Player.STATE_BUFFERING */:
           internalListener.onBuffering();
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onBuffering();
@@ -80,7 +79,9 @@ public abstract class ToroPlayerHelper {
   @NonNull protected final Container container;
   @NonNull protected final ToroPlayer player;
 
+  @SuppressWarnings("WeakerAccess")
   final ArrayList<ToroPlayer.EventListener> eventListeners = new ArrayList<>();
+  @SuppressWarnings("WeakerAccess")
   final ToroPlayer.EventListener internalListener = new ToroPlayer.EventListener() {
     @Override public void onBuffering() {
       // do nothing
@@ -105,7 +106,7 @@ public abstract class ToroPlayerHelper {
   }
 
   // Hook into the scroll state change event. Called by the enclosing ToroPlayer.
-  public void onContainerScrollStateChange(int newState) {
+  public void onSettled() {
     // Do nothing, sub class can override this.
   }
 

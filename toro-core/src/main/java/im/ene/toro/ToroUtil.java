@@ -29,7 +29,7 @@ import im.ene.toro.widget.Container;
  * @author eneim | 5/31/17.
  */
 
-@SuppressWarnings("unused") public final class ToroUtil {
+public final class ToroUtil {
 
   private static final String TAG = "ToroLib:Util";
 

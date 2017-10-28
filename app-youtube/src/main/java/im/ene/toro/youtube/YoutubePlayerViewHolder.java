@@ -91,8 +91,8 @@ public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements 
     return getAdapterPosition();
   }
 
-  @Override public void onContainerScrollStateChange(Container container, int newState) {
-    if (helper != null) helper.onContainerScrollStateChange(newState);
+  @Override public void onSettled(Container container) {
+    if (helper != null) helper.onSettled();
   }
 
   void bind(FragmentManager fragmentManager, String videoId) {

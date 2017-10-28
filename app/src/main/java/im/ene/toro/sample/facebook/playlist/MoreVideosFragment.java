@@ -24,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.State;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
 
   public static final String TAG = "Toro:Fb:MoreVideos";
 
+  // Arguments to start this fragment
   private static final String ARG_EXTRA_PLAYBACK_INFO = "fb:more_videos:playback_info";
   private static final String ARG_EXTRA_BASE_FB_VIDEO = "fb:more_videos:base_video";
   private static final String ARG_EXTRA_BASE_ORDER = "fb:more_videos:base_order";
@@ -70,6 +72,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
   private static final String STATE_KEY_ACTIVE_ORDER = "fb:timeline:list:state:order";
   private static final String STATE_KEY_PLAYBACK_STATE = "fb:timeline:list:state:playback_info";
 
+  // Save state from "Big player"
   private static final String STATE_KEY_BIG_PLAYER_BUNDLE = "fb:timeline:list:state:player:bundle";
 
   // We use FbVideo as Parcelable, in real life, it should be retrieved from Database.
@@ -141,11 +144,9 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
     }
 
     layoutManager = new LinearLayoutManager(getContext()) {
-      @Override
-      public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
-          int position) {
+      @Override public void smoothScrollToPosition(RecyclerView view, State state, int position) {
         LinearSmoothScroller linearSmoothScroller =
-            new SnapTopLinearSmoothScroller(recyclerView.getContext());
+            new SnapTopLinearSmoothScroller(view.getContext());
         linearSmoothScroller.setTargetPosition(position);
         super.startSmoothScroll(linearSmoothScroller);
       }
@@ -158,47 +159,49 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
     container.savePlaybackInfo(0, baseInfo);
 
     adapter.setOnCompleteCallback(new MoreVideosAdapter.OnCompleteCallback() {
-      @Override void onCompletePlayback(Container container, ToroPlayer player) {
+      @Override void onCompleted(Container container, ToroPlayer player) {
         int position = adapter.findNextPlayerPosition(player.getPlayerOrder());
         //noinspection Convert2MethodRef
         Observable.just(container)
-            .delay(300, TimeUnit.MICROSECONDS)
+            .delay(250, TimeUnit.MILLISECONDS)
             .filter(c -> c != null)
-            .subscribe(cc -> cc.smoothScrollToPosition(position));
+            .subscribe(rv -> rv.smoothScrollToPosition(position));
       }
     });
 
+    // Backup active selector.
     selector = container.getPlayerSelector();
   }
 
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
     super.onViewStateRestored(bundle);
     if (bundle == null) {
-      // User come here from first place, we keep current behaviour.
+      // User comes here from first place, don't need to do anything.
       return;
     }
+
     Bundle playerBundle = bundle.getBundle(STATE_KEY_BIG_PLAYER_BUNDLE);
-    if (playerBundle != null) {
+    if (playerBundle != null) { // Not null = just back after a "Big player" dismissed.
       int order = playerBundle.getInt(BigPlayerFragment.BUNDLE_KEY_ORDER);
       PlaybackInfo info = playerBundle.getParcelable(BigPlayerFragment.BUNDLE_KEY_INFO);
       if (info == null) info = new PlaybackInfo();
       this.container.savePlaybackInfo(order, info);
     }
-    // Bundle != null, which is a hint that we come here from a orientation change.
+    // Bundle != null, which is a hint that we come here from a config change, maybe orientation.
     if (ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
-      // Device in landscape mode. Here we use PlayerSelector.NONE to disable the auto playback.
+      // Device in landscape mode. Here we use PlayerSelector.NONE to disable the current playback.
       container.setPlayerSelector(PlayerSelector.NONE);
       // Since we come here from a orientation change, if previous state (portrait mode),
-      // there was a on-playing Player, we should have a saved state of latest playback.
+      // there was an on-playing Player, there would have a saved state of that playback.
       // Let's retrieve it and then do stuff.
 
-      // 1. Obtain the Video object and its order.
-      FbVideo video = bundle.getParcelable(STATE_KEY_FB_VIDEO); // can be null.
+      // 1. Obtain the saved Video object and its order.
+      FbVideo video = bundle.getParcelable(STATE_KEY_FB_VIDEO); // !can be null.
       int order = bundle.getInt(STATE_KEY_ACTIVE_ORDER);
       if (video != null) {
         // 2. Get saved playback info. We know the adapter is also a state manager though.
         PlaybackInfo info = bundle.getParcelable(STATE_KEY_PLAYBACK_STATE);
-        // 3. Prepare video Uri, open a full screen playback dialog.
+        // 3. Prepare video Uri, open a full screen playback dialog on top of this one.
         BigPlayerFragment playerFragment = BigPlayerFragment.newInstance(order, video, info);
         playerFragment.show(getChildFragmentManager(), BigPlayerFragment.FRAGMENT_TAG);
       }
@@ -216,7 +219,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
       outState.putBundle(STATE_KEY_BIG_PLAYER_BUNDLE, playerBundle);
     }
 
-    // Save stuff here.
+    // Save this fragment's stuff here.
     List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
     if (activePlayers.isEmpty()) return;
     ToroPlayer firstPlayer = activePlayers.get(0);  // get the first one only.
