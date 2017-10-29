@@ -59,8 +59,8 @@ public interface PlayerSelector {
    *
    * @param container current {@link Container} that holds the players.
    * @param items a mutable collection of candidate {@link ToroPlayer}s, which are the players
-   * those can start a playback. Items are sorted in order obtained from {@link
-   * ToroPlayer#getPlayerOrder()}.
+   * those can start a playback. Items are sorted in order obtained from
+   * {@link ToroPlayer#getPlayerOrder()}.
    * @return the collection of {@link ToroPlayer}s to start a playback. An on-going playback can be
    * selected, but it will keep playing.
    */

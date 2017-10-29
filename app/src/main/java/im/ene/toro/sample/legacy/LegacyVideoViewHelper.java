@@ -79,14 +79,15 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
     }
 
+    final LegacyVideoViewHelper helper = LegacyVideoViewHelper.this;
     // On Complete event, we reset the player, re-prepare the VideoView so that it can be re-used.
     this.playerView.setOnCompletionListener(mp -> {
       playerState = State.STATE_END;
       onPlayerStateUpdated(playWhenReady, playerState);
-      if (LegacyVideoViewHelper.this.onCompletionListener != null) {
-        LegacyVideoViewHelper.this.onCompletionListener.onCompletion(mp);
+      if (helper.onCompletionListener != null) {
+        helper.onCompletionListener.onCompletion(mp);
       }
-      // Reset the player so it can be immediately reused.
+      // Reset the player so it can be reused.
       if (mediaPlayer != null) {
         mediaPlayer.reset();
       }
@@ -99,8 +100,8 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       onPlayerStateUpdated(playWhenReady, playerState);
 
       mediaPlayer = mp;
-      if (LegacyVideoViewHelper.this.onPreparedListener != null) {
-        LegacyVideoViewHelper.this.onPreparedListener.onPrepared(mp);
+      if (helper.onPreparedListener != null) {
+        helper.onPreparedListener.onPrepared(mp);
       }
       if (playWhenReady) play();
     });

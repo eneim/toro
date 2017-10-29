@@ -18,12 +18,13 @@ package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArraySet;
 import android.view.View;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author eneim | 5/31/17.
@@ -38,7 +39,7 @@ import java.util.List;
 final class PlayerManager {
 
   // Make sure each ToroPlayer will present only once in this Manager.
-  private final HashSet<ToroPlayer> players = new HashSet<>();
+  private final Set<ToroPlayer> players = new ArraySet<>();
 
   boolean attachPlayer(@NonNull ToroPlayer player) {
     return players.add(player);
