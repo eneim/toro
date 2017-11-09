@@ -38,13 +38,13 @@ import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.POWER_SERVICE;
+import static im.ene.toro.widget.Common.max;
 
 /**
  * @author eneim | 5/31/17.
@@ -292,11 +292,6 @@ public class Container extends RecyclerView {
 
   ////// Handle update after data change animation
 
-  private static long max(Long... numbers) {
-    List<Long> list = Arrays.asList(numbers);
-    return Collections.<Long>max(list);
-  }
-
   long getMaxAnimationDuration() {
     ItemAnimator animator = getItemAnimator();
     if (animator == null) return 50; // a blink ...
@@ -325,7 +320,7 @@ public class Container extends RecyclerView {
   /**
    * See {@link ToroDataObserver}
    */
-  final ToroDataObserver dataObserver = new ToroDataObserver();
+  private final ToroDataObserver dataObserver = new ToroDataObserver();
 
   /**
    * {@inheritDoc}
@@ -333,7 +328,7 @@ public class Container extends RecyclerView {
    * See {@link Adapter#registerAdapterDataObserver(AdapterDataObserver)}
    * See {@link Adapter#unregisterAdapterDataObserver(AdapterDataObserver)}
    */
-  @Override public void setAdapter(Adapter adapter) {
+  @CallSuper @Override public void setAdapter(Adapter adapter) {
     super.setAdapter(adapter);
     dataObserver.registerAdapter(adapter);
   }
@@ -343,7 +338,7 @@ public class Container extends RecyclerView {
    *
    * See {@link Container#setAdapter(Adapter)}
    */
-  @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
+  @CallSuper @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
     super.swapAdapter(adapter, removeAndRecycleExistingViews);
     dataObserver.registerAdapter(adapter);
   }
@@ -559,7 +554,14 @@ public class Container extends RecyclerView {
     boolean recreating =
         getContext() instanceof Activity && ((Activity) getContext()).isChangingConfigurations();
 
-    if (recreating) { // release on recreation event only
+    // Release current players on recreation event only.
+    // Note that there are cases where this method is called without the activity destroying/recreating.
+    // For example: in API 26 (my test mostly run on O), when user clicking to "Current App" button,
+    // current Activity will enter the "Stop" state but not be destroyed/recreated and View hierarchy
+    // state will be saved (this method is called).
+    //
+    // In those cases, we don't need to release current resources.
+    if (recreating) {
       for (ToroPlayer player : source) {
         playerManager.release(player);
         playerManager.detachPlayer(player);
@@ -570,7 +572,7 @@ public class Container extends RecyclerView {
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
 
-    // To mark that this method was called
+    // To mark that this method was called.
     tmpStates = states;
     return playerViewState;
   }
@@ -630,7 +632,7 @@ public class Container extends RecyclerView {
     }
 
     public static final Creator<PlayerViewState> CREATOR =
-        new ClassLoaderCreator<PlayerViewState>() {
+        new ClassLoaderCreator<PlayerViewState>() { // Added from API 13
           @Override public PlayerViewState createFromParcel(Parcel in, ClassLoader loader) {
             return new PlayerViewState(in, loader);
           }
@@ -649,11 +651,11 @@ public class Container extends RecyclerView {
     }
   }
 
-  private class ToroDataObserver extends AdapterDataObserver {
+  private final class ToroDataObserver extends AdapterDataObserver {
 
     private Adapter adapter;
 
-    void registerAdapter(Adapter adapter) {
+    final void registerAdapter(Adapter adapter) {
       if (this.adapter == adapter) return;
       if (this.adapter != null) this.adapter.unregisterAdapterDataObserver(this);
       this.adapter = adapter;

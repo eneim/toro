@@ -18,6 +18,7 @@ package im.ene.toro.helper;
 
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
@@ -64,9 +65,9 @@ public abstract class ToroPlayerHelper {
           }
           break;
         case State.STATE_END /* Player.STATE_ENDED */:
-          internalListener.onCompleted(container, player);
+          internalListener.onCompleted();
           for (ToroPlayer.EventListener callback : eventListeners) {
-            callback.onCompleted(container, player);
+            callback.onCompleted();
           }
           break;
         default:
@@ -95,7 +96,7 @@ public abstract class ToroPlayerHelper {
       // do nothing
     }
 
-    @Override public void onCompleted(Container container, ToroPlayer player) {
+    @Override public void onCompleted() {
       container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
     }
   };
@@ -147,10 +148,12 @@ public abstract class ToroPlayerHelper {
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
   // Mimic ExoPlayer
+  @CallSuper
   protected final void onPlayerStateUpdated(boolean playWhenReady, @State int playbackState) {
     handler.obtainMessage(playbackState, playWhenReady).sendToTarget();
   }
 
+  @CallSuper
   public void release() {
     handler.removeCallbacksAndMessages(null);
   }

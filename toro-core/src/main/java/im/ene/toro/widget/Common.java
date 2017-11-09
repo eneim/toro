@@ -22,7 +22,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.view.View;
 import im.ene.toro.ToroPlayer;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * @author eneim | 6/2/17.
@@ -37,6 +40,11 @@ final class Common {
 
   static int compare(int x, int y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  }
+
+  static long max(Long... numbers) {
+    List<Long> list = Arrays.asList(numbers);
+    return Collections.<Long>max(list);
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY) //

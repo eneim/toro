@@ -159,7 +159,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
     container.savePlaybackInfo(0, baseInfo);
 
     adapter.setOnCompleteCallback(new MoreVideosAdapter.OnCompleteCallback() {
-      @Override void onCompleted(Container container, ToroPlayer player) {
+      @Override void onCompleted(ToroPlayer player) {
         int position = adapter.findNextPlayerPosition(player.getPlayerOrder());
         //noinspection Convert2MethodRef
         Observable.just(container)

@@ -102,7 +102,7 @@ public interface ToroPlayer {
     /**
      * See {@link Player#STATE_ENDED}
      */
-    void onCompleted(Container container, ToroPlayer player); // ExoPlayer state: 4
+    void onCompleted(); // ExoPlayer state: 4
   }
 
   // Adapt from ExoPlayer.
