@@ -17,15 +17,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.1.51'
+  ext.kotlin_version = '1.1.60'
   repositories {
-    jcenter()
     google()
+    jcenter()
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.0.0'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.7.3'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
     classpath 'me.tatarka:gradle-retrolambda:3.7.0'
     classpath "com.novoda:bintray-release:0.5.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -34,8 +34,8 @@ buildscript {
 
 allprojects {
   repositories {
-    jcenter()
     google()
+    jcenter()
     maven {
       name 'glide-snapshot'
       url 'http://oss.sonatype.org/content/repositories/snapshots'
@@ -56,7 +56,7 @@ allprojects {
 ext {
   androidVersion = 26
   buildToolVersion = '26.0.2'
-  supportLibraryVersion = '26.1.0'
+  supportLibraryVersion = '27.0.1'
   exoPlayer2Version = 'r2.5.4'
   minSupportSDKVersion = 16
 }
