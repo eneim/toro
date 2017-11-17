@@ -76,7 +76,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
 
   override fun getPlayerOrder() = adapterPosition
 
-  override fun onContainerScrollStateChange(container: Container?, newState: Int) {
+  override fun onSettled(container: Container?) {
     // Do nothing
   }
 

@@ -96,7 +96,7 @@
             android:id="@+id/player_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
+            android:layout_gravity="top|end"
             android:layout_margin="4dp"
             android:background="#80000000"
             android:maxLines="1"

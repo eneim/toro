@@ -26,29 +26,25 @@ import android.os.PowerManager;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.view.AbsSavedState;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerSelector;
-import im.ene.toro.ToroLayoutManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static android.content.Context.POWER_SERVICE;
+import static im.ene.toro.widget.Common.max;
 
 /**
  * @author eneim | 5/31/17.
@@ -78,9 +74,9 @@ public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
 
-  /* package */ final PlayerManager playerManager = new PlayerManager();  // never null
+  /* package */ final PlayerManager playerManager;
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
-  /* package */ Handler animatorFinishHandler;  // null ~ Container is detached ...
+  /* package */ Handler animatorFinishHandler;  // null = Container is detached ...
 
   public Container(Context context) {
     this(context, null);
@@ -92,10 +88,12 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    this.playerManager = new PlayerManager(this);
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    if (getAdapter() != null) dataObserver.registerAdapter(getAdapter());
     if (animatorFinishHandler == null) {
       animatorFinishHandler = new Handler(new AnimatorHelper(this));
     }
@@ -124,6 +122,8 @@ public class Container extends RecyclerView {
       }
       playerManager.clear();
     }
+
+    dataObserver.registerAdapter(null);
   }
 
   /**
@@ -159,10 +159,9 @@ public class Container extends RecyclerView {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          if (Common.allowsToPlay(playerView, Container.this)) {
+          if (Common.allowsToPlay(player)) {
             if (playerManager.attachPlayer(player)) {
-              PlaybackInfo info = Container.this.getPlaybackInfo(player.getPlayerOrder());
-              playerManager.initialize(player, Container.this, info);
+              playerManager.initialize(player);
               dispatchUpdateOnAnimationFinished(false);
             }
           }
@@ -207,57 +206,32 @@ public class Container extends RecyclerView {
     // 1. Find players those are managed but not qualified to play anymore.
     for (int i = 0, size = players.size(); i < size; i++) {
       ToroPlayer player = players.get(i);
-      if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;
+      if (Common.allowsToPlay(player)) continue;
       if (player.isPlaying()) {
         this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
       }
+      playerManager.release(player);
       playerManager.detachPlayer(player);
-      player.release();
     }
 
     // 2. Refresh the good players list.
-    int firstVisiblePosition = NO_POSITION;
-    int lastVisiblePosition = NO_POSITION;
-
-    LayoutManager layoutManager = getLayoutManager();
-    if (layoutManager instanceof LinearLayoutManager) {
-      firstVisiblePosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
-      lastVisiblePosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-    } else if (layoutManager instanceof StaggeredGridLayoutManager) {
-      int[] firstVisibleItemPositions =
-          ((StaggeredGridLayoutManager) layoutManager).findFirstVisibleItemPositions(null);
-      Arrays.sort(firstVisibleItemPositions);
-      if (firstVisibleItemPositions.length > 0) {
-        firstVisiblePosition = firstVisibleItemPositions[0];
-      }
-
-      int[] lastVisiblePositions =
-          ((StaggeredGridLayoutManager) layoutManager).findLastVisibleItemPositions(null);
-      Arrays.sort(lastVisiblePositions);
-      if (lastVisiblePositions.length > 0) {
-        lastVisiblePosition = lastVisiblePositions[0];
-      }
-    } else if (layoutManager instanceof ToroLayoutManager) {
-      firstVisiblePosition = ((ToroLayoutManager) layoutManager).getFirstVisibleItemPosition();
-      lastVisiblePosition = ((ToroLayoutManager) layoutManager).getLastVisibleItemPosition();
-    }
-
-    if (firstVisiblePosition <= lastVisiblePosition /* protect the 'for' loop */ &&  //
-        (firstVisiblePosition != NO_POSITION || lastVisiblePosition != NO_POSITION)) {
-      for (int i = firstVisiblePosition; i <= lastVisiblePosition; i++) {
-        // Detected a view holder for media player
-        RecyclerView.ViewHolder holder = findViewHolderForAdapterPosition(i);
+    LayoutManager layout = super.getLayoutManager();
+    int childCount = layout.getChildCount();
+    if (childCount > 0) {
+      for (int i = 0; i < childCount; i++) {
+        View child = layout.getChildAt(i);
+        ViewHolder holder = super.findContainingViewHolder(child);
         if (holder != null && holder instanceof ToroPlayer) {
           ToroPlayer player = (ToroPlayer) holder;
           // Check candidate's condition
-          if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
+          if (Common.allowsToPlay(player)) {
             if (!playerManager.manages(player)) {
               playerManager.attachPlayer(player);
             }
             // Don't check the attach result, because the player may be managed already.
             if (!player.isPlaying()) {
-              playerManager.initialize(player, this, this.getPlaybackInfo(player.getPlayerOrder()));
+              playerManager.initialize(player);
             }
           }
         }
@@ -291,7 +265,7 @@ public class Container extends RecyclerView {
     }
 
     for (ToroPlayer player : playerManager.getPlayers()) {
-      player.onContainerScrollStateChange(this, state);
+      player.onSettled(this);
     }
   }
 
@@ -304,7 +278,7 @@ public class Container extends RecyclerView {
   public final void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
-    this.onScrollStateChanged(SCROLL_STATE_IDLE);
+    dispatchUpdateOnAnimationFinished(true);
   }
 
   /**
@@ -318,11 +292,6 @@ public class Container extends RecyclerView {
 
   ////// Handle update after data change animation
 
-  private static long max(Long... numbers) {
-    List<Long> list = Arrays.asList(numbers);
-    return Collections.<Long>max(list);
-  }
-
   long getMaxAnimationDuration() {
     ItemAnimator animator = getItemAnimator();
     if (animator == null) return 50; // a blink ...
@@ -331,6 +300,7 @@ public class Container extends RecyclerView {
   }
 
   void dispatchUpdateOnAnimationFinished(boolean immediate) {
+    if (getScrollState() != SCROLL_STATE_IDLE) return;
     if (animatorFinishHandler == null) return;
     final long duration = immediate ? 50 : getMaxAnimationDuration();
     if (getItemAnimator() != null) {
@@ -351,31 +321,17 @@ public class Container extends RecyclerView {
   /**
    * See {@link ToroDataObserver}
    */
-  final ToroDataObserver dataObserver = new ToroDataObserver();
+  private final ToroDataObserver dataObserver = new ToroDataObserver();
 
   /**
    * {@inheritDoc}
    *
-   * We need to wrap the Adapter using {@link AdapterWrapper} to be able to use {@link
-   * ToroDataObserver}. The reason is we also need to unregister the {@link ToroDataObserver} after
-   * that. The design of {@link Adapter} will throw an {@link Exception} if we unregister a
-   * non-registered Observer. A wrapper will make sure the safety of register/unregister steps.
-   *
    * See {@link Adapter#registerAdapterDataObserver(AdapterDataObserver)}
    * See {@link Adapter#unregisterAdapterDataObserver(AdapterDataObserver)}
    */
-  @Override public void setAdapter(Adapter adapter) {
-    Adapter oldAdapter = super.getAdapter();
-    if (oldAdapter != null && oldAdapter instanceof AdapterWrapper) {
-      ((AdapterWrapper) oldAdapter).unregister();
-    }
-
-    AdapterWrapper wrapper = null;
-    if (adapter != null) {
-      wrapper = new AdapterWrapper(adapter, dataObserver);
-      wrapper.register();
-    }
-    super.setAdapter(wrapper);
+  @CallSuper @Override public void setAdapter(Adapter adapter) {
+    super.setAdapter(adapter);
+    dataObserver.registerAdapter(adapter);
   }
 
   /**
@@ -383,34 +339,14 @@ public class Container extends RecyclerView {
    *
    * See {@link Container#setAdapter(Adapter)}
    */
-  @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
-    Adapter oldAdapter = super.getAdapter();
-    if (oldAdapter != null && oldAdapter instanceof AdapterWrapper) {
-      ((AdapterWrapper) oldAdapter).unregister();
-    }
-
-    AdapterWrapper wrapper = null;
-    if (adapter != null) {
-      wrapper = new AdapterWrapper(adapter, dataObserver);
-      wrapper.register();
-    }
-    super.swapAdapter(wrapper, removeAndRecycleExistingViews);
-  }
-
-  /**
-   * {@inheritDoc}
-   *
-   * If we have wrapper the original {@link Adapter}, we unwrap it here and return the original one.
-   */
-  @Override public Adapter getAdapter() {
-    Adapter adapter = super.getAdapter();
-    return adapter != null && adapter instanceof AdapterWrapper ? //
-        ((AdapterWrapper) adapter).origin : adapter;
+  @CallSuper @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
+    super.swapAdapter(adapter, removeAndRecycleExistingViews);
+    dataObserver.registerAdapter(adapter);
   }
 
   //// PlaybackInfo Cache implementation
   private CacheManager cacheManager = null; // null by default
-  private Map<Object, PlaybackInfo> infoCache = new LinkedHashMap<>();
+  private Map<Object, PlaybackInfo> infoCache = new ArrayMap<>();
 
   /**
    * Save {@link PlaybackInfo} for the current {@link ToroPlayer} of a specific order.
@@ -520,7 +456,7 @@ public class Container extends RecyclerView {
         }
       }
       tmpStates = null;
-      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+      dispatchUpdateOnAnimationFinished(true);
     }
 
     dispatchWindowVisibilityMayChange();
@@ -540,7 +476,11 @@ public class Container extends RecyclerView {
   }
 
   /**
-   * Called when:
+   * This method supports the case that by some reasons, Container should changes it behaviour
+   * without any Activity recreation (so {@link #onSaveInstanceState()} and
+   * {@link #onRestoreInstanceState(Parcelable)} could not help).
+   *
+   * This method is called when:
    * - Screen state changed.
    * or - Window focus changed.
    * or - Window visibility changed.
@@ -552,7 +492,7 @@ public class Container extends RecyclerView {
    * following conditions are all satisfied:
    * - Current window is visible. (but not necessarily focused).
    * - Container is visible in Window (partly is fine, we care about the Media player).
-   * - Container is focused in Window. (so we don't screw up other component's focus).
+   * - Container is focused in Window. (so we don't screw up other components' focuses).
    *
    * In lower API (eg: 16), {@link #getWindowVisibility()} always returns {@link #VISIBLE}, which
    * cannot tell much. We need to investigate this flag in various APIs in various Scenarios.
@@ -567,13 +507,13 @@ public class Container extends RecyclerView {
         }
       }
     } else if (screenState == SCREEN_STATE_ON
-        // Container has focus in current Window
+        // Container is focused in current Window
         && hasFocus()
         // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
         // In that case, other triggers will supposed to be called and we are safe here.
         // Need further investigation if need.
         && hasWindowFocus()) {
-      // tmpStates may be consumed already, if there is a good reason for that, so no big deal.
+      // tmpStates may be consumed already, if there is a good reason for that, so not a big deal.
       if (tmpStates != null && tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
@@ -582,13 +522,10 @@ public class Container extends RecyclerView {
         }
       }
       tmpStates = null;
-      this.onScrollStateChanged(SCROLL_STATE_IDLE);
+      dispatchUpdateOnAnimationFinished(true);
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
     final Collection<Integer> savedOrders = this.getSavedPlayerOrders();
@@ -605,7 +542,7 @@ public class Container extends RecyclerView {
         PlaybackInfo info = player.getCurrentPlaybackInfo();
         this.savePlaybackInfo(player.getPlayerOrder(), info);
         states.put(player.getPlayerOrder(), info);
-        playerManager.pause(player);
+        // playerManager.pause(player);
       }
     }
 
@@ -618,7 +555,14 @@ public class Container extends RecyclerView {
     boolean recreating =
         getContext() instanceof Activity && ((Activity) getContext()).isChangingConfigurations();
 
-    if (recreating) { // release on recreation event only
+    // Release current players on recreation event only.
+    // Note that there are cases where this method is called without the activity destroying/recreating.
+    // For example: in API 26 (my test mostly run on O), when user clicking to "Current App" button,
+    // current Activity will enter the "Stop" state but not be destroyed/recreated and View hierarchy
+    // state will be saved (this method is called).
+    //
+    // In those cases, we don't need to release current resources.
+    if (recreating) {
       for (ToroPlayer player : source) {
         playerManager.release(player);
         playerManager.detachPlayer(player);
@@ -629,14 +573,11 @@ public class Container extends RecyclerView {
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
 
-    // To mark that this method was called
+    // To mark that this method was called.
     tmpStates = states;
     return playerViewState;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override protected void onRestoreInstanceState(Parcelable state) {
     if (!(state instanceof PlayerViewState)) {
       super.onRestoreInstanceState(state);
@@ -646,8 +587,9 @@ public class Container extends RecyclerView {
     PlayerViewState viewState = (PlayerViewState) state;
     super.onRestoreInstanceState(viewState.getSuperState());
     SparseArray<?> saveStates = viewState.statesCache;
-    if (saveStates != null && saveStates.size() > 0) {
-      for (int i = 0; i < saveStates.size(); i++) {
+    int cacheSize;
+    if (saveStates != null && (cacheSize = saveStates.size()) > 0) {
+      for (int i = 0; i < cacheSize; i++) {
         int order = saveStates.keyAt(i);
         PlaybackInfo playbackInfo = (PlaybackInfo) saveStates.get(order);
         this.savePlaybackInfo(order, playbackInfo);
@@ -658,8 +600,7 @@ public class Container extends RecyclerView {
   /**
    * Store the array of {@link PlaybackInfo} of recently cached playback. This state will be used
    * only when {@link #cacheManager} is not {@code null}. Extension of {@link Container} must
-   * also have its own version of {@link SavedState} which extends this {@link PlayerViewState} as
-   * well.
+   * also have its own version of {@link SavedState} extends this {@link PlayerViewState}.
    */
   @SuppressWarnings("WeakerAccess") //
   public static class PlayerViewState extends AbsSavedState {
@@ -692,7 +633,7 @@ public class Container extends RecyclerView {
     }
 
     public static final Creator<PlayerViewState> CREATOR =
-        new ClassLoaderCreator<PlayerViewState>() {
+        new ClassLoaderCreator<PlayerViewState>() { // Added from API 13
           @Override public PlayerViewState createFromParcel(Parcel in, ClassLoader loader) {
             return new PlayerViewState(in, loader);
           }
@@ -707,18 +648,19 @@ public class Container extends RecyclerView {
         };
 
     @Override public String toString() {
-      // > "The shorter the better, the String is." - ???
       return "Cache{" + "states=" + statesCache + '}';
     }
   }
 
-  /**
-   * A custom {@link AdapterDataObserver} to watch the data changes in the original {@link Adapter}.
-   * Toro needs to watch those event to update all the corresponding changes in playback order.
-   */
-  private class ToroDataObserver extends AdapterDataObserver {
+  private final class ToroDataObserver extends AdapterDataObserver {
 
-    ToroDataObserver() {
+    private Adapter adapter;
+
+    final void registerAdapter(Adapter adapter) {
+      if (this.adapter == adapter) return;
+      if (this.adapter != null) this.adapter.unregisterAdapterDataObserver(this);
+      this.adapter = adapter;
+      if (this.adapter != null) this.adapter.registerAdapterDataObserver(this);
     }
 
     @Override public void onChanged() {
@@ -739,97 +681,6 @@ public class Container extends RecyclerView {
 
     @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
       dispatchUpdateOnAnimationFinished(false);
-    }
-  }
-
-  /**
-   * A wrapper for original {@link Adapter} which adds a custom {@link AdapterDataObserver} to
-   * watch the data changes in the original {@link Adapter}. Toro needs to watch those event to
-   * update all the corresponding changes in playback order.
-   */
-  private static class AdapterWrapper extends Adapter {
-
-    final Adapter origin;
-    final ToroDataObserver observer;
-
-    AdapterWrapper(@NonNull Adapter origin, @NonNull ToroDataObserver observer) {
-      super();
-      this.origin = origin;
-      this.observer = observer;
-    }
-
-    void unregister() {
-      this.origin.unregisterAdapterDataObserver(this.observer);
-    }
-
-    void register() {
-      this.origin.registerAdapterDataObserver(this.observer);
-    }
-
-    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      return origin.onCreateViewHolder(parent, viewType);
-    }
-
-    @Override public void onBindViewHolder(ViewHolder holder, int position) {
-      //noinspection unchecked
-      origin.onBindViewHolder(holder, position);
-    }
-
-    @Override public int getItemCount() {
-      return origin.getItemCount();
-    }
-
-    @Override public void onBindViewHolder(ViewHolder holder, int position, List payloads) {
-      //noinspection unchecked
-      origin.onBindViewHolder(holder, position, payloads);
-    }
-
-    @Override public int getItemViewType(int position) {
-      return origin.getItemViewType(position);
-    }
-
-    @Override public void setHasStableIds(boolean hasStableIds) {
-      origin.setHasStableIds(hasStableIds);
-    }
-
-    @Override public long getItemId(int position) {
-      return origin.getItemId(position);
-    }
-
-    @Override public void onViewRecycled(ViewHolder holder) {
-      //noinspection unchecked
-      origin.onViewRecycled(holder);
-    }
-
-    @Override public boolean onFailedToRecycleView(ViewHolder holder) {
-      //noinspection unchecked
-      return origin.onFailedToRecycleView(holder);
-    }
-
-    @Override public void onViewAttachedToWindow(ViewHolder holder) {
-      //noinspection unchecked
-      origin.onViewAttachedToWindow(holder);
-    }
-
-    @Override public void onViewDetachedFromWindow(ViewHolder holder) {
-      //noinspection unchecked
-      origin.onViewDetachedFromWindow(holder);
-    }
-
-    @Override public void registerAdapterDataObserver(AdapterDataObserver observer) {
-      origin.registerAdapterDataObserver(observer);
-    }
-
-    @Override public void unregisterAdapterDataObserver(AdapterDataObserver observer) {
-      origin.unregisterAdapterDataObserver(observer);
-    }
-
-    @Override public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-      origin.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-      origin.onDetachedFromRecyclerView(recyclerView);
     }
   }
 
