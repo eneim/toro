@@ -13,9 +13,10 @@
 
 * [Features](#features)
 * [Demo](#demo)
-* [Getting start](#getting-start)
-* [Advance usage and class documentation](#advance-usage-and-class-documentation-i-need-your-request-to-update-this-list)
-* [Contribution & Donation](#contribution--donation)
+* [Getting start, basic usages](#getting-start--basic-implementation)
+* [Advance topics](#advance-topics)
+* [Contribution](#contribution)
+* [Donation](#donation)
 * [Hall of Fame](#hall-of-fame)
 * [License](#license)
 
@@ -33,7 +34,7 @@
 
 [![](https://img.youtube.com/vi/gw0awL_89V4/0.jpg)](https://www.youtube.com/watch?v=gw0awL_89V4)
 
-### Getting start
+### Getting start, basic implementation
 
 1. Update module build.gradle.
 
@@ -42,7 +43,7 @@ Latest version:
  
 ```groovy
 ext {
-  toroVersion = '3.0.0'
+  toroVersion = '3.1.1' // TODO check above for latest version
   // below: other dependencies' versions maybe
 }
 
@@ -54,7 +55,7 @@ dependencies {
 }
 ```
 
-2. Using ```Container``` in place of Video list. 
+2. Using ```Container``` in place of Video list/RecyclerView. 
 
 ```xml
 <im.ene.toro.widget.Container
@@ -139,10 +140,12 @@ More advanced View holder implementations can be found in **app** module.
 
 That's all. Your View should be ready to play.
 
-### Advance usage and class documentation (I need your request to update this list)
+### Advance topics
 
-1. Enable playback position save/restore: using ```CacheManager```
+1. Enable playback position save/restore.
 
+By default, **toro**'s Container will always start a playback from beginning.
+ 
 The implementation is simple: create a class implementing ```CacheManager```, then set it to the Container using ```Container#setCacheManager(CacheManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
 
 2. Multiple simultaneous playback
@@ -195,7 +198,7 @@ Behaviour:
 
 ![](/extra/demo-player-selector.gif)
 
-3. Enable/Disable the autoplay on demand.
+3. Enable/Disable the auto-play on demand.
 
 To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Container. To enable it again, just use a Selector that actually select the player. There is ```PlayerSelector.DEFAULT``` built-in.
 
