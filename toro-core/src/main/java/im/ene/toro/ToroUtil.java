@@ -49,7 +49,7 @@ public final class ToroUtil {
    */
   @FloatRange(from = 0.0, to = 1.0) //
   public static float visibleAreaOffset(@NonNull ToroPlayer player, @Nullable ViewParent parent) {
-    if (parent == null || !(parent instanceof Container)) return 0.0f;
+    if (parent == null) return 0.0f;
 
     View playerView = player.getPlayerView();
     Rect drawRect = new Rect();

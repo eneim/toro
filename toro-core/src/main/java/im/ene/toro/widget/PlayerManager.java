@@ -17,11 +17,8 @@
 package im.ene.toro.widget;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.util.ArraySet;
-import android.view.View;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,12 +28,18 @@ import java.util.Set;
  *
  *         Manage the collection of {@link ToroPlayer}s for a specific {@link Container}.
  *
- *         Task: collect all Players in which "{@link Common#allowsToPlay(View, Container)}"
+ *         Task: collect all Players in which "{@link Common#allowsToPlay(ToroPlayer)}"
  *         returns true, then initialize them.
  */
 
 @SuppressWarnings({ "unused", "UnusedReturnValue" }) //
 final class PlayerManager {
+
+  private final Container container;
+
+  PlayerManager(Container container) {
+    this.container = container;
+  }
 
   // Make sure each ToroPlayer will present only once in this Manager.
   private final Set<ToroPlayer> players = new ArraySet<>();
@@ -62,9 +65,8 @@ final class PlayerManager {
     return new ArrayList<>(this.players);
   }
 
-  void initialize(@NonNull ToroPlayer player, @NonNull Container container,
-      @Nullable PlaybackInfo playbackInfo) {
-    player.initialize(container, playbackInfo);
+  void initialize(@NonNull ToroPlayer player) {
+    player.initialize(container, container.getPlaybackInfo(player.getPlayerOrder()));
   }
 
   void play(@NonNull ToroPlayer player) {

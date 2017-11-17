@@ -20,7 +20,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
-import android.view.View;
+import android.support.v7.widget.RecyclerView;
 import im.ene.toro.ToroPlayer;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +62,11 @@ final class Common {
   };
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
-  static boolean allowsToPlay(@NonNull View videoView, @NonNull Container parent) {
-    return videoView.getGlobalVisibleRect(new Rect(), new Point());
+  static boolean allowsToPlay(@NonNull ToroPlayer player) {
+    //noinspection ConstantConditions
+    boolean valid = player != null && player instanceof RecyclerView.ViewHolder;  // Should be true
+    if (valid) valid = ((RecyclerView.ViewHolder) player).itemView.getParent() != null;
+    if (valid) valid = player.getPlayerView().getGlobalVisibleRect(new Rect(), new Point());
+    return valid;
   }
 }

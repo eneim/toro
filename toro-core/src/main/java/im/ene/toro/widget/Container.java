@@ -74,7 +74,7 @@ public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
 
-  /* package */ final PlayerManager playerManager = new PlayerManager();  // never null
+  /* package */ final PlayerManager playerManager;
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
   /* package */ Handler animatorFinishHandler;  // null = Container is detached ...
 
@@ -88,6 +88,7 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    this.playerManager = new PlayerManager(this);
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
@@ -158,10 +159,9 @@ public class Container extends RecyclerView {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          if (Common.allowsToPlay(playerView, Container.this)) {
+          if (Common.allowsToPlay(player)) {
             if (playerManager.attachPlayer(player)) {
-              PlaybackInfo info = Container.this.getPlaybackInfo(player.getPlayerOrder());
-              playerManager.initialize(player, Container.this, info);
+              playerManager.initialize(player);
               dispatchUpdateOnAnimationFinished(false);
             }
           }
@@ -206,7 +206,7 @@ public class Container extends RecyclerView {
     // 1. Find players those are not qualified to play anymore.
     for (int i = 0, size = players.size(); i < size; i++) {
       ToroPlayer player = players.get(i);
-      if (Common.allowsToPlay(player.getPlayerView(), Container.this)) continue;
+      if (Common.allowsToPlay(player)) continue;
       if (player.isPlaying()) {
         this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
@@ -225,13 +225,13 @@ public class Container extends RecyclerView {
         if (holder != null && holder instanceof ToroPlayer) {
           ToroPlayer player = (ToroPlayer) holder;
           // Check candidate's condition
-          if (Common.allowsToPlay(player.getPlayerView(), Container.this)) {
+          if (Common.allowsToPlay(player)) {
             if (!playerManager.manages(player)) {
               playerManager.attachPlayer(player);
             }
             // Don't check the attach result, because the player may be managed already.
             if (!player.isPlaying()) {
-              playerManager.initialize(player, this, this.getPlaybackInfo(player.getPlayerOrder()));
+              playerManager.initialize(player);
             }
           }
         }
