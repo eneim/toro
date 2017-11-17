@@ -300,6 +300,7 @@ public class Container extends RecyclerView {
   }
 
   void dispatchUpdateOnAnimationFinished(boolean immediate) {
+    if (getScrollState() != SCROLL_STATE_IDLE) return;
     if (animatorFinishHandler == null) return;
     final long duration = immediate ? 50 : getMaxAnimationDuration();
     if (getItemAnimator() != null) {
