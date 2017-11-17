@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.MediaSource;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
@@ -75,24 +76,33 @@ public interface ToroPlayer {
 
   /**
    * Notify a Player about its {@link Container}'s scroll state change.
-   *
-   * @param container the {@link Container} that contains this player.
-   * @param newState new Scroll state of the Container.
    */
-  void onContainerScrollStateChange(Container container, int newState);
+  void onSettled(Container container);
 
   /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
    */
   interface EventListener {
 
+    /**
+     * See {@link Player#STATE_BUFFERING}
+     */
     void onBuffering(); // ExoPlayer state: 2
 
+    /**
+     * See {@link Player#STATE_READY}
+     */
     void onPlaying(); // ExoPlayer state: 3, play flag: true
 
+    /**
+     * See {@link Player#STATE_READY}
+     */
     void onPaused();  // ExoPlayer state: 3, play flag: false
 
-    void onCompleted(Container container, ToroPlayer player); // ExoPlayer state: 4
+    /**
+     * See {@link Player#STATE_ENDED}
+     */
+    void onCompleted(); // ExoPlayer state: 4
   }
 
   // Adapt from ExoPlayer.

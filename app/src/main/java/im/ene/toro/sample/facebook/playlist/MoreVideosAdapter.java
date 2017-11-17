@@ -26,7 +26,6 @@ import android.view.ViewGroup;
 import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.sample.facebook.data.FbVideo;
-import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,8 +86,8 @@ import java.util.List;
 
       }
 
-      @Override public void onCompleted(Container container, ToroPlayer player) {
-        if (onCompleteCallback != null) onCompleteCallback.onCompletePlayback(container, player);
+      @Override public void onCompleted() {
+        if (onCompleteCallback != null) onCompleteCallback.onCompleted(viewHolder);
       }
     });
 
@@ -120,6 +119,6 @@ import java.util.List;
 
   static abstract class OnCompleteCallback {
 
-    abstract void onCompletePlayback(Container container, ToroPlayer player);
+    abstract void onCompleted(ToroPlayer player);
   }
 }

@@ -41,6 +41,7 @@ import butterknife.BindView;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.ramotion.cardslider.CardSliderLayoutManager;
 import com.ramotion.cardslider.CardSnapHelper;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.media.PlaybackInfo;
@@ -94,7 +95,7 @@ import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
   @BindView(R.id.place_holder) ViewPager viewPager;
   @BindView(R.id.player_container) Container container;
-  CustomCardSliderLayoutManager layoutManager;
+  CardSliderLayoutManager layoutManager;
   CustomLayoutAdapter adapter;
   LicensePagerAdapter pagerAdapter;
 
@@ -106,7 +107,7 @@ import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
   @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
-    layoutManager = new CustomCardSliderLayoutManager(
+    layoutManager = new CardSliderLayoutManager(
         getResources().getDimensionPixelOffset(R.dimen.custom_card_left),
         getResources().getDimensionPixelSize(R.dimen.custom_item_width),
         getResources().getDimensionPixelOffset(R.dimen.custom_card_gap));
