@@ -39,7 +39,7 @@ import im.ene.toro.widget.Container;
 @SuppressWarnings("WeakerAccess") //
 final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
 
-  final FragmentManager fragmentManager;
+  final FragmentManager manager;
   final PlaybackInfo playbackInfo = new PlaybackInfo();
   final String videoId;
 
@@ -61,7 +61,7 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     if (player.getPlayerView() == null) {
       throw new IllegalArgumentException("Player's view must not be null.");
     }
-    this.fragmentManager = fragmentManager;
+    this.manager = fragmentManager;
     this.videoId = videoId;
   }
 
@@ -118,7 +118,7 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
 
     if (playerFragment != null) {
-      fragmentManager.beginTransaction().remove(playerFragment).commitNowAllowingStateLoss();
+      manager.beginTransaction().remove(playerFragment).commitNowAllowingStateLoss();
       playerFragment = null;
     }
 
@@ -131,19 +131,18 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
         // 1. Remove current fragment if there is one
         this.playerViewId = player.getPlayerView().getId();
         if (playerViewId != View.NO_ID) {
-          playerFragment =
-              (YouTubePlayerSupportFragment) fragmentManager.findFragmentById(playerViewId);
+          playerFragment = (YouTubePlayerSupportFragment) manager.findFragmentById(playerViewId);
         }
         if (playerFragment != null) {
-          fragmentManager.beginTransaction().remove(playerFragment).commitAllowingStateLoss();
+          manager.beginTransaction().remove(playerFragment).commitNowAllowingStateLoss();
           playerFragment = null;
         }
         // 2. Generate new unique Id for the fragment's container and add new fragment.
         playerViewId = ViewUtil.generateViewId();
         player.getPlayerView().setId(playerViewId);
         playerFragment = YouTubePlayerSupportFragment.newInstance();
-        fragmentManager.beginTransaction().replace(playerViewId, playerFragment)  //
-            .commitAllowingStateLoss();
+        manager.beginTransaction().replace(playerViewId, playerFragment)  //
+            .commitNowAllowingStateLoss();
         break;
       case MSG_PLAY:
         if (playerFragment == null || !playerFragment.isVisible()) break;
