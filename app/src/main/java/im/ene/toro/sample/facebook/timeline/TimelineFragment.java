@@ -126,14 +126,15 @@ public class TimelineFragment extends BaseFragment
   @Override public void onViewStateRestored(@Nullable Bundle bundle) {
     super.onViewStateRestored(bundle);
     if (bundle == null) {
-      // User come here from first place, we keep current behaviour.
+      // User come here from empty, we keep current behaviour.
       return;
     }
-    // Bundle != null, which is a hint that we come here from a orientation change.
+    // Bundle != null, which is a hint that we come here from a config change.
+    //
     // There is a chance that this Fragment is recreated after a config change. In that case,
     // if in previous 'life', there was a BigPlayerFragment created, it will store a bundle
     // containing its latest playback state that was provided by this Fragment.
-    // Here we restore it to continue the playback.
+    // Here we restore it to continue the last playback.
     Bundle playerBundle = bundle.getBundle(STATE_KEY_BIG_PLAYER_BUNDLE);
     if (playerBundle != null) {
       int order = playerBundle.getInt(BigPlayerFragment.BUNDLE_KEY_ORDER);
@@ -141,9 +142,10 @@ public class TimelineFragment extends BaseFragment
       if (info == null) info = new PlaybackInfo();
       this.container.savePlaybackInfo(order, info);
     }
+
     if (ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
-      // Since we come here from a orientation change, if previous state (portrait mode),
-      // there was a on-playing Player, we should have a saved state of latest playback.
+      // Since we come here from a config change, if previous state (portrait mode),
+      // there was a on-playing Big Player, we should have a saved state of its playback.
       // Let's retrieve it and then do stuff.
 
       // 1. Obtain the Video object and its order.
@@ -185,7 +187,7 @@ public class TimelineFragment extends BaseFragment
       }
     }
 
-    // Save this and restore again to open on a BigPlayer if need.
+    // Save this and restore later to open on a BigPlayer if need.
     if (item instanceof FbVideo) {
       outState.putInt(STATE_KEY_ACTIVE_ORDER, firstPlayer.getPlayerOrder());
       outState.putParcelable(STATE_KEY_FB_VIDEO, (FbVideo) item);

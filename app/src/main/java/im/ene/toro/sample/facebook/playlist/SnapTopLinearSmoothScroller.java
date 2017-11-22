@@ -35,6 +35,6 @@ public class SnapTopLinearSmoothScroller extends LinearSmoothScroller {
   }
 
   @Override protected float calculateSpeedPerPixel(DisplayMetrics displayMetrics) {
-    return super.calculateSpeedPerPixel(displayMetrics) * 5.f;
+    return super.calculateSpeedPerPixel(displayMetrics) * 5.f;  // Speed up
   }
 }

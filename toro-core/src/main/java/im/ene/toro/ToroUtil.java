@@ -29,7 +29,7 @@ import im.ene.toro.widget.Container;
  * @author eneim | 5/31/17.
  */
 
-@SuppressWarnings("unused") public final class ToroUtil {
+public final class ToroUtil {
 
   private static final String TAG = "ToroLib:Util";
 
@@ -49,7 +49,7 @@ import im.ene.toro.widget.Container;
    */
   @FloatRange(from = 0.0, to = 1.0) //
   public static float visibleAreaOffset(@NonNull ToroPlayer player, @Nullable ViewParent parent) {
-    if (parent == null || !(parent instanceof Container)) return 0.0f;
+    if (parent == null) return 0.0f;
 
     View playerView = player.getPlayerView();
     Rect drawRect = new Rect();
