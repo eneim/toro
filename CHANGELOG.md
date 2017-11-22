@@ -1,6 +1,27 @@
 Changelog
 ===========
 
+3.2.0 (2017/11/23)
+--------------
+
+***This release will make scrolling with many Videos smoother. Sorry for making you wait!***
+
+#### API Updates
+
+- BREAKING CHANGE: ``ToroPlayer#onContainerScrollStateChange(Container, int)`` has been removed, replaced by ``ToroPlayer#onSettled(Container)``.
+- BREAKING CHANGE: ``ToroPlayer#onCompleted(Container, ToroPlayer)`` has been removed, replaced by ``ToroPlayer#onCompleted()``.
+- BREAKING CHANGE: ``ToroLayoutManager`` has been removed. Internal implement now doesn't depend on first and last ViewHolder indicator.
+
+#### Internal Updates
+
+- ``ToroUtil#visibleAreaOffset()`` implementation now doesn't require ``ViewParent`` to be a ``Container`` anymore.
+- ``Common#allowsToPlay()`` implementation improved.
+- ``Container`` and ``PlayerManager`` internal implementation has been significantly improved.
+
+#### Demo App Updates
+
+- Minor coding improvement for Youtube demo.
+
 3.1.1 (2017/10/06)
 --------------
 
