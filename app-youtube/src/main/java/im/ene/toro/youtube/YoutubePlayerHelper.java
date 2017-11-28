@@ -25,6 +25,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import im.ene.toro.ToroPlayer;
@@ -45,7 +46,7 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   @IntRange(from = 1) final int playerViewId; // also the Id for playerFragment's container
 
   YouTubePlayer youTubePlayer;
-  YouTubePlayerSupportFragment playerFragment;
+  YouTubePlayerSupportFragment ytFragment;
 
   final Handler handler = new Handler(this);
   final int MSG_INIT = 1000;
@@ -120,9 +121,9 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
       youTubePlayer = null;
     }
 
-    if (playerFragment != null) {
-      if (playerFragment.isAdded()) manager.beginTransaction().remove(playerFragment).commitNow();
-      playerFragment = null;
+    if (ytFragment != null) {
+      if (ytFragment.isVisible()) manager.beginTransaction().remove(ytFragment).commitNow();
+      ytFragment = null;
     }
     super.release();
   }
@@ -131,28 +132,29 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     switch (message.what) {
       case MSG_INIT:
         // 1. Remove current fragment if there is one
-        playerFragment = (YouTubePlayerSupportFragment) manager.findFragmentById(playerViewId);
-        if (playerFragment != null) {
-          manager.beginTransaction().remove(playerFragment).commitNow();
+        ytFragment = (YouTubePlayerSupportFragment) manager.findFragmentById(playerViewId);
+        if (ytFragment != null) {
+          manager.beginTransaction().remove(ytFragment).commitNow();
         }
         // 2. Generate new unique Id for the fragment's container and add new fragment.
-        playerFragment = YouTubePlayerSupportFragment.newInstance();
-        manager.beginTransaction().replace(playerViewId, playerFragment).commitNow();
+        ytFragment = YouTubePlayerSupportFragment.newInstance();
+        manager.beginTransaction().replace(playerViewId, ytFragment).commitNow();
         break;
       case MSG_PLAY:
-        if (playerFragment == null || !playerFragment.isVisible()) break;
+        if (ytFragment == null || !ytFragment.isVisible()) break;
         final YoutubePlayerHelper helper = YoutubePlayerHelper.this; // make a local access
-        playerFragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
+        ytFragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
           @Override
           public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
             helper.youTubePlayer = player;
+            player.setPlayerStateChangeListener(new StateChangeImpl());
             player.setShowFullscreenButton(false);  // fullscreen requires more work ...
             player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
           }
 
           @Override public void onInitializationFailure(Provider provider,
               YouTubeInitializationResult result) {
-            throw new RuntimeException("Failed with result: " + result.name());
+            throw new RuntimeException("YouTube init error: " + result.name());
           }
         });
         break;
@@ -178,6 +180,34 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     if (nextMsg != MSG_NONE) {
       handler.sendEmptyMessageDelayed(nextMsg, MSG_DELAY);
       nextMsg = MSG_NONE;
+    }
+  }
+
+  class StateChangeImpl implements PlayerStateChangeListener {
+
+    @Override public void onLoading() {
+
+    }
+
+    @Override public void onLoaded(String s) {
+
+    }
+
+    @Override public void onAdStarted() {
+
+    }
+
+    @Override public void onVideoStarted() {
+
+    }
+
+    @Override public void onVideoEnded() {
+
+    }
+
+    @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
+      // Force a crash to log to Fabric.
+      throw new RuntimeException("YouTubePlayer Error: " + errorReason);
     }
   }
 }

@@ -20,4 +20,5 @@ bintray_user=empty now
 bintray_apikey=empty now
 bintray_gpg_password=empty now
 
-youtube_apikey=your key here
+youtube_apikey=your-key-here
+fabric_api_key=fabric-hey-here
