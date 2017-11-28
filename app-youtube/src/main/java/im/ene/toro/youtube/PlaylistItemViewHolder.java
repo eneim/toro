@@ -22,7 +22,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.api.services.youtube.model.Thumbnail;
+import com.google.api.services.youtube.model.Video;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
@@ -32,25 +37,41 @@ import im.ene.toro.widget.Container;
  * @author eneim (8/1/17).
  */
 
-public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+@SuppressWarnings("WeakerAccess") public class PlaylistItemViewHolder
+    extends RecyclerView.ViewHolder implements ToroPlayer {
 
-  static final int LAYOUT_RES = R.layout.view_holder_youtube_player;
+  private static final String TAG = "Toro:Yt:ViewHolder";
 
-  private YoutubePlayerHelper helper;
+  static final int LAYOUT_RES = R.layout.view_holder_youtube_player_full;
+
+  YoutubePlayerHelper helper;
   private FragmentManager fragmentManager;
   private String videoId;
 
-  @SuppressWarnings("WeakerAccess") FrameLayout playerViewContainer;
-  @SuppressWarnings("WeakerAccess") TextView videoName;
+  private final RequestOptions options =
+      new RequestOptions().fitCenter().placeholder(R.drawable.exo_edit_mode_logo);
 
-  YoutubePlayerViewHolder(View itemView) {
+  AspectRatioFrameLayout playerViewContainer;
+  TextView videoName;
+  TextView videoCaption;
+  ImageView thumbnail;
+
+  final FrameLayout playerView;
+
+  PlaylistItemViewHolder(View itemView) {
     super(itemView);
     playerViewContainer = itemView.findViewById(R.id.player_container);
     videoName = itemView.findViewById(R.id.video_id);
+    videoCaption = itemView.findViewById(R.id.video_description);
+    thumbnail = itemView.findViewById(R.id.thumbnail);
+
+    playerView = itemView.findViewById(R.id.player_view);
+    int viewId = ViewUtil.generateViewId();
+    playerView.setId(viewId);
   }
 
   @NonNull @Override public View getPlayerView() {
-    return playerViewContainer.getChildAt(0);
+    return playerView;
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
@@ -64,13 +85,16 @@ public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements 
     }
 
     helper.initialize(playbackInfo);
+    thumbnail.setVisibility(View.VISIBLE);
   }
 
   @Override public void play() {
+    thumbnail.setVisibility(View.GONE);
     if (helper != null) helper.play();
   }
 
   @Override public void pause() {
+    thumbnail.setVisibility(View.VISIBLE);
     if (helper != null) helper.pause();
   }
 
@@ -79,12 +103,12 @@ public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements 
   }
 
   @Override public void release() {
-    if (helper != null) helper.release();
+    this.pause();
     helper = null;
   }
 
   @Override public boolean wantsToPlay() {
-    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.99;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.999;
   }
 
   @Override public int getPlayerOrder() {
@@ -95,9 +119,16 @@ public class YoutubePlayerViewHolder extends RecyclerView.ViewHolder implements 
     if (helper != null) helper.onSettled();
   }
 
-  void bind(FragmentManager fragmentManager, String videoId) {
+  void bind(FragmentManager fragmentManager, Video item) {
     this.fragmentManager = fragmentManager;
-    this.videoId = videoId;
-    this.videoName.setText("Video: " + videoId);
+    this.videoId = item.getId();
+    this.videoName.setText(item.getSnippet().getTitle());
+    this.videoCaption.setText(item.getSnippet().getDescription());
+
+    Thumbnail thumb = item.getSnippet().getThumbnails().getHigh();
+    if (thumb != null) {
+      playerViewContainer.setAspectRatio(thumb.getWidth() / (float) thumb.getHeight());
+      Glide.with(itemView).load(thumb.getUrl()).apply(options).into(thumbnail);
+    }
   }
 }

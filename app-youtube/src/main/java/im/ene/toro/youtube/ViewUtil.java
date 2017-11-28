@@ -16,6 +16,7 @@
 
 package im.ene.toro.youtube;
 
+import android.support.annotation.IntRange;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,7 +32,7 @@ final class ViewUtil {
   private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
   // Copied from official View.java
-  static int generateViewId() {
+  @IntRange(from = 1) static int generateViewId() {
     for (; ; ) {
       final int result = sNextGeneratedId.get();
       // aapt-generated IDs have the high byte nonzero; clamp to the range under that.

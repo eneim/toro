@@ -16,16 +16,20 @@
 
 package im.ene.toro.youtube;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import im.ene.toro.widget.Container;
+import java.io.IOException;
 
 public class HomeActivity extends AppCompatActivity {
 
   Container container;
-  YoutubeVideosAdapter adapter;
+  YoutubePlaylistAdapter adapter;
+
+  PlaylistViewModel viewModel;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -33,10 +37,18 @@ public class HomeActivity extends AppCompatActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+    viewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
+
     container = findViewById(R.id.container);
-    adapter = new YoutubeVideosAdapter(getSupportFragmentManager());
+    adapter = new YoutubePlaylistAdapter(getSupportFragmentManager());
     container.setLayoutManager(new LinearLayoutManager(this));
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
+
+    try {
+      viewModel.getPlaylist().observe(this, response -> adapter.setData(response));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

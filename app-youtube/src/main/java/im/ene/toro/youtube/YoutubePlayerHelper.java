@@ -18,11 +18,11 @@ package im.ene.toro.youtube;
 
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
@@ -42,8 +42,8 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   final FragmentManager manager;
   final PlaybackInfo playbackInfo = new PlaybackInfo();
   final String videoId;
+  @IntRange(from = 1) final int playerViewId; // also the Id for playerFragment's container
 
-  int playerViewId; // also the Id for playerFragment's container
   YouTubePlayer youTubePlayer;
   YouTubePlayerSupportFragment playerFragment;
 
@@ -51,7 +51,7 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   final int MSG_INIT = 1000;
   final int MSG_PLAY = 1001;
   final int MSG_PAUSE = 1002;
-  final int MSG_DELAY = 300;
+  final int MSG_DELAY = 50;
   final int MSG_NONE = -1;
 
   YoutubePlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
@@ -61,6 +61,8 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     if (player.getPlayerView() == null) {
       throw new IllegalArgumentException("Player's view must not be null.");
     }
+
+    this.playerViewId = player.getPlayerView().getId();
     this.manager = fragmentManager;
     this.videoId = videoId;
   }
@@ -105,6 +107,7 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   }
 
   private void updateResumePosition() {
+    // TODO reproduce the case YoutubePlayer is released by System, and fix it.
     if (youTubePlayer != null) {
       playbackInfo.setResumePosition(youTubePlayer.getCurrentTimeMillis());
     }
@@ -118,10 +121,9 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
 
     if (playerFragment != null) {
-      manager.beginTransaction().remove(playerFragment).commitNowAllowingStateLoss();
+      if (playerFragment.isAdded()) manager.beginTransaction().remove(playerFragment).commitNow();
       playerFragment = null;
     }
-
     super.release();
   }
 
@@ -129,20 +131,13 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     switch (message.what) {
       case MSG_INIT:
         // 1. Remove current fragment if there is one
-        this.playerViewId = player.getPlayerView().getId();
-        if (playerViewId != View.NO_ID) {
-          playerFragment = (YouTubePlayerSupportFragment) manager.findFragmentById(playerViewId);
-        }
+        playerFragment = (YouTubePlayerSupportFragment) manager.findFragmentById(playerViewId);
         if (playerFragment != null) {
-          manager.beginTransaction().remove(playerFragment).commitNowAllowingStateLoss();
-          playerFragment = null;
+          manager.beginTransaction().remove(playerFragment).commitNow();
         }
         // 2. Generate new unique Id for the fragment's container and add new fragment.
-        playerViewId = ViewUtil.generateViewId();
-        player.getPlayerView().setId(playerViewId);
         playerFragment = YouTubePlayerSupportFragment.newInstance();
-        manager.beginTransaction().replace(playerViewId, playerFragment)  //
-            .commitNowAllowingStateLoss();
+        manager.beginTransaction().replace(playerViewId, playerFragment).commitNow();
         break;
       case MSG_PLAY:
         if (playerFragment == null || !playerFragment.isVisible()) break;

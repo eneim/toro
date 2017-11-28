@@ -280,6 +280,31 @@ public final class ExoPlayerHelper {
     ComponentListener() {
     }
 
+    // [BEGIN] Added in ExoPlayer 2.6.0
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+      // do nothing
+    }
+
+    @Override public void onPositionDiscontinuity(int reason) {
+      if (needRetrySource) {
+        // This will only occur if the user has performed a seek whilst in the error playerState. Update the
+        // resume position so that if the user then retries, playback will resume from the position to
+        // which they seek.
+        updateResumePosition();
+      }
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onPositionDiscontinuity(reason);
+        }
+      }
+    }
+
+    @Override public void onSeekProcessed() {
+      // do nothing
+    }
+    // [END] Added in ExoPlayer 2.6.0
+
     @Override public void onRepeatModeChanged(int repeatMode) {
 
     }
@@ -389,21 +414,6 @@ public final class ExoPlayerHelper {
       }
     }
 
-    @Override public void onPositionDiscontinuity() {
-      if (needRetrySource) {
-        // This will only occur if the user has performed a seek whilst in the error playerState. Update the
-        // resume position so that if the user then retries, playback will resume from the position to
-        // which they seek.
-        updateResumePosition();
-      }
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onPositionDiscontinuity();
-        }
-      }
-    }
-
     @Override public void onPlaybackParametersChanged(PlaybackParameters parameters) {
       int count;
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
@@ -487,6 +497,18 @@ public final class ExoPlayerHelper {
       this.delegate = delegate;
     }
 
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+    }
+
+    @Override public void onPositionDiscontinuity(int reason) {
+      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
+    }
+
+    @Override public void onSeekProcessed() {
+
+    }
+
     @Override public void onRepeatModeChanged(int repeatMode) {
       if (this.delegate != null) this.delegate.onRepeatModeChanged(repeatMode);
     }
@@ -510,10 +532,6 @@ public final class ExoPlayerHelper {
 
     @Override public void onPlayerError(ExoPlaybackException error) {
       if (this.delegate != null) this.delegate.onPlayerError(error);
-    }
-
-    @Override public void onPositionDiscontinuity() {
-      if (this.delegate != null) this.delegate.onPositionDiscontinuity();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
