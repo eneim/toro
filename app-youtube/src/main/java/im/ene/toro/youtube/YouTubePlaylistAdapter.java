@@ -18,33 +18,56 @@ package im.ene.toro.youtube;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import im.ene.toro.CacheManager;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.widget.Container;
+import io.reactivex.Observable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static io.reactivex.Observable.fromIterable;
 
 /**
  * @author eneim (2017/11/23).
  */
 
-public class YoutubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemViewHolder>
+public class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemViewHolder>
     implements CacheManager {
 
   private static final String TAG = "Toro:Yt:Adapter";
 
   private final FragmentManager fragmentManager;
+  private final Map<ToroPlayer, YouTubePlayerHelper> helpers = new HashMap<>();
+
   private VideoListResponse data = new VideoListResponse();
 
-  YoutubePlaylistAdapter(FragmentManager fragmentManager) {
+  YouTubePlaylistAdapter(@NonNull FragmentManager fragmentManager) {
     super();
-    setHasStableIds(true);
+    // setHasStableIds(true);
     this.fragmentManager = fragmentManager;
+    FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentLifecycleCallbacks() {
+      // Actively release resource base on FragmentManager behaviour.
+      @Override public void onFragmentViewDestroyed(FragmentManager fm, Fragment fragment) {
+        Log.w(TAG, "View Destroyed: " + fragment);
+        getHelpers(fragment).forEach(helper -> {
+          helper.releasePlayer();
+          helper.ytFragment = null;
+        });
+      }
+    };
+    this.fragmentManager.registerFragmentLifecycleCallbacks(lifecycleCallbacks, false);
   }
 
   public void setData(VideoListResponse data) {
@@ -55,11 +78,30 @@ public class YoutubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
   @Override public PlaylistItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(PlaylistItemViewHolder.LAYOUT_RES, parent, false);
-    return new PlaylistItemViewHolder(view);
+    return new PlaylistItemViewHolder(this, view);
   }
 
   @Override public void onBindViewHolder(PlaylistItemViewHolder holder, int position) {
-    holder.bind(this.fragmentManager, getItem(position));
+    holder.bind(getItem(position));
+  }
+
+  /// Manage the YouTubePlayerHelpers
+
+  YouTubePlayerHelper createHelper(Container container, ToroPlayer player, String videoId) {
+    YouTubePlayerHelper helper = helpers.get(player);
+    if (helper == null) {
+      helper = new YouTubePlayerHelper(container, player, this.fragmentManager, videoId);
+      helpers.put(player, helper);
+    }
+    return helper;
+  }
+
+  @SuppressWarnings("UnusedReturnValue") YouTubePlayerHelper destroyHelper(ToroPlayer player) {
+    return this.helpers.remove(player);
+  }
+
+  @SuppressWarnings("WeakerAccess") Observable<YouTubePlayerHelper> getHelpers(Fragment fragment) {
+    return fromIterable(helpers.values()).filter(helper -> helper.ytFragment == fragment);
   }
 
   private Video getItem(int position) {
@@ -80,7 +122,7 @@ public class YoutubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
     return getItem(position).getId().hashCode();
   }
 
-  /// CacheManager
+  /// CacheManager implementation
 
   @Nullable @Override public Object getKeyForOrder(int order) {
     return order < 0 ? null : getItem(order);

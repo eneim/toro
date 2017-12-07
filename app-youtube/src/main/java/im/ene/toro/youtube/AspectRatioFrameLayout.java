@@ -33,7 +33,7 @@ public class AspectRatioFrameLayout extends FrameLayout {
   /**
    * Resize modes for {@link AspectRatioFrameLayout}.
    */
-  @Retention(RetentionPolicy.SOURCE) @IntDef({
+  @SuppressWarnings("WeakerAccess") @Retention(RetentionPolicy.SOURCE) @IntDef({
       RESIZE_MODE_FIT, RESIZE_MODE_FIXED_WIDTH, RESIZE_MODE_FIXED_HEIGHT, RESIZE_MODE_FILL,
       RESIZE_MODE_ZOOM
   }) public @interface ResizeMode {

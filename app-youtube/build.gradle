@@ -1,3 +1,5 @@
+import java.util.function.Predicate
+
 /*
  * Copyright (c) 2017 Nam Nguyen, nam@ene.im
  *
@@ -88,6 +90,20 @@ android {
     abortOnError false
   }
 
+  splits {
+    abi {
+      enable gradle.startParameter.taskNames.stream().filter(new Predicate<String>() {
+        @Override
+        boolean test(String s) {
+          return s.toLowerCase().contains("assemble")
+        }
+      }).findFirst().present
+      reset()
+      include 'x86', 'x86_64', 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'mips', 'mips64'
+      universalApk false
+    }
+  }
+
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
@@ -117,7 +133,7 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
   // implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 

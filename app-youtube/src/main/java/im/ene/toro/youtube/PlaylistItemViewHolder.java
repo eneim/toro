@@ -18,7 +18,6 @@ package im.ene.toro.youtube;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -37,15 +36,16 @@ import im.ene.toro.widget.Container;
  * @author eneim (8/1/17).
  */
 
-@SuppressWarnings("WeakerAccess") public class PlaylistItemViewHolder
-    extends RecyclerView.ViewHolder implements ToroPlayer {
+@SuppressWarnings("WeakerAccess") //
+public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
   private static final String TAG = "Toro:Yt:ViewHolder";
 
   static final int LAYOUT_RES = R.layout.view_holder_youtube_player_full;
 
-  YoutubePlayerHelper helper;
-  private FragmentManager fragmentManager;
+  private final YouTubePlaylistAdapter adapter;
+
+  private YouTubePlayerHelper helper;
   private String videoId;
 
   private final RequestOptions options =
@@ -58,8 +58,9 @@ import im.ene.toro.widget.Container;
 
   final FrameLayout playerView;
 
-  PlaylistItemViewHolder(View itemView) {
+  PlaylistItemViewHolder(YouTubePlaylistAdapter adapter, View itemView) {
     super(itemView);
+    this.adapter = adapter;
     playerViewContainer = itemView.findViewById(R.id.player_container);
     videoName = itemView.findViewById(R.id.video_id);
     videoCaption = itemView.findViewById(R.id.video_description);
@@ -81,7 +82,7 @@ import im.ene.toro.widget.Container;
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new YoutubePlayerHelper(container, this, fragmentManager, videoId);
+      helper = adapter.createHelper(container, this, videoId);
     }
 
     helper.initialize(playbackInfo);
@@ -103,8 +104,13 @@ import im.ene.toro.widget.Container;
   }
 
   @Override public void release() {
-    this.pause();
-    helper = null;
+    thumbnail.setVisibility(View.VISIBLE);
+    if (helper != null) {
+      helper.pause();
+      helper = null;
+    }
+
+    adapter.destroyHelper(this);
   }
 
   @Override public boolean wantsToPlay() {
@@ -119,8 +125,7 @@ import im.ene.toro.widget.Container;
     if (helper != null) helper.onSettled();
   }
 
-  void bind(FragmentManager fragmentManager, Video item) {
-    this.fragmentManager = fragmentManager;
+  void bind(Video item) {
     this.videoId = item.getId();
     this.videoName.setText(item.getSnippet().getTitle());
     this.videoCaption.setText(item.getSnippet().getDescription());

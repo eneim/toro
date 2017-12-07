@@ -27,7 +27,7 @@ import java.io.IOException;
 public class HomeActivity extends AppCompatActivity {
 
   Container container;
-  YoutubePlaylistAdapter adapter;
+  YouTubePlaylistAdapter adapter;
 
   PlaylistViewModel viewModel;
 
@@ -40,7 +40,7 @@ public class HomeActivity extends AppCompatActivity {
     viewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
 
     container = findViewById(R.id.container);
-    adapter = new YoutubePlaylistAdapter(getSupportFragmentManager());
+    adapter = new YouTubePlaylistAdapter(getSupportFragmentManager());
     container.setLayoutManager(new LinearLayoutManager(this));
     container.setAdapter(adapter);
     container.setCacheManager(adapter);

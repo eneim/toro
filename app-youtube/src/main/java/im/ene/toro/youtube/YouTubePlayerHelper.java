@@ -16,13 +16,16 @@
 
 package im.ene.toro.youtube;
 
+import android.content.Context;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
@@ -38,24 +41,27 @@ import im.ene.toro.widget.Container;
  */
 
 @SuppressWarnings("WeakerAccess") //
-final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
+final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
 
+  private static final String TAG = "Toro:Yt:Helper";
+
+  static final int MSG_INIT = 1000;
+  static final int MSG_PLAY = 1001;
+  static final int MSG_PAUSE = 1002;
+  static final int MSG_DELAY = 50;
+  static final int MSG_NONE = -1;
+
+  final Handler handler = new Handler(this);
+  final Context context;
+  final String videoId;
   final FragmentManager manager;
   final PlaybackInfo playbackInfo = new PlaybackInfo();
-  final String videoId;
   @IntRange(from = 1) final int playerViewId; // also the Id for playerFragment's container
 
   YouTubePlayer youTubePlayer;
   YouTubePlayerSupportFragment ytFragment;
 
-  final Handler handler = new Handler(this);
-  final int MSG_INIT = 1000;
-  final int MSG_PLAY = 1001;
-  final int MSG_PAUSE = 1002;
-  final int MSG_DELAY = 50;
-  final int MSG_NONE = -1;
-
-  YoutubePlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
+  YouTubePlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
       FragmentManager fragmentManager, String videoId) {
     super(container, player);
     //noinspection ConstantConditions
@@ -63,6 +69,7 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
       throw new IllegalArgumentException("Player's view must not be null.");
     }
 
+    this.context = container.getContext();
     this.playerViewId = player.getPlayerView().getId();
     this.manager = fragmentManager;
     this.videoId = videoId;
@@ -74,23 +81,13 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
       this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
     }
 
-    if (container.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-      handler.sendEmptyMessageDelayed(MSG_INIT, MSG_DELAY);
-      nextMsg = MSG_NONE;
-    } else {
-      handler.removeCallbacksAndMessages(null);
-      nextMsg = MSG_INIT;
-    }
+    handler.sendEmptyMessageDelayed(MSG_INIT, MSG_DELAY);
+    nextMsg = MSG_NONE;
   }
 
   @Override public void play() {
-    if (container.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-      handler.sendEmptyMessageDelayed(MSG_PLAY, MSG_DELAY);
-      nextMsg = MSG_NONE;
-    } else {
-      handler.removeCallbacksAndMessages(null);
-      nextMsg = MSG_PLAY;
-    }
+    handler.sendEmptyMessageDelayed(MSG_PLAY, MSG_DELAY);
+    nextMsg = MSG_NONE;
   }
 
   @Override public void pause() {
@@ -108,7 +105,6 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   }
 
   private void updateResumePosition() {
-    // TODO reproduce the case YoutubePlayer is released by System, and fix it.
     if (youTubePlayer != null) {
       playbackInfo.setResumePosition(youTubePlayer.getCurrentTimeMillis());
     }
@@ -116,16 +112,19 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
   @Override public void release() {
     handler.removeCallbacksAndMessages(null);
-    if (youTubePlayer != null) {
-      youTubePlayer.release();
-      youTubePlayer = null;
-    }
-
+    releasePlayer();
     if (ytFragment != null) {
       if (ytFragment.isVisible()) manager.beginTransaction().remove(ytFragment).commitNow();
       ytFragment = null;
     }
     super.release();
+  }
+
+  void releasePlayer() {
+    if (youTubePlayer != null) {
+      youTubePlayer.release();
+      youTubePlayer = null;
+    }
   }
 
   @Override public boolean handleMessage(Message message) {
@@ -142,14 +141,17 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
         break;
       case MSG_PLAY:
         if (ytFragment == null || !ytFragment.isVisible()) break;
-        final YoutubePlayerHelper helper = YoutubePlayerHelper.this; // make a local access
+        final YouTubePlayerHelper helper = YouTubePlayerHelper.this; // make a local access
         ytFragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
           @Override
           public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
             helper.youTubePlayer = player;
             player.setPlayerStateChangeListener(new StateChangeImpl());
-            player.setShowFullscreenButton(false);  // fullscreen requires more work ...
-            player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
+            player.setShowFullscreenButton(true);  // fullscreen requires more work ...
+            player.setFullscreen(false);
+            if (shouldPlay()) { // make sure YouTubePlayerView is fully visible.
+              player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
+            }
           }
 
           @Override public void onInitializationFailure(Provider provider,
@@ -174,14 +176,6 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   }
 
   int nextMsg = MSG_NONE; // message (the 'what') to be executed after Container stops scrolling
-
-  @Override public void onSettled() {
-    super.onSettled();
-    if (nextMsg != MSG_NONE) {
-      handler.sendEmptyMessageDelayed(nextMsg, MSG_DELAY);
-      nextMsg = MSG_NONE;
-    }
-  }
 
   class StateChangeImpl implements PlayerStateChangeListener {
 
@@ -209,5 +203,27 @@ final class YoutubePlayerHelper extends ToroPlayerHelper implements Handler.Call
       // Force a crash to log to Fabric.
       throw new RuntimeException("YouTubePlayer Error: " + errorReason);
     }
+  }
+
+  boolean shouldPlay() {
+    if (ytFragment == null || !ytFragment.isVisible()) return false;
+    View ytView = ytFragment.getView();
+    return ytView != null && visibleAreaOffset(ytView) >= 0.999;
+  }
+
+  static float visibleAreaOffset(@NonNull View playerView) {
+    Rect drawRect = new Rect();
+    playerView.getDrawingRect(drawRect);
+    int drawArea = drawRect.width() * drawRect.height();
+
+    Rect playerRect = new Rect();
+    boolean visible = playerView.getGlobalVisibleRect(playerRect, new Point());
+
+    float offset = 0.f;
+    if (visible && drawArea > 0) {
+      int visibleArea = playerRect.height() * playerRect.width();
+      offset = visibleArea / (float) drawArea;
+    }
+    return offset;
   }
 }
