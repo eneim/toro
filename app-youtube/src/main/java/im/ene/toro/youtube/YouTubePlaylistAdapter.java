@@ -16,6 +16,7 @@
 
 package im.ene.toro.youtube;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,13 +32,10 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.widget.Container;
-import io.reactivex.Observable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static io.reactivex.Observable.fromIterable;
 
 /**
  * @author eneim (2017/11/23).
@@ -58,15 +56,31 @@ public class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
     // setHasStableIds(true);
     this.fragmentManager = fragmentManager;
     FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentLifecycleCallbacks() {
+      @Override public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v,
+          Bundle savedInstanceState) {
+        if (f instanceof ToroYouTubePlayerFragment) {
+          Log.w(TAG, "View Created: " + f);
+          ToroYouTubePlayerFragment fragment = (ToroYouTubePlayerFragment) f;
+          YouTubePlayerHelper helper = fragment.getHelperKey();
+          if (helper != null) helper.ytFragment = fragment;
+        }
+      }
+
       // Actively release resource base on FragmentManager behaviour.
-      @Override public void onFragmentViewDestroyed(FragmentManager fm, Fragment fragment) {
-        Log.w(TAG, "View Destroyed: " + fragment);
-        getHelpers(fragment).forEach(helper -> {
-          helper.releasePlayer();
-          helper.ytFragment = null;
-        });
+      @Override public void onFragmentViewDestroyed(FragmentManager fm, Fragment f) {
+        if (f instanceof ToroYouTubePlayerFragment) {
+          Log.e(TAG, "View Destroyed: " + f);
+          ToroYouTubePlayerFragment fragment = (ToroYouTubePlayerFragment) f;
+          YouTubePlayerHelper helper = fragment.getHelperKey();
+          if (helper != null) {
+            helper.release();
+            if (helper.ytFragment != null) helper.ytFragment = null;
+          }
+          fragment.setHelperKey(null);
+        }
       }
     };
+
     this.fragmentManager.registerFragmentLifecycleCallbacks(lifecycleCallbacks, false);
   }
 
@@ -86,23 +100,6 @@ public class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
   }
 
   /// Manage the YouTubePlayerHelpers
-
-  YouTubePlayerHelper createHelper(Container container, ToroPlayer player, String videoId) {
-    YouTubePlayerHelper helper = helpers.get(player);
-    if (helper == null) {
-      helper = new YouTubePlayerHelper(container, player, this.fragmentManager, videoId);
-      helpers.put(player, helper);
-    }
-    return helper;
-  }
-
-  @SuppressWarnings("UnusedReturnValue") YouTubePlayerHelper destroyHelper(ToroPlayer player) {
-    return this.helpers.remove(player);
-  }
-
-  @SuppressWarnings("WeakerAccess") Observable<YouTubePlayerHelper> getHelpers(Fragment fragment) {
-    return fromIterable(helpers.values()).filter(helper -> helper.ytFragment == fragment);
-  }
 
   private Video getItem(int position) {
     return getItems().get(position);
@@ -130,5 +127,38 @@ public class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
 
   @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
     return key instanceof Video ? getItems().indexOf(key) : null;
+  }
+
+  /// [2017/12/07] TEST: New YouTube player manage mechanism.
+
+  YouTubePlayerHelper obtainHelper(Container container, @NonNull ToroPlayer player, String video) {
+    YouTubePlayerHelper helper = this.helpers.get(player);
+
+    if (helper != null && helper.ytFragment != null) {
+      fragmentManager.beginTransaction().remove(helper.ytFragment).commitNow();
+    }
+
+    if (helper == null) {
+      helper = new YouTubePlayerHelper(container, player, video);
+      helpers.put(player, helper);
+    }
+
+    ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
+    fragment.setHelperKey(helper);
+    fragmentManager.beginTransaction()
+        .replace(player.getPlayerView().getId(), fragment)
+        .commitNow();
+
+    return helper;
+  }
+
+  void releaseHelper(ToroPlayer player) {
+    YouTubePlayerHelper helper = this.helpers.remove(player);
+    if (helper != null) {
+      helper.release();
+      if (helper.ytFragment != null) {
+        fragmentManager.beginTransaction().remove(helper.ytFragment).commitNow();
+      }
+    }
   }
 }

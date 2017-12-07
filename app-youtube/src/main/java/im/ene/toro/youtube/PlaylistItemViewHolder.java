@@ -44,9 +44,9 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
   static final int LAYOUT_RES = R.layout.view_holder_youtube_player_full;
 
   private final YouTubePlaylistAdapter adapter;
-
-  private YouTubePlayerHelper helper;
   private String videoId;
+
+  YouTubePlayerHelper helper;
 
   private final RequestOptions options =
       new RequestOptions().fitCenter().placeholder(R.drawable.exo_edit_mode_logo);
@@ -54,7 +54,7 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
   AspectRatioFrameLayout playerViewContainer;
   TextView videoName;
   TextView videoCaption;
-  ImageView thumbnail;
+  ImageView thumbnailView;
 
   final FrameLayout playerView;
 
@@ -64,7 +64,7 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
     playerViewContainer = itemView.findViewById(R.id.player_container);
     videoName = itemView.findViewById(R.id.video_id);
     videoCaption = itemView.findViewById(R.id.video_description);
-    thumbnail = itemView.findViewById(R.id.thumbnail);
+    thumbnailView = itemView.findViewById(R.id.thumbnail);
 
     playerView = itemView.findViewById(R.id.player_view);
     int viewId = ViewUtil.generateViewId();
@@ -82,20 +82,20 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = adapter.createHelper(container, this, videoId);
+      helper = adapter.obtainHelper(container, this, this.videoId);
     }
 
     helper.initialize(playbackInfo);
-    thumbnail.setVisibility(View.VISIBLE);
+    thumbnailView.setVisibility(View.VISIBLE);
   }
 
   @Override public void play() {
-    thumbnail.setVisibility(View.GONE);
+    thumbnailView.setVisibility(View.GONE);
     if (helper != null) helper.play();
   }
 
   @Override public void pause() {
-    thumbnail.setVisibility(View.VISIBLE);
+    thumbnailView.setVisibility(View.VISIBLE);
     if (helper != null) helper.pause();
   }
 
@@ -104,13 +104,9 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override public void release() {
-    thumbnail.setVisibility(View.VISIBLE);
-    if (helper != null) {
-      helper.pause();
-      helper = null;
-    }
-
-    adapter.destroyHelper(this);
+    thumbnailView.setVisibility(View.VISIBLE);
+    adapter.releaseHelper(this);
+    this.helper = null;
   }
 
   @Override public boolean wantsToPlay() {
@@ -130,10 +126,14 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
     this.videoName.setText(item.getSnippet().getTitle());
     this.videoCaption.setText(item.getSnippet().getDescription());
 
-    Thumbnail thumb = item.getSnippet().getThumbnails().getHigh();
-    if (thumb != null) {
-      playerViewContainer.setAspectRatio(thumb.getWidth() / (float) thumb.getHeight());
-      Glide.with(itemView).load(thumb.getUrl()).apply(options).into(thumbnail);
+    Thumbnail thumbnail = item.getSnippet().getThumbnails().getHigh();
+    if (thumbnail != null) {
+      playerViewContainer.setAspectRatio(thumbnail.getWidth() / (float) thumbnail.getHeight());
+      Glide.with(itemView).load(thumbnail.getUrl()).apply(options).into(thumbnailView);
     }
+  }
+
+  @Override public String toString() {
+    return "Player{" + "playerOrder=" + getPlayerOrder() + '}';
   }
 }

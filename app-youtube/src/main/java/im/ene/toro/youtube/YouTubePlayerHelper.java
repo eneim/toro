@@ -24,13 +24,12 @@ import android.os.Message;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
@@ -54,15 +53,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   final Handler handler = new Handler(this);
   final Context context;
   final String videoId;
-  final FragmentManager manager;
+
   final PlaybackInfo playbackInfo = new PlaybackInfo();
   @IntRange(from = 1) final int playerViewId; // also the Id for playerFragment's container
 
   YouTubePlayer youTubePlayer;
-  YouTubePlayerSupportFragment ytFragment;
+  ToroYouTubePlayerFragment ytFragment;
 
-  YouTubePlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
-      FragmentManager fragmentManager, String videoId) {
+  YouTubePlayerHelper(@NonNull Container container, @NonNull ToroPlayer player, String videoId) {
     super(container, player);
     //noinspection ConstantConditions
     if (player.getPlayerView() == null) {
@@ -71,7 +69,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
     this.context = container.getContext();
     this.playerViewId = player.getPlayerView().getId();
-    this.manager = fragmentManager;
     this.videoId = videoId;
   }
 
@@ -112,32 +109,21 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
   @Override public void release() {
     handler.removeCallbacksAndMessages(null);
-    releasePlayer();
-    if (ytFragment != null) {
-      if (ytFragment.isVisible()) manager.beginTransaction().remove(ytFragment).commitNow();
-      ytFragment = null;
-    }
-    super.release();
-  }
-
-  void releasePlayer() {
+    // If the player is paused by Toro, youtubePlayer will be released before this call,
+    // But in case the Fragment is released by System, "pause()" is not called yet, we use
+    // Fragment Lifecycle callback to ask the Adapter to do the cleanup and it will call this method.
     if (youTubePlayer != null) {
       youTubePlayer.release();
       youTubePlayer = null;
     }
+    super.release();
   }
 
   @Override public boolean handleMessage(Message message) {
+    Log.i(TAG, "handleMessage: " + message.what + ", " + player.getPlayerOrder());
     switch (message.what) {
       case MSG_INIT:
-        // 1. Remove current fragment if there is one
-        ytFragment = (YouTubePlayerSupportFragment) manager.findFragmentById(playerViewId);
-        if (ytFragment != null) {
-          manager.beginTransaction().remove(ytFragment).commitNow();
-        }
-        // 2. Generate new unique Id for the fragment's container and add new fragment.
-        ytFragment = YouTubePlayerSupportFragment.newInstance();
-        manager.beginTransaction().replace(playerViewId, ytFragment).commitNow();
+        // Since this is Fragment transaction, it will be handled by the Adapter.
         break;
       case MSG_PLAY:
         if (ytFragment == null || !ytFragment.isVisible()) break;
@@ -211,7 +197,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return ytView != null && visibleAreaOffset(ytView) >= 0.999;
   }
 
-  static float visibleAreaOffset(@NonNull View playerView) {
+  private static float visibleAreaOffset(@NonNull View playerView) {
     Rect drawRect = new Rect();
     playerView.getDrawingRect(drawRect);
     int drawArea = drawRect.width() * drawRect.height();
