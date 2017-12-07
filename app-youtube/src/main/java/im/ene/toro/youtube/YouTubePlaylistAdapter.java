@@ -53,7 +53,6 @@ public class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
 
   YouTubePlaylistAdapter(@NonNull FragmentManager fragmentManager) {
     super();
-    // setHasStableIds(true);
     this.fragmentManager = fragmentManager;
     FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentLifecycleCallbacks() {
       @Override public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v,
@@ -113,10 +112,6 @@ public class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemVie
 
   @Override public int getItemCount() {
     return getItems().size();
-  }
-
-  @Override public long getItemId(int position) {
-    return getItem(position).getId().hashCode();
   }
 
   /// CacheManager implementation
