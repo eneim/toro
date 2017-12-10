@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.youtube;
+package im.ene.toro.youtube.common;
 
 import android.content.Context;
 import android.content.res.TypedArray;

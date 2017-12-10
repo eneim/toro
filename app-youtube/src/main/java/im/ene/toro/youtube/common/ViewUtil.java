@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package im.ene.toro.youtube;
+package im.ene.toro.youtube.common;
 
 import android.support.annotation.IntRange;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author eneim (8/1/17).
  */
 
-final class ViewUtil {
+public final class ViewUtil {
 
   private ViewUtil() {
 
@@ -32,7 +32,7 @@ final class ViewUtil {
   private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
   // Copied from official View.java
-  @IntRange(from = 1) static int generateViewId() {
+  @IntRange(from = 1) public static int generateViewId() {
     for (; ; ) {
       final int result = sNextGeneratedId.get();
       // aapt-generated IDs have the high byte nonzero; clamp to the range under that.

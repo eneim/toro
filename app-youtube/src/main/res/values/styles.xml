@@ -33,4 +33,16 @@
 
   <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+  <style name="Toro.Dialog.Fullscreen" parent="Theme.AppCompat.Light.DialogWhenLarge">
+    <item name="android:windowAnimationStyle">@style/Animation.Design.BottomSheetDialog</item>
+  </style>
+
+  <style name="Toro.Dialog.Fullscreen.NoTitle">
+    <item name="windowActionBar">false</item>
+    <item name="windowNoTitle">true</item>
+  </style>
+
+  <style name="Toro.Theme.Board" parent="Toro.Dialog.Fullscreen.NoTitle">
+    <item name="android:windowBackground">@color/toro_black</item>
+  </style>
 </resources>

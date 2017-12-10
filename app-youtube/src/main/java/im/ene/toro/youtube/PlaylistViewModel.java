@@ -44,7 +44,7 @@ import static im.ene.toro.youtube.BuildConfig.API_KEY;
 
 public class PlaylistViewModel extends ViewModel {
 
-  private static final String TAG = "Toro:Yt:ViewModel";
+  private static final String TAG = "YouT:ViewModel";
 
   // droidconNYC 2017 playlist
   private static final String YOUTUBE_PLAYLIST_ID = "PLdb5m83JnoaATBUkWTVxT_kGyhYBozZ4F";
@@ -79,6 +79,10 @@ public class PlaylistViewModel extends ViewModel {
   }
 
   LiveData<VideoListResponse> getPlaylist() throws IOException {
+    return liveData;
+  }
+
+  void refresh() throws IOException {
     Disposable disposable = Observable.just(ytApi.playlistItems()
         .list(YOUTUBE_PLAYLIST_PART)
         .setPlaylistId(YOUTUBE_PLAYLIST_ID)
@@ -101,6 +105,5 @@ public class PlaylistViewModel extends ViewModel {
         .doOnSuccess(liveData::setValue)
         .subscribe();
     disposables.add(disposable);
-    return liveData;
   }
 }

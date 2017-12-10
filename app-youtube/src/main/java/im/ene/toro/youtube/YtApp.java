@@ -17,6 +17,8 @@
 package im.ene.toro.youtube;
 
 import android.app.Application;
+import android.content.res.Configuration;
+import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import io.fabric.sdk.android.Fabric;
@@ -27,8 +29,15 @@ import io.fabric.sdk.android.Fabric;
 
 public class YtApp extends Application {
 
+  private static final String TAG = "YouT:App";
+
   @Override public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+  }
+
+  @Override public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    Log.d(TAG, "onConfigurationChanged() called with: newConfig = [" + newConfig + "]");
   }
 }

@@ -31,6 +31,8 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
+import im.ene.toro.youtube.common.AspectRatioFrameLayout;
+import im.ene.toro.youtube.common.ViewUtil;
 
 /**
  * @author eneim (8/1/17).
@@ -39,11 +41,11 @@ import im.ene.toro.widget.Container;
 @SuppressWarnings("WeakerAccess") //
 public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
-  private static final String TAG = "Toro:Yt:ViewHolder";
+  private static final String TAG = "YouT:ViewHolder";
 
   static final int LAYOUT_RES = R.layout.view_holder_youtube_player_full;
 
-  private final YouTubePlaylistAdapter adapter;
+  private final YouTubePlayerManager manager;
   private String videoId;
 
   YouTubePlayerHelper helper;
@@ -58,9 +60,9 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
 
   final FrameLayout playerView;
 
-  PlaylistItemViewHolder(YouTubePlaylistAdapter adapter, View itemView) {
+  PlaylistItemViewHolder(YouTubePlayerManager manager, View itemView) {
     super(itemView);
-    this.adapter = adapter;
+    this.manager = manager;
     playerViewContainer = itemView.findViewById(R.id.player_container);
     videoName = itemView.findViewById(R.id.video_id);
     videoCaption = itemView.findViewById(R.id.video_description);
@@ -82,7 +84,7 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = adapter.obtainHelper(container, this, this.videoId);
+      helper = manager.obtainHelper(container, this, this.videoId);
     }
 
     helper.initialize(playbackInfo);
@@ -105,7 +107,7 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
 
   @Override public void release() {
     thumbnailView.setVisibility(View.VISIBLE);
-    adapter.releaseHelper(this);
+    manager.releaseHelper(this);
     this.helper = null;
   }
 

@@ -31,7 +31,7 @@
       android:orientation="vertical"
       >
 
-    <im.ene.toro.youtube.AspectRatioFrameLayout
+    <im.ene.toro.youtube.common.AspectRatioFrameLayout
         android:id="@+id/player_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
           android:layout_height="match_parent"
           android:scaleType="centerCrop"
           />
-    </im.ene.toro.youtube.AspectRatioFrameLayout>
+    </im.ene.toro.youtube.common.AspectRatioFrameLayout>
 
     <TextView
         android:id="@+id/video_id"

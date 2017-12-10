@@ -38,4 +38,8 @@ public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
   public static ToroYouTubePlayerFragment newInstance() {
     return new ToroYouTubePlayerFragment();
   }
+
+  @Override public String toString() {
+    return "Toro:Yt:Fragment{" + "helper=" + helperKey + '}';
+  }
 }

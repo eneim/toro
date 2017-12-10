@@ -42,17 +42,18 @@ import im.ene.toro.widget.Container;
 @SuppressWarnings("WeakerAccess") //
 final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
 
-  private static final String TAG = "Toro:Yt:Helper";
+  private static final String TAG = "YouT:Helper";
 
   static final int MSG_INIT = 1000;
   static final int MSG_PLAY = 1001;
   static final int MSG_PAUSE = 1002;
   static final int MSG_DELAY = 50;
-  static final int MSG_NONE = -1;
 
+  // Actions must be done in order/queue, so we use a handle to make that happens.
   final Handler handler = new Handler(this);
   final Context context;
   final String videoId;
+  final Callback callback;
 
   final PlaybackInfo playbackInfo = new PlaybackInfo();
   @IntRange(from = 1) final int playerViewId; // also the Id for playerFragment's container
@@ -60,7 +61,8 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
 
-  YouTubePlayerHelper(@NonNull Container container, @NonNull ToroPlayer player, String videoId) {
+  YouTubePlayerHelper(@NonNull Callback callback, @NonNull Container container,
+      @NonNull ToroPlayer player, String videoId) {
     super(container, player);
     //noinspection ConstantConditions
     if (player.getPlayerView() == null) {
@@ -68,6 +70,8 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
 
     this.context = container.getContext();
+
+    this.callback = callback;
     this.playerViewId = player.getPlayerView().getId();
     this.videoId = videoId;
   }
@@ -79,12 +83,10 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
 
     handler.sendEmptyMessageDelayed(MSG_INIT, MSG_DELAY);
-    nextMsg = MSG_NONE;
   }
 
   @Override public void play() {
     handler.sendEmptyMessageDelayed(MSG_PLAY, MSG_DELAY);
-    nextMsg = MSG_NONE;
   }
 
   @Override public void pause() {
@@ -101,13 +103,18 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
   }
 
-  private void updateResumePosition() {
+  void updateResumePosition() {
     if (youTubePlayer != null) {
       playbackInfo.setResumePosition(youTubePlayer.getCurrentTimeMillis());
     }
   }
 
+  String getVideoId() {
+    return videoId;
+  }
+
   @Override public void release() {
+    Log.d(TAG, "release() called, " + player);
     handler.removeCallbacksAndMessages(null);
     // If the player is paused by Toro, youtubePlayer will be released before this call,
     // But in case the Fragment is released by System, "pause()" is not called yet, we use
@@ -115,6 +122,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     if (youTubePlayer != null) {
       youTubePlayer.release();
       youTubePlayer = null;
+      if (callback != null) callback.onPlayerDestroyed(this);
     }
     super.release();
   }
@@ -132,9 +140,11 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
           @Override
           public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
             helper.youTubePlayer = player;
+            if (helper.callback != null) helper.callback.onPlayerCreated(helper, player);
+            player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
             player.setPlayerStateChangeListener(new StateChangeImpl());
             player.setShowFullscreenButton(true);  // fullscreen requires more work ...
-            player.setFullscreen(false);
+            player.setOnFullscreenListener(new FullScreenListenerImpl());
             if (shouldPlay()) { // make sure YouTubePlayerView is fully visible.
               player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
             }
@@ -153,6 +163,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
         if (youTubePlayer != null) {
           youTubePlayer.release();
           youTubePlayer = null;
+          if (callback != null) callback.onPlayerDestroyed(this);
         }
         break;
       default:
@@ -161,15 +172,13 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return true;
   }
 
-  int nextMsg = MSG_NONE; // message (the 'what') to be executed after Container stops scrolling
-
   class StateChangeImpl implements PlayerStateChangeListener {
 
     @Override public void onLoading() {
 
     }
 
-    @Override public void onLoaded(String s) {
+    @Override public void onLoaded(String videoId) {
 
     }
 
@@ -191,10 +200,25 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
   }
 
+  class FullScreenListenerImpl implements YouTubePlayer.OnFullscreenListener {
+
+    @Override public void onFullscreen(boolean fullscreen) {
+      Log.d(TAG, "onFullscreen() called with: fullscreen = [" + fullscreen + "], " + player);
+      if (callback != null) {
+        callback.onFullscreen(YouTubePlayerHelper.this, YouTubePlayerHelper.this.youTubePlayer,
+            fullscreen);
+      }
+    }
+  }
+
   boolean shouldPlay() {
     if (ytFragment == null || !ytFragment.isVisible()) return false;
     View ytView = ytFragment.getView();
     return ytView != null && visibleAreaOffset(ytView) >= 0.999;
+  }
+
+  @Override public String toString() {
+    return "Toro:Yt:Helper{" + "videoId='" + videoId + '\'' + ", player=" + player + '}';
   }
 
   private static float visibleAreaOffset(@NonNull View playerView) {
@@ -211,5 +235,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
       offset = visibleArea / (float) drawArea;
     }
     return offset;
+  }
+
+  interface Callback {
+
+    void onPlayerCreated(YouTubePlayerHelper helper, YouTubePlayer player);
+
+    void onPlayerDestroyed(YouTubePlayerHelper helper);
+
+    void onFullscreen(YouTubePlayerHelper helper, YouTubePlayer player, boolean fullscreen);
   }
 }

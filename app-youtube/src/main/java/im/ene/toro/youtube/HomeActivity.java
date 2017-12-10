@@ -19,17 +19,21 @@ package im.ene.toro.youtube;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import im.ene.toro.widget.Container;
 import java.io.IOException;
+
+import static android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL;
 
 public class HomeActivity extends AppCompatActivity {
 
   Container container;
   YouTubePlaylistAdapter adapter;
-
+  YouTubePlayerManager playerManager;
   PlaylistViewModel viewModel;
+  RecyclerView.LayoutManager layoutManager;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -39,9 +43,16 @@ public class HomeActivity extends AppCompatActivity {
 
     viewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
 
+    playerManager = new YouTubePlayerManager(this, getSupportFragmentManager());
+    if (savedInstanceState != null) {
+      playerManager.onRestoreState(savedInstanceState);
+    }
+
     container = findViewById(R.id.container);
-    adapter = new YouTubePlaylistAdapter(getSupportFragmentManager());
-    container.setLayoutManager(new LinearLayoutManager(this));
+    adapter = new YouTubePlaylistAdapter(playerManager);
+    layoutManager =
+        new StaggeredGridLayoutManager(getResources().getInteger(R.integer.span_count), VERTICAL);
+    container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
 
@@ -50,5 +61,18 @@ public class HomeActivity extends AppCompatActivity {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    if (savedInstanceState == null) {
+      try {
+        viewModel.refresh();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  @Override protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (outState != null && isChangingConfigurations()) playerManager.onSaveState(outState);
   }
 }
