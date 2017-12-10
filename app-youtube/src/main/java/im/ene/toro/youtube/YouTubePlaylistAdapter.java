@@ -32,7 +32,7 @@ import java.util.List;
  * @author eneim (2017/11/23).
  */
 
-class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemViewHolder>
+class YouTubePlaylistAdapter extends RecyclerView.Adapter<YouTubeVideoViewHolder>
     implements CacheManager {
 
   private final YouTubePlayerManager manager;
@@ -48,13 +48,13 @@ class YouTubePlaylistAdapter extends RecyclerView.Adapter<PlaylistItemViewHolder
     notifyDataSetChanged();
   }
 
-  @Override public PlaylistItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override public YouTubeVideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
-        .inflate(PlaylistItemViewHolder.LAYOUT_RES, parent, false);
-    return new PlaylistItemViewHolder(manager, view);
+        .inflate(YouTubeVideoViewHolder.LAYOUT_RES, parent, false);
+    return new YouTubeVideoViewHolder(manager, view);
   }
 
-  @Override public void onBindViewHolder(PlaylistItemViewHolder holder, int position) {
+  @Override public void onBindViewHolder(YouTubeVideoViewHolder holder, int position) {
     holder.bind(getItem(position));
   }
 

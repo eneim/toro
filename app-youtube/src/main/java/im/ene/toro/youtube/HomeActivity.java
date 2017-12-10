@@ -22,12 +22,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import im.ene.toro.PlayerSelector;
+import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import java.io.IOException;
 
 import static android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements YouTubePlayerDialog.Callback {
 
   Container container;
   YouTubePlaylistAdapter adapter;
@@ -50,11 +52,13 @@ public class HomeActivity extends AppCompatActivity {
 
     container = findViewById(R.id.container);
     adapter = new YouTubePlaylistAdapter(playerManager);
-    layoutManager =
-        new StaggeredGridLayoutManager(getResources().getInteger(R.integer.span_count), VERTICAL);
+    int spanCount = getResources().getInteger(R.integer.span_count);
+    layoutManager = new StaggeredGridLayoutManager(spanCount, VERTICAL);
     container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
+
+    selector = container.getPlayerSelector();
 
     try {
       viewModel.getPlaylist().observe(this, response -> adapter.setData(response));
@@ -74,5 +78,18 @@ public class HomeActivity extends AppCompatActivity {
   @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     if (outState != null && isChangingConfigurations()) playerManager.onSaveState(outState);
+  }
+
+  /// YouTubePlayerDialog.Callback
+  PlayerSelector selector;
+
+  @Override public void onBigPlayerCreated() {
+    container.setPlayerSelector(PlayerSelector.NONE);
+  }
+
+  @Override
+  public void onBigPlayerDestroyed(int videoOrder, String baseItem, PlaybackInfo latestInfo) {
+    container.savePlaybackInfo(videoOrder, latestInfo);
+    container.setPlayerSelector(selector);
   }
 }

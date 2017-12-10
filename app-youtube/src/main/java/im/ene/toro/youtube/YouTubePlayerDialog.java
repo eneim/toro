@@ -16,11 +16,13 @@
 
 package im.ene.toro.youtube;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,17 +39,21 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
 
   public static final String TAG = "YouT:BigPlayer";
 
+  static final String ARGS_ADAPTER_ORDER = "youtube:dialog:adapter_order";
   static final String ARGS_VIDEO_ID = "youtube:dialog:video_id";
   static final String ARGS_PLAYBACK_INFO = "youtube:dialog:playback_info";
   static final String ARGS_ORIENTATION = "youtube:dialog:orientation";
 
   static class InitData {
 
+    final int adapterOrder;
     final String videoId;
     final PlaybackInfo playbackInfo;
     final int orientation;  // Original Orientation of requested Activity
 
-    InitData(@NonNull String videoId, @NonNull PlaybackInfo playbackInfo, int orientation) {
+    InitData(int adapterOrder, @NonNull String videoId, @NonNull PlaybackInfo playbackInfo,
+        int orientation) {
+      this.adapterOrder = adapterOrder;
       this.videoId = videoId;
       this.playbackInfo = playbackInfo;
       this.orientation = orientation;
@@ -57,6 +63,7 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
   public static YouTubePlayerDialog newInstance(InitData initData) {
     YouTubePlayerDialog fragment = new YouTubePlayerDialog();
     Bundle args = new Bundle();
+    args.putInt(ARGS_ADAPTER_ORDER, initData.adapterOrder);
     args.putString(ARGS_VIDEO_ID, initData.videoId);
     args.putParcelable(ARGS_PLAYBACK_INFO, initData.playbackInfo);
     args.putInt(ARGS_ORIENTATION, initData.orientation);
@@ -64,15 +71,48 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
     return fragment;
   }
 
+  Callback callback;
+
+  @Override public void onAttach(Context context) {
+    super.onAttach(context);
+    // TODO user must properly custom this.
+    if (context instanceof Callback) {
+      this.callback = (Callback) context;
+    } else if (getTargetFragment() instanceof Callback) {
+      this.callback = (Callback) getTargetFragment();
+    }
+  }
+
   InitData data;
+  YouTubePlayer player;
+  ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
+
+  final FragmentLifecycleCallbacks callbacks = new FragmentLifecycleCallbacks() {
+    @Override public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v,
+        Bundle savedInstanceState) {
+      // fm.unregisterFragmentLifecycleCallbacks(this);
+      if (fragment == f) initPlayer();
+    }
+
+    @Override public void onFragmentStopped(FragmentManager fm, Fragment f) {
+      if (fragment == f && player != null) {
+        // YouTubePlayer instance is still available, but we need safety here.
+        try {
+          data.playbackInfo.setResumePosition(player.getCurrentTimeMillis());
+        } catch (IllegalStateException er) {
+          er.printStackTrace();
+        }
+      }
+    }
+  };
 
   @Override public final void onCreate(@Nullable Bundle bundle) {
     super.onCreate(bundle);
     Bundle args = getArguments();
     if (args != null) {
       //noinspection ConstantConditions
-      data = new InitData(args.getString(ARGS_VIDEO_ID), args.getParcelable(ARGS_PLAYBACK_INFO),
-          args.getInt(ARGS_ORIENTATION));
+      data = new InitData(args.getInt(ARGS_ADAPTER_ORDER, -1), args.getString(ARGS_VIDEO_ID),
+          args.getParcelable(ARGS_PLAYBACK_INFO), args.getInt(ARGS_ORIENTATION));
     }
     super.setCancelable(false);
   }
@@ -83,26 +123,20 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
     return inflater.inflate(R.layout.fragment_dialog_player, container, false);
   }
 
-  ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
-  final FragmentManager.FragmentLifecycleCallbacks callbacks =
-      new FragmentManager.FragmentLifecycleCallbacks() {
-        @Override public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v,
-            Bundle savedInstanceState) {
-          fm.unregisterFragmentLifecycleCallbacks(this);
-          if (fragment == f) initPlayer();
-        }
-      };
-
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
+    if (callback != null) callback.onBigPlayerCreated();
     getChildFragmentManager().registerFragmentLifecycleCallbacks(callbacks, false);
     getChildFragmentManager().beginTransaction().replace(view.getId(), fragment).commitNow();
   }
 
+  // YoutubePlayer will be released before this method.
   @Override public void onDestroyView() {
     super.onDestroyView();
+    PlaybackInfo info = new PlaybackInfo(data.playbackInfo);
     fragment = null;
     getChildFragmentManager().unregisterFragmentLifecycleCallbacks(callbacks);
+    if (callback != null) callback.onBigPlayerDestroyed(data.adapterOrder, data.videoId, info);
   }
 
   // Guard this, disallow this customization
@@ -115,8 +149,10 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
     this.fragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
       @Override public void onInitializationSuccess(YouTubePlayer.Provider provider,
           YouTubePlayer youTubePlayer, boolean b) {
-        youTubePlayer.setOnFullscreenListener(fullscreenListener);
-        youTubePlayer.loadVideo(data.videoId, (int) data.playbackInfo.getResumePosition());
+        player = youTubePlayer;
+        player.setOnFullscreenListener(fullscreenListener);
+        player.setFullscreen(true);
+        player.loadVideo(data.videoId, (int) data.playbackInfo.getResumePosition());
       }
 
       @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
@@ -134,4 +170,11 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
       dismissAllowingStateLoss();
     }
   };
+
+  public interface Callback {
+
+    void onBigPlayerCreated();
+
+    void onBigPlayerDestroyed(int videoOrder, String baseItem, PlaybackInfo latestInfo);
+  }
 }

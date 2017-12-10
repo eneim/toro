@@ -22,7 +22,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
-import android.util.Log;
 import android.view.View;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.toro.ToroPlayer;
@@ -42,16 +41,14 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
   private static final String TAG = "YouT:Manager";
 
-  private final Activity activity;
-  private final FragmentManager fragmentManager;
+  private final FragmentManager manager;
   private final Map<ToroPlayer, YouTubePlayerHelper> helpers = new HashMap<>();
 
   private final int orientation;
 
-  YouTubePlayerManager(Activity activity, FragmentManager fragmentManager) {
-    this.activity = activity;
+  YouTubePlayerManager(Activity activity, FragmentManager manager) {
     this.orientation = activity.getRequestedOrientation();
-    this.fragmentManager = fragmentManager;
+    this.manager = manager;
     FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentLifecycleCallbacks() {
       @Override public void onFragmentViewCreated(FragmentManager fm, Fragment f, View v,
           Bundle savedInstanceState) {
@@ -59,6 +56,16 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
           ToroYouTubePlayerFragment fragment = (ToroYouTubePlayerFragment) f;
           YouTubePlayerHelper helper = fragment.getHelperKey();
           if (helper != null) helper.ytFragment = fragment;
+        }
+      }
+
+      @Override public void onFragmentStopped(FragmentManager fm, Fragment f) {
+        if (f instanceof ToroYouTubePlayerFragment) {
+          ToroYouTubePlayerFragment fragment = (ToroYouTubePlayerFragment) f;
+          YouTubePlayerHelper helper = fragment.getHelperKey();
+          if (helper != null) {
+            helper.release();
+          }
         }
       }
 
@@ -76,11 +83,13 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
       }
     };
 
-    this.fragmentManager.registerFragmentLifecycleCallbacks(lifecycleCallbacks, false);
+    this.manager.registerFragmentLifecycleCallbacks(lifecycleCallbacks, false);
   }
 
   /// [2017/12/07] TEST: New YouTube player manage mechanism.
+  /// [2017/12/09] TEST: Support Fullscreen for Activity's config change (no manifest attribute).
 
+  private static final String STATE_KEY_VIDEO_ORDER = "yt:adapter:video_order";
   private static final String STATE_KEY_VIDEO_ID = "yt:adapter:video_id";
   private static final String STATE_KEY_FULLSCREEN = "yt:adapter:fullscreen";
   private static final String STATE_KEY_PLAYBACK_INFO = "yt:adapter:playback_info";
@@ -88,9 +97,8 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
   YouTubePlayerHelper obtainHelper(Container container, @NonNull ToroPlayer player, String video) {
     YouTubePlayerHelper helper = this.helpers.get(player);
-
     if (helper != null && helper.ytFragment != null) {
-      fragmentManager.beginTransaction().remove(helper.ytFragment).commitNow();
+      manager.beginTransaction().remove(helper.ytFragment).commitNow();
     }
 
     if (helper == null) {
@@ -100,10 +108,7 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
     ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
     fragment.setHelperKey(helper);
-    fragmentManager.beginTransaction()
-        .replace(player.getPlayerView().getId(), fragment)
-        .commitNow();
-
+    manager.beginTransaction().replace(player.getPlayerView().getId(), fragment).commitNow();
     return helper;
   }
 
@@ -111,7 +116,7 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
     YouTubePlayerHelper helper = this.helpers.remove(player);
     if (helper != null) {
       if (helper.ytFragment != null) {
-        fragmentManager.beginTransaction().remove(helper.ytFragment).commitNow();
+        manager.beginTransaction().remove(helper.ytFragment).commitNow();
       } else {
         // Should not happen. We always try to release the helper along with Fragment's life-cycle.
         helper.release();
@@ -125,6 +130,7 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   void onSaveState(@NonNull Bundle outState) {
     outState.putBoolean(STATE_KEY_FULLSCREEN, fullscreenRequested);
     if (this.initData != null) {
+      outState.putInt(STATE_KEY_VIDEO_ORDER, initData.adapterOrder);
       outState.putString(STATE_KEY_VIDEO_ID, initData.videoId);
       outState.putParcelable(STATE_KEY_PLAYBACK_INFO, initData.playbackInfo);
       outState.putInt(STATE_KEY_ORIENTATION, initData.orientation);
@@ -136,21 +142,22 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
     if (fullscreenRequested) {
       String videoId = savedState.getString(STATE_KEY_VIDEO_ID);
       PlaybackInfo playbackInfo = savedState.getParcelable(STATE_KEY_PLAYBACK_INFO);
+      int videoOrder = savedState.getInt(STATE_KEY_VIDEO_ORDER);
 
-      if (videoId == null || playbackInfo == null) {
+      if (videoId == null || playbackInfo == null || videoOrder < 0) {
         throw new IllegalStateException("Fullscreen requested with no valid data.");
       }
 
       int orientation = savedState.getInt(STATE_KEY_ORIENTATION);
 
       YouTubePlayerDialog playerDialog =
-          (YouTubePlayerDialog) fragmentManager.findFragmentByTag(YouTubePlayerDialog.TAG);
+          (YouTubePlayerDialog) manager.findFragmentByTag(YouTubePlayerDialog.TAG);
       if (playerDialog != null) {
         playerDialog.dismissAllowingStateLoss();
       }
 
-      playerDialog = newInstance(new InitData(videoId, playbackInfo, orientation));
-      playerDialog.show(this.fragmentManager, YouTubePlayerDialog.TAG);
+      playerDialog = newInstance(new InitData(videoOrder, videoId, playbackInfo, orientation));
+      playerDialog.show(this.manager, YouTubePlayerDialog.TAG);
     }
   }
 
@@ -159,7 +166,6 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   private InitData initData;
 
   @Override public void onPlayerCreated(YouTubePlayerHelper helper, YouTubePlayer player) {
-    Log.d(TAG, "onPlayerCreated: " + helper);
     if (this.activeHelper != null) {
       throw new IllegalStateException("Another player is still active.");
     }
@@ -168,7 +174,6 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   }
 
   @Override public void onPlayerDestroyed(YouTubePlayerHelper helper) {
-    Log.d(TAG, "onPlayerDestroyed: " + helper);
     if (this.activeHelper == helper) this.activeHelper = null;
   }
 
@@ -178,7 +183,8 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
     if (helper == null || helper.ytFragment == null || helper.youTubePlayer == null) return;
     fullscreenRequested = fullscreen;
     if (fullscreenRequested) {
-      initData = new InitData(helper.getVideoId(), helper.getLatestPlaybackInfo(), orientation);
+      initData = new InitData(helper.getToroPlayer().getPlayerOrder(), helper.getVideoId(),
+          helper.getLatestPlaybackInfo(), orientation);
     }
   }
 }

@@ -113,6 +113,10 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return videoId;
   }
 
+  ToroPlayer getToroPlayer() {
+    return this.player;
+  }
+
   @Override public void release() {
     Log.d(TAG, "release() called, " + player);
     handler.removeCallbacksAndMessages(null);
@@ -141,7 +145,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
           public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
             helper.youTubePlayer = player;
             if (helper.callback != null) helper.callback.onPlayerCreated(helper, player);
-            player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
             player.setPlayerStateChangeListener(new StateChangeImpl());
             player.setShowFullscreenButton(true);  // fullscreen requires more work ...
             player.setOnFullscreenListener(new FullScreenListenerImpl());

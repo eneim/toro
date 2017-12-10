@@ -38,8 +38,8 @@ import im.ene.toro.youtube.common.ViewUtil;
  * @author eneim (8/1/17).
  */
 
-@SuppressWarnings("WeakerAccess") //
-public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+@SuppressWarnings({ "WeakerAccess", "unused" }) //
+public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
   private static final String TAG = "YouT:ViewHolder";
 
@@ -60,7 +60,7 @@ public class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements T
 
   final FrameLayout playerView;
 
-  PlaylistItemViewHolder(YouTubePlayerManager manager, View itemView) {
+  YouTubeVideoViewHolder(YouTubePlayerManager manager, View itemView) {
     super(itemView);
     this.manager = manager;
     playerViewContainer = itemView.findViewById(R.id.player_container);
