@@ -199,7 +199,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
     @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
       // Force a crash to log to Fabric.
-      throw new RuntimeException("YouTubePlayer Error: " + errorReason);
+      // throw new RuntimeException("YouTubePlayer Error: " + errorReason);
     }
   }
 

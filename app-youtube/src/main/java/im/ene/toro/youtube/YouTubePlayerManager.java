@@ -19,6 +19,7 @@ package im.ene.toro.youtube;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
@@ -27,6 +28,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
+import im.ene.toro.youtube.YouTubePlayerDialog.FullscreenRequestType;
 import im.ene.toro.youtube.YouTubePlayerDialog.InitData;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,9 +46,11 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   private final FragmentManager manager;
   private final Map<ToroPlayer, YouTubePlayerHelper> helpers = new HashMap<>();
 
+  private final Activity activity;
   private final int orientation;
 
   YouTubePlayerManager(Activity activity, FragmentManager manager) {
+    this.activity = activity;
     this.orientation = activity.getRequestedOrientation();
     this.manager = manager;
     FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentLifecycleCallbacks() {
@@ -125,11 +129,19 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   }
 
   /// Deal with config change when User start Fullscreen YouTube player
-  private boolean fullscreenRequested = false;
+  private FullscreenRequestType fullscreenRequest = null;
+  private InitData initData;
 
-  void onSaveState(@NonNull Bundle outState) {
-    outState.putBoolean(STATE_KEY_FULLSCREEN, fullscreenRequested);
-    if (this.initData != null) {
+  void onSaveState(@NonNull Bundle outState, @Nullable InitData data, boolean configChange) {
+    if (fullscreenRequest == null) {
+      if (configChange && data != null) {
+        fullscreenRequest = FullscreenRequestType.CONFIG_CHANGE;
+        this.initData = data;
+      }
+    }
+
+    if (fullscreenRequest != null && initData != null) {
+      outState.putSerializable(STATE_KEY_FULLSCREEN, fullscreenRequest);
       outState.putInt(STATE_KEY_VIDEO_ORDER, initData.adapterOrder);
       outState.putString(STATE_KEY_VIDEO_ID, initData.videoId);
       outState.putParcelable(STATE_KEY_PLAYBACK_INFO, initData.playbackInfo);
@@ -137,9 +149,14 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
     }
   }
 
-  void onRestoreState(@NonNull Bundle savedState) {
-    boolean fullscreenRequested = savedState.getBoolean(STATE_KEY_FULLSCREEN);
-    if (fullscreenRequested) {
+  /**
+   * @param savedState saved state
+   * @param shouldFullScreen Current Window is suitable for fullscreen playback
+   */
+  void onRestoreState(@NonNull Bundle savedState, boolean shouldFullScreen) {
+    FullscreenRequestType fullscreenRequested =
+        (FullscreenRequestType) savedState.getSerializable(STATE_KEY_FULLSCREEN);
+    if (fullscreenRequested != null && shouldFullScreen) {
       String videoId = savedState.getString(STATE_KEY_VIDEO_ID);
       PlaybackInfo playbackInfo = savedState.getParcelable(STATE_KEY_PLAYBACK_INFO);
       int videoOrder = savedState.getInt(STATE_KEY_VIDEO_ORDER);
@@ -163,7 +180,6 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
   /// YouTubePlayerHelper.Callback
   private YouTubePlayerHelper activeHelper = null;
-  private InitData initData;
 
   @Override public void onPlayerCreated(YouTubePlayerHelper helper, YouTubePlayer player) {
     if (this.activeHelper != null) {
@@ -181,9 +197,9 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   public void onFullscreen(YouTubePlayerHelper helper, YouTubePlayer player, boolean fullscreen) {
     if (activeHelper != helper) return;
     if (helper == null || helper.ytFragment == null || helper.youTubePlayer == null) return;
-    fullscreenRequested = fullscreen;
-    if (fullscreenRequested) {
-      initData = new InitData(helper.getToroPlayer().getPlayerOrder(), helper.getVideoId(),
+    if (fullscreen) fullscreenRequest = FullscreenRequestType.USER_REQUEST;
+    if (fullscreenRequest != null) {
+      this.initData = new InitData(helper.getToroPlayer().getPlayerOrder(), helper.getVideoId(),
           helper.getLatestPlaybackInfo(), orientation);
     }
   }

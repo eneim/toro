@@ -58,7 +58,7 @@ class YouTubePlaylistAdapter extends RecyclerView.Adapter<YouTubeVideoViewHolder
     holder.bind(getItem(position));
   }
 
-  private Video getItem(int position) {
+  Video getItem(int position) {
     return getItems().get(position);
   }
 

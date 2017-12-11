@@ -543,7 +543,7 @@ public class Container extends RecyclerView {
         this.savePlaybackInfo(player.getPlayerOrder(), info);
         states.put(player.getPlayerOrder(), info);
         // TODO 20171207 why I commented this out?
-        // playerManager.pause(player);
+        playerManager.pause(player);
       }
     }
 

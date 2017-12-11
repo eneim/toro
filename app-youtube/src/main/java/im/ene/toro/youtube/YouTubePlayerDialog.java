@@ -17,12 +17,14 @@
 package im.ene.toro.youtube;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +77,7 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
 
   @Override public void onAttach(Context context) {
     super.onAttach(context);
+    Log.d(TAG, "onAttach() called with: context = [" + context + "]");
     // TODO user must properly custom this.
     if (context instanceof Callback) {
       this.callback = (Callback) context;
@@ -139,6 +142,10 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
     if (callback != null) callback.onBigPlayerDestroyed(data.adapterOrder, data.videoId, info);
   }
 
+  @Override public void onDismiss(DialogInterface dialog) {
+    super.onDismiss(dialog);
+  }
+
   // Guard this, disallow this customization
   @Override public final void setCancelable(boolean cancelable) {
     throw new RuntimeException("Not Supported.");
@@ -176,5 +183,9 @@ public class YouTubePlayerDialog extends BlackBoardDialogFragment {
     void onBigPlayerCreated();
 
     void onBigPlayerDestroyed(int videoOrder, String baseItem, PlaybackInfo latestInfo);
+  }
+
+  public enum FullscreenRequestType {
+    CONFIG_CHANGE, USER_REQUEST
   }
 }

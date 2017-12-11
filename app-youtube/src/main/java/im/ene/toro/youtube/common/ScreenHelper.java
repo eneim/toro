@@ -16,10 +16,27 @@
 
 package im.ene.toro.youtube.common;
 
+import android.graphics.Point;
+import android.view.Display;
+
 /**
- * @author eneim (2017/12/09).
+ * @author eneim | 6/21/17.
  */
 
-public class ScreenHelper {
+@SuppressWarnings("unused") public class ScreenHelper {
 
+  private static final String TAG = "Toro:Fb:Screen";
+
+  private ScreenHelper() {
+    throw new RuntimeException("Meh!");
+  }
+
+  // If current window has the horizontal edge longer than vertical edge, it is a hint to
+  // open and use a big player.
+  // Of course if there is no available resource to play, we just ignore it.
+  public static boolean shouldUseBigPlayer(Display display) {
+    Point displaySize = new Point();
+    display.getSize(displaySize);
+    return displaySize.x >= displaySize.y;
+  }
 }

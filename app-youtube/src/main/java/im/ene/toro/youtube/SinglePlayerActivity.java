@@ -23,6 +23,7 @@ import android.util.Log;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
+// To test YouTubePlayer only, no related to main purpose.
 public class SinglePlayerActivity extends AppCompatActivity {
 
   private static final String TAG = "YouT:Single";
@@ -36,34 +37,31 @@ public class SinglePlayerActivity extends AppCompatActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    if (savedInstanceState == null) {
-      fragment = (ToroYouTubePlayerFragment) getSupportFragmentManager().findFragmentById(
-          R.id.player_fragment);
+    fragment = (ToroYouTubePlayerFragment) getSupportFragmentManager().findFragmentById(
+        R.id.player_fragment);
 
-      if (fragment != null) {
-        fragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
-          @Override
-          public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
-              boolean restored) {
-            youTubePlayer = player;
-            configPlayer();
-            youTubePlayer.loadVideo("6ZfuNTqbHE8");
-          }
+    if (fragment != null) {
+      fragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
+        @Override
+        public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
+            boolean restored) {
+          youTubePlayer = player;
+          configPlayer();
+          youTubePlayer.loadVideo("6ZfuNTqbHE8");
+        }
 
-          @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
-              YouTubeInitializationResult youTubeInitializationResult) {
+        @Override public void onInitializationFailure(YouTubePlayer.Provider provider,
+            YouTubeInitializationResult youTubeInitializationResult) {
 
-          }
-        });
-      }
+        }
+      });
     }
   }
 
   void configPlayer() {
     if (this.youTubePlayer == null) return;
-    //youTubePlayer.addFullscreenControlFlag(
-    //    YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE
-    //        | YouTubePlayer.FULLSCREEN_FLAG_CONTROL_SYSTEM_UI);
+    youTubePlayer.addFullscreenControlFlag(
+        YouTubePlayer.FULLSCREEN_FLAG_ALWAYS_FULLSCREEN_IN_LANDSCAPE);
     youTubePlayer.setPlayerStateChangeListener(new PlayerStateImpl());
     youTubePlayer.setPlaybackEventListener(new PlaybackEventImpl());
     youTubePlayer.setShowFullscreenButton(true);
