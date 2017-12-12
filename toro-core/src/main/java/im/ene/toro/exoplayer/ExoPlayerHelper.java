@@ -497,18 +497,6 @@ public final class ExoPlayerHelper {
       this.delegate = delegate;
     }
 
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-
-    }
-
-    @Override public void onPositionDiscontinuity(int reason) {
-      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
-    }
-
-    @Override public void onSeekProcessed() {
-
-    }
-
     @Override public void onRepeatModeChanged(int repeatMode) {
       if (this.delegate != null) this.delegate.onRepeatModeChanged(repeatMode);
     }
@@ -532,6 +520,18 @@ public final class ExoPlayerHelper {
 
     @Override public void onPlayerError(ExoPlaybackException error) {
       if (this.delegate != null) this.delegate.onPlayerError(error);
+    }
+
+    @Override public void onPositionDiscontinuity(int reason) {
+      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
+    }
+
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+      if (this.delegate != null) this.delegate.onShuffleModeEnabledChanged(shuffleModeEnabled);
+    }
+
+    @Override public void onSeekProcessed() {
+      if (this.delegate != null) this.delegate.onSeekProcessed();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
