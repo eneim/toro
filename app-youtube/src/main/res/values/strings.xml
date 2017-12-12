@@ -106,4 +106,6 @@
     "when a user tries to pick up one of cards.\n\n"
   </string>
   <string name="action_settings">Settings</string>
+  <string name="title_activity_single_player">SinglePlayerActivity</string>
+  <integer name="span_count">1</integer>
 </resources>

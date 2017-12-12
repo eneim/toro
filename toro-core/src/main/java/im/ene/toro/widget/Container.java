@@ -161,7 +161,6 @@ public class Container extends RecyclerView {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           if (Common.allowsToPlay(player)) {
             if (playerManager.attachPlayer(player)) {
-              playerManager.initialize(player);
               dispatchUpdateOnAnimationFinished(false);
             }
           }
@@ -199,9 +198,9 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
-    if (state != SCROLL_STATE_IDLE) return;
     if (getChildCount() == 0) return;
 
+    // Need to handle the dead playback even then the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
     for (int i = 0, size = players.size(); i < size; i++) {
@@ -214,6 +213,8 @@ public class Container extends RecyclerView {
       playerManager.release(player);
       playerManager.detachPlayer(player);
     }
+
+    if (state != SCROLL_STATE_IDLE) return;
 
     // 2. Refresh the good players list.
     LayoutManager layout = super.getLayoutManager();
@@ -515,7 +516,7 @@ public class Container extends RecyclerView {
         && hasWindowFocus()) {
       // tmpStates may be consumed already, if there is a good reason for that, so not a big deal.
       if (tmpStates != null && tmpStates.size() > 0) {
-        for (int i = 0; i < tmpStates.size(); i++) {
+        for (int i = 0, size = tmpStates.size(); i < size; i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
           this.savePlaybackInfo(order, playbackInfo);
@@ -538,11 +539,11 @@ public class Container extends RecyclerView {
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
         playingOrders.add(player.getPlayerOrder());
-
         PlaybackInfo info = player.getCurrentPlaybackInfo();
         this.savePlaybackInfo(player.getPlayerOrder(), info);
         states.put(player.getPlayerOrder(), info);
-        // playerManager.pause(player);
+        // TODO 20171207 why I commented this out?
+        playerManager.pause(player);
       }
     }
 
@@ -557,7 +558,7 @@ public class Container extends RecyclerView {
 
     // Release current players on recreation event only.
     // Note that there are cases where this method is called without the activity destroying/recreating.
-    // For example: in API 26 (my test mostly run on O), when user clicking to "Current App" button,
+    // For example: in API 26 (my test mostly run on Oreo), when user clicking to "Current App" button,
     // current Activity will enter the "Stop" state but not be destroyed/recreated and View hierarchy
     // state will be saved (this method is called).
     //

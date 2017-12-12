@@ -190,7 +190,7 @@ public class TimelineFragment extends BaseFragment
     // Save this and restore later to open on a BigPlayer if need.
     if (item instanceof FbVideo) {
       outState.putInt(STATE_KEY_ACTIVE_ORDER, firstPlayer.getPlayerOrder());
-      outState.putParcelable(STATE_KEY_FB_VIDEO, (FbVideo) item);
+      outState.putParcelable(STATE_KEY_FB_VIDEO, item);
       outState.putParcelable(STATE_KEY_PLAYBACK_STATE, firstPlayer.getCurrentPlaybackInfo());
     } else {
       // Real practice should not face the following issue, only for debugging.

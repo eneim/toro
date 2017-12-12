@@ -16,9 +16,5 @@
   -->
 
 <resources>
-  <color name="colorPrimary">#3F51B5</color>
-  <color name="colorPrimaryDark">#303F9F</color>
-  <color name="colorAccent">#FF4081</color>
-
-  <color name="toro_black">#000000</color>
+  <integer name="span_count">2</integer>
 </resources>

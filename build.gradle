@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.1.60'
+  ext.kotlin_version = '1.1.61'
   repositories {
     google()
     jcenter()
@@ -25,9 +25,8 @@ buildscript {
 
   dependencies {
     classpath 'com.android.tools.build:gradle:3.0.1'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
-    classpath 'me.tatarka:gradle-retrolambda:3.7.0'
-    classpath "com.novoda:bintray-release:0.5.0"
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+    classpath "com.novoda:bintray-release:0.8.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
@@ -36,27 +35,23 @@ allprojects {
   repositories {
     google()
     jcenter()
-    maven {
-      name 'glide-snapshot'
-      url 'http://oss.sonatype.org/content/repositories/snapshots'
-    }
   }
 
   project.ext {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.2.0'
-    releaseVersionCode = 320
+    releaseVersion = '3.3.0-A1'
+    releaseVersionCode = 330
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
   }
 }
 
 ext {
-  androidVersion = 26
-  buildToolVersion = '26.0.2'
-  supportLibraryVersion = '27.0.1'
+  androidVersion = 27
+  buildToolVersion = '27.0.2'
+  supportLibraryVersion = '27.0.2'
   exoPlayer2Version = '2.6.0'
   minSupportSDKVersion = 16
 }
@@ -66,7 +61,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.1'
+  gradleVersion = '4.3'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }

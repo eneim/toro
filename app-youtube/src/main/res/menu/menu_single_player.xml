@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2017 Nam Nguyen, nam@ene.im
   ~
@@ -15,10 +14,13 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <color name="colorPrimary">#3F51B5</color>
-  <color name="colorPrimaryDark">#303F9F</color>
-  <color name="colorAccent">#FF4081</color>
-
-  <color name="toro_black">#000000</color>
-</resources>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="im.ene.toro.youtube.SinglePlayerActivity">
+  <item
+      android:id="@+id/action_settings"
+      android:orderInCategory="100"
+      android:title="@string/action_settings"
+      app:showAsAction="never"/>
+</menu>
