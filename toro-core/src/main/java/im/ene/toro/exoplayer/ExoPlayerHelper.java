@@ -22,7 +22,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.DefaultRenderersFactory.ExtensionRendererMode;
@@ -55,16 +54,14 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.net.CookieManager;
-import java.net.CookiePolicy;
-import java.util.ArrayList;
-import java.util.UUID;
-
 import im.ene.toro.R;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
 
@@ -392,7 +389,7 @@ public final class ExoPlayerHelper {
       }
     }
 
-    @Override public void onPositionDiscontinuity(int reason) {
+    @Override public void onPositionDiscontinuity() {
       if (needRetrySource) {
         // This will only occur if the user has performed a seek whilst in the error playerState. Update the
         // resume position so that if the user then retries, playback will resume from the position to
@@ -402,7 +399,7 @@ public final class ExoPlayerHelper {
       int count;
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onPositionDiscontinuity(reason);
+          eventListeners.get(i).onPositionDiscontinuity();
         }
       }
     }
@@ -412,24 +409,6 @@ public final class ExoPlayerHelper {
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
           eventListeners.get(i).onPlaybackParametersChanged(parameters);
-        }
-      }
-    }
-
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onShuffleModeEnabledChanged(shuffleModeEnabled);
-        }
-      }
-    }
-
-    @Override public void onSeekProcessed() {
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onSeekProcessed();
         }
       }
     }
@@ -533,16 +512,8 @@ public final class ExoPlayerHelper {
       if (this.delegate != null) this.delegate.onPlayerError(error);
     }
 
-    @Override public void onPositionDiscontinuity(int reason) {
-      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
-    }
-
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      if (this.delegate != null) this.delegate.onShuffleModeEnabledChanged(shuffleModeEnabled);
-    }
-
-    @Override public void onSeekProcessed() {
-      if (this.delegate != null) this.delegate.onSeekProcessed();
+    @Override public void onPositionDiscontinuity() {
+      if (this.delegate != null) this.delegate.onPositionDiscontinuity();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
