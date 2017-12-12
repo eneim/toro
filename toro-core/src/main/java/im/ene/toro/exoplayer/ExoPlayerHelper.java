@@ -280,31 +280,6 @@ public final class ExoPlayerHelper {
     ComponentListener() {
     }
 
-    // [BEGIN] Added in ExoPlayer 2.6.0
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      // do nothing
-    }
-
-    @Override public void onPositionDiscontinuity(int reason) {
-      if (needRetrySource) {
-        // This will only occur if the user has performed a seek whilst in the error playerState. Update the
-        // resume position so that if the user then retries, playback will resume from the position to
-        // which they seek.
-        updateResumePosition();
-      }
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onPositionDiscontinuity(reason);
-        }
-      }
-    }
-
-    @Override public void onSeekProcessed() {
-      // do nothing
-    }
-    // [END] Added in ExoPlayer 2.6.0
-
     @Override public void onRepeatModeChanged(int repeatMode) {
 
     }
@@ -414,11 +389,44 @@ public final class ExoPlayerHelper {
       }
     }
 
+    @Override public void onPositionDiscontinuity(int reason) {
+      if (needRetrySource) {
+        // This will only occur if the user has performed a seek whilst in the error playerState. Update the
+        // resume position so that if the user then retries, playback will resume from the position to
+        // which they seek.
+        updateResumePosition();
+      }
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onPositionDiscontinuity(reason);
+        }
+      }
+    }
+
     @Override public void onPlaybackParametersChanged(PlaybackParameters parameters) {
       int count;
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
           eventListeners.get(i).onPlaybackParametersChanged(parameters);
+        }
+      }
+    }
+
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onShuffleModeEnabledChanged(shuffleModeEnabled);
+        }
+      }
+    }
+
+    @Override public void onSeekProcessed() {
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onSeekProcessed();
         }
       }
     }
