@@ -51,7 +51,7 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   YouTubePlayerHelper helper;
 
   private final RequestOptions options =
-      new RequestOptions().fitCenter().placeholder(R.drawable.exo_edit_mode_logo);
+      new RequestOptions().fitCenter().placeholder(R.drawable.ic_launcher_background);
 
   AspectRatioFrameLayout playerViewContainer;
   TextView videoName;

@@ -18,13 +18,16 @@ package im.ene.toro.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.google.android.exoplayer2.C;
 
 /**
  * @author eneim | 6/6/17.
  */
 
 public class PlaybackInfo implements Parcelable {
+
+  public static final long TIME_UNSET = Long.MIN_VALUE + 1;
+
+  public static final int INDEX_UNSET = -1;
 
   private int resumeWindow;
   private long resumePosition;
@@ -35,7 +38,7 @@ public class PlaybackInfo implements Parcelable {
   }
 
   public PlaybackInfo() {
-    this(C.INDEX_UNSET, C.TIME_UNSET);
+    this(INDEX_UNSET, TIME_UNSET);
   }
 
   public PlaybackInfo(PlaybackInfo other) {
@@ -87,8 +90,8 @@ public class PlaybackInfo implements Parcelable {
   }
 
   public void reset() {
-    resumeWindow = C.INDEX_UNSET;
-    resumePosition = C.TIME_UNSET;
+    resumeWindow = INDEX_UNSET;
+    resumePosition = TIME_UNSET;
   }
 
   @Override public String toString() {

@@ -21,6 +21,7 @@ import android.content.res.TypedArray;
 import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+import im.ene.toro.youtube.R;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -83,12 +84,9 @@ public class AspectRatioFrameLayout extends FrameLayout {
     resizeMode = RESIZE_MODE_FIT;
     if (attrs != null) {
       TypedArray a = context.getTheme()
-          .obtainStyledAttributes(attrs,
-              com.google.android.exoplayer2.ui.R.styleable.AspectRatioFrameLayout, 0, 0);
+          .obtainStyledAttributes(attrs, R.styleable.AspectRatioFrameLayout, 0, 0);
       try {
-        resizeMode = a.getInt(
-            com.google.android.exoplayer2.ui.R.styleable.AspectRatioFrameLayout_resize_mode,
-            RESIZE_MODE_FIT);
+        resizeMode = a.getInt(R.styleable.AspectRatioFrameLayout_resize_mode, RESIZE_MODE_FIT);
       } finally {
         a.recycle();
       }
