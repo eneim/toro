@@ -37,13 +37,11 @@ import java.util.ArrayList;
  */
 public abstract class ToroPlayerHelper {
 
-  protected static final String TAG = "ToroLib:PlayerHelper";
-
   private final Handler handler = new Handler(new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
-        case State.STATE_BUFFERING /* exoplayer.Player.STATE_BUFFERING */:
+        case State.STATE_BUFFERING /* Player.STATE_BUFFERING */:
           internalListener.onBuffering();
           for (ToroPlayer.EventListener callback : eventListeners) {
             callback.onBuffering();
@@ -117,15 +115,14 @@ public abstract class ToroPlayerHelper {
   }
 
   public final void removePlayerEventListener(ToroPlayer.EventListener eventListener) {
-    if (eventListener != null) {
-      this.eventListeners.remove(eventListener);
-    }
+    this.eventListeners.remove(eventListener);
   }
 
   /**
    * Initialize the necessary resource for the incoming playback. For example, prepare the
    * ExoPlayer instance for SimpleExoPlayerView. The initialization is feed by an initial playback
    * info, telling if the playback should start from a specific position or from beginning.
+   *
    * Normally this info can be obtained from cache if there is cache manager, or null if there is no
    * such cached information.
    *
@@ -141,7 +138,7 @@ public abstract class ToroPlayerHelper {
 
   /**
    * Get latest playback info. Either on-going playback info if current player is playing, or latest
-   * playback info available if player is pausing.
+   * playback info available if player is paused.
    *
    * @return latest {@link PlaybackInfo} of current Player.
    */

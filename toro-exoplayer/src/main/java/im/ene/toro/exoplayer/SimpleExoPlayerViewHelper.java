@@ -56,6 +56,7 @@ public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
     if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
       throw new IllegalArgumentException("Only SimpleExoPlayerView is supported.");
     }
+    //noinspection ConstantConditions
     if (mediaUri == null) throw new NullPointerException("Media Uri is null.");
     this.mediaSourceBuilder = new MediaSourceBuilder(container.getContext(), mediaUri);
     this.helper = new ExoPlayerHelper((SimpleExoPlayerView) player.getPlayerView());

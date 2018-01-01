@@ -27,7 +27,7 @@ android {
     versionName "v" + releaseVersion
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    buildConfigField("String", "LIB_NAME", "\"" + "ToroLib, v" + releaseVersion + "\"")
+    buildConfigField("String", "LIB_NAME", "\"" + "Toro ExoPlayer Extension, v" + releaseVersion + "\"")
   }
 
   buildTypes {
@@ -35,27 +35,27 @@ android {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
-
-    debug {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-    }
   }
 }
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-  testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:1.0.1'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+  // implementation fileTree(dir: 'libs', include: ['*.jar'])
+  implementation project(':toro-core')
+  implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
+    exclude group: 'com.android.support'
+  }
 
   implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
 
 ext {
-  releaseArtifact = 'toro'
-  releaseDescription = 'The Toro core library.'
+  releaseArtifact = 'toro-ext-exoplayer'
+  releaseDescription = 'The Toro Extension for ExoPlayer v2.'
 }
 
 apply from: '../.script/publish.gradle'
