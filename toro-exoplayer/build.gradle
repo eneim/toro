@@ -27,7 +27,7 @@ android {
     versionName "v" + releaseVersion
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    buildConfigField("String", "LIB_NAME", "\"" + "Toro Extension, v" + releaseVersion + "\"")
+    buildConfigField("String", "LIB_NAME", "\"" + "Toro ExoPlayer Extension, v" + releaseVersion + "\"")
   }
 
   buildTypes {
