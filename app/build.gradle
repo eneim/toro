@@ -16,7 +16,6 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
@@ -64,6 +63,7 @@ android {
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation project(':toro-core')
+  implementation project(':toro-exoplayer')
 
   testImplementation 'junit:junit:4.12'
   androidTestImplementation 'com.android.support.test:runner:1.0.1'
@@ -73,9 +73,9 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support.constraint:constraint-layout:1.1.0-beta3"
+  implementation "com.android.support.constraint:constraint-layout:1.1.0-beta4"
 
-  implementation ('net.opacapp:multiline-collapsingtoolbar:1.5.0') {
+  implementation ('net.opacapp:multiline-collapsingtoolbar:1.6.0') {
     transitive = false
   }
 
@@ -86,17 +86,18 @@ dependencies {
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // rxJava 2
-  implementation("io.reactivex.rxjava2:rxandroid:2.0.1", {
+  implementation ("io.reactivex.rxjava2:rxandroid:2.0.1", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.6'
 
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-  testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
-  implementation 'com.github.bumptech.glide:glide:4.3.1'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+  testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
+  implementation 'com.github.bumptech.glide:glide:4.4.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 

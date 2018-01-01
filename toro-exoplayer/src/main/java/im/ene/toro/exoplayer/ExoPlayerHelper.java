@@ -76,12 +76,12 @@ public final class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
-  // Instance is unchanged, but inner fields are changeable.
-  final PlaybackInfo playbackInfo = new PlaybackInfo();
+  // Reference is unchanged, but inner fields are changeable.
+  @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
   @NonNull final Context context;  // Application context, will obtain from playerView context.
   @NonNull final SimpleExoPlayerView playerView;
+  @NonNull final Handler mainHandler;
   @ExtensionRendererMode final int extensionMode;
-  final Handler mainHandler;
 
   SimpleExoPlayer player;
   ComponentListener componentListener;
@@ -281,7 +281,12 @@ public final class ExoPlayerHelper {
     }
 
     @Override public void onRepeatModeChanged(int repeatMode) {
-
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onRepeatModeChanged(repeatMode);
+        }
+      }
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -389,7 +394,7 @@ public final class ExoPlayerHelper {
       }
     }
 
-    @Override public void onPositionDiscontinuity() {
+    @Override public void onPositionDiscontinuity(int reason) {
       if (needRetrySource) {
         // This will only occur if the user has performed a seek whilst in the error playerState. Update the
         // resume position so that if the user then retries, playback will resume from the position to
@@ -399,7 +404,7 @@ public final class ExoPlayerHelper {
       int count;
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onPositionDiscontinuity();
+          eventListeners.get(i).onPositionDiscontinuity(reason);
         }
       }
     }
@@ -409,6 +414,24 @@ public final class ExoPlayerHelper {
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
           eventListeners.get(i).onPlaybackParametersChanged(parameters);
+        }
+      }
+    }
+
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onShuffleModeEnabledChanged(shuffleModeEnabled);
+        }
+      }
+    }
+
+    @Override public void onSeekProcessed() {
+      int count;
+      if (eventListeners != null && (count = eventListeners.size()) > 0) {
+        for (int i = count - 1; i >= 0; i--) {
+          eventListeners.get(i).onSeekProcessed();
         }
       }
     }
@@ -512,8 +535,16 @@ public final class ExoPlayerHelper {
       if (this.delegate != null) this.delegate.onPlayerError(error);
     }
 
-    @Override public void onPositionDiscontinuity() {
-      if (this.delegate != null) this.delegate.onPositionDiscontinuity();
+    @Override public void onPositionDiscontinuity(int reason) {
+      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
+    }
+
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+      if (this.delegate != null) this.delegate.onShuffleModeEnabledChanged(shuffleModeEnabled);
+    }
+
+    @Override public void onSeekProcessed() {
+      if (this.delegate != null) this.delegate.onSeekProcessed();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {

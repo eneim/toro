@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2017 Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="1dp"
+    >
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      >
+
+    <im.ene.toro.youtube.common.AspectRatioFrameLayout
+        android:id="@+id/player_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:resize_mode="fixed_width"
+        >
+
+      <FrameLayout
+          android:id="@+id/player_view"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:minHeight="230dp"
+          />
+
+      <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/thumbnail"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:scaleType="centerCrop"
+          />
+    </im.ene.toro.youtube.common.AspectRatioFrameLayout>
+
+    <TextView
+        android:id="@+id/video_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:padding="8dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2"
+        />
+
+    <TextView
+        android:id="@+id/video_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="5"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+        />
+
+  </LinearLayout>
+
+</android.support.v7.widget.CardView>

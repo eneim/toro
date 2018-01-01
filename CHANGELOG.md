@@ -1,6 +1,29 @@
 Changelog
 ===========
 
+3.3.0 (2018/01/01)
+--------------
+
+***This release contains breaking changes, minor migration may be required.***
+
+#### API Updates
+
+- BREAKING CHANGE: Remove ExoPlayer API from Core. This is to remove the dependant of Toro from ExoPlayer. Some libraries may use older version of ExoPlayer. Current implementation of ExoPlayer is released as separated extension for Toro, User should add the following entry to gradle:
+
+```groovy
+implementation "im.ene.toro3:toro-ext-exoplayer:${toroVersion}" // same version as Toro
+```
+
+- BREAKING CHANGE: ExoPlayer extension is released as separated library (see above). This extension will **always** use latest version of ExoPlayer. For this time's release, it is **2.6.0**. User can refer to its implementation to support different version which doesn't binary compatible (for example r2.4.4).
+
+#### Internal Updates
+
+- Various implementation improvement.
+
+#### Demo App Updates
+
+- YouTube demo application is improved, full-screen player is added. Forkers of this library are required to provide their own application Id for YouTube demo app (see gradle.properties-sample) for the key. 
+
 3.2.0 (2017/11/23)
 --------------
 
