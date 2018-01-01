@@ -40,7 +40,7 @@ import com.google.android.exoplayer2.upstream.TransferListener;
 import com.google.android.exoplayer2.util.Util;
 
 import static android.text.TextUtils.isEmpty;
-import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
+import static im.ene.toro.mopub.BuildConfig.LIB_NAME;
 
 /**
  * @author eneim (7/8/17).
@@ -54,7 +54,7 @@ import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 @SuppressWarnings({ "WeakerAccess", "unused" }) //
 public class MediaSourceBuilder {
 
-  private final Context context;  // Application context
+  private final Context context;
   private final Uri mediaUri;
   private final String extension;
   private final Handler handler;

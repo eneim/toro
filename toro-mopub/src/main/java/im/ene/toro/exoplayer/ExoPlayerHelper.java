@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,11 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.DefaultRenderersFactory.ExtensionRendererMode;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
@@ -46,7 +45,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -54,7 +53,6 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.R;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
@@ -66,22 +64,19 @@ import java.util.UUID;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
 
 /**
- * @author eneim | 6/5/17.
- *
- *         A helper class, dedicated to {@link SimpleExoPlayerView}.
+ * @author eneim (2018/01/01).
  */
 
-@SuppressWarnings({ "WeakerAccess", "unused" }) //
-public final class ExoPlayerHelper {
+@SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
-  // Reference is unchanged, but inner fields are changeable.
+  // Instance is unchanged, but inner fields are changeable.
   @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
   @NonNull final Context context;  // Application context, will obtain from playerView context.
   @NonNull final SimpleExoPlayerView playerView;
   @NonNull final Handler mainHandler;
-  @ExtensionRendererMode final int extensionMode;
+  @DefaultRenderersFactory.ExtensionRendererMode final int extensionMode;
 
   SimpleExoPlayer player;
   ComponentListener componentListener;
@@ -93,10 +88,10 @@ public final class ExoPlayerHelper {
   boolean shouldAutoPlay;
   boolean needRetrySource;
 
-  ArrayList<Player.EventListener> eventListeners;
+  ArrayList<ExoPlayer.EventListener> eventListeners;
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
-      @ExtensionRendererMode int extensionMode, boolean playWhenReady) {
+      @DefaultRenderersFactory.ExtensionRendererMode int extensionMode, boolean playWhenReady) {
     this.playerView = playerView;
     this.context = playerView.getContext().getApplicationContext();
     this.extensionMode = extensionMode;
@@ -105,7 +100,7 @@ public final class ExoPlayerHelper {
   }
 
   public ExoPlayerHelper(@NonNull SimpleExoPlayerView playerView,
-      @ExtensionRendererMode int extensionMode) {
+      @DefaultRenderersFactory.ExtensionRendererMode int extensionMode) {
     this(playerView, extensionMode, false);
   }
 
@@ -154,9 +149,10 @@ public final class ExoPlayerHelper {
           drmSessionManager = buildDrmSessionManager(drmSchemeUuid, drmLicenseUrl,  //
               keyRequestPropertiesArray, mainHandler);
         } catch (UnsupportedDrmException e) {
-          int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
+          int errorStringId = Util.SDK_INT < 18 ? im.ene.toro.R.string.error_drm_not_supported
               : (e.reason == REASON_UNSUPPORTED_SCHEME ?  //
-                  R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown);
+                  im.ene.toro.R.string.error_drm_unsupported_scheme
+                  : im.ene.toro.R.string.error_drm_unknown);
           Toast.makeText(context, errorStringId, Toast.LENGTH_SHORT).show();
           return;
         }
@@ -229,7 +225,7 @@ public final class ExoPlayerHelper {
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
   }
 
-  public void addEventListener(@NonNull Player.EventListener eventListener) {
+  public void addEventListener(@NonNull ExoPlayer.EventListener eventListener) {
     if (this.eventListeners == null) {
       this.eventListeners = new ArrayList<>();
     }
@@ -238,7 +234,7 @@ public final class ExoPlayerHelper {
     if (eventListener != null) this.eventListeners.add(eventListener);
   }
 
-  public void removeEventListener(Player.EventListener eventListener) {
+  public void removeEventListener(ExoPlayer.EventListener eventListener) {
     if (this.eventListeners != null && eventListener != null) {
       this.eventListeners.remove(eventListener);
     }
@@ -275,18 +271,9 @@ public final class ExoPlayerHelper {
     playbackInfo.reset();
   }
 
-  private class ComponentListener implements Player.EventListener {
+  private class ComponentListener implements ExoPlayer.EventListener {
 
     ComponentListener() {
-    }
-
-    @Override public void onRepeatModeChanged(int repeatMode) {
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onRepeatModeChanged(repeatMode);
-        }
-      }
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -300,16 +287,18 @@ public final class ExoPlayerHelper {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-      MappedTrackInfo mappedTrackInfo =
+      MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
           trackSelector != null ? trackSelector.getCurrentMappedTrackInfo() : null;
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
-            == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(context, R.string.error_unsupported_video, Toast.LENGTH_SHORT).show();
+            == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
+          Toast.makeText(context, im.ene.toro.R.string.error_unsupported_video, Toast.LENGTH_SHORT)
+              .show();
         }
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
-            == MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(context, R.string.error_unsupported_audio, Toast.LENGTH_SHORT).show();
+            == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
+          Toast.makeText(context, im.ene.toro.R.string.error_unsupported_audio, Toast.LENGTH_SHORT)
+              .show();
         }
       }
       int count;
@@ -332,7 +321,7 @@ public final class ExoPlayerHelper {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       boolean screenOn = isPlaying() && (playbackState >= 2 || playbackState <= 3);
       playerView.setKeepScreenOn(screenOn);
-      if (playbackState == Player.STATE_ENDED) {
+      if (playbackState == ExoPlayer.STATE_ENDED) {
         if (player != null) {
           player.setPlayWhenReady(false);
           player.seekTo(0); // reset playback position for current window
@@ -357,16 +346,16 @@ public final class ExoPlayerHelper {
               (MediaCodecRenderer.DecoderInitializationException) cause;
           if (decoderInitializationException.decoderName == null) {
             if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
-              errorString = context.getString(R.string.error_querying_decoders);
+              errorString = context.getString(im.ene.toro.R.string.error_querying_decoders);
             } else if (decoderInitializationException.secureDecoderRequired) {
-              errorString = context.getString(R.string.error_no_secure_decoder,
+              errorString = context.getString(im.ene.toro.R.string.error_no_secure_decoder,
                   decoderInitializationException.mimeType);
             } else {
-              errorString = context.getString(R.string.error_no_decoder,
+              errorString = context.getString(im.ene.toro.R.string.error_no_decoder,
                   decoderInitializationException.mimeType);
             }
           } else {
-            errorString = context.getString(R.string.error_instantiating_decoder,
+            errorString = context.getString(im.ene.toro.R.string.error_instantiating_decoder,
                 decoderInitializationException.decoderName);
           }
         }
@@ -394,7 +383,7 @@ public final class ExoPlayerHelper {
       }
     }
 
-    @Override public void onPositionDiscontinuity(int reason) {
+    @Override public void onPositionDiscontinuity() {
       if (needRetrySource) {
         // This will only occur if the user has performed a seek whilst in the error playerState. Update the
         // resume position so that if the user then retries, playback will resume from the position to
@@ -404,7 +393,7 @@ public final class ExoPlayerHelper {
       int count;
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onPositionDiscontinuity(reason);
+          eventListeners.get(i).onPositionDiscontinuity();
         }
       }
     }
@@ -414,24 +403,6 @@ public final class ExoPlayerHelper {
       if (eventListeners != null && (count = eventListeners.size()) > 0) {
         for (int i = count - 1; i >= 0; i--) {
           eventListeners.get(i).onPlaybackParametersChanged(parameters);
-        }
-      }
-    }
-
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onShuffleModeEnabledChanged(shuffleModeEnabled);
-        }
-      }
-    }
-
-    @Override public void onSeekProcessed() {
-      int count;
-      if (eventListeners != null && (count = eventListeners.size()) > 0) {
-        for (int i = count - 1; i >= 0; i--) {
-          eventListeners.get(i).onSeekProcessed();
         }
       }
     }
@@ -494,11 +465,11 @@ public final class ExoPlayerHelper {
   }
 
   // Adapter for original EventListener
-  public static class EventListener implements Player.EventListener {
+  public static class EventListener implements ExoPlayer.EventListener {
 
-    private Player.EventListener delegate;
+    private ExoPlayer.EventListener delegate;
 
-    public EventListener(Player.EventListener delegate) {
+    public EventListener(ExoPlayer.EventListener delegate) {
       this.delegate = delegate;
     }
 
@@ -506,12 +477,8 @@ public final class ExoPlayerHelper {
       this.delegate = null;
     }
 
-    public void setDelegate(Player.EventListener delegate) {
+    public void setDelegate(ExoPlayer.EventListener delegate) {
       this.delegate = delegate;
-    }
-
-    @Override public void onRepeatModeChanged(int repeatMode) {
-      if (this.delegate != null) this.delegate.onRepeatModeChanged(repeatMode);
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -535,16 +502,8 @@ public final class ExoPlayerHelper {
       if (this.delegate != null) this.delegate.onPlayerError(error);
     }
 
-    @Override public void onPositionDiscontinuity(int reason) {
-      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
-    }
-
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      if (this.delegate != null) this.delegate.onShuffleModeEnabledChanged(shuffleModeEnabled);
-    }
-
-    @Override public void onSeekProcessed() {
-      if (this.delegate != null) this.delegate.onSeekProcessed();
+    @Override public void onPositionDiscontinuity() {
+      if (this.delegate != null) this.delegate.onPositionDiscontinuity();
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {

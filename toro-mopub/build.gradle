@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *  
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *        
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+repositories {
+  google()
+  jcenter()
+  maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
+
+  defaultConfig {
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
+    versionCode releaseVersionCode
+    versionName "v" + releaseVersion
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    buildConfigField("String", "LIB_NAME", "\"" + "Toro Mopub Extension, v" + releaseVersion + "\"")
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
+
+dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+  implementation project(':toro-core')
+
+  implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+
+  // For native video. This will automatically also include native static
+  implementation('com.mopub:mopub-sdk-native-video:4.19.0@aar')
+
+  implementation ("com.google.android.exoplayer:exoplayer:r2.4.4") {
+    exclude group: 'com.android.support'
+  }
+
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
