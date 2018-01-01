@@ -63,3 +63,10 @@ dependencies {
   androidTestImplementation 'com.android.support.test:runner:1.0.1'
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+ext {
+  releaseArtifact = 'toro-ext-mopub'
+  releaseDescription = 'The Toro Extension for Mopub (ExoPlayer v2)'
+}
+
+apply from: '../.script/publish.gradle'
