@@ -43,15 +43,13 @@ Latest version:
  
 ```groovy
 ext {
-  toroVersion = '3.1.1' // TODO check above for latest version
+  toroVersion = '3.3.0' // TODO check above for latest version
   // below: other dependencies' versions maybe
 }
 
 dependencies {
-   compile "im.ene.toro3:toro:${toroVersion}" // deprecated in Android Studio 3.0
-   
-   // TODO: uncomment if using Android Studio 3.+ only
-   // implementation "im.ene.toro3:toro:${toroVersion}"
+   implementation "im.ene.toro3:toro:${toroVersion}"
+   implementation "im.ene.toro3:toro-ext-exoplayer:${toroVersion}"  // to get ExoPlayer support
 }
 ```
 
