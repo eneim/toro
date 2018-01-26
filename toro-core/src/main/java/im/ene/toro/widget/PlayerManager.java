@@ -77,8 +77,15 @@ final class PlayerManager {
     player.pause();
   }
 
-  void release(@NonNull ToroPlayer player) {
-    player.release();
+  // return false if this manager could not release the player.
+  // normally when this manager doesn't manage the player.
+  boolean release(@NonNull ToroPlayer player) {
+    if (manages(player)) {
+      player.release();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void clear() {

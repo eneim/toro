@@ -51,7 +51,6 @@ import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
  *         See {@link DrmMediaProvider}.
  */
 
-@SuppressWarnings({ "WeakerAccess", "unused" }) //
 public class MediaSourceBuilder {
 
   private final Context context;  // Application context

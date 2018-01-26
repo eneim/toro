@@ -192,14 +192,12 @@ public class Container extends RecyclerView {
     // sometime it happens after all Animation, but we also need to update playback here.
     dispatchUpdateOnAnimationFinished(true);
     // finally release the player
-    // this player may not be managed so it should release by itself.
-    player.release();
+    // if player manager doesn't manager player, release by itself.
+    if (!playerManager.release(player)) player.release();
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
-    if (getChildCount() == 0) return;
-
     // Need to handle the dead playback even then the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
@@ -214,7 +212,7 @@ public class Container extends RecyclerView {
       playerManager.detachPlayer(player);
     }
 
-    if (state != SCROLL_STATE_IDLE) return;
+    if (getChildCount() == 0 || state != SCROLL_STATE_IDLE) return;
 
     // 2. Refresh the good players list.
     LayoutManager layout = super.getLayoutManager();
@@ -542,7 +540,6 @@ public class Container extends RecyclerView {
         PlaybackInfo info = player.getCurrentPlaybackInfo();
         this.savePlaybackInfo(player.getPlayerOrder(), info);
         states.put(player.getPlayerOrder(), info);
-        // TODO 20171207 why I commented this out?
         playerManager.pause(player);
       }
     }
@@ -558,11 +555,11 @@ public class Container extends RecyclerView {
 
     // Release current players on recreation event only.
     // Note that there are cases where this method is called without the activity destroying/recreating.
-    // For example: in API 26 (my test mostly run on Oreo), when user clicking to "Current App" button,
+    // For example: in API 26 (my test mostly run on 8.0), when user click to "Current App" button,
     // current Activity will enter the "Stop" state but not be destroyed/recreated and View hierarchy
     // state will be saved (this method is called).
     //
-    // In those cases, we don't need to release current resources.
+    // We only need to release current resources when the recreation happens.
     if (recreating) {
       for (ToroPlayer player : source) {
         playerManager.release(player);
@@ -656,6 +653,8 @@ public class Container extends RecyclerView {
   private final class ToroDataObserver extends AdapterDataObserver {
 
     private Adapter adapter;
+
+    ToroDataObserver() {}
 
     final void registerAdapter(Adapter adapter) {
       if (this.adapter == adapter) return;

@@ -90,7 +90,10 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+
+  // https://mvnrepository.com/artifact/org.jsoup/jsoup
+  implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
 
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
