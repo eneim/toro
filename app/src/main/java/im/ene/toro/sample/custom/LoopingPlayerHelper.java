@@ -17,14 +17,11 @@
 package im.ene.toro.sample.custom;
 
 import android.net.Uri;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.source.LoopingMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
+import im.ene.toro.exoplayer.MediaSourceBuilder;
+import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.widget.Container;
 
 /**
@@ -35,12 +32,8 @@ public class LoopingPlayerHelper extends ExoPlayerViewHelper {
 
   public LoopingPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
       @NonNull Uri mediaUri) {
-    super(container, player, mediaUri);
-  }
-
-  @Override protected MediaSource createMediaSource(@NonNull Uri uri, @Nullable Handler handler,
-      @Nullable MediaSourceEventListener listener) {
-    MediaSource origin = super.createMediaSource(uri, handler, listener);
-    return new LoopingMediaSource(origin);
+    // customized using Looping media source builder
+    super(container, player, mediaUri, ToroExo.with(container.getContext()).builder()  //
+        .mediaSourceBuilder(MediaSourceBuilder.LOOPING).build());
   }
 }

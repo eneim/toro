@@ -87,7 +87,7 @@
 
     <activity-alias
         android:name=".Launch"
-        android:targetActivity=".article.ScrollingArticleActivity">
+        android:targetActivity=".custom.CustomLayoutActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

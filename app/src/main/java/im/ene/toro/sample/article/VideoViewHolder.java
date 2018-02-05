@@ -25,11 +25,10 @@ import android.view.ViewGroup;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
-import toro.exoplayer.ExoPlayerViewHelper;
-import toro.exoplayer.ToroExo;
 
 /**
  * @author eneim (2018/01/08).
@@ -64,8 +63,7 @@ class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(container, this, video.buildUpon().build(), null,
-          ToroExo.with(container.getContext()).getHub());
+      helper = new ExoPlayerViewHelper(container, this, video.buildUpon().build());
     }
     helper.initialize(playbackInfo);
   }

@@ -16,202 +16,192 @@
 
 package im.ene.toro.exoplayer;
 
-import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.C;
+import android.util.Log;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
-
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
-import static com.google.android.exoplayer2.util.Util.getUserAgent;
-import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author eneim (2018/01/05).
+ * @author eneim (2018/01/24).
  */
 
+@SuppressWarnings("WeakerAccess") //
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
-  private EventListener listener = new EventListener() {
-    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
-      super.onPlayerStateChanged(playWhenReady, playbackState);
-    }
-  };
+  private static final String TAG = "Toro:ExoPlayer";
 
-  @NonNull final Uri mediaUri;
-  @NonNull final Handler handler;
-  @NonNull final SimpleExoPlayerView playerView;
-
-  @NonNull protected final DataSource.Factory manifestDataSourceFactory;
-  @NonNull protected final DataSource.Factory mediaDataSourceFactory;
-
-  private Playback playback;
+  @NonNull private final Playback.Helper helper;
+  @NonNull /* p */ final EventListeners listeners;
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
-      @NonNull Uri mediaUri) {
+      @NonNull Uri uri) {
+    this(container, player, uri, ToroExo.with(container.getContext()).getHub());
+  }
+
+  public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
+      @NonNull Uri uri, @NonNull PlayerHub playerHub) {
+    this(container, player, uri, null, playerHub);
+  }
+
+  public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
+      @NonNull Uri uri, @Nullable Playback.EventListener eventListener,
+      @NonNull PlayerHub playerHub) {
     super(container, player);
     if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
-      throw new IllegalArgumentException("Only SimpleExoPlayerView is required.");
+      throw new IllegalArgumentException("Require SimpleExoPlayerView");
     }
-    //noinspection ConstantConditions
-    if (mediaUri == null) throw new NullPointerException("Media Uri is null.");
-    this.playerView = (SimpleExoPlayerView) player.getPlayerView();
-    this.mediaUri = mediaUri;
-    this.handler = new Handler();
-    Context context = container.getContext().getApplicationContext();
-    String appName = getUserAgent(context, LIB_NAME);
-    this.manifestDataSourceFactory = new DefaultDataSourceFactory(context, appName);
-    this.mediaDataSourceFactory =
-        new DefaultDataSourceFactory(context, appName, new DefaultBandwidthMeter());
-  }
 
-  public final void setEventListener(Player.EventListener eventListener) {
-    this.listener.setDelegate(eventListener);
-  }
-
-  protected MediaSource createMediaSource(@NonNull Uri uri, @Nullable Handler handler,
-      @Nullable MediaSourceEventListener listener) {
-    @C.ContentType int type = Util.inferContentType(uri);
-    switch (type) {
-      case C.TYPE_DASH:
-        return new DashMediaSource.Factory(
-            new DefaultDashChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)//
-            .createMediaSource(uri, handler, listener);
-      case C.TYPE_HLS:
-        return new HlsMediaSource.Factory(mediaDataSourceFactory) //
-            .createMediaSource(uri, handler, listener);
-      case C.TYPE_OTHER:
-        return new ExtractorMediaSource.Factory(mediaDataSourceFactory) //
-            .createMediaSource(uri, handler, listener);
-      case C.TYPE_SS:
-        return new SsMediaSource.Factory( //
-            new DefaultSsChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory) //
-            .createMediaSource(uri, handler, listener);
-      default:
-        throw new IllegalStateException("Unsupported type: " + type);
-    }
+    listeners = new EventListeners();
+    if (eventListener != null) listeners.add(eventListener);
+    helper = playerHub.createHelper((SimpleExoPlayerView) player.getPlayerView(), uri, listeners);
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
-    if (this.playback == null) {
-      Playback.Resource resource = new Playback.Resource(this.playerView,
-          createMediaSource(this.mediaUri, this.handler, null));
-      this.playback = ExoPlayerManager.Factory.with(container.getContext())
-          .prepare(resource, playbackInfo, null, EXTENSION_RENDERER_MODE_OFF, listener);
-    } else {
-      this.playback.setPlaybackInfo(playbackInfo);
+    Log.d(TAG, "initialize() called with: playbackInfo = [" + playbackInfo + "]");
+    if (!helper.initialized()) helper.prepare();
+    if (playbackInfo != null) {
+      helper.setPlaybackInfo(playbackInfo);
     }
-  }
-
-  // To get the playback instance for any behavior after initialization.
-  public final Playback getPlayback() {
-    if (this.playback == null) throw new IllegalStateException("Playback has not been initialized");
-    return this.playback;
-  }
-
-  @Override public void play() {
-    getPlayback().play();
-  }
-
-  @Override public void pause() {
-    getPlayback().pause();
-  }
-
-  @Override public boolean isPlaying() {
-    return playback != null && playback.isPlaying();
-  }
-
-  @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
-    return getPlayback().getPlaybackInfo();
   }
 
   @Override public void release() {
-    getPlayback().release();
-    this.playback = null;
     super.release();
+    helper.release();
+    this.listeners.clear();
   }
 
-  // Adapter for original EventListener
-  public static class EventListener implements Player.EventListener {
+  @Override public void play() {
+    helper.play();
+  }
 
-    private Player.EventListener delegate;
+  @Override public void pause() {
+    helper.pause();
+  }
 
-    public EventListener(Player.EventListener delegate) {
-      this.delegate = delegate;
+  @Override public boolean isPlaying() {
+    return helper.isPlaying();
+  }
+
+  @Override public void setVolume(float volume) {
+    helper.setVolume(volume);
+  }
+
+  @Override public float getVolume() {
+    return helper.getVolume();
+  }
+
+  @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
+    return helper.getPlaybackInfo();
+  }
+
+  public void addEventListener(@NonNull Playback.EventListener listener) {
+    //noinspection ConstantConditions
+    if (listener != null) this.listeners.add(listener);
+  }
+
+  public void removeEventListener(Playback.EventListener listener) {
+    this.listeners.remove(listener);
+  }
+
+  private class EventListeners extends ArrayList<Playback.EventListener>
+      implements Playback.EventListener {
+
+    EventListeners() {
     }
 
-    public EventListener() {
-      this.delegate = null;
+    @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
+        float pixelWidthHeightRatio) {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onVideoSizeChanged(width, height, unAppliedRotationDegrees,
+            pixelWidthHeightRatio);
+      }
     }
 
-    public void setDelegate(Player.EventListener delegate) {
-      this.delegate = delegate;
-    }
-
-    @Override public void onRepeatModeChanged(int repeatMode) {
-      if (this.delegate != null) this.delegate.onRepeatModeChanged(repeatMode);
+    @Override public void onRenderedFirstFrame() {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onRenderedFirstFrame();
+      }
     }
 
     @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-      if (this.delegate != null) this.delegate.onTimelineChanged(timeline, manifest);
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onTimelineChanged(timeline, manifest);
+      }
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-      if (this.delegate != null) this.delegate.onTracksChanged(trackGroups, trackSelections);
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onTracksChanged(trackGroups, trackSelections);
+      }
     }
 
     @Override public void onLoadingChanged(boolean isLoading) {
-      if (this.delegate != null) this.delegate.onLoadingChanged(isLoading);
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onLoadingChanged(isLoading);
+      }
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      if (this.delegate != null) this.delegate.onPlayerStateChanged(playWhenReady, playbackState);
+      ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onPlayerStateChanged(playWhenReady, playbackState);
+      }
     }
 
-    @Override public void onPlayerError(ExoPlaybackException error) {
-      if (this.delegate != null) this.delegate.onPlayerError(error);
-    }
-
-    @Override public void onPositionDiscontinuity(int reason) {
-      if (this.delegate != null) this.delegate.onPositionDiscontinuity(reason);
+    @Override public void onRepeatModeChanged(int repeatMode) {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onRepeatModeChanged(repeatMode);
+      }
     }
 
     @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      if (this.delegate != null) this.delegate.onShuffleModeEnabledChanged(shuffleModeEnabled);
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onShuffleModeEnabledChanged(shuffleModeEnabled);
+      }
     }
 
-    @Override public void onSeekProcessed() {
-      if (this.delegate != null) this.delegate.onSeekProcessed();
+    @Override public void onPlayerError(ExoPlaybackException error) {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onPlayerError(error);
+      }
+    }
+
+    @Override public void onPositionDiscontinuity(int reason) {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onPositionDiscontinuity(reason);
+      }
     }
 
     @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-      if (this.delegate != null) this.delegate.onPlaybackParametersChanged(playbackParameters);
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onPlaybackParametersChanged(playbackParameters);
+      }
+    }
+
+    @Override public void onSeekProcessed() {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onSeekProcessed();
+      }
+    }
+
+    @Override public void onCues(List<Cue> cues) {
+      for (Playback.EventListener eventListener : this) {
+        eventListener.onCues(cues);
+      }
     }
   }
 }

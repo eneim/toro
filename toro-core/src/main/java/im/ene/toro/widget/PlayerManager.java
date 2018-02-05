@@ -88,6 +88,10 @@ final class PlayerManager {
     }
   }
 
+  void recycle(ToroPlayer player) {
+    // no-ops, place holder only.
+  }
+
   void clear() {
     this.players.clear();
   }

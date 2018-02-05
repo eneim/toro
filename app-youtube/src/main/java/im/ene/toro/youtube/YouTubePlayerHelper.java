@@ -94,6 +94,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     handler.sendEmptyMessage(MSG_PAUSE);
   }
 
+  @Override public void setVolume(float volume) {
+    throw new UnsupportedOperationException("YouTubeApi doesn't allow to do this.");
+  }
+
+  @Override public float getVolume() {
+    return 1;
+  }
+
   @Override public boolean isPlaying() {
     return youTubePlayer != null;
   }

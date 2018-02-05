@@ -21,6 +21,8 @@ import com.squareup.leakcanary.LeakCanary;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import im.ene.toro.exoplayer.PlayerHub;
+import im.ene.toro.exoplayer.ToroExo;
 
 /**
  * @author eneim | 6/5/17.
@@ -36,6 +38,7 @@ public class ToroDemo extends Application {
   }
 
   private static ToroDemo singleton;
+  private PlayerHub playerHub;
 
   @Override public void onCreate() {
     super.onCreate();
@@ -45,6 +48,7 @@ public class ToroDemo extends Application {
       CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
     }
 
+    playerHub = ToroExo.with(this).getHub();
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       // You should not init your app in this process.
@@ -55,5 +59,9 @@ public class ToroDemo extends Application {
 
   public static ToroDemo getApp() {
     return singleton;
+  }
+
+  public static PlayerHub getPlayerHub() {
+    return singleton.playerHub;
   }
 }

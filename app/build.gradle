@@ -99,8 +99,8 @@ dependencies {
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
   testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
-  implementation 'com.github.bumptech.glide:glide:4.4.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
+  implementation 'com.github.bumptech.glide:glide:4.5.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
