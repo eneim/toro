@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
+import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 import static java.lang.Runtime.getRuntime;
 
 /**
@@ -35,8 +36,6 @@ import static java.lang.Runtime.getRuntime;
  */
 
 public final class ToroExo {
-
-  private static final String LIB_NAME = "ExoPlayer Pool";
 
   @SuppressLint("StaticFieldLeak") static volatile ToroExo toro;
   private static final int MAX_POOL_SIZE = Math.max(4, getRuntime().availableProcessors());
