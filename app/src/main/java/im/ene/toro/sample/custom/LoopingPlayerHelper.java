@@ -28,9 +28,9 @@ import im.ene.toro.widget.Container;
  * @author eneim (2018/01/05).
  */
 
-public class LoopingPlayerHelper extends ExoPlayerViewHelper {
+class LoopingPlayerHelper extends ExoPlayerViewHelper {
 
-  public LoopingPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
+  LoopingPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
       @NonNull Uri mediaUri) {
     // customized using Looping media source builder
     super(container, player, mediaUri, ToroExo.with(container.getContext()).builder()  //

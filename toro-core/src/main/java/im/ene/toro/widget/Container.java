@@ -299,7 +299,8 @@ public class Container extends RecyclerView {
   public final void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
-    dispatchUpdateOnAnimationFinished(true);
+    // dispatchUpdateOnAnimationFinished(true); // doesn't work well :(
+    this.onScrollStateChanged(SCROLL_STATE_IDLE); // immediately update.
   }
 
   /**
