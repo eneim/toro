@@ -16,6 +16,12 @@
 
 package im.ene.toro.sample.common;
 
+import android.content.Context;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * @author eneim | 6/8/17.
  */
@@ -28,5 +34,20 @@ public class DemoUtil {
 
   public static int compare(long x, long y) {
     return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  }
+
+  public static String getFileContent(Context context, String fileName) {
+    StringBuilder total = new StringBuilder();
+    try (InputStream inputStream = context.getAssets().open(fileName);
+         BufferedReader r = new BufferedReader(new InputStreamReader(inputStream))) {
+      String line;
+      while ((line = r.readLine()) != null) {
+        total.append(line).append('\n');
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return total.toString();
   }
 }

@@ -53,6 +53,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @State int playerState = State.STATE_IDLE;
   boolean playWhenReady = false;  // mimic the ExoPlayer
+  float volume = 1f;
 
   public LegacyVideoViewHelper(Container container, ToroPlayer player, @NonNull Uri mediaUri) {
     super(container, player);
@@ -166,6 +167,18 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     updateResumePosition();
     return new PlaybackInfo(C.INDEX_UNSET, playbackInfo.getResumePosition());
+  }
+
+  @Override public void setVolume(float volume) {
+    if (mediaPlayer != null) {
+      mediaPlayer.setVolume(volume, volume);
+      // if the set above fails, then we won't go here. nothing changes.
+      this.volume = volume;
+    }
+  }
+
+  @Override public float getVolume() {
+    return volume;
   }
 
   void updateResumePosition() {

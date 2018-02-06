@@ -19,6 +19,7 @@ package im.ene.toro.helper;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.CallSuper;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
@@ -78,20 +79,20 @@ public abstract class ToroPlayerHelper {
   @NonNull protected final Container container;
   @NonNull protected final ToroPlayer player;
 
-  @SuppressWarnings("WeakerAccess")
+  @SuppressWarnings("WeakerAccess") //
   final ArrayList<ToroPlayer.EventListener> eventListeners = new ArrayList<>();
-  @SuppressWarnings("WeakerAccess")
+  @SuppressWarnings("WeakerAccess") //
   final ToroPlayer.EventListener internalListener = new ToroPlayer.EventListener() {
     @Override public void onBuffering() {
       // do nothing
     }
 
     @Override public void onPlaying() {
-      // do nothing
+      player.getPlayerView().setKeepScreenOn(true);
     }
 
     @Override public void onPaused() {
-      // do nothing
+      player.getPlayerView().setKeepScreenOn(false);
     }
 
     @Override public void onCompleted() {
@@ -136,6 +137,10 @@ public abstract class ToroPlayerHelper {
 
   public abstract boolean isPlaying();
 
+  public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+
+  public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
+
   /**
    * Get latest playback info. Either on-going playback info if current player is playing, or latest
    * playback info available if player is paused.
@@ -145,13 +150,12 @@ public abstract class ToroPlayerHelper {
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
   // Mimic ExoPlayer
-  @CallSuper
-  protected final void onPlayerStateUpdated(boolean playWhenReady, @State int playbackState) {
+  @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,
+      @State int playbackState) {
     handler.obtainMessage(playbackState, playWhenReady).sendToTarget();
   }
 
-  @CallSuper
-  public void release() {
+  @CallSuper public void release() {
     handler.removeCallbacksAndMessages(null);
   }
 

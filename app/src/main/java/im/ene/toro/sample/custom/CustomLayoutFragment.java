@@ -46,10 +46,9 @@ import com.ramotion.cardslider.CardSnapHelper;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.SinglePlayerActivity;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
-
-import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
 /**
  * @author eneim (7/1/17).
@@ -140,8 +139,9 @@ import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
           }
         }
 
-        Intent intent = createIntent(getContext(), position, media.mediaUri,  //
+        Intent intent = SinglePlayerActivity.createIntent(getContext(), position, media.mediaUri, //
             content, info, viewSize, videoSize, false);
+        //noinspection ConstantConditions
         ActivityOptionsCompat options = ActivityOptionsCompat.
             makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
         startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());

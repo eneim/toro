@@ -55,8 +55,8 @@ public interface CacheManager {
   @Nullable Integer getOrderForKey(@NonNull Object key);
 
   /**
-   * A built-in {@link CacheManager} that use the order as the unique key. Note that this may not
-   * survive data changes. Which means that after data change events, the map may need to be
+   * A built-in {@link CacheManager} that use the order as the unique key. Note that this is not
+   * data-changes-proof. Which means that after data change events, the map may need to be
    * updated.
    */
   CacheManager DEFAULT = new CacheManager() {

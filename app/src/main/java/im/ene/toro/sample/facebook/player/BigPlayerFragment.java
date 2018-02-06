@@ -29,14 +29,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import butterknife.BindView;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
-import im.ene.toro.exoplayer.MediaSourceBuilder;
+import im.ene.toro.exoplayer.Playback;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.ToroDemo;
 import im.ene.toro.sample.facebook.core.BlackBoardDialogFragment;
 import im.ene.toro.sample.facebook.core.ScreenHelper;
 import im.ene.toro.sample.facebook.data.FbVideo;
@@ -114,8 +112,10 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
 
     // here, we dispatch the orientation check, if we found that it is in portrait mode, we immediately
     // dismiss the dialog to prevent it from showing unexpectedly.
-    windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-    if (!ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
+    windowManager = getContext() == null ? null
+        : (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    if (windowManager == null || !ScreenHelper.shouldUseBigPlayer(
+        windowManager.getDefaultDisplay())) {
       dismissAllowingStateLoss();
     }
   }
@@ -127,7 +127,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   }
 
   @BindView(R.id.big_player) SimpleExoPlayerView playerView;
-  ExoPlayerHelper playerHelper;
+  Playback.Helper playerHelper;
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -174,15 +174,9 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   @Override public void onStart() {
     super.onStart();
     if (playerHelper == null) {
-      playerHelper = new ExoPlayerHelper(playerView,  //
-          DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, false);
-      try {
-        MediaSourceBuilder sourceBuilder =
-            new MediaSourceBuilder(getContext(), videoItem.getMediaUrl().getUri());
-        playerHelper.prepare(sourceBuilder);
-      } catch (ParserException e) {
-        e.printStackTrace();
-      }
+      playerHelper = ToroDemo.getPlayerHub().createHelper(playerView, //
+          videoItem.getMediaUrl().getUri(), new Playback.DefaultEventListener());
+      playerHelper.prepare();
     }
     playerHelper.setPlaybackInfo(playbackInfo);
     playerHelper.play();

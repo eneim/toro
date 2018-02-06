@@ -25,7 +25,7 @@ import butterknife.BindView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
+import im.ene.toro.exoplayer.Playback;
 import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
@@ -52,7 +52,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   @BindView(R.id.fb_video_player) SimpleExoPlayerView playerView;
   @BindView(R.id.player_state) TextView state;
 
-  private ExoPlayerHelper.EventListener listener = new ExoPlayerHelper.EventListener() {
+  private Playback.EventListener listener = new Playback.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
       state.setText(format(Locale.getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
@@ -89,6 +89,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+    if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
       helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
       helper.setEventListener(listener);

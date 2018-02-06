@@ -72,8 +72,10 @@ public interface ToroPlayer {
 
   /**
    * Notify a Player about its {@link Container}'s scroll state change.
+   *
+   * Deprecated, no-longer used.
    */
-  void onSettled(Container container);
+  @Deprecated void onSettled(Container container);
 
   /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
@@ -90,9 +92,9 @@ public interface ToroPlayer {
   }
 
   // Adapt from ExoPlayer.
-  @SuppressWarnings("UnnecessaryInterfaceModifier") @Retention(RetentionPolicy.SOURCE)  //
+  @Retention(RetentionPolicy.SOURCE)  //
   @IntDef({ State.STATE_IDLE, State.STATE_BUFFERING, State.STATE_READY, State.STATE_END })  //
-  public @interface State {
+  @interface State {
     int STATE_IDLE = 1;
     int STATE_BUFFERING = 2;
     int STATE_READY = 3;

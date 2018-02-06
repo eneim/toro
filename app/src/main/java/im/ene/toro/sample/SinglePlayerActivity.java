@@ -33,16 +33,15 @@ import android.view.Window;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
+import im.ene.toro.exoplayer.Playback;
+import im.ene.toro.exoplayer.Playback.DefaultEventListener;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.common.LoopingMediaSourceBuilder;
 
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
+import static im.ene.toro.sample.ToroDemo.getPlayerHub;
 import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYBACK_INFO;
 import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYER_ORDER;
 
@@ -89,7 +88,7 @@ public class SinglePlayerActivity extends BaseActivity {
   // If false: this Activity starts in current screen mode, changeable by user (eg: rotate device).
   private boolean fullscreen;
 
-  private ExoPlayerHelper playerHelper;
+  private Playback.Helper playerHelper;
 
   @BindView(R.id.player_view) SimpleExoPlayerView playerView;
   // Views below are not available in landscape mode.
@@ -161,8 +160,7 @@ public class SinglePlayerActivity extends BaseActivity {
     }
 
     if (mediaDescription != null) mediaDescription.setText(Html.fromHtml(content));
-    LoopingMediaSourceBuilder mediaSourceBuilder = new LoopingMediaSourceBuilder(this, mediaUri);
-    playerHelper = new ExoPlayerHelper(playerView, EXTENSION_RENDERER_MODE_OFF, true);
+    playerHelper = getPlayerHub().createHelper(playerView, mediaUri, new DefaultEventListener());
     playerHelper.setPlaybackInfo(playbackInfo);
 
     ActivityCompat.postponeEnterTransition(this);
@@ -174,11 +172,7 @@ public class SinglePlayerActivity extends BaseActivity {
           }
         });
 
-    try {
-      playerHelper.prepare(mediaSourceBuilder);
-    } catch (ParserException e) {
-      e.printStackTrace();
-    }
+    playerHelper.prepare();
   }
 
   @Override protected void onStart() {

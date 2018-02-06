@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,92 +18,86 @@ package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.helper.ToroPlayerHelper;
-import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author eneim | 6/11/17.
+ * @author eneim (2018/02/05).
  *
- *         Extension of {@link ToroPlayerHelper}, aims to support {@link ExoPlayer} via its
- *         components {@link SimpleExoPlayer} and {@link SimpleExoPlayerView}.
+ *         For backward compatibility. Will be removed from 3.5.0
  */
 
-public final class SimpleExoPlayerViewHelper extends ToroPlayerHelper {
+@Deprecated //
+public final class SimpleExoPlayerViewHelper extends ExoPlayerViewHelper {
 
-  private final ExoPlayerHelper.EventListener internalListener =
-      new ExoPlayerHelper.EventListener() {
-        @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-          SimpleExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
-          super.onPlayerStateChanged(playWhenReady, playbackState);
-        }
-      };
-
-  private final AtomicInteger counter = new AtomicInteger(0); // initialize count
-  private final ExoPlayerHelper helper;
-  private final MediaSourceBuilder mediaSourceBuilder;
-
-  public SimpleExoPlayerViewHelper(Container container, ToroPlayer player, @NonNull Uri mediaUri) {
-    super(container, player);
-    if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
-      throw new IllegalArgumentException("Only SimpleExoPlayerView is supported.");
-    }
-    //noinspection ConstantConditions
-    if (mediaUri == null) throw new NullPointerException("Media Uri is null.");
-    this.mediaSourceBuilder = new MediaSourceBuilder(container.getContext(), mediaUri);
-    this.helper = new ExoPlayerHelper((SimpleExoPlayerView) player.getPlayerView());
+  public SimpleExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
+      @NonNull Uri uri) {
+    super(container, player, uri);
   }
+
+  private ListenerWrapper listener;
 
   public final void setEventListener(Player.EventListener eventListener) {
-    this.internalListener.setDelegate(eventListener);
+    if (eventListener == null) {
+      if (this.listener != null) super.removeEventListener(this.listener);
+    } else if (this.listener == null) {
+      this.listener = new ListenerWrapper(eventListener);
+      super.addEventListener(this.listener);
+    }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   */
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
-    if (counter.getAndIncrement() == 0) { // prevent the multiple time init
-      this.helper.addEventListener(internalListener);
-      try {
-        this.helper.prepare(this.mediaSourceBuilder);
-      } catch (ParserException e) {
-        e.printStackTrace();
-      }
+  static class ListenerWrapper extends Playback.DefaultEventListener {
+    final Player.EventListener weakerDelegate;
+
+    ListenerWrapper(Player.EventListener weakerDelegate) {
+      this.weakerDelegate = weakerDelegate;
     }
 
-    this.helper.setPlaybackInfo(playbackInfo);
-  }
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
+      weakerDelegate.onTimelineChanged(timeline, manifest);
+    }
 
-  @Override public void play() {
-    this.helper.play();
-  }
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+      weakerDelegate.onTracksChanged(trackGroups, trackSelections);
+    }
 
-  @Override public void pause() {
-    this.helper.pause();
-  }
+    @Override public void onLoadingChanged(boolean isLoading) {
+      weakerDelegate.onLoadingChanged(isLoading);
+    }
 
-  @Override public boolean isPlaying() {
-    return this.helper.isPlaying();
-  }
+    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+      weakerDelegate.onPlayerStateChanged(playWhenReady, playbackState);
+    }
 
-  @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
-    return this.helper.getPlaybackInfo();
-  }
+    @Override public void onRepeatModeChanged(int repeatMode) {
+      weakerDelegate.onRepeatModeChanged(repeatMode);
+    }
 
-  @Override public void release() {
-    counter.set(0); // reset
-    this.helper.removeEventListener(internalListener);
-    this.helper.release();
-    super.release();
+    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+      weakerDelegate.onShuffleModeEnabledChanged(shuffleModeEnabled);
+    }
+
+    @Override public void onPlayerError(ExoPlaybackException error) {
+      weakerDelegate.onPlayerError(error);
+    }
+
+    @Override public void onPositionDiscontinuity(int reason) {
+      weakerDelegate.onPositionDiscontinuity(reason);
+    }
+
+    @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+      weakerDelegate.onPlaybackParametersChanged(playbackParameters);
+    }
+
+    @Override public void onSeekProcessed() {
+      weakerDelegate.onSeekProcessed();
+    }
   }
 }

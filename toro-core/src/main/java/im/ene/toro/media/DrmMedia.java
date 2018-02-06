@@ -24,6 +24,7 @@ package im.ene.toro.media;
 
 public interface DrmMedia {
 
+  // DRM Scheme
   String getType();
 
   String getLicenseUrl();
