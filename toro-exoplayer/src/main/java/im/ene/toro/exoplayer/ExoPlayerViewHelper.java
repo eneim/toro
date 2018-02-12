@@ -19,68 +19,58 @@ package im.ene.toro.exoplayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.text.Cue;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author eneim (2018/01/24).
  */
 
-@SuppressWarnings("WeakerAccess") //
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
-  private static final String TAG = "Toro:ExoPlayer";
-
-  @NonNull private final Playback.Helper helper;
-  @NonNull /* p */ final EventListeners listeners;
+  @NonNull private final Playable helper;
+  @NonNull private final MyEventListeners listeners;
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
       @NonNull Uri uri) {
-    this(container, player, uri, ToroExo.with(container.getContext()).getHub());
+    this(container, player, uri, ToroExo.with(container.getContext()).getDefaultCreator());
   }
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
-      @NonNull Uri uri, @NonNull PlayerHub playerHub) {
-    this(container, player, uri, null, playerHub);
+      @NonNull Uri uri, @NonNull ExoCreator creator) {
+    this(container, player, uri, null, creator);
   }
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
-      @NonNull Uri uri, @Nullable Playback.EventListener eventListener,
-      @NonNull PlayerHub playerHub) {
+      @NonNull Uri uri, @Nullable Playable.EventListener eventListener,
+      @NonNull ExoCreator creator) {
     super(container, player);
     if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
       throw new IllegalArgumentException("Require SimpleExoPlayerView");
     }
 
-    listeners = new EventListeners();
+    listeners = new MyEventListeners();
     if (eventListener != null) listeners.add(eventListener);
-    helper = playerHub.createHelper((SimpleExoPlayerView) player.getPlayerView(), uri, listeners);
+    helper = creator.createPlayable(uri);
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
-    Log.d(TAG, "initialize() called with: playbackInfo = [" + playbackInfo + "]");
-    if (!helper.initialized()) helper.prepare();
+    helper.prepare();
+    helper.attachView((SimpleExoPlayerView) player.getPlayerView());
     if (playbackInfo != null) {
       helper.setPlaybackInfo(playbackInfo);
     }
+    helper.addEventListener(listeners);
   }
 
   @Override public void release() {
     super.release();
+    helper.detachView();
+    helper.removeEventListener(listeners);
     helper.release();
-    this.listeners.clear();
   }
 
   @Override public void play() {
@@ -107,101 +97,26 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     return helper.getPlaybackInfo();
   }
 
-  public void addEventListener(@NonNull Playback.EventListener listener) {
+  @SuppressWarnings("WeakerAccess") //
+  public void addEventListener(@NonNull Playable.EventListener listener) {
     //noinspection ConstantConditions
     if (listener != null) this.listeners.add(listener);
   }
 
-  public void removeEventListener(Playback.EventListener listener) {
+  @SuppressWarnings("WeakerAccess") //
+  public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
   }
 
-  private class EventListeners extends ArrayList<Playback.EventListener>
-      implements Playback.EventListener {
+  // A proxy, to also hook into ToroPlayerHelper's state change event.
+  private class MyEventListeners extends Playable.EventListeners {
 
-    EventListeners() {
-    }
-
-    @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
-        float pixelWidthHeightRatio) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onVideoSizeChanged(width, height, unAppliedRotationDegrees,
-            pixelWidthHeightRatio);
-      }
-    }
-
-    @Override public void onRenderedFirstFrame() {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onRenderedFirstFrame();
-      }
-    }
-
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onTimelineChanged(timeline, manifest);
-      }
-    }
-
-    @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onTracksChanged(trackGroups, trackSelections);
-      }
-    }
-
-    @Override public void onLoadingChanged(boolean isLoading) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onLoadingChanged(isLoading);
-      }
+    MyEventListeners() {
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onPlayerStateChanged(playWhenReady, playbackState);
-      }
-    }
-
-    @Override public void onRepeatModeChanged(int repeatMode) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onRepeatModeChanged(repeatMode);
-      }
-    }
-
-    @Override public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onShuffleModeEnabledChanged(shuffleModeEnabled);
-      }
-    }
-
-    @Override public void onPlayerError(ExoPlaybackException error) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onPlayerError(error);
-      }
-    }
-
-    @Override public void onPositionDiscontinuity(int reason) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onPositionDiscontinuity(reason);
-      }
-    }
-
-    @Override public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onPlaybackParametersChanged(playbackParameters);
-      }
-    }
-
-    @Override public void onSeekProcessed() {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onSeekProcessed();
-      }
-    }
-
-    @Override public void onCues(List<Cue> cues) {
-      for (Playback.EventListener eventListener : this) {
-        eventListener.onCues(cues);
-      }
+      super.onPlayerStateChanged(playWhenReady, playbackState);
     }
   }
 }

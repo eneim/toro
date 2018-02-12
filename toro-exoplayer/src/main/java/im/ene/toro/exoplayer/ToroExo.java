@@ -33,6 +33,16 @@ import static java.lang.Runtime.getRuntime;
 
 /**
  * @author eneim (2018/01/26).
+ *
+ *         Global helper class to manage {@link ExoCreator} and {@link SimpleExoPlayer} instances.
+ *
+ *         In this setup, {@link ExoCreator} and SimpleExoPlayer pools are cached. A {@link Config}
+ *         is a key for each {@link ExoCreator}.
+ *
+ *         ExoCreator creator = ToroExo.with(this).getDefaultCreator();
+ *         SimpleExoPlayer player = creator.createPlayer();
+ *         MediaSource source = creator.createMediaSource(videoUri);
+ *         // next: do stuff with SimpleExoPlayer instance and MediaSource instance.
  */
 
 public final class ToroExo {
@@ -50,6 +60,7 @@ public final class ToroExo {
   }
 
   final String appName;
+  final Config defaultConfig = new Config.Builder().build();
 
   @NonNull private final Context context;  // Application context
   @NonNull private final Map<Config, ExoCreator> creators;
@@ -69,10 +80,6 @@ public final class ToroExo {
     }
   }
 
-  public PlayerHub.Builder builder() {
-    return new PlayerHub.Builder();
-  }
-
   public ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
@@ -83,16 +90,16 @@ public final class ToroExo {
     return creator;
   }
 
-  public PlayerHub getHub() {
-    return builder().build();
+  public ExoCreator getDefaultCreator() {
+    return getCreator(defaultConfig);
   }
 
   /// internal APIs
-  Pools.Pool<SimpleExoPlayer> getPool(PlayerHub hub) {
-    Pools.Pool<SimpleExoPlayer> pool = playerPools.get(hub.creator);
+  Pools.Pool<SimpleExoPlayer> getPool(ExoCreator creator) {
+    Pools.Pool<SimpleExoPlayer> pool = playerPools.get(creator);
     if (pool == null) {
       pool = new Pools.SimplePool<>(MAX_POOL_SIZE);
-      playerPools.put(hub.creator, pool);
+      playerPools.put(creator, pool);
     }
 
     return pool;

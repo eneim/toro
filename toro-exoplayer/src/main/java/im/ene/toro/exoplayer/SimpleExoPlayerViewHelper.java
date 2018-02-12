@@ -30,7 +30,7 @@ import im.ene.toro.widget.Container;
 /**
  * @author eneim (2018/02/05).
  *
- *         For backward compatibility. Will be removed from 3.5.0
+ *         {@link Deprecated}. Keep this for backward compatibility. Will be removed from 3.5.0.
  */
 
 @Deprecated //
@@ -52,10 +52,10 @@ public final class SimpleExoPlayerViewHelper extends ExoPlayerViewHelper {
     }
   }
 
-  static class ListenerWrapper extends Playback.DefaultEventListener {
-    final Player.EventListener weakerDelegate;
+  static class ListenerWrapper extends Playable.DefaultEventListener {
+    @NonNull final Player.EventListener weakerDelegate; // weaker than Playable.EventListener.
 
-    ListenerWrapper(Player.EventListener weakerDelegate) {
+    ListenerWrapper(@NonNull Player.EventListener weakerDelegate) {
       this.weakerDelegate = weakerDelegate;
     }
 

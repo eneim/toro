@@ -54,20 +54,4 @@ public final class BaseMeter<T extends BandwidthMeter, S extends TransferListene
   @Override public void onTransferEnd(Object source) {
     transferListener.onTransferEnd(source);
   }
-
-  @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    BaseMeter<?, ?> baseMeter = (BaseMeter<?, ?>) o;
-
-    if (!bandwidthMeter.equals(baseMeter.bandwidthMeter)) return false;
-    return transferListener.equals(baseMeter.transferListener);
-  }
-
-  @Override public int hashCode() {
-    int result = bandwidthMeter.hashCode();
-    result = 31 * result + transferListener.hashCode();
-    return result;
-  }
 }

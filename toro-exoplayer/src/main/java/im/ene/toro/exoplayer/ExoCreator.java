@@ -21,12 +21,20 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 
 /**
+ * A simple interface whose implementation helps Client to easily create {@link SimpleExoPlayer}
+ * instance, {@link MediaSource} instance or specifically a {@link Playable} instance.
+ *
+ * Most of the time, Client just needs to request for a {@link Playable} for a specific Uri.
+ *
  * @author eneim (2018/02/04).
+ * @since 3.4.0
  */
-
 public interface ExoCreator {
 
   SimpleExoPlayer createPlayer();
 
   MediaSource createMediaSource(Uri uri);
+
+  // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
+  Playable createPlayable(Uri uri);
 }
