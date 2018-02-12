@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * This interface is designed to be reused across Config change. Implementation must not hold any
  * final reference to Activity, and if it supports any kind of that, make sure to implicitly clean
- * it up.
+ * it up. Currently, there is no clear way to reuse an instance of this.
  *
  * @author eneim
  * @since 3.4.0

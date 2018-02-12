@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.Sorted;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
@@ -134,7 +135,7 @@ public class FlexibleListFragment extends BaseFragment {
     // Custom player selector for a complicated playback in grid
     activeSelector = new PlayerSelector() {
       @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container,
-          @NonNull List<ToroPlayer> items) {
+          @Sorted(order = Sorted.Order.ASCENDING) @NonNull List<ToroPlayer> items) {
         List<ToroPlayer> toSelect;
         int count = items.size();
         if (count < 1) {

@@ -33,7 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.Playback;
+import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
@@ -66,7 +66,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
   @BindView(R.id.player_state) TextView state;
   @BindView(R.id.over_lay) View overLay;
 
-  private Playback.EventListener listener = new Playback.DefaultEventListener() {
+  private Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
       state.setText(format(getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));

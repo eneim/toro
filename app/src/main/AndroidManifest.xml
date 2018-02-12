@@ -80,11 +80,6 @@
         android:launchMode="singleTop"
         android:theme="@style/AppTheme.NoActionBar"/>
 
-    <activity
-        android:name=".article.ScrollingArticleActivity"
-        android:label="@string/title_activity_scrolling_article">
-    </activity>
-
     <activity-alias
         android:name=".Launch"
         android:targetActivity=".custom.CustomLayoutActivity">

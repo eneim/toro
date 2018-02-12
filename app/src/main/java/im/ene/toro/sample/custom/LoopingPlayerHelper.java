@@ -19,10 +19,12 @@ package im.ene.toro.sample.custom;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.exoplayer.Config;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer.MediaSourceBuilder;
-import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.widget.Container;
+
+import static im.ene.toro.exoplayer.ToroExo.with;
 
 /**
  * @author eneim (2018/01/05).
@@ -30,10 +32,12 @@ import im.ene.toro.widget.Container;
 
 class LoopingPlayerHelper extends ExoPlayerViewHelper {
 
+  private static Config loopingConfig =
+      new Config.Builder().setMediaSourceBuilder(MediaSourceBuilder.LOOPING).build();
+
   LoopingPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player,
       @NonNull Uri mediaUri) {
     // customized using Looping media source builder
-    super(container, player, mediaUri, ToroExo.with(container.getContext()).builder()  //
-        .mediaSourceBuilder(MediaSourceBuilder.LOOPING).build());
+    super(container, player, mediaUri, with(container.getContext()).getCreator(loopingConfig));
   }
 }

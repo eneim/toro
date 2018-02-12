@@ -54,13 +54,6 @@ final class Common {
     }
   };
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) //
-  static Comparator<ToroPlayer> ORDER_COMPARATOR_REVERSE = new Comparator<ToroPlayer>() {
-    @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
-      return Common.compare(o2.getPlayerOrder(), o1.getPlayerOrder());
-    }
-  };
-
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   static boolean allowsToPlay(@NonNull ToroPlayer player) {
     //noinspection ConstantConditions

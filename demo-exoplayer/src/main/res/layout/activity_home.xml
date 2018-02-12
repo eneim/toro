@@ -18,42 +18,30 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="toro.demo.exoplayer.HomeDemoActivity"
     >
 
   <android.support.design.widget.AppBarLayout
       android:id="@+id/app_bar"
       android:layout_width="match_parent"
-      android:layout_height="@dimen/app_bar_height"
+      android:layout_height="180dp"
       android:fitsSystemWindows="true"
       android:theme="@style/AppTheme.AppBarOverlay"
       >
 
-    <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
+    <android.support.design.widget.CollapsingToolbarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         app:contentScrim="?attr/colorPrimary"
-        app:expandedTitleMarginBottom="24dp"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
-        app:maxLines="4"
         app:toolbarId="@+id/toolbar"
         >
-
-      <android.support.v7.widget.AppCompatImageView
-          android:id="@+id/cover"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          app:layout_collapseMode="parallax"
-          />
-
-      <View
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:background="#99000000"
-          />
 
       <android.support.v7.widget.Toolbar
           android:id="@+id/toolbar"
@@ -61,16 +49,15 @@
           android:layout_height="?attr/actionBarSize"
           app:layout_collapseMode="pin"
           app:popupTheme="@style/AppTheme.PopupOverlay"
-          app:title="@string/title_activity_scrolling_article"
           />
 
-    </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
+    </android.support.design.widget.CollapsingToolbarLayout>
   </android.support.design.widget.AppBarLayout>
 
-  <im.ene.toro.widget.Container
-      android:id="@+id/player_container"
+  <android.support.v4.widget.NestedScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      android:fitsSystemWindows="true"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       />
 
