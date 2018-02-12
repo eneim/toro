@@ -58,12 +58,10 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
+    helper.addEventListener(listeners);
     helper.prepare();
     helper.attachView((SimpleExoPlayerView) player.getPlayerView());
-    if (playbackInfo != null) {
-      helper.setPlaybackInfo(playbackInfo);
-    }
-    helper.addEventListener(listeners);
+    if (playbackInfo != null) helper.setPlaybackInfo(playbackInfo);
   }
 
   @Override public void release() {
@@ -115,7 +113,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState);
+      ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState); // important
       super.onPlayerStateChanged(playWhenReady, playbackState);
     }
   }
