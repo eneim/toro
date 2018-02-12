@@ -4,10 +4,13 @@ Changelog
 3.4.0-alpha1 (2018/02/XX)
 --------------
 
-This pre-release bring overall improvement to ExoPlayer extension. The interfaces are slightly changed, but the underneath implementation is re-written. Detail is as below:
+This pre-release bring overall improvement to ExoPlayer extension. The interfaces are kept unchanged (or a little), but the underneath implementation is re-written. Detail is as below:
 
 - New interface ``ExoCreator`` that helps to create a new ``SimpleExoPlayer`` instance as well as to build a ``MediaSource`` from existing Uri. Implementing of this interface should always return a creation result, not from cache. Toro take care of the caching mechanism for ``SimpleExoPlayer`` instances and will call this interface if need. ``DefaultExoCreator`` is the default implementation for this interface.
 
+- ``Playable`` interface defines playback behavior. Implementation of this interface must guarantee to survive config change. ``ExoCreator`` will also create a Playable, using default implementation (See ``ExoCreator#createPlayable(Uri)``).
+ 
+- Some old event listeners (interfaces) are replaced with ``Playable$EventListener``. Client need to update them.
 
 
 3.3.0 (2018/01/01)
