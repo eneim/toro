@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.sample.article;
+package im.ene.toro.annotations;
 
-import android.support.annotation.CallSuper;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * @author eneim (2018/01/06).
+ * @author eneim (2018/02/07).
+ *
+ *         Annotate that a list of items are sorted in specific {@link Order}.
  */
 
-class BaseViewHolder extends RecyclerView.ViewHolder {
+@Retention(RetentionPolicy.SOURCE)  //
+public @interface Sorted {
 
-  BaseViewHolder(View itemView) {
-    super(itemView);
-  }
+  Order order() default Order.ASCENDING;
 
-  @CallSuper void bind(Object object) {
+  enum Order {
+    ASCENDING, DESCENDING, UNSORTED
   }
 }

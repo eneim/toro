@@ -35,8 +35,8 @@ import com.google.android.exoplayer2.util.Util;
 
 /**
  * @author eneim (2018/01/24).
+ * @since 3.4.0
  */
-
 public interface MediaSourceBuilder {
 
   @NonNull MediaSource buildMediaSource(Context context, Uri uri, Handler handler,
@@ -52,8 +52,7 @@ public interface MediaSourceBuilder {
       switch (type) {
         case C.TYPE_DASH:
           return new DashMediaSource.Factory(
-              new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
-              manifestDataSourceFactory) //
+              new DefaultDashChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)
               .createMediaSource(uri, handler, listener);
         case C.TYPE_HLS:
           return new HlsMediaSource.Factory(mediaDataSourceFactory) //

@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.Sorted;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
@@ -77,7 +78,7 @@ public class ComplexListFragment extends BaseFragment {
     // Custom player selector for a complicated playback in grid
     activeSelector = new PlayerSelector() {
       @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container,
-          @NonNull List<ToroPlayer> items) {
+          @Sorted(order = Sorted.Order.ASCENDING) @NonNull List<ToroPlayer> items) {
         List<ToroPlayer> toSelect;
         int count = items.size();
         if (count < 1) {

@@ -21,67 +21,104 @@ import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory.ExtensionRendererMode;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 
 /**
- * @author eneim (2018/01/23).
+ * Necessary configuration for {@link ExoCreator} to produces {@link SimpleExoPlayer} and
+ * {@link MediaSource}. Instance of this class must be construct using {@link Builder}.
  *
- *         Make sure hashCode and equals are implemented to make sure we efficiently cache the
- *         instances.
+ * @author eneim (2018/01/23).
+ * @since 3.4.0
  */
 
 public final class Config {
 
   // primitive flags
-  @ExtensionRendererMode int extensionMode = EXTENSION_RENDERER_MODE_OFF;
+  @ExtensionRendererMode final int extensionMode;
 
-  private final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
   // NonNull options
-  @SuppressWarnings("unchecked")  //
-  @NonNull BaseMeter meter = new BaseMeter(bandwidthMeter, bandwidthMeter);
-
-  @NonNull LoadControl loadControl = new DefaultLoadControl();
-
-  @NonNull MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
+  @NonNull final BaseMeter meter;
+  @NonNull final LoadControl loadControl;
+  @NonNull final MediaSourceBuilder mediaSourceBuilder;
 
   // Nullable options
-  @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
-  @Nullable Cache cache = null; // null by default
+  @SuppressWarnings("WeakerAccess") //
+  @Nullable final DrmSessionManager drmSessionManager;
+  @Nullable final Cache cache; // null by default
 
-  @Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Config config = (Config) o;
-
-    if (extensionMode != config.extensionMode) return false;
-    if (bandwidthMeter != null ? !bandwidthMeter.equals(config.bandwidthMeter)
-        : config.bandwidthMeter != null) {
-      return false;
-    }
-    if (!meter.equals(config.meter)) return false;
-    if (!loadControl.equals(config.loadControl)) return false;
-    if (!mediaSourceBuilder.equals(config.mediaSourceBuilder)) return false;
-    if (drmSessionManager != null ? !drmSessionManager.equals(config.drmSessionManager)
-        : config.drmSessionManager != null) {
-      return false;
-    }
-    return cache != null ? cache.equals(config.cache) : config.cache == null;
+  Config(int extensionMode, @NonNull BaseMeter meter, @NonNull LoadControl loadControl,
+      @NonNull MediaSourceBuilder mediaSourceBuilder, @Nullable DrmSessionManager drmSessionManager,
+      @Nullable Cache cache) {
+    this.extensionMode = extensionMode;
+    this.meter = meter;
+    this.loadControl = loadControl;
+    this.mediaSourceBuilder = mediaSourceBuilder;
+    this.drmSessionManager = drmSessionManager;
+    this.cache = cache;
   }
 
-  @Override public int hashCode() {
-    int result = extensionMode;
-    result = 31 * result + (bandwidthMeter != null ? bandwidthMeter.hashCode() : 0);
-    result = 31 * result + meter.hashCode();
-    result = 31 * result + loadControl.hashCode();
-    result = 31 * result + mediaSourceBuilder.hashCode();
-    result = 31 * result + (drmSessionManager != null ? drmSessionManager.hashCode() : 0);
-    result = 31 * result + (cache != null ? cache.hashCode() : 0);
-    return result;
+  @SuppressWarnings("unused") public Builder newBuilder() {
+    return new Builder().setCache(this.cache)
+        .setDrmSessionManager(this.drmSessionManager)
+        .setExtensionMode(this.extensionMode)
+        .setLoadControl(this.loadControl)
+        .setMediaSourceBuilder(this.mediaSourceBuilder)
+        .setMeter(this.meter);
+  }
+
+  /// Builder
+  @SuppressWarnings({ "unused", "WeakerAccess" }) //
+  public static class Builder {
+    @ExtensionRendererMode private int extensionMode = EXTENSION_RENDERER_MODE_OFF;
+    private final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+    @SuppressWarnings("unchecked")  //
+    private BaseMeter meter = new BaseMeter(bandwidthMeter, bandwidthMeter);
+    private LoadControl loadControl = new DefaultLoadControl();
+    private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
+    private DrmSessionManager drmSessionManager = null;
+    private Cache cache = null;
+
+    public Builder setExtensionMode(@ExtensionRendererMode int extensionMode) {
+      this.extensionMode = extensionMode;
+      return this;
+    }
+
+    public Builder setMeter(@NonNull BaseMeter meter) {
+      this.meter = checkNotNull(meter, "Need non-null BaseMeter");
+      return this;
+    }
+
+    public Builder setLoadControl(@NonNull LoadControl loadControl) {
+      this.loadControl = checkNotNull(loadControl, "Need non-null LoadControl");
+      return this;
+    }
+
+    public Builder setMediaSourceBuilder(@NonNull MediaSourceBuilder mediaSourceBuilder) {
+      this.mediaSourceBuilder =
+          checkNotNull(mediaSourceBuilder, "Need non-null MediaSourceBuilder");
+      return this;
+    }
+
+    public Builder setDrmSessionManager(@Nullable DrmSessionManager drmSessionManager) {
+      this.drmSessionManager = drmSessionManager;
+      return this;
+    }
+
+    public Builder setCache(@Nullable Cache cache) {
+      this.cache = cache;
+      return this;
+    }
+
+    public Config build() {
+      return new Config(extensionMode, meter, loadControl,  //
+          mediaSourceBuilder, drmSessionManager, cache);
+    }
   }
 }

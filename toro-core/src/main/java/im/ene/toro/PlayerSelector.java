@@ -17,13 +17,17 @@
 package im.ene.toro;
 
 import android.support.annotation.NonNull;
+import im.ene.toro.annotations.Sorted;
 import im.ene.toro.widget.Container;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import static im.ene.toro.ToroUtil.visibleAreaOffset;
+import static im.ene.toro.annotations.Sorted.Order.ASCENDING;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -34,14 +38,14 @@ import static java.util.Collections.singletonList;
  *         playback.
  *
  *         On specific event of RecyclerView, such as Child view attached/detached, scroll, the
- *         collection of players those are available for a playback will change. PlayerSelecter is
- *         used to select a specific number of players from that updated Collection to start a new
- *         playback or pause an old playback if the corresponding Player is not selected anymore.
+ *         Collection of players those are available for a playback will change. PlayerSelector is
+ *         responded to select a specific number of players from that updated Collection to start a
+ *         new playback or pause an old playback if the corresponding Player is not selected
+ *         anymore.
  *
  *         Client should implement a custom PlayerSelecter and set it to the Container for expected
  *         behaviour. By default, Toro comes with linear selection implementation (the Selector
- *         that
- *         will iterate over the Collection and select the players from top to bottom until a
+ *         that will iterate over the Collection and select the players from top to bottom until a
  *         certain condition is fullfilled, for example the maximum of player count is reached).
  *
  *         Custom Selector can have more complicated selecting logics, for example: among 2n + 1
@@ -65,7 +69,7 @@ public interface PlayerSelector {
    * selected, but it will keep playing.
    */
   @NonNull Collection<ToroPlayer> select(@NonNull Container container,
-      @NonNull List<ToroPlayer> items);
+      @Sorted(order = ASCENDING) @NonNull List<ToroPlayer> items);
 
   /**
    * The 'reverse' selector of this selector, which can help to select the reversed collection of
@@ -80,7 +84,7 @@ public interface PlayerSelector {
 
   PlayerSelector DEFAULT = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
-        @NonNull List<ToroPlayer> items) {
+        @Sorted(order = ASCENDING) @NonNull List<ToroPlayer> items) {
       int count = items.size();
       return count > 0 ? singletonList(items.get(0)) : Collections.<ToroPlayer>emptyList();
     }
@@ -92,7 +96,7 @@ public interface PlayerSelector {
 
   PlayerSelector DEFAULT_REVERSE = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
-        @NonNull List<ToroPlayer> items) {
+        @Sorted(order = ASCENDING) @NonNull List<ToroPlayer> items) {
       int count = items.size();
       return count > 0 ? singletonList(items.get(count - 1)) : Collections.<ToroPlayer>emptyList();
     }
@@ -103,26 +107,39 @@ public interface PlayerSelector {
   };
 
   @SuppressWarnings("unused") PlayerSelector BY_AREA = new PlayerSelector() {
-    @NonNull @Override public Collection<ToroPlayer> select(@NonNull final Container container,
-        @NonNull List<ToroPlayer> items) {
-      int count = items.size();
-      Collections.sort(items, new Comparator<ToroPlayer>() {
-        @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
-          return Float.compare(visibleAreaOffset(o1, container), visibleAreaOffset(o2, container));
-        }
-      });
 
-      return count > 0 ? singletonList(items.get(0)) : Collections.<ToroPlayer>emptyList();
+    NavigableMap<Float, ToroPlayer> areas = new TreeMap<>(new Comparator<Float>() {
+      @Override public int compare(Float o1, Float o2) {
+        return Float.compare(o2, o1); // reverse order, from high to low.
+      }
+    });
+
+    @NonNull @Override public Collection<ToroPlayer> select(@NonNull final Container container,
+        @Sorted(order = ASCENDING) @NonNull List<ToroPlayer> items) {
+      areas.clear();
+      int count = items.size();
+      if (count > 0) {
+        for (int i = 0; i < count; i++) {
+          ToroPlayer item = items.get(i);
+          if (!areas.containsValue(item)) areas.put(visibleAreaOffset(item, container), item);
+        }
+
+        count = areas.size();
+      }
+
+      return count > 0 ? singletonList(areas.firstEntry().getValue())
+          : Collections.<ToroPlayer>emptyList();
     }
 
     @NonNull @Override public PlayerSelector reverse() {
-      return this;  // FIXME return proper reverse selector.
+      return this;
     }
   };
 
+
   @SuppressWarnings("unused") PlayerSelector NONE = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
-        @NonNull List<ToroPlayer> items) {
+        @Sorted(order = ASCENDING) @NonNull List<ToroPlayer> items) {
       return emptyList();
     }
 

@@ -19,7 +19,9 @@ package toro.demo.exoplayer
 import android.app.Application
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import im.ene.toro.exoplayer.PlayerHub
+import im.ene.toro.exoplayer.Config
+import im.ene.toro.exoplayer.ExoCreator
+import im.ene.toro.exoplayer.MediaSourceBuilder
 import im.ene.toro.exoplayer.ToroExo
 import java.io.File
 
@@ -31,7 +33,7 @@ class DemoApp : Application() {
     companion object {
         var cacheFile = 8 * 1024 * 1024.toLong()
         var demoApp: DemoApp? = null
-        var playerHub: PlayerHub? = null
+        var exoCreator: ExoCreator? = null
     }
 
     override fun onCreate() {
@@ -39,6 +41,10 @@ class DemoApp : Application() {
         demoApp = this
         val cache = SimpleCache(File(filesDir.path + "/toro_cache"),
                 LeastRecentlyUsedCacheEvictor(cacheFile))
-        playerHub = ToroExo.with(this).builder().cache(cache).build()
+        val config = Config.Builder()
+                .setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
+                .setCache(cache)
+                .build()
+        exoCreator = ToroExo.with(this).getCreator(config)
     }
 }

@@ -34,14 +34,13 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.exoplayer.Playback;
-import im.ene.toro.exoplayer.Playback.DefaultEventListener;
+import im.ene.toro.exoplayer.Playable;
+import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.common.BaseActivity;
 
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
-import static im.ene.toro.sample.ToroDemo.getPlayerHub;
 import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYBACK_INFO;
 import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYER_ORDER;
 
@@ -88,7 +87,7 @@ public class SinglePlayerActivity extends BaseActivity {
   // If false: this Activity starts in current screen mode, changeable by user (eg: rotate device).
   private boolean fullscreen;
 
-  private Playback.Helper playerHelper;
+  private Playable playerHelper;
 
   @BindView(R.id.player_view) SimpleExoPlayerView playerView;
   // Views below are not available in landscape mode.
@@ -160,8 +159,7 @@ public class SinglePlayerActivity extends BaseActivity {
     }
 
     if (mediaDescription != null) mediaDescription.setText(Html.fromHtml(content));
-    playerHelper = getPlayerHub().createHelper(playerView, mediaUri, new DefaultEventListener());
-    playerHelper.setPlaybackInfo(playbackInfo);
+    playerHelper = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri);
 
     ActivityCompat.postponeEnterTransition(this);
     playerView.getViewTreeObserver()
@@ -173,28 +171,32 @@ public class SinglePlayerActivity extends BaseActivity {
         });
 
     playerHelper.prepare();
+    if (playbackInfo != null) playerHelper.setPlaybackInfo(playbackInfo);
   }
 
   @Override protected void onStart() {
     super.onStart();
-    if (playerHelper != null && !playerHelper.isPlaying()) {
+    playerHelper.attachView(playerView);
+    if (!playerHelper.isPlaying()) {
       playerHelper.play();
     }
   }
 
   @Override protected void onStop() {
     super.onStop();
-    if (playerHelper != null) {
-      playerHelper.pause();
-    }
+    playerHelper.pause();
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (playerHelper != null) {
-      playerHelper.release();
-      playerHelper = null;
-    }
+    playerHelper.detachView();
+    playerHelper.release();
+    playerHelper = null;
+  }
+
+  @Override public void onBackPressed() {
+    super.onBackPressed();
+    playerHelper.detachView();
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
