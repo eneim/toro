@@ -12,6 +12,10 @@ This pre-release bring overall improvement to ExoPlayer extension. The interface
  
 - Some old event listeners (interfaces) are replaced with ``Playable$EventListener``. Client need to update them.
 
+- New demo app dedicated for ExoPlayer extension is added: ``demo-exoplayer``. Currently, there are 3 demos:
+  - ``BasicListActivity`` shows normal usage of **Toro** with new implementation of ``ExoPlayerViewHelper``. Written in Kotlin.
+  - ``CreatorDemoActivity`` shows non-Toro use case, where Client use ``ExoCreator`` API to build ``SimpleExoPlayer`` and ``MediaSource``. Written in Java.
+  - ``PlayableDemoActivity`` shows non-Toro use case, where Client use ``ExoCreator`` API to build ``Playable``. Written in Kotlin.
 
 3.3.0 (2018/01/01)
 --------------
