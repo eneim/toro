@@ -9,8 +9,14 @@ This pre-release bring overall improvement to ExoPlayer extension. The interface
 - New interface ``ExoCreator`` that helps to create a new ``SimpleExoPlayer`` instance as well as to build a ``MediaSource`` from existing Uri. Implementing of this interface should always return a creation result, not from cache. Toro take care of the caching mechanism for ``SimpleExoPlayer`` instances and will call this interface if need. ``DefaultExoCreator`` is the default implementation for this interface.
 
 - ``Playable`` interface defines playback behavior. Implementation of this interface must guarantee to survive config change. ``ExoCreator`` will also create a Playable, using default implementation (See ``ExoCreator#createPlayable(Uri)``).
- 
+
+- ``Config`` class defines the configuration for a ``ExoCreator``. One config should be kept statically for one Application. One App can have one or more Configs. ``ToroExo`` holds a default config that fits most of the cases so you don't have to create anything by default. Build up a new Config by using its ``Config$Builder`` class, or by using ``Config#newBuilder()`` to create a Builder from current Config.
+
+- ``ToroExo`` is the global manager of this update. It helps manager the cache for SimpleExoPlayer, ExoCreator, etc. Obtaining its (singleton) by calling ``ToroExo.with(context)`` and from there, Client has the access into its functionality.
+
 - Some old event listeners (interfaces) are replaced with ``Playable$EventListener``. Client need to update them.
+
+- ``SimpleExoPlayerViewHelper`` is kept but its internal implementation has changed using the new mechanism. This class's existence is to maintain backward compatibility of current Clients using older library. In fact, Client still need to migrate to use the new ``EventListener``, but the change should be a little. Changing to use ``ExoPlayerViewHelper`` is recommended.
 
 - New demo app dedicated for ExoPlayer extension is added: ``demo-exoplayer``. Currently, there are 3 demos:
   - ``BasicListActivity`` shows normal usage of **Toro** with new implementation of ``ExoPlayerViewHelper``. Written in Kotlin.
