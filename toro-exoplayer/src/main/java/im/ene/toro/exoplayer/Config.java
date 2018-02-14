@@ -28,7 +28,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
-import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
+import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * Necessary configuration for {@link ExoCreator} to produces {@link SimpleExoPlayer} and
@@ -62,6 +62,35 @@ public final class Config {
     this.mediaSourceBuilder = mediaSourceBuilder;
     this.drmSessionManager = drmSessionManager;
     this.cache = cache;
+  }
+
+  @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Config config = (Config) o;
+
+    if (extensionMode != config.extensionMode) return false;
+    if (!meter.equals(config.meter)) return false;
+    if (!loadControl.equals(config.loadControl)) return false;
+    if (!mediaSourceBuilder.equals(config.mediaSourceBuilder)) return false;
+    if (drmSessionManager != null ? !drmSessionManager.equals(config.drmSessionManager)
+        : config.drmSessionManager != null) {
+      return false;
+    }
+    return cache != null ? cache.equals(config.cache) : config.cache == null;
+  }
+
+  // This method doesn't really help, because the default implementation of loadControl, cache and
+  // drmSessionManager don't guarantee the hashCode identity. We put it here for future.
+  @Override public int hashCode() {
+    int result = extensionMode;
+    result = 31 * result + meter.hashCode();
+    result = 31 * result + loadControl.hashCode();
+    result = 31 * result + mediaSourceBuilder.hashCode();
+    result = 31 * result + (drmSessionManager != null ? drmSessionManager.hashCode() : 0);
+    result = 31 * result + (cache != null ? cache.hashCode() : 0);
+    return result;
   }
 
   @SuppressWarnings("unused") public Builder newBuilder() {
