@@ -72,7 +72,7 @@ public final class ToroExo {
     this.playerPools = new HashMap<>();
     this.creators = new HashMap<>();
 
-    // Adapt from ExoPlayer demo app.
+    // Adapt from ExoPlayer demo app. Start this on demand.
     CookieManager cookieManager = new CookieManager();
     cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
     if (CookieHandler.getDefault() != cookieManager) {
@@ -92,6 +92,17 @@ public final class ToroExo {
 
   public ExoCreator getDefaultCreator() {
     return getCreator(defaultConfig);
+  }
+
+  // Release and clear all current cached ExoPlayer instances. This should be called when
+  // Client Application runs out of memory (Application#onTrimMemory for example).
+  public void cleanUp() {
+    for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
+      SimpleExoPlayer item;
+      while ((item = pool.acquire()) != null) {
+        item.release();
+      }
+    }
   }
 
   /// internal APIs
