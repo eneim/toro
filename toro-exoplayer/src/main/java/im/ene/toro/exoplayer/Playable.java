@@ -59,15 +59,17 @@ public interface Playable {
 
   void pause();
 
+  // Reset all resource, so that the playback can start all over again.
   void reset();
 
-  // Always call after detachView.
+  // Release all resource. After this, the Playable need to be prepared again to be usable.
   void release();
 
   @NonNull PlaybackInfo getPlaybackInfo();
 
   void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo);
 
+  // Should be called before prepare() so that Client could received all events from preparation.
   void addEventListener(@NonNull EventListener listener);
 
   void removeEventListener(EventListener listener);

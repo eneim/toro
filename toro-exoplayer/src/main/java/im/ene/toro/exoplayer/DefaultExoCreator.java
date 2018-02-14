@@ -46,7 +46,9 @@ import im.ene.toro.media.PlaybackInfo;
 import java.io.IOException;
 import java.util.List;
 
+import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.toro;
+import static im.ene.toro.exoplayer.ToroExo.with;
 import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
 import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
@@ -57,7 +59,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
  */
 
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
-final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
+public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   private final Context context;  // per application
   private final TrackSelector trackSelector;  // 'maybe' stateless
@@ -67,25 +69,26 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   private final DataSource.Factory mediaDataSourceFactory;  // stateless
   private final DataSource.Factory manifestDataSourceFactory; // stateless
 
-  @SuppressWarnings("unchecked")  //
-  public DefaultExoCreator(Context context, Config config) {
+  @SuppressWarnings("unchecked") DefaultExoCreator(Context context, Config config, String appName) {
     this.context = context.getApplicationContext();
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
     renderersFactory = new DefaultRenderersFactory(this.context,  //
         null /* config.drmSessionManager */, config.extensionMode);
-    DataSource.Factory factory =
-        new DefaultDataSourceFactory(this.context, toro.appName, config.meter);
-    if (config.cache != null) {
-      factory = new CacheDataSourceFactory(config.cache, factory);
-    }
+    DataSource.Factory factory = new DefaultDataSourceFactory(this.context, appName, config.meter);
+    if (config.cache != null) factory = new CacheDataSourceFactory(config.cache, factory);
     mediaDataSourceFactory = factory;
-    manifestDataSourceFactory = new DefaultDataSourceFactory(this.context, toro.appName);
+    manifestDataSourceFactory = new DefaultDataSourceFactory(this.context, appName);
+  }
+
+  @SuppressWarnings("unchecked")  //
+  public DefaultExoCreator(Context context, Config config) {
+    this(context, config, with(context).appName);
   }
 
   public DefaultExoCreator(Context context) {
-    this(context, toro.defaultConfig);
+    this(context, with(context).defaultConfig);
   }
 
   @SuppressWarnings("SimplifiableIfStatement") @Override public boolean equals(Object o) {
@@ -173,21 +176,21 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   /**
    * TODO [20180208]
-   * I'm trying to reuse this thing. Not only to save resource, improve
-   * performance, but also to have a way to keep the playback smooth.
+   * I'm trying to reuse this thing. Not only to save resource, improve performance, but also to
+   * have a way to keep the playback smooth across config change.
    */
-  static class PlayableImpl implements Playable {
+  private static class PlayableImpl implements Playable {
 
-    private final PlaybackInfo playbackInfo = new PlaybackInfo();
-    private final EventListeners listeners = new EventListeners();
+    private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
+    private final EventListeners listeners = new EventListeners();  // original listener.
 
     private final Uri mediaUri; // immutable
     private final ExoCreator creator; // cached
 
-    private SimpleExoPlayer player;
-    private SimpleExoPlayerView playerView;
-    private ListenerWrapper listenerWrapper;
-    private MediaSource mediaSource;
+    private SimpleExoPlayer player; // on-demand, cached
+    private SimpleExoPlayerView playerView; // on-demand, not always required.
+    private ListenerWrapper listenerWrapper;  // proxy to wrap original listener.
+    private MediaSource mediaSource;  // on-demand
 
     PlayableImpl(ExoCreator creator, Uri uri) {
       this.creator = creator;
@@ -238,11 +241,11 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     }
 
     @Override public void play() {
-      if (this.player != null) this.player.setPlayWhenReady(true);
+      checkNotNull(player, "Playable#play(): Player is null!").setPlayWhenReady(true);
     }
 
     @Override public void pause() {
-      if (this.player != null) this.player.setPlayWhenReady(false);
+      checkNotNull(player, "Playable#pause(): Player is null!").setPlayWhenReady(false);
     }
 
     @Override public void reset() {
@@ -253,13 +256,14 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
           player.seekTo(this.playbackInfo.getResumeWindow(), this.playbackInfo.getResumePosition());
         }
         // re-prepare using new MediaSource instance.
+        // TODO [20180214] Maybe change this when ExoPlayer 2.7.0 is released.
         mediaSource = creator.createMediaSource(mediaUri);
         player.prepare(mediaSource, !haveResumePosition, false);
       }
     }
 
     @Override public void release() {
-      if (playerView != null) throw new IllegalStateException("Detach PlayerView first.");
+      if (this.playerView != null) detachView(); // detach view if need
       if (this.player != null) {
         if (listenerWrapper != null) {
           player.removeListener(listenerWrapper);
@@ -268,9 +272,8 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
           listenerWrapper = null;
         }
         toro.getPool(creator).release(this.player);
+        this.player = null;
       }
-
-      this.player = null;
     }
 
     @NonNull @Override public PlaybackInfo getPlaybackInfo() {
@@ -311,14 +314,6 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       return player != null && player.getPlayWhenReady();
     }
 
-    Playable createCopy() {
-      PlayableImpl playable = new PlayableImpl(this.creator, this.mediaUri);
-      playable.player = requestPlayer(creator);
-      playable.playbackInfo.setResumePosition(this.playbackInfo.getResumePosition());
-      playable.playbackInfo.setResumeWindow(this.playbackInfo.getResumeWindow());
-      return playable;
-    }
-
     void updatePlaybackInfo() {
       if (player == null || player.getPlaybackState() == 1) return;
       playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
@@ -345,9 +340,9 @@ final class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       this.delegate = delegate;
     }
 
-    @Override public void onVideoSizeChanged(int width, int height, int unPppliedRotationDegrees,
+    @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
         float pixelWidthHeightRatio) {
-      delegate.onVideoSizeChanged(width, height, unPppliedRotationDegrees, pixelWidthHeightRatio);
+      delegate.onVideoSizeChanged(width, height, unAppliedRotationDegrees, pixelWidthHeightRatio);
     }
 
     @Override public void onRenderedFirstFrame() {
