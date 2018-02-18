@@ -265,6 +265,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     @Override public void release() {
       if (this.playerView != null) detachView(); // detach view if need
       if (this.player != null) {
+        this.player.stop();
         if (listenerWrapper != null) {
           player.removeListener(listenerWrapper);
           player.removeVideoListener(listenerWrapper);
@@ -272,8 +273,9 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
           listenerWrapper = null;
         }
         toro.getPool(creator).release(this.player);
-        this.player = null;
       }
+      this.player = null;
+      this.mediaSource = null;
     }
 
     @NonNull @Override public PlaybackInfo getPlaybackInfo() {
