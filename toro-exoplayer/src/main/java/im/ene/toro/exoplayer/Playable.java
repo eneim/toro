@@ -24,6 +24,8 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.metadata.Metadata;
+import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextOutput;
@@ -47,10 +49,7 @@ public interface Playable {
   void prepare();
 
   // Attach a new PlayerView to current Playable.
-  void attachView(@NonNull SimpleExoPlayerView playerView);
-
-  // Detach current SimpleExoPlayerView.
-  void detachView();
+  void setPlayerView(@Nullable SimpleExoPlayerView playerView);
 
   // Return current attached SimpleExoPlayerView.
   @Nullable SimpleExoPlayerView getPlayerView();
@@ -81,7 +80,8 @@ public interface Playable {
   @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   // Combine necessary interfaces.
-  interface EventListener extends Player.EventListener, SimpleExoPlayer.VideoListener, TextOutput {
+  interface EventListener extends Player.EventListener, SimpleExoPlayer.VideoListener, TextOutput,
+      MetadataOutput {
 
   }
 
@@ -138,6 +138,10 @@ public interface Playable {
     }
 
     @Override public void onCues(List<Cue> cues) {
+
+    }
+
+    @Override public void onMetadata(Metadata metadata) {
 
     }
   }
@@ -226,6 +230,12 @@ public interface Playable {
     @Override public void onCues(List<Cue> cues) {
       for (EventListener eventListener : this) {
         eventListener.onCues(cues);
+      }
+    }
+
+    @Override public void onMetadata(Metadata metadata) {
+      for (EventListener eventListener : this) {
+        eventListener.onMetadata(metadata);
       }
     }
   }

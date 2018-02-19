@@ -42,6 +42,9 @@ public abstract class ToroPlayerHelper {
     @Override public boolean handleMessage(Message msg) {
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
+        case State.STATE_IDLE:
+          // TODO: deal with idle state, maybe error handling.
+          break;
         case State.STATE_BUFFERING /* Player.STATE_BUFFERING */:
           internalListener.onBuffering();
           for (ToroPlayer.EventListener callback : eventListeners) {

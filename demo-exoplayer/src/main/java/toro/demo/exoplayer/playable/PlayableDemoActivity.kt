@@ -61,7 +61,7 @@ class PlayableDemoActivity : AppCompatActivity() {
         playable = DemoApp.exoCreator!!.createPlayable(videoUri)
         playable!!.addEventListener(listener)
         playable!!.prepare()
-        playable!!.attachView(playerView)
+        playable!!.playerView = playerView
         app_bar.addOnOffsetChangedListener(offsetChangeListener)
     }
 
@@ -79,7 +79,7 @@ class PlayableDemoActivity : AppCompatActivity() {
         super.onDestroy()
         playable!!.removeEventListener(listener)
         playable!!.apply {
-            this.detachView()
+            this.playerView = null
             this.release()
         }
         app_bar.removeOnOffsetChangedListener(offsetChangeListener)
