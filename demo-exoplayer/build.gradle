@@ -63,8 +63,6 @@ dependencies {
   implementation project(':toro-exoplayer')
 
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
-  implementation "com.google.android.exoplayer:extension-rtmp:${rootProject.ext.exoPlayer2Version}"
-  implementation "net.butterflytv.utils:rtmp-client:3.0.1"
 
   implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
