@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
   ~
@@ -14,8 +15,13 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <dimen name="app_bar_height">180dp</dimen>
-  <dimen name="fab_margin">16dp</dimen>
-  <dimen name="text_margin">16dp</dimen>
-</resources>
+<com.google.android.exoplayer2.ui.SimpleExoPlayerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
+    android:fitsSystemWindows="true"
+    app:resize_mode="fixed_width"
+    />

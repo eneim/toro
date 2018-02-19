@@ -17,8 +17,11 @@
 package im.ene.toro.exoplayer;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import java.net.CookieHandler;
@@ -72,7 +75,7 @@ public final class ToroExo {
     this.playerPools = new HashMap<>();
     this.creators = new HashMap<>();
 
-    // Adapt from ExoPlayer demo app.
+    // Adapt from ExoPlayer demo app. Start this on demand.
     CookieManager cookieManager = new CookieManager();
     cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
     if (CookieHandler.getDefault() != cookieManager) {
@@ -80,7 +83,7 @@ public final class ToroExo {
     }
   }
 
-  public ExoCreator getCreator(Config config) {
+  public final ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
       creator = new DefaultExoCreator(context, config);
@@ -90,12 +93,53 @@ public final class ToroExo {
     return creator;
   }
 
-  public ExoCreator getDefaultCreator() {
+  public final ExoCreator getDefaultCreator() {
     return getCreator(defaultConfig);
   }
 
+  /**
+   * Request an instance of {@link SimpleExoPlayer}. It can be an existing instance cached by Pool
+   * or new one.
+   *
+   * @param creator the {@link ExoCreator} that is scoped to the {@link SimpleExoPlayer} config.
+   * @return an usable {@link SimpleExoPlayer} instance.
+   */
+  @SuppressWarnings("WeakerAccess") @NonNull  //
+  public final SimpleExoPlayer requestPlayer(ExoCreator creator) {
+    //noinspection UnusedAssignment
+    SimpleExoPlayer player = getPool(creator).acquire();
+    if (player == null) {
+      player = creator.createPlayer();
+    }
+
+    return player;
+  }
+
+  /**
+   * @param creator the {@link ExoCreator} that created the player.
+   * @param player the {@link SimpleExoPlayer} to be released back to the Pool
+   * @return true if player is released to relevant Pool, false otherwise.
+   */
+  @SuppressWarnings("WeakerAccess") //
+  public final boolean releasePlayer(ExoCreator creator, SimpleExoPlayer player) {
+    return getPool(creator).release(player);
+  }
+
+  /**
+   * Release and clear all current cached ExoPlayer instances. This should be called when
+   * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
+   */
+  public final void cleanUp() {
+    for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
+      SimpleExoPlayer item;
+      while ((item = pool.acquire()) != null) {
+        item.release();
+      }
+    }
+  }
+
   /// internal APIs
-  Pools.Pool<SimpleExoPlayer> getPool(ExoCreator creator) {
+  private Pools.Pool<SimpleExoPlayer> getPool(ExoCreator creator) {
     Pools.Pool<SimpleExoPlayer> pool = playerPools.get(creator);
     if (pool == null) {
       pool = new Pools.SimplePool<>(MAX_POOL_SIZE);
@@ -103,5 +147,9 @@ public final class ToroExo {
     }
 
     return pool;
+  }
+
+  String getString(@StringRes int resId, @Nullable Object... params) {
+    return params == null ? this.context.getString(resId) : this.context.getString(resId, params);
   }
 }

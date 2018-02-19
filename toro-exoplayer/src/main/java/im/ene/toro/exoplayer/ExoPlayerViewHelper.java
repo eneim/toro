@@ -31,7 +31,7 @@ import im.ene.toro.widget.Container;
 
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
-  @NonNull private final Playable helper;
+  @NonNull private final Playable playable;
   @NonNull private final MyEventListeners listeners;
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
@@ -41,12 +41,11 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
       @NonNull Uri uri, @NonNull ExoCreator creator) {
-    this(container, player, uri, null, creator);
+    this(container, player, uri, creator, null);
   }
 
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
-      @NonNull Uri uri, @Nullable Playable.EventListener eventListener,
-      @NonNull ExoCreator creator) {
+      @NonNull Uri uri, @NonNull ExoCreator creator, Playable.EventListener eventListener) {
     super(container, player);
     if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
       throw new IllegalArgumentException("Require SimpleExoPlayerView");
@@ -54,45 +53,45 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     listeners = new MyEventListeners();
     if (eventListener != null) listeners.add(eventListener);
-    helper = creator.createPlayable(uri);
+    playable = creator.createPlayable(uri);
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
-    helper.addEventListener(listeners);
-    helper.prepare();
-    helper.attachView((SimpleExoPlayerView) player.getPlayerView());
-    if (playbackInfo != null) helper.setPlaybackInfo(playbackInfo);
+    playable.addEventListener(listeners);
+    playable.prepare();
+    playable.setPlayerView((SimpleExoPlayerView) player.getPlayerView());
+    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
   @Override public void release() {
     super.release();
-    helper.detachView();
-    helper.removeEventListener(listeners);
-    helper.release();
+    playable.setPlayerView(null);
+    playable.removeEventListener(listeners);
+    playable.release();
   }
 
   @Override public void play() {
-    helper.play();
+    playable.play();
   }
 
   @Override public void pause() {
-    helper.pause();
+    playable.pause();
   }
 
   @Override public boolean isPlaying() {
-    return helper.isPlaying();
+    return playable.isPlaying();
   }
 
   @Override public void setVolume(float volume) {
-    helper.setVolume(volume);
+    playable.setVolume(volume);
   }
 
   @Override public float getVolume() {
-    return helper.getVolume();
+    return playable.getVolume();
   }
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
-    return helper.getPlaybackInfo();
+    return playable.getPlaybackInfo();
   }
 
   @SuppressWarnings("WeakerAccess") //

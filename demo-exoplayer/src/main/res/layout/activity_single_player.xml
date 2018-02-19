@@ -43,16 +43,6 @@
         app:toolbarId="@+id/toolbar"
         >
 
-      <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-          android:id="@+id/playerView"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:minHeight="232dp"
-          app:resize_mode="fixed_width"
-          app:surface_type="texture_view"
-          app:use_controller="false"
-          />
-
       <android.support.v7.widget.Toolbar
           android:id="@+id/toolbar"
           android:layout_width="match_parent"

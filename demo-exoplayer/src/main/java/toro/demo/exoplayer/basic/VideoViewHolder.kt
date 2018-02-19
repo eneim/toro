@@ -24,7 +24,6 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import im.ene.toro.ToroPlayer
 import im.ene.toro.ToroUtil.visibleAreaOffset
 import im.ene.toro.exoplayer.ExoPlayerViewHelper
-import im.ene.toro.exoplayer.Playable.DefaultEventListener
 import im.ene.toro.media.PlaybackInfo
 import im.ene.toro.widget.Container
 import org.jsoup.nodes.Element
@@ -67,8 +66,10 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
     override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
 
     override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
-        if (helper === null) helper = ExoPlayerViewHelper(container, this,
-                videoUri!!, DefaultEventListener(), DemoApp.exoCreator!!)
+        if (helper === null) {
+            helper = ExoPlayerViewHelper(container, this,
+                    videoUri!!, DemoApp.exoCreator!!, null)
+        }
         helper!!.initialize(playbackInfo)
     }
 

@@ -42,12 +42,22 @@ public final class SimpleExoPlayerViewHelper extends ExoPlayerViewHelper {
   }
 
   private ListenerWrapper listener;
+  private Player.EventListener eventListener;
 
   public final void setEventListener(Player.EventListener eventListener) {
-    if (eventListener == null) {
-      if (this.listener != null) super.removeEventListener(this.listener);
-    } else if (this.listener == null) {
-      this.listener = new ListenerWrapper(eventListener);
+    if (this.eventListener == eventListener) return;  // nothing change
+    if (this.listener != null) { // == this.eventListener != null
+      // new listener is different, so we clean current listener first.
+      super.removeEventListener(this.listener);
+      this.listener = null;
+    }
+
+    this.eventListener = eventListener;
+    //noinspection StatementWithEmptyBody
+    if (this.eventListener == null) { // Client is trying to clear current listener.
+      // do nothing, cleanup is done up there, but keep this block for acknowledgement.
+    } else {  // eventListener is not null --> Client is setting an actual listener.
+      this.listener = new ListenerWrapper(this.eventListener);
       super.addEventListener(this.listener);
     }
   }

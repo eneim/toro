@@ -180,7 +180,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
           .createPlayable(videoItem.getMediaUrl().getUri());
       playerHelper.prepare();
     }
-    playerHelper.attachView(playerView);
+    playerHelper.setPlayerView(playerView);
     playerHelper.setPlaybackInfo(playbackInfo);
     playerHelper.play();
   }
@@ -201,7 +201,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   @Override public void onDestroyView() {
     if (playerHelper != null) {
       playbackInfo = playerHelper.getPlaybackInfo();
-      playerHelper.detachView();
+      playerHelper.setPlayerView(null);
       playerHelper.release();
       playerHelper = null;
     }

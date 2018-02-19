@@ -39,16 +39,16 @@
         android:name=".playable.PlayableDemoActivity"
         android:label="@string/title_activity_single_player"
         android:theme="@style/AppTheme.NoActionBar">
-    </activity>
-    <activity
-        android:name=".creator.CreatorDemoActivity"
-        android:label="@string/title_activity_single_player"
-        android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
+    </activity>
+    <activity
+        android:name=".creator.CreatorDemoActivity"
+        android:label="@string/title_activity_single_player"
+        android:theme="@style/AppTheme.NoActionBar">
     </activity>
   </application>
 

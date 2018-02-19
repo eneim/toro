@@ -16,16 +16,16 @@
 
 package toro.demo.exoplayer.playable
 
+import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout.OnOffsetChangedListener
 import android.support.v7.app.AppCompatActivity
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import im.ene.toro.exoplayer.Playable
 import im.ene.toro.exoplayer.Playable.DefaultEventListener
-import kotlinx.android.synthetic.main.activity_single_player.app_bar
-import kotlinx.android.synthetic.main.activity_single_player.playerView
 import kotlinx.android.synthetic.main.activity_single_player.toolbar
+import kotlinx.android.synthetic.main.activity_single_player_landscape.player_view
+import kotlinx.android.synthetic.main.content_single_player.playerView
 import toro.demo.exoplayer.DemoApp
 import toro.demo.exoplayer.R
 
@@ -39,49 +39,57 @@ class PlayableDemoActivity : AppCompatActivity() {
     }
 
     private var playable: Playable? = null
-    private val offsetChangeListener: OnOffsetChangedListener by lazy {
-        OnOffsetChangedListener { app_bar, offset ->
-            val rate = ((app_bar.height + offset.toFloat()) / app_bar.height.toFloat())
-            if (rate < 0.75) playable!!.pause() else if (!playable!!.isPlaying) playable!!.play()
-        }
-    }
+    private var exoPlayerView: SimpleExoPlayerView? = null
 
     private val listener = object : DefaultEventListener() {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            val active = playbackState > Player.STATE_IDLE && playbackState < Player.STATE_ENDED
-            playerView.keepScreenOn = active
+            exoPlayerView!!.keepScreenOn = playWhenReady
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_single_player)
-        setSupportActionBar(toolbar)
+        val windowSize = Point()
+        window.windowManager.defaultDisplay.getSize(windowSize)
+        val landscape = windowSize.y < windowSize.x
+        exoPlayerView = //
+                if (landscape) {
+                    setContentView(R.layout.activity_single_player_landscape)
+                    player_view
+                } else {
+                    setContentView(R.layout.activity_single_player)
+                    setSupportActionBar(toolbar)
+                    playerView
+                }
 
-        playable = DemoApp.exoCreator!!.createPlayable(videoUri)
+        playable = lastCustomNonConfigurationInstance as Playable?
+        if (playable == null) {
+            playable = DemoApp.exoCreator!!.createPlayable(videoUri)
+            playable!!.prepare()
+        }
         playable!!.addEventListener(listener)
-        playable!!.prepare()
-        playable!!.attachView(playerView)
-        app_bar.addOnOffsetChangedListener(offsetChangeListener)
     }
 
     override fun onStart() {
         super.onStart()
-        playable!!.play()
+        playable!!.playerView = exoPlayerView
+        if (!playable!!.isPlaying) playable!!.play()
     }
 
     override fun onStop() {
         super.onStop()
-        playable!!.pause()
+        // If the activity is not finishing, we keep it playing.
+        if (isFinishing) playable!!.pause()
+        playable!!.playerView = null
     }
 
     override fun onDestroy() {
         super.onDestroy()
         playable!!.removeEventListener(listener)
-        playable!!.apply {
-            this.detachView()
-            this.release()
-        }
-        app_bar.removeOnOffsetChangedListener(offsetChangeListener)
+        if (isFinishing) playable!!.release()
+    }
+
+    override fun onRetainCustomNonConfigurationInstance(): Any {
+        return playable!!
     }
 }

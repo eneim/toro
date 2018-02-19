@@ -176,7 +176,7 @@ public class SinglePlayerActivity extends BaseActivity {
 
   @Override protected void onStart() {
     super.onStart();
-    playerHelper.attachView(playerView);
+    playerHelper.setPlayerView(playerView);
     if (!playerHelper.isPlaying()) {
       playerHelper.play();
     }
@@ -189,14 +189,14 @@ public class SinglePlayerActivity extends BaseActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    playerHelper.detachView();
+    playerHelper.setPlayerView(null);
     playerHelper.release();
     playerHelper = null;
   }
 
   @Override public void onBackPressed() {
     super.onBackPressed();
-    playerHelper.detachView();
+    playerHelper.setPlayerView(null);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {

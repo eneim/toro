@@ -47,4 +47,9 @@ class DemoApp : Application() {
                 .build()
         exoCreator = ToroExo.with(this).getCreator(config)
     }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level == TRIM_MEMORY_RUNNING_LOW) ToroExo.with(this).cleanUp()
+    }
 }
