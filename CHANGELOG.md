@@ -17,6 +17,7 @@ Changelog
   - ``ToroExo#releasePlayer(ExoCreator, SimpleExoPlayer)`` is added, on-par with the method above. Client can use this method to release an SimpleExoPlayer instance back to the Pool (which must be mapped to the ExoCreator).
 - Other changes:
   - ``DefaultExoCreator`` is changed to public so that client can extend it for custom usage.
+  - ``ExoPlayerViewHelper`` constructor signature's items order has been change.
  
 - Update to ``demo-exoplayer``: PlayableDemoActivity.kt has been updated with the logic to reuse ``Playable`` instance across config change. This shows how to keep the playback smooth across config change (eg: Window size change, Orientation change, etc). This update take the use of ``onRetainCustomNonConfigurationInstance`` which may or may not good practice, so User to this library should consider this as a "Proof of Concept" kind of thing, and get the concept of how it *can work*. I actively work on this to figure out a good way for production level stability.
   - How is the behavior: the Activity can start normally in either orientation. If it starts in landscape mode or multi windows mode whose horizontal edge is longer than vertical edge, it will be a single full-screen player. If it starts in portrait mode or multi windows mode whose horizontal edge is shorter than vertical edge, it will be a list of content and the Player view stays on top of the LinearLayout (inside a NestedScrollView, etc).
