@@ -1,7 +1,29 @@
 Changelog
 ===========
 
-3.4.0-alpha1 (2018/02/XX)
+3.4.0-alpha2 (2018/02/19)
+--------------
+
+> This release improve alpha 1, regarding usability of Playable instance, minor (but important) implementation improvement that in turns improve client UX and performance, and many other tiny tuning.
+
+- Changes for ``Playable``:
+  - ``attacheView(SimpleExoPlayerView)`` and ``detachView()`` are replaced by one method ``setPlayerView(SimpleExoPlayerView)``, makes more sense.
+  - ``Playable.EventListener`` now extends ``MetadataOutput`` as well. Client should update the implementation.
+  - ``PlayableImpl`` has been improve so that: ``MediaSource`` will be prepared only after client calls ``play()`` for the first time. **This is to prevent Device to download the media even if the playback is not requested.** 
+  
+- Changes for ``ToroExo``:
+  - ``ToroExo#cleanUp()`` is added so that client can aggressively/actively cleanup all currently cached SimpleExoPlayer instance. This is useful when the Application is running out of memory. Note that only instances those are staying in the Pool are released, ones are in used is not affected by this, which is expected.
+  - ``ToroExo#requestPlayer(ExoCreator)`` is added, so that client can effectively request for SimpleExoPlayer instance. Instead of calling ``ExoCreator#createPlayer()`` in alpha1, which will not mind the cache, this method will only create new instance of there is no cache in the Pool.
+  - ``ToroExo#releasePlayer(ExoCreator, SimpleExoPlayer)`` is added, on-par with the method above. Client can use this method to release an SimpleExoPlayer instance back to the Pool (which must be mapped to the ExoCreator).
+- Other changes:
+  - ``DefaultExoCreator`` is changed to public so that client can extend it for custom usage.
+ 
+- Update to ``demo-exoplayer``: PlayableDemoActivity.kt has been updated with the logic to reuse ``Playable`` instance across config change. This shows how to keep the playback smooth across config change (eg: Window size change, Orientation change, etc). This update take the use of ``onRetainCustomNonConfigurationInstance`` which may or may not good practice, so User to this library should consider this as a "Proof of Concept" kind of thing, and get the concept of how it *can work*. I actively work on this to figure out a good way for production level stability.
+  - How is the behavior: the Activity can start normally in either orientation. If it starts in landscape mode or multi windows mode whose horizontal edge is longer than vertical edge, it will be a single full-screen player. If it starts in portrait mode or multi windows mode whose horizontal edge is shorter than vertical edge, it will be a list of content and the Player view stays on top of the LinearLayout (inside a NestedScrollView, etc).
+  - When you change the config by either change the orientation or enter multi windows mode, the Activity do necessary cleanup, save the Playable instance via ``onRetainCustomNonConfigurationInstance`` and so on. When the Activity is recreated, retrieve the Playable and update its Player view to the new one. This way, the Audio playback is kept smoothly while Video playback is disturbed by the Config change only.
+  - Note that this implementation involves 'Switching the Surface' for SimpleExoPlayer, which in turns the MediaCodec and so on. This work is known to be troublesome in low-spec/low-level Devices. It should work best on API 23+. So making it widely usable in production is a long way ahead. Just you have been warned.
+
+3.4.0-alpha1 (2018/02/12)
 --------------
 
 This pre-release bring overall improvement to ExoPlayer extension. The interfaces are kept unchanged (or a little), but the underneath implementation is re-written. Detail is as below:
