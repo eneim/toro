@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2017 Nam Nguyen, nam@ene.im
+  ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,15 +15,22 @@
   ~ limitations under the License.
   -->
 
-<im.ene.toro.widget.Container xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/container"
+    android:id="@+id/card"
     android:layout_width="match_parent"
-    android:layout_height="240dp"
-    android:layout_marginTop="8dp"
-    android:background="@color/cardview_light_background"
-    android:clipToPadding="false"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-    />
+    android:layout_height="match_parent"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="1dp"
+    >
+
+  <TextView
+      android:id="@+id/text"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:minWidth="@dimen/app_bar_height"
+      android:padding="16dp"
+      android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
+      />
+
+</android.support.v7.widget.CardView>
