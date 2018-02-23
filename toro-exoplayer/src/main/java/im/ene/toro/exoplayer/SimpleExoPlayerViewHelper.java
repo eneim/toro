@@ -69,8 +69,8 @@ public final class SimpleExoPlayerViewHelper extends ExoPlayerViewHelper {
       this.weakerDelegate = weakerDelegate;
     }
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-      weakerDelegate.onTimelineChanged(timeline, manifest);
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+      weakerDelegate.onTimelineChanged(timeline, manifest, reason);
     }
 
     @Override

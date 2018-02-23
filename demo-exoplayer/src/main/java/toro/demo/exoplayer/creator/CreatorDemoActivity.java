@@ -23,7 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.exoplayer.ExoCreator;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.exoplayer.ToroExo;
@@ -39,7 +39,7 @@ public class CreatorDemoActivity extends AppCompatActivity {
 
   static final Uri videoUri = Uri.parse("file:///android_asset/bbb/video.mp4");
 
-  SimpleExoPlayerView playerView;
+  PlayerView playerView;
 
   ExoCreator creator;
   SimpleExoPlayer exoPlayer;

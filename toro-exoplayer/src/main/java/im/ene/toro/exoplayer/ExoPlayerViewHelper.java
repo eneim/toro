@@ -19,7 +19,7 @@ package im.ene.toro.exoplayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
@@ -47,7 +47,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   public ExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
       @NonNull Uri uri, @NonNull ExoCreator creator, Playable.EventListener eventListener) {
     super(container, player);
-    if (!(player.getPlayerView() instanceof SimpleExoPlayerView)) {
+    if (!(player.getPlayerView() instanceof PlayerView)) {
       throw new IllegalArgumentException("Require SimpleExoPlayerView");
     }
 
@@ -59,7 +59,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
     playable.addEventListener(listeners);
     playable.prepare();
-    playable.setPlayerView((SimpleExoPlayerView) player.getPlayerView());
+    playable.setPlayerView((PlayerView) player.getPlayerView());
     if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 

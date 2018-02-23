@@ -22,7 +22,6 @@ import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
@@ -30,7 +29,8 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.video.VideoListener;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,10 +49,10 @@ public interface Playable {
   void prepare();
 
   // Attach a new PlayerView to current Playable.
-  void setPlayerView(@Nullable SimpleExoPlayerView playerView);
+  void setPlayerView(@Nullable PlayerView playerView);
 
   // Return current attached SimpleExoPlayerView.
-  @Nullable SimpleExoPlayerView getPlayerView();
+  @Nullable PlayerView getPlayerView();
 
   void play();
 
@@ -80,14 +80,13 @@ public interface Playable {
   @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   // Combine necessary interfaces.
-  interface EventListener extends Player.EventListener, SimpleExoPlayer.VideoListener, TextOutput,
-      MetadataOutput {
+  interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {
 
   }
 
   class DefaultEventListener implements EventListener {
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
 
     }
 
@@ -166,9 +165,9 @@ public interface Playable {
       }
     }
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
       for (EventListener eventListener : this) {
-        eventListener.onTimelineChanged(timeline, manifest);
+        eventListener.onTimelineChanged(timeline, manifest, reason);
       }
     }
 

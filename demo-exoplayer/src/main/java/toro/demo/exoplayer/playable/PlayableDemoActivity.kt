@@ -20,7 +20,7 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView
+import com.google.android.exoplayer2.ui.PlayerView
 import im.ene.toro.exoplayer.Playable
 import im.ene.toro.exoplayer.Playable.DefaultEventListener
 import kotlinx.android.synthetic.main.activity_single_player.toolbar
@@ -39,7 +39,7 @@ class PlayableDemoActivity : AppCompatActivity() {
     }
 
     private var playable: Playable? = null
-    private var exoPlayerView: SimpleExoPlayerView? = null
+    private var exoPlayerView: PlayerView? = null
 
     private val listener = object : DefaultEventListener() {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
