@@ -28,9 +28,9 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.widget.Container;
 
 /**
- * @author eneim (2018/02/05).
+ * {@link Deprecated}. Keep this for backward compatibility. Will be removed from 3.5.0.
  *
- *         {@link Deprecated}. Keep this for backward compatibility. Will be removed from 3.5.0.
+ * @author eneim (2018/02/05).
  */
 
 @Deprecated //

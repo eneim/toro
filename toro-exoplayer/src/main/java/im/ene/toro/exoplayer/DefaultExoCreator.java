@@ -60,9 +60,10 @@ import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
 import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
 /**
- * @author eneim (2018/02/04).
+ * Usage: use this as-it or inheritance.
  *
- *         Usage: use this as-it or inheritance.
+ * @author eneim (2018/02/04).
+ * @since 3.4.0
  */
 
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
@@ -328,7 +329,6 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
           Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
     }
-
   }
 
   private static class ListenerWrapper implements Playable.EventListener {

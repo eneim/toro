@@ -27,6 +27,7 @@ import im.ene.toro.widget.Container;
 
 /**
  * @author eneim (2018/01/24).
+ * @since 3.4.0
  */
 
 public class ExoPlayerViewHelper extends ToroPlayerHelper {

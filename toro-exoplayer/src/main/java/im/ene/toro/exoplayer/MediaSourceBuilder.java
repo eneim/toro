@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.util.Util;
  * @author eneim (2018/01/24).
  * @since 3.4.0
  */
+
 public interface MediaSourceBuilder {
 
   @NonNull MediaSource buildMediaSource(Context context, Uri uri, Handler handler,

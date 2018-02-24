@@ -31,7 +31,7 @@ import java.io.File
 class DemoApp : Application() {
 
     companion object {
-        var cacheFile = 8 * 1024 * 1024.toLong()
+        var cacheFile = 2 * 1024 * 1024.toLong() // size of each cache file.
         var demoApp: DemoApp? = null
         var exoCreator: ExoCreator? = null
     }
