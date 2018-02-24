@@ -24,10 +24,10 @@ import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
@@ -43,11 +43,11 @@ public class FlexiblePlayerViewHolder extends RecyclerView.ViewHolder implements
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_flexible;
 
-  SimpleExoPlayerViewHelper helper;
+  ExoPlayerViewHelper helper;
   Uri mediaUri;
   View.OnClickListener clickListener;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player) PlayerView playerView;
 
   public FlexiblePlayerViewHolder(View itemView) {
     super(itemView);
@@ -71,7 +71,7 @@ public class FlexiblePlayerViewHolder extends RecyclerView.ViewHolder implements
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(container, this, mediaUri);
     }
     helper.initialize(playbackInfo);
   }
