@@ -1,10 +1,17 @@
 Changelog
 ===========
 
-3.4.0-alpha3 (2018/02/xx)
+3.4.0-alpha3 (2018/02/24)
 --------------
 
-- TBD
+- **toro-core**
+  - Add ``PlayerDispatcher`` to provide more flexible playback. In detail, it can delay the call to ToroPlayer#play() where the delay time is configurable by client. Default behavior is no delay.
+
+- **toro-exoplayer**
+  - Now compile with ExoPlayer version 2.7.0. There are breaking changes in that library, so clients of Toro are expected to migrate them. The migration is trivial.
+
+- All demo apps are now compile with ExoPlayer version 2.7.0.
+  
 
 3.4.0-alpha2 (2018/02/19)
 --------------
