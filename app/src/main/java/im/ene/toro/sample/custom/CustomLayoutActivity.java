@@ -134,6 +134,7 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
 
   @Override public void onContainerAvailable(@NonNull Container container) {
     this.container = container;
+    this.container.setPlayerDispatcher((player) -> 1500);
     this.selector = container.getPlayerSelector();
   }
 }

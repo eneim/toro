@@ -35,17 +35,17 @@ import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 import static java.lang.Runtime.getRuntime;
 
 /**
+ * Global helper class to manage {@link ExoCreator} and {@link SimpleExoPlayer} instances.
+ * In this setup, {@link ExoCreator} and SimpleExoPlayer pools are cached. A {@link Config}
+ * is a key for each {@link ExoCreator}.
+ *
+ * ExoCreator creator = ToroExo.with(this).getDefaultCreator();
+ * SimpleExoPlayer player = creator.createPlayer();
+ * MediaSource source = creator.createMediaSource(videoUri);
+ * // next: do stuff with SimpleExoPlayer instance and MediaSource instance.
+ *
  * @author eneim (2018/01/26).
- *
- *         Global helper class to manage {@link ExoCreator} and {@link SimpleExoPlayer} instances.
- *
- *         In this setup, {@link ExoCreator} and SimpleExoPlayer pools are cached. A {@link Config}
- *         is a key for each {@link ExoCreator}.
- *
- *         ExoCreator creator = ToroExo.with(this).getDefaultCreator();
- *         SimpleExoPlayer player = creator.createPlayer();
- *         MediaSource source = creator.createMediaSource(videoUri);
- *         // next: do stuff with SimpleExoPlayer instance and MediaSource instance.
+ * @since 3.4.0
  */
 
 public final class ToroExo {
@@ -116,11 +116,13 @@ public final class ToroExo {
   }
 
   /**
+   * Release player to Pool attached to the creator.
+   *
    * @param creator the {@link ExoCreator} that created the player.
    * @param player the {@link SimpleExoPlayer} to be released back to the Pool
    * @return true if player is released to relevant Pool, false otherwise.
    */
-  @SuppressWarnings("WeakerAccess") //
+  @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
   public final boolean releasePlayer(ExoCreator creator, SimpleExoPlayer player) {
     return getPool(creator).release(player);
   }

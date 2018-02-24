@@ -20,13 +20,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.exoplayer.ExoCreator;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.exoplayer.ToroExo;
+import toro.demo.exoplayer.DemoApp;
 import toro.demo.exoplayer.R;
 
 /**
@@ -37,9 +39,11 @@ import toro.demo.exoplayer.R;
 
 public class CreatorDemoActivity extends AppCompatActivity {
 
-  static final Uri videoUri = Uri.parse("file:///android_asset/bbb/video.mp4");
+  static final Uri videoUri =
+      Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
+      // Uri.parse("file:///android_asset/bbb/video.mp4");
 
-  SimpleExoPlayerView playerView;
+  PlayerView playerView;
 
   ExoCreator creator;
   SimpleExoPlayer exoPlayer;
@@ -56,11 +60,13 @@ public class CreatorDemoActivity extends AppCompatActivity {
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_single_player);
+    Toolbar toolbar = findViewById(R.id.toolbar);
+    setSupportActionBar(toolbar);
 
     playerView = findViewById(R.id.playerView);
-    creator = ToroExo.with(this).getDefaultCreator();
+    creator = DemoApp.Companion.getExoCreator();
 
-    exoPlayer = creator.createPlayer();
+    exoPlayer = ToroExo.with(this).requestPlayer(creator);
     mediaSource = creator.createMediaSource(videoUri);
     exoPlayer.addListener(listener);
     exoPlayer.prepare(mediaSource);

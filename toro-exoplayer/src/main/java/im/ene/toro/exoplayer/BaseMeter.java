@@ -23,7 +23,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
 /**
- * @author eneim (2018/01/26). Abstract the {@link DefaultBandwidthMeter}, provide a wider use.
+ * Abstract the {@link DefaultBandwidthMeter}, provide a wider use.
+ *
+ * @author eneim (2018/01/26).
+ * @since 3.4.0
  */
 
 @SuppressWarnings("WeakerAccess") //

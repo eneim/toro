@@ -82,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-      <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+      <com.google.android.exoplayer2.ui.PlayerView
           android:id="@+id/fb_video_player"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
             android:textAppearance="@style/DebugText"
             android:textColor="#FFFF00"
             />
-      </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+      </com.google.android.exoplayer2.ui.PlayerView>
     </FrameLayout>
 
     <LinearLayout

@@ -15,23 +15,22 @@
   ~ limitations under the License.
   -->
 
-<com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="1dp"
-    app:resize_mode="fixed_width"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="1dp"
     >
 
-  <com.google.android.exoplayer2.ui.PlayerView
-      android:id="@+id/player"
+  <TextView
+      android:id="@+id/text"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      app:resize_mode="fixed_width"
-      app:shutter_background_color="?attr/colorButtonNormal"
-      app:surface_type="texture_view"
-      app:use_controller="false"
+      android:minWidth="@dimen/app_bar_height"
+      android:padding="16dp"
+      android:textAppearance="@style/Base.TextAppearance.AppCompat.Body1"
       />
 
-</com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+</android.support.v7.widget.CardView>

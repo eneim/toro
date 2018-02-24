@@ -33,7 +33,7 @@ import android.view.Window;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.media.PlaybackInfo;
@@ -83,13 +83,13 @@ public class SinglePlayerActivity extends BaseActivity {
   Point playerSize;
   Point videoSize;
   // ONLY start with fullscreen on landscape mode or not.
-  // If true: this Activity starts in landscape mode, no changeable.
-  // If false: this Activity starts in current screen mode, changeable by user (eg: rotate device).
+  // If true: this Activity starts in landscape mode, unchangeable.
+  // If false: this Activity starts in current screen mode, changeable by config change.
   private boolean fullscreen;
 
-  private Playable playerHelper;
+  private Playable playable;
 
-  @BindView(R.id.player_view) SimpleExoPlayerView playerView;
+  @BindView(R.id.player_view) PlayerView playerView;
   // Views below are not available in landscape mode.
   @Nullable @BindView(R.id.media_description) TextView mediaDescription;
 
@@ -159,7 +159,7 @@ public class SinglePlayerActivity extends BaseActivity {
     }
 
     if (mediaDescription != null) mediaDescription.setText(Html.fromHtml(content));
-    playerHelper = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri);
+    playable = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri);
 
     ActivityCompat.postponeEnterTransition(this);
     playerView.getViewTreeObserver()
@@ -170,48 +170,48 @@ public class SinglePlayerActivity extends BaseActivity {
           }
         });
 
-    playerHelper.prepare();
-    if (playbackInfo != null) playerHelper.setPlaybackInfo(playbackInfo);
+    playable.prepare();
+    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
   @Override protected void onStart() {
     super.onStart();
-    playerHelper.setPlayerView(playerView);
-    if (!playerHelper.isPlaying()) {
-      playerHelper.play();
+    playable.setPlayerView(playerView);
+    if (!playable.isPlaying()) {
+      playable.play();
     }
   }
 
   @Override protected void onStop() {
     super.onStop();
-    playerHelper.pause();
+    playable.pause();
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    playerHelper.setPlayerView(null);
-    playerHelper.release();
-    playerHelper = null;
+    playable.setPlayerView(null);
+    playable.release();
+    playable = null;
   }
 
   @Override public void onBackPressed() {
     super.onBackPressed();
-    playerHelper.setPlayerView(null);
+    playable.setPlayerView(null);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (playerHelper != null) {
-      PlaybackInfo info = playerHelper.getPlaybackInfo();
+    if (playable != null) {
+      PlaybackInfo info = playable.getPlaybackInfo();
       outState.putParcelable(STATE_MEDIA_PLAYBACK_INFO, info);
     }
   }
 
   @Override public void finish() {
-    if (playerHelper != null) {
+    if (playable != null) {
       Intent intent = new Intent();
       intent.putExtra(RESULT_EXTRA_PLAYER_ORDER, order);
-      intent.putExtra(RESULT_EXTRA_PLAYBACK_INFO, playerHelper.getPlaybackInfo());
+      intent.putExtra(RESULT_EXTRA_PLAYBACK_INFO, playable.getPlaybackInfo());
       setResult(Activity.RESULT_OK, intent);
     }
     super.finish();

@@ -43,7 +43,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -60,9 +60,10 @@ import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
 import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
 /**
- * @author eneim (2018/02/04).
+ * Usage: use this as-it or inheritance.
  *
- *         Usage: use this as-it or inheritance.
+ * @author eneim (2018/02/04).
+ * @since 3.4.0
  */
 
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
@@ -199,7 +200,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     final ExoCreator creator; // cached
 
     private SimpleExoPlayer player; // on-demand, cached
-    private SimpleExoPlayerView playerView; // on-demand, not always required.
+    private PlayerView playerView; // on-demand, not always required.
     private ListenerWrapper listenerWrapper;  // proxy to wrap original listener.
     private MediaSource mediaSource;  // on-demand
 
@@ -220,6 +221,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
         player.addListener(listenerWrapper);
         player.addVideoListener(listenerWrapper);
         player.addTextOutput(listenerWrapper);
+        player.addMetadataOutput(listenerWrapper);
       }
 
       if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
@@ -232,14 +234,14 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       this.inErrorState = false;
     }
 
-    @Override public void setPlayerView(@Nullable SimpleExoPlayerView playerView) {
+    @Override public void setPlayerView(@Nullable PlayerView playerView) {
       if (this.player == null) throw new IllegalStateException("Player is null, prepare it first.");
       if (this.playerView == playerView) return;
-      SimpleExoPlayerView.switchTargetView(this.player, this.playerView, playerView);
+      PlayerView.switchTargetView(this.player, this.playerView, playerView);
       this.playerView = playerView;
     }
 
-    @Override public SimpleExoPlayerView getPlayerView() {
+    @Override public PlayerView getPlayerView() {
       return this.playerView;
     }
 
@@ -274,6 +276,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
           player.removeListener(listenerWrapper);
           player.removeVideoListener(listenerWrapper);
           player.removeTextOutput(listenerWrapper);
+          player.removeMetadataOutput(listenerWrapper);
           listenerWrapper = null;
         }
         toro.releasePlayer(this.creator, this.player);
@@ -326,7 +329,6 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
           Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
     }
-
   }
 
   private static class ListenerWrapper implements Playable.EventListener {
@@ -348,8 +350,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
       delegate.onRenderedFirstFrame();
     }
 
-    @Override public void onTimelineChanged(Timeline timeline, Object manifest) {
-      delegate.onTimelineChanged(timeline, manifest);
+    @Override public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+      delegate.onTimelineChanged(timeline, manifest, reason);
     }
 
     @Override

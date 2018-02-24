@@ -31,20 +31,23 @@ import im.ene.toro.CacheManager;
 public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
     implements CacheManager {
 
-  private final int MEDIA_LIST_POSITION = 3;
+  private static final int MEDIA_LIST_POSITION = 3;
 
+  private LayoutInflater inflater;
   private final MediaList mediaList = new MediaList();
 
   @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    if (inflater == null || inflater.getContext() != parent.getContext()) {
+      inflater = LayoutInflater.from(parent.getContext());
+    }
+
     final View view;
     final BaseViewHolder viewHolder;
     if (viewType == 1000) {
-      view = LayoutInflater.from(parent.getContext())
-          .inflate(MediaListViewHolder.LAYOUT_RES, parent, false);
+      view = inflater.inflate(MediaListViewHolder.LAYOUT_RES, parent, false);
       viewHolder = new MediaListViewHolder(view);
     } else {
-      view = LayoutInflater.from(parent.getContext())
-          .inflate(TextViewHolder.LAYOUT_RES, parent, false);
+      view = inflater.inflate(TextViewHolder.LAYOUT_RES, parent, false);
       viewHolder = new TextViewHolder(view);
     }
 
@@ -66,7 +69,14 @@ public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
   @Override public void onViewDetachedFromWindow(BaseViewHolder holder) {
     super.onViewDetachedFromWindow(holder);
     if (holder instanceof MediaListViewHolder) {
-      ((MediaListViewHolder) holder).detach();
+      ((MediaListViewHolder) holder).onDetached();
+    }
+  }
+
+  @Override public void onViewAttachedToWindow(BaseViewHolder holder) {
+    super.onViewAttachedToWindow(holder);
+    if (holder instanceof MediaListViewHolder) {
+      ((MediaListViewHolder) holder).onAttached();
     }
   }
 

@@ -33,8 +33,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.BindView;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Sorted;
@@ -100,11 +101,14 @@ public class FlexibleListFragment extends BaseFragment {
         String content = getString(contents[position % contents.length]);
         Point viewSize = new Point(view.getWidth(), view.getHeight());
         Point videoSize = new Point(view.getWidth(), view.getHeight());
-        if (view instanceof SimpleExoPlayerView
-            && ((SimpleExoPlayerView) view).getPlayer() != null) {
-          SimpleExoPlayer player = ((SimpleExoPlayerView) view).getPlayer();
-          Format videoFormat = player.getVideoFormat();
-          if (videoFormat.width != Format.NO_VALUE && videoFormat.height != Format.NO_VALUE) {
+        if (view instanceof PlayerView && ((PlayerView) view).getPlayer() != null) {
+          Player player = ((PlayerView) view).getPlayer();
+          Format videoFormat =  //
+              player instanceof SimpleExoPlayer ? ((SimpleExoPlayer) player).getVideoFormat()
+                  : null;
+          if (videoFormat != null
+              && videoFormat.width != Format.NO_VALUE
+              && videoFormat.height != Format.NO_VALUE) {
             videoSize.set(videoFormat.width, videoFormat.height);
           }
         }

@@ -101,6 +101,9 @@ public class ComplexListFragment extends BaseFragment {
       }
     };
 
+    // A demo of using PlayerDispatcher flexible, may not be practical.
+    container.setPlayerDispatcher(player -> player.getPlayerOrder() % 2 == 1 ? 0 : 1500);
+
     if (viewPagerMode) {
       if (getUserVisibleHint()) {
         selector = activeSelector;
