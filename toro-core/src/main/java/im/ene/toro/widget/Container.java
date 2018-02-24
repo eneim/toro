@@ -34,8 +34,10 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.CacheManager;
+import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,6 +79,7 @@ public class Container extends RecyclerView {
   static final int SOME_BLINKS = 50;  // 3 frames ...
 
   /* package */ final PlayerManager playerManager;
+  /* package */ PlayerDispatcher playerDispatcher = PlayerDispatcher.DEFAULT;
   /* package */ RecyclerListenerImpl recyclerListener;  // null = not attached/detached
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
   /* package */ Handler animatorFinishHandler;  // null = not attached/detached
@@ -310,6 +313,10 @@ public class Container extends RecyclerView {
    */
   @Nullable public final PlayerSelector getPlayerSelector() {
     return playerSelector;
+  }
+
+  public final void setPlayerDispatcher(@NonNull PlayerDispatcher playerDispatcher) {
+    this.playerDispatcher = ToroUtil.checkNotNull(playerDispatcher);
   }
 
   ////// Handle update after data change animation
