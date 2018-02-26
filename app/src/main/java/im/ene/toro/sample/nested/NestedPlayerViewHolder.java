@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
@@ -42,7 +42,7 @@ public class NestedPlayerViewHolder extends BaseViewHolder implements ToroPlayer
   ExoPlayerViewHelper helper;
   Uri mediaUri;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player) PlayerView playerView;
 
   public NestedPlayerViewHolder(View itemView) {
     super(itemView);
@@ -64,9 +64,9 @@ public class NestedPlayerViewHolder extends BaseViewHolder implements ToroPlayer
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {

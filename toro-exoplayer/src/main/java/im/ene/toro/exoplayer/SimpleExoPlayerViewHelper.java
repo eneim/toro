@@ -28,17 +28,18 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.widget.Container;
 
 /**
- * {@link Deprecated}. Keep this for backward compatibility. Will be removed from 3.5.0.
- *
  * @author eneim (2018/02/05).
+ * @deprecated Use {@link ExoPlayerViewHelper} instead. Keep this for backward compatibility. Will
+ * be removed from 3.5.0.
  */
 
 @Deprecated //
 public final class SimpleExoPlayerViewHelper extends ExoPlayerViewHelper {
 
-  public SimpleExoPlayerViewHelper(@NonNull Container container, @NonNull ToroPlayer player,
-      @NonNull Uri uri) {
-    super(container, player, uri);
+  @Deprecated
+  public SimpleExoPlayerViewHelper(@SuppressWarnings("unused") @NonNull Container container,
+      @NonNull ToroPlayer player, @NonNull Uri uri) {
+    super(player, uri);
   }
 
   private ListenerWrapper listener;

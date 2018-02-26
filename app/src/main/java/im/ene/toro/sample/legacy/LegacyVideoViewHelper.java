@@ -56,7 +56,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   float volume = 1f;
 
   public LegacyVideoViewHelper(Container container, ToroPlayer player, @NonNull Uri mediaUri) {
-    super(container, player);
+    super(player);
     if (!(player.getPlayerView() instanceof ToroVideoView)) {
       throw new IllegalArgumentException("Only support ToroVideoView.");
     }

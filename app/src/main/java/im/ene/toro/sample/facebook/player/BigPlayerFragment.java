@@ -30,7 +30,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import butterknife.BindView;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.media.PlaybackInfo;
@@ -126,7 +126,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     return inflater.inflate(R.layout.fragment_dialog_facebook_bigplayer, container, false);
   }
 
-  @BindView(R.id.big_player) SimpleExoPlayerView playerView;
+  @BindView(R.id.big_player) PlayerView playerView;
   Playable playerHelper;
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -163,8 +163,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
           immersiveStickyFrag = 4096; // not affective, just to by pass the lint
         }
 
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             // | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // un-comment for 100% full screen.
             // | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  // un-comment for 100% full screen.
             | immersiveStickyFrag;
@@ -178,7 +177,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     if (playerHelper == null) {
       playerHelper = ToroExo.with(getContext()).getDefaultCreator() //
           .createPlayable(videoItem.getMediaUrl().getUri());
-      playerHelper.prepare();
+      playerHelper.prepare(true);
     }
     playerHelper.setPlayerView(playerView);
     playerHelper.setPlaybackInfo(playbackInfo);

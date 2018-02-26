@@ -104,7 +104,7 @@ public final class Config {
 
   /// Builder
   @SuppressWarnings({ "unused", "WeakerAccess" }) //
-  public static class Builder {
+  public static final class Builder {
     @ExtensionRendererMode private int extensionMode = EXTENSION_RENDERER_MODE_OFF;
     private final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
     @SuppressWarnings("unchecked")  //

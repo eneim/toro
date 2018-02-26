@@ -91,10 +91,10 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
       helper.addEventListener(listener);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {

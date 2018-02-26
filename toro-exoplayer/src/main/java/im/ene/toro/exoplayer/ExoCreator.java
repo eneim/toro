@@ -32,6 +32,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 
 public interface ExoCreator {
 
+  String TAG = "ToroExo:Creator";
+
   SimpleExoPlayer createPlayer();
 
   MediaSource createMediaSource(Uri uri);

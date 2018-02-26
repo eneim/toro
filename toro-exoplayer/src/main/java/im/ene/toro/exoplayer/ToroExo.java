@@ -39,10 +39,13 @@ import static java.lang.Runtime.getRuntime;
  * In this setup, {@link ExoCreator} and SimpleExoPlayer pools are cached. A {@link Config}
  * is a key for each {@link ExoCreator}.
  *
- * ExoCreator creator = ToroExo.with(this).getDefaultCreator();
- * SimpleExoPlayer player = creator.createPlayer();
- * MediaSource source = creator.createMediaSource(videoUri);
- * // next: do stuff with SimpleExoPlayer instance and MediaSource instance.
+ * A suggested usage is as below:
+ * <code>
+ *   ExoCreator creator = ToroExo.with(this).getDefaultCreator();
+ *   Playable playable = creator.createPlayable(uri);
+ *   playable.prepare();
+ *   // TODO: setup PlayerView and start the playback.
+ * </code>
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0

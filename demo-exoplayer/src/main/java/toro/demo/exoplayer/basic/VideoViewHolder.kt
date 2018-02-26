@@ -20,7 +20,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView
+import com.google.android.exoplayer2.ui.PlayerView
 import im.ene.toro.ToroPlayer
 import im.ene.toro.ToroUtil.visibleAreaOffset
 import im.ene.toro.exoplayer.ExoPlayerViewHelper
@@ -44,7 +44,7 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
     }
 
     private val playerFrame by lazy { itemView as AspectRatioFrameLayout }
-    private val player = itemView.findViewById(R.id.player) as SimpleExoPlayerView
+    private val player = itemView.findViewById(R.id.player) as PlayerView
     private var helper: ExoPlayerViewHelper? = null
     private var videoUri: Uri? = null
 
@@ -67,10 +67,9 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
 
     override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
         if (helper === null) {
-            helper = ExoPlayerViewHelper(container, this,
-                    videoUri!!, DemoApp.exoCreator!!, null)
+            helper = ExoPlayerViewHelper(this, videoUri!!, DemoApp.exoCreator!!, null)
         }
-        helper!!.initialize(playbackInfo)
+        helper!!.initialize(container, playbackInfo)
     }
 
     override fun play() {

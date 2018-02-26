@@ -23,18 +23,18 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 
 /**
- * @author eneim | 6/11/17.
+ * General definition of a helper class for a specific {@link ToroPlayer}. This class helps
+ * forwarding the playback state to the {@link ToroPlayer} if there is any {@link EventListener}
+ * registered. It also requests the initialization for the Player.
  *
- *         General interface for a helper class for a specific {@link ToroPlayer}. This class helps
- *         forwarding the playback state to the {@link ToroPlayer} if there is any
- *         {@link ToroPlayer.EventListener} registered. It also requests the initialization for the
- *         Player.
+ * @author eneim | 6/11/17.
  */
 public abstract class ToroPlayerHelper {
 
@@ -47,7 +47,7 @@ public abstract class ToroPlayerHelper {
           break;
         case State.STATE_BUFFERING /* Player.STATE_BUFFERING */:
           internalListener.onBuffering();
-          for (ToroPlayer.EventListener callback : eventListeners) {
+          for (EventListener callback : eventListeners) {
             callback.onBuffering();
           }
           break;
@@ -58,7 +58,7 @@ public abstract class ToroPlayerHelper {
             internalListener.onPaused();
           }
 
-          for (ToroPlayer.EventListener callback : eventListeners) {
+          for (EventListener callback : eventListeners) {
             if (playWhenReady) {
               callback.onPlaying();
             } else {
@@ -68,7 +68,7 @@ public abstract class ToroPlayerHelper {
           break;
         case State.STATE_END /* Player.STATE_ENDED */:
           internalListener.onCompleted();
-          for (ToroPlayer.EventListener callback : eventListeners) {
+          for (EventListener callback : eventListeners) {
             callback.onCompleted();
           }
           break;
@@ -79,13 +79,15 @@ public abstract class ToroPlayerHelper {
     }
   });
 
-  @NonNull protected final Container container;
   @NonNull protected final ToroPlayer player;
 
+  // This instance should be setup by calling #initialize
+  protected Container container;
+
   @SuppressWarnings("WeakerAccess") //
-  final ArrayList<ToroPlayer.EventListener> eventListeners = new ArrayList<>();
+  final ArrayList<EventListener> eventListeners = new ArrayList<>();
   @SuppressWarnings("WeakerAccess") //
-  final ToroPlayer.EventListener internalListener = new ToroPlayer.EventListener() {
+  final EventListener internalListener = new EventListener() {
     @Override public void onBuffering() {
       // do nothing
     }
@@ -99,12 +101,13 @@ public abstract class ToroPlayerHelper {
     }
 
     @Override public void onCompleted() {
-      container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+      if (container != null) {
+        container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+      }
     }
   };
 
-  public ToroPlayerHelper(@NonNull Container container, @NonNull ToroPlayer player) {
-    this.container = container;
+  public ToroPlayerHelper(@NonNull ToroPlayer player) {
     this.player = player;
   }
 
@@ -114,11 +117,11 @@ public abstract class ToroPlayerHelper {
   }
 
   @SuppressWarnings("ConstantConditions")
-  public final void addPlayerEventListener(@NonNull ToroPlayer.EventListener eventListener) {
+  public final void addPlayerEventListener(@NonNull EventListener eventListener) {
     if (eventListener != null) this.eventListeners.add(eventListener);
   }
 
-  public final void removePlayerEventListener(ToroPlayer.EventListener eventListener) {
+  public final void removePlayerEventListener(EventListener eventListener) {
     this.eventListeners.remove(eventListener);
   }
 
@@ -131,8 +134,15 @@ public abstract class ToroPlayerHelper {
    * such cached information.
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
+   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead.
    */
+  @Deprecated  //
   public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
+
+  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+    this.container = container;
+    this.initialize(playbackInfo);
+  }
 
   public abstract void play();
 
@@ -159,10 +169,11 @@ public abstract class ToroPlayerHelper {
   }
 
   @CallSuper public void release() {
+    this.container = null;
     handler.removeCallbacksAndMessages(null);
   }
 
   @Override public String toString() {
-    return "ToroPlayerHelper{" + "container=" + container + ", player=" + player + '}';
+    return "Toro:Helper{" + "player=" + player + ", container=" + container + '}';
   }
 }

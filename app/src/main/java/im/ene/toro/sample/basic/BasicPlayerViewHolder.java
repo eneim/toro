@@ -64,9 +64,9 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {

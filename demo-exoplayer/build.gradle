@@ -17,6 +17,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
@@ -76,6 +77,9 @@ dependencies {
   // Because RxAndroid releases are few and far between, it is recommended you also
   // explicitly depend on RxJava's latest version for bug fixes and new features.
   implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+
+  implementation 'com.jakewharton:butterknife:8.8.1'
+  kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
 

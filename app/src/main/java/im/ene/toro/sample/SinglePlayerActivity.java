@@ -170,7 +170,7 @@ public class SinglePlayerActivity extends BaseActivity {
           }
         });
 
-    playable.prepare();
+    playable.prepare(true);
     if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
