@@ -66,9 +66,10 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
 
 /**
  * @author eneim (2018/01/01).
+ * @deprecated since 3.4.0. Use {@link ExoPlayerViewHelper} instead.
  */
 
-@SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
+@Deprecated @SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
@@ -83,7 +84,7 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
   ComponentListener componentListener;
   DefaultTrackSelector trackSelector;
 
-  MediaSourceBuilder mediaSourceBuilder;
+  MediaSourceCreator mediaSourceBuilder;
   BandwidthMeter bandwidthMeter;
 
   boolean shouldAutoPlay;
@@ -123,15 +124,15 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
     }
   }
 
-  public void prepare(@NonNull MediaSourceBuilder mediaSourceBuilder) throws ParserException {
+  public void prepare(@NonNull MediaSourceCreator mediaSourceBuilder) throws ParserException {
     prepare(mediaSourceBuilder, new DefaultBandwidthMeter(mainHandler, null));
   }
 
-  public void prepare(@NonNull MediaSourceBuilder mediaSourceBuilder,
+  public void prepare(@NonNull MediaSourceCreator mediaSourceBuilder,
       @Nullable BandwidthMeter bandwidthMeter) throws ParserException {
     //noinspection ConstantConditions
     if (mediaSourceBuilder == null) {
-      throw new IllegalArgumentException("MediaSourceBuilder must not be null.");
+      throw new IllegalArgumentException("MediaSourceCreator must not be null.");
     }
     this.mediaSourceBuilder = mediaSourceBuilder;
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
