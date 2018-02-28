@@ -45,10 +45,7 @@ android {
 }
 
 dependencies {
-  implementation fileTree(dir: 'libs', include: ['*.jar'])
-
   implementation project(':toro-core')
-
   implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
 
@@ -69,4 +66,4 @@ ext {
   releaseDescription = 'The Toro Extension for Mopub (ExoPlayer v2)'
 }
 
-apply from: '../.script/publish.gradle'
+apply from: '../gradle/script/publish.gradle'

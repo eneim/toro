@@ -56,6 +56,7 @@ import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.mopub.R;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
@@ -292,13 +293,11 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(context, im.ene.toro.R.string.error_unsupported_video, Toast.LENGTH_SHORT)
-              .show();
+          Toast.makeText(context, R.string.error_unsupported_video, Toast.LENGTH_SHORT).show();
         }
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(context, im.ene.toro.R.string.error_unsupported_audio, Toast.LENGTH_SHORT)
-              .show();
+          Toast.makeText(context, R.string.error_unsupported_audio, Toast.LENGTH_SHORT).show();
         }
       }
       int count;

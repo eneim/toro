@@ -58,4 +58,4 @@ ext {
   releaseDescription = 'The Toro Extension for ExoPlayer v2.'
 }
 
-apply from: '../.script/publish.gradle'
+apply from: '../gradle/script/publish.gradle'

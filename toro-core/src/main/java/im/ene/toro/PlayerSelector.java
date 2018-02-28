@@ -136,7 +136,6 @@ public interface PlayerSelector {
     }
   };
 
-
   @SuppressWarnings("unused") PlayerSelector NONE = new PlayerSelector() {
     @NonNull @Override public Collection<ToroPlayer> select(@NonNull Container container, //
         @Sorted(order = ASCENDING) @NonNull List<ToroPlayer> items) {

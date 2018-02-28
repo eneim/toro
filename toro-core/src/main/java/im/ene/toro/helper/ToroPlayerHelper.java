@@ -36,6 +36,7 @@ import java.util.ArrayList;
  *
  * @author eneim | 6/11/17.
  */
+@SuppressWarnings("WeakerAccess") //
 public abstract class ToroPlayerHelper {
 
   private final Handler handler = new Handler(new Handler.Callback() {
@@ -81,12 +82,10 @@ public abstract class ToroPlayerHelper {
 
   @NonNull protected final ToroPlayer player;
 
-  // This instance should be setup by calling #initialize
+  // This instance should be setup from #initialize and cleared from #release
   protected Container container;
 
-  @SuppressWarnings("WeakerAccess") //
   final ArrayList<EventListener> eventListeners = new ArrayList<>();
-  @SuppressWarnings("WeakerAccess") //
   final EventListener internalListener = new EventListener() {
     @Override public void onBuffering() {
       // do nothing
@@ -169,8 +168,8 @@ public abstract class ToroPlayerHelper {
   }
 
   @CallSuper public void release() {
-    this.container = null;
     handler.removeCallbacksAndMessages(null);
+    this.container = null;
   }
 
   @Override public String toString() {

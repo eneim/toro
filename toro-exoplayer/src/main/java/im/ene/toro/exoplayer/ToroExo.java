@@ -23,7 +23,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import im.ene.toro.annotations.Beta;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
+import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 import static java.lang.Runtime.getRuntime;
 
@@ -41,16 +44,17 @@ import static java.lang.Runtime.getRuntime;
  *
  * A suggested usage is as below:
  * <code>
- *   ExoCreator creator = ToroExo.with(this).getDefaultCreator();
- *   Playable playable = creator.createPlayable(uri);
- *   playable.prepare();
- *   // TODO: setup PlayerView and start the playback.
+ * ExoCreator creator = ToroExo.with(this).getDefaultCreator();
+ * Playable playable = creator.createPlayable(uri);
+ * playable.prepare();
+ * // next: setup PlayerView and start the playback.
  * </code>
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
  */
 
+@Beta // Currently in Beta testing.
 public final class ToroExo {
 
   @SuppressLint("StaticFieldLeak") static volatile ToroExo toro;
@@ -65,12 +69,12 @@ public final class ToroExo {
     return toro;
   }
 
-  final String appName;
-  final Config defaultConfig = new Config.Builder().build();
-
+  @NonNull final String appName;
   @NonNull private final Context context;  // Application context
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
+
+  /* pkg */ Config defaultConfig; // will be created on the first time it is used.
 
   private ToroExo(Context context) {
     this.context = context.getApplicationContext();
@@ -86,6 +90,9 @@ public final class ToroExo {
     }
   }
 
+  /**
+   * Utility method to produce {@link ExoCreator} instance from a {@link Config}.
+   */
   public final ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
@@ -96,7 +103,11 @@ public final class ToroExo {
     return creator;
   }
 
+  /**
+   * Get the default {@link ExoCreator}. This ExoCreator is configured by {@link #defaultConfig}.
+   */
   public final ExoCreator getDefaultCreator() {
+    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
     return getCreator(defaultConfig);
   }
 
@@ -104,17 +115,19 @@ public final class ToroExo {
    * Request an instance of {@link SimpleExoPlayer}. It can be an existing instance cached by Pool
    * or new one.
    *
+   * The creator may or may not be the one created by either {@link #getCreator(Config)} or
+   * {@link #getDefaultCreator()}.
+   *
    * @param creator the {@link ExoCreator} that is scoped to the {@link SimpleExoPlayer} config.
    * @return an usable {@link SimpleExoPlayer} instance.
    */
-  @SuppressWarnings("WeakerAccess") @NonNull  //
-  public final SimpleExoPlayer requestPlayer(ExoCreator creator) {
-    //noinspection UnusedAssignment
-    SimpleExoPlayer player = getPool(creator).acquire();
-    if (player == null) {
-      player = creator.createPlayer();
+  @NonNull  //
+  public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
+    SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
+    if (player == null) player = creator.createPlayer();
+    if (player.getPlaybackState() == Player.STATE_IDLE) { // should never happen
+      throw new IllegalStateException("Player#" + player.hashCode() + " is not in idle state.");
     }
-
     return player;
   }
 
@@ -126,8 +139,11 @@ public final class ToroExo {
    * @return true if player is released to relevant Pool, false otherwise.
    */
   @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
-  public final boolean releasePlayer(ExoCreator creator, SimpleExoPlayer player) {
-    return getPool(creator).release(player);
+  public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
+    if (checkNotNull(player).getPlaybackState() != Player.STATE_IDLE) {
+      throw new IllegalStateException("Player must be stopped before releasing it back to Pool.");
+    }
+    return getPool(checkNotNull(creator)).release(player);
   }
 
   /**
@@ -137,9 +153,7 @@ public final class ToroExo {
   public final void cleanUp() {
     for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
       SimpleExoPlayer item;
-      while ((item = pool.acquire()) != null) {
-        item.release();
-      }
+      while ((item = pool.acquire()) != null) item.release();
     }
   }
 
@@ -154,7 +168,10 @@ public final class ToroExo {
     return pool;
   }
 
-  String getString(@StringRes int resId, @Nullable Object... params) {
+  /**
+   * Get a possibly-non-localized String from existing resourceId.
+   */
+  /* pkg */ String getString(@StringRes int resId, @Nullable Object... params) {
     return params == null ? this.context.getString(resId) : this.context.getString(resId, params);
   }
 }

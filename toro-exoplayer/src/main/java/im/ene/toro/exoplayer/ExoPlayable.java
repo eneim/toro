@@ -17,27 +17,31 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
+import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
 
 import static com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS;
 import static im.ene.toro.exoplayer.DefaultExoCreator.isBehindLiveWindow;
 import static im.ene.toro.exoplayer.ToroExo.toro;
 
 /**
- * Making {@link Playable} extensible.
+ * Making {@link Playable} extensible. This can be used with custom {@link ExoCreator}. Extending
+ * this class must make sure the re-usability of the implementation.
  *
  * @author eneim (2018/02/26).
  */
 
-public abstract class ExoPlayable extends DefaultExoCreator.PlayableImpl {
+public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
 
   private static final String TAG = "ToroExo:Playable";
 
@@ -53,12 +57,20 @@ public abstract class ExoPlayable extends DefaultExoCreator.PlayableImpl {
 
   @Override public void prepare(boolean prepareSource) {
     if (listener == null) {
-      listener = new ListenerImpl();
+      listener = new Listener();
       super.addEventListener(listener);
     }
     super.prepare(prepareSource);
     this.lastSeenTrackGroupArray = null;
     this.inErrorState = false;
+  }
+
+  @Override public void setPlayerView(@Nullable PlayerView playerView) {
+    // This will also clear these flags
+    // TODO we need to double check this.
+    this.lastSeenTrackGroupArray = null;
+    this.inErrorState = false;
+    super.setPlayerView(playerView);
   }
 
   @Override public void reset() {
@@ -77,17 +89,19 @@ public abstract class ExoPlayable extends DefaultExoCreator.PlayableImpl {
     this.inErrorState = false;
   }
 
-  public abstract void onErrorMessage(String message);
+  @SuppressWarnings({ "WeakerAccess", "unused" }) //
+  @CallSuper public void onErrorMessage(String message) {
+    // Do nothing. Child class may need to do something with this, show a Toast maybe.
+  }
 
-  private class ListenerImpl extends DefaultEventListener {
+  private class Listener extends DefaultEventListener {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-      TrackSelector selector = ((DefaultExoCreator) creator).getTrackSelector();
-      if (selector != null && selector instanceof DefaultTrackSelector) {
-        if (trackGroups != lastSeenTrackGroupArray) {
-          MappingTrackSelector.MappedTrackInfo trackInfo =
-              ((DefaultTrackSelector) selector).getCurrentMappedTrackInfo();
+      if (trackGroups != lastSeenTrackGroupArray) {
+        TrackSelector selector = ((DefaultExoCreator) creator).getTrackSelector();
+        if (selector != null && selector instanceof DefaultTrackSelector) {
+          MappedTrackInfo trackInfo = ((DefaultTrackSelector) selector).getCurrentMappedTrackInfo();
           if (trackInfo != null) {
             if (trackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
                 == RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
@@ -99,9 +113,8 @@ public abstract class ExoPlayable extends DefaultExoCreator.PlayableImpl {
               onErrorMessage(toro.getString(R.string.error_unsupported_audio));
             }
           }
-
-          lastSeenTrackGroupArray = trackGroups;
         }
+        lastSeenTrackGroupArray = trackGroups;
       }
 
       super.onTracksChanged(trackGroups, trackSelections);
