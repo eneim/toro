@@ -48,9 +48,9 @@ class SectionContentAdapter : Adapter<BaseViewHolder>() {
 
     private var inflater: LayoutInflater? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BaseViewHolder {
-        if (inflater === null || inflater!!.context !== parent!!.context) {
-            inflater = LayoutInflater.from(parent!!.context)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        if (inflater === null || inflater!!.context !== parent.context) {
+            inflater = LayoutInflater.from(parent.context)
         }
 
         return if (viewType == typeVideo) VideoViewHolder(inflater, parent)
@@ -59,8 +59,8 @@ class SectionContentAdapter : Adapter<BaseViewHolder>() {
 
     override fun getItemCount() = this.elements.size
 
-    override fun onBindViewHolder(holder: BaseViewHolder?, position: Int) {
-        holder!!.bind(elements[position])
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        holder.bind(elements[position])
     }
 
     override fun getItemViewType(position: Int): Int {

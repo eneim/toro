@@ -51,7 +51,7 @@ allprojects {
 ext {
   androidVersion = 27
   buildToolVersion = '27.0.2'
-  supportLibraryVersion = '27.0.2'
+  supportLibraryVersion = '27.1.0'
   exoPlayer2Version = '2.7.0'
   minSupportSDKVersion = 16
 }

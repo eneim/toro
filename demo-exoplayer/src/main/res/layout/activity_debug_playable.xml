@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -27,9 +27,9 @@
   <com.google.android.exoplayer2.ui.PlayerView
       android:id="@+id/playerView"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:minHeight="200dp"
+      android:layout_height="360dp"
+      android:layout_alignParentTop="true"
+      android:background="#0a0a0a"
       app:resize_mode="fixed_width"
       app:shutter_background_color="@color/cardview_dark_background"
       app:surface_type="surface_view"
@@ -40,7 +40,7 @@
       android:id="@+id/buttonBarContainer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_gravity="bottom"
+      android:layout_alignParentBottom="true"
       android:layout_margin="8dp"
       >
     <android.support.v7.widget.LinearLayoutCompat
@@ -56,4 +56,14 @@
     </android.support.v7.widget.LinearLayoutCompat>
   </HorizontalScrollView>
 
-</FrameLayout>
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/resize_mode"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_above="@id/buttonBarContainer"
+      android:layout_margin="8dp"
+      android:gravity="start"
+      android:padding="8dp"
+      android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+      />
+</RelativeLayout>

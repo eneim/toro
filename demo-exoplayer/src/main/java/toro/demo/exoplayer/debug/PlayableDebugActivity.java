@@ -24,12 +24,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.exoplayer.Playable;
 import toro.demo.exoplayer.DemoApp;
 import toro.demo.exoplayer.R;
+
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FILL;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
+import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM;
 
 /**
  * @author eneim (2018/02/25).
@@ -41,6 +49,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
 
   Playable playable;
   LayoutInflater inflater;
+  int currentResizeMode = 0;
 
   void play() {
     if (playable != null && !playable.isPlaying()) playable.play();
@@ -72,8 +81,16 @@ public class PlayableDebugActivity extends AppCompatActivity {
     if (playable != null) playable.setVolume(1.f);
   }
 
+  void changeResizeMode() {
+    currentResizeMode++;
+    currentResizeMode = currentResizeMode % MODES.values().length;
+    playerView.setResizeMode(MODES.values()[currentResizeMode].mode);
+    resizeMode.setText("Resize mode: " + MODES.values()[currentResizeMode].name());
+  }
+
   @BindView(R.id.playerView) PlayerView playerView;
   @BindView(R.id.buttonBar) ViewGroup buttonBar;
+  @BindView(R.id.resize_mode) TextView resizeMode;
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -83,7 +100,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
     inflater = LayoutInflater.from(this);
     //noinspection ConstantConditions
     playable = DemoApp.Companion.getExoCreator().createPlayable(video);
-    playable.prepare(false);
+    playable.prepare(true);
     playable.setPlayerView(playerView);
 
     buttonBar.removeAllViews();
@@ -91,8 +108,13 @@ public class PlayableDebugActivity extends AppCompatActivity {
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Pause", v -> pause());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Reset", v -> reset());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Release", v -> release());
+    addButton(inflater, buttonBar, R.layout.widget_debug_button, "Resize mode",
+        v -> changeResizeMode());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Mute", v -> mute());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "UnMute", v -> unMute());
+
+    //playerView.setResizeMode(MODES.values()[currentResizeMode].mode);
+    changeResizeMode();
   }
 
   @Override protected void onDestroy() {
@@ -106,5 +128,19 @@ public class PlayableDebugActivity extends AppCompatActivity {
     if (view instanceof Button) ((Button) view).setText(text);
     view.setOnClickListener(listener);
     parent.addView(view);
+  }
+
+  enum MODES {
+    RESIZE_FIT(RESIZE_MODE_FIT),  //
+    RESIZE_FILL(RESIZE_MODE_FILL),  //
+    RESIZE_FIXED_HEIGHT(RESIZE_MODE_FIXED_HEIGHT),  //
+    RESIZE_FIXED_WIDTH(RESIZE_MODE_FIXED_WIDTH),  //
+    RESIZE_ZOOM(RESIZE_MODE_ZOOM);
+
+    @AspectRatioFrameLayout.ResizeMode final int mode;
+
+    MODES(int mode) {
+      this.mode = mode;
+    }
   }
 }

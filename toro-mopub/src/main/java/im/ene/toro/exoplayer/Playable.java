@@ -47,7 +47,7 @@ import java.util.List;
  * @since 3.4.0
  */
 
-public interface Playable {
+public interface Playable<T> {
 
   /**
    * Prepare the resource for a {@link SimpleExoPlayer}. This method should:
@@ -64,7 +64,7 @@ public interface Playable {
   void prepare(boolean prepareSource);
 
   /**
-   * Set the {@link SimpleExoPlayerView} for this Playable. It is expected that a playback doesn't
+   * Set the {@link T} for this Playable. It is expected that a playback doesn't
    * require a
    * UI, so this setup is optional. But it must be called after the SimpleExoPlayer is prepared,
    * which is after {@link #prepare(boolean)} and before {@link #release()}.
@@ -74,14 +74,14 @@ public interface Playable {
    *
    * @param playerView the PlayerView to set to the SimpleExoPlayer.
    */
-  void setPlayerView(@Nullable SimpleExoPlayerView playerView);
+  void setPlayerView(@Nullable T playerView);
 
   /**
-   * Get current {@link SimpleExoPlayerView} of this Playable.
+   * Get current {@link T} of this Playable.
    *
    * @return current PlayerView instance of this Playable.
    */
-  @Nullable SimpleExoPlayerView getPlayerView();
+  @Nullable T getPlayerView();
 
   /**
    * Start the playback. If the {@link MediaSource} is not prepared, then also prepare it.

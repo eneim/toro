@@ -21,6 +21,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import im.ene.toro.exoplayer.ui.PlayerView;
 
 /**
  * A simple interface whose implementation helps Client to easily create {@link SimpleExoPlayer}
@@ -41,5 +43,8 @@ public interface ExoCreator {
   MediaSource createMediaSource(@NonNull Uri uri, @Nullable String extension);
 
   // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
-  Playable createPlayable(@NonNull Uri uri, @Nullable String extension);
+  Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri, @Nullable String extension);
+
+  // Support custom PlayerView.
+  Playable<PlayerView> createPlayableCompat(@NonNull Uri uri, @Nullable String extension);
 }

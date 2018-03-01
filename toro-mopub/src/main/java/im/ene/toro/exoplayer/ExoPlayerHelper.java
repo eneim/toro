@@ -66,7 +66,7 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
 
 /**
  * @author eneim (2018/01/01).
- * @deprecated since 3.4.0. Use {@link ExoPlayerViewHelper} instead.
+ * @deprecated since 3.4.0. Use {@link ExoPlayerViewHelper} or {@link PlayerViewHelper} instead.
  */
 
 @Deprecated @SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
@@ -151,10 +151,9 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
           drmSessionManager = buildDrmSessionManager(drmSchemeUuid, drmLicenseUrl,  //
               keyRequestPropertiesArray, mainHandler);
         } catch (UnsupportedDrmException e) {
-          int errorStringId = Util.SDK_INT < 18 ? im.ene.toro.R.string.error_drm_not_supported
+          int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
               : (e.reason == REASON_UNSUPPORTED_SCHEME ?  //
-                  im.ene.toro.R.string.error_drm_unsupported_scheme
-                  : im.ene.toro.R.string.error_drm_unknown);
+                  R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown);
           Toast.makeText(context, errorStringId, Toast.LENGTH_SHORT).show();
           return;
         }
@@ -346,16 +345,16 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
               (MediaCodecRenderer.DecoderInitializationException) cause;
           if (decoderInitializationException.decoderName == null) {
             if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
-              errorString = context.getString(im.ene.toro.R.string.error_querying_decoders);
+              errorString = context.getString(R.string.error_querying_decoders);
             } else if (decoderInitializationException.secureDecoderRequired) {
-              errorString = context.getString(im.ene.toro.R.string.error_no_secure_decoder,
+              errorString = context.getString(R.string.error_no_secure_decoder,
                   decoderInitializationException.mimeType);
             } else {
-              errorString = context.getString(im.ene.toro.R.string.error_no_decoder,
+              errorString = context.getString(R.string.error_no_decoder,
                   decoderInitializationException.mimeType);
             }
           } else {
-            errorString = context.getString(im.ene.toro.R.string.error_instantiating_decoder,
+            errorString = context.getString(R.string.error_instantiating_decoder,
                 decoderInitializationException.decoderName);
           }
         }

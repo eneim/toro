@@ -23,7 +23,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import im.ene.toro.annotations.Beta;
 import java.net.CookieHandler;
@@ -125,9 +124,11 @@ public final class ToroExo {
   public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
     SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
     if (player == null) player = creator.createPlayer();
-    if (player.getPlaybackState() == ExoPlayer.STATE_IDLE) { // should never happen
-      throw new IllegalStateException("Player#" + player.hashCode() + " is not in idle state.");
-    }
+    // TODO investigate this on config change, etc
+    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
+    //if (player.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+    //  throw new IllegalStateException("Player is not in idle state.");
+    //}
     return player;
   }
 
@@ -140,9 +141,10 @@ public final class ToroExo {
    */
   @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
   public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
-    if (checkNotNull(player).getPlaybackState() != ExoPlayer.STATE_IDLE) {
-      throw new IllegalStateException("Player must be stopped before releasing it back to Pool.");
-    }
+    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
+    //if (checkNotNull(player).getPlaybackState() != ExoPlayer.STATE_IDLE) {
+    //  throw new IllegalStateException("Player must be stopped before releasing it back to Pool.");
+    //}
     return getPool(checkNotNull(creator)).release(player);
   }
 

@@ -39,7 +39,7 @@ import static im.ene.toro.exoplayer.ToroExo.with;
 
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
-  @NonNull private final Playable playable;
+  @NonNull private final Playable<SimpleExoPlayerView> playable;
   @NonNull private final MyEventListeners listeners;
 
   @Deprecated //
