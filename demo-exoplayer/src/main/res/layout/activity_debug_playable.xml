@@ -32,7 +32,7 @@
       android:background="#0a0a0a"
       app:resize_mode="fixed_width"
       app:shutter_background_color="@color/cardview_dark_background"
-      app:surface_type="surface_view"
+      app:surface_type="texture_view"
       app:use_controller="false"
       />
 

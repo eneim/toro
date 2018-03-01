@@ -31,7 +31,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public interface Playable<T> {
    * - If there is non-trivial PlaybackInfo, update it to the SimpleExoPlayer.
    * - If client request to prepare MediaSource, then prepare it.
    *
-   * This method must be called before {@link #setPlayerView(SimpleExoPlayerView)}.
+   * This method must be called before {@link #setPlayerView(Object)}.
    *
    * @param prepareSource if {@code true}, also prepare the MediaSource so that it could be played
    * immediately, if {@code false} just do nothing for the MediaSource.
