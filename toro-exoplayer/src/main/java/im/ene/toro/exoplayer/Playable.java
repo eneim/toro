@@ -52,22 +52,22 @@ public interface Playable {
 
   /**
    * Prepare the resource for a {@link SimpleExoPlayer}. This method should:
-   * - Request for new SimpleExoPlayer instance if there is not a usable one.
-   * - Configure EventListener for it.
+   * - Request for new {@link SimpleExoPlayer} instance if there is not a usable one.
+   * - Configure {@link EventListener} for it.
    * - If there is non-trivial PlaybackInfo, update it to the SimpleExoPlayer.
    * - If client request to prepare MediaSource, then prepare it.
    *
    * This method must be called before {@link #setPlayerView(PlayerView)}.
    *
-   * @param prepareSource if {@code true}, also prepare the MediaSource so that it could be played
-   * immediately, if {@code false} just do nothing for the MediaSource.
+   * @param prepareSource if {@code true}, also prepare the MediaSource when preparing the Player,
+   * if {@code false} just do nothing for the MediaSource.
    */
   void prepare(boolean prepareSource);
 
   /**
    * Set the {@link PlayerView} for this Playable. It is expected that a playback doesn't require a
    * UI, so this setup is optional. But it must be called after the SimpleExoPlayer is prepared,
-   * which is after {@link #prepare(boolean)} and before {@link #release()}.
+   * that is after {@link #prepare(boolean)} and before {@link #release()}.
    *
    * Changing the PlayerView during playback is expected, though not always recommended, especially
    * on old Devices with low Android API.
@@ -95,14 +95,14 @@ public interface Playable {
 
   /**
    * Reset all resource, so that the playback can start all over again. This is to cleanup the
-   * playback for reuse. The SimpleExoPlayer instance must be still usable without calling {@link
-   * #prepare(boolean)}.
+   * playback for reuse. The SimpleExoPlayer instance must be still usable without calling
+   * {@link #prepare(boolean)}.
    */
   void reset();
 
   /**
    * Release all resource. After this, the SimpleExoPlayer is released to the Player pool and the
-   * Playable need to call {@link #prepare(boolean)} again to be usable again.
+   * Playable must call {@link #prepare(boolean)} again to be usable again.
    */
   void release();
 

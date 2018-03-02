@@ -77,7 +77,7 @@ public interface ToroPlayer {
   /**
    * Notify a Player about its {@link Container}'s scroll state change.
    *
-   * Deprecated, no-longer used.
+   * @deprecated no-longer used.
    */
   @Deprecated void onSettled(Container container);
 

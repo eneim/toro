@@ -45,11 +45,12 @@ import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MOD
 
 public class PlayableDebugActivity extends AppCompatActivity {
 
-  static final Uri video = Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01a05pM2FXWEN0b0U/responsive-01-durations-v1.mp4");
+  static final Uri video = Uri.parse("file:///android_asset/bbb/video.mp4");
+  // Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01a05pM2FXWEN0b0U/responsive-01-durations-v1.mp4");
 
   Playable playable;
   LayoutInflater inflater;
-  int currentResizeMode = 0;
+  static int currentResizeMode = 0; // static, so it won't reset.
 
   void play() {
     if (playable != null && !playable.isPlaying()) playable.play();
@@ -82,8 +83,6 @@ public class PlayableDebugActivity extends AppCompatActivity {
   }
 
   void changeResizeMode() {
-    currentResizeMode++;
-    currentResizeMode = currentResizeMode % MODES.values().length;
     playerView.setResizeMode(MODES.values()[currentResizeMode].mode);
     resizeMode.setText("Resize mode: " + MODES.values()[currentResizeMode].name());
   }
@@ -98,9 +97,13 @@ public class PlayableDebugActivity extends AppCompatActivity {
     ButterKnife.bind(this);
 
     inflater = LayoutInflater.from(this);
-    //noinspection ConstantConditions
-    playable = DemoApp.Companion.getExoCreator().createPlayable(video);
-    playable.prepare(true);
+    playable = (Playable) getLastCustomNonConfigurationInstance();
+    if (playable == null) {
+      //noinspection ConstantConditions
+      playable = DemoApp.Companion.getExoCreator().createPlayable(video);
+      playable.prepare(true);
+    }
+
     playable.setPlayerView(playerView);
 
     buttonBar.removeAllViews();
@@ -108,8 +111,11 @@ public class PlayableDebugActivity extends AppCompatActivity {
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Pause", v -> pause());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Reset", v -> reset());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Release", v -> release());
-    addButton(inflater, buttonBar, R.layout.widget_debug_button, "Resize mode",
-        v -> changeResizeMode());
+    addButton(inflater, buttonBar, R.layout.widget_debug_button, "Resize mode", v -> {
+      currentResizeMode++;
+      currentResizeMode = currentResizeMode % MODES.values().length;
+      changeResizeMode();
+    });
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "Mute", v -> mute());
     addButton(inflater, buttonBar, R.layout.widget_debug_button, "UnMute", v -> unMute());
 
@@ -119,7 +125,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    release();
+    if (isFinishing()) release();
   }
 
   static void addButton(LayoutInflater inflater, ViewGroup parent, int layoutId, String text,
@@ -142,5 +148,9 @@ public class PlayableDebugActivity extends AppCompatActivity {
     MODES(int mode) {
       this.mode = mode;
     }
+  }
+
+  @Override public Object onRetainCustomNonConfigurationInstance() {
+    return playable;
   }
 }

@@ -72,8 +72,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new DefaultRenderersFactory(this.context,  //
-        null /* config.drmSessionManager */, config.extensionMode);
+    renderersFactory =
+        new DefaultRenderersFactory(this.context, config.drmSessionManager, config.extensionMode);
     DataSource.Factory factory = new DefaultDataSourceFactory(this.context, appName, config.meter);
     if (config.cache != null) factory = new CacheDataSourceFactory(config.cache, factory);
     mediaDataSourceFactory = factory;
@@ -119,16 +119,16 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     return trackSelector;
   }
 
-  @Override public SimpleExoPlayer createPlayer() {
+  @NonNull @Override public SimpleExoPlayer createPlayer() {
     return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
   }
 
-  @Override public MediaSource createMediaSource(Uri uri) {
+  @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri) {
     return mediaSourceBuilder.buildMediaSource(this.context, uri, new Handler(),
         manifestDataSourceFactory, mediaDataSourceFactory, this);
   }
 
-  @Override public Playable createPlayable(Uri uri) {
+  @NonNull @Override public Playable createPlayable(@NonNull Uri uri) {
     return new PlayableImpl(this, uri);
   }
 
@@ -227,9 +227,17 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     }
 
     @CallSuper @Override public void setPlayerView(@Nullable PlayerView playerView) {
-      if (this.player == null) throw new IllegalStateException("Player is null, prepare it first.");
       if (this.playerView == playerView) return;
-      PlayerView.switchTargetView(this.player, this.playerView, playerView);
+      if (playerView == null) {
+        this.playerView.setPlayer(null);
+      } else {
+        // playerView is non-null, we requires a non-null player too.
+        if (this.player == null) {
+          throw new IllegalStateException("Player is null, prepare it first.");
+        }
+        PlayerView.switchTargetView(this.player, this.playerView, playerView);
+      }
+
       this.playerView = playerView;
     }
 

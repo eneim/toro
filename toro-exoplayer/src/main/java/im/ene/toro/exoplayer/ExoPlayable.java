@@ -21,6 +21,7 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -39,6 +40,7 @@ import static im.ene.toro.exoplayer.ToroExo.toro;
  * this class must make sure the re-usability of the implementation.
  *
  * @author eneim (2018/02/26).
+ * @since 3.4.0
  */
 
 public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
@@ -51,6 +53,14 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
   @SuppressWarnings("WeakerAccess") protected boolean inErrorState = false;
   @SuppressWarnings("WeakerAccess") protected TrackGroupArray lastSeenTrackGroupArray;
 
+  /**
+   * Construct an instance of {@link ExoPlayable} from an {@link ExoCreator} and {@link Uri}. The
+   * {@link ExoCreator} is used to request {@link SimpleExoPlayer} instance, while {@link Uri}
+   * defines the media to play.
+   *
+   * @param creator the {@link ExoCreator} instance.
+   * @param uri the {@link Uri} of the media.
+   */
   public ExoPlayable(ExoCreator creator, Uri uri) {
     super(creator, uri);
   }
@@ -67,7 +77,7 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
 
   @Override public void setPlayerView(@Nullable PlayerView playerView) {
     // This will also clear these flags
-    // TODO we need to double check this.
+    // TODO [20180301] re-think about this setup.
     this.lastSeenTrackGroupArray = null;
     this.inErrorState = false;
     super.setPlayerView(playerView);

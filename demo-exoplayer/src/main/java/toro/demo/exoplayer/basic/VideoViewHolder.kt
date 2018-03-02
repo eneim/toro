@@ -19,9 +19,11 @@ package toro.demo.exoplayer.basic
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.PlayerView
 import im.ene.toro.ToroPlayer
+import im.ene.toro.ToroPlayer.EventListener
 import im.ene.toro.ToroUtil.visibleAreaOffset
 import im.ene.toro.exoplayer.ExoPlayerViewHelper
 import im.ene.toro.media.PlaybackInfo
@@ -45,8 +47,11 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
 
     private val playerFrame by lazy { itemView as AspectRatioFrameLayout }
     private val player = itemView.findViewById(R.id.player) as PlayerView
+    private val status = itemView.findViewById(R.id.playerStatus) as TextView
     private var helper: ExoPlayerViewHelper? = null
     private var videoUri: Uri? = null
+
+    var listener: EventListener? = null
 
     override fun bind(item: Any?) {
         super.bind(item)
@@ -59,6 +64,7 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
             if (ratio === null) ratio = defaultRatio
             playerFrame.setAspectRatio(100F / ratio)
         }
+        helper = ExoPlayerViewHelper(this, videoUri!!, DemoApp.exoCreator!!, null)
     }
 
     override fun getPlayerView() = player
@@ -66,8 +72,26 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
     override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
 
     override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
-        if (helper === null) {
-            helper = ExoPlayerViewHelper(this, videoUri!!, DemoApp.exoCreator!!, null)
+        if (listener == null) {
+            listener = object : EventListener {
+                override fun onBuffering() {
+                    status.text = "Buffering"
+                }
+
+                override fun onPlaying() {
+                    status.text = "Playing"
+                }
+
+                override fun onPaused() {
+                    status.text = "Paused"
+                }
+
+                override fun onCompleted() {
+                    status.text = "Completed"
+                }
+
+            }
+            helper!!.addPlayerEventListener(listener!!)
         }
         helper!!.initialize(container, playbackInfo)
     }
@@ -83,6 +107,8 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
     override fun isPlaying() = helper?.isPlaying ?: false
 
     override fun release() {
+        if (listener != null) helper?.removePlayerEventListener(listener)
+        listener = null
         helper?.release()
         helper = null
     }

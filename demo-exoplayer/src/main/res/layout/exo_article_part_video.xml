@@ -30,8 +30,23 @@
       android:layout_height="match_parent"
       app:resize_mode="fixed_width"
       app:shutter_background_color="?attr/colorButtonNormal"
-      app:surface_type="texture_view"
+      app:surface_type="surface_view"
       app:use_controller="false"
       />
 
+  <android.support.v7.widget.AppCompatTextView
+      android:id="@+id/playerStatus"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="8dp"
+      android:alpha="0.85"
+      android:background="@color/cardview_dark_background"
+      android:paddingBottom="4dp"
+      android:paddingEnd="8dp"
+      android:paddingStart="8dp"
+      android:paddingTop="4dp"
+      android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+      android:textColor="@color/cardview_light_background"
+      />
 </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>

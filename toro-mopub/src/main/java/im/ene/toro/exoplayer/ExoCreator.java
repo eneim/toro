@@ -38,13 +38,50 @@ public interface ExoCreator {
 
   String TAG = "ToroExo:Creator";
 
-  SimpleExoPlayer createPlayer();
+  /**
+   * Create a new {@link SimpleExoPlayer} instance. This method should always create new instance of
+   * {@link SimpleExoPlayer}, but client should use {@link ExoCreator} indirectly via
+   * {@link ToroExo}.
+   *
+   * @return a new {@link SimpleExoPlayer} instance.
+   */
+  @NonNull SimpleExoPlayer createPlayer();
 
-  MediaSource createMediaSource(@NonNull Uri uri, @Nullable String extension);
+  /**
+   * Create a {@link MediaSource} from media {@link Uri}.
+   *
+   * @param uri the media {@link Uri}.
+   * @param extension optional (File) extension of the Uri.
+   * @return a {@link MediaSource} for media {@link Uri}.
+   */
+  @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String extension);
 
   // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
-  Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri, @Nullable String extension);
+
+  /**
+   * Create a {@link Playable} for a media {@link Uri} that uses {@link SimpleExoPlayerView}. Client
+   * should always use this method for
+   * quick and simple setup. Only use {@link #createMediaSource(Uri, String)} and/or {@link
+   * #createPlayer()}
+   * when necessary.
+   *
+   * @param uri the media {@link Uri}.
+   * @return the {@link Playable} to manage the media {@link Uri}.
+   */
+  @NonNull Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri,
+      @Nullable String extension);
 
   // Support custom PlayerView.
-  Playable<PlayerView> createPlayableCompat(@NonNull Uri uri, @Nullable String extension);
+
+  /**
+   * Create a {@link Playable} for a media {@link Uri} that uses {@link PlayerView}. Client should
+   * always use this method for
+   * quick and simple setup. Only use {@link #createMediaSource(Uri, String)} and/or {@link
+   * #createPlayer()}
+   * when necessary.
+   *
+   * @param uri the media {@link Uri}.
+   * @return the {@link Playable} to manage the media {@link Uri}.
+   */
+  @NonNull Playable<PlayerView> createPlayableCompat(@NonNull Uri uri, @Nullable String extension);
 }

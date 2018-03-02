@@ -69,8 +69,8 @@ public class DefaultExoCreator implements ExoCreator {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new DefaultRenderersFactory(this.context,  //
-        null /* config.drmSessionManager */, config.extensionMode);
+    renderersFactory =
+        new DefaultRenderersFactory(this.context, config.drmSessionManager, config.extensionMode);
     DataSource.Factory factory = new DefaultDataSourceFactory(this.context, appName, config.meter);
     if (config.cache != null) factory = new CacheDataSourceFactory(config.cache, factory);
     mediaDataSourceFactory = factory;
@@ -116,20 +116,21 @@ public class DefaultExoCreator implements ExoCreator {
     return trackSelector;
   }
 
-  @Override public SimpleExoPlayer createPlayer() {
+  @NonNull @Override public SimpleExoPlayer createPlayer() {
     return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
   }
 
-  @Override public MediaSource createMediaSource(@NonNull Uri uri, String extension) {
+  @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String extension) {
     return mediaSourceBuilder.buildMediaSource(this.context, uri, extension, new Handler(),
         manifestDataSourceFactory, mediaDataSourceFactory);
   }
 
-  @Override public Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri, String extension) {
+  @NonNull @Override
+  public Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri, String extension) {
     return new PlayableImpl(this, uri, extension);
   }
 
-  @Override
+  @NonNull @Override
   public Playable<PlayerView> createPlayableCompat(@NonNull Uri uri, @Nullable String extension) {
     return new PlayableCompat(this, uri, extension);
   }
@@ -191,9 +192,17 @@ public class DefaultExoCreator implements ExoCreator {
     }
 
     @CallSuper @Override public void setPlayerView(@Nullable SimpleExoPlayerView playerView) {
-      if (this.player == null) throw new IllegalStateException("Player is null, prepare it first.");
       if (this.playerView == playerView) return;
-      SimpleExoPlayerView.switchTargetView(this.player, this.playerView, playerView);
+      if (playerView == null) {
+        this.playerView.setPlayer(null);
+      } else {
+        // playerView is non-null, we requires a non-null player too.
+        if (this.player == null) {
+          throw new IllegalStateException("Player is null, prepare it first.");
+        }
+        SimpleExoPlayerView.switchTargetView(this.player, this.playerView, playerView);
+      }
+
       this.playerView = playerView;
     }
 
@@ -330,9 +339,17 @@ public class DefaultExoCreator implements ExoCreator {
     }
 
     @CallSuper @Override public void setPlayerView(@Nullable PlayerView playerView) {
-      if (this.player == null) throw new IllegalStateException("Player is null, prepare it first.");
       if (this.playerView == playerView) return;
-      PlayerView.switchTargetView(this.player, this.playerView, playerView);
+      if (playerView == null) {
+        this.playerView.setPlayer(null);
+      } else {
+        // playerView is non-null, we requires a non-null player too.
+        if (this.player == null) {
+          throw new IllegalStateException("Player is null, prepare it first.");
+        }
+        PlayerView.switchTargetView(this.player, this.playerView, playerView);
+      }
+
       this.playerView = playerView;
     }
 
