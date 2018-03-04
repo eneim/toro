@@ -29,12 +29,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import butterknife.BindView;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
-import im.ene.toro.exoplayer.MediaSourceBuilder;
+import com.google.android.exoplayer2.ui.PlayerView;
+import im.ene.toro.exoplayer.Playable;
+import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.facebook.core.BlackBoardDialogFragment;
@@ -114,8 +112,10 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
 
     // here, we dispatch the orientation check, if we found that it is in portrait mode, we immediately
     // dismiss the dialog to prevent it from showing unexpectedly.
-    windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-    if (!ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay())) {
+    windowManager = getContext() == null ? null
+        : (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+    if (windowManager == null || !ScreenHelper.shouldUseBigPlayer(
+        windowManager.getDefaultDisplay())) {
       dismissAllowingStateLoss();
     }
   }
@@ -126,8 +126,8 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     return inflater.inflate(R.layout.fragment_dialog_facebook_bigplayer, container, false);
   }
 
-  @BindView(R.id.big_player) SimpleExoPlayerView playerView;
-  ExoPlayerHelper playerHelper;
+  @BindView(R.id.big_player) PlayerView playerView;
+  Playable playerHelper;
 
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -148,8 +148,10 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
 
   @Override public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    /* Surface.Rotation interface, values are 0, 1, 2, 3 */
     int rotation = windowManager.getDefaultDisplay().getRotation();
     if (rotation % 2 != 0) {
+      // ROTATION_90 or ROTATION_270 --> not in its natural or reversed natural position.
       // Only do this in landscape mode.
       Window window = getDialog().getWindow();
       if (window != null) {
@@ -161,8 +163,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
           immersiveStickyFrag = 4096; // not affective, just to by pass the lint
         }
 
-        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
             // | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // un-comment for 100% full screen.
             // | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION  // un-comment for 100% full screen.
             | immersiveStickyFrag;
@@ -174,16 +175,11 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   @Override public void onStart() {
     super.onStart();
     if (playerHelper == null) {
-      playerHelper = new ExoPlayerHelper(playerView,  //
-          DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, false);
-      try {
-        MediaSourceBuilder sourceBuilder =
-            new MediaSourceBuilder(getContext(), videoItem.getMediaUrl().getUri());
-        playerHelper.prepare(sourceBuilder);
-      } catch (ParserException e) {
-        e.printStackTrace();
-      }
+      playerHelper = ToroExo.with(getContext()).getDefaultCreator() //
+          .createPlayable(videoItem.getMediaUrl().getUri());
+      playerHelper.prepare(true);
     }
+    playerHelper.setPlayerView(playerView);
     playerHelper.setPlaybackInfo(playbackInfo);
     playerHelper.play();
   }
@@ -204,6 +200,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   @Override public void onDestroyView() {
     if (playerHelper != null) {
       playbackInfo = playerHelper.getPlaybackInfo();
+      playerHelper.setPlayerView(null);
       playerHelper.release();
       playerHelper = null;
     }

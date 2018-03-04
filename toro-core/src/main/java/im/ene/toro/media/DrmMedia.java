@@ -16,6 +16,9 @@
 
 package im.ene.toro.media;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 /**
  * @author eneim | 6/5/17.
  *
@@ -24,9 +27,12 @@ package im.ene.toro.media;
 
 public interface DrmMedia {
 
-  String getType();
+  // DRM Scheme
+  @NonNull String getType();
 
-  String getLicenseUrl();
+  @NonNull String getLicenseUrl();
 
-  String[] getKeyRequestPropertiesArray();
+  @Nullable String[] getKeyRequestPropertiesArray();
+
+  boolean multiSession();
 }

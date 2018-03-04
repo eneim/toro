@@ -22,11 +22,11 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
-import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
+import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.MediaUrl;
@@ -46,13 +46,13 @@ import static java.lang.String.format;
 @SuppressWarnings("WeakerAccess") //
 public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroPlayer {
 
-  @Nullable SimpleExoPlayerViewHelper helper;
+  @Nullable ExoPlayerViewHelper helper;
   @Nullable private Uri mediaUri;
 
-  @BindView(R.id.fb_video_player) SimpleExoPlayerView playerView;
+  @BindView(R.id.fb_video_player) PlayerView playerView;
   @BindView(R.id.player_state) TextView state;
 
-  private ExoPlayerHelper.EventListener listener = new ExoPlayerHelper.EventListener() {
+  private Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
       state.setText(format(Locale.getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
@@ -89,11 +89,12 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+    if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
-      helper.setEventListener(listener);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
+      helper.addEventListener(listener);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {
@@ -110,7 +111,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override public void release() {
     if (helper != null) {
-      helper.setEventListener(null);
+      helper.removeEventListener(listener);
       helper.release();
       helper = null;
     }

@@ -22,7 +22,7 @@
     >
   <!-- put this inside a FrameLayout so that on layout change (eg: multi windows mode)
   the player still fit in center of the window -->
-  <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+  <com.google.android.exoplayer2.ui.PlayerView
       android:id="@+id/big_player"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

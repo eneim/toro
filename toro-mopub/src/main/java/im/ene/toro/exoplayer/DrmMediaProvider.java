@@ -25,14 +25,14 @@ import im.ene.toro.media.DrmMedia;
  * @author eneim (7/8/17).
  *
  *         A definition of a Media source that supplies a DRM media. Application that requires DRM
- *         supports should have a {@link MediaSourceBuilder} implements this interface to get
+ *         supports should have a {@link MediaSourceCreator} implements this interface to get
  *         support from {@link ExoPlayer} as well as {@link ExoPlayerHelper}.
  *
- *         See {@link ExoPlayerHelper#prepare(MediaSourceBuilder, BandwidthMeter)}.
- *         See {@link MediaSourceBuilder}.
+ *         See {@link ExoPlayerHelper#prepare(MediaSourceCreator, BandwidthMeter)}.
+ *         See {@link MediaSourceCreator}.
+ * @deprecated since 3.4.0
  */
-
-public interface DrmMediaProvider {
+@Deprecated public interface DrmMediaProvider {
 
   @NonNull DrmMedia getDrmMedia();
 }

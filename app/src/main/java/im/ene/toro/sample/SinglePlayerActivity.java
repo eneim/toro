@@ -33,14 +33,12 @@ import android.view.Window;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ParserException;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
+import com.google.android.exoplayer2.ui.PlayerView;
+import im.ene.toro.exoplayer.Playable;
+import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.common.LoopingMediaSourceBuilder;
 
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
 import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH;
 import static im.ene.toro.sample.common.BaseFragment.RESULT_EXTRA_PLAYBACK_INFO;
@@ -85,13 +83,13 @@ public class SinglePlayerActivity extends BaseActivity {
   Point playerSize;
   Point videoSize;
   // ONLY start with fullscreen on landscape mode or not.
-  // If true: this Activity starts in landscape mode, no changeable.
-  // If false: this Activity starts in current screen mode, changeable by user (eg: rotate device).
+  // If true: this Activity starts in landscape mode, unchangeable.
+  // If false: this Activity starts in current screen mode, changeable by config change.
   private boolean fullscreen;
 
-  private ExoPlayerHelper playerHelper;
+  private Playable playable;
 
-  @BindView(R.id.player_view) SimpleExoPlayerView playerView;
+  @BindView(R.id.player_view) PlayerView playerView;
   // Views below are not available in landscape mode.
   @Nullable @BindView(R.id.media_description) TextView mediaDescription;
 
@@ -161,9 +159,7 @@ public class SinglePlayerActivity extends BaseActivity {
     }
 
     if (mediaDescription != null) mediaDescription.setText(Html.fromHtml(content));
-    LoopingMediaSourceBuilder mediaSourceBuilder = new LoopingMediaSourceBuilder(this, mediaUri);
-    playerHelper = new ExoPlayerHelper(playerView, EXTENSION_RENDERER_MODE_OFF, true);
-    playerHelper.setPlaybackInfo(playbackInfo);
+    playable = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri);
 
     ActivityCompat.postponeEnterTransition(this);
     playerView.getViewTreeObserver()
@@ -174,48 +170,48 @@ public class SinglePlayerActivity extends BaseActivity {
           }
         });
 
-    try {
-      playerHelper.prepare(mediaSourceBuilder);
-    } catch (ParserException e) {
-      e.printStackTrace();
-    }
+    playable.prepare(true);
+    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
   @Override protected void onStart() {
     super.onStart();
-    if (playerHelper != null && !playerHelper.isPlaying()) {
-      playerHelper.play();
+    playable.setPlayerView(playerView);
+    if (!playable.isPlaying()) {
+      playable.play();
     }
   }
 
   @Override protected void onStop() {
     super.onStop();
-    if (playerHelper != null) {
-      playerHelper.pause();
-    }
+    playable.pause();
   }
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    if (playerHelper != null) {
-      playerHelper.release();
-      playerHelper = null;
-    }
+    playable.setPlayerView(null);
+    playable.release();
+    playable = null;
+  }
+
+  @Override public void onBackPressed() {
+    super.onBackPressed();
+    playable.setPlayerView(null);
   }
 
   @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (playerHelper != null) {
-      PlaybackInfo info = playerHelper.getPlaybackInfo();
+    if (playable != null) {
+      PlaybackInfo info = playable.getPlaybackInfo();
       outState.putParcelable(STATE_MEDIA_PLAYBACK_INFO, info);
     }
   }
 
   @Override public void finish() {
-    if (playerHelper != null) {
+    if (playable != null) {
       Intent intent = new Intent();
       intent.putExtra(RESULT_EXTRA_PLAYER_ORDER, order);
-      intent.putExtra(RESULT_EXTRA_PLAYBACK_INFO, playerHelper.getPlaybackInfo());
+      intent.putExtra(RESULT_EXTRA_PLAYBACK_INFO, playable.getPlaybackInfo());
       setResult(Activity.RESULT_OK, intent);
     }
     super.finish();

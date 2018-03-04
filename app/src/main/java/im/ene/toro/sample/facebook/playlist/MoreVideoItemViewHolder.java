@@ -30,11 +30,11 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.ExoPlayerHelper;
-import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
+import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.MediaUrl;
@@ -55,18 +55,18 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
 
   static final int LAYOUT_RES = R.layout.vh_fbcard_base_dark;
 
-  @Nullable SimpleExoPlayerViewHelper helper;
+  @Nullable ExoPlayerViewHelper helper;
   @Nullable private Uri mediaUri;
 
   @BindView(R.id.fb_user_icon) ImageView userIcon;
   @BindView(R.id.fb_user_name) TextView userName;
   @BindView(R.id.fb_user_profile) TextView userProfile;
   @BindView(R.id.fb_item_middle) FrameLayout container;
-  @BindView(R.id.fb_video_player) SimpleExoPlayerView playerView;
+  @BindView(R.id.fb_video_player) PlayerView playerView;
   @BindView(R.id.player_state) TextView state;
   @BindView(R.id.over_lay) View overLay;
 
-  private ExoPlayerHelper.EventListener listener = new ExoPlayerHelper.EventListener() {
+  private Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
       state.setText(format(getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
@@ -107,12 +107,13 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+    if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
-      helper.setEventListener(listener);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
+      helper.addEventListener(listener);
       helper.addPlayerEventListener(eventListener);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   ViewPropertyAnimator onPlayAnimator;
@@ -154,7 +155,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
     onPauseAnimator = null;
 
     if (helper != null) {
-      helper.setEventListener(null);
+      helper.removeEventListener(listener);
       helper.removePlayerEventListener(eventListener);
       helper.release();
       helper = null;

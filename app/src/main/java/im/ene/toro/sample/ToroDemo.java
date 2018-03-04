@@ -18,9 +18,6 @@ package im.ene.toro.sample;
 
 import android.app.Application;
 import com.squareup.leakcanary.LeakCanary;
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
 /**
  * @author eneim | 6/5/17.
@@ -28,23 +25,11 @@ import java.net.CookiePolicy;
 
 public class ToroDemo extends Application {
 
-  private static final CookieManager DEFAULT_COOKIE_MANAGER;
-
-  static {
-    DEFAULT_COOKIE_MANAGER = new CookieManager();
-    DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-  }
-
   private static ToroDemo singleton;
 
   @Override public void onCreate() {
     super.onCreate();
     singleton = this;
-    // adopt from ExoPlayer demo.
-    if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
-      CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
-    }
-
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       // You should not init your app in this process.

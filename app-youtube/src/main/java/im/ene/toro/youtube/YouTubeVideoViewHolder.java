@@ -84,10 +84,10 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = manager.obtainHelper(container, this, this.videoId);
+      helper = manager.obtainHelper(this, this.videoId);
     }
 
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
     thumbnailView.setVisibility(View.VISIBLE);
   }
 

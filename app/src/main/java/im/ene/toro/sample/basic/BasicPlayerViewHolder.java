@@ -26,7 +26,8 @@ import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
+import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
@@ -42,7 +43,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
 
-  SimpleExoPlayerViewHelper helper;
+  ToroPlayerHelper helper;
   Uri mediaUri;
 
   @BindView(R.id.player) SimpleExoPlayerView playerView;
@@ -63,9 +64,9 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {

@@ -52,7 +52,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
     if (playerHelper == null) {
       playerHelper = LegacyVideoViewHelper(container, this, mediaUri!!)
     }
-    playerHelper!!.initialize(playbackInfo)
+    playerHelper!!.initialize(container, playbackInfo)
   }
 
   override fun play() {

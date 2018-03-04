@@ -23,12 +23,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
-import im.ene.toro.sample.common.LoopingExoPlayerViewHelper;
 import im.ene.toro.widget.Container;
 
 /**
@@ -40,11 +39,11 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_custom;
 
-  LoopingExoPlayerViewHelper helper;
+  LoopingPlayerHelper helper;
   Uri mediaUri;
   View.OnClickListener clickListener;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player) PlayerView playerView;
 
   public CustomExoPlayerViewHolder(View itemView) {
     super(itemView);
@@ -68,9 +67,9 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new LoopingExoPlayerViewHelper(container, this, mediaUri);
+      helper = new LoopingPlayerHelper(this, mediaUri);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {

@@ -1,6 +1,106 @@
 Changelog
 ===========
 
+3.4.0 (2018/03/04)
+--------------
+
+> 3.4.0 is the biggest release since 3.0.0. In short, many issues are fixed, many internal improvement and many new ways to start your new playback. This changes also focus on ExoPlayer so that using ExoPlayer with Toro is easier than ever before.
+ 
+- **toro-core**
+  - Add ``PlayerDispatcher``: this interface intercepts the call to ``ToroPlayer#play()``, and tells the library 'how long should this call be delayed'. It is useful when client need some delay before the playback starts. ``PlayerDispatcher`` works with ``PlayerManager`` and can be setup using ``Container#setPlayerDispatcher(PlayerDispatcher)``. Defaul ``PlayerDispatcher`` dispatch the call immediately.
+  - Improve ``PlayerSelector``: the ``ToroPlayer`` list in parameter of ``PlayerSelector#select()`` is always sorted, while the order is unclear to the caller. This release adds the annotation **Sorted** telling the caller if a list is sorted by which order (either ``ASCENDING`` or ``DESCENDING``).
+  - ``ToroPlayer``: ``ToroPlayer#onSettled(Container)`` is deprecated and will be removed in next major release (3.5.0).
+  - ``ToroPlayerHelper``: instance of ``Container`` is no longer required when constructing an instance of this class. This brings flexibility and usability to the subclass of this helper. Also, it removes the concern about sharing instance of this helper across different Containers. Along with this update, ``initialize(PlaybackInfo)`` is deprecated and replaced by ``initialize(Container container, PlaybackInfo)``. Sub class still need to override ``initialize(PlaybackInfo)`` for backward compatibility, but it is recommended to use/call the new one in practice.
+  - ``ToroPlayerHelper``: default behavior when the ``ToroPlayer`` state changes to play or pause is changed. When ``ToroPlayer``'s state is playing, the player View will keep the screen on, and when the state is pause, player View will not keep the screen on.
+  - This release adds ``setVolume(float)`` and ``getVolume`` to the helper as well. Sub classes must provide a volume control for this change.
+  - ``DrmMedia`` adds method ``multiSession()`` that returns a boolean telling if the Drm playback should supports multi sessions or not. This adapts the change from ExoPlayer, but not depend on it.
+
+- **toro-exoplayer** (Toro Extension for ExoPlayer 2)
+  - Has been vastly rewritten. Building new ``SimpleExoPlayer`` instance is now easier and more flexible than before. And the instance will be cached for re-use, which shows significant performance improvement. Client now has the simpler and safer way to integrate ExoPlayer into ToroPlayer, and also the ability to use ExoPlayer separately to ToroPlayer's API with the same flexibility.  
+  - This release comes with some new helper classes, including ``ToroExo``, ``ExoCreator``, ``Config``, ``Playable``, ``ExoPlayable``, ``MediaSourceBuilder``.
+  - ``ExoCreator``: this is the main character, playing the roles that create new ``SimpleExoPlayer`` instances, ``MediaSource`` instances and also ``Playable`` instance.
+  - ``Config``: this class defines the necessary setup for a ``SimpleExoPlayer`` as well as ``MediaSource``. Its instance can be built using Builder, which gives client the ease of use and the flexibility to reuse the Config instance (By calling ``Config#newBuilder()``, client can simply clone the Config and update it with different options). Also, it is recommended to have global instance of Config for each client, and if it requires different configs, the number of config should be kept as small as possible.
+  - ``Playable``: similar to ``ToroPlayer`` in that it defines core playback control such as play/pause and volume update. But this interface is built for ExoPlayer components, and deeply integrates into its API. Instance of this interface can be used either in a subclass of ``ToroPlayerHelper`` to support a ``ToroPlayer``, or individually as a single playback controller. ``Playable`` is designed to be resuable, even across configuration change, so that client can keept the playback smoothly in those changes.
+  - ``ExoPlayable``: an implementation of ``Playable`` where client can extend it for customization with flexibility.
+  - ``MediaSourceBuilder``: a single interface tells client `how should a MediaSource` should be created, and ask for the implementation. Providing the ``Config`` by an instance of this interface is enough for the rest of your app.
+  - ``ToroExo``: the manager for this new update. It hides the complexity of implementations of ``ExoCreator`` or ``Playable``, gives client necessary but powerful entry points to request for those instances. Also, initiating this class is just as simple as calling ``ToroExo.with(context)`` you may see else where. ``ToroExo.with(Context)``, ``ToroExo#requestPlayer(ExoCreator)``, ``ToroExo#releasePlayer(ExoCreator, SimpleExoCreator)``, ``ToroExo#getCreator(Config)``, ``ToroExo#getDefaultCreator()`` are only methods you need to remember.  
+  - ``ExoPlayerViewHelper`` is renamed from ``ExoPlayerHelper`` and also a rewritten version of it. It is the combination between ``ToroPlayerHelper`` and ``ExoPlayable``, brings the best of this release to user of **toro**.
+  - ``SimpleExoPlayerViewHelper`` is deprecated, client should use ``ExoPlayerViewHelper`` instead. This class will be removed from next major release (3.5.0).
+
+- **toro-mopub**
+  - The changes for this extension is almost the same with the **toro-exoplayer**, while its responsibility is to keep the compatibility with ExoPlayer r2.4.4, which is non-trivial.
+  - The addition interfaces are the same, but their signature are slightly different. Client is recommended to check out the source to take a look. But to use them, it is just as simple as calling the same methods from ``ToroExo`` with the same set of options as in ``toro-exoplayer``.
+  - ``PlayerView`` is added. It is a clone of ``SimpleExoPlayerView`` where there are some addition improvement brought from ExoPlayer 2.7.0.
+  - ``ToroControlView`` is added, with a custom UI where user can also change the Volume. This options is not available in official ExoPlayer Widgets, which is the reason why I create this View.
+  - The old ``MediaSourceBuilder`` is renamed to ``MediaSourceCreator`` and also be created in favor to the new setup for ExoPlayer.
+  - The new ``MediaSourceBuild`` class is added to work with new building system for ExoPlayer.
+  - Helpers for ``ToroPlayer`` are now: ``PlayerViewHelper`` for new custom ``PlayerView`` and ``ExoPlayerViewHelper`` for ``SimpleExoPlayerView``. 
+
+- Demo
+  - Add **demo-exoplayer** that contains simple Activities to show how to use the new ``ToroExo`` with all other new classes, either with ``Container`` or as single Media player.
+  - Add **demo-mopub** to show how to use **toro-mopub** extension effectively.
+
+- Others
+  - **toro-exoplayer** now uses ExoPlayer 2.7.0 as dependency.
+  - **app** the demo app is also updated with latest ExoPlayer version and latest improvement from **toro-exoplayer**.
+
+3.4.0-alpha3 (2018/02/24)
+--------------
+
+- **toro-core**
+  - Add ``PlayerDispatcher`` to provide more flexible playback. In detail, it can delay the call to ToroPlayer#play() where the delay time is configurable by client. Default behavior is no delay.
+
+- **toro-exoplayer**
+  - Now compile with ExoPlayer version 2.7.0. There are breaking changes in that library, so clients of Toro are expected to migrate them. The migration is trivial.
+
+- All demo apps are now compile with ExoPlayer version 2.7.0.
+  
+
+3.4.0-alpha2 (2018/02/19)
+--------------
+
+> This release improve alpha 1, regarding usability of Playable instance, minor (but important) implementation improvement that in turns improve client UX and performance, and many other tiny tuning.
+
+- Changes for ``Playable``:
+  - ``attacheView(SimpleExoPlayerView)`` and ``detachView()`` are replaced by one method ``setPlayerView(SimpleExoPlayerView)``, makes more sense.
+  - ``Playable.EventListener`` now extends ``MetadataOutput`` as well. Client should update the implementation.
+  - ``PlayableImpl`` has been improve so that: ``MediaSource`` will be prepared only after client calls ``play()`` for the first time. **This is to prevent Device to download the media even if the playback is not requested.** 
+  
+- Changes for ``ToroExo``:
+  - ``ToroExo#cleanUp()`` is added so that client can aggressively/actively cleanup all currently cached SimpleExoPlayer instance. This is useful when the Application is running out of memory. Note that only instances those are staying in the Pool are released, ones are in used is not affected by this, which is expected.
+  - ``ToroExo#requestPlayer(ExoCreator)`` is added, so that client can effectively request for SimpleExoPlayer instance. Instead of calling ``ExoCreator#createPlayer()`` in alpha1, which will not mind the cache, this method will only create new instance of there is no cache in the Pool.
+  - ``ToroExo#releasePlayer(ExoCreator, SimpleExoPlayer)`` is added, on-par with the method above. Client can use this method to release an SimpleExoPlayer instance back to the Pool (which must be mapped to the ExoCreator).
+- Other changes:
+  - ``DefaultExoCreator`` is changed to public so that client can extend it for custom usage.
+  - ``ExoPlayerViewHelper`` constructor signature's items order has been change.
+ 
+- Update to ``demo-exoplayer``: PlayableDemoActivity.kt has been updated with the logic to reuse ``Playable`` instance across config change. This shows how to keep the playback smooth across config change (eg: Window size change, Orientation change, etc). This update take the use of ``onRetainCustomNonConfigurationInstance`` which may or may not good practice, so User to this library should consider this as a "Proof of Concept" kind of thing, and get the concept of how it *can work*. I actively work on this to figure out a good way for production level stability.
+  - How is the behavior: the Activity can start normally in either orientation. If it starts in landscape mode or multi windows mode whose horizontal edge is longer than vertical edge, it will be a single full-screen player. If it starts in portrait mode or multi windows mode whose horizontal edge is shorter than vertical edge, it will be a list of content and the Player view stays on top of the LinearLayout (inside a NestedScrollView, etc).
+  - When you change the config by either change the orientation or enter multi windows mode, the Activity do necessary cleanup, save the Playable instance via ``onRetainCustomNonConfigurationInstance`` and so on. When the Activity is recreated, retrieve the Playable and update its Player view to the new one. This way, the Audio playback is kept smoothly while Video playback is disturbed by the Config change only.
+  - Note that this implementation involves 'Switching the Surface' for SimpleExoPlayer, which in turns the MediaCodec and so on. This work is known to be troublesome in low-spec/low-level Devices. It should work best on API 23+. So making it widely usable in production is a long way ahead. Just you have been warned.
+
+3.4.0-alpha1 (2018/02/12)
+--------------
+
+This pre-release bring overall improvement to ExoPlayer extension. The interfaces are kept unchanged (or a little), but the underneath implementation is re-written. Detail is as below:
+
+- New interface ``ExoCreator`` that helps to create a new ``SimpleExoPlayer`` instance as well as to build a ``MediaSource`` from existing Uri. Implementing of this interface should always return a creation result, not from cache. Toro take care of the caching mechanism for ``SimpleExoPlayer`` instances and will call this interface if need. ``DefaultExoCreator`` is the default implementation for this interface.
+
+- ``Playable`` interface defines playback behavior. Implementation of this interface must guarantee to survive config change. ``ExoCreator`` will also create a Playable, using default implementation (See ``ExoCreator#createPlayable(Uri)``).
+
+- ``Config`` class defines the configuration for a ``ExoCreator``. One config should be kept statically for one Application. One App can have one or more Configs. ``ToroExo`` holds a default config that fits most of the cases so you don't have to create anything by default. Build up a new Config by using its ``Config$Builder`` class, or by using ``Config#newBuilder()`` to create a Builder from current Config.
+
+- ``ToroExo`` is the global manager of this update. It helps manager the cache for SimpleExoPlayer, ExoCreator, etc. Obtaining its (singleton) by calling ``ToroExo.with(context)`` and from there, Client has the access into its functionality.
+
+- Some old event listeners (interfaces) are replaced with ``Playable$EventListener``. Client need to update them.
+
+- ``SimpleExoPlayerViewHelper`` is kept but its internal implementation has changed using the new mechanism. This class's existence is to maintain backward compatibility of current Clients using older library. In fact, Client still need to migrate to use the new ``EventListener``, but the change should be a little. Changing to use ``ExoPlayerViewHelper`` is recommended.
+
+- New demo app dedicated for ExoPlayer extension is added: ``demo-exoplayer``. Currently, there are 3 demos:
+  - ``BasicListActivity`` shows normal usage of **Toro** with new implementation of ``ExoPlayerViewHelper``. Written in Kotlin.
+  - ``CreatorDemoActivity`` shows non-Toro use case, where Client use ``ExoCreator`` API to build ``SimpleExoPlayer`` and ``MediaSource``. Written in Java.
+  - ``PlayableDemoActivity`` shows non-Toro use case, where Client use ``ExoCreator`` API to build ``Playable``. Written in Kotlin.
+
 3.3.0 (2018/01/01)
 --------------
 

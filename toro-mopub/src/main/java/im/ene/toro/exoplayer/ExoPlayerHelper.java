@@ -56,6 +56,7 @@ import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.mopub.R;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
@@ -65,9 +66,10 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
 
 /**
  * @author eneim (2018/01/01).
+ * @deprecated since 3.4.0. Use {@link ExoPlayerViewHelper} or {@link PlayerViewHelper} instead.
  */
 
-@SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
+@Deprecated @SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
@@ -82,7 +84,7 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
   ComponentListener componentListener;
   DefaultTrackSelector trackSelector;
 
-  MediaSourceBuilder mediaSourceBuilder;
+  MediaSourceCreator mediaSourceBuilder;
   BandwidthMeter bandwidthMeter;
 
   boolean shouldAutoPlay;
@@ -122,15 +124,15 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
     }
   }
 
-  public void prepare(@NonNull MediaSourceBuilder mediaSourceBuilder) throws ParserException {
+  public void prepare(@NonNull MediaSourceCreator mediaSourceBuilder) throws ParserException {
     prepare(mediaSourceBuilder, new DefaultBandwidthMeter(mainHandler, null));
   }
 
-  public void prepare(@NonNull MediaSourceBuilder mediaSourceBuilder,
+  public void prepare(@NonNull MediaSourceCreator mediaSourceBuilder,
       @Nullable BandwidthMeter bandwidthMeter) throws ParserException {
     //noinspection ConstantConditions
     if (mediaSourceBuilder == null) {
-      throw new IllegalArgumentException("MediaSourceBuilder must not be null.");
+      throw new IllegalArgumentException("MediaSourceCreator must not be null.");
     }
     this.mediaSourceBuilder = mediaSourceBuilder;
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
@@ -149,10 +151,9 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
           drmSessionManager = buildDrmSessionManager(drmSchemeUuid, drmLicenseUrl,  //
               keyRequestPropertiesArray, mainHandler);
         } catch (UnsupportedDrmException e) {
-          int errorStringId = Util.SDK_INT < 18 ? im.ene.toro.R.string.error_drm_not_supported
+          int errorStringId = Util.SDK_INT < 18 ? R.string.error_drm_not_supported
               : (e.reason == REASON_UNSUPPORTED_SCHEME ?  //
-                  im.ene.toro.R.string.error_drm_unsupported_scheme
-                  : im.ene.toro.R.string.error_drm_unknown);
+                  R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown);
           Toast.makeText(context, errorStringId, Toast.LENGTH_SHORT).show();
           return;
         }
@@ -292,13 +293,11 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(context, im.ene.toro.R.string.error_unsupported_video, Toast.LENGTH_SHORT)
-              .show();
+          Toast.makeText(context, R.string.error_unsupported_video, Toast.LENGTH_SHORT).show();
         }
         if (mappedTrackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-          Toast.makeText(context, im.ene.toro.R.string.error_unsupported_audio, Toast.LENGTH_SHORT)
-              .show();
+          Toast.makeText(context, R.string.error_unsupported_audio, Toast.LENGTH_SHORT).show();
         }
       }
       int count;
@@ -346,16 +345,16 @@ import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_U
               (MediaCodecRenderer.DecoderInitializationException) cause;
           if (decoderInitializationException.decoderName == null) {
             if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
-              errorString = context.getString(im.ene.toro.R.string.error_querying_decoders);
+              errorString = context.getString(R.string.error_querying_decoders);
             } else if (decoderInitializationException.secureDecoderRequired) {
-              errorString = context.getString(im.ene.toro.R.string.error_no_secure_decoder,
+              errorString = context.getString(R.string.error_no_secure_decoder,
                   decoderInitializationException.mimeType);
             } else {
-              errorString = context.getString(im.ene.toro.R.string.error_no_decoder,
+              errorString = context.getString(R.string.error_no_decoder,
                   decoderInitializationException.mimeType);
             }
           } else {
-            errorString = context.getString(im.ene.toro.R.string.error_instantiating_decoder,
+            errorString = context.getString(R.string.error_instantiating_decoder,
                 decoderInitializationException.decoderName);
           }
         }

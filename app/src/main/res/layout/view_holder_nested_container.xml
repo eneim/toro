@@ -21,7 +21,7 @@
     android:layout_width="match_parent"
     android:layout_height="240dp"
     android:layout_marginTop="8dp"
-    android:background="@color/cardview_dark_background"
+    android:background="@color/cardview_light_background"
     android:clipToPadding="false"
     android:orientation="horizontal"
     android:padding="8dp"

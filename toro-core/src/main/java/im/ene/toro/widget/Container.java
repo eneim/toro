@@ -34,8 +34,10 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.CacheManager;
+import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,9 +76,13 @@ public class Container extends RecyclerView {
 
   private static final String TAG = "ToroLib:Container";
 
+  static final int SOME_BLINKS = 50;  // 3 frames ...
+
   /* package */ final PlayerManager playerManager;
+  /* package */ PlayerDispatcher playerDispatcher = PlayerDispatcher.DEFAULT;
+  /* package */ RecyclerListenerImpl recyclerListener;  // null = not attached/detached
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
-  /* package */ Handler animatorFinishHandler;  // null = Container is detached ...
+  /* package */ Handler animatorFinishHandler;  // null = not attached/detached
 
   public Container(Context context) {
     this(context, null);
@@ -89,6 +95,12 @@ public class Container extends RecyclerView {
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     this.playerManager = new PlayerManager(this);
+  }
+
+  @Override public final void setRecyclerListener(RecyclerListener listener) {
+    if (recyclerListener == null) recyclerListener = new RecyclerListenerImpl(this);
+    recyclerListener.delegate = listener;
+    super.setRecyclerListener(recyclerListener);
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
@@ -104,10 +116,22 @@ public class Container extends RecyclerView {
     } else {
       this.screenState = View.SCREEN_STATE_OFF;
     }
+
+    /* setRecyclerListener can be called before this, it is considered as user-setup */
+    if (recyclerListener == null) {
+      recyclerListener = new RecyclerListenerImpl(this);
+      recyclerListener.delegate = NULL; // mark as it is set by Toro, not user.
+      super.setRecyclerListener(recyclerListener);  // must be a super call
+    }
   }
 
   @CallSuper @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
+    if (recyclerListener != null && recyclerListener.delegate == NULL) {  // set by Toro, not user.
+      super.setRecyclerListener(null);  // must be a super call
+      recyclerListener = null;
+    }
+
     if (animatorFinishHandler != null) {
       animatorFinishHandler.removeCallbacksAndMessages(null);
       animatorFinishHandler = null;
@@ -192,14 +216,12 @@ public class Container extends RecyclerView {
     // sometime it happens after all Animation, but we also need to update playback here.
     dispatchUpdateOnAnimationFinished(true);
     // finally release the player
-    // this player may not be managed so it should release by itself.
-    player.release();
+    // if player manager could not manager player, release by itself.
+    if (!playerManager.release(player)) player.release();
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
-    if (getChildCount() == 0) return;
-
     // Need to handle the dead playback even then the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
@@ -214,11 +236,11 @@ public class Container extends RecyclerView {
       playerManager.detachPlayer(player);
     }
 
-    if (state != SCROLL_STATE_IDLE) return;
-
     // 2. Refresh the good players list.
     LayoutManager layout = super.getLayoutManager();
-    int childCount = layout.getChildCount();
+    int childCount = layout.getChildCount();  // number of visible 'Virtual Children'
+    if (childCount == 0 || state != SCROLL_STATE_IDLE) return;
+
     if (childCount > 0) {
       for (int i = 0; i < childCount; i++) {
         View child = layout.getChildAt(i);
@@ -231,7 +253,7 @@ public class Container extends RecyclerView {
               playerManager.attachPlayer(player);
             }
             // Don't check the attach result, because the player may be managed already.
-            if (!player.isPlaying()) {
+            if (!player.isPlaying()) {  // not playing or not ready to play.
               playerManager.initialize(player);
             }
           }
@@ -266,6 +288,7 @@ public class Container extends RecyclerView {
     }
 
     for (ToroPlayer player : playerManager.getPlayers()) {
+      // TODO [20180128, 3.4.0] remove this call from 3.5+
       player.onSettled(this);
     }
   }
@@ -279,7 +302,8 @@ public class Container extends RecyclerView {
   public final void setPlayerSelector(@Nullable PlayerSelector playerSelector) {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
-    dispatchUpdateOnAnimationFinished(true);
+    // dispatchUpdateOnAnimationFinished(true); // doesn't work well :(
+    this.onScrollStateChanged(SCROLL_STATE_IDLE); // immediately update.
   }
 
   /**
@@ -291,11 +315,15 @@ public class Container extends RecyclerView {
     return playerSelector;
   }
 
+  public final void setPlayerDispatcher(@NonNull PlayerDispatcher playerDispatcher) {
+    this.playerDispatcher = ToroUtil.checkNotNull(playerDispatcher);
+  }
+
   ////// Handle update after data change animation
 
   long getMaxAnimationDuration() {
     ItemAnimator animator = getItemAnimator();
-    if (animator == null) return 50; // a blink ...
+    if (animator == null) return SOME_BLINKS;
     return max(animator.getAddDuration(), animator.getMoveDuration(), animator.getRemoveDuration(),
         animator.getChangeDuration());
   }
@@ -303,7 +331,7 @@ public class Container extends RecyclerView {
   void dispatchUpdateOnAnimationFinished(boolean immediate) {
     if (getScrollState() != SCROLL_STATE_IDLE) return;
     if (animatorFinishHandler == null) return;
-    final long duration = immediate ? 50 : getMaxAnimationDuration();
+    final long duration = immediate ? SOME_BLINKS : getMaxAnimationDuration();
     if (getItemAnimator() != null) {
       getItemAnimator().isRunning(new ItemAnimator.ItemAnimatorFinishedListener() {
         @Override public void onAnimationsFinished() {
@@ -340,7 +368,8 @@ public class Container extends RecyclerView {
    *
    * See {@link Container#setAdapter(Adapter)}
    */
-  @CallSuper @Override public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
+  @CallSuper @Override public void swapAdapter(Adapter adapter,
+      boolean removeAndRecycleExistingViews) {
     super.swapAdapter(adapter, removeAndRecycleExistingViews);
     dataObserver.registerAdapter(adapter);
   }
@@ -486,8 +515,8 @@ public class Container extends RecyclerView {
    * or - Window focus changed.
    * or - Window visibility changed.
    *
-   * For each of that change, Screen may be turned off or Window's focused state may change, this
-   * is to decide if Container should keep current playback state or change it.
+   * For each of that event, Screen may be turned off or Window's focus state may change, we need
+   * to decide if Container should keep current playback state or change it.
    *
    * <strong>Discussion</strong>: In fact, we expect that: Container will be playing if the
    * following conditions are all satisfied:
@@ -542,7 +571,6 @@ public class Container extends RecyclerView {
         PlaybackInfo info = player.getCurrentPlaybackInfo();
         this.savePlaybackInfo(player.getPlayerOrder(), info);
         states.put(player.getPlayerOrder(), info);
-        // TODO 20171207 why I commented this out?
         playerManager.pause(player);
       }
     }
@@ -558,11 +586,11 @@ public class Container extends RecyclerView {
 
     // Release current players on recreation event only.
     // Note that there are cases where this method is called without the activity destroying/recreating.
-    // For example: in API 26 (my test mostly run on Oreo), when user clicking to "Current App" button,
+    // For example: in API 26 (my test mostly run on 8.0), when user click to "Current App" button,
     // current Activity will enter the "Stop" state but not be destroyed/recreated and View hierarchy
     // state will be saved (this method is called).
     //
-    // In those cases, we don't need to release current resources.
+    // We only need to release current resources when the recreation happens.
     if (recreating) {
       for (ToroPlayer player : source) {
         playerManager.release(player);
@@ -574,7 +602,7 @@ public class Container extends RecyclerView {
     PlayerViewState playerViewState = new PlayerViewState(superState);
     playerViewState.statesCache = states;
 
-    // To mark that this method was called.
+    // To mark that this method was called. An activity recreation will clear this.
     tmpStates = states;
     return playerViewState;
   }
@@ -657,6 +685,9 @@ public class Container extends RecyclerView {
 
     private Adapter adapter;
 
+    ToroDataObserver() {
+    }
+
     final void registerAdapter(Adapter adapter) {
       if (this.adapter == adapter) return;
       if (this.adapter != null) this.adapter.unregisterAdapterDataObserver(this);
@@ -687,7 +718,7 @@ public class Container extends RecyclerView {
 
   /**
    * A {@link Handler.Callback} that will fake a scroll with {@link #SCROLL_STATE_IDLE} to refresh
-   * all the playback.
+   * all the playback. This is relatively expensive.
    */
   private static class AnimatorHelper implements Handler.Callback {
 
@@ -702,6 +733,29 @@ public class Container extends RecyclerView {
       return true;
     }
   }
+
+  private static class RecyclerListenerImpl implements RecyclerView.RecyclerListener {
+
+    final Container container;
+    RecyclerListener delegate;
+
+    RecyclerListenerImpl(@NonNull Container container) {
+      this.container = container;
+    }
+
+    @Override public void onViewRecycled(ViewHolder holder) {
+      if (this.delegate != null) this.delegate.onViewRecycled(holder);
+      if (!(holder instanceof ToroPlayer)) return;
+      this.container.playerManager.recycle((ToroPlayer) holder);
+    }
+  }
+
+  // This instance is to mark a RecyclerListenerImpl to be set by Toro, not by user.
+  private static final RecyclerListener NULL = new RecyclerListener() {
+    @Override public void onViewRecycled(ViewHolder holder) {
+      // No-ops
+    }
+  };
 
   /**
    * An utility interface, used by {@link Container} to filter for {@link ToroPlayer}.

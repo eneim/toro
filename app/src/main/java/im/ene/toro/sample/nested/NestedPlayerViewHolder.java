@@ -19,14 +19,13 @@ package im.ene.toro.sample.nested;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.SimpleExoPlayerViewHelper;
+import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
@@ -36,18 +35,22 @@ import im.ene.toro.widget.Container;
  */
 
 @SuppressWarnings("WeakerAccess") //
-public class NestedPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+public class NestedPlayerViewHolder extends BaseViewHolder implements ToroPlayer {
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_nested;
 
-  SimpleExoPlayerViewHelper helper;
+  ExoPlayerViewHelper helper;
   Uri mediaUri;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player) PlayerView playerView;
 
   public NestedPlayerViewHolder(View itemView) {
     super(itemView);
     ButterKnife.bind(this, itemView);
+  }
+
+  @Override void bind(int position, Object object) {
+    this.mediaUri = ((Content.Media) object).mediaUri;
   }
 
   @NonNull @Override public View getPlayerView() {
@@ -61,9 +64,9 @@ public class NestedPlayerViewHolder extends RecyclerView.ViewHolder implements T
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void play() {
@@ -99,9 +102,5 @@ public class NestedPlayerViewHolder extends RecyclerView.ViewHolder implements T
 
   @Override public String toString() {
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
-  }
-
-  void bind(Content.Media media) {
-    this.mediaUri = media.mediaUri;
   }
 }

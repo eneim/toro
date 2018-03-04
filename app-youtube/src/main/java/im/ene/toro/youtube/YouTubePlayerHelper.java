@@ -33,7 +33,8 @@ import com.google.android.youtube.player.YouTubePlayer.Provider;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.widget.Container;
+
+import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * @author eneim (8/1/17).
@@ -61,15 +62,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
 
-  YouTubePlayerHelper(@NonNull Callback callback, @NonNull Container container,
-      @NonNull ToroPlayer player, String videoId) {
-    super(container, player);
+  YouTubePlayerHelper(@NonNull Callback callback, @NonNull ToroPlayer player, String videoId) {
+    super(player);
     //noinspection ConstantConditions
     if (player.getPlayerView() == null) {
       throw new IllegalArgumentException("Player's view must not be null.");
     }
 
-    this.context = container.getContext();
+    this.context = checkNotNull(player.getPlayerView().getContext());
 
     this.callback = callback;
     this.playerViewId = player.getPlayerView().getId();
@@ -92,6 +92,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   @Override public void pause() {
     handler.removeCallbacksAndMessages(null);
     handler.sendEmptyMessage(MSG_PAUSE);
+  }
+
+  @Override public void setVolume(float volume) {
+    throw new UnsupportedOperationException("YouTubeApi doesn't allow to do this.");
+  }
+
+  @Override public float getVolume() {
+    return 1;
   }
 
   @Override public boolean isPlaying() {
