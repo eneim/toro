@@ -23,8 +23,6 @@ import im.ene.toro.exoplayer.Config;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer.MediaSourceBuilder;
 
-import static im.ene.toro.exoplayer.ToroExo.with;
-
 /**
  * @author eneim (2018/01/05).
  */
@@ -36,6 +34,6 @@ class LoopingPlayerHelper extends ExoPlayerViewHelper {
 
   LoopingPlayerHelper(@NonNull ToroPlayer player, @NonNull Uri mediaUri) {
     // customized using Looping media source builder
-    super(player, mediaUri, with(player.getPlayerView().getContext()).getCreator(loopingConfig));
+    super(player, mediaUri, loopingConfig);
   }
 }

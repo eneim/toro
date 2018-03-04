@@ -39,26 +39,30 @@ import static im.ene.toro.exoplayer.ToroExo.with;
 
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
-  @NonNull private final Playable playable;
+  @NonNull private final ExoPlayable playable;
   @NonNull private final MyEventListeners listeners;
 
-  @Deprecated //
-  public ExoPlayerViewHelper(@SuppressWarnings("unused") @NonNull Container container,
-      @NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(player.getPlayerView().getContext()).getDefaultCreator());
+  // Container is no longer required for constructing new instance.
+  @SuppressWarnings("unused") @Deprecated //
+  public ExoPlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
+    this(player, uri);
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(checkNotNull(player.getPlayerView()).getContext()).getDefaultCreator());
+    this(player, uri, with(player.getPlayerView().getContext()).defaultConfig);
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @NonNull ExoCreator creator) {
-    this(player, uri, creator, null);
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @NonNull Config config) {
+    this(player, uri, with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @NonNull ExoCreator creator, Playable.EventListener eventListener) {
+  // Hide this constructor, as it depends on ExoCreator implementation, which is non-trivial now.
+  @SuppressWarnings("WeakerAccess") //
+  ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @NonNull ExoCreator creator) {
+    this(player, new ExoPlayable(creator, uri));
+  }
+
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull ExoPlayable playable) {
     super(player);
     //noinspection ConstantConditions
     if (player.getPlayerView() == null || !(player.getPlayerView() instanceof PlayerView)) {
@@ -66,8 +70,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     }
 
     listeners = new MyEventListeners();
-    if (eventListener != null) listeners.add(eventListener);
-    playable = creator.createPlayable(uri);
+    this.playable = playable;
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {

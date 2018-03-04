@@ -38,7 +38,6 @@ import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.annotations.Beta;
 import im.ene.toro.media.DrmMedia;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -59,42 +58,44 @@ import static java.lang.Runtime.getRuntime;
  * is a key for each {@link ExoCreator}.
  *
  * A suggested usage is as below:
- * <code>
+ * <pre><code>
  * ExoCreator creator = ToroExo.with(this).getDefaultCreator();
  * Playable playable = creator.createPlayable(uri);
  * playable.prepare();
  * // next: setup PlayerView and start the playback.
- * </code>
+ * </code></pre>
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
  */
 
-@Beta // Currently in Beta testing.
 public final class ToroExo {
 
-  @SuppressLint("StaticFieldLeak") static volatile ToroExo toro;
-  private static final int MAX_POOL_SIZE = Math.max(4, getRuntime().availableProcessors());
+  // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
+  @SuppressWarnings("WeakerAccess") //
+  static final int MAX_POOL_SIZE = Math.max(Util.SDK_INT / 6, getRuntime().availableProcessors());
+  @SuppressLint("StaticFieldLeak")  //
+  static volatile ToroExo toro;
 
   public static ToroExo with(Context context) {
     if (toro == null) {
       synchronized (ToroExo.class) {
-        if (toro == null) toro = new ToroExo(context);
+        if (toro == null) toro = new ToroExo(context.getApplicationContext());
       }
     }
     return toro;
   }
 
   @NonNull final String appName;
-  @NonNull private final Context context;  // Application context
+  @NonNull final Context context;  // Application context
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
 
   /* pkg */ Config defaultConfig; // will be created on the first time it is used.
 
-  private ToroExo(Context context) {
-    this.context = context.getApplicationContext();
-    this.appName = getUserAgent(context.getApplicationContext(), LIB_NAME);
+  private ToroExo(@NonNull Context context /* Application context */) {
+    this.context = context;
+    this.appName = getUserAgent(context, LIB_NAME);
     this.playerPools = new HashMap<>();
     this.creators = new HashMap<>();
 
@@ -112,7 +113,7 @@ public final class ToroExo {
   public final ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
-      creator = new DefaultExoCreator(context, config);
+      creator = new DefaultExoCreator(this, config);
       this.creators.put(config, creator);
     }
 

@@ -64,7 +64,7 @@ internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
             if (ratio === null) ratio = defaultRatio
             playerFrame.setAspectRatio(100F / ratio)
         }
-        helper = ExoPlayerViewHelper(this, videoUri!!, DemoApp.exoCreator!!, null)
+        helper = ExoPlayerViewHelper(this, videoUri!!, DemoApp.config!!)
     }
 
     override fun getPlayerView() = player

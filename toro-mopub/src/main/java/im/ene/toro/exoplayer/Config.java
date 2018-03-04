@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 
@@ -52,13 +53,17 @@ public final class Config {
   @SuppressWarnings("WeakerAccess") //
   @Nullable final DrmSessionManager drmSessionManager;
   @Nullable final Cache cache; // null by default
+  // If null, ExoCreator must come up with a default one.
+  // This is to help customizing the Data source, for example using OkHttp extension.
+  @Nullable final DataSource.Factory dataSourceFactory;
 
   Config(int extensionMode, @NonNull BaseMeter meter, @NonNull LoadControl loadControl,
-      @NonNull MediaSourceBuilder mediaSourceBuilder, @Nullable DrmSessionManager drmSessionManager,
-      @Nullable Cache cache) {
+      @Nullable DataSource.Factory dataSourceFactory, @NonNull MediaSourceBuilder mediaSourceBuilder,
+      @Nullable DrmSessionManager drmSessionManager, @Nullable Cache cache) {
     this.extensionMode = extensionMode;
     this.meter = meter;
     this.loadControl = loadControl;
+    this.dataSourceFactory = dataSourceFactory;
     this.mediaSourceBuilder = mediaSourceBuilder;
     this.drmSessionManager = drmSessionManager;
     this.cache = cache;
@@ -110,6 +115,7 @@ public final class Config {
     @SuppressWarnings("unchecked")  //
     private BaseMeter meter = new BaseMeter(bandwidthMeter, bandwidthMeter);
     private LoadControl loadControl = new DefaultLoadControl();
+    private DataSource.Factory dataSourceFactory = null;
     private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
     private DrmSessionManager drmSessionManager = null;
     private Cache cache = null;
@@ -126,6 +132,12 @@ public final class Config {
 
     public Builder setLoadControl(@NonNull LoadControl loadControl) {
       this.loadControl = checkNotNull(loadControl, "Need non-null LoadControl");
+      return this;
+    }
+
+    // Option is Nullable, but if user customize this, it must be a Nonnull one.
+    public Builder setDataSourceFactory(@NonNull DataSource.Factory dataSourceFactory) {
+      this.dataSourceFactory = checkNotNull(dataSourceFactory);
       return this;
     }
 
@@ -146,7 +158,7 @@ public final class Config {
     }
 
     public Config build() {
-      return new Config(extensionMode, meter, loadControl,  //
+      return new Config(extensionMode, meter, loadControl, dataSourceFactory,
           mediaSourceBuilder, drmSessionManager, cache);
     }
   }

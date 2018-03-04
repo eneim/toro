@@ -36,12 +36,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
-import static im.ene.toro.exoplayer.ToroExo.toro;
 import static im.ene.toro.exoplayer.ToroExo.with;
 import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
 import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
@@ -56,7 +56,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
 public class DefaultExoCreator implements ExoCreator {
 
-  private final Context context;  // per application
+  final ToroExo toro;  // per application
   private final TrackSelector trackSelector;  // 'maybe' stateless
   private final LoadControl loadControl;  // stateless
   private final MediaSourceBuilder mediaSourceBuilder;  // stateless
@@ -64,26 +64,27 @@ public class DefaultExoCreator implements ExoCreator {
   private final DataSource.Factory mediaDataSourceFactory;  // stateless
   private final DataSource.Factory manifestDataSourceFactory; // stateless
 
-  @SuppressWarnings("unchecked") DefaultExoCreator(Context context, Config config, String appName) {
-    this.context = context.getApplicationContext();
+  @SuppressWarnings("unchecked")  //
+  public DefaultExoCreator(ToroExo toro, Config config) {
+    this.toro = checkNotNull(toro);
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory =
-        new DefaultRenderersFactory(this.context, config.drmSessionManager, config.extensionMode);
-    DataSource.Factory factory = new DefaultDataSourceFactory(this.context, appName, config.meter);
+    renderersFactory = new DefaultRenderersFactory(this.toro.context, //
+        config.drmSessionManager, config.extensionMode);
+    DataSource.Factory baseFactory = config.dataSourceFactory;
+    if (baseFactory == null) {
+      baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
+    }
+    DataSource.Factory factory = new DefaultDataSourceFactory(this.toro.context,  //
+        config.meter, baseFactory);
     if (config.cache != null) factory = new CacheDataSourceFactory(config.cache, factory);
     mediaDataSourceFactory = factory;
-    manifestDataSourceFactory = new DefaultDataSourceFactory(this.context, appName);
+    manifestDataSourceFactory = new DefaultDataSourceFactory(this.toro.context, this.toro.appName);
   }
 
-  @SuppressWarnings("unchecked")  //
   public DefaultExoCreator(Context context, Config config) {
-    this(context, config, with(context).appName);
-  }
-
-  public DefaultExoCreator(Context context) {
-    this(context, with(context).defaultConfig);
+    this(with(context), config);
   }
 
   @SuppressWarnings("SimplifiableIfStatement") @Override public boolean equals(Object o) {
@@ -92,7 +93,7 @@ public class DefaultExoCreator implements ExoCreator {
 
     DefaultExoCreator that = (DefaultExoCreator) o;
 
-    if (!context.equals(that.context)) return false;
+    if (!toro.equals(that.toro)) return false;
     if (!trackSelector.equals(that.trackSelector)) return false;
     if (!loadControl.equals(that.loadControl)) return false;
     if (!mediaSourceBuilder.equals(that.mediaSourceBuilder)) return false;
@@ -102,7 +103,7 @@ public class DefaultExoCreator implements ExoCreator {
   }
 
   @Override public int hashCode() {
-    int result = context.hashCode();
+    int result = toro.hashCode();
     result = 31 * result + trackSelector.hashCode();
     result = 31 * result + loadControl.hashCode();
     result = 31 * result + mediaSourceBuilder.hashCode();
@@ -112,8 +113,12 @@ public class DefaultExoCreator implements ExoCreator {
     return result;
   }
 
-  TrackSelector getTrackSelector() {
+  final TrackSelector getTrackSelector() {
     return trackSelector;
+  }
+
+  @Nullable @Override public Context getContext() {
+    return toro.context;
   }
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
@@ -121,7 +126,7 @@ public class DefaultExoCreator implements ExoCreator {
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String extension) {
-    return mediaSourceBuilder.buildMediaSource(this.context, uri, extension, new Handler(),
+    return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, extension, new Handler(),
         manifestDataSourceFactory, mediaDataSourceFactory);
   }
 
@@ -167,7 +172,10 @@ public class DefaultExoCreator implements ExoCreator {
     }
 
     @CallSuper @Override public void prepare(boolean prepareSource) {
-      if (player == null) player = toro.requestPlayer(creator);
+      if (player == null) {
+        player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+            .requestPlayer(creator);
+      }
 
       if (!listenerApplied) {
         player.addListener(listeners);
@@ -240,7 +248,8 @@ public class DefaultExoCreator implements ExoCreator {
           player.setMetadataOutput(null);
           listenerApplied = false;
         }
-        toro.releasePlayer(this.creator, this.player);
+        with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+            .releasePlayer(this.creator, this.player);
       }
       this.player = null;
       this.mediaSource = null;
@@ -314,7 +323,10 @@ public class DefaultExoCreator implements ExoCreator {
     }
 
     @CallSuper @Override public void prepare(boolean prepareSource) {
-      if (player == null) player = toro.requestPlayer(creator);
+      if (player == null) {
+        player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+            .requestPlayer(creator);
+      }
 
       if (!listenerApplied) {
         player.addListener(listeners);
@@ -387,7 +399,8 @@ public class DefaultExoCreator implements ExoCreator {
           player.setMetadataOutput(null);
           listenerApplied = false;
         }
-        toro.releasePlayer(this.creator, this.player);
+        with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+            .releasePlayer(this.creator, this.player);
       }
       this.player = null;
       this.mediaSource = null;

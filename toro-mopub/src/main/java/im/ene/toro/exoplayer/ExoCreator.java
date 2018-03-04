@@ -16,6 +16,7 @@
 
 package im.ene.toro.exoplayer;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +38,12 @@ import im.ene.toro.exoplayer.ui.PlayerView;
 public interface ExoCreator {
 
   String TAG = "ToroExo:Creator";
+
+  /**
+   * Return current Application context used in {@link ToroExo}. An {@link ExoCreator} must be used
+   * within Application scope.
+   */
+  @Nullable Context getContext();
 
   /**
    * Create a new {@link SimpleExoPlayer} instance. This method should always create new instance of

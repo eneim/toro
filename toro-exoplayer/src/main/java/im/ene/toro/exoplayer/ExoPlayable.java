@@ -17,7 +17,6 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -77,9 +76,11 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
 
   @Override public void setPlayerView(@Nullable PlayerView playerView) {
     // This will also clear these flags
-    // TODO [20180301] re-think about this setup.
-    this.lastSeenTrackGroupArray = null;
-    this.inErrorState = false;
+    // TODO [20180301] double check this setup.
+    if (playerView != this.playerView) {
+      this.lastSeenTrackGroupArray = null;
+      this.inErrorState = false;
+    }
     super.setPlayerView(playerView);
   }
 
@@ -100,7 +101,7 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
   }
 
   @SuppressWarnings({ "WeakerAccess", "unused" }) //
-  @CallSuper public void onErrorMessage(String message) {
+  protected void onErrorMessage(String message) {
     // Do nothing. Child class may need to do something with this, show a Toast maybe.
   }
 
@@ -108,26 +109,25 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-      if (trackGroups != lastSeenTrackGroupArray) {
-        TrackSelector selector = ((DefaultExoCreator) creator).getTrackSelector();
-        if (selector != null && selector instanceof DefaultTrackSelector) {
-          MappedTrackInfo trackInfo = ((DefaultTrackSelector) selector).getCurrentMappedTrackInfo();
-          if (trackInfo != null) {
-            if (trackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
-                == RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-              onErrorMessage(toro.getString(R.string.error_unsupported_video));
-            }
+      super.onTracksChanged(trackGroups, trackSelections);
+      if (trackGroups == lastSeenTrackGroupArray) return;
+      lastSeenTrackGroupArray = trackGroups;
+      if (!(creator instanceof DefaultExoCreator)) return;
+      TrackSelector selector = ((DefaultExoCreator) creator).getTrackSelector();
+      if (selector != null && selector instanceof DefaultTrackSelector) {
+        MappedTrackInfo trackInfo = ((DefaultTrackSelector) selector).getCurrentMappedTrackInfo();
+        if (trackInfo != null) {
+          if (trackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)
+              == RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
+            onErrorMessage(toro.getString(R.string.error_unsupported_video));
+          }
 
-            if (trackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
-                == RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-              onErrorMessage(toro.getString(R.string.error_unsupported_audio));
-            }
+          if (trackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_AUDIO)
+              == RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
+            onErrorMessage(toro.getString(R.string.error_unsupported_audio));
           }
         }
-        lastSeenTrackGroupArray = trackGroups;
       }
-
-      super.onTracksChanged(trackGroups, trackSelections);
     }
 
     @Override public void onPlayerError(ExoPlaybackException error) {

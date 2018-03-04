@@ -26,7 +26,6 @@ import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 
-import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
 
 /**
@@ -43,30 +42,24 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @NonNull private final MyEventListeners listeners;
 
   @Deprecated //
-  public ExoPlayerViewHelper(@SuppressWarnings("unused") @NonNull Container container,
-      @NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(player.getPlayerView().getContext()).getDefaultCreator());
+  public ExoPlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
+    this(player, uri, null, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(checkNotNull(player.getPlayerView()).getContext()).getDefaultCreator());
-  }
-
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @NonNull ExoCreator creator) {
-    this(player, uri, null, creator, null);
+    this(player, uri, null, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String extension,
-      @NonNull ExoCreator creator, Playable.EventListener eventListener) {
+      @NonNull ExoCreator creator) {
     super(player);
     //noinspection ConstantConditions
-    if (player.getPlayerView() == null || !(player.getPlayerView() instanceof SimpleExoPlayerView)) {
+    if (player.getPlayerView() == null
+        || !(player.getPlayerView() instanceof SimpleExoPlayerView)) {
       throw new IllegalArgumentException("Require non-null SimpleExoPlayerView");
     }
 
     listeners = new MyEventListeners();
-    if (eventListener != null) listeners.add(eventListener);
     playable = creator.createPlayable(uri, extension);
   }
 
