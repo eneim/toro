@@ -65,7 +65,7 @@ class PlayableDemoActivity : AppCompatActivity() {
         playable = lastCustomNonConfigurationInstance as Playable?
         if (playable == null) {
             playable = DemoApp.exoCreator!!.createPlayable(videoUri)
-            playable!!.prepare()
+            playable!!.prepare(true)
         }
         playable!!.addEventListener(listener)
     }

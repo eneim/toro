@@ -26,6 +26,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
+ * Definition of a Player used in Toro. Besides common playback command ({@link #play()}, {@link
+ * #pause()}, etc), it provides the library necessary information about the playback and
+ * components.
+ *
  * @author eneim | 5/31/17.
  */
 
@@ -73,7 +77,7 @@ public interface ToroPlayer {
   /**
    * Notify a Player about its {@link Container}'s scroll state change.
    *
-   * Deprecated, no-longer used.
+   * @deprecated no-longer used.
    */
   @Deprecated void onSettled(Container container);
 

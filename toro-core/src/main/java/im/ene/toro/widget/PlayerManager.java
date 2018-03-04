@@ -75,12 +75,13 @@ final class PlayerManager {
   void play(@NonNull ToroPlayer player) {
     int delay = container.playerDispatcher.getDelayToPlay(player);
     if (delay < PlayerDispatcher.DELAY_INFINITE) throw new IllegalArgumentException("Too negative");
+
+    handler.removeMessages(MSG_PLAY, player); // remove unsent msg
     if (delay == PlayerDispatcher.DELAY_INFINITE) {
       // do nothing
     } else if (delay == PlayerDispatcher.DELAY_NONE) {
       player.play();
     } else {
-      handler.removeMessages(MSG_PLAY, player); // remove unsent msg
       handler.sendMessageDelayed(handler.obtainMessage(MSG_PLAY, player), delay);
     }
   }

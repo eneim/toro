@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.2.21'
+  ext.kotlin_version = '1.2.30'
   repositories {
     google()
     jcenter()
@@ -41,7 +41,7 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.4.0-A3'
+    releaseVersion = '3.4.0-B1'
     releaseVersionCode = 340
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
@@ -51,7 +51,7 @@ allprojects {
 ext {
   androidVersion = 27
   buildToolVersion = '27.0.2'
-  supportLibraryVersion = '27.0.2'
+  supportLibraryVersion = '27.1.0'
   exoPlayer2Version = '2.7.0'
   minSupportSDKVersion = 16
 }

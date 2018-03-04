@@ -27,7 +27,6 @@ import android.view.View;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.widget.Container;
 import im.ene.toro.youtube.YouTubePlayerDialog.FullscreenRequestType;
 import im.ene.toro.youtube.YouTubePlayerDialog.InitData;
 import java.util.HashMap;
@@ -99,14 +98,14 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
   private static final String STATE_KEY_PLAYBACK_INFO = "yt:adapter:playback_info";
   private static final String STATE_KEY_ORIENTATION = "yt:adapter:orientation";
 
-  YouTubePlayerHelper obtainHelper(Container container, @NonNull ToroPlayer player, String video) {
+  YouTubePlayerHelper obtainHelper(@NonNull ToroPlayer player, String video) {
     YouTubePlayerHelper helper = this.helpers.get(player);
     if (helper != null && helper.ytFragment != null) {
       manager.beginTransaction().remove(helper.ytFragment).commitNow();
     }
 
     if (helper == null) {
-      helper = new YouTubePlayerHelper(this, container, player, video);
+      helper = new YouTubePlayerHelper(this, player, video);
       helpers.put(player, helper);
     }
 

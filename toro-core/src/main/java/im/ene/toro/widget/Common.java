@@ -34,6 +34,7 @@ import java.util.List;
  */
 
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
+@RestrictTo(RestrictTo.Scope.LIBRARY) //
 final class Common {
 
   private static final String TAG = "ToroLib:Common";
@@ -47,14 +48,12 @@ final class Common {
     return Collections.<Long>max(list);
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) //
   static Comparator<ToroPlayer> ORDER_COMPARATOR = new Comparator<ToroPlayer>() {
     @Override public int compare(ToroPlayer o1, ToroPlayer o2) {
       return Common.compare(o1.getPlayerOrder(), o2.getPlayerOrder());
     }
   };
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY)
   static boolean allowsToPlay(@NonNull ToroPlayer player) {
     //noinspection ConstantConditions
     boolean valid = player != null && player instanceof RecyclerView.ViewHolder;  // Should be true

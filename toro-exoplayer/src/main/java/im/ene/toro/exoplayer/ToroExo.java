@@ -19,18 +19,36 @@ package im.ene.toro.exoplayer;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
+import android.widget.Toast;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.ExoMediaCrypto;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
+import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.media.DrmMedia;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
+import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 import static java.lang.Runtime.getRuntime;
 
@@ -39,10 +57,13 @@ import static java.lang.Runtime.getRuntime;
  * In this setup, {@link ExoCreator} and SimpleExoPlayer pools are cached. A {@link Config}
  * is a key for each {@link ExoCreator}.
  *
+ * A suggested usage is as below:
+ * <pre><code>
  * ExoCreator creator = ToroExo.with(this).getDefaultCreator();
- * SimpleExoPlayer player = creator.createPlayer();
- * MediaSource source = creator.createMediaSource(videoUri);
- * // next: do stuff with SimpleExoPlayer instance and MediaSource instance.
+ * Playable playable = creator.createPlayable(uri);
+ * playable.prepare();
+ * // next: setup PlayerView and start the playback.
+ * </code></pre>
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
@@ -50,28 +71,31 @@ import static java.lang.Runtime.getRuntime;
 
 public final class ToroExo {
 
-  @SuppressLint("StaticFieldLeak") static volatile ToroExo toro;
-  private static final int MAX_POOL_SIZE = Math.max(4, getRuntime().availableProcessors());
+  // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
+  @SuppressWarnings("WeakerAccess") //
+  static final int MAX_POOL_SIZE = Math.max(Util.SDK_INT / 6, getRuntime().availableProcessors());
+  @SuppressLint("StaticFieldLeak")  //
+  static volatile ToroExo toro;
 
   public static ToroExo with(Context context) {
     if (toro == null) {
       synchronized (ToroExo.class) {
-        if (toro == null) toro = new ToroExo(context);
+        if (toro == null) toro = new ToroExo(context.getApplicationContext());
       }
     }
     return toro;
   }
 
-  final String appName;
-  final Config defaultConfig = new Config.Builder().build();
-
-  @NonNull private final Context context;  // Application context
+  @NonNull final String appName;
+  @NonNull final Context context;  // Application context
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
 
-  private ToroExo(Context context) {
-    this.context = context.getApplicationContext();
-    this.appName = getUserAgent(context.getApplicationContext(), LIB_NAME);
+  /* pkg */ Config defaultConfig; // will be created on the first time it is used.
+
+  private ToroExo(@NonNull Context context /* Application context */) {
+    this.context = context;
+    this.appName = getUserAgent(context, LIB_NAME);
     this.playerPools = new HashMap<>();
     this.creators = new HashMap<>();
 
@@ -83,17 +107,24 @@ public final class ToroExo {
     }
   }
 
+  /**
+   * Utility method to produce {@link ExoCreator} instance from a {@link Config}.
+   */
   public final ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
-      creator = new DefaultExoCreator(context, config);
+      creator = new DefaultExoCreator(this, config);
       this.creators.put(config, creator);
     }
 
     return creator;
   }
 
+  /**
+   * Get the default {@link ExoCreator}. This ExoCreator is configured by {@link #defaultConfig}.
+   */
   public final ExoCreator getDefaultCreator() {
+    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
     return getCreator(defaultConfig);
   }
 
@@ -101,17 +132,22 @@ public final class ToroExo {
    * Request an instance of {@link SimpleExoPlayer}. It can be an existing instance cached by Pool
    * or new one.
    *
+   * The creator may or may not be the one created by either {@link #getCreator(Config)} or
+   * {@link #getDefaultCreator()}.
+   *
    * @param creator the {@link ExoCreator} that is scoped to the {@link SimpleExoPlayer} config.
    * @return an usable {@link SimpleExoPlayer} instance.
    */
-  @SuppressWarnings("WeakerAccess") @NonNull  //
-  public final SimpleExoPlayer requestPlayer(ExoCreator creator) {
-    //noinspection UnusedAssignment
-    SimpleExoPlayer player = getPool(creator).acquire();
-    if (player == null) {
-      player = creator.createPlayer();
+  @NonNull  //
+  public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
+    SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
+    if (player == null) player = creator.createPlayer();
+    // TODO investigate this on config change, etc
+    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
+    if (player.getPlaybackState() != Player.STATE_IDLE) {
+      // Throw when debug only. Some devices/versions could not reset the player on-time ...
+      if (BuildConfig.DEBUG) throw new IllegalStateException("Player is not in idle state.");
     }
-
     return player;
   }
 
@@ -123,8 +159,15 @@ public final class ToroExo {
    * @return true if player is released to relevant Pool, false otherwise.
    */
   @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
-  public final boolean releasePlayer(ExoCreator creator, SimpleExoPlayer player) {
-    return getPool(creator).release(player);
+  public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
+    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
+    if (checkNotNull(player).getPlaybackState() != Player.STATE_IDLE) {
+      // Throw when debug only. Some devices/versions could not reset the player on-time ...
+      if (BuildConfig.DEBUG) {
+        throw new IllegalStateException("Player must be stopped before releasing it back to Pool.");
+      }
+    }
+    return getPool(checkNotNull(creator)).release(player);
   }
 
   /**
@@ -134,9 +177,7 @@ public final class ToroExo {
   public final void cleanUp() {
     for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
       SimpleExoPlayer item;
-      while ((item = pool.acquire()) != null) {
-        item.release();
-      }
+      while ((item = pool.acquire()) != null) item.release();
     }
   }
 
@@ -151,7 +192,66 @@ public final class ToroExo {
     return pool;
   }
 
-  String getString(@StringRes int resId, @Nullable Object... params) {
+  /**
+   * Get a possibly-non-localized String from existing resourceId.
+   */
+  /* pkg */ String getString(@StringRes int resId, @Nullable Object... params) {
     return params == null ? this.context.getString(resId) : this.context.getString(resId, params);
+  }
+
+  /**
+   * Utility method to build a {@link DrmSessionManager} that can be used in {@link Config}
+   *
+   * Usage:
+   * <pre><code>
+   *   DrmSessionManager manager = ToroExo.with(context).createDrmSessionManager(mediaDrm, null);
+   *   Config config = new Config.Builder().setDrmSessionManager(manager);
+   *   ExoCreator creator = ToroExo.with(context).getCreator(config);
+   * </code></pre>
+   */
+  @RequiresApi(18) @Nullable
+  public DrmSessionManager<? extends ExoMediaCrypto> createDrmSessionManager(
+      @NonNull DrmMedia drmMedia, @Nullable Handler handler) {
+    DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
+    int errorStringId = R.string.error_drm_unknown;
+    if (Util.SDK_INT < 18) {
+      errorStringId = R.string.error_drm_not_supported;
+    } else {
+      UUID drmSchemeUuid = Util.getDrmUuid(checkNotNull(drmMedia).getType());
+      if (drmSchemeUuid == null) {
+        errorStringId = R.string.error_drm_unsupported_scheme;
+      } else {
+        HttpDataSource.Factory factory = new DefaultHttpDataSourceFactory(appName);
+        try {
+          drmSessionManager = buildDrmSessionManagerV18(drmSchemeUuid, drmMedia.getLicenseUrl(),
+              drmMedia.getKeyRequestPropertiesArray(), drmMedia.multiSession(), factory, handler);
+        } catch (UnsupportedDrmException e) {
+          e.printStackTrace();
+          errorStringId = e.reason == REASON_UNSUPPORTED_SCHEME ? //
+              R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
+        }
+      }
+    }
+
+    if (drmSessionManager == null) {
+      Toast.makeText(context, context.getString(errorStringId), Toast.LENGTH_SHORT).show();
+    }
+
+    return drmSessionManager;
+  }
+
+  @RequiresApi(18) private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
+      @NonNull UUID uuid, @NonNull String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
+      boolean multiSession, @NonNull HttpDataSource.Factory httpDataSourceFactory,
+      @Nullable Handler handler) throws UnsupportedDrmException {
+    HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
+    if (keyRequestPropertiesArray != null) {
+      for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
+        drmCallback.setKeyRequestProperty(keyRequestPropertiesArray[i],
+            keyRequestPropertiesArray[i + 1]);
+      }
+    }
+    return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
+        null, handler, null, multiSession);
   }
 }

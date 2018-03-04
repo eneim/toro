@@ -16,7 +16,10 @@
 
 package im.ene.toro.exoplayer;
 
+import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 
@@ -32,10 +35,40 @@ import com.google.android.exoplayer2.source.MediaSource;
 
 public interface ExoCreator {
 
-  SimpleExoPlayer createPlayer();
+  String TAG = "ToroExo:Creator";
 
-  MediaSource createMediaSource(Uri uri);
+  /**
+   * Return current Application context used in {@link ToroExo}. An {@link ExoCreator} must be used
+   * within Application scope.
+   */
+  @Nullable Context getContext();
+
+  /**
+   * Create a new {@link SimpleExoPlayer} instance. This method should always create new instance of
+   * {@link SimpleExoPlayer}, but client should use {@link ExoCreator} indirectly via {@link
+   * ToroExo}.
+   *
+   * @return a new {@link SimpleExoPlayer} instance.
+   */
+  @NonNull SimpleExoPlayer createPlayer();
+
+  /**
+   * Create a {@link MediaSource} from media {@link Uri}.
+   *
+   * @param uri the media {@link Uri}.
+   * @return a {@link MediaSource} for media {@link Uri}.
+   */
+  @NonNull MediaSource createMediaSource(@NonNull Uri uri);
 
   // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
-  Playable createPlayable(Uri uri);
+
+  /**
+   * Create a {@link Playable} for a media {@link Uri}. Client should always use this method for
+   * quick and simple setup. Only use {@link #createMediaSource(Uri)} and/or {@link #createPlayer()}
+   * when necessary.
+   *
+   * @param uri the media {@link Uri}.
+   * @return the {@link Playable} to manage the media {@link Uri}.
+   */
+  @NonNull Playable createPlayable(@NonNull Uri uri);
 }
