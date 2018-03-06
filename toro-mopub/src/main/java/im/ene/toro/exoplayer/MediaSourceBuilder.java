@@ -32,9 +32,9 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.util.Util;
 
 import static android.text.TextUtils.isEmpty;
+import static com.google.android.exoplayer2.util.Util.inferContentType;
 
 /**
  * @author eneim (2018/01/24).
@@ -53,8 +53,7 @@ public interface MediaSourceBuilder {
     public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
         String extension, Handler handler, @NonNull DataSource.Factory manifestDataSourceFactory,
         @NonNull DataSource.Factory mediaDataSourceFactory) {
-      int type =
-          Util.inferContentType(isEmpty(extension) ? uri.getLastPathSegment() : "." + extension);
+      int type = inferContentType(isEmpty(extension) ? uri.getLastPathSegment() : "." + extension);
       switch (type) {
         case C.TYPE_SS:
           return new SsMediaSource(uri, manifestDataSourceFactory,

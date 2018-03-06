@@ -1,6 +1,12 @@
 Changelog
 ===========
 
+3.4.1 (2018/03/06)
+--------------
+
+- Fix a critical bug in 3.4.0, which cause the NPE when initializing the playables.
+- **toro-exoplayer**: Some methods of ``ExoCreator`` and ``MediaSourceBuilder`` now requires the Uri extension as option, to deal with the case that actual Url doesn't end with file extension. Client should pass expected media type so that ExoPlayer can build suitable MediaSource instances. As a result, ``ExoPlayerViewHelper`` adds addition constructor to support optional media type extension. 
+
 <h3>[Important notice, 2018/03/05] Due to some internal bugs, 3.4.0 has been pulled down from Jcenter. Please wait for 3.4.1 with the bug fixes. At the mean time, please stay at 3.3.0 or 3.4.0-A4. Sorry for the inconvenience.</h3>
 
 3.4.0 (2018/03/04)
