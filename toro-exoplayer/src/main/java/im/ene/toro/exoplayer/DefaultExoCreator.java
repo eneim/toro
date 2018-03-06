@@ -23,7 +23,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -73,8 +72,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new DefaultRenderersFactory(this.toro.context, //
-        config.drmSessionManager, config.extensionMode);
+    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
+        config.extensionMode, config.drmSessionManagers);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);

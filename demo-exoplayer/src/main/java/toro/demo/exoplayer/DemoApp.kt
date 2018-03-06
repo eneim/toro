@@ -51,6 +51,6 @@ class DemoApp : Application() {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        if (level == TRIM_MEMORY_RUNNING_LOW) ToroExo.with(this).cleanUp()
+        if (level >= TRIM_MEMORY_BACKGROUND) ToroExo.with(this).cleanUp()
     }
 }

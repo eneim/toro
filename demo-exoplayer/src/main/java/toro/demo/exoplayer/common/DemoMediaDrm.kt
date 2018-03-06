@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package im.ene.toro.media;
+package toro.demo.exoplayer.common
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import im.ene.toro.media.DrmMedia
 
-/**
- * @author eneim | 6/5/17.
- *
- *         A definition of DRM media type.
- */
-
-public interface DrmMedia {
-
-  // DRM Scheme
-  @NonNull String getType();
-
-  @Nullable String getLicenseUrl();
-
-  @Nullable String[] getKeyRequestPropertiesArray();
-
-  boolean multiSession();
+data class DemoMediaDrm(    //
+        private val _type: String,  //
+        private val _licenseUrl: String?,   //
+        private val _multiSession: Boolean) : DrmMedia { //
+    override fun getLicenseUrl() = _licenseUrl
+    override fun getType() = _type
+    override fun getKeyRequestPropertiesArray(): Array<String>? = null
+    override fun multiSession() = _multiSession
 }

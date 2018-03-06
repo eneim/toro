@@ -79,11 +79,13 @@ public interface MediaSourceBuilder {
   };
 
   MediaSourceBuilder LOOPING = new MediaSourceBuilder() {
+
     @NonNull @Override
     public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
         @Nullable String fileExt, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
-        @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
+        @NonNull DataSource.Factory mediaDataSourceFactory,
+        @Nullable MediaSourceEventListener listener) {
       return new LoopingMediaSource(
           DEFAULT.buildMediaSource(context, uri, fileExt, handler, manifestDataSourceFactory,
               mediaDataSourceFactory, listener));

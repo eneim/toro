@@ -66,11 +66,9 @@ public interface ExoCreator {
   // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
 
   /**
-   * Create a {@link Playable} for a media {@link Uri} that uses {@link SimpleExoPlayerView}. Client
-   * should always use this method for
-   * quick and simple setup. Only use {@link #createMediaSource(Uri, String)} and/or {@link
-   * #createPlayer()}
-   * when necessary.
+   * Create a {@link Playable} for a media {@link Uri} that uses {@link SimpleExoPlayerView}.
+   * Client should always use this method for quick and simple setup. Only use
+   * {@link #createMediaSource(Uri, String)} and/or {@link #createPlayer()} when necessary.
    *
    * @param uri the media {@link Uri}.
    * @return the {@link Playable} to manage the media {@link Uri}.
