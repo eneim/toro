@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.C.ContentType;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -32,7 +33,9 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.util.Util;
+
+import static android.text.TextUtils.isEmpty;
+import static com.google.android.exoplayer2.util.Util.inferContentType;
 
 /**
  * @author eneim (2018/01/24).
@@ -42,16 +45,18 @@ import com.google.android.exoplayer2.util.Util;
 public interface MediaSourceBuilder {
 
   @NonNull MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
-      @Nullable Handler handler, @NonNull DataSource.Factory manifestDataSourceFactory,
+      @Nullable String fileExt, @Nullable Handler handler,
+      @NonNull DataSource.Factory manifestDataSourceFactory,
       @NonNull DataSource.Factory mediaDataSourceFactory,
       @Nullable MediaSourceEventListener listener);
 
   MediaSourceBuilder DEFAULT = new MediaSourceBuilder() {
     @NonNull @Override
-    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri, Handler handler,
+    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
+        @Nullable String ext, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
         @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
-      @C.ContentType int type = Util.inferContentType(uri);
+      @ContentType int type = isEmpty(ext) ? inferContentType(uri) : inferContentType("." + ext);
       switch (type) {
         case C.TYPE_DASH:
           return new DashMediaSource.Factory(
@@ -75,11 +80,12 @@ public interface MediaSourceBuilder {
 
   MediaSourceBuilder LOOPING = new MediaSourceBuilder() {
     @NonNull @Override
-    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri, Handler handler,
+    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
+        @Nullable String fileExt, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
         @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
       return new LoopingMediaSource(
-          DEFAULT.buildMediaSource(context, uri, handler, manifestDataSourceFactory,
+          DEFAULT.buildMediaSource(context, uri, fileExt, handler, manifestDataSourceFactory,
               mediaDataSourceFactory, listener));
     }
   };

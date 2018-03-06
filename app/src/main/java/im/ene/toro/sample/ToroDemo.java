@@ -18,6 +18,7 @@ package im.ene.toro.sample;
 
 import android.app.Application;
 import com.squareup.leakcanary.LeakCanary;
+import im.ene.toro.exoplayer.ToroExo;
 
 /**
  * @author eneim | 6/5/17.
@@ -40,5 +41,10 @@ public class ToroDemo extends Application {
 
   public static ToroDemo getApp() {
     return singleton;
+  }
+
+  @Override public void onTrimMemory(int level) {
+    super.onTrimMemory(level);
+    if (level >= TRIM_MEMORY_BACKGROUND) ToroExo.with(this).cleanUp();
   }
 }

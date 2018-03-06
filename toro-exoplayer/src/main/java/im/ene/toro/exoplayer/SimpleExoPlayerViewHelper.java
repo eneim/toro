@@ -39,7 +39,11 @@ public final class SimpleExoPlayerViewHelper extends ExoPlayerViewHelper {
   @Deprecated
   public SimpleExoPlayerViewHelper(@SuppressWarnings("unused") @NonNull Container container,
       @NonNull ToroPlayer player, @NonNull Uri uri) {
-    super(player, uri);
+    this(player, uri, null);
+  }
+
+  public SimpleExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt) {
+    super(player, uri, fileExt);
   }
 
   private ListenerWrapper listener;
