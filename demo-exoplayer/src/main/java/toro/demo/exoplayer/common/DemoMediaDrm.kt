@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package toro.demo.exoplayer
+package toro.demo.exoplayer.common
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import im.ene.toro.media.DrmMedia
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
+data class DemoMediaDrm(    //
+        private val _type: String,  //
+        private val _licenseUrl: String?,   //
+        private val _multiSession: Boolean) : DrmMedia { //
+    override fun getLicenseUrl() = _licenseUrl
+    override fun getType() = _type
+    override fun getKeyRequestPropertiesArray(): Array<String>? = null
+    override fun multiSession() = _multiSession
 }

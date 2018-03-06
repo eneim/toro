@@ -49,17 +49,21 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(player.getPlayerView().getContext()).defaultConfig);
+    this(player, uri, null);
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @NonNull Config config) {
-    this(player, uri, with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @Nullable String extension) {
+    this(player, uri, extension, with(player.getPlayerView().getContext()).getDefaultConfig());
+  }
+
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @Nullable String extension, @NonNull Config config) {
+    this(player, uri, extension, with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
   // Hide this constructor, as it depends on ExoCreator implementation, which is non-trivial now.
   @SuppressWarnings("WeakerAccess") //
-  ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @NonNull ExoCreator creator) {
-    this(player, new ExoPlayable(creator, uri));
+  ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @Nullable String extension, @NonNull ExoCreator creator) {
+    this(player, new ExoPlayable(creator, uri, extension));
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull ExoPlayable playable) {

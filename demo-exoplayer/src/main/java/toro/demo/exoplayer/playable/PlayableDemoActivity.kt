@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
+@file:Suppress("RedundantOverride")
+
 package toro.demo.exoplayer.playable
 
-import android.graphics.Point
+import android.arch.lifecycle.ViewModelProviders
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.google.android.exoplayer2.ui.PlayerView
 import im.ene.toro.exoplayer.Playable
-import im.ene.toro.exoplayer.Playable.DefaultEventListener
-import kotlinx.android.synthetic.main.activity_single_player.toolbar
-import kotlinx.android.synthetic.main.activity_single_player_landscape.player_view
-import kotlinx.android.synthetic.main.content_single_player.playerView
-import toro.demo.exoplayer.DemoApp
-import toro.demo.exoplayer.R
+import toro.demo.exoplayer.DemoItemsFragment
+import toro.demo.exoplayer.common.PlayableViewModel
 
 /**
  * Demo for @see [Playable]. Written in Kotlin.
@@ -38,58 +36,46 @@ class PlayableDemoActivity : AppCompatActivity() {
         private val videoUri = Uri.parse("file:///android_asset/bbb/video.mp4")
     }
 
-    private var playable: Playable? = null
     private var exoPlayerView: PlayerView? = null
 
-    private val listener = object : DefaultEventListener() {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            exoPlayerView!!.keepScreenOn = playWhenReady
-        }
+    private val viewModel: PlayableViewModel by lazy {
+        ViewModelProviders.of(this,
+                PlayableViewModel.Factory(application, null, videoUri)).get(
+                PlayableViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val windowSize = Point()
-        window.windowManager.defaultDisplay.getSize(windowSize)
-        val landscape = windowSize.y < windowSize.x
-        exoPlayerView = //
-                if (landscape) {
-                    setContentView(R.layout.activity_single_player_landscape)
-                    player_view
-                } else {
-                    setContentView(R.layout.activity_single_player)
-                    setSupportActionBar(toolbar)
-                    playerView
-                }
+//        val windowSize = Point()
+//        window.windowManager.defaultDisplay.getSize(windowSize)
+//        val landscape = windowSize.y < windowSize.x
+//        exoPlayerView = //
+//                if (landscape) {
+//                    setContentView(R.layout.activity_single_player_landscape)
+//                    player_view
+//                } else {
+//                    setContentView(R.layout.activity_single_player)
+//                    setSupportActionBar(toolbar)
+//                    playerView
+//                }
+//
+//        viewModel.setPlayerView(exoPlayerView!!)
 
-        playable = lastCustomNonConfigurationInstance as Playable?
-        if (playable == null) {
-            playable = DemoApp.exoCreator!!.createPlayable(videoUri)
-            playable!!.prepare(true)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().replace(android.R.id.content,
+                    DemoItemsFragment.newInstance()).commit()
         }
-        playable!!.addEventListener(listener)
     }
 
     override fun onStart() {
         super.onStart()
-        playable!!.playerView = exoPlayerView
-        if (!playable!!.isPlaying) playable!!.play()
+        // viewModel.play()
     }
 
     override fun onStop() {
         super.onStop()
         // If the activity is not finishing, we keep it playing.
-        if (isFinishing) playable!!.pause()
-        playable!!.playerView = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        playable!!.removeEventListener(listener)
-        if (isFinishing) playable!!.release()
-    }
-
-    override fun onRetainCustomNonConfigurationInstance(): Any {
-        return playable!!
+//        if (isFinishing) viewModel.pause()
+//        viewModel.setPlayerView(null)
     }
 }

@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
@@ -42,16 +43,20 @@ import com.google.android.exoplayer2.util.Util;
 public interface MediaSourceBuilder {
 
   @NonNull MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
-      @Nullable Handler handler, @NonNull DataSource.Factory manifestDataSourceFactory,
+      @Nullable String uriExtension, @Nullable Handler handler,
+      @NonNull DataSource.Factory manifestDataSourceFactory,
       @NonNull DataSource.Factory mediaDataSourceFactory,
       @Nullable MediaSourceEventListener listener);
 
   MediaSourceBuilder DEFAULT = new MediaSourceBuilder() {
     @NonNull @Override
-    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri, Handler handler,
+    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
+        @Nullable String uriExtension, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
-        @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
-      @C.ContentType int type = Util.inferContentType(uri);
+        @NonNull DataSource.Factory mediaDataSourceFactory,
+        @Nullable MediaSourceEventListener listener) {
+      @C.ContentType int type = TextUtils.isEmpty(uriExtension) ? Util.inferContentType(uri)
+          : Util.inferContentType("." + uriExtension);
       switch (type) {
         case C.TYPE_DASH:
           return new DashMediaSource.Factory(
@@ -74,12 +79,15 @@ public interface MediaSourceBuilder {
   };
 
   MediaSourceBuilder LOOPING = new MediaSourceBuilder() {
+
     @NonNull @Override
-    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri, Handler handler,
+    public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
+        @Nullable String uriExtension, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
-        @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
+        @NonNull DataSource.Factory mediaDataSourceFactory,
+        @Nullable MediaSourceEventListener listener) {
       return new LoopingMediaSource(
-          DEFAULT.buildMediaSource(context, uri, handler, manifestDataSourceFactory,
+          DEFAULT.buildMediaSource(context, uri, uriExtension, handler, manifestDataSourceFactory,
               mediaDataSourceFactory, listener));
     }
   };

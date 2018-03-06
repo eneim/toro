@@ -45,8 +45,8 @@ public interface ExoCreator {
 
   /**
    * Create a new {@link SimpleExoPlayer} instance. This method should always create new instance of
-   * {@link SimpleExoPlayer}, but client should use {@link ExoCreator} indirectly via {@link
-   * ToroExo}.
+   * {@link SimpleExoPlayer}, but client should use {@link ExoCreator} indirectly via
+   * {@link ToroExo}.
    *
    * @return a new {@link SimpleExoPlayer} instance.
    */
@@ -56,19 +56,21 @@ public interface ExoCreator {
    * Create a {@link MediaSource} from media {@link Uri}.
    *
    * @param uri the media {@link Uri}.
+   * @param extension optional (File) extension of the Uri.
    * @return a {@link MediaSource} for media {@link Uri}.
    */
-  @NonNull MediaSource createMediaSource(@NonNull Uri uri);
+  @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String extension);
 
   // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
 
   /**
    * Create a {@link Playable} for a media {@link Uri}. Client should always use this method for
-   * quick and simple setup. Only use {@link #createMediaSource(Uri)} and/or {@link #createPlayer()}
-   * when necessary.
+   * quick and simple setup. Only use {@link #createMediaSource(Uri, String)} and/or
+   * {@link #createPlayer()} when necessary.
    *
    * @param uri the media {@link Uri}.
+   * @param extension optional (File) extension of the Uri.
    * @return the {@link Playable} to manage the media {@link Uri}.
    */
-  @NonNull Playable createPlayable(@NonNull Uri uri);
+  @NonNull Playable createPlayable(@NonNull Uri uri, @Nullable String extension);
 }

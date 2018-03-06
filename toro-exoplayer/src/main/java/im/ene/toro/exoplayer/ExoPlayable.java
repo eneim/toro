@@ -59,9 +59,10 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
    *
    * @param creator the {@link ExoCreator} instance.
    * @param uri the {@link Uri} of the media.
+   * @param extension optional (File) extension of the Uri.
    */
-  public ExoPlayable(ExoCreator creator, Uri uri) {
-    super(creator, uri);
+  public ExoPlayable(ExoCreator creator, Uri uri, String extension) {
+    super(creator, uri, extension);
   }
 
   @Override public void prepare(boolean prepareSource) {

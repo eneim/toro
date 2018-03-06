@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package toro.demo.exoplayer
+package toro.demo.exoplayer.common
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import com.squareup.moshi.Json
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
+ * @author eneim (2018/03/05).
  */
-class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
-    }
-}
+data class DemoItem(    //
+        @Json(name = "name") val name: String,                   // name
+        @Json(name = "samples") val samples: List<VideoItem>        // samples
+)

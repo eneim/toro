@@ -30,7 +30,6 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
@@ -46,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -91,7 +91,7 @@ public final class ToroExo {
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
 
-  /* pkg */ Config defaultConfig; // will be created on the first time it is used.
+  private Config defaultConfig; // will be created on the first time it is used.
 
   private ToroExo(@NonNull Context context /* Application context */) {
     this.context = context;
@@ -118,6 +118,11 @@ public final class ToroExo {
     }
 
     return creator;
+  }
+
+  public final Config getDefaultConfig() {
+    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
+    return defaultConfig;
   }
 
   /**
@@ -209,11 +214,11 @@ public final class ToroExo {
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @RequiresApi(18) @Nullable
-  public DrmSessionManager<? extends ExoMediaCrypto> createDrmSessionManager(
+  @RequiresApi(18) @Nullable public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(
       @NonNull DrmMedia drmMedia, @Nullable Handler handler) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
+    String subString = null;
     if (Util.SDK_INT < 18) {
       errorStringId = R.string.error_drm_not_supported;
     } else {
@@ -229,19 +234,22 @@ public final class ToroExo {
           e.printStackTrace();
           errorStringId = e.reason == REASON_UNSUPPORTED_SCHEME ? //
               R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
+          if (e.reason == REASON_UNSUPPORTED_SCHEME) {
+            subString = drmMedia.getType();
+          }
         }
       }
     }
 
     if (drmSessionManager == null) {
-      Toast.makeText(context, context.getString(errorStringId), Toast.LENGTH_SHORT).show();
+      Toast.makeText(context, context.getString(errorStringId) + subString, LENGTH_SHORT).show();
     }
 
     return drmSessionManager;
   }
 
   @RequiresApi(18) private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
-      @NonNull UUID uuid, @NonNull String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
+      @NonNull UUID uuid, @Nullable String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
       boolean multiSession, @NonNull HttpDataSource.Factory httpDataSourceFactory,
       @Nullable Handler handler) throws UnsupportedDrmException {
     HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
@@ -251,6 +259,7 @@ public final class ToroExo {
             keyRequestPropertiesArray[i + 1]);
       }
     }
+
     return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
         null, handler, null, multiSession);
   }

@@ -34,6 +34,6 @@ class LoopingPlayerHelper extends ExoPlayerViewHelper {
 
   LoopingPlayerHelper(@NonNull ToroPlayer player, @NonNull Uri mediaUri) {
     // customized using Looping media source builder
-    super(player, mediaUri, loopingConfig);
+    super(player, mediaUri, null, loopingConfig);
   }
 }

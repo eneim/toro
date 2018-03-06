@@ -23,7 +23,6 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -73,8 +72,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new DefaultRenderersFactory(this.toro.context, //
-        config.drmSessionManager, config.extensionMode);
+    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
+        config.extensionMode, config.drmSessionManagers);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -128,13 +127,14 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
   }
 
-  @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri) {
-    return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, new Handler(),
+  @NonNull @Override
+  public MediaSource createMediaSource(@NonNull Uri uri, @Nullable String extension) {
+    return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, extension, new Handler(),
         manifestDataSourceFactory, mediaDataSourceFactory, this);
   }
 
-  @NonNull @Override public Playable createPlayable(@NonNull Uri uri) {
-    return new PlayableImpl(this, uri);
+  @NonNull @Override public Playable createPlayable(@NonNull Uri uri, @Nullable String extension) {
+    return new PlayableImpl(this, uri, extension);
   }
 
   /// MediaSourceEventListener
@@ -193,6 +193,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     private final EventListeners listeners = new EventListeners();  // original listener.
 
     protected final Uri mediaUri; // immutable, parcelable
+    protected final String extension; // expected extension of the Uri
     protected final ExoCreator creator; // required, cached
 
     protected SimpleExoPlayer player; // on-demand, cached
@@ -201,9 +202,10 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
     private boolean listenerApplied = false;
 
-    PlayableImpl(ExoCreator creator, Uri uri) {
+    PlayableImpl(ExoCreator creator, Uri uri, String extension) {
       this.creator = creator;
       this.mediaUri = uri;
+      this.extension = extension;
     }
 
     @CallSuper @Override public void prepare(boolean prepareSource) {
@@ -228,7 +230,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
       if (prepareSource) {
         if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-          mediaSource = creator.createMediaSource(mediaUri);
+          mediaSource = creator.createMediaSource(mediaUri, extension);
           player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
         }
       }
@@ -256,7 +258,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     @CallSuper @Override public void play() {
       checkNotNull(player, "Playable#play(): Player is null!");
       if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-        mediaSource = creator.createMediaSource(mediaUri);
+        mediaSource = creator.createMediaSource(mediaUri, extension);
         player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
       }
       player.setPlayWhenReady(true);

@@ -100,7 +100,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
     playable = (Playable) getLastCustomNonConfigurationInstance();
     if (playable == null) {
       //noinspection ConstantConditions
-      playable = DemoApp.Companion.getExoCreator().createPlayable(video);
+      playable = DemoApp.Companion.getExoCreator().createPlayable(video, null);
       playable.prepare(true);
     }
 
