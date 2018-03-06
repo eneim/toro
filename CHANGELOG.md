@@ -1,6 +1,8 @@
 Changelog
 ===========
 
+<h3>[Important notice, 2018/03/05] Due to some internal bugs, 3.4.0 has been pulled down from Jcenter. Please wait for 3.4.1 with the bug fixes. At the mean time, please stay at 3.3.0 or 3.4.0-A4. Sorry for the inconvenience.</h3>
+
 3.4.0 (2018/03/04)
 --------------
 
