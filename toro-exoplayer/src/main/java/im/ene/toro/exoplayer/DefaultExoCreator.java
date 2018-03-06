@@ -128,13 +128,13 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
   }
 
-  @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri) {
-    return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, new Handler(),
+  @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
+    return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, fileExt, new Handler(),
         manifestDataSourceFactory, mediaDataSourceFactory, this);
   }
 
-  @NonNull @Override public Playable createPlayable(@NonNull Uri uri) {
-    return new PlayableImpl(this, uri);
+  @NonNull @Override public Playable createPlayable(@NonNull Uri uri, String fileExt) {
+    return new PlayableImpl(this, uri, fileExt);
   }
 
   /// MediaSourceEventListener
@@ -193,6 +193,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     private final EventListeners listeners = new EventListeners();  // original listener.
 
     protected final Uri mediaUri; // immutable, parcelable
+    protected final String fileExt;
     protected final ExoCreator creator; // required, cached
 
     protected SimpleExoPlayer player; // on-demand, cached
@@ -201,9 +202,10 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
     private boolean listenerApplied = false;
 
-    PlayableImpl(ExoCreator creator, Uri uri) {
+    PlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
       this.creator = creator;
       this.mediaUri = uri;
+      this.fileExt = fileExt;
     }
 
     @CallSuper @Override public void prepare(boolean prepareSource) {
@@ -228,7 +230,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
       if (prepareSource) {
         if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-          mediaSource = creator.createMediaSource(mediaUri);
+          mediaSource = creator.createMediaSource(mediaUri, fileExt);
           player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
         }
       }
@@ -256,7 +258,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     @CallSuper @Override public void play() {
       checkNotNull(player, "Playable#play(): Player is null!");
       if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-        mediaSource = creator.createMediaSource(mediaUri);
+        mediaSource = creator.createMediaSource(mediaUri, fileExt);
         player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
       }
       player.setPlayWhenReady(true);

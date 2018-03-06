@@ -176,7 +176,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
     super.onStart();
     if (playerHelper == null) {
       playerHelper = ToroExo.with(getContext()).getDefaultCreator() //
-          .createPlayable(videoItem.getMediaUrl().getUri());
+          .createPlayable(videoItem.getMediaUrl().getUri(), null);
       playerHelper.prepare(true);
     }
     playerHelper.setPlayerView(playerView);

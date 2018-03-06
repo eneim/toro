@@ -159,7 +159,7 @@ public class SinglePlayerActivity extends BaseActivity {
     }
 
     if (mediaDescription != null) mediaDescription.setText(Html.fromHtml(content));
-    playable = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri);
+    playable = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri, null);
 
     ActivityCompat.postponeEnterTransition(this);
     playerView.getViewTreeObserver()

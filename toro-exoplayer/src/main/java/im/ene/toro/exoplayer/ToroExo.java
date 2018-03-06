@@ -91,7 +91,7 @@ public final class ToroExo {
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
 
-  /* pkg */ Config defaultConfig; // will be created on the first time it is used.
+  private Config defaultConfig; // will be created on the first time it is used.
 
   private ToroExo(@NonNull Context context /* Application context */) {
     this.context = context;
@@ -120,12 +120,16 @@ public final class ToroExo {
     return creator;
   }
 
+  public final Config getDefaultConfig() {
+    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
+    return defaultConfig;
+  }
+
   /**
    * Get the default {@link ExoCreator}. This ExoCreator is configured by {@link #defaultConfig}.
    */
   public final ExoCreator getDefaultCreator() {
-    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
-    return getCreator(defaultConfig);
+    return getCreator(getDefaultConfig());
   }
 
   /**

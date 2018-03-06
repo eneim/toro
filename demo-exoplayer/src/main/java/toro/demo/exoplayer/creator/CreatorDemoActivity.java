@@ -67,7 +67,7 @@ public class CreatorDemoActivity extends AppCompatActivity {
     creator = DemoApp.Companion.getExoCreator();
 
     exoPlayer = ToroExo.with(this).requestPlayer(creator);
-    mediaSource = creator.createMediaSource(videoUri);
+    mediaSource = creator.createMediaSource(videoUri, null);
     exoPlayer.addListener(listener);
     exoPlayer.prepare(mediaSource);
     playerView.setPlayer(exoPlayer);

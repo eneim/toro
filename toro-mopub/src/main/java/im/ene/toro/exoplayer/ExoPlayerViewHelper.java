@@ -47,7 +47,11 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, null, with(player.getPlayerView().getContext()).getDefaultCreator());
+    this(player, uri, null);
+  }
+
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String extension) {
+    this(player, uri, extension, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
 
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String extension,
