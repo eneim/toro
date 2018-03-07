@@ -22,6 +22,6 @@ import com.squareup.moshi.Json
  * @author eneim (2018/03/05).
  */
 data class DemoItem(    //
-        @Json(name = "name") val name: String,                   // name
+        @Json(name = "name") val name: String,                      // name
         @Json(name = "samples") val samples: List<VideoItem>        // samples
 )

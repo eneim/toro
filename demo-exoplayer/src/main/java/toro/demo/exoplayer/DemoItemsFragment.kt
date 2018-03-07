@@ -52,14 +52,36 @@ import toro.demo.exoplayer.common.VideoItem
 /**
  * @author eneim (2018/03/05).
  */
-class DemoItemsFragment : Fragment(), (VideoItem) -> Config {
+class DemoItemsFragment : Fragment(), (DemoItem) -> Config {
     companion object {
         fun newInstance() = DemoItemsFragment()
     }
 
     private val configCache = HashMap<DemoMediaDrm, Config>()
 
-    override fun invoke(item: VideoItem): Config {
+    override fun invoke(item: DemoItem): Config {
+        val defaultConfig = DemoApp.config!!
+        if (Util.SDK_INT < 18) return defaultConfig
+
+        // Step 1: process 1st level Videos.
+        val drmList = item.samples.filter { it.drmScheme != null }.map { it ->
+            DemoMediaDrm(it.drmScheme!!, it.drmLicenseUrl, false)
+        }.distinctBy { it.hashCode() }
+
+        var config = configCache[drmList.firstOrNull()]
+        if (config == null) {
+            config = drmList.map { it ->
+                ToroExo.with(requireContext()).createDrmSessionManager(it, Handler())
+            }.run {
+                defaultConfig.newBuilder().setDrmSessionManagers(this.toTypedArray()).build()
+            }
+            drmList.forEach { configCache[it] = config }
+        }
+
+        return config!!
+    }
+
+    fun invoke(item: VideoItem): Config {
         val defaultConfig = DemoApp.config!!
         return if (item.drmScheme == null || Util.SDK_INT < 18)
             defaultConfig
@@ -106,7 +128,7 @@ class DemoItemViewHolder(itemView: View) : ViewHolder(itemView), ToroPlayer {
         val videoUri = videoItem!!.uri
         if (videoUri != null && helper == null) {
             helper = ExoPlayerViewHelper(this, Uri.parse(videoUri),
-                    videoItem!!.extension, act!!.invoke(videoItem!!))
+                    videoItem!!.extension, act!!.invoke(demoItem!!))
         }
 
         if (listener == null) {
@@ -164,9 +186,9 @@ class DemoItemViewHolder(itemView: View) : ViewHolder(itemView), ToroPlayer {
     private var helper: ExoPlayerViewHelper? = null
     private var listener: EventListener? = null
     private var videoItem: VideoItem? = null
-    private var act: ((VideoItem) -> Config)? = null
+    private var act: ((DemoItem) -> Config)? = null
 
-    fun bind(item: DemoItem, act: (VideoItem) -> Config) {
+    fun bind(item: DemoItem, act: (DemoItem) -> Config) {
         this.act = act
         this.demoItem = item
         if (demoItem?.samples?.isNotEmpty()!!) {
@@ -190,7 +212,7 @@ class DemoItemViewHolder(itemView: View) : ViewHolder(itemView), ToroPlayer {
     }
 }
 
-class DemoAdapter(private val act: (VideoItem) -> Config) : Adapter<DemoItemViewHolder>() {
+class DemoAdapter(private val act: (DemoItem) -> Config) : Adapter<DemoItemViewHolder>() {
 
     private val items = arrayListOf<DemoItem>()
     private var inflater: LayoutInflater? = null

@@ -42,7 +42,6 @@ final class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
   private static final String TAG = "Toro:Yt:Manager";
 
-  // final Object LOCK = new Object();
   private final FragmentManager manager;
   private final Map<ToroPlayer, YouTubePlayerHelper> helpers = new HashMap<>();
 
@@ -58,10 +57,6 @@ final class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
           ToroYouTubePlayerFragment fragment = (ToroYouTubePlayerFragment) f;
           YouTubePlayerHelper helper = fragment.getHelperKey();
           if (helper != null) helper.ytFragment = fragment;
-
-          //synchronized (LOCK) {
-          //  LOCK.notify();
-          //}
         }
       }
 
@@ -83,10 +78,6 @@ final class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
             if (helper.ytFragment != null) helper.ytFragment = null;
           }
           fragment.setHelperKey(null);
-
-          //synchronized (LOCK) {
-          //  LOCK.notify();
-          //}
         }
       }
     };
@@ -110,14 +101,6 @@ final class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
       manager.beginTransaction().remove(helper.ytFragment).commitNow();
     }
 
-    //synchronized (LOCK) {
-    //  try {
-    //    LOCK.wait();
-    //  } catch (InterruptedException e) {
-    //    e.printStackTrace();
-    //  }
-    //}
-
     if (helper == null) {
       helper = new YouTubePlayerHelper(this, player, video);
       helpers.put(player, helper);
@@ -126,14 +109,6 @@ final class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
     ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
     fragment.setHelperKey(helper);
     manager.beginTransaction().replace(player.getPlayerView().getId(), fragment).commitNow();
-
-    //synchronized (LOCK) {
-    //  try {
-    //    LOCK.wait();
-    //  } catch (InterruptedException e) {
-    //    e.printStackTrace();
-    //  }
-    //}
 
     return helper;
   }
