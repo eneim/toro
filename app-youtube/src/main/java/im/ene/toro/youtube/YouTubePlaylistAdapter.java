@@ -48,13 +48,14 @@ class YouTubePlaylistAdapter extends RecyclerView.Adapter<YouTubeVideoViewHolder
     notifyDataSetChanged();
   }
 
-  @Override public YouTubeVideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @Override
+  public YouTubeVideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(YouTubeVideoViewHolder.LAYOUT_RES, parent, false);
     return new YouTubeVideoViewHolder(manager, view);
   }
 
-  @Override public void onBindViewHolder(YouTubeVideoViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull YouTubeVideoViewHolder holder, int position) {
     holder.bind(getItem(position));
   }
 

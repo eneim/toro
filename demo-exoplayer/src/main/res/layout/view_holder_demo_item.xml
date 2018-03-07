@@ -23,6 +23,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
+    app:cardCornerRadius="0dp"
     >
 
   <android.support.v7.widget.LinearLayoutCompat
@@ -41,12 +42,30 @@
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/itemVideo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="180dp"
-        app:resize_mode="fixed_width"
-        app:use_controller="true"
+        android:layout_height="200dp"
+        android:minHeight="200dp"
+        app:resize_mode="zoom"
+        app:surface_type="surface_view"
+        app:use_controller="false"
         tools:layout_height="180dp"
         >
+
+      <android.support.v7.widget.AppCompatTextView
+          android:id="@+id/playerStatus"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="bottom|end"
+          android:layout_margin="8dp"
+          android:background="#80fefefe"
+          android:paddingBottom="4dp"
+          android:paddingEnd="8dp"
+          android:paddingLeft="8dp"
+          android:paddingRight="8dp"
+          android:paddingStart="8dp"
+          android:paddingTop="4dp"
+          android:textColor="@color/cardview_dark_background"
+          />
+
     </com.google.android.exoplayer2.ui.PlayerView>
 
     <android.support.v7.widget.LinearLayoutCompat
@@ -60,21 +79,4 @@
     </android.support.v7.widget.LinearLayoutCompat>
 
   </android.support.v7.widget.LinearLayoutCompat>
-
-  <android.support.v7.widget.AppCompatTextView
-      android:id="@+id/playerStatus"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|end"
-      android:layout_margin="8dp"
-      android:background="#800e0e0e"
-      android:paddingBottom="4dp"
-      android:paddingEnd="8dp"
-      android:paddingLeft="8dp"
-      android:paddingRight="8dp"
-      android:paddingStart="8dp"
-      android:paddingTop="4dp"
-      android:textColor="@color/cardview_light_background"
-      />
-
 </android.support.v7.widget.CardView>

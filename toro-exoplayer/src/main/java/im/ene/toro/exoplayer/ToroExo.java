@@ -25,6 +25,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -70,6 +72,8 @@ import static java.lang.Runtime.getRuntime;
  */
 
 public final class ToroExo {
+
+  private static final String TAG = "ToroExo";
 
   // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
   @SuppressWarnings("WeakerAccess") //
@@ -213,8 +217,7 @@ public final class ToroExo {
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @RequiresApi(18) @Nullable
-  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(
+  @RequiresApi(18) @Nullable public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(
       @NonNull DrmMedia drmMedia, @Nullable Handler handler) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
@@ -242,7 +245,10 @@ public final class ToroExo {
     }
 
     if (drmSessionManager == null) {
-      Toast.makeText(context, context.getString(errorStringId) + subString, LENGTH_SHORT).show();
+      String error = TextUtils.isEmpty(subString) ? context.getString(errorStringId)
+          : context.getString(errorStringId) + ": " + subString;
+      Toast.makeText(context, error, LENGTH_SHORT).show();
+      Log.e(TAG, "createDrmSessionManager: " + error);
     }
 
     return drmSessionManager;
