@@ -44,6 +44,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -183,9 +184,13 @@ public final class ToroExo {
    * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
    */
   public final void cleanUp() {
-    for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
+    // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
+    for (Iterator<Map.Entry<ExoCreator, Pools.Pool<SimpleExoPlayer>>> it =
+        playerPools.entrySet().iterator(); it.hasNext(); ) {
+      Pools.Pool<SimpleExoPlayer> pool = it.next().getValue();
       SimpleExoPlayer item;
       while ((item = pool.acquire()) != null) item.release();
+      it.remove();
     }
   }
 
@@ -213,7 +218,7 @@ public final class ToroExo {
    * Usage:
    * <pre><code>
    *   DrmSessionManager manager = ToroExo.with(context).createDrmSessionManager(mediaDrm, null);
-   *   Config config = new Config.Builder().setDrmSessionManager(manager);
+   *   Config config = new Config.Builder().setDrmSessionManagers([manager]);
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */

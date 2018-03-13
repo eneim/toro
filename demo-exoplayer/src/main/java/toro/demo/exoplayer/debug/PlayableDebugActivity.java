@@ -45,7 +45,9 @@ import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MOD
 
 public class PlayableDebugActivity extends AppCompatActivity {
 
-  static final Uri video = Uri.parse("file:///android_asset/bbb/video.mp4");
+  static final Uri video =
+      Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4");
+      // Uri.parse("file:///android_asset/bbb/video.mp4");
   // Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01a05pM2FXWEN0b0U/responsive-01-durations-v1.mp4");
 
   Playable playable;
@@ -100,7 +102,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
     playable = (Playable) getLastCustomNonConfigurationInstance();
     if (playable == null) {
       //noinspection ConstantConditions
-      playable = DemoApp.Companion.getExoCreator().createPlayable(video, null);
+      playable = DemoApp.Companion.getExoCreator().createPlayable(video, "mp4");
       playable.prepare(true);
     }
 

@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Renderer;
+import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -31,15 +32,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * A {@link RenderersFactory} that supports multiple {@link DrmSessionManager}s.
+ *
  * @author eneim (2018/03/05).
  */
 
-public final class MultiDrmRendererFactory extends DefaultRenderersFactory {
+final class MultiDrmRendererFactory extends DefaultRenderersFactory {
 
   private final ArrayList<DrmSessionManager<FrameworkMediaCrypto>> drmSessionManagers;
 
   MultiDrmRendererFactory(Context context, int extensionRendererMode,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto>... managers) {
+      @Nullable DrmSessionManager<FrameworkMediaCrypto>[] managers) {
     super(context, managers != null && managers.length > 0 ? managers[0] : null,
         extensionRendererMode);
     this.drmSessionManagers = managers != null && managers.length > 1 // at least one more.
@@ -67,8 +70,7 @@ public final class MultiDrmRendererFactory extends DefaultRenderersFactory {
       localOut.clear();
       for (DrmSessionManager<FrameworkMediaCrypto> manager : this.drmSessionManagers) {
         super.buildVideoRenderers(context, manager, allowedVideoJoiningTimeMs,  //
-            eventHandler, eventListener, DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF,
-            localOut);
+            eventHandler, eventListener, EXTENSION_RENDERER_MODE_OFF, localOut);
       }
       outSet.addAll(localOut);
     }
@@ -91,7 +93,7 @@ public final class MultiDrmRendererFactory extends DefaultRenderersFactory {
       localOut.clear();
       for (DrmSessionManager<FrameworkMediaCrypto> manager : this.drmSessionManagers) {
         super.buildAudioRenderers(context, manager, audioProcessors, eventHandler, eventListener,
-            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF, localOut);
+            EXTENSION_RENDERER_MODE_OFF, localOut);
       }
       outSet.addAll(localOut);
     }

@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
@@ -328,6 +329,16 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
     @Override public boolean isPlaying() {
       return player != null && player.getPlayWhenReady();
+    }
+
+    @Override public void setParameters(PlaybackParameters parameters) {
+      checkNotNull(player, "Playable#setParameters(PlaybackParameters): Player is null") //
+          .setPlaybackParameters(parameters);
+    }
+
+    @Override public PlaybackParameters getParameters() {
+      return checkNotNull(player,
+          "Playable#getParameters(): Player is null").getPlaybackParameters();
     }
 
     final void updatePlaybackInfo() {
