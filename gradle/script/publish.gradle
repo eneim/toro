@@ -70,11 +70,6 @@ publishing {
       artifactId = releaseArtifact
       version = releaseVersion
       // Tell maven to prepare the generated "*.aar" file for publishing
-
-      // artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
-      // artifact("$buildDir/libs/${project.getName()}-javadoc.jar")
-      // artifact("$buildDir/libs/${project.getName()}-sources.jar")
-
       artifact(androidSourcesJar)
       artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
     }
