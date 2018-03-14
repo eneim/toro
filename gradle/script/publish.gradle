@@ -15,6 +15,8 @@
  */
 
 apply plugin: 'com.novoda.bintray-release'
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'maven-publish'
 
 publish {
   artifactId = releaseArtifact  // library
@@ -30,4 +32,55 @@ publish {
   bintrayKey = bintray_apikey
 
   dryRun = false
+}
+
+artifactory {
+  contextUrl = "https://oss.jfrog.org/artifactory"
+  //The base Artifactory URL if not overridden by the publisher/resolver
+  publish {
+    repository {
+      repoKey = 'oss-snapshot-local'
+      username = "${bintray_user}"
+      password = "${bintray_apikey}"
+      maven = true
+    }
+  }
+  resolve {
+    repository {
+      repoKey = 'libs-snapshot'
+      username = "${bintray_user}"
+      password = "${bintray_apikey}"
+      maven = true
+    }
+  }
+}
+
+artifactoryPublish.dependsOn('build',
+    'releaseAndroidJavadocs', 'releaseAndroidJavadocsJar', 'releaseAndroidSourcesJar')
+
+task androidSourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+  publications {
+    aar(MavenPublication) {
+      groupId = releaseGroupId
+      artifactId = releaseArtifact
+      version = releaseVersion
+      // Tell maven to prepare the generated "*.aar" file for publishing
+
+      // artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+      // artifact("$buildDir/libs/${project.getName()}-javadoc.jar")
+      // artifact("$buildDir/libs/${project.getName()}-sources.jar")
+
+      artifact(androidSourcesJar)
+      artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+    }
+  }
+}
+
+artifactoryPublish {
+  publications(publishing.publications.aar)
 }
