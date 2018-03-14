@@ -556,6 +556,11 @@ import java.util.List;
     }
   }
 
+  // Because we don't have a proper way to update UI when Player changes Volume explicitly
+  public final void onVolumeUpdate() {
+    if (controller instanceof ToroControlView) ((ToroControlView) controller).onVolumeUpdate();
+  }
+
   /**
    * Returns the playback controls timeout. The playback controls are automatically hidden after
    * this duration of time has elapsed without user input and with playback or buffering in

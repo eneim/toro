@@ -18,6 +18,7 @@ package im.ene.toro.exoplayer.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -108,11 +109,23 @@ public class ToroControlView extends PlaybackControlView {
     return getPlayer() instanceof SimpleExoPlayer ? ((SimpleExoPlayer) getPlayer()).getVolume() : 1;
   }
 
+  // Position is an integer from 0 to 100.
   protected final void setVolume(int position) {
     if (getPlayer() instanceof SimpleExoPlayer) {
       ((SimpleExoPlayer) getPlayer()).setVolume(position / (float) 100);
       volume.set(position);
     }
+  }
+
+  @Override public void setPlayer(ExoPlayer player) {
+    super.setPlayer(player);
+    volume.set((int) (getVolume() * 100));
+  }
+
+  // Called by PlayerView to update UI buttons here.
+  void onVolumeUpdate() {
+    volume.set((int) (getVolume() * 100));
+    updateVolumeButton();
   }
 
   private class ComponentListener implements OnClickListener, TimeBar.OnScrubListener {
@@ -148,13 +161,19 @@ public class ToroControlView extends PlaybackControlView {
     }
   }
 
+  @Override protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+    super.onVisibilityChanged(changedView, visibility);
+    if (changedView != this) return;
+    updateVolumeButton();
+  }
+
   @SuppressWarnings("ConstantConditions") void updateVolumeButton() {
     if (!isVisible() || !ViewCompat.isAttachedToWindow(this)) {
       return;
     }
     boolean requestButtonFocus = false;
     boolean muted =
-        getVolume() == 0;  // muted then show volumeOffButton, or else show volumeUpButton
+        getVolume() == 0;  // if muted then show volumeOffButton, or else show volumeUpButton
     if (volumeOffButton != null) {
       requestButtonFocus |= muted && volumeOffButton.isFocused();
       volumeOffButton.setVisibility(muted ? View.VISIBLE : View.GONE);

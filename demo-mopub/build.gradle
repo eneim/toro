@@ -43,6 +43,7 @@ dependencies {
   implementation project(':toro-core')
   implementation project(':toro-mopub')
 
+  //noinspection GradleDependency
   implementation "com.google.android.exoplayer:exoplayer:r2.4.4"
 
   implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"

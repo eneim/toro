@@ -434,6 +434,8 @@ public class DefaultExoCreator implements ExoCreator {
 
     @CallSuper @Override public void setVolume(float volume) {
       checkNotNull(player, "Playable#setVolume(): Player is null!").setVolume(volume);
+      // If playerView has been set, we should request an update, if not, it will be done automatically later.
+      if (playerView != null) playerView.onVolumeUpdate();
     }
 
     @CallSuper @Override public float getVolume() {

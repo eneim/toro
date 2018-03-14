@@ -13,8 +13,7 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="toro.demo.mopub">
 
@@ -28,6 +27,11 @@
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
     <activity android:name=".MainActivity">
+    </activity>
+    <activity
+        android:name=".list.DemoListActivity"
+        android:label="@string/title_activity_demo_list"
+        android:theme="@style/AppTheme">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
