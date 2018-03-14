@@ -18,24 +18,36 @@ package toro.demo.mopub.list;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import toro.demo.mopub.R;
 
 /**
  * @author eneim (2018/03/13).
  */
 
+@SuppressWarnings({ "WeakerAccess", "FieldCanBeLocal" })  //
 public class TextViewHolder extends BaseViewHolder {
 
-  TextView textView;
+  // My own photo, all right reserved.
+  private static String image =
+      "http://78.media.tumblr.com/d1929212f56afe00873be1dcb817d021/tumblr_n81obgYeRm1rsj2h0o5_1280.jpg";
+  private static RequestOptions options = new RequestOptions().fitCenter();
+
+  final ImageView imageView;
+  final TextView textView;
 
   public TextViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
     super(parent, inflater, layoutRes);
     textView = itemView.findViewById(R.id.textContent);
+    imageView = itemView.findViewById(R.id.imageContent);
   }
 
   @Override void bind(Object item) {
     super.bind(item);
+    Glide.with(itemView).load(image).apply(options.clone()).into(imageView);
     textView.setText(R.string.small_text);
   }
 }

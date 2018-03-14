@@ -65,7 +65,8 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
       helper = new PlayerViewHelper(this, videoUri);
     }
     helper.initialize(container, playbackInfo);
-    // TODO remember last volume setting by user, may requires more manual work.
+    // Always do this after initialize.
+    // TODO remember last volume setting by user, may requires more work.
     helper.setVolume(0);
   }
 
