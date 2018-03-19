@@ -148,7 +148,7 @@ public class ToroControlView extends PlaybackControlView {
     }
 
     @Override public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
-      // no-ops
+      dispatchOnScrubStop(position);
     }
   }
 
@@ -252,5 +252,9 @@ public class ToroControlView extends PlaybackControlView {
 
     updateVolumeInfo(actualVolume);
     updateVolumeButtons();
+  }
+
+  void dispatchOnScrubStop(long position) {
+    this.dispatchOnScrubMove(position);
   }
 }
