@@ -156,6 +156,10 @@ public interface Playable<T> {
    */
   @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
+  void setVolumeInfo(@NonNull VolumeInfo volumeInfo);
+
+  @NonNull VolumeInfo getVolumeInfo();
+
   // Combine necessary interfaces.
   interface EventListener extends ExoPlayer.EventListener, SimpleExoPlayer.VideoListener,
       TextRenderer.Output, MetadataRenderer.Output {

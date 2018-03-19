@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.media;
+package toro.demo.mopub.list;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 /**
- * @author eneim | 6/5/17.
- *
- *         A definition of DRM media type.
+ * @author eneim (2018/03/13).
  */
 
-public interface DrmMedia {
+public class BaseViewHolder extends RecyclerView.ViewHolder {
 
-  // DRM Scheme
-  @NonNull String getType();
+  public BaseViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
+    super(inflater.inflate(layoutRes, parent, false));
+  }
 
-  @Nullable String getLicenseUrl();
+  void bind(Object item) {
 
-  @Nullable String[] getKeyRequestPropertiesArray();
-
-  boolean multiSession();
+  }
 }

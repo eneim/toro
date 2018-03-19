@@ -25,12 +25,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
@@ -43,9 +44,11 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
+import static android.widget.Toast.LENGTH_SHORT;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -70,6 +73,8 @@ import static java.lang.Runtime.getRuntime;
  */
 
 public final class ToroExo {
+
+  private static final String TAG = "ToroExo";
 
   // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
   @SuppressWarnings("WeakerAccess") //
@@ -179,9 +184,13 @@ public final class ToroExo {
    * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
    */
   public final void cleanUp() {
-    for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
+    // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
+    for (Iterator<Map.Entry<ExoCreator, Pools.Pool<SimpleExoPlayer>>> it =
+        playerPools.entrySet().iterator(); it.hasNext(); ) {
+      Pools.Pool<SimpleExoPlayer> pool = it.next().getValue();
       SimpleExoPlayer item;
       while ((item = pool.acquire()) != null) item.release();
+      it.remove();
     }
   }
 
@@ -209,15 +218,15 @@ public final class ToroExo {
    * Usage:
    * <pre><code>
    *   DrmSessionManager manager = ToroExo.with(context).createDrmSessionManager(mediaDrm, null);
-   *   Config config = new Config.Builder().setDrmSessionManager(manager);
+   *   Config config = new Config.Builder().setDrmSessionManagers([manager]);
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @RequiresApi(18) @Nullable
-  public DrmSessionManager<? extends ExoMediaCrypto> createDrmSessionManager(
+  @RequiresApi(18) @Nullable public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(
       @NonNull DrmMedia drmMedia, @Nullable Handler handler) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
+    String subString = null;
     if (Util.SDK_INT < 18) {
       errorStringId = R.string.error_drm_not_supported;
     } else {
@@ -233,19 +242,25 @@ public final class ToroExo {
           e.printStackTrace();
           errorStringId = e.reason == REASON_UNSUPPORTED_SCHEME ? //
               R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
+          if (e.reason == REASON_UNSUPPORTED_SCHEME) {
+            subString = drmMedia.getType();
+          }
         }
       }
     }
 
     if (drmSessionManager == null) {
-      Toast.makeText(context, context.getString(errorStringId), Toast.LENGTH_SHORT).show();
+      String error = TextUtils.isEmpty(subString) ? context.getString(errorStringId)
+          : context.getString(errorStringId) + ": " + subString;
+      Toast.makeText(context, error, LENGTH_SHORT).show();
+      Log.e(TAG, "createDrmSessionManager: " + error);
     }
 
     return drmSessionManager;
   }
 
   @RequiresApi(18) private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
-      @NonNull UUID uuid, @NonNull String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
+      @NonNull UUID uuid, @Nullable String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
       boolean multiSession, @NonNull HttpDataSource.Factory httpDataSourceFactory,
       @Nullable Handler handler) throws UnsupportedDrmException {
     HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);

@@ -50,7 +50,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   static final int MSG_PAUSE = 1002;
   static final int MSG_DELAY = 50;
 
-  // Actions must be done in order/queue, so we use a handle to make that happens.
+  // Actions must be done in order/queue, so we use a handler to make that happens.
   final Handler handler = new Handler(this);
   final Context context;
   final String videoId;

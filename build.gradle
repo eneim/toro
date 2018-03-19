@@ -21,6 +21,9 @@ buildscript {
   repositories {
     google()
     jcenter()
+    maven {
+      url 'https://oss.jfrog.org/artifactory/plugins-release'
+    }
   }
 
   dependencies {
@@ -28,6 +31,7 @@ buildscript {
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     classpath "com.novoda:bintray-release:0.8.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.0"
   }
 }
 
@@ -35,14 +39,15 @@ allprojects {
   repositories {
     google()
     jcenter()
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
   }
 
   project.ext {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.4.1'
-    releaseVersionCode = 341
+    releaseVersion = '3.4.2-SNAPSHOT' /* '3.4.2' */
+    releaseVersionCode = 342
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
   }

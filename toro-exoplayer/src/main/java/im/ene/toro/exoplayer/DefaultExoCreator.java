@@ -23,11 +23,11 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
@@ -73,8 +73,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new DefaultRenderersFactory(this.toro.context, //
-        config.drmSessionManager, config.extensionMode);
+    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
+        config.extensionMode, config.drmSessionManagers);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -329,6 +329,16 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
     @Override public boolean isPlaying() {
       return player != null && player.getPlayWhenReady();
+    }
+
+    @Override public void setParameters(PlaybackParameters parameters) {
+      checkNotNull(player, "Playable#setParameters(PlaybackParameters): Player is null") //
+          .setPlaybackParameters(parameters);
+    }
+
+    @Override public PlaybackParameters getParameters() {
+      return checkNotNull(player,
+          "Playable#getParameters(): Player is null").getPlaybackParameters();
     }
 
     final void updatePlaybackInfo() {

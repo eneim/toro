@@ -81,7 +81,13 @@ dependencies {
   implementation 'com.jakewharton:butterknife:8.8.1'
   kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
-  // implementation 'com.squareup.moshi:moshi-kotlin:1.5.0'
+  implementation "android.arch.lifecycle:extensions:1.1.0"
+  kapt "android.arch.lifecycle:compiler:1.1.0"
+  // Paging
+  // implementation "android.arch.paging:runtime:1.0.0-alpha6"
+
+  implementation "com.squareup.moshi:moshi:1.5.0"
+  implementation "com.squareup.moshi:moshi-kotlin:1.5.0"
 
   testImplementation 'junit:junit:4.12'
   androidTestImplementation 'com.android.support.test:runner:1.0.1'

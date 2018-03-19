@@ -157,6 +157,10 @@ public interface Playable {
    */
   @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
+  void setParameters(PlaybackParameters parameters);
+
+  PlaybackParameters getParameters();
+
   // Combine necessary interfaces.
   interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {
 

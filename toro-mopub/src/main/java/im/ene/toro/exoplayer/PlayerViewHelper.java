@@ -106,6 +106,14 @@ public class PlayerViewHelper extends ToroPlayerHelper {
     return playable.getVolume();
   }
 
+  public void setVolumeInfo(VolumeInfo volumeInfo) {
+    playable.setVolumeInfo(volumeInfo);
+  }
+
+  public VolumeInfo getVolumeInfo() {
+    return playable.getVolumeInfo();
+  }
+
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     return playable.getPlaybackInfo();
   }

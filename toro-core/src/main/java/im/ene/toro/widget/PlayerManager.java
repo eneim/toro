@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArraySet;
+import android.support.v7.widget.RecyclerView;
 import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.ToroPlayer;
 import java.util.ArrayList;
@@ -111,6 +112,12 @@ final class PlayerManager {
   void clear() {
     handler.removeCallbacksAndMessages(null);
     this.players.clear();
+  }
+
+  void onContainerScrollStateChanged(int state) {
+    if (state != RecyclerView.SCROLL_STATE_IDLE) {
+      handler.removeMessages(MSG_PLAY);
+    }
   }
 
   @SuppressWarnings("WeakerAccess") static final int MSG_PLAY = 100;

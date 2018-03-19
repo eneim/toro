@@ -38,18 +38,16 @@ import static im.ene.toro.youtube.YouTubePlayerDialog.newInstance;
  * @author eneim (2017/12/10).
  */
 
-class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
+final class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
-  private static final String TAG = "YouT:Manager";
+  private static final String TAG = "Toro:Yt:Manager";
 
   private final FragmentManager manager;
   private final Map<ToroPlayer, YouTubePlayerHelper> helpers = new HashMap<>();
 
-  private final Activity activity;
   private final int orientation;
 
   YouTubePlayerManager(Activity activity, FragmentManager manager) {
-    this.activity = activity;
     this.orientation = activity.getRequestedOrientation();
     this.manager = manager;
     FragmentLifecycleCallbacks lifecycleCallbacks = new FragmentLifecycleCallbacks() {
@@ -66,9 +64,7 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
         if (f instanceof ToroYouTubePlayerFragment) {
           ToroYouTubePlayerFragment fragment = (ToroYouTubePlayerFragment) f;
           YouTubePlayerHelper helper = fragment.getHelperKey();
-          if (helper != null) {
-            helper.release();
-          }
+          if (helper != null) helper.release();
         }
       }
 
@@ -100,6 +96,7 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
 
   YouTubePlayerHelper obtainHelper(@NonNull ToroPlayer player, String video) {
     YouTubePlayerHelper helper = this.helpers.get(player);
+    // Dirty helper, remove the Fragment first.
     if (helper != null && helper.ytFragment != null) {
       manager.beginTransaction().remove(helper.ytFragment).commitNow();
     }
@@ -112,6 +109,7 @@ class YouTubePlayerManager implements YouTubePlayerHelper.Callback {
     ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
     fragment.setHelperKey(helper);
     manager.beginTransaction().replace(player.getPlayerView().getId(), fragment).commitNow();
+
     return helper;
   }
 
