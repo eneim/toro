@@ -39,9 +39,7 @@ allprojects {
   repositories {
     google()
     jcenter()
-    maven {
-      url 'https://oss.jfrog.org/artifactory/oss-snapshot-local'
-    }
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
   }
 
   project.ext {

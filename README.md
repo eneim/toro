@@ -13,7 +13,7 @@
 
 * [Features](#features)
 * [Demo](#demo)
-* [Getting start, basic usages](#getting-start--basic-implementation)
+* [Getting start, basic implementation](#getting-start--basic-implementation)
 * [Advance topics](#advance-topics)
 * [Contribution](#contribution)
 * [Donation](#donation)
@@ -22,13 +22,16 @@
 
 ### Features
 
-- Auto start/pause Media playback on Attach/Detach/Scroll/... events.
-- Optional playback position save/restore (no position save/restore by default).
-  - If enabled, Toro will also save/restore them on Configuration change (orientation change, multi-window mode ...).
-- Customizable playback component: either MediaPlayer or ExoPlayer will work. Toro comes with default helper classes to support these 2.
-- Customizable player selector: custom the selection of the player to start, among many other players.
-  - Which in turn support single/multiple players.
-- First class Support ExoPlayer 2. 
+Core:
+  - Auto start/pause Media playback on user interaction: scroll, open/close App.
+  - Optional playback position save/restore (default: disabled).
+    - If enabled, Toro will also save/restore them on Configuration change (orientation change, multi-window mode ...).
+  - Customizable playback component: either MediaPlayer or ExoPlayer will work. Toro comes with default helper classes to support these 2.
+  - Customizable player selector: custom the selection of the player to start, among many other players.
+    - Which in turn support single/multiple players.
+
+Plus alpha:
+  - First class support for ExoPlayer 2. 
 
 ### Demo (Youtube Video)
 
@@ -43,13 +46,44 @@ Latest version:
  
 ```groovy
 ext {
-  toroVersion = '3.3.0' // TODO check above for latest version
+  latest_release = '3.4.1' // TODO check above for latest version
   // below: other dependencies' versions maybe
 }
 
 dependencies {
-   implementation "im.ene.toro3:toro:${toroVersion}"
-   implementation "im.ene.toro3:toro-ext-exoplayer:${toroVersion}"  // to get ExoPlayer support
+   implementation "im.ene.toro3:toro:${latest_release}"
+   implementation "im.ene.toro3:toro-ext-exoplayer:${latest_release}"  // to get ExoPlayer support
+}
+```
+
+Using snapshot:
+
+Update this to root's ``build.gradle``
+
+```gradle
+allprojects {
+  repositories {
+    google()
+    jcenter()
+    // Add url below to use snaphot
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+  }
+  
+  // TODO anything else
+}
+```
+
+Application's build.gradle
+
+```groovy
+ext {
+  latest_snapshot = '3.4.2-SNAPSHOT' // TODO check above for latest version
+  // below: other dependencies' versions maybe
+}
+
+dependencies {
+   implementation "im.ene.toro3:toro:${latest_snapshot}"
+   implementation "im.ene.toro3:toro-ext-exoplayer:${latest_snapshot}"  // to get ExoPlayer support
 }
 ```
 
@@ -70,10 +104,10 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
   static final int LAYOUT_RES = R.layout.vh_exoplayer_basic;
 
-  @Nullable SimpleExoPlayerViewHelper helper;
+  @Nullable ExoPlayerViewHelper helper;
   @Nullable private Uri mediaUri;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player) PlayerView playerView;
 
   SimpleExoPlayerViewHolder(View itemView) {
     super(itemView);
@@ -98,9 +132,9 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new SimpleExoPlayerViewHelper(container, this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri);
     }
-    helper.initialize(playbackInfo);
+    helper.initialize(container, playbackInfo);
   }
 
   @Override public void release() {
@@ -132,7 +166,7 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 }
 ```
 
-More advanced View holder implementations can be found in **app** module.
+More advanced View holder implementations can be found in **app**, **demo-??** module.
 
 4. Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
 
@@ -140,7 +174,7 @@ That's all. Your View should be ready to play.
 
 ### Advance topics
 
-1. Enable playback position save/restore.
+1. Enable playback position save/restore
 
 By default, **toro**'s Container will always start a playback from beginning.
  
@@ -196,13 +230,69 @@ Behaviour:
 
 ![](/extra/demo-player-selector.gif)
 
-3. Enable/Disable the auto-play on demand.
+3. Enable/Disable the auto-play on demand
 
 To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Container. To enable it again, just use a Selector that actually select the player. There is ```PlayerSelector.DEFAULT``` built-in.
 
+4. Start playback with delay
+
+It is expected that: when user scrolls so that the Player view is in playable state (maybe because it is fully visual), there should be a small delay before the Player starts playing. Toro supports this out of the box using ``PlayerDispatcher`` and via ``Container#setPlayerDispatcher()``. Further more, the delay ca be flexibly configured by per-Player. The snippet below shows how to use ``PlayerDispatcher``:
+  
+``java
+// ToroPlayer whose order is divisible by 3 will be delayed by 250 ms, others will be delayed by 1000 ms (1 second). 
+container.setPlayerDispatcher(player -> player.getPlayerOrder() % 3 == 0 ? 250 : 1000);
+``
+
+5. Works with ``CoordinatorLayout``
+
+When using a ``Container`` in the following View hierarchy
+
+```xml
+<CoordinatorLayout>
+  <AppBarLayout app:layout_behavior:AppBarLayout.Behavior.class>
+    <CollapsingToolbarLayout>
+    </CollapsingToolbarLayout>
+  </AppBarLayout>
+  <Container app:layout_behavior:ScrollingViewBehavior.class></Container>
+</CoordinatorLayout>
+```
+
+In the layout above, when User 'scroll' the UI by flinging the CollapsingToolbarLayout (not the Container), neither CoordinatorLayout will not tell Container about the 'scroll', nor Container will trigger a call to ``Container#onScrollStateChanged(int)``. But in practice, an interaction like this will make the Player be visible, and User expects a playback to starts, which may not without some update in your codebase.
+
+To support this use case, **Toro** adds a delegation ``Container.Behavior`` that can be used manually to catch the behavior like above.
+
+The usage looks like below:
+ 
+```java
+// Add following snippet in Activity#onCreate or Fragment#onViewCreated
+// Only when you use Container inside a CoordinatorLayout and depends on Behavior.
+// 1. Request Container's LayoutParams
+ViewGroup.LayoutParams params = container.getLayoutParams();
+// 2. Only continue if it is of type CoordinatorLayout.LayoutParams
+if (params != null && params instanceof CoordinatorLayout.LayoutParams) {
+  // 3. Check if there is an already set CoordinatorLayout.Behavior. If not, just ignore everything. 
+  CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
+  if (behavior != null) {
+    ((LayoutParams) params).setBehavior(new Container.Behavior(behavior,
+        // 4. Container.Behavior requires a Container.BehaviorCallback to ask client what to do next. 
+        new Container.BehaviorCallback() {
+          @Override public void onFinishInteraction() {
+            container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);
+          }
+        }));
+  }
+}
+```
+
+Below is the behavior before and after we apply the code above:
+
+|Before|After|
+|---|---|
+|![](/extra/behaviour_before.gif)|![](/extra/behaviour_after.gif)|
+
 ### Contribution
 
-- **IMPORTANT:** Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` before any build.
+- **IMPORTANT:** Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` and update it before any build.
 
 - Issue report and Pull Requests are welcome. Please follow issue format for quick response.
 
