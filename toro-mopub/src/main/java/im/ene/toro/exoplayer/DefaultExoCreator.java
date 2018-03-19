@@ -289,6 +289,21 @@ public class DefaultExoCreator implements ExoCreator {
       return checkNotNull(player, "Playable#getVolume(): Player is null!").getVolume();
     }
 
+    private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
+
+    @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+      this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      if (this.volumeInfo.isMute()) {
+        this.setVolume(0.f);
+      } else {
+        this.setVolume(this.volumeInfo.getVolume());
+      }
+    }
+
+    @NonNull @Override public VolumeInfo getVolumeInfo() {
+      return this.volumeInfo;
+    }
+
     @Override public boolean isPlaying() {
       return player != null && player.getPlayWhenReady();
     }
@@ -435,11 +450,30 @@ public class DefaultExoCreator implements ExoCreator {
     @CallSuper @Override public void setVolume(float volume) {
       checkNotNull(player, "Playable#setVolume(): Player is null!").setVolume(volume);
       // If playerView has been set, we should request an update, if not, it will be done automatically later.
-      if (playerView != null) playerView.onVolumeUpdate();
+      this.volumeInfo.setTo(volume == 0, volume);
+      if (playerView != null) playerView.onVolumeInfoUpdate(this.volumeInfo);
     }
 
     @CallSuper @Override public float getVolume() {
       return checkNotNull(player, "Playable#getVolume(): Player is null!").getVolume();
+    }
+
+    private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
+
+    @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+      checkNotNull(player, "Playable#setVolumeInfo(): Player is null!");
+      this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      if (this.volumeInfo.isMute()) {
+        this.player.setVolume(0.f);
+      } else {
+        this.player.setVolume(this.volumeInfo.getVolume());
+      }
+      // If playerView has been set, we should request an update, if not, it will be done automatically later.
+      if (playerView != null) playerView.onVolumeInfoUpdate(this.volumeInfo);
+    }
+
+    @NonNull @Override public VolumeInfo getVolumeInfo() {
+      return this.volumeInfo;
     }
 
     @Override public boolean isPlaying() {

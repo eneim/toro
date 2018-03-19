@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.PlayerViewHelper;
+import im.ene.toro.exoplayer.VolumeInfo;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
@@ -67,7 +68,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
     helper.initialize(container, playbackInfo);
     // Always do this after initialize.
     // TODO remember last volume setting by user, may requires more work.
-    helper.setVolume(0);
+    helper.setVolumeInfo(new VolumeInfo(true, 0.75f));
   }
 
   @Override public void play() {
