@@ -97,6 +97,9 @@ public abstract class ToroPlayerHelper {
 
     @Override public void onPaused() {
       player.getPlayerView().setKeepScreenOn(false);
+      if (container != null) {
+        container.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+      }
     }
 
     @Override public void onCompleted() {

@@ -24,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.ViewGroup;
+import im.ene.toro.PlayerSelector;
 import im.ene.toro.widget.Container;
 import toro.demo.mopub.R;
 
@@ -41,10 +42,14 @@ public class DemoListActivity extends AppCompatActivity {
 
     container = findViewById(R.id.container);
     layoutManager = new LinearLayoutManager(this);
-    adapter = new DemoListAdapter();
+    // See DemoListAdapter for detail usage.
+    adapter = new DemoListAdapter(PlayerSelector.DEFAULT);
+    container.setPlayerSelector(adapter);
+    container.setCacheManager(adapter);
 
     container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
+    container.setPlayerDispatcher(__ -> 500); // The playback will be delayed 500ms.
 
     // Only when you use Container inside a CoordinatorLayout and depends on Behavior.
     ViewGroup.LayoutParams params = container.getLayoutParams();

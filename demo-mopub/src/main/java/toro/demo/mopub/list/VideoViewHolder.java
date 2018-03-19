@@ -39,9 +39,9 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   final PlayerView playerView;
   PlayerViewHelper helper;
-  Uri videoUri;
+  private Uri videoUri;
 
-  public VideoViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
+  VideoViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
     super(parent, inflater, layoutRes);
     playerView = itemView.findViewById(R.id.playerView);
   }
@@ -91,7 +91,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @Override public boolean wantsToPlay() {
-    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.5;
   }
 
   @Override public int getPlayerOrder() {

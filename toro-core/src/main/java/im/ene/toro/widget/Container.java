@@ -59,7 +59,7 @@ import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.widget.Common.max;
 
 /**
- * A custom {@link RecyclerView} that is capable of managing and controling the {@link ToroPlayer}s'
+ * A custom {@link RecyclerView} that is capable of managing and controlling the {@link ToroPlayer}s'
  * playback behaviour.
  *
  * A client wish to have the auto playback behaviour should replace the normal use of
@@ -68,7 +68,7 @@ import static im.ene.toro.widget.Common.max;
  * By default, {@link Container} doesn't support playback position saving/restoring. This is
  * because {@link Container} has no idea about the uniqueness of media content those are being
  * played. This can be archived by supplying {@link Container} with a valid {@link CacheManager}. A
- * {@link CacheManager} will help providing the uniqness of Medias by which it can correctly
+ * {@link CacheManager} will help providing the uniqueness of Medias by which it can correctly
  * save/restore the playback state of a specific media item. Setup this can be done using
  * {@link Container#setCacheManager(CacheManager)}.
  *
@@ -104,6 +104,7 @@ public class Container extends RecyclerView {
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
     this.playerManager = new PlayerManager(this);
+    requestDisallowInterceptTouchEvent(true);
   }
 
   @Override public final void setRecyclerListener(RecyclerListener listener) {
@@ -231,6 +232,7 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
+    playerManager.onContainerScrollStateChanged(state);
     // Need to handle the dead playback even then the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
@@ -312,7 +314,8 @@ public class Container extends RecyclerView {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     // dispatchUpdateOnAnimationFinished(true); // doesn't work well :(
-    this.onScrollStateChanged(SCROLL_STATE_IDLE); // immediately update.
+    // Immediately update.
+    if (getLayoutManager() != null) this.onScrollStateChanged(SCROLL_STATE_IDLE);
   }
 
   /**
