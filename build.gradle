@@ -27,6 +27,7 @@ buildscript {
   }
 
   dependencies {
+    //noinspection GradleDependency
     classpath 'com.android.tools.build:gradle:3.1.0-rc03'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     classpath "com.novoda:bintray-release:0.8.0"
@@ -66,7 +67,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.4'
+  gradleVersion = '4.6'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }

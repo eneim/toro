@@ -51,14 +51,13 @@ android {
   }
 
   compileSdkVersion rootProject.ext.androidVersion
-  // buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.toro.youtube"
     minSdkVersion rootProject.ext.minSupportSDKVersion
     targetSdkVersion rootProject.ext.androidVersion
-    versionCode 1
-    versionName "1.0"
+    versionCode releaseVersionCode
+    versionName "v" + releaseVersion
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     vectorDrawables.useSupportLibrary = true
@@ -113,7 +112,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
   // rxJava 2
-  implementation("io.reactivex.rxjava2:rxandroid:2.0.1", {
+  implementation("io.reactivex.rxjava2:rxandroid:2.0.2", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 

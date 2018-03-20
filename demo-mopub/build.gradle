@@ -17,16 +17,17 @@
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 27
+  compileSdkVersion rootProject.ext.androidVersion
 
   defaultConfig {
     applicationId "toro.demo.mopub"
-    minSdkVersion 16
-    targetSdkVersion 27
-    versionCode 1
-    versionName "1.0"
+    minSdkVersion rootProject.ext.minSupportSDKVersion
+    targetSdkVersion rootProject.ext.androidVersion
+    versionCode releaseVersionCode
+    versionName "v" + releaseVersion
 
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    vectorDrawables.useSupportLibrary = true
   }
 
   buildTypes {
@@ -34,6 +35,15 @@ android {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
+  }
+
+  packagingOptions {
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+
+  lintOptions {
+    disable 'InvalidPackage'
+    abortOnError false
   }
 
   compileOptions {
@@ -49,7 +59,7 @@ dependencies {
   implementation project(':toro-mopub')
 
   //noinspection GradleDependency
-  implementation "com.google.android.exoplayer:exoplayer:r2.4.4"
+  implementation "com.google.android.exoplayer:exoplayer:r2.4.4"  // for mopub
 
   implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
