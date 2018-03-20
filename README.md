@@ -238,10 +238,10 @@ To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Contai
 
 It is expected that: when user scrolls so that the Player view is in playable state (maybe because it is fully visual), there should be a small delay before the Player starts playing. Toro supports this out of the box using ``PlayerDispatcher`` and via ``Container#setPlayerDispatcher()``. Further more, the delay ca be flexibly configured by per-Player. The snippet below shows how to use ``PlayerDispatcher``:
   
-``java
+```java
 // ToroPlayer whose order is divisible by 3 will be delayed by 250 ms, others will be delayed by 1000 ms (1 second). 
 container.setPlayerDispatcher(player -> player.getPlayerOrder() % 3 == 0 ? 250 : 1000);
-``
+```
 
 5. Works with ``CoordinatorLayout``
 
