@@ -51,7 +51,7 @@ android {
   }
 
   compileSdkVersion rootProject.ext.androidVersion
-  buildToolsVersion rootProject.ext.buildToolVersion
+  // buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.toro.youtube"
