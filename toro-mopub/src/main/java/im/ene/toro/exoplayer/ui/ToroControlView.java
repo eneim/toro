@@ -29,7 +29,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
-import im.ene.toro.exoplayer.VolumeInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.mopub.R;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

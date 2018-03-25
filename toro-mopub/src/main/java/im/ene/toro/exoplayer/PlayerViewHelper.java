@@ -18,12 +18,10 @@ package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.helper.ToroPlayerHelper;
-import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -39,105 +37,32 @@ import static im.ene.toro.exoplayer.ToroExo.with;
  * @since 3.4.0
  */
 
-public class PlayerViewHelper extends ToroPlayerHelper {
+public class PlayerViewHelper extends BaseViewHelper<PlayerView> {
 
-  @NonNull private final Playable<PlayerView> playable;
-  @NonNull private final MyEventListeners listeners;
-
-  @Deprecated //
-  public PlayerViewHelper(@SuppressWarnings("unused") @NonNull Container container,
-      @NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(player.getPlayerView().getContext()).getDefaultCreator());
+  @SuppressWarnings("unused") @Deprecated
+  public PlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
+    this(player, uri, null, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
 
+  @SuppressWarnings("unused")
   public PlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, with(checkNotNull(player.getPlayerView()).getContext()).getDefaultCreator());
+    this(player, uri, null);
   }
 
-  public PlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @NonNull ExoCreator creator) {
-    this(player, uri, null, creator, null);
+  @SuppressWarnings("WeakerAccess")
+  public PlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String extension) {
+    this(player, uri, extension,
+        with(checkNotNull(player.getPlayerView()).getContext()).getDefaultCreator());
   }
 
+  @SuppressWarnings("WeakerAccess")
   public PlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String extension,
-      @NonNull ExoCreator creator, Playable.EventListener eventListener) {
-    super(player);
-    //noinspection ConstantConditions
-    if (player.getPlayerView() == null || !(player.getPlayerView() instanceof PlayerView)) {
-      throw new IllegalArgumentException("Require non-null SimpleExoPlayerView");
-    }
-
-    listeners = new MyEventListeners();
-    if (eventListener != null) listeners.add(eventListener);
-    playable = creator.createPlayableCompat(uri, extension);
+      @NonNull ExoCreator creator) {
+    super(player, uri, extension, creator);
   }
 
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
-    playable.addEventListener(listeners);
-    playable.prepare(false);
-    playable.setPlayerView((PlayerView) player.getPlayerView());
-    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
-  }
-
-  @Override public void release() {
-    super.release();
-    playable.setPlayerView(null);
-    playable.removeEventListener(listeners);
-    playable.release();
-  }
-
-  @Override public void play() {
-    playable.play();
-  }
-
-  @Override public void pause() {
-    playable.pause();
-  }
-
-  @Override public boolean isPlaying() {
-    return playable.isPlaying();
-  }
-
-  @Override public void setVolume(float volume) {
-    playable.setVolume(volume);
-  }
-
-  @Override public float getVolume() {
-    return playable.getVolume();
-  }
-
-  public void setVolumeInfo(VolumeInfo volumeInfo) {
-    playable.setVolumeInfo(volumeInfo);
-  }
-
-  public VolumeInfo getVolumeInfo() {
-    return playable.getVolumeInfo();
-  }
-
-  @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
-    return playable.getPlaybackInfo();
-  }
-
-  @SuppressWarnings("WeakerAccess") //
-  public void addEventListener(@NonNull Playable.EventListener listener) {
-    //noinspection ConstantConditions
-    if (listener != null) this.listeners.add(listener);
-  }
-
-  @SuppressWarnings("WeakerAccess") //
-  public void removeEventListener(Playable.EventListener listener) {
-    this.listeners.remove(listener);
-  }
-
-  // A proxy, to also hook into ToroPlayerHelper's state change event.
-  private class MyEventListeners extends Playable.EventListeners {
-
-    MyEventListeners() {
-    }
-
-    @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      PlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState); // important
-      super.onPlayerStateChanged(playWhenReady, playbackState);
-    }
+  @NonNull @Override //
+  Playable<PlayerView> requirePlayable(ExoCreator creator, @NonNull Uri uri, String ext) {
+    return creator.createPlayableCompat(uri, ext);
   }
 }

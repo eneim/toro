@@ -25,9 +25,9 @@ import android.view.ViewGroup;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.PlayerViewHelper;
-import im.ene.toro.exoplayer.VolumeInfo;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 import toro.demo.mopub.R;
 

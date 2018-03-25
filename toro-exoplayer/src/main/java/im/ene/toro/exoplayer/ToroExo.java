@@ -28,7 +28,6 @@ import android.support.v4.util.Pools;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -50,6 +49,7 @@ import java.util.UUID;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
+import static com.google.android.exoplayer2.util.Util.getDrmUuid;
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
@@ -151,12 +151,6 @@ public final class ToroExo {
   public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
     SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
     if (player == null) player = creator.createPlayer();
-    // TODO investigate this on config change, etc
-    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
-    if (player.getPlaybackState() != Player.STATE_IDLE) {
-      // Throw when debug only. Some devices/versions could not reset the player on-time ...
-      if (BuildConfig.DEBUG) throw new IllegalStateException("Player is not in idle state.");
-    }
     return player;
   }
 
@@ -169,13 +163,6 @@ public final class ToroExo {
    */
   @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
   public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
-    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
-    if (checkNotNull(player).getPlaybackState() != Player.STATE_IDLE) {
-      // Throw when debug only. Some devices/versions could not reset the player on-time ...
-      if (BuildConfig.DEBUG) {
-        throw new IllegalStateException("Player must be stopped before releasing it back to Pool.");
-      }
-    }
     return getPool(checkNotNull(creator)).release(player);
   }
 
@@ -230,7 +217,7 @@ public final class ToroExo {
     if (Util.SDK_INT < 18) {
       errorStringId = R.string.error_drm_not_supported;
     } else {
-      UUID drmSchemeUuid = Util.getDrmUuid(checkNotNull(drmMedia).getType());
+      UUID drmSchemeUuid = getDrmUuid(checkNotNull(drmMedia).getType());
       if (drmSchemeUuid == null) {
         errorStringId = R.string.error_drm_unsupported_scheme;
       } else {

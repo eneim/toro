@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.video.VideoListener;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public interface Playable {
 
   /**
    * Release all resource. After this, the SimpleExoPlayer is released to the Player pool and the
-   * Playable must call {@link #prepare(boolean)} again to be usable again.
+   * Playable must call {@link #prepare(boolean)} again to use it again.
    */
   void release();
 
@@ -147,19 +148,40 @@ public interface Playable {
    * Change the volume of current playback.
    *
    * @param volume the volume value to be set. Must be a {@code float} of range from 0 to 1.
+   * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
    */
-  void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  @Deprecated void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
   /**
    * Obtain current volume value. The returned value is a {@code float} of range from 0 to 1.
    *
    * @return current volume value.
+   * @deprecated use {@link #getVolumeInfo()} instead.
    */
-  @FloatRange(from = 0.0, to = 1.0) float getVolume();
+  @Deprecated @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
-  void setParameters(PlaybackParameters parameters);
+  /**
+   * Update playback's volume.
+   *
+   * @param volumeInfo the {@link VolumeInfo} to update to.
+   * @return {@code true} if current Volume info is updated, {@code false} otherwise.
+   */
+  boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo);
 
-  PlaybackParameters getParameters();
+  /**
+   * Get current {@link VolumeInfo}.
+   */
+  @NonNull VolumeInfo getVolumeInfo();
+
+  /**
+   * Same as {@link Player#setPlaybackParameters(PlaybackParameters)}
+   */
+  void setParameters(@Nullable PlaybackParameters parameters);
+
+  /**
+   * Same as {@link Player#getPlaybackParameters()}
+   */
+  @Nullable PlaybackParameters getParameters();
 
   // Combine necessary interfaces.
   interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {

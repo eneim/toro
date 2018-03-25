@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package im.ene.toro.exoplayer;
+package im.ene.toro.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.FloatRange;
 
 /**
  * @author eneim (2018/03/14).
  */
 public final class VolumeInfo implements Parcelable {
 
+  // Indicate that the playback is in muted state or not.
   private boolean mute;
-  private float volume;
+  // The actual Volume value if 'mute' is false.
+  @FloatRange(from = 0, to = 1) private float volume;
 
-  public VolumeInfo(boolean mute, float volume) {
+  public VolumeInfo(boolean mute, @FloatRange(from = 0, to = 1) float volume) {
     this.mute = mute;
     this.volume = volume;
   }
@@ -40,15 +43,15 @@ public final class VolumeInfo implements Parcelable {
     this.mute = mute;
   }
 
-  public float getVolume() {
+  @FloatRange(from = 0, to = 1) public float getVolume() {
     return volume;
   }
 
-  public void setVolume(float volume) {
+  public void setVolume(@FloatRange(from = 0, to = 1) float volume) {
     this.volume = volume;
   }
 
-  public void setTo(boolean mute, float volume) {
+  public void setTo(boolean mute, @FloatRange(from = 0, to = 1) float volume) {
     this.mute = mute;
     this.volume = volume;
   }
@@ -80,4 +83,20 @@ public final class VolumeInfo implements Parcelable {
       return new VolumeInfo[size];
     }
   };
+
+  @SuppressWarnings("SimplifiableIfStatement") @Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    VolumeInfo that = (VolumeInfo) o;
+
+    if (mute != that.mute) return false;
+    return Float.compare(that.volume, volume) == 0;
+  }
+
+  @Override public int hashCode() {
+    int result = (mute ? 1 : 0);
+    result = 31 * result + (volume != +0.0f ? Float.floatToIntBits(volume) : 0);
+    return result;
+  }
 }
