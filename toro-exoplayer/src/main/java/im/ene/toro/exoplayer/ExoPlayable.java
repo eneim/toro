@@ -42,7 +42,7 @@ import static im.ene.toro.exoplayer.ToroExo.toro;
  * @since 3.4.0
  */
 
-public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
+public class ExoPlayable extends PlayableImpl {
 
   private static final String TAG = "ToroExo:Playable";
 

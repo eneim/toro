@@ -253,7 +253,8 @@ When using a ``Container`` in the following View hierarchy
     <CollapsingToolbarLayout>
     </CollapsingToolbarLayout>
   </AppBarLayout>
-  <Container app:layout_behavior:ScrollingViewBehavior.class></Container>
+  <Container app:layout_behavior:ScrollingViewBehavior.class>
+  </Container>
 </CoordinatorLayout>
 ```
 

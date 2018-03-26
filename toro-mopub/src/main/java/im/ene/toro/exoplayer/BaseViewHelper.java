@@ -19,68 +19,37 @@ package im.ene.toro.exoplayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
+import android.view.View;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import im.ene.toro.widget.Container;
-
-import static im.ene.toro.ToroUtil.checkNotNull;
-import static im.ene.toro.exoplayer.ToroExo.with;
 
 /**
- * An implementation of {@link ToroPlayerHelper} where the actual Player is an {@link ExoPlayer}
- * implementation. This is a bridge between ExoPlayer's callback and ToroPlayerHelper behaviors.
+ * Common implementation for {@link Playable}.
  *
- * @author eneim (2018/01/24).
- * @since 3.4.0
+ * @author eneim (2018/03/20).
+ * @since 3.4.2
  */
+@SuppressWarnings("WeakerAccess") //
+abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
 
-public class ExoPlayerViewHelper extends ToroPlayerHelper {
+  @NonNull protected final Playable<VIEW> playable;
+  @NonNull protected final MyEventListeners listeners;
 
-  @NonNull private final ExoPlayable playable;
-  @NonNull private final MyEventListeners listeners;
-
-  // Container is no longer required for constructing new instance.
-  @SuppressWarnings("unused") @Deprecated //
-  public ExoPlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri);
-  }
-
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri) {
-    this(player, uri, null);
-  }
-
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt) {
-    this(player, uri, fileExt, with(player.getPlayerView().getContext()).getDefaultCreator());
-  }
-
-  /** Config instance should be kept as global instance. */
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt, @NonNull Config config) {
-    this(player, uri, fileExt, with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
-  }
-
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt, @NonNull ExoCreator creator) {
-    this(player, new ExoPlayable(creator, uri, fileExt));
-  }
-
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull ExoPlayable playable) {
+  BaseViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String extension,
+      @NonNull ExoCreator creator) {
     super(player);
-    //noinspection ConstantConditions
-    if (player.getPlayerView() == null || !(player.getPlayerView() instanceof PlayerView)) {
-      throw new IllegalArgumentException("Require non-null SimpleExoPlayerView");
-    }
-
     listeners = new MyEventListeners();
-    this.playable = playable;
+    playable = ToroUtil.checkNotNull(requirePlayable(creator, uri, extension));
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
     playable.addEventListener(listeners);
     playable.prepare(false);
-    playable.setPlayerView((PlayerView) player.getPlayerView());
+    //noinspection unchecked
+    playable.setPlayerView((VIEW) player.getPlayerView());
     if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
@@ -144,8 +113,11 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     }
 
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-      ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState); // important
+      BaseViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState); // important
       super.onPlayerStateChanged(playWhenReady, playbackState);
     }
   }
+
+  @NonNull
+  abstract Playable<VIEW> requirePlayable(ExoCreator creator, @NonNull Uri uri, String extension);
 }

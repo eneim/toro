@@ -58,6 +58,10 @@ public interface MediaSourceBuilder {
         @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
       @ContentType int type = isEmpty(ext) ? inferContentType(uri) : inferContentType("." + ext);
       switch (type) {
+        case C.TYPE_SS:
+          return new SsMediaSource.Factory( //
+              new DefaultSsChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)//
+              .createMediaSource(uri, handler, listener);
         case C.TYPE_DASH:
           return new DashMediaSource.Factory(
               new DefaultDashChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)
@@ -67,10 +71,6 @@ public interface MediaSourceBuilder {
               .createMediaSource(uri, handler, listener);
         case C.TYPE_OTHER:
           return new ExtractorMediaSource.Factory(mediaDataSourceFactory) //
-              .createMediaSource(uri, handler, listener);
-        case C.TYPE_SS:
-          return new SsMediaSource.Factory( //
-              new DefaultSsChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)//
               .createMediaSource(uri, handler, listener);
         default:
           throw new IllegalStateException("Unsupported type: " + type);

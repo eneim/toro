@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-buildscript {
-  repositories {
-    maven { url 'https://maven.fabric.io/public' }
-  }
-
-  dependencies {
-    classpath 'io.fabric.tools:gradle:1.25.1'
-  }
-}
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
-repositories {
-  maven { url 'https://maven.fabric.io/public' }
-}
-
-// apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
+
+def haveFabricApiKey = !propOrDef("toro_fabric_api_key", "").isEmpty()
+if (haveFabricApiKey) {
+  apply plugin: 'io.fabric'
+}
 
 android {
   signingConfigs {
@@ -51,20 +40,21 @@ android {
   }
 
   compileSdkVersion rootProject.ext.androidVersion
-  buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.toro.youtube"
     minSdkVersion rootProject.ext.minSupportSDKVersion
     targetSdkVersion rootProject.ext.androidVersion
-    versionCode 1
-    versionName "1.0"
+    versionCode releaseVersionCode
+    versionName "v" + releaseVersion
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     vectorDrawables.useSupportLibrary = true
-    buildConfigField("String", "API_KEY", "\"${youtube_apikey}\"")
+    buildConfigField("String", "API_KEY", "\"${toro_youtube_apikey}\"")
+
     // multiDexEnabled true
-    manifestPlaceholders = [fabric_api_key: "${fabric_api_key}"]
+    manifestPlaceholders += ["fabric_api_key": propOrDef("toro_fabric_api_key", "")]
+    ext.enableCrashlytics = false
   }
 
   buildTypes {
@@ -113,7 +103,7 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
   // rxJava 2
-  implementation("io.reactivex.rxjava2:rxandroid:2.0.1", {
+  implementation("io.reactivex.rxjava2:rxandroid:2.0.2", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 

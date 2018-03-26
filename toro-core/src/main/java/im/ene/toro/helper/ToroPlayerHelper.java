@@ -26,6 +26,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 
@@ -84,6 +85,7 @@ public abstract class ToroPlayerHelper {
 
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
+  protected ToroPlayer.OnVolumeChangeListener volumeChangeListener;
 
   final ArrayList<EventListener> eventListeners = new ArrayList<>();
   final EventListener internalListener = new EventListener() {
@@ -127,6 +129,10 @@ public abstract class ToroPlayerHelper {
     this.eventListeners.remove(eventListener);
   }
 
+  public final void setOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    this.volumeChangeListener = listener;
+  }
+
   /**
    * Initialize the necessary resource for the incoming playback. For example, prepare the
    * ExoPlayer instance for SimpleExoPlayerView. The initialization is feed by an initial playback
@@ -152,9 +158,19 @@ public abstract class ToroPlayerHelper {
 
   public abstract boolean isPlaying();
 
-  public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  /**
+   * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
+   */
+  @Deprecated public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
-  public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
+  /**
+   * @deprecated use {@link #getVolumeInfo()} instead.
+   */
+  @Deprecated public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
+
+  public abstract void setVolumeInfo(@NonNull VolumeInfo volumeInfo);
+
+  @NonNull public abstract VolumeInfo getVolumeInfo();
 
   /**
    * Get latest playback info. Either on-going playback info if current player is playing, or latest

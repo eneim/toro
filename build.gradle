@@ -21,17 +21,18 @@ buildscript {
   repositories {
     google()
     jcenter()
-    maven {
-      url 'https://oss.jfrog.org/artifactory/plugins-release'
-    }
+    maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://oss.jfrog.org/artifactory/plugins-release' }
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.0.1'
+    //noinspection GradleDependency
+    classpath 'com.android.tools.build:gradle:3.1.0-rc03'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     classpath "com.novoda:bintray-release:0.8.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.0"
+    classpath 'io.fabric.tools:gradle:1.25.1'
   }
 }
 
@@ -69,4 +70,11 @@ task wrapper(type: Wrapper) {
   gradleVersion = '4.4'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
+}
+
+// copy from https://github.com/chrisbanes/tivi
+// read from gradle.properties for a value, or use default instead.
+String propOrDef(String propertyName, String defaultValue) {
+  def propertyValue = project.properties[propertyName]
+  return propertyValue != null ? propertyValue : defaultValue
 }

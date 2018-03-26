@@ -56,7 +56,7 @@ public interface ExoCreator {
    * Create a {@link MediaSource} from media {@link Uri}.
    *
    * @param uri the media {@link Uri}.
-   * @param fileExt the custom extension of the media Uri.
+   * @param fileExt the optional (File) extension of the media Uri.
    * @return a {@link MediaSource} for media {@link Uri}.
    */
   @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String fileExt);
@@ -69,7 +69,7 @@ public interface ExoCreator {
    * {@link #createPlayer()} when necessary.
    *
    * @param uri the media {@link Uri}.
-   * @param fileExt the custom extension of the media Uri.
+   * @param fileExt the optional (File) extension of the media Uri.
    * @return the {@link Playable} to manage the media {@link Uri}.
    */
   @NonNull Playable createPlayable(@NonNull Uri uri, @Nullable String fileExt);

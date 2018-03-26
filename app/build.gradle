@@ -16,11 +16,11 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
   compileSdkVersion rootProject.ext.androidVersion
-  buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.toro.sample"
@@ -63,7 +63,6 @@ android {
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   implementation project(':toro-core')
-  // implementation "im.ene.toro3:toro:3.4.2-SNAPSHOT"
   implementation project(':toro-exoplayer')
 
   testImplementation 'junit:junit:4.12'
@@ -84,10 +83,10 @@ dependencies {
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
 
   implementation 'com.jakewharton:butterknife:8.8.1'
-  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+  kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // rxJava 2
-  implementation ("io.reactivex.rxjava2:rxandroid:2.0.1", {
+  implementation ("io.reactivex.rxjava2:rxandroid:2.0.2", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
@@ -101,7 +100,7 @@ dependencies {
   testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
   implementation 'com.github.bumptech.glide:glide:4.6.1'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+  kapt 'com.github.bumptech.glide:compiler:4.6.1'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
