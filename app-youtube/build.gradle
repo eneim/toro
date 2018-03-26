@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-buildscript {
-  repositories {
-    maven { url 'https://maven.fabric.io/public' }
-  }
-
-  dependencies {
-    classpath 'io.fabric.tools:gradle:1.25.1'
-  }
-}
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
-repositories {
-  maven { url 'https://maven.fabric.io/public' }
-}
-
-// apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
+
+def haveFabricApiKey = !propOrDef("toro_fabric_api_key", "").isEmpty()
+if (haveFabricApiKey) {
+  apply plugin: 'io.fabric'
+}
 
 android {
   signingConfigs {
@@ -61,9 +50,11 @@ android {
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     vectorDrawables.useSupportLibrary = true
-    buildConfigField("String", "API_KEY", "\"${youtube_apikey}\"")
+    buildConfigField("String", "API_KEY", "\"${toro_youtube_apikey}\"")
+
     // multiDexEnabled true
-    manifestPlaceholders = [fabric_api_key: "${fabric_api_key}"]
+    manifestPlaceholders += ["fabric_api_key": propOrDef("toro_fabric_api_key", "")]
+    ext.enableCrashlytics = false
   }
 
   buildTypes {

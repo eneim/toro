@@ -57,3 +57,4 @@
 /demo-mopub/src/androidTest/
 /demo-mopub/src/test/
 /.idea/caches/build_file_checksums.ser
+!/gradle.properties
