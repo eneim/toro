@@ -43,6 +43,7 @@ import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MOD
  * @author eneim (2018/02/25).
  */
 
+@SuppressWarnings("deprecation")  //
 public class PlayableDebugActivity extends AppCompatActivity {
 
   static final Uri video =

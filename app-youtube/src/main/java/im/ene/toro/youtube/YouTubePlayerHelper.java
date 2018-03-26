@@ -33,6 +33,7 @@ import com.google.android.youtube.player.YouTubePlayer.Provider;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 
@@ -57,6 +58,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   final Callback callback;
 
   final PlaybackInfo playbackInfo = new PlaybackInfo();
+  final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
   @IntRange(from = 1) final int playerViewId; // also the Id for playerFragment's container
 
   YouTubePlayer youTubePlayer;
@@ -100,6 +102,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
   @Override public float getVolume() {
     return 1;
+  }
+
+  @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    throw new UnsupportedOperationException("YouTubeApi doesn't allow to do this.");
+  }
+
+  @NonNull @Override public VolumeInfo getVolumeInfo() {
+    return volumeInfo;
   }
 
   @Override public boolean isPlaying() {

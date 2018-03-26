@@ -26,6 +26,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
@@ -53,7 +54,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @State int playerState = State.STATE_IDLE;
   boolean playWhenReady = false;  // mimic the ExoPlayer
-  float volume = 1f;
+  final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
   public LegacyVideoViewHelper(Container container, ToroPlayer player, @NonNull Uri mediaUri) {
     super(player);
@@ -170,15 +171,28 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   }
 
   @Override public void setVolume(float volume) {
-    if (mediaPlayer != null) {
-      mediaPlayer.setVolume(volume, volume);
-      // if the set above fails, then we won't go here. nothing changes.
-      this.volume = volume;
-    }
+    this.setVolumeInfo(new VolumeInfo(volume == 0, volume));
   }
 
   @Override public float getVolume() {
-    return volume;
+    return volumeInfo.getVolume();
+  }
+
+  @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    if (mediaPlayer == null) return;
+    boolean changed = !this.volumeInfo.equals(volumeInfo);
+    if (changed) {
+      float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
+      mediaPlayer.setVolume(volume, volume);
+      this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      if (volumeChangeListener != null) {
+        volumeChangeListener.onVolumeChanged(volumeInfo);
+      }
+    }
+  }
+
+  @NonNull @Override public VolumeInfo getVolumeInfo() {
+    return this.volumeInfo;
   }
 
   void updateResumePosition() {
