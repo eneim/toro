@@ -293,7 +293,9 @@ Below is the behavior before and after we apply the code above:
 
 ### Contribution
 
-- **IMPORTANT:** Forkers of Toro should also rename file ```gradle.properties-sample``` to ```gradle.properties``` and update it before any build.
+- For development:
+  - Fork the repo, clone it to your machine and execute ``./gradlew clean build`` to start.
+  - Latest Toro repository is developed using Android Studio 3.1.0.
 
 - Issue report and Pull Requests are welcome. Please follow issue format for quick response.
 
