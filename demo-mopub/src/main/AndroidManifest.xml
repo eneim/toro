@@ -25,16 +25,15 @@
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
   <application
+      android:name=".DemoApp"
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
       android:label="@string/app_name"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity android:name=".MainActivity">
-    </activity>
     <activity
-        android:name=".list.DemoListActivity"
+        android:name=".DemoListActivity"
         android:label="@string/title_activity_demo_list"
         android:theme="@style/AppTheme">
       <intent-filter>

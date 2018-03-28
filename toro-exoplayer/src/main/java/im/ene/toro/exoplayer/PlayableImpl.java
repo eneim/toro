@@ -37,12 +37,15 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 /**
  * [20180225]
  *
+ * Default implementation of {@link Playable}.
+ *
  * Instance of {@link Playable} should be reusable. Retaining instance of Playable across config
  * change must guarantee that all {@link EventListener} are cleaned up on config change.
  *
  * @author eneim (2018/02/25).
  */
-@SuppressWarnings("WeakerAccess") class PlayableImpl implements Playable {
+@SuppressWarnings("WeakerAccess") //
+class PlayableImpl implements Playable {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
@@ -128,6 +131,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     this.playbackInfo.reset();
     if (player != null) player.stop(true);
     // TODO [20180214] double check this when ExoPlayer 2.7.0 is released.
+    // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
     this.mediaSource = null; // so it will be re-prepared when play() is called.
   }
 
@@ -206,8 +210,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   }
 
   @Override public PlaybackParameters getParameters() {
-    return checkNotNull(player,
-        "Playable#getParameters(): Player is null").getPlaybackParameters();
+    return checkNotNull(player, "Playable#getParameters(): Player is null").getPlaybackParameters();
   }
 
   @Override public boolean isPlaying() {

@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package toro.demo.mopub.list;
+package toro.demo.mopub;
 
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.ViewGroup;
 import im.ene.toro.PlayerSelector;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.widget.Container;
-import toro.demo.mopub.R;
+
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 public class DemoListActivity extends AppCompatActivity {
 
@@ -52,14 +51,7 @@ public class DemoListActivity extends AppCompatActivity {
     container.setPlayerDispatcher(__ -> 500); // The playback will be delayed 500ms.
 
     // Only when you use Container inside a CoordinatorLayout and depends on Behavior.
-    ViewGroup.LayoutParams params = container.getLayoutParams();
-    if (params != null && params instanceof LayoutParams) {
-      CoordinatorLayout.Behavior behavior = ((LayoutParams) params).getBehavior();
-      if (behavior != null) {
-        //noinspection unchecked
-        ((LayoutParams) params).setBehavior(new Container.Behavior(behavior,  //
-            () -> container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE)));
-      }
-    }
+    ToroUtil.wrapParamBehavior(container,
+        () -> container.onScrollStateChanged(SCROLL_STATE_IDLE));
   }
 }

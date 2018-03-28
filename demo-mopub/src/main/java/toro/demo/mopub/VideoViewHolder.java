@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.demo.mopub.list;
+package toro.demo.mopub;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -24,12 +24,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
-import im.ene.toro.exoplayer.PlayerViewHelper;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import toro.demo.mopub.R;
 
 /**
  * @author eneim (2018/03/13).
@@ -37,8 +35,8 @@ import toro.demo.mopub.R;
 
 public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
-  final PlayerView playerView;
-  PlayerViewHelper helper;
+  protected final PlayerView playerView;
+  protected VolumeAwareHelper helper;
   private Uri videoUri;
 
   VideoViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
@@ -63,12 +61,17 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     if (videoUri == null) throw new IllegalStateException("Video is null.");
     if (helper == null) {
-      helper = new PlayerViewHelper(this, videoUri);
+      helper = new VolumeAwareHelper(this, videoUri);
     }
     helper.initialize(container, playbackInfo);
     // Always do this after initialize.
-    // TODO remember last volume setting by user, may requires more work.
-    helper.setVolumeInfo(new VolumeInfo(true, 0.75f));
+    // [Restore user's Volume] if playbackInfo is a VolumeAwarePlaybackInfo --> it was cached and returned here.
+    // This case, there will be a saved VolumeInfo so we use it instead.
+    if (playbackInfo instanceof VolumeAwarePlaybackInfo) {
+      helper.setVolumeInfo(((VolumeAwarePlaybackInfo) playbackInfo).getVolumeInfo());
+    } else {
+      helper.setVolumeInfo(new VolumeInfo(true, 0.75f));
+    }
   }
 
   @Override public void play() {
@@ -91,7 +94,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @Override public boolean wantsToPlay() {
-    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.5;
+    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.65;
   }
 
   @Override public int getPlayerOrder() {

@@ -112,10 +112,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    boolean volumeChanged = playable.setVolumeInfo(volumeInfo);
-    if (volumeChanged && volumeChangeListener != null) {
-      volumeChangeListener.onVolumeChanged(volumeInfo);
-    }
+    playable.setVolumeInfo(volumeInfo);
   }
 
   @Override @NonNull public VolumeInfo getVolumeInfo() {

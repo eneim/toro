@@ -99,4 +99,8 @@ public final class VolumeInfo implements Parcelable {
     result = 31 * result + (volume != +0.0f ? Float.floatToIntBits(volume) : 0);
     return result;
   }
+
+  @Override public String toString() {
+    return "Vol{" + "mute=" + mute + ", volume=" + volume + '}';
+  }
 }

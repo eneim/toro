@@ -117,7 +117,8 @@ public class DefaultExoCreator implements ExoCreator {
   }
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
-    return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+    // return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl);
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {

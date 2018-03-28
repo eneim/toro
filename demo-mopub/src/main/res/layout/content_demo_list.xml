@@ -23,6 +23,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="toro.demo.mopub.list.DemoListActivity"
+    tools:context="toro.demo.mopub.DemoListActivity"
     tools:showIn="@layout/activity_demo_list"
     />
