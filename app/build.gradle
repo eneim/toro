@@ -73,7 +73,7 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support.constraint:constraint-layout:1.1.0-beta5"
+  implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.constrainLayoutVersion}"
 
   implementation ('net.opacapp:multiline-collapsingtoolbar:1.6.0') {
     transitive = false
@@ -90,7 +90,7 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
 
   // https://mvnrepository.com/artifact/org.jsoup/jsoup
   implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
@@ -106,8 +106,4 @@ dependencies {
 
   // Custom LayoutManager
   // compile 'com.google.android:flexbox:0.3.0'
-}
-
-repositories {
-  mavenCentral()
 }
