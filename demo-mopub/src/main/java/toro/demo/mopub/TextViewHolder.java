@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package toro.demo.mopub.list;
+package toro.demo.mopub;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import toro.demo.mopub.R;
 
 /**
  * @author eneim (2018/03/13).
@@ -47,7 +47,15 @@ public class TextViewHolder extends BaseViewHolder {
 
   @Override void bind(Object item) {
     super.bind(item);
-    Glide.with(itemView).load(image).apply(options.clone()).into(imageView);
+    if (item instanceof Boolean) {
+      if (Boolean.TRUE.equals(item)) {
+        imageView.setVisibility(View.VISIBLE);
+        Glide.with(itemView).load(image).apply(options.clone()).into(imageView);
+      } else {
+        imageView.setVisibility(View.GONE);
+      }
+    }
+
     textView.setText(R.string.small_text);
   }
 }

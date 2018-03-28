@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.demo.mopub.list;
+package toro.demo.mopub;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

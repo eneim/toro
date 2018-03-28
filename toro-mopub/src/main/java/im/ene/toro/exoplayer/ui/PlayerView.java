@@ -433,6 +433,11 @@ import java.util.List;
     }
   }
 
+  @Override protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    this.setPlayer(null);
+  }
+
   /**
    * Sets the resize mode.
    *
@@ -554,17 +559,6 @@ import java.util.List;
   public void hideController() {
     if (controller != null) {
       controller.hide();
-    }
-  }
-
-  // Because we don't have a proper way to update UI when Player changes Volume explicitly
-  public final void onVolumeInfoUpdate(VolumeInfo volumeInfo) {
-    if (volumeInfo.isMute() && player.getVolume() != 0) {
-      throw new IllegalStateException("Unstable state of Volume.");
-    }
-
-    if (controller instanceof ToroControlView) {
-      ((ToroControlView) controller).onVolumeInfoUpdate(volumeInfo);
     }
   }
 

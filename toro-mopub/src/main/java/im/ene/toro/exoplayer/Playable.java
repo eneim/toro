@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
@@ -138,6 +139,13 @@ public interface Playable<T> {
    * @param listener the EventListener to be removed. If null, nothing happens.
    */
   void removeEventListener(EventListener listener);
+
+  /**
+   * !This must only work if the Player in use is a {@link ToroExoPlayer}.
+   */
+  void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
+
+  void removeOnVolumeChangeListener(@Nullable ToroPlayer.OnVolumeChangeListener listener);
 
   /**
    * Check if current Playable is playing or not.

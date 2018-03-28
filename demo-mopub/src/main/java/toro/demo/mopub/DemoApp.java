@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package toro.demo.mopub.list;
+package toro.demo.mopub;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.app.Application;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
- * @author eneim (2018/03/13).
+ * @author eneim (2018/03/28).
  */
+public class DemoApp extends Application {
 
-public class BaseViewHolder extends RecyclerView.ViewHolder {
-
-  public BaseViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
-    super(inflater.inflate(layoutRes, parent, false));
-  }
-
-  void bind(Object item) {
-
+  @Override public void onCreate() {
+    super.onCreate();
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      // You should not init your app in this process.
+      return;
+    }
+    LeakCanary.install(this);
   }
 }

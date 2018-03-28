@@ -25,9 +25,13 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
+import java.util.HashSet;
+import java.util.Set;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -55,6 +59,8 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   protected PlayerView playerView; // on-demand, not always required.
 
   private boolean listenerApplied = false;
+  // Use a Set to prevent duplicated setup.
+  private Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
 
   PlayableCompatImpl(ExoCreator creator, Uri uri, String fileExt) {
     this.creator = creator;
@@ -66,6 +72,11 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     if (player == null) {
       player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
+      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
+        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
+        }
+      }
     }
 
     if (!listenerApplied) {
@@ -132,6 +143,9 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     this.setPlayerView(null);
     if (this.player != null) {
       this.player.stop();
+      if (this.player instanceof ToroExoPlayer) {
+        ((ToroExoPlayer) this.player).clearOnVolumeChangeListener();
+      }
       if (listenerApplied) {
         player.removeListener(listeners);
         player.setVideoListener(null);
@@ -173,10 +187,10 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   }
 
   @CallSuper @Override public void setVolume(float volume) {
-    checkNotNull(player, "Playable#setVolume(): Player is null!").setVolume(volume);
+    checkNotNull(player, "Playable#setVolume(): Player is null!");
     // If playerView has been set, we should request an update, if not, it will be done automatically later.
     this.volumeInfo.setTo(volume == 0, volume);
-    if (playerView != null) playerView.onVolumeInfoUpdate(this.volumeInfo);
+    ToroExo.setVolumeInfo(player, this.volumeInfo);
   }
 
   @CallSuper @Override public float getVolume() {
@@ -184,17 +198,11 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   }
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    checkNotNull(player, "Playable#setVolume(): Player is null!");
     boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      if (this.volumeInfo.isMute()) {
-        this.setVolume(0.f);
-      } else {
-        this.setVolume(this.volumeInfo.getVolume());
-      }
-      // If playerView has been set, we should request an update,
-      // if not, it will be done automatically later.
-      if (playerView != null) playerView.onVolumeInfoUpdate(this.volumeInfo);
+      ToroExo.setVolumeInfo(player, this.volumeInfo);
     }
     return changed;
   }
@@ -209,8 +217,26 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   }
 
   @Override public PlaybackParameters getParameters() {
-    return checkNotNull(player,
-        "Playable#getParameters(): Player is null").getPlaybackParameters();
+    return checkNotNull(player, "Playable#getParameters(): Player is null").getPlaybackParameters();
+  }
+
+  @Override
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
+    volumeChangeListeners.add(ToroUtil.checkNotNull(listener));
+    if (this.player != null && this.player instanceof ToroExoPlayer) {
+      ((ToroExoPlayer) this.player).addOnVolumeChangeListener(listener);
+    }
+  }
+
+  @Override
+  public void removeOnVolumeChangeListener(@Nullable ToroPlayer.OnVolumeChangeListener listener) {
+    if (volumeChangeListeners != null) {
+      volumeChangeListeners.remove(listener);
+      if (this.player != null && this.player instanceof ToroExoPlayer) {
+        ((ToroExoPlayer) this.player).removeOnVolumeChangeListener(listener);
+      }
+    }
   }
 
   @Override public boolean isPlaying() {

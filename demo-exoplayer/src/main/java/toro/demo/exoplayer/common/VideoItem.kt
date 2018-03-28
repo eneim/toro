@@ -22,11 +22,11 @@ import com.squareup.moshi.Json
  * @author eneim (2018/03/05).
  */
 data class VideoItem(   //
-        @Json(name = "name") val name: String?,                         // name
-        @Json(name = "uri") val uri: String?,                           // uri
-        @Json(name = "extension") val extension: String?,               // extension
-        @Json(name = "drm_scheme") val drmScheme: String?,              // drm_scheme
-        @Json(name = "drm_license_url") val drmLicenseUrl: String?,     // drm_license_url
-        @Json(name = "ad_tag_uri") val adTagUri: String?,               // ad_tag_uri
-        @Json(name = "playlist") val playlist: List<VideoItem>?         // playlist
+    @Json(name = "name") val name: String?,                         // name
+    @Json(name = "uri") val uri: String?,                           // uri
+    @Json(name = "extension") val extension: String?,               // extension
+    @Json(name = "drm_scheme") val drmScheme: String?,              // drm_scheme
+    @Json(name = "drm_license_url") val drmLicenseUrl: String?,     // drm_license_url
+    @Json(name = "ad_tag_uri") val adTagUri: String?,               // ad_tag_uri
+    @Json(name = "playlist") val playlist: List<VideoItem>?         // playlist
 )

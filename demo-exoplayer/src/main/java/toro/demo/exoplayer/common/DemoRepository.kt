@@ -31,7 +31,7 @@ class DemoRepository {
 
     companion object {
         var listMyData = Types.newParameterizedType(List::class.java,
-                DemoItem::class.java)
+            DemoItem::class.java)!!
     }
 
     private val moshi: Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()

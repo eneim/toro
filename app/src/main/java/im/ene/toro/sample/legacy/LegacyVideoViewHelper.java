@@ -56,7 +56,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   boolean playWhenReady = false;  // mimic the ExoPlayer
   final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
-  public LegacyVideoViewHelper(Container container, ToroPlayer player, @NonNull Uri mediaUri) {
+  public LegacyVideoViewHelper(ToroPlayer player, @NonNull Uri mediaUri) {
     super(player);
     if (!(player.getPlayerView() instanceof ToroVideoView)) {
       throw new IllegalArgumentException("Only support ToroVideoView.");
@@ -185,9 +185,6 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
       mediaPlayer.setVolume(volume, volume);
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      if (volumeChangeListener != null) {
-        volumeChangeListener.onVolumeChanged(volumeInfo);
-      }
     }
   }
 

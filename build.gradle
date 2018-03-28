@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.2.30'
+  ext.kotlin_version = '1.2.31'
   repositories {
     google()
     jcenter()
@@ -27,13 +27,22 @@ buildscript {
 
   dependencies {
     //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.1.0-rc03'
+    classpath 'com.android.tools.build:gradle:3.1.0'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     classpath "com.novoda:bintray-release:0.8.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.0"
     classpath 'io.fabric.tools:gradle:1.25.1'
   }
+}
+
+ext {
+  androidVersion = 27
+  supportLibraryVersion = '27.1.0'
+  constrainLayoutVersion = '1.1.0-beta6'
+  archLibraryVersion = '1.1.1'
+  exoPlayer2Version = '2.7.0'
+  minSupportSDKVersion = 16
 }
 
 allprojects {
@@ -52,14 +61,6 @@ allprojects {
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
   }
-}
-
-ext {
-  androidVersion = 27
-  buildToolVersion = '27.0.2'
-  supportLibraryVersion = '27.1.0'
-  exoPlayer2Version = '2.7.0'
-  minSupportSDKVersion = 16
 }
 
 task clean(type: Delete) {

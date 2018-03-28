@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
+import im.ene.toro.annotations.Beta;
 import java.util.Arrays;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
@@ -148,6 +149,7 @@ public final class Config {
       return this;
     }
 
+    @Beta
     public Builder setDrmSessionManagers(@Nullable DrmSessionManager[] drmSessionManagers) {
       this.drmSessionManagers = drmSessionManagers;
       return this;

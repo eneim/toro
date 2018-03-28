@@ -66,8 +66,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
-        config.extensionMode, config.drmSessionManagers);
+    renderersFactory = new MultiDrmRendererFactory(this.toro.context, config.drmSessionManagers,
+        config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -170,15 +170,5 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason,
       Object trackSelectionData, long mediaTimeMs) {
     // no-ops
-  }
-
-  static boolean isBehindLiveWindow(ExoPlaybackException error) {
-    if (error.type != ExoPlaybackException.TYPE_SOURCE) return false;
-    Throwable cause = error.getSourceException();
-    while (cause != null) {
-      if (cause instanceof BehindLiveWindowException) return true;
-      cause = cause.getCause();
-    }
-    return false;
   }
 }

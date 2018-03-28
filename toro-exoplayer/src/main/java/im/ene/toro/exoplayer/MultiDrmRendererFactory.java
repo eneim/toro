@@ -41,8 +41,8 @@ final class MultiDrmRendererFactory extends DefaultRenderersFactory {
 
   private final ArrayList<DrmSessionManager<FrameworkMediaCrypto>> drmSessionManagers;
 
-  MultiDrmRendererFactory(Context context, int extensionRendererMode,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto>[] managers) {
+  MultiDrmRendererFactory(Context context,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto>[] managers, int extensionRendererMode) {
     super(context, managers != null && managers.length > 0 ? managers[0] : null,
         extensionRendererMode);
     this.drmSessionManagers = managers != null && managers.length > 1 // at least one more.

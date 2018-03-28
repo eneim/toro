@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package toro.demo.exoplayer.common
+package toro.demo.mopub;
 
-import im.ene.toro.media.DrmMedia
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
-data class DemoMediaDrm(    //
-    private val _type: String,  //
-    private val _licenseUrl: String?,   //
-    private val _multiSession: Boolean) : DrmMedia { //
-  override fun getLicenseUrl() = _licenseUrl
-  override fun getType() = _type
-  override fun getKeyRequestPropertiesArray(): Array<String>? = null
-  override fun multiSession() = _multiSession
+/**
+ * @author eneim (2018/03/13).
+ */
+
+public class BaseViewHolder extends RecyclerView.ViewHolder {
+
+  BaseViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
+    super(inflater.inflate(layoutRes, parent, false));
+  }
+
+  void bind(Object item) {
+    // do nothing
+  }
 }

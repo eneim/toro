@@ -26,6 +26,8 @@ import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 
+import static im.ene.toro.ToroUtil.checkNotNull;
+
 /**
  * Common implementation for {@link Playable}.
  *
@@ -42,7 +44,7 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
       @NonNull ExoCreator creator) {
     super(player);
     listeners = new MyEventListeners();
-    playable = ToroUtil.checkNotNull(requirePlayable(creator, uri, extension));
+    playable = checkNotNull(requirePlayable(creator, uri, extension));
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
@@ -81,10 +83,7 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   }
 
   @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    boolean volumeChanged = playable.setVolumeInfo(volumeInfo);
-    if (volumeChanged && volumeChangeListener != null) {
-      volumeChangeListener.onVolumeChanged(volumeInfo);
-    }
+    playable.setVolumeInfo(volumeInfo);
   }
 
   @Override @NonNull public VolumeInfo getVolumeInfo() {
@@ -104,6 +103,14 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   @SuppressWarnings("WeakerAccess") //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
+  }
+
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    this.playable.addOnVolumeChangeListener(checkNotNull(listener));
+  }
+
+  public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    this.playable.removeOnVolumeChangeListener(listener);
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

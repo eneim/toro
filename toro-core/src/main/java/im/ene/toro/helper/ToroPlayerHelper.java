@@ -85,7 +85,6 @@ public abstract class ToroPlayerHelper {
 
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
-  protected ToroPlayer.OnVolumeChangeListener volumeChangeListener;
 
   final ArrayList<EventListener> eventListeners = new ArrayList<>();
   final EventListener internalListener = new EventListener() {
@@ -129,10 +128,6 @@ public abstract class ToroPlayerHelper {
     this.eventListeners.remove(eventListener);
   }
 
-  public final void setOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    this.volumeChangeListener = listener;
-  }
-
   /**
    * Initialize the necessary resource for the incoming playback. For example, prepare the
    * ExoPlayer instance for SimpleExoPlayerView. The initialization is feed by an initial playback
@@ -142,9 +137,10 @@ public abstract class ToroPlayerHelper {
    * such cached information.
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead.
+   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead. From 3.5.0, this method
+   * will be downgraded to protected only.
    */
-  @Deprecated  //
+  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated  //
   public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
 
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
@@ -192,6 +188,6 @@ public abstract class ToroPlayerHelper {
   }
 
   @Override public String toString() {
-    return "Toro:Helper{" + "player=" + player + ", container=" + container + '}';
+    return "ToroLib:Helper{" + "player=" + player + ", container=" + container + '}';
   }
 }

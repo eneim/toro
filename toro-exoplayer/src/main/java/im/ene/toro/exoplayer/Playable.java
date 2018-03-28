@@ -39,10 +39,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Define an interface to control a playback.
+ * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link PlayerView}.
  *
  * This interface is designed to be reused across Config change. Implementation must not hold any
- * hard reference to Activity, and if it supports any kind of that, make sure to implicitly clean
+ * strong reference to Activity, and if it supports any kind of that, make sure to implicitly clean
  * it up.
  *
  * @author eneim

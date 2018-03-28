@@ -48,6 +48,7 @@ class LegacyDemoActivity : BaseActivity() {
 
     container!!.layoutManager = layoutManager
     container!!.adapter = adapter
+    container!!.cacheManager = adapter
   }
 
   override fun onDestroy() {

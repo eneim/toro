@@ -78,9 +78,9 @@ public interface ToroPlayer {
   /**
    * Notify a Player about its {@link Container}'s scroll state change.
    *
-   * @deprecated no-longer used.
+   * @deprecated no-longer used. Will be removed from 3.5.0
    */
-  @Deprecated void onSettled(Container container);
+  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated void onSettled(Container container);
 
   /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
@@ -98,7 +98,7 @@ public interface ToroPlayer {
 
   interface OnVolumeChangeListener {
 
-    void onVolumeChanged(VolumeInfo volumeInfo);
+    void onVolumeChanged(@NonNull VolumeInfo volumeInfo);
   }
 
   // Adapt from ExoPlayer.

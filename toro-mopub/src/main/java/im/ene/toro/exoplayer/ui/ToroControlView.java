@@ -29,6 +29,9 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
+import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
+import im.ene.toro.exoplayer.ToroExo;
+import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.mopub.R;
 import java.lang.reflect.Field;
@@ -90,6 +93,7 @@ public class ToroControlView extends PlaybackControlView {
     if (volumeUpButton != null) volumeUpButton.setOnClickListener(null);
     if (volumeOffButton != null) volumeOffButton.setOnClickListener(null);
     if (volumeBar != null) volumeBar.setListener(null);
+    this.setPlayer(null);
   }
 
   @SuppressLint("ClickableViewAccessibility") @Override
@@ -103,37 +107,43 @@ public class ToroControlView extends PlaybackControlView {
   }
 
   @Override public void setPlayer(ExoPlayer player) {
+    ExoPlayer current = super.getPlayer();
+    if (current == player) return;
+
+    if (current != null && current instanceof ToroExoPlayer) {
+      ((ToroExoPlayer) current).removeOnVolumeChangeListener(componentListener);
+    }
+
     super.setPlayer(player);
-    float volume = player instanceof SimpleExoPlayer ? ((SimpleExoPlayer) player).getVolume() : 1;
-    updateVolumeInfo(volume);
+
+    current = super.getPlayer();
+    @NonNull final VolumeInfo tempVol;
+    if (current instanceof ToroExoPlayer) {
+      tempVol = ((ToroExoPlayer) current).getVolumeInfo();
+      ((ToroExoPlayer) current).addOnVolumeChangeListener(componentListener);
+    } else if (current instanceof SimpleExoPlayer) {
+      float volume = ((SimpleExoPlayer) current).getVolume();
+      tempVol = new VolumeInfo(volume == 0, volume);
+    } else {
+      tempVol = new VolumeInfo(false, 1f);
+    }
+
+    this.volumeInfo.setTo(tempVol.isMute(), tempVol.getVolume());
     updateVolumeButtons();
   }
 
-  private void updateVolumeInfo(float actualVolume) {
-    boolean actuallyMute = actualVolume == 0;
-    volumeInfo.setTo(actuallyMute, actualVolume);
-  }
-
-  // Called by PlayerView to update UI buttons here.
-  void onVolumeInfoUpdate(VolumeInfo volumeInfo) {
-    this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-    updateVolumeButtons();
-  }
-
-  private class ComponentListener implements OnClickListener, TimeBar.OnScrubListener {
+  private class ComponentListener
+      implements OnClickListener, TimeBar.OnScrubListener, OnVolumeChangeListener {
 
     @Override public void onClick(View v) {
       ExoPlayer player = getPlayer();
       if (player == null || !(player instanceof SimpleExoPlayer)) return;
-      SimpleExoPlayer exoPlayer = (SimpleExoPlayer) player;
       if (v == volumeOffButton) {  // click to vol Off --> unmute
         volumeInfo.setTo(false, volumeInfo.getVolume());
-        exoPlayer.setVolume(volumeInfo.getVolume());
       } else if (v == volumeUpButton) {  // click to vol Up --> mute
         volumeInfo.setTo(true, volumeInfo.getVolume());
-        exoPlayer.setVolume(0);
       }
-
+      ToroExo.setVolumeInfo((SimpleExoPlayer) player, volumeInfo);
       updateVolumeButtons();
     }
 
@@ -149,6 +159,13 @@ public class ToroControlView extends PlaybackControlView {
 
     @Override public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
       dispatchOnScrubStop(position);
+    }
+
+    /// ToroPlayer.OnVolumeChangeListener
+
+    @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
+      ToroControlView.this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      updateVolumeButtons();
     }
   }
 
@@ -246,11 +263,11 @@ public class ToroControlView extends PlaybackControlView {
     if (position < 0) position = 0;
 
     float actualVolume = position / (float) 100;
+    this.volumeInfo.setTo(actualVolume == 0, actualVolume);
     if (getPlayer() instanceof SimpleExoPlayer) {
-      ((SimpleExoPlayer) getPlayer()).setVolume(actualVolume);
+      ToroExo.setVolumeInfo((SimpleExoPlayer) getPlayer(), this.volumeInfo);
     }
 
-    updateVolumeInfo(actualVolume);
     updateVolumeButtons();
   }
 

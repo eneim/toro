@@ -21,7 +21,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.util.ArraySet;
-import android.support.v7.widget.RecyclerView;
 import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.ToroPlayer;
 import java.util.ArrayList;
@@ -37,13 +36,10 @@ import java.util.Set;
  * @author eneim | 5/31/17.
  */
 @SuppressWarnings({ "unused", "UnusedReturnValue", "StatementWithEmptyBody" }) //
-final class PlayerManager {
+final class PlayerManager implements Handler.Callback {
 
-  private final Container container;
-
-  PlayerManager(Container container) {
-    this.container = container;
-  }
+  private static final String TAG = "ToroLib:Manager";
+  private Handler handler;
 
   // Make sure each ToroPlayer will present only once in this Manager.
   private final Set<ToroPlayer> players = new ArraySet<>();
@@ -69,15 +65,14 @@ final class PlayerManager {
     return new ArrayList<>(this.players);
   }
 
-  void initialize(@NonNull ToroPlayer player) {
+  void initialize(@NonNull ToroPlayer player, Container container) {
     player.initialize(container, container.getPlaybackInfo(player.getPlayerOrder()));
   }
 
-  void play(@NonNull ToroPlayer player) {
-    int delay = container.playerDispatcher.getDelayToPlay(player);
+  void play(@NonNull ToroPlayer player, int delay) {
     if (delay < PlayerDispatcher.DELAY_INFINITE) throw new IllegalArgumentException("Too negative");
-
-    handler.removeMessages(MSG_PLAY, player); // remove unsent msg
+    if (handler == null) return;
+    handler.removeMessages(MSG_PLAY, player); // remove undone msg for this player
     if (delay == PlayerDispatcher.DELAY_INFINITE) {
       // do nothing
     } else if (delay == PlayerDispatcher.DELAY_NONE) {
@@ -95,7 +90,7 @@ final class PlayerManager {
   // return false if this manager could not release the player.
   // normally when this manager doesn't manage the player.
   boolean release(@NonNull ToroPlayer player) {
-    handler.removeCallbacksAndMessages(null);
+    if (handler != null) handler.removeCallbacksAndMessages(null);
     if (manages(player)) {
       player.release();
       return true;
@@ -106,29 +101,37 @@ final class PlayerManager {
 
   void recycle(ToroPlayer player) {
     // no-ops, place holder only.
-    handler.removeCallbacksAndMessages(null);
+    if (handler != null) handler.removeCallbacksAndMessages(null);
   }
 
   void clear() {
-    handler.removeCallbacksAndMessages(null);
+    if (handler != null) handler.removeCallbacksAndMessages(null);
     this.players.clear();
   }
 
-  void onContainerScrollStateChanged(int state) {
-    if (state != RecyclerView.SCROLL_STATE_IDLE) {
-      handler.removeMessages(MSG_PLAY);
+  void postponeDelayedPlaybacks() {
+    if (handler != null) handler.removeMessages(MSG_PLAY);
+  }
+
+  void onAttach() {
+    // do nothing
+    if (handler == null) handler = new Handler(Looper.getMainLooper(), this);
+  }
+
+  void onDetach() {
+    if (handler != null) {
+      handler.removeCallbacksAndMessages(null);
+      handler = null;
     }
   }
 
   @SuppressWarnings("WeakerAccess") static final int MSG_PLAY = 100;
 
-  private final Handler handler = new Handler(Looper.getMainLooper()) {
-    @Override public void handleMessage(Message msg) {
-      if (!(msg.obj instanceof ToroPlayer)) return;
-      if (msg.what == MSG_PLAY) {
-        ToroPlayer player = (ToroPlayer) msg.obj;
-        player.play();
-      }
+  @Override public boolean handleMessage(Message msg) {
+    if (msg.what == MSG_PLAY && msg.obj instanceof ToroPlayer) {
+      ToroPlayer player = (ToroPlayer) msg.obj;
+      player.play();
     }
-  };
+    return true;
+  }
 }
