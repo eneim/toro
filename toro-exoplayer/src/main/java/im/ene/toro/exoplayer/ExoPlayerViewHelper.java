@@ -134,6 +134,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this.listeners.remove(listener);
   }
 
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    this.playable.addOnVolumeChangeListener(checkNotNull(listener));
+  }
+
+  public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    this.playable.removeOnVolumeChangeListener(listener);
+  }
+
   // A proxy, to also hook into ToroPlayerHelper's state change event.
   private class MyEventListeners extends Playable.EventListeners {
 

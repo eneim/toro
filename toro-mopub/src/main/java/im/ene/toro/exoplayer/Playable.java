@@ -43,7 +43,7 @@ import java.util.List;
  * Define an interface to control a playback.
  *
  * This interface is designed to be reused across Config change. Implementation must not hold any
- * hard reference to Activity, and if it supports any kind of that, make sure to implicitly clean
+ * strong reference to Activity, and if it supports any kind of that, make sure to implicitly clean
  * it up.
  *
  * @param <T> the View that acts as the Player. It should be a {@link SimpleExoPlayerView} or {@link PlayerView}.
@@ -99,14 +99,14 @@ public interface Playable<T> {
 
   /**
    * Reset all resource, so that the playback can start all over again. This is to cleanup the
-   * playback for reuse. The SimpleExoPlayer instance must be still usable without calling {@link
-   * #prepare(boolean)}.
+   * playback for reuse. The SimpleExoPlayer instance must be still usable without calling
+   * {@link #prepare(boolean)}.
    */
   void reset();
 
   /**
    * Release all resource. After this, the SimpleExoPlayer is released to the Player pool and the
-   * Playable need to call {@link #prepare(boolean)} again to be usable again.
+   * Playable must call {@link #prepare(boolean)} again to use it again.
    */
   void release();
 
@@ -171,11 +171,16 @@ public interface Playable<T> {
   @Deprecated @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   /**
-   * @param volumeInfo the {@link VolumeInfo} to update.
-   * @return {@code true} if VolumeInfo is changed, {@code false} otherwise.
+   * Update playback's volume.
+   *
+   * @param volumeInfo the {@link VolumeInfo} to update to.
+   * @return {@code true} if current Volume info is updated, {@code false} otherwise.
    */
   boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo);
 
+  /**
+   * Get current {@link VolumeInfo}.
+   */
   @NonNull VolumeInfo getVolumeInfo();
 
   /**

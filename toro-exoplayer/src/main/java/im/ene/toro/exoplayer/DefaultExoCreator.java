@@ -66,8 +66,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new MultiDrmRendererFactory(this.toro.context, config.drmSessionManagers,
-        config.extensionMode);
+    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
+        config.drmSessionManagers, config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -118,7 +118,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
-    return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+    // return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl);
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
