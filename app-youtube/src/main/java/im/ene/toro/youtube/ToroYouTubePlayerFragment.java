@@ -16,23 +16,24 @@
 
 package im.ene.toro.youtube;
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.View;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
 /**
  * @author eneim (2017/12/07).
  */
 
-public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
+public final class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
 
-  // This is used by the Adapter's FragmentManager to know which Helper request the Fragment.
-  private YouTubePlayerHelper helperKey;
+  // This instance lives out of the lifecycle callbacks, but must be released and cleared before
+  // any destroying event (onDestroyView/onDestroy)
+  private YouTubePlayerHelper playerHelper;
 
-  /* package */ YouTubePlayerHelper getHelperKey() {
-    return helperKey;
-  }
-
-  /* package */ void setHelperKey(YouTubePlayerHelper helperKey) {
-    this.helperKey = helperKey;
+  /* package */ void setPlayerHelper(YouTubePlayerHelper playerHelper) {
+    this.playerHelper = playerHelper;
   }
 
   public static ToroYouTubePlayerFragment newInstance() {
@@ -40,6 +41,26 @@ public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
   }
 
   @Override public String toString() {
-    return "Toro:Yt:Fragment{" + "helper=" + helperKey + '}';
+    return "Toro:Yt:Fragment{" + "helper=" + playerHelper + '}';
+  }
+
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    if (this.playerHelper != null) this.playerHelper.ytFragment = this;
+  }
+
+  @Override public void onStop() {
+    super.onStop();
+    // A stopped player need to be release or else it will throw error when resume. It is weird ...
+    if (this.playerHelper != null) this.playerHelper.release();
+  }
+
+  @Override public void onDestroyView() {
+    super.onDestroyView();
+    if (this.playerHelper != null) {
+      this.playerHelper.release();
+      this.playerHelper.ytFragment = null;
+      this.playerHelper = null;
+    }
   }
 }

@@ -39,7 +39,7 @@ import im.ene.toro.youtube.common.ViewUtil;
  */
 
 @SuppressWarnings({ "WeakerAccess", "unused" }) //
-public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+final class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
   private static final String TAG = "YouT:ViewHolder";
 
@@ -97,8 +97,8 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override public void pause() {
-    thumbnailView.setVisibility(View.VISIBLE);
     if (helper != null) helper.pause();
+    thumbnailView.setVisibility(View.VISIBLE);
   }
 
   @Override public boolean isPlaying() {
@@ -112,6 +112,7 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override public boolean wantsToPlay() {
+    // YouTube Player API requires the player view to be fully visible.
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.999;
   }
 
@@ -120,10 +121,9 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override public void onSettled(Container container) {
-    if (helper != null) helper.onSettled();
   }
 
-  void bind(Video item) {
+  void bind(@NonNull Video item) {
     this.videoId = item.getId();
     this.videoName.setText(item.getSnippet().getTitle());
     this.videoCaption.setText(item.getSnippet().getDescription());
@@ -136,6 +136,6 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override public String toString() {
-    return "Player{" + "playerOrder=" + getPlayerOrder() + '}';
+    return "Player{" + "videoId='" + videoId + '\'' + ", order=" + getPlayerOrder() + '}';
   }
 }
