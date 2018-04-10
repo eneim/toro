@@ -58,11 +58,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   /** Config instance should be kept as global instance. */
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt, @NonNull Config config) {
-    this(player, uri, fileExt, with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
+      @NonNull Config config) {
+    this(player, uri, fileExt,
+        with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt, @NonNull ExoCreator creator) {
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
+      @NonNull ExoCreator creator) {
     this(player, new ExoPlayable(creator, uri, fileExt));
   }
 
@@ -75,12 +78,12 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     listeners = new MyEventListeners();
     this.playable = playable;
+    this.playable.setPlayerView((PlayerView) player.getPlayerView());
   }
 
   @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
     playable.addEventListener(listeners);
     playable.prepare(false);
-    playable.setPlayerView((PlayerView) player.getPlayerView());
     if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 

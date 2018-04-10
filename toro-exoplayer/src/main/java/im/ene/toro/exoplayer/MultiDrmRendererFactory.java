@@ -61,10 +61,9 @@ final class MultiDrmRendererFactory extends DefaultRenderersFactory {
       VideoRendererEventListener eventListener, int extensionRendererMode,
       ArrayList<Renderer> out) {
     ArrayList<Renderer> localOut = new ArrayList<>();
-    Set<Renderer> outSet = new HashSet<>();
     super.buildVideoRenderers(context, drmSessionManager, allowedVideoJoiningTimeMs,  //
         eventHandler, eventListener, extensionRendererMode, localOut);
-    outSet.addAll(localOut);
+    Set<Renderer> outSet = new HashSet<>(localOut);
 
     if (this.drmSessionManagers != null) {
       localOut.clear();
@@ -84,10 +83,9 @@ final class MultiDrmRendererFactory extends DefaultRenderersFactory {
       AudioRendererEventListener eventListener, int extensionRendererMode,
       ArrayList<Renderer> out) {
     ArrayList<Renderer> localOut = new ArrayList<>();
-    Set<Renderer> outSet = new HashSet<>();
     super.buildAudioRenderers(context, drmSessionManager, audioProcessors, eventHandler,
         eventListener, extensionRendererMode, localOut);
-    outSet.addAll(localOut);
+    Set<Renderer> outSet = new HashSet<>(localOut);
 
     if (this.drmSessionManagers != null) {
       localOut.clear();
