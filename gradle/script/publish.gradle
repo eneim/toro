@@ -20,14 +20,14 @@ apply plugin: 'maven-publish'
 
 publish {
   artifactId = releaseArtifact  // library
-  description = releaseDescription  // by library
+  desc = releaseDescription  // by library
   repoName = releaseRepoName  // by library
   userOrg = releaseUserOrg  // shared
   groupId = releaseGroupId  // shared
   version = releaseVersion  // shared
   website = releaseWebsite  // shared
   licences = releaseLicense // shared
-
+  publishVersion = releaseVersion
   bintrayUser = bintray_user
   bintrayKey = bintray_apikey
 

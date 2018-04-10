@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -32,6 +31,8 @@ import org.jsoup.select.Elements;
 import toro.demo.exoplayer.DemoApp;
 
 /**
+ * Parsing some html for the demo app.
+ *
  * @author eneim (2018/01/23).
  */
 
@@ -52,7 +53,8 @@ public class Motion {
     article = Jsoup.parse(getFileContent(DemoApp.Companion.getDemoApp(), "motion/index.html"));
   }
 
-  static String getFileContent(Context context, String fileName) {
+  @SuppressWarnings("SameParameterValue")
+  private static String getFileContent(Context context, String fileName) {
     StringBuilder total = new StringBuilder();
     try (InputStream inputStream = context.getAssets().open(fileName);
          BufferedReader r = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -86,31 +88,13 @@ public class Motion {
     });
   }
 
-  public static Observable<Pair<String, Element>> content() {
-    return Observable.fromCallable(() -> {
-      Element body = article.body();
-      List<Pair<String, Element>> result = new ArrayList<>();
-      result.add(Pair.create("", body.select(INTRO).first()));
-
-      Element part;
-
-      part = body.getElementById(ID_PART2);
-      result.add(Pair.create(part.child(0).text(), part.child(1)));
-
-      part = body.getElementById(ID_PART3);
-      result.add(Pair.create(part.child(0).text(), part.child(1)));
-
-      part = body.getElementById(ID_PART4);
-      result.add(Pair.create(part.child(0).text(), part.child(1)));
-      return result;
-    }).flatMap(Observable::fromIterable);
-  }
-
   // try hard to flatten elements from the source into des
   public static void flatten(Elements des, Element source) {
     Elements children = source.children();
-    if (children.size() == 0 || "media".equals(source.className()) || //
-        "figcaption".equals(source.tagName()) || "module".equals(source.className())) {
+    if (children.size() == 0 || //
+        "media".equals(source.className()) || //
+        "figcaption".equals(source.tagName()) ||  //
+        "module".equals(source.className())) {
       des.add(source);
     } else {
       for (Element element : children) {

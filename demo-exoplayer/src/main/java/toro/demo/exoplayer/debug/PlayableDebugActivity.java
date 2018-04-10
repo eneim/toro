@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
+import im.ene.toro.exoplayer.ExoPlayable;
 import im.ene.toro.exoplayer.Playable;
 import toro.demo.exoplayer.DemoApp;
 import toro.demo.exoplayer.R;
@@ -102,7 +103,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
     playable = (Playable) getLastCustomNonConfigurationInstance();
     if (playable == null) {
       //noinspection ConstantConditions
-      playable = DemoApp.Companion.getExoCreator().createPlayable(video, "mp4");
+      playable = new ExoPlayable(DemoApp.Companion.getExoCreator(), video, "mp4");
       playable.prepare(true);
     }
 

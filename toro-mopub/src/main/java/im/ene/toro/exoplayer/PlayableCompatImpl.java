@@ -44,7 +44,8 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
  *
  * @author eneim (2018/03/24).
  */
-@SuppressWarnings("WeakerAccess") class PlayableCompatImpl implements Playable<PlayerView> {
+@SuppressWarnings("WeakerAccess") //
+class PlayableCompatImpl implements Playable<PlayerView> {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
@@ -188,7 +189,6 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
   @CallSuper @Override public void setVolume(float volume) {
     checkNotNull(player, "Playable#setVolume(): Player is null!");
-    // If playerView has been set, we should request an update, if not, it will be done automatically later.
     this.volumeInfo.setTo(volume == 0, volume);
     ToroExo.setVolumeInfo(player, this.volumeInfo);
   }

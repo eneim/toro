@@ -16,7 +16,6 @@
 
 package im.ene.toro.exoplayer;
 
-import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
@@ -43,20 +42,19 @@ public class ToroExoPlayer extends SimpleExoPlayer {
 
   private Set<ToroPlayer.OnVolumeChangeListener> listeners;
 
-  public final void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
     if (this.listeners == null) this.listeners = new HashSet<>();
     this.listeners.add(ToroUtil.checkNotNull(listener));
   }
 
-  public final void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+  public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
     if (this.listeners != null) this.listeners.remove(listener);
   }
 
-  public final void clearOnVolumeChangeListener() {
+  public void clearOnVolumeChangeListener() {
     if (this.listeners != null) this.listeners.clear();
   }
 
-  @CallSuper
   @Override public void setVolume(float audioVolume) {
     this.setVolumeInfo(new VolumeInfo(audioVolume == 0, audioVolume));
   }
@@ -64,7 +62,6 @@ public class ToroExoPlayer extends SimpleExoPlayer {
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
   @SuppressWarnings("UnusedReturnValue")  //
-  @CallSuper
   public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     boolean changed = !this.volumeInfo.equals(volumeInfo);
     if (changed) {

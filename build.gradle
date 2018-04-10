@@ -27,9 +27,9 @@ buildscript {
 
   dependencies {
     //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.1.0'
+    classpath 'com.android.tools.build:gradle:3.1.1'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
-    classpath "com.novoda:bintray-release:0.8.0"
+    classpath "com.novoda:bintray-release:0.8.1"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.0"
     classpath 'io.fabric.tools:gradle:1.25.1'

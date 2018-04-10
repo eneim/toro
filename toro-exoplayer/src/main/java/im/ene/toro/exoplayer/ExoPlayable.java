@@ -17,7 +17,10 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
+import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -102,8 +105,11 @@ public class ExoPlayable extends PlayableImpl {
   }
 
   @SuppressWarnings({ "WeakerAccess", "unused" }) //
-  protected void onErrorMessage(String message) {
-    // Do nothing. Child class may need to do something with this, show a Toast maybe.
+  @CallSuper protected void onErrorMessage(@NonNull String message) {
+    // Do nothing. Sub class should handle the message on demand.
+    if (playerView != null) {
+      Toast.makeText(playerView.getContext(), message, Toast.LENGTH_SHORT).show();
+    }
   }
 
   private class Listener extends DefaultEventListener {

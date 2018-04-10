@@ -26,8 +26,12 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
+import java.util.HashSet;
+import java.util.Set;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -49,7 +53,10 @@ class PlayableImpl implements Playable {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
-  private final EventListeners listeners = new EventListeners();  // original listener.
+
+  protected final EventListeners listeners = new EventListeners();  // original listener.
+  // Use a Set to prevent duplicated setup.
+  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
 
   protected final Uri mediaUri; // immutable, parcelable
   protected final String fileExt;
@@ -71,6 +78,11 @@ class PlayableImpl implements Playable {
     if (player == null) {
       player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
+      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
+        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
+        }
+      }
     }
 
     if (!listenerApplied) {
@@ -81,17 +93,14 @@ class PlayableImpl implements Playable {
       listenerApplied = true;
     }
 
-    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
     boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
 
     if (prepareSource) {
-      if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-        mediaSource = creator.createMediaSource(mediaUri, fileExt);
-        player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
-      }
+      ensurePlayerView();
+      ensureMediaSource();
     }
   }
 
@@ -100,11 +109,9 @@ class PlayableImpl implements Playable {
     if (playerView == null) {
       this.playerView.setPlayer(null);
     } else {
-      // playerView is non-null, we requires a non-null player too.
-      if (this.player == null) {
-        throw new IllegalStateException("Player is null, prepare it first.");
+      if (this.player != null) {
+        PlayerView.switchTargetView(this.player, this.playerView, playerView);
       }
-      PlayerView.switchTargetView(this.player, this.playerView, playerView);
     }
 
     this.playerView = playerView;
@@ -116,10 +123,8 @@ class PlayableImpl implements Playable {
 
   @CallSuper @Override public void play() {
     checkNotNull(player, "Playable#play(): Player is null!");
-    if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-      mediaSource = creator.createMediaSource(mediaUri, fileExt);
-      player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
-    }
+    ensureMediaSource();
+    ensurePlayerView();
     player.setPlayWhenReady(true);
   }
 
@@ -139,6 +144,9 @@ class PlayableImpl implements Playable {
     this.setPlayerView(null);
     if (this.player != null) {
       this.player.stop(true);
+      if (this.player instanceof ToroExoPlayer) {
+        ((ToroExoPlayer) this.player).clearOnVolumeChangeListener();
+      }
       if (listenerApplied) {
         player.removeListener(listeners);
         player.removeVideoListener(listeners);
@@ -180,7 +188,9 @@ class PlayableImpl implements Playable {
   }
 
   @CallSuper @Override public void setVolume(float volume) {
-    checkNotNull(player, "Playable#setVolume(): Player is null!").setVolume(volume);
+    checkNotNull(player, "Playable#setVolume(): Player is null!");
+    this.volumeInfo.setTo(volume == 0, volume);
+    ToroExo.setVolumeInfo(player, this.volumeInfo);
   }
 
   @CallSuper @Override public float getVolume() {
@@ -188,14 +198,11 @@ class PlayableImpl implements Playable {
   }
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    checkNotNull(player, "Playable#setVolume(): Player is null!");
     boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      if (this.volumeInfo.isMute()) {
-        this.setVolume(0.f);
-      } else {
-        this.setVolume(this.volumeInfo.getVolume());
-      }
+      ToroExo.setVolumeInfo(player, this.volumeInfo);
     }
     return changed;
   }
@@ -213,6 +220,25 @@ class PlayableImpl implements Playable {
     return checkNotNull(player, "Playable#getParameters(): Player is null").getPlaybackParameters();
   }
 
+  @Override
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
+    volumeChangeListeners.add(ToroUtil.checkNotNull(listener));
+    if (this.player != null && this.player instanceof ToroExoPlayer) {
+      ((ToroExoPlayer) this.player).addOnVolumeChangeListener(listener);
+    }
+  }
+
+  @Override
+  public void removeOnVolumeChangeListener(@Nullable ToroPlayer.OnVolumeChangeListener listener) {
+    if (volumeChangeListeners != null) {
+      volumeChangeListeners.remove(listener);
+      if (this.player != null && this.player instanceof ToroExoPlayer) {
+        ((ToroExoPlayer) this.player).removeOnVolumeChangeListener(listener);
+      }
+    }
+  }
+
   @Override public boolean isPlaying() {
     return player != null && player.getPlayWhenReady();
   }
@@ -222,5 +248,16 @@ class PlayableImpl implements Playable {
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
     playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
         Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
+  }
+
+  private void ensurePlayerView() {
+    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
+  }
+
+  private void ensureMediaSource() {
+    if (mediaSource == null) {  // Only actually prepare the source when play() is called.
+      mediaSource = creator.createMediaSource(mediaUri, fileExt);
+      player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
+    }
   }
 }

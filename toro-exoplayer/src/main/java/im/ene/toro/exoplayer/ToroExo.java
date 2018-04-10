@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.RestrictTo;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.media.DrmMedia;
+import im.ene.toro.media.VolumeInfo;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -259,5 +261,19 @@ public final class ToroExo {
     }
     return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
         null, handler, null, multiSession);
+  }
+
+  // Share the code of setting Volume. For use inside library only.
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public static void setVolumeInfo(@NonNull SimpleExoPlayer player, @NonNull VolumeInfo volumeInfo) {
+    if (player instanceof ToroExoPlayer) {
+      ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
+    } else {
+      if (volumeInfo.isMute()) {
+        player.setVolume(0f);
+      } else {
+        player.setVolume(volumeInfo.getVolume());
+      }
+    }
   }
 }
