@@ -22,13 +22,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewParent;
+import android.widget.Toast;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
@@ -41,8 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @SuppressWarnings("WeakerAccess") //
 final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
 
-  private static final String TAG = "YouT:Helper";
-
   static final int MSG_INIT = 1000;
   static final int MSG_PLAY = 1001;
   static final int MSG_PAUSE = 1002;
@@ -50,24 +50,23 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
   // Actions must be done in order/queue, so we use a handler to make that happens.
   final String videoId;
-  final Callback callback;
 
   final PlaybackInfo playbackInfo = new PlaybackInfo();
   final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
   final AtomicBoolean playWhenReady = new AtomicBoolean(false);
 
+  Callback callback;
   Handler handler;
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
 
-  YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId, @NonNull Callback callback) {
+  YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId) {
     super(player);
     //noinspection ConstantConditions
     if (player.getPlayerView() == null) {
       throw new IllegalArgumentException("Player's view must not be null.");
     }
 
-    this.callback = callback;
     this.videoId = videoId;
   }
 
@@ -119,6 +118,10 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
   }
 
+  public void setCallback(Callback callback) {
+    this.callback = callback;
+  }
+
   void updateResumePosition() {
     if (youTubePlayer != null) {
       playbackInfo.setResumePosition(youTubePlayer.getCurrentTimeMillis());
@@ -126,7 +129,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   }
 
   @Override public void release() {
-    Log.d(TAG, "release() called, " + player);
     if (handler != null) {
       handler.removeCallbacksAndMessages(null);
       handler = null;
@@ -144,7 +146,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   }
 
   @Override public boolean handleMessage(Message message) {
-    Log.i(TAG, "handleMessage: " + message.what + ", " + player.getPlayerOrder());
     switch (message.what) {
       case MSG_INIT:
         // Prepare the Fragment and put it in place.
@@ -160,8 +161,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
             if (helper.callback != null) helper.callback.onPlayerCreated(helper, player);
             player.setPlayerStateChangeListener(new StateChangeListenerImpl());
             player.setPlaybackEventListener(new PlaybackEventListenerImpl());
-            player.setOnFullscreenListener(new FullScreenListenerImpl());
-            player.setShowFullscreenButton(true);  // fullscreen requires more work ...
+            player.setShowFullscreenButton(false);  // fullscreen requires more work ...
             if (shouldPlay()) { // make sure YouTubePlayerView is fully visible.
               player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
             }
@@ -211,9 +211,11 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
     }
 
-    @Override public void onError(YouTubePlayer.ErrorReason errorReason) {
-      // Force a crash to log to Fabric.
-      if (BuildConfig.DEBUG) throw new RuntimeException("YouTubePlayer Error: " + errorReason);
+    @Override public void onError(YouTubePlayer.ErrorReason reason) {
+      // if (BuildConfig.DEBUG) throw new RuntimeException("YouTubePlayer Error: " + reason);
+      if (ytFragment != null && ytFragment.isAdded()) {
+        Toast.makeText(ytFragment.requireContext(), "Error: " + reason, Toast.LENGTH_SHORT).show();
+      }
     }
   }
 
@@ -240,19 +242,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
   }
 
-  class FullScreenListenerImpl implements YouTubePlayer.OnFullscreenListener {
-
-    // Called when User click to 'Full-screen button'.
-    @Override public void onFullscreen(boolean fullscreen) {
-      // Fullscreen is turned on/off by User.
-      Log.d(TAG, "onFullscreen() called with: fullscreen = [" + fullscreen + "], " + player);
-      if (callback != null) {
-        callback.onFullscreen(YouTubePlayerHelper.this, //
-            YouTubePlayerHelper.this.youTubePlayer, fullscreen);
-      }
-    }
-  }
-
   // Ensure that we are in the good situation.
   boolean shouldPlay() {
     if (ytFragment == null || !ytFragment.isVisible()) return false;
@@ -264,6 +253,11 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return "Toro:Yt:Helper{" + "videoId='" + videoId + '\'' + ", player=" + player + '}';
   }
 
+  ToroPlayer getPlayer() {
+    return player;
+  }
+
+  /** Mimic {@link ToroUtil#visibleAreaOffset(ToroPlayer, ViewParent)} */
   private static float visibleAreaOffset(@NonNull View playerView) {
     Rect drawRect = new Rect();
     playerView.getDrawingRect(drawRect);
@@ -282,10 +276,11 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
   interface Callback {
 
-    void onPlayerCreated(YouTubePlayerHelper helper, YouTubePlayer player);
+    void onPlayerCreated(@NonNull YouTubePlayerHelper helper, @NonNull YouTubePlayer player);
 
-    void onPlayerDestroyed(YouTubePlayerHelper helper);
+    void onPlayerDestroyed(@NonNull YouTubePlayerHelper helper);
 
-    void onFullscreen(YouTubePlayerHelper helper, YouTubePlayer player, boolean fullscreen);
+    @SuppressWarnings("unused") void onFullscreen(@NonNull YouTubePlayerHelper helper,
+        @Nullable YouTubePlayer player, boolean fullscreen);
   }
 }

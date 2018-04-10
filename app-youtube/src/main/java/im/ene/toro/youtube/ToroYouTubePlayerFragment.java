@@ -26,7 +26,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
  * @author eneim (2017/12/07).
  */
 
-public final class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
+public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
 
   // This instance lives out of the lifecycle callbacks, but must be released and cleared before
   // any destroying event (onDestroyView/onDestroy)
@@ -41,7 +41,7 @@ public final class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragmen
   }
 
   @Override public String toString() {
-    return "Toro:Yt:Fragment{" + "helper=" + playerHelper + '}';
+    return "YouT:Fragment{" + "helper=" + playerHelper + '}';
   }
 
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

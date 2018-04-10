@@ -17,30 +17,30 @@
 package im.ene.toro.youtube;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
-import im.ene.toro.CacheManager;
-import im.ene.toro.ToroUtil;
 import java.util.ArrayList;
 import java.util.List;
+
+import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * @author eneim (2017/11/23).
  */
 
-final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> implements CacheManager {
+final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> {
 
   private final YouTubePlayerManager manager;
   private VideoListResponse data = new VideoListResponse();
+  private LayoutInflater inflater;
 
   YouTubePlaylistAdapter(YouTubePlayerManager playerManager) {
     super();
-    this.manager = ToroUtil.checkNotNull(playerManager);
+    this.manager = checkNotNull(playerManager);
   }
 
   public void setData(VideoListResponse data) {
@@ -50,8 +50,10 @@ final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> imple
 
   @NonNull @Override
   public YouTubeVideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(parent.getContext())
-        .inflate(YouTubeVideoViewHolder.LAYOUT_RES, parent, false);
+    if (inflater == null || inflater.getContext() != parent.getContext()) {
+      inflater = LayoutInflater.from(parent.getContext());
+    }
+    View view = inflater.inflate(YouTubeVideoViewHolder.LAYOUT_RES, parent, false);
     return new YouTubeVideoViewHolder(manager, view);
   }
 
@@ -71,16 +73,6 @@ final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> imple
 
   @Override public int getItemCount() {
     return getItems().size();
-  }
-
-  /// CacheManager implementation
-
-  @Nullable @Override public Object getKeyForOrder(int order) {
-    return order < 0 ? null : getItem(order);
-  }
-
-  @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
-    return key instanceof Video ? getItems().indexOf(key) : null;
   }
 }
 
