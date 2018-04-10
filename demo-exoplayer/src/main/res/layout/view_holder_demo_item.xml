@@ -45,7 +45,7 @@
         android:layout_height="200dp"
         android:minHeight="200dp"
         app:resize_mode="zoom"
-        app:surface_type="surface_view"
+        app:surface_type="texture_view"
         app:use_controller="false"
         tools:layout_height="180dp"
         >
