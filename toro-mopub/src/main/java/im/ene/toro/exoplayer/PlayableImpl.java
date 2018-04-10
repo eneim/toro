@@ -46,11 +46,15 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
  *
  * @author eneim (2018/02/25).
  */
-@SuppressWarnings("WeakerAccess") class PlayableImpl implements Playable<SimpleExoPlayerView> {
+@SuppressWarnings("WeakerAccess") //
+class PlayableImpl implements Playable<SimpleExoPlayerView> {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
-  private final EventListeners listeners = new EventListeners();  // original listener.
+
+  protected final EventListeners listeners = new EventListeners();  // original listener.
+  // Use a Set to prevent duplicated setup.
+  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
 
   protected final Uri mediaUri; // immutable, parcelable
   protected final String fileExt;
@@ -87,17 +91,14 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
       listenerApplied = true;
     }
 
-    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
     boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
 
     if (prepareSource) {
-      if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-        mediaSource = creator.createMediaSource(mediaUri, fileExt);
-        player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
-      }
+      ensurePlayerView();
+      ensureMediaSource();
     }
   }
 
@@ -106,11 +107,9 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     if (playerView == null) {
       this.playerView.setPlayer(null);
     } else {
-      // playerView is non-null, we requires a non-null player too.
-      if (this.player == null) {
-        throw new IllegalStateException("Player is null, prepare it first.");
+      if (this.player != null) {
+        SimpleExoPlayerView.switchTargetView(this.player, this.playerView, playerView);
       }
-      SimpleExoPlayerView.switchTargetView(this.player, this.playerView, playerView);
     }
 
     this.playerView = playerView;
@@ -122,10 +121,8 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
   @CallSuper @Override public void play() {
     checkNotNull(player, "Playable#play(): Player is null!");
-    if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-      mediaSource = creator.createMediaSource(mediaUri, fileExt);
-      player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
-    }
+    ensurePlayerView();
+    ensureMediaSource();
     player.setPlayWhenReady(true);
   }
 
@@ -188,7 +185,6 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
   @CallSuper @Override public void setVolume(float volume) {
     checkNotNull(player, "Playable#setVolume(): Player is null!");
-    // If playerView has been set, we should request an update, if not, it will be done automatically later.
     this.volumeInfo.setTo(volume == 0, volume);
     ToroExo.setVolumeInfo(player, this.volumeInfo);
   }
@@ -198,6 +194,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   }
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    checkNotNull(player, "Playable#setVolumeInfo(): Player is null!");
     boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
@@ -218,9 +215,6 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   @Override public PlaybackParameters getParameters() {
     return checkNotNull(player, "Playable#getParameters(): Player is null").getPlaybackParameters();
   }
-
-  // Use a Set to prevent duplicated setup.
-  Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
 
   @Override
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
@@ -250,5 +244,16 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
     playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
         Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
+  }
+
+  private void ensurePlayerView() {
+    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
+  }
+
+  private void ensureMediaSource() {
+    if (mediaSource == null) {  // Only actually prepare the source when play() is called.
+      mediaSource = creator.createMediaSource(mediaUri, fileExt);
+      player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
+    }
   }
 }
