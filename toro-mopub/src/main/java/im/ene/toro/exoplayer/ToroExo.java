@@ -23,16 +23,16 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.annotation.RestrictTo;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
@@ -41,17 +41,15 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.media.DrmMedia;
-import im.ene.toro.media.VolumeInfo;
+import im.ene.toro.mopub.BuildConfig;
 import im.ene.toro.mopub.R;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import static android.widget.Toast.LENGTH_SHORT;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
 import static com.google.android.exoplayer2.util.Util.getUserAgent;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -76,8 +74,6 @@ import static java.lang.Runtime.getRuntime;
  */
 
 public final class ToroExo {
-
-  private static final String TAG = "ToroExo";
 
   // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
   @SuppressWarnings("WeakerAccess") //
@@ -154,6 +150,12 @@ public final class ToroExo {
   public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
     SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
     if (player == null) player = creator.createPlayer();
+    // TODO investigate this on config change, etc
+    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
+    if (player.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+      // Throw when debug only. Some devices/versions could not reset the player on-time ...
+      if (BuildConfig.DEBUG) throw new IllegalStateException("Player is not in idle state.");
+    }
     return player;
   }
 
@@ -166,6 +168,13 @@ public final class ToroExo {
    */
   @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
   public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
+    // A call to player.stop() doesn't change the state immediately, so we cannot check this here.
+    if (checkNotNull(player).getPlaybackState() != ExoPlayer.STATE_IDLE) {
+      // Throw when debug only. Some devices/versions could not reset the player on-time ...
+      if (BuildConfig.DEBUG) {
+        throw new IllegalStateException("Player must be stopped before releasing it back to Pool.");
+      }
+    }
     return getPool(checkNotNull(creator)).release(player);
   }
 
@@ -174,13 +183,9 @@ public final class ToroExo {
    * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
    */
   public final void cleanUp() {
-    // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
-    for (Iterator<Map.Entry<ExoCreator, Pools.Pool<SimpleExoPlayer>>> it =
-        playerPools.entrySet().iterator(); it.hasNext(); ) {
-      Pools.Pool<SimpleExoPlayer> pool = it.next().getValue();
+    for (Pools.Pool<SimpleExoPlayer> pool : playerPools.values()) {
       SimpleExoPlayer item;
       while ((item = pool.acquire()) != null) item.release();
-      it.remove();
     }
   }
 
@@ -212,47 +217,47 @@ public final class ToroExo {
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @RequiresApi(18) @Nullable public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(
+  @RequiresApi(18) @Nullable
+  public DrmSessionManager<? extends ExoMediaCrypto> createDrmSessionManager(
       @NonNull DrmMedia drmMedia, @Nullable Handler handler) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
-    String subString = null;
     if (Util.SDK_INT < 18) {
       errorStringId = R.string.error_drm_not_supported;
     } else {
-      UUID drmSchemeUuid = getDrmUuid(checkNotNull(drmMedia).getType());
+      UUID drmSchemeUuid = null;
+      try {
+        drmSchemeUuid = getDrmUuid(checkNotNull(drmMedia).getType());
+      } catch (ParserException e) {
+        e.printStackTrace();
+      }
+
       if (drmSchemeUuid == null) {
         errorStringId = R.string.error_drm_unsupported_scheme;
       } else {
         HttpDataSource.Factory factory = new DefaultHttpDataSourceFactory(appName);
         try {
           drmSessionManager = buildDrmSessionManagerV18(drmSchemeUuid, drmMedia.getLicenseUrl(),
-              drmMedia.getKeyRequestPropertiesArray(), drmMedia.multiSession(), factory, handler);
+              drmMedia.getKeyRequestPropertiesArray(), factory, handler);
         } catch (UnsupportedDrmException e) {
           e.printStackTrace();
           errorStringId = e.reason == REASON_UNSUPPORTED_SCHEME ? //
               R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
-          if (e.reason == REASON_UNSUPPORTED_SCHEME) {
-            subString = drmMedia.getType();
-          }
         }
       }
     }
 
     if (drmSessionManager == null) {
-      String error = TextUtils.isEmpty(subString) ? context.getString(errorStringId)
-          : context.getString(errorStringId) + ": " + subString;
-      Toast.makeText(context, error, LENGTH_SHORT).show();
-      Log.e(TAG, "createDrmSessionManager: " + error);
+      Toast.makeText(context, context.getString(errorStringId), Toast.LENGTH_SHORT).show();
     }
 
     return drmSessionManager;
   }
 
   @RequiresApi(18) private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
-      @NonNull UUID uuid, @Nullable String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
-      boolean ignored, @NonNull HttpDataSource.Factory httpDataSourceFactory, @Nullable Handler handler)
-      throws UnsupportedDrmException {
+      @NonNull UUID uuid, @NonNull String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
+      @NonNull HttpDataSource.Factory httpDataSourceFactory,
+      @Nullable Handler handler) throws UnsupportedDrmException {
     HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
     if (keyRequestPropertiesArray != null) {
       for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
@@ -264,35 +269,21 @@ public final class ToroExo {
         null, handler, null);
   }
 
-  private static UUID getDrmUuid(String typeString) {
+  private static UUID getDrmUuid(String typeString) throws ParserException {
     switch (Util.toLowerInvariant(typeString)) {
       case "widevine":
         return C.WIDEVINE_UUID;
       case "playready":
         return C.PLAYREADY_UUID;
-      case "cenc":  // deprecated?
-      case "clearkey":
+      case "cenc":
         return C.CLEARKEY_UUID;
       default:
         try {
           return UUID.fromString(typeString);
         } catch (RuntimeException e) {
-          return null;
+          throw new ParserException("Unsupported drm type: " + typeString);
         }
     }
   }
 
-  // Share the code of setting Volume. For use inside library only.
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public static void setVolumeInfo(@NonNull SimpleExoPlayer player, @NonNull VolumeInfo volumeInfo) {
-    if (player instanceof ToroExoPlayer) {
-      ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
-    } else {
-      if (volumeInfo.isMute()) {
-        player.setVolume(0f);
-      } else {
-        player.setVolume(volumeInfo.getVolume());
-      }
-    }
-  }
 }

@@ -16,11 +16,11 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
   compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.toro.sample"
@@ -73,7 +73,7 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.constrainLayoutVersion}"
+  implementation "com.android.support.constraint:constraint-layout:1.1.0-beta5"
 
   implementation ('net.opacapp:multiline-collapsingtoolbar:1.6.0') {
     transitive = false
@@ -83,14 +83,14 @@ dependencies {
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
 
   implementation 'com.jakewharton:butterknife:8.8.1'
-  kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // rxJava 2
-  implementation ("io.reactivex.rxjava2:rxandroid:2.0.2", {
+  implementation ("io.reactivex.rxjava2:rxandroid:2.0.1", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
 
   // https://mvnrepository.com/artifact/org.jsoup/jsoup
   implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
@@ -99,11 +99,15 @@ dependencies {
   releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
   testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
-  implementation 'com.github.bumptech.glide:glide:4.6.1'
-  kapt 'com.github.bumptech.glide:compiler:4.6.1'
+  implementation 'com.github.bumptech.glide:glide:4.4.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
   // Custom LayoutManager
   // compile 'com.google.android:flexbox:0.3.0'
+}
+
+repositories {
+  mavenCentral()
 }

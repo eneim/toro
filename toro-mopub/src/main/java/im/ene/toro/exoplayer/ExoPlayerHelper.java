@@ -53,6 +53,7 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.media.DrmMedia;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.mopub.R;
@@ -62,12 +63,10 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
-import static im.ene.toro.mopub.BuildConfig.LIB_NAME;
 
 /**
  * @author eneim (2018/01/01).
  * @deprecated since 3.4.0. Use {@link ExoPlayerViewHelper} or {@link PlayerViewHelper} instead.
- * This class will be removed from 3.5.0.
  */
 
 @Deprecated @SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
@@ -438,7 +437,7 @@ import static im.ene.toro.mopub.BuildConfig.LIB_NAME;
       return null;
     }
     HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl,
-        new DefaultHttpDataSourceFactory(Util.getUserAgent(context, LIB_NAME), null));
+        new DefaultHttpDataSourceFactory(Util.getUserAgent(context, ToroUtil.LIB_NAME), null));
     if (keyRequestPropertiesArray != null) {
       for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
         drmCallback.setKeyRequestProperty(keyRequestPropertiesArray[i],

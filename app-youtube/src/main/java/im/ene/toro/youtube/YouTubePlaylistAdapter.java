@@ -17,30 +17,30 @@
 package im.ene.toro.youtube;
 
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
+import im.ene.toro.CacheManager;
 import java.util.ArrayList;
 import java.util.List;
-
-import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * @author eneim (2017/11/23).
  */
 
-final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> {
+class YouTubePlaylistAdapter extends RecyclerView.Adapter<YouTubeVideoViewHolder>
+    implements CacheManager {
 
   private final YouTubePlayerManager manager;
   private VideoListResponse data = new VideoListResponse();
-  private LayoutInflater inflater;
 
   YouTubePlaylistAdapter(YouTubePlayerManager playerManager) {
     super();
-    this.manager = checkNotNull(playerManager);
+    this.manager = playerManager;
   }
 
   public void setData(VideoListResponse data) {
@@ -48,24 +48,21 @@ final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> {
     notifyDataSetChanged();
   }
 
-  @NonNull @Override
-  public YouTubeVideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    if (inflater == null || inflater.getContext() != parent.getContext()) {
-      inflater = LayoutInflater.from(parent.getContext());
-    }
-    View view = inflater.inflate(YouTubeVideoViewHolder.LAYOUT_RES, parent, false);
+  @Override public YouTubeVideoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    View view = LayoutInflater.from(parent.getContext())
+        .inflate(YouTubeVideoViewHolder.LAYOUT_RES, parent, false);
     return new YouTubeVideoViewHolder(manager, view);
   }
 
-  @Override public void onBindViewHolder(@NonNull YouTubeVideoViewHolder holder, int position) {
+  @Override public void onBindViewHolder(YouTubeVideoViewHolder holder, int position) {
     holder.bind(getItem(position));
   }
 
-  @SuppressWarnings("WeakerAccess") @NonNull Video getItem(int position) {
+  Video getItem(int position) {
     return getItems().get(position);
   }
 
-  @NonNull private List<Video> getItems() {
+  private List<Video> getItems() {
     List<Video> items = data.getItems();
     if (items == null) items = new ArrayList<>();
     return items;
@@ -73,6 +70,16 @@ final class YouTubePlaylistAdapter extends Adapter<YouTubeVideoViewHolder> {
 
   @Override public int getItemCount() {
     return getItems().size();
+  }
+
+  /// CacheManager implementation
+
+  @Nullable @Override public Object getKeyForOrder(int order) {
+    return order < 0 ? null : getItem(order);
+  }
+
+  @Nullable @Override public Integer getOrderForKey(@NonNull Object key) {
+    return key instanceof Video ? getItems().indexOf(key) : null;
   }
 }
 

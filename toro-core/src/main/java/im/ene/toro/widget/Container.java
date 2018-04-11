@@ -18,67 +18,57 @@ package im.ene.toro.widget;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.PowerManager;
 import android.support.annotation.CallSuper;
-import android.support.annotation.ColorInt;
-import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.view.AbsSavedState;
-import android.support.v4.view.WindowInsetsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.POWER_SERVICE;
-import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.widget.Common.max;
 
 /**
- * A custom {@link RecyclerView} that is capable of managing and controlling the {@link ToroPlayer}s'
- * playback behaviour.
- *
- * A client wish to have the auto playback behaviour should replace the normal use of
- * {@link RecyclerView} with {@link Container}.
- *
- * By default, {@link Container} doesn't support playback position saving/restoring. This is
- * because {@link Container} has no idea about the uniqueness of media content those are being
- * played. This can be archived by supplying {@link Container} with a valid {@link CacheManager}. A
- * {@link CacheManager} will help providing the uniqueness of Medias by which it can correctly
- * save/restore the playback state of a specific media item. Setup this can be done using
- * {@link Container#setCacheManager(CacheManager)}.
- *
- * {@link Container} uses {@link PlayerSelector} to control the {@link ToroPlayer}. A
- * {@link PlayerSelector} will be asked to select which {@link ToroPlayer} to start playback, and
- * those are not selected will be paused. By default, it uses {@link PlayerSelector#DEFAULT}.
- * Custom {@link PlayerSelector} can be set via {@link Container#setPlayerSelector(PlayerSelector)}.
- *
  * @author eneim | 5/31/17.
+ *
+ *         A custom {@link RecyclerView} that is capable of managing and controling the
+ *         {@link ToroPlayer}s' playback behaviour.
+ *
+ *         A client wish to have the auto playback behaviour should replace the normal use of
+ *         {@link RecyclerView} with {@link Container}.
+ *
+ *         By default, {@link Container} doesn't support playback position saving/restoring. This
+ *         is because {@link Container} has no idea about the uniqueness of media content those are
+ *         being played. This can be archived by supplying {@link Container} with a valid {@link
+ *         CacheManager}. A {@link CacheManager} will help providing the uniqness of Medias by
+ *         which it can correctly save/restore the playback state of a specific media item. Setup
+ *         this can be done using {@link Container#setCacheManager(CacheManager)}.
+ *
+ *         {@link Container} uses {@link PlayerSelector} to control the {@link ToroPlayer}. A
+ *         {@link PlayerSelector} will be asked to select which {@link ToroPlayer} to start
+ *         playback, and those are not selected will be paused. By default, it uses {@link
+ *         PlayerSelector#DEFAULT}. Custom {@link PlayerSelector} can be set via {@link
+ *         Container#setPlayerSelector(PlayerSelector)}.
  */
 
 @SuppressWarnings({ "unused", "ConstantConditions" }) //
@@ -89,12 +79,10 @@ public class Container extends RecyclerView {
   static final int SOME_BLINKS = 50;  // 3 frames ...
 
   /* package */ final PlayerManager playerManager;
-  /* package */ final ChildLayoutChangeListener childLayoutChangeListener;
   /* package */ PlayerDispatcher playerDispatcher = PlayerDispatcher.DEFAULT;
   /* package */ RecyclerListenerImpl recyclerListener;  // null = not attached/detached
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
   /* package */ Handler animatorFinishHandler;  // null = not attached/detached
-  /* package */ BehaviorCallback behaviorCallback;
 
   public Container(Context context) {
     this(context, null);
@@ -106,9 +94,7 @@ public class Container extends RecyclerView {
 
   public Container(Context context, @Nullable AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    playerManager = new PlayerManager();
-    childLayoutChangeListener = new ChildLayoutChangeListener(this);
-    requestDisallowInterceptTouchEvent(true);
+    this.playerManager = new PlayerManager(this);
   }
 
   @Override public final void setRecyclerListener(RecyclerListener listener) {
@@ -137,27 +123,10 @@ public class Container extends RecyclerView {
       recyclerListener.delegate = NULL; // mark as it is set by Toro, not user.
       super.setRecyclerListener(recyclerListener);  // must be a super call
     }
-    playerManager.onAttach();
-
-    ViewGroup.LayoutParams params = getLayoutParams();
-    if (params != null && params instanceof CoordinatorLayout.LayoutParams) {
-      CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
-      if (behavior instanceof Behavior) {
-        ((Behavior) behavior).onViewAttached(this);
-      }
-    }
   }
 
   @CallSuper @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
-    ViewGroup.LayoutParams params = getLayoutParams();
-    if (params != null && params instanceof CoordinatorLayout.LayoutParams) {
-      CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
-      if (behavior instanceof Behavior) {
-        ((Behavior) behavior).onViewDetached(this);
-      }
-    }
-
     if (recyclerListener != null && recyclerListener.delegate == NULL) {  // set by Toro, not user.
       super.setRecyclerListener(null);  // must be a super call
       recyclerListener = null;
@@ -177,9 +146,8 @@ public class Container extends RecyclerView {
       }
       playerManager.clear();
     }
-    playerManager.onDetach();
+
     dataObserver.registerAdapter(null);
-    childLayoutChangeListener.containerRef.clear();
   }
 
   /**
@@ -200,7 +168,6 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
-    child.addOnLayoutChangeListener(childLayoutChangeListener);
     final ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
@@ -211,9 +178,7 @@ public class Container extends RecyclerView {
 
     if (playerManager.manages(player)) {
       // Only if container is in idle state and player is not playing.
-      if (getScrollState() == SCROLL_STATE_IDLE && !player.isPlaying()) {
-        playerManager.play(player, playerDispatcher.getDelayToPlay(player));
-      }
+      if (getScrollState() == SCROLL_STATE_IDLE && !player.isPlaying()) playerManager.play(player);
     } else {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
@@ -230,7 +195,6 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onChildDetachedFromWindow(View child) {
     super.onChildDetachedFromWindow(child);
-    child.removeOnLayoutChangeListener(childLayoutChangeListener);
     ViewHolder holder = getChildViewHolder(child);
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
@@ -274,26 +238,24 @@ public class Container extends RecyclerView {
 
     // 2. Refresh the good players list.
     LayoutManager layout = super.getLayoutManager();
-    // current number of visible 'Virtual Children', or zero if there is no LayoutManager available.
-    int childCount = layout != null ? layout.getChildCount() : 0;
-    if (childCount <= 0 || state != SCROLL_STATE_IDLE) {
-      playerManager.postponeDelayedPlaybacks();
-      return;
-    }
+    int childCount = layout.getChildCount();  // number of visible 'Virtual Children'
+    if (childCount == 0 || state != SCROLL_STATE_IDLE) return;
 
-    for (int i = 0; i < childCount; i++) {
-      View child = layout.getChildAt(i);
-      ViewHolder holder = super.findContainingViewHolder(child);
-      if (holder != null && holder instanceof ToroPlayer) {
-        ToroPlayer player = (ToroPlayer) holder;
-        // Check candidate's condition
-        if (Common.allowsToPlay(player)) {
-          if (!playerManager.manages(player)) {
-            playerManager.attachPlayer(player);
-          }
-          // Don't check the attach result, because the player may be managed already.
-          if (!player.isPlaying()) {  // not playing or not ready to play.
-            playerManager.initialize(player, Container.this);
+    if (childCount > 0) {
+      for (int i = 0; i < childCount; i++) {
+        View child = layout.getChildAt(i);
+        ViewHolder holder = super.findContainingViewHolder(child);
+        if (holder != null && holder instanceof ToroPlayer) {
+          ToroPlayer player = (ToroPlayer) holder;
+          // Check candidate's condition
+          if (Common.allowsToPlay(player)) {
+            if (!playerManager.manages(player)) {
+              playerManager.attachPlayer(player);
+            }
+            // Don't check the attach result, because the player may be managed already.
+            if (!player.isPlaying()) {  // not playing or not ready to play.
+              playerManager.initialize(player);
+            }
           }
         }
       }
@@ -313,7 +275,7 @@ public class Container extends RecyclerView {
     Collection<ToroPlayer> toPlay = playerSelector != null ? playerSelector.select(this, candidates)
         : Collections.<ToroPlayer>emptyList();
     for (ToroPlayer player : toPlay) {
-      if (!player.isPlaying()) playerManager.play(player, playerDispatcher.getDelayToPlay(player));
+      if (!player.isPlaying()) playerManager.play(player);
     }
 
     source.removeAll(toPlay);
@@ -341,8 +303,7 @@ public class Container extends RecyclerView {
     if (this.playerSelector == playerSelector) return;
     this.playerSelector = playerSelector;
     // dispatchUpdateOnAnimationFinished(true); // doesn't work well :(
-    // Immediately update.
-    this.onScrollStateChanged(SCROLL_STATE_IDLE);
+    this.onScrollStateChanged(SCROLL_STATE_IDLE); // immediately update.
   }
 
   /**
@@ -355,12 +316,7 @@ public class Container extends RecyclerView {
   }
 
   public final void setPlayerDispatcher(@NonNull PlayerDispatcher playerDispatcher) {
-    this.playerDispatcher = checkNotNull(playerDispatcher);
-  }
-
-  /** Define the callback that to be used later by {@link Behavior} if setup. */
-  public final void setBehaviorCallback(@Nullable BehaviorCallback behaviorCallback) {
-    this.behaviorCallback = behaviorCallback;
+    this.playerDispatcher = ToroUtil.checkNotNull(playerDispatcher);
   }
 
   ////// Handle update after data change animation
@@ -832,265 +788,5 @@ public class Container extends RecyclerView {
         return true;
       }
     };
-  }
-
-  /**
-   * This behaviour is to catch the touch/fling/scroll caused by other children of
-   * {@link CoordinatorLayout}. We try to acknowledge user actions by intercepting the call but not
-   * consume the events.
-   *
-   * This class helps solve the issue when Client has a {@link Container} inside a
-   * {@link CoordinatorLayout} together with an {@link AppBarLayout} whose direct child is a
-   * {@link CollapsingToolbarLayout} (which is 'scrollable'). This 'scroll behavior' is not the
-   * same as Container's natural scroll. When user 'scrolls' to collapse or expand the {@link
-   * AppBarLayout}, {@link CoordinatorLayout} will offset the {@link Container} to make room for
-   * {@link AppBarLayout}, in which {@link Container} will not receive any scrolling event update,
-   * but just be shifted along the scrolling axis. This behavior results in a bad case that after
-   * the AppBarLayout collapse its direct {@link CollapsingToolbarLayout}, the Video may be fully
-   * visible, but because the Container has no way to know about that update, there is no playback
-   * update.
-   *
-   * @since 3.4.2
-   */
-  @SuppressWarnings("WeakerAccess") //
-  public static class Behavior extends CoordinatorLayout.Behavior<Container>
-      implements Handler.Callback {
-
-    @NonNull final CoordinatorLayout.Behavior<? super Container> delegate;
-    @Nullable BehaviorCallback callback;
-
-    static final int EVENT_IDLE = 1;
-    static final int EVENT_SCROLL = 2;
-    static final int EVENT_TOUCH = 3;
-    static final int EVENT_DELAY = 150;
-
-    final AtomicBoolean scrollConsumed = new AtomicBoolean(false);
-
-    Handler handler;
-
-    void onViewAttached(Container container) {
-      if (handler == null) handler = new Handler(this);
-      this.callback = container.behaviorCallback;
-    }
-
-    void onViewDetached(Container container) {
-      if (handler != null) {
-        handler.removeCallbacksAndMessages(null);
-        handler = null;
-      }
-      this.callback = null;
-    }
-
-    @Override public boolean handleMessage(Message msg) {
-      if (callback == null) return true;
-      switch (msg.what) {
-        case EVENT_SCROLL:
-        case EVENT_TOUCH:
-          scrollConsumed.set(false);
-          handler.removeMessages(EVENT_IDLE);
-          handler.sendEmptyMessageDelayed(EVENT_IDLE, EVENT_DELAY);
-          break;
-        case EVENT_IDLE:
-          // idle --> consume it.
-          if (!scrollConsumed.getAndSet(true)) callback.onFinishInteraction();
-          break;
-      }
-      return true;
-    }
-
-    /* No default constructor. Using this class from xml will result in error. */
-    // public Behavior() {
-    // }
-    //
-    // public Behavior(Context context, AttributeSet attrs) {
-    //   super(context, attrs);
-    // }
-
-    public Behavior(@NonNull CoordinatorLayout.Behavior<Container> delegate) {
-      this.delegate = checkNotNull(delegate, "Behavior is null.");
-    }
-
-    /// We only need to intercept the following 3 methods:
-
-    @Override public boolean onInterceptTouchEvent( //
-        CoordinatorLayout parent, Container child, MotionEvent ev) {
-      if (this.handler != null) {
-        this.handler.removeCallbacksAndMessages(null);
-        this.handler.sendEmptyMessage(EVENT_TOUCH);
-      }
-      return delegate.onInterceptTouchEvent(parent, child, ev);
-    }
-
-    @Override
-    public boolean onTouchEvent(CoordinatorLayout parent, Container child, MotionEvent ev) {
-      if (this.handler != null) {
-        this.handler.removeCallbacksAndMessages(null);
-        this.handler.sendEmptyMessage(EVENT_TOUCH);
-      }
-      return delegate.onTouchEvent(parent, child, ev);
-    }
-
-    @Override
-    public boolean onStartNestedScroll(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
-      if (this.handler != null) {
-        this.handler.removeCallbacksAndMessages(null);
-        this.handler.sendEmptyMessage(EVENT_SCROLL);
-      }
-      return delegate.onStartNestedScroll(layout, child, directTargetChild, target, axes, type);
-    }
-
-    /// Other methods
-
-    @Override public void onAttachedToLayoutParams(@NonNull CoordinatorLayout.LayoutParams params) {
-      if (handler == null) handler = new Handler(this);
-      delegate.onAttachedToLayoutParams(params);
-    }
-
-    @Override public void onDetachedFromLayoutParams() {
-      if (handler != null) {
-        handler.removeCallbacksAndMessages(null);
-        handler = null;
-      }
-      delegate.onDetachedFromLayoutParams();
-    }
-
-    @Override @ColorInt public int getScrimColor(CoordinatorLayout parent, Container child) {
-      return delegate.getScrimColor(parent, child);
-    }
-
-    @Override @FloatRange(from = 0.0D, to = 1.0D)
-    public float getScrimOpacity(CoordinatorLayout parent, Container child) {
-      return delegate.getScrimOpacity(parent, child);
-    }
-
-    @Override public boolean blocksInteractionBelow(CoordinatorLayout parent, Container child) {
-      return delegate.blocksInteractionBelow(parent, child);
-    }
-
-    @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, Container child, View dependency) {
-      return delegate.layoutDependsOn(parent, child, dependency);
-    }
-
-    @Override public boolean onDependentViewChanged(CoordinatorLayout parent, Container child,
-        View dependency) {
-      return delegate.onDependentViewChanged(parent, child, dependency);
-    }
-
-    @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent, Container child, View dependency) {
-      delegate.onDependentViewRemoved(parent, child, dependency);
-    }
-
-    @Override public boolean onMeasureChild(CoordinatorLayout parent, Container child,
-        int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
-      return delegate.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed,
-          parentHeightMeasureSpec, heightUsed);
-    }
-
-    @Override
-    public boolean onLayoutChild(CoordinatorLayout parent, Container child, int layoutDirection) {
-      return delegate.onLayoutChild(parent, child, layoutDirection);
-    }
-
-    @Override
-    public void onNestedScrollAccepted(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
-      delegate.onNestedScrollAccepted(layout, child, directTargetChild, target, axes, type);
-    }
-
-    @Override
-    public void onStopNestedScroll(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View target, int type) {
-      delegate.onStopNestedScroll(layout, child, target, type);
-    }
-
-    @Override
-    public void onNestedScroll(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed,
-        int type) {
-      delegate.onNestedScroll(layout, child, target, dxConsumed, dyConsumed, dxUnconsumed,
-          dyUnconsumed, type);
-    }
-
-    @Override
-    public void onNestedPreScroll(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
-      delegate.onNestedPreScroll(layout, child, target, dx, dy, consumed, type);
-    }
-
-    @Override
-    public boolean onNestedFling(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View target, float velocityX, float velocityY, boolean consumed) {
-      return delegate.onNestedFling(layout, child, target, velocityX, velocityY, consumed);
-    }
-
-    @Override
-    public boolean onNestedPreFling(@NonNull CoordinatorLayout layout, @NonNull Container child,
-        @NonNull View target, float velocityX, float velocityY) {
-      return delegate.onNestedPreFling(layout, child, target, velocityX, velocityY);
-    }
-
-    @Override @NonNull
-    public WindowInsetsCompat onApplyWindowInsets(CoordinatorLayout layout, Container child,
-        WindowInsetsCompat insets) {
-      return delegate.onApplyWindowInsets(layout, child, insets);
-    }
-
-    @Override
-    public boolean onRequestChildRectangleOnScreen(CoordinatorLayout layout, Container child,
-        Rect rectangle, boolean immediate) {
-      return delegate.onRequestChildRectangleOnScreen(layout, child, rectangle, immediate);
-    }
-
-    @Override public void onRestoreInstanceState(CoordinatorLayout parent, Container child,
-        Parcelable state) {
-      delegate.onRestoreInstanceState(parent, child, state);
-    }
-
-    @Override public Parcelable onSaveInstanceState(CoordinatorLayout parent, Container child) {
-      return delegate.onSaveInstanceState(parent, child);
-    }
-
-    @Override
-    public boolean getInsetDodgeRect(@NonNull CoordinatorLayout parent, @NonNull Container child,
-        @NonNull Rect rect) {
-      return delegate.getInsetDodgeRect(parent, child, rect);
-    }
-  }
-
-  /**
-   * Callback for {@link Behavior} to tell the Client that User has finished the interaction for
-   * enough amount of time, so it (the Client) should do something. Normally, we ask Container to
-   * dispatch an 'idle scroll' to refresh the player list.
-   */
-  public interface BehaviorCallback {
-
-    void onFinishInteraction();
-  }
-
-  static class ChildLayoutChangeListener implements OnLayoutChangeListener {
-
-    final WeakReference<Container> containerRef;
-
-    ChildLayoutChangeListener(Container container) {
-      this.containerRef = new WeakReference<>(container);
-    }
-
-    @Override
-    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft,
-        int oldTop, int oldRight, int oldBottom) {
-      Container container = containerRef.get();
-      if (container == null) return;
-      if (layoutDidChange(left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)) {
-        container.dispatchUpdateOnAnimationFinished(false);
-      }
-    }
-  }
-
-  static boolean layoutDidChange(int left, int top, int right, int bottom, int oldLeft, int oldTop,
-      int oldRight, int oldBottom) {
-    return left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom;
   }
 }

@@ -17,103 +17,74 @@
 package im.ene.toro.youtube;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
-import com.google.android.youtube.player.YouTubePlayer;
-import im.ene.toro.CacheManager;
+import com.google.api.services.youtube.model.Video;
 import im.ene.toro.PlayerSelector;
+import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
+import im.ene.toro.youtube.YouTubePlayerDialog.InitData;
+import im.ene.toro.youtube.common.ScreenHelper;
 import java.io.IOException;
+import java.util.List;
 
 import static android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL;
-import static im.ene.toro.youtube.common.ScreenHelper.shouldUseBigPlayer;
 
-public class HomeActivity extends AppCompatActivity
-    implements YouTubePlayerDialog.Callback, YouTubePlayerHelper.Callback {
+public class HomeActivity extends AppCompatActivity implements YouTubePlayerDialog.Callback {
 
   Container container;
-  PlaylistViewModel viewModel;
-  YouTubePlayerManager playerManager;
   YouTubePlaylistAdapter adapter;
+  YouTubePlayerManager playerManager;
+  PlaylistViewModel viewModel;
   RecyclerView.LayoutManager layoutManager;
 
-  // Judge current window size to open big player or not.
-  WindowManager windowManager;
-  // Save manifest orientation
-  int manifestOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+  private WindowManager windowManager;
+  private int originalOrientation;  // At Activity creation
 
-  @Override protected void onCreate(Bundle state) {
-    super.onCreate(state);
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
+
+    viewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
+
+    originalOrientation = getRequestedOrientation();
     windowManager = getWindowManager();
 
-    if (state == null) manifestOrientation = getRequestedOrientation();
+    playerManager = new YouTubePlayerManager(this, getSupportFragmentManager());
+    if (savedInstanceState != null) {
+      playerManager.onRestoreState(savedInstanceState,
+          ScreenHelper.shouldUseBigPlayer(windowManager.getDefaultDisplay()));
+    }
 
-    // Prepare Container
-    playerManager = new YouTubePlayerManager(getSupportFragmentManager(), this);
     container = findViewById(R.id.container);
     adapter = new YouTubePlaylistAdapter(playerManager);
     int spanCount = getResources().getInteger(R.integer.span_count);
     layoutManager = new StaggeredGridLayoutManager(spanCount, VERTICAL);
     container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
-    container.setCacheManager(CacheManager.DEFAULT);
-
-    // Prepare data
-    viewModel = ViewModelProviders.of(this).get(PlaylistViewModel.class);
-    viewModel.getPlaylist().observe(this, response -> adapter.setData(response));
+    container.setCacheManager(adapter);
 
     selector = container.getPlayerSelector();
 
-    initData = state != null ? state.getParcelable(STATE_INIT_DATA) : null;
-    YouTubePlayerDialog bigPlayer = (YouTubePlayerDialog) getSupportFragmentManager() //
-        .findFragmentByTag(YouTubePlayerDialog.TAG);
-    YouTubePlayerDialog.InitData temp = bigPlayer != null ? bigPlayer.getDataFromArgs() : null;
-
-    boolean requestPlayerDialog =
-        initData != null && shouldUseBigPlayer(windowManager.getDefaultDisplay());
-
-    if (!requestPlayerDialog) {
-      if (bigPlayer != null) bigPlayer.dismissAllowingStateLoss();
-    } else {
-      //noinspection StatementWithEmptyBody
-      if (temp == initData) {
-        // The Fullscreen dialog is recovered from saved state and have the same init data.
-        // Or they are both null and there is no need for a Big player here.
-      } else {
-        if (bigPlayer != null) bigPlayer.dismissAllowingStateLoss();
-        bigPlayer = YouTubePlayerDialog.newInstance(initData);
-        bigPlayer.show(getSupportFragmentManager(), YouTubePlayerDialog.TAG);
-      }
+    try {
+      viewModel.getPlaylist().observe(this, response -> adapter.setData(response));
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    if (state == null) {
+    if (savedInstanceState == null) {
       try {
         viewModel.refresh();
       } catch (IOException e) {
         e.printStackTrace();
-      }
-    }
-  }
-
-  @Override protected void onPostCreate(@Nullable Bundle state) {
-    super.onPostCreate(state);
-    if (state != null) {
-      YouTubePlayerDialog.InitData savedData = state.getParcelable(STATE_SAVED_DATA);
-      if (savedData != null) {
-        container.savePlaybackInfo(savedData.adapterOrder, savedData.playbackInfo);
       }
     }
   }
@@ -123,6 +94,26 @@ public class HomeActivity extends AppCompatActivity
     windowManager = null;
   }
 
+  @Override protected void onSaveInstanceState(Bundle outState) {
+    InitData initData = null;
+    List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
+    if (!activePlayers.isEmpty()) {
+      ToroPlayer firstPlayer = activePlayers.get(0);  // get the first one only.
+      // We will store the Media object, playback state.
+      Video item = adapter.getItem(firstPlayer.getPlayerOrder());
+      if (item == null) {
+        throw new IllegalStateException("Video is null for active Player: " + firstPlayer);
+      }
+
+      initData = new InitData(firstPlayer.getPlayerOrder(), item.getId(),
+          firstPlayer.getCurrentPlaybackInfo(), originalOrientation);
+    }
+
+    super.onSaveInstanceState(outState);
+    playerManager.onSaveState(outState, initData, isChangingConfigurations());
+  }
+
+  /// YouTubePlayerDialog.Callback
   PlayerSelector selector;
 
   @Override public void onBigPlayerCreated() {
@@ -132,64 +123,8 @@ public class HomeActivity extends AppCompatActivity
 
   @Override
   public void onBigPlayerDestroyed(int videoOrder, String baseItem, PlaybackInfo latestInfo) {
-    container.setVisibility(View.VISIBLE);
     container.savePlaybackInfo(videoOrder, latestInfo);
-    // HelperManager need access to FragmentManager, and setPlayerSelector will trigger it.
-    // If we doing this in the state that FragmentManager is also executing tasks, it will throw
-    // IllegalStateException.
-    if (!isDestroyed()) container.setPlayerSelector(selector);
-  }
-
-  static final String STATE_INIT_DATA = "toro:yt:init_data";
-  static final String STATE_SAVED_DATA = "toro:yt:saved_data";
-
-  @Override protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    if (initData != null) outState.putParcelable(STATE_INIT_DATA, initData);
-    Fragment fragment = getSupportFragmentManager().findFragmentByTag(YouTubePlayerDialog.TAG);
-    if (fragment != null && fragment instanceof YouTubePlayerDialog) {
-      YouTubePlayerDialog.InitData data = ((YouTubePlayerDialog) fragment).getLatestData();
-      outState.putParcelable(STATE_SAVED_DATA, data);
-    }
-  }
-
-  // If non-null then save to state to the recreated Activity.
-  YouTubePlayerDialog.InitData initData;
-  YouTubePlayerHelper activeHelper;
-  YouTubePlayer activePlayer;
-
-  @Override
-  public void onPlayerCreated(@NonNull YouTubePlayerHelper helper, @NonNull YouTubePlayer player) {
-    if (activeHelper != helper) {
-      activeHelper = helper;
-      activePlayer = player;
-    }
-  }
-
-  @Override public void onPlayerDestroyed(@NonNull YouTubePlayerHelper helper) {
-    if (activeHelper == helper) {
-      initData = new YouTubePlayerDialog.InitData(  //
-          helper.getPlayer().getPlayerOrder(),  //
-          helper.videoId,   //
-          helper.getLatestPlaybackInfo(), //
-          manifestOrientation  //
-      );
-
-      activePlayer = null;
-      activeHelper = null;
-    }
-  }
-
-  // Triggered by User interaction.
-  @Override public void onFullscreen(@NonNull YouTubePlayerHelper helper, YouTubePlayer player,
-      boolean fullscreen) {
-    // A hint that User request Fullscreen playback by clicking the button.
-    // We prepare some information here and stuff.
-    initData = new YouTubePlayerDialog.InitData(  //
-        helper.getPlayer().getPlayerOrder(),  //
-        helper.videoId,   //
-        helper.getLatestPlaybackInfo(), //
-        manifestOrientation //
-    );
+    container.setPlayerSelector(selector);
+    container.setVisibility(View.VISIBLE);
   }
 }

@@ -30,7 +30,7 @@ public interface DrmMedia {
   // DRM Scheme
   @NonNull String getType();
 
-  @Nullable String getLicenseUrl();
+  @NonNull String getLicenseUrl();
 
   @Nullable String[] getKeyRequestPropertiesArray();
 

@@ -20,10 +20,8 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
+import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewParent;
 import im.ene.toro.widget.Container;
 
@@ -33,23 +31,25 @@ import im.ene.toro.widget.Container;
 
 public final class ToroUtil {
 
-  @SuppressWarnings("unused") private static final String TAG = "ToroLib:Util";
+  private static final String TAG = "ToroLib:Util";
 
   private ToroUtil() {
     throw new RuntimeException("Meh!");
   }
 
+  public static final String LIB_NAME = BuildConfig.LIB_NAME;
+
   /**
    * Get the ratio in range of 0.0 ~ 1.0 the visible area of a {@link ToroPlayer}'s playerView.
    *
    * @param player the {@link ToroPlayer} need to investigate.
-   * @param container the {@link ViewParent} that holds the {@link ToroPlayer}. If {@code null}
-   * then this method must returns 0.0f;
+   * @param parent the {@link ViewParent} that holds the {@link ToroPlayer}. If {@code null} or
+   * not a {@link Container} then this method must returns 0.0f;
    * @return the value in range of 0.0 ~ 1.0 of the visible area.
    */
   @FloatRange(from = 0.0, to = 1.0) //
-  public static float visibleAreaOffset(@NonNull ToroPlayer player, ViewParent container) {
-    if (container == null) return 0.0f;
+  public static float visibleAreaOffset(@NonNull ToroPlayer player, @Nullable ViewParent parent) {
+    if (parent == null) return 0.0f;
 
     View playerView = player.getPlayerView();
     Rect drawRect = new Rect();
@@ -88,7 +88,7 @@ public final class ToroUtil {
    *
    * @param reference an object reference
    * @param errorMessage the exception message to use if the check fails; will
-   * be converted to a string using {@link String#valueOf(Object)}
+   *     be converted to a string using {@link String#valueOf(Object)}
    * @return the non-null reference that was validated
    * @throws NullPointerException if {@code reference} is null
    */
@@ -97,18 +97,5 @@ public final class ToroUtil {
       throw new NullPointerException(String.valueOf(errorMessage));
     }
     return reference;
-  }
-
-  @SuppressWarnings("unchecked")  //
-  public static void wrapParamBehavior(@NonNull final Container container,
-      final Container.BehaviorCallback callback) {
-    container.setBehaviorCallback(callback);
-    ViewGroup.LayoutParams params = container.getLayoutParams();
-    if (params != null && params instanceof LayoutParams) {
-      CoordinatorLayout.Behavior temp = ((LayoutParams) params).getBehavior();
-      if (temp != null) {
-        ((LayoutParams) params).setBehavior(new Container.Behavior(temp));
-      }
-    }
   }
 }

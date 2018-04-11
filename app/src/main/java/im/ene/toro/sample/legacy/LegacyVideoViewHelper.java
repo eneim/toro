@@ -26,19 +26,16 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
+import im.ene.toro.widget.Container;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
-import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * @author eneim | 6/11/17.
  *
- * Helper class for {@link ToroVideoView}. This class makes the playback using {@link
- * ToroVideoView} easier by wrapping all necessary components and functionality.
+ *         Helper class for {@link ToroVideoView}. This class makes the playback using {@link
+ *         ToroVideoView} easier by wrapping all necessary components and functionality.
  */
 
 @SuppressWarnings({ "WeakerAccess", "ConstantConditions", "unused" }) //
@@ -56,9 +53,9 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @State int playerState = State.STATE_IDLE;
   boolean playWhenReady = false;  // mimic the ExoPlayer
-  final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
+  float volume = 1f;
 
-  public LegacyVideoViewHelper(ToroPlayer player, @NonNull Uri mediaUri) {
+  public LegacyVideoViewHelper(Container container, ToroPlayer player, @NonNull Uri mediaUri) {
     super(player);
     if (!(player.getPlayerView() instanceof ToroVideoView)) {
       throw new IllegalArgumentException("Only support ToroVideoView.");
@@ -173,43 +170,15 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   }
 
   @Override public void setVolume(float volume) {
-    this.setVolumeInfo(new VolumeInfo(volume == 0, volume));
-  }
-
-  @Override public float getVolume() {
-    return volumeInfo.getVolume();
-  }
-
-  @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    if (mediaPlayer == null) return;
-    boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
-    if (changed) {
-      float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
+    if (mediaPlayer != null) {
       mediaPlayer.setVolume(volume, volume);
-      this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      if (volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          listener.onVolumeChanged(volumeInfo);
-        }
-      }
+      // if the set above fails, then we won't go here. nothing changes.
+      this.volume = volume;
     }
   }
 
-  @NonNull @Override public VolumeInfo getVolumeInfo() {
-    return this.volumeInfo;
-  }
-
-  // Use a Set to prevent duplicated setup.
-  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
-
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
-    volumeChangeListeners.add(checkNotNull(listener));
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners != null) volumeChangeListeners.remove(listener);
+  @Override public float getVolume() {
+    return volume;
   }
 
   void updateResumePosition() {

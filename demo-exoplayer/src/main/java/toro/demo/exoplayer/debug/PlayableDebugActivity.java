@@ -29,7 +29,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
-import im.ene.toro.exoplayer.ExoPlayable;
 import im.ene.toro.exoplayer.Playable;
 import toro.demo.exoplayer.DemoApp;
 import toro.demo.exoplayer.R;
@@ -44,11 +43,9 @@ import static com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MOD
  * @author eneim (2018/02/25).
  */
 
-@SuppressWarnings("deprecation")  //
 public class PlayableDebugActivity extends AppCompatActivity {
 
-  static final Uri video = Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4");
-  // Uri.parse("file:///android_asset/bbb/video.mp4");
+  static final Uri video = Uri.parse("file:///android_asset/bbb/video.mp4");
   // Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01a05pM2FXWEN0b0U/responsive-01-durations-v1.mp4");
 
   Playable playable;
@@ -103,7 +100,7 @@ public class PlayableDebugActivity extends AppCompatActivity {
     playable = (Playable) getLastCustomNonConfigurationInstance();
     if (playable == null) {
       //noinspection ConstantConditions
-      playable = new ExoPlayable(DemoApp.Companion.getExoCreator(), video, "mp4");
+      playable = DemoApp.Companion.getExoCreator().createPlayable(video, null);
       playable.prepare(true);
     }
 

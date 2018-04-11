@@ -1,3 +1,5 @@
+import java.util.function.Predicate
+
 /*
  * Copyright (c) 2017 Nam Nguyen, nam@ene.im
  *
@@ -13,14 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+buildscript {
+  repositories {
+    maven { url 'https://maven.fabric.io/public' }
+  }
+
+  dependencies {
+    classpath 'io.fabric.tools:gradle:1.+'
+  }
+}
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'io.fabric'
 
-def haveFabricApiKey = !propOrDef("toro_fabric_api_key", "").isEmpty()
-if (haveFabricApiKey) {
-  apply plugin: 'io.fabric'
+repositories {
+  maven { url 'https://maven.fabric.io/public' }
 }
+
+// apply plugin: 'kotlin-android'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
   signingConfigs {
@@ -40,20 +53,20 @@ android {
   }
 
   compileSdkVersion rootProject.ext.androidVersion
+  buildToolsVersion rootProject.ext.buildToolVersion
 
   defaultConfig {
     applicationId "im.ene.toro.youtube"
-    minSdkVersion 23 //rootProject.ext.minSupportSDKVersion
+    minSdkVersion rootProject.ext.minSupportSDKVersion
     targetSdkVersion rootProject.ext.androidVersion
-    versionCode releaseVersionCode
-    versionName "v" + releaseVersion
+    versionCode 1
+    versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     vectorDrawables.useSupportLibrary = true
-    buildConfigField("String", "API_KEY", "\"${toro_youtube_apikey}\"")
-
-    manifestPlaceholders += ["fabric_api_key": propOrDef("toro_fabric_api_key", "")]
-    ext.enableCrashlytics = false
+    buildConfigField("String", "API_KEY", "\"${youtube_apikey}\"")
+    // multiDexEnabled true
+    manifestPlaceholders = [fabric_api_key: "${fabric_api_key}"]
   }
 
   buildTypes {
@@ -63,7 +76,7 @@ android {
     }
 
     debug {
-      minifyEnabled false
+      minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
@@ -75,6 +88,20 @@ android {
   lintOptions {
     disable 'InvalidPackage'
     abortOnError false
+  }
+
+  splits {
+    abi {
+      enable gradle.startParameter.taskNames.stream().filter(new Predicate<String>() {
+        @Override
+        boolean test(String s) {
+          return s.toLowerCase().contains("assemble")
+        }
+      }).findFirst().present
+      reset()
+      include 'x86', 'x86_64', 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'mips', 'mips64'
+      universalApk false
+    }
   }
 
   compileOptions {
@@ -91,22 +118,22 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
 
-  implementation 'com.google.apis:google-api-services-youtube:v3-rev193-1.23.0'
-  implementation 'com.google.http-client:google-http-client-android:1.23.0'
-  implementation 'com.google.api-client:google-api-client-android:1.23.0'
-  implementation 'com.google.api-client:google-api-client-gson:1.23.0'
+  implementation 'com.google.apis:google-api-services-youtube:v3-rev187-1.23.0'
+  implementation 'com.google.http-client:google-http-client-android:1.20.0'
+  implementation 'com.google.api-client:google-api-client-android:1.20.0'
+  implementation 'com.google.api-client:google-api-client-gson:1.20.0'
 
-  implementation "android.arch.lifecycle:extensions:${rootProject.ext.archLibraryVersion}"
+  implementation "android.arch.lifecycle:extensions:1.1.0"
 
-  implementation 'com.github.bumptech.glide:glide:4.6.1'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+  implementation 'com.github.bumptech.glide:glide:4.4.0'
+  annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
 
   // rxJava 2
-  implementation("io.reactivex.rxjava2:rxandroid:2.0.2", {
+  implementation("io.reactivex.rxjava2:rxandroid:2.0.1", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+  implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
 
   // implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
@@ -114,21 +141,17 @@ dependencies {
   // androidTestImplementation 'com.android.support.test:runner:1.0.1'
   // androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-  implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+  implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
     transitive = true
   }
 
-  implementation('com.crashlytics.sdk.android:crashlytics-ndk:2.0.2@aar') {
+  implementation('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
     transitive = true
   }
-
-  // implementation "com.android.support:multidex:1.0.3"
 }
 
-if (haveFabricApiKey) {
-  crashlytics {
-    enableNdk true
-    androidNdkOut 'src/main/obj'
-    androidNdkLibsOut 'src/main/libs'
-  }
+crashlytics {
+  enableNdk true
+  androidNdkOut 'src/main/obj'
+  androidNdkLibsOut 'src/main/libs'
 }

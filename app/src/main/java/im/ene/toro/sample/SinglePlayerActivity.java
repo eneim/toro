@@ -34,7 +34,6 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.PlayerView;
-import im.ene.toro.exoplayer.ExoPlayable;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.media.PlaybackInfo;
@@ -160,7 +159,7 @@ public class SinglePlayerActivity extends BaseActivity {
     }
 
     if (mediaDescription != null) mediaDescription.setText(Html.fromHtml(content));
-    playable = new ExoPlayable(ToroExo.with(this).getDefaultCreator(), mediaUri, null);
+    playable = ToroExo.with(this).getDefaultCreator().createPlayable(mediaUri, null);
 
     ActivityCompat.postponeEnterTransition(this);
     playerView.getViewTreeObserver()
