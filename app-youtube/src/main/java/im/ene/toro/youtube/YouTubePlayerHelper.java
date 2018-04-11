@@ -109,6 +109,15 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return volumeInfo;
   }
 
+  @Override
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    throw new UnsupportedOperationException("YouTube helper doesn't allow to do this.");
+  }
+
+  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    throw new UnsupportedOperationException("YouTube helper doesn't allow to do this.");
+  }
+
   @Override public boolean isPlaying() {
     return youTubePlayer != null;
   }
