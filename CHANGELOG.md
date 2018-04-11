@@ -1,8 +1,8 @@
 Changelog
 ===========
 
-3.4.2 (2018/xx/xx)
---------------
+3.4.2 (2018/04/11)
+------------------
 
 > Toro 3.4.2 and above will be developed by Android Studio 3.1.0+, and maybe kotlin as well.
 
