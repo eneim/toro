@@ -204,7 +204,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @Override
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners != null) volumeChangeListeners = new HashSet<>();
+    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
     volumeChangeListeners.add(checkNotNull(listener));
   }
 
