@@ -37,11 +37,11 @@ fun AppCompatTextView.htmlText(html: String) {
     }
 
     val spannable = SpannableStringBuilder(spanned)
-    replaceBulletSpans(spannable)
+    replaceQuoteSpans(spannable)
     this.text = spannable
 }
 
-fun replaceBulletSpans(spannable: Spannable) {
+fun replaceQuoteSpans(spannable: Spannable) {
     val quoteSpans = spannable.getSpans(0, spannable.length, BulletSpan::class.java)
     quoteSpans.forEach {
         val start = spannable.getSpanStart(it)

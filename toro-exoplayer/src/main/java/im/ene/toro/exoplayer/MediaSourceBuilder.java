@@ -58,10 +58,6 @@ public interface MediaSourceBuilder {
         @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
       @ContentType int type = isEmpty(ext) ? inferContentType(uri) : inferContentType("." + ext);
       switch (type) {
-        case C.TYPE_SS:
-          return new SsMediaSource.Factory( //
-              new DefaultSsChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)//
-              .createMediaSource(uri, handler, listener);
         case C.TYPE_DASH:
           return new DashMediaSource.Factory(
               new DefaultDashChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)
@@ -72,6 +68,10 @@ public interface MediaSourceBuilder {
         case C.TYPE_OTHER:
           return new ExtractorMediaSource.Factory(mediaDataSourceFactory) //
               .createMediaSource(uri, handler, listener);
+        case C.TYPE_SS:
+          return new SsMediaSource.Factory( //
+              new DefaultSsChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)//
+              .createMediaSource(uri, handler, listener);
         default:
           throw new IllegalStateException("Unsupported type: " + type);
       }
@@ -79,13 +79,11 @@ public interface MediaSourceBuilder {
   };
 
   MediaSourceBuilder LOOPING = new MediaSourceBuilder() {
-
     @NonNull @Override
     public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
         @Nullable String fileExt, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
-        @NonNull DataSource.Factory mediaDataSourceFactory,
-        @Nullable MediaSourceEventListener listener) {
+        @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
       return new LoopingMediaSource(
           DEFAULT.buildMediaSource(context, uri, fileExt, handler, manifestDataSourceFactory,
               mediaDataSourceFactory, listener));

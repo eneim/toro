@@ -33,17 +33,15 @@ import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.video.VideoListener;
-import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.media.VolumeInfo;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link PlayerView}.
+ * Define an interface to control a playback.
  *
  * This interface is designed to be reused across Config change. Implementation must not hold any
- * strong reference to Activity, and if it supports any kind of that, make sure to implicitly clean
+ * hard reference to Activity, and if it supports any kind of that, make sure to implicitly clean
  * it up.
  *
  * @author eneim
@@ -104,7 +102,7 @@ public interface Playable {
 
   /**
    * Release all resource. After this, the SimpleExoPlayer is released to the Player pool and the
-   * Playable must call {@link #prepare(boolean)} again to use it again.
+   * Playable must call {@link #prepare(boolean)} again to be usable again.
    */
   void release();
 
@@ -139,13 +137,6 @@ public interface Playable {
   void removeEventListener(EventListener listener);
 
   /**
-   * !This must only work if the Player in use is a {@link ToroExoPlayer}.
-   */
-  void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
-
-  void removeOnVolumeChangeListener(@Nullable ToroPlayer.OnVolumeChangeListener listener);
-
-  /**
    * Check if current Playable is playing or not.
    *
    * @return {@code true} if this Playable is playing, {@code false} otherwise.
@@ -156,40 +147,15 @@ public interface Playable {
    * Change the volume of current playback.
    *
    * @param volume the volume value to be set. Must be a {@code float} of range from 0 to 1.
-   * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
    */
-  @Deprecated void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
   /**
    * Obtain current volume value. The returned value is a {@code float} of range from 0 to 1.
    *
    * @return current volume value.
-   * @deprecated use {@link #getVolumeInfo()} instead.
    */
-  @Deprecated @FloatRange(from = 0.0, to = 1.0) float getVolume();
-
-  /**
-   * Update playback's volume.
-   *
-   * @param volumeInfo the {@link VolumeInfo} to update to.
-   * @return {@code true} if current Volume info is updated, {@code false} otherwise.
-   */
-  boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo);
-
-  /**
-   * Get current {@link VolumeInfo}.
-   */
-  @NonNull VolumeInfo getVolumeInfo();
-
-  /**
-   * Same as {@link Player#setPlaybackParameters(PlaybackParameters)}
-   */
-  void setParameters(@Nullable PlaybackParameters parameters);
-
-  /**
-   * Same as {@link Player#getPlaybackParameters()}
-   */
-  @Nullable PlaybackParameters getParameters();
+  @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   // Combine necessary interfaces.
   interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {

@@ -26,7 +26,6 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 
@@ -98,9 +97,6 @@ public abstract class ToroPlayerHelper {
 
     @Override public void onPaused() {
       player.getPlayerView().setKeepScreenOn(false);
-      if (container != null) {
-        container.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-      }
     }
 
     @Override public void onCompleted() {
@@ -137,10 +133,9 @@ public abstract class ToroPlayerHelper {
    * such cached information.
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead. From 3.5.0, this method
-   * will be downgraded to protected only.
+   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead.
    */
-  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated  //
+  @Deprecated  //
   public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
 
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
@@ -154,19 +149,9 @@ public abstract class ToroPlayerHelper {
 
   public abstract boolean isPlaying();
 
-  /**
-   * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
-   */
-  @Deprecated public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
-  /**
-   * @deprecated use {@link #getVolumeInfo()} instead.
-   */
-  @Deprecated public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
-
-  public abstract void setVolumeInfo(@NonNull VolumeInfo volumeInfo);
-
-  @NonNull public abstract VolumeInfo getVolumeInfo();
+  public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   /**
    * Get latest playback info. Either on-going playback info if current player is playing, or latest
@@ -175,10 +160,6 @@ public abstract class ToroPlayerHelper {
    * @return latest {@link PlaybackInfo} of current Player.
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
-
-  public abstract void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
-
-  public abstract void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
 
   // Mimic ExoPlayer
   @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,
@@ -192,6 +173,6 @@ public abstract class ToroPlayerHelper {
   }
 
   @Override public String toString() {
-    return "ToroLib:Helper{" + "player=" + player + ", container=" + container + '}';
+    return "Toro:Helper{" + "player=" + player + ", container=" + container + '}';
   }
 }

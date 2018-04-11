@@ -30,30 +30,30 @@ import toro.demo.exoplayer.R
 
 class BasicListActivity : AppCompatActivity() {
 
-  private val adapter = SectionContentAdapter()
-  private val disposable = CompositeDisposable()
+    private val adapter = SectionContentAdapter()
+    private val disposable = CompositeDisposable()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_basic_list)
-    setSupportActionBar(toolbar)
-    toolbar_layout.title = "Material Motion"
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_basic_list)
+        setSupportActionBar(toolbar)
+        toolbar_layout.title = "Material Motion"
 
-    container.apply {
-      adapter = this@BasicListActivity.adapter
-      layoutManager = LinearLayoutManager(this@BasicListActivity)
-      cacheManager = CacheManager.DEFAULT
+        container.apply {
+            adapter = this@BasicListActivity.adapter
+            layoutManager = LinearLayoutManager(this@BasicListActivity)
+            cacheManager = CacheManager.DEFAULT
+        }
+
+        disposable.add(Motion.contents()
+                .subscribeOn(io()).observeOn(mainThread())
+                .doOnNext({ it -> adapter.updateElements(it) })
+                .subscribe()
+        )
     }
 
-    disposable.add(Motion.contents()
-        .subscribeOn(io()).observeOn(mainThread())
-        .doOnNext { it -> adapter.updateElements(it) }
-        .subscribe()
-    )
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    disposable.clear()
-  }
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.clear()
+    }
 }

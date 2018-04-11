@@ -37,8 +37,8 @@ public class SinglePlayerActivity extends AppCompatActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    fragment = (ToroYouTubePlayerFragment) getSupportFragmentManager()  //
-        .findFragmentById(R.id.player_fragment);
+    fragment = (ToroYouTubePlayerFragment) getSupportFragmentManager().findFragmentById(
+        R.id.player_fragment);
 
     if (fragment != null) {
       fragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {

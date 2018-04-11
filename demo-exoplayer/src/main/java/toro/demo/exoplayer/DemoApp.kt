@@ -30,27 +30,27 @@ import java.io.File
  */
 class DemoApp : Application() {
 
-  companion object {
-    var cacheFile = 2 * 1024 * 1024.toLong() // size of each cache file.
-    var demoApp: DemoApp? = null
-    var config: Config? = null
-    var exoCreator: ExoCreator? = null
-  }
+    companion object {
+        var cacheFile = 2 * 1024 * 1024.toLong() // size of each cache file.
+        var demoApp: DemoApp? = null
+        var config: Config? = null
+        var exoCreator: ExoCreator? = null
+    }
 
-  override fun onCreate() {
-    super.onCreate()
-    demoApp = this
-    val cache = SimpleCache(File(filesDir.path + "/toro_cache"),
-        LeastRecentlyUsedCacheEvictor(cacheFile))
-    config = Config.Builder()
-        .setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
-        .setCache(cache)
-        .build()
-    exoCreator = ToroExo.with(this).getCreator(config)
-  }
+    override fun onCreate() {
+        super.onCreate()
+        demoApp = this
+        val cache = SimpleCache(File(filesDir.path + "/toro_cache"),
+                LeastRecentlyUsedCacheEvictor(cacheFile))
+        config = Config.Builder()
+                .setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
+                .setCache(cache)
+                .build()
+        exoCreator = ToroExo.with(this).getCreator(config)
+    }
 
-  override fun onTrimMemory(level: Int) {
-    super.onTrimMemory(level)
-    if (level >= TRIM_MEMORY_BACKGROUND) ToroExo.with(this).cleanUp()
-  }
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        if (level == TRIM_MEMORY_RUNNING_LOW) ToroExo.with(this).cleanUp()
+    }
 }
