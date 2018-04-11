@@ -169,7 +169,7 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   }
 }
 ```
-</p></details>
+</p></details></br>
 
 More advanced View holder implementations can be found in **app**, **demo-??** module.
 
