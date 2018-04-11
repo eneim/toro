@@ -105,8 +105,9 @@ public class ExoPlayable extends PlayableImpl {
   }
 
   @SuppressWarnings({ "WeakerAccess", "unused" }) //
-  @CallSuper protected void onErrorMessage(@NonNull String message) {
-    // Do nothing. Sub class should handle the message on demand.
+  protected void onErrorMessage(@NonNull String message) {
+    // Sub class can have custom reaction about the error here, including not to show this toast
+    // (by not calling super.onErrorMessage(message)).
     if (playerView != null) {
       Toast.makeText(playerView.getContext(), message, Toast.LENGTH_SHORT).show();
     }

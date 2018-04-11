@@ -176,6 +176,10 @@ public abstract class ToroPlayerHelper {
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
+  public abstract void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
+
+  public abstract void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
+
   // Mimic ExoPlayer
   @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,
       @State int playbackState) {

@@ -104,11 +104,12 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
     this.listeners.remove(listener);
   }
 
+  @Override
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
     this.playable.addOnVolumeChangeListener(checkNotNull(listener));
   }
 
-  public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
     this.playable.removeOnVolumeChangeListener(listener);
   }
 

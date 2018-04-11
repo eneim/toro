@@ -21,6 +21,17 @@ import android.os.Parcelable;
 import android.support.annotation.FloatRange;
 
 /**
+ * Information about volume of a playback. There are a few state this class could show:
+ *
+ * - An expected volume value.
+ * - State of mute or not.
+ *
+ * When {@link #mute} is {@code true}, {@link #volume} value will be ignored. But when {@link #mute}
+ * is set to {@code false}, actual volume value will be brought to the playback.
+ *
+ * This volume information doesn't relate to system Volume. Which means that even if client set
+ * this to non-mute volume, the device's volume setup wins the actual behavior.
+ *
  * @author eneim (2018/03/14).
  */
 public final class VolumeInfo implements Parcelable {

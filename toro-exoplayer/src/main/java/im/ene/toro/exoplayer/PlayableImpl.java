@@ -123,8 +123,8 @@ class PlayableImpl implements Playable {
 
   @CallSuper @Override public void play() {
     checkNotNull(player, "Playable#play(): Player is null!");
-    ensureMediaSource();
     ensurePlayerView();
+    ensureMediaSource();
     player.setPlayWhenReady(true);
   }
 
@@ -198,7 +198,7 @@ class PlayableImpl implements Playable {
   }
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    checkNotNull(player, "Playable#setVolume(): Player is null!");
+    checkNotNull(player, "Playable#setVolumeInfo(): Player is null!");
     boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());

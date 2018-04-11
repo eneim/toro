@@ -27,16 +27,18 @@ import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import im.ene.toro.widget.Container;
+import java.util.HashSet;
+import java.util.Set;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
+import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * @author eneim | 6/11/17.
  *
- *         Helper class for {@link ToroVideoView}. This class makes the playback using {@link
- *         ToroVideoView} easier by wrapping all necessary components and functionality.
+ * Helper class for {@link ToroVideoView}. This class makes the playback using {@link
+ * ToroVideoView} easier by wrapping all necessary components and functionality.
  */
 
 @SuppressWarnings({ "WeakerAccess", "ConstantConditions", "unused" }) //
@@ -180,16 +182,34 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     if (mediaPlayer == null) return;
-    boolean changed = !this.volumeInfo.equals(volumeInfo);
+    boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
     if (changed) {
       float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
       mediaPlayer.setVolume(volume, volume);
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      if (volumeChangeListeners != null) {
+        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+          listener.onVolumeChanged(volumeInfo);
+        }
+      }
     }
   }
 
   @NonNull @Override public VolumeInfo getVolumeInfo() {
     return this.volumeInfo;
+  }
+
+  // Use a Set to prevent duplicated setup.
+  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
+
+  @Override
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
+    volumeChangeListeners.add(checkNotNull(listener));
+  }
+
+  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    if (volumeChangeListeners != null) volumeChangeListeners.remove(listener);
   }
 
   void updateResumePosition() {
