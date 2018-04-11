@@ -358,6 +358,7 @@ public class Container extends RecyclerView {
     this.playerDispatcher = checkNotNull(playerDispatcher);
   }
 
+  /** Define the callback that to be used later by {@link Behavior} if setup. */
   public final void setBehaviorCallback(@Nullable BehaviorCallback behaviorCallback) {
     this.behaviorCallback = behaviorCallback;
   }
@@ -856,7 +857,7 @@ public class Container extends RecyclerView {
       implements Handler.Callback {
 
     @NonNull final CoordinatorLayout.Behavior<? super Container> delegate;
-    @NonNull BehaviorCallback callback;
+    @Nullable BehaviorCallback callback;
 
     static final int EVENT_IDLE = 1;
     static final int EVENT_SCROLL = 2;

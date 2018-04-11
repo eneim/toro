@@ -7,24 +7,32 @@ Changelog
 > Toro 3.4.2 and above will be developed by Android Studio 3.1.0+, and maybe kotlin as well.
 
 - **Development**
-  - Migrate the repo to Android Studio 3.1.0 (current: RC3).
+  - Migrate the repo to Android Studio 3.1.1.
   - Remove ``gradle.properties-sample`` and some internal change so contributor can start forking and contributing more easily.
   - **Toro** is now distributed to SNAPSHOT channel as well for early builds. This enables user to try latest updates with ease. Detail can be found on README.
 
 - **toro-core**
   - Add a mechanism to support the case ``Container`` is used in ``CoordinatorLayout`` with other Views, using ``Behavior``. Detail can be found on README.
-  - Add ``VolumeInfo`` for a tailored volume setup. It holds the 'mute' status as well as the actual volume value when the playback is unmuted. ``VolumeInfo`` is used in ``ToroPlayerViewHelper``.
-  - Add ``ToroPlayer$OnVolumeChangeListener`` that listens to the change of internal ``VolumeInfo``. Instance of this interface is set by ``ToroPlayerViewHelper``.
+  - Add ``VolumeInfo`` for a tailored volume setup. It holds the 'mute' status as well as the actual volume value when the playback is unmuted.
+  - Add ``ToroPlayer$OnVolumeChangeListener`` that listens to the change of internal ``VolumeInfo``. Instance of this interface is setup by ``ToroPlayerHelper`` and its variants.
   - ``Container`` will no longer start a delayed playback if the scroll is not idled.
 
 - **toro-exoplayer**
   - ``Config`` now accepts an array of ``DrmSessionManager``s instead of a single ``DrmSessionManager``. This is an experiment.
   - Add ``Playable#setParameters()`` and ``Playable#getParameters`` to match ExoPlayer behaviour.
+  - Add ``ToroExoPlayer`` which extends ``SimpleExoPlayer`` and provides the ability to work with ``VolumeInfo``.
+  - ``Playable`` and default implementations are updated to work with ``VolumeInfo``.
 
 - **toro-mopub**
   - Add custom UI components: ``PlayerView`` and ``ToroControlView`` that combines ExoPlayer r2.4.4 implementation with some fixes from ExoPlayer 2.7.0.
   - Add ``Playable#setParameters()`` and ``Playable#getParameters`` to match ExoPlayer behaviour.
-  - Demo app is updated using new UI components as well as VolumeInfo.
+  - Add ``ToroExoPlayer`` which extends ``SimpleExoPlayer`` and provides the ability to work with ``VolumeInfo``.
+  - ``Playable`` and default implementations are updated to work with ``VolumeInfo``.
+  - Demo app is updated using new UI components as well as ``VolumeInfo``.
+
+- **Others**: minor performance improvement update.
+
+- Detail implementation and suggested usage can be found on demo applications.
 
 3.4.1 (2018/03/06)
 --------------
