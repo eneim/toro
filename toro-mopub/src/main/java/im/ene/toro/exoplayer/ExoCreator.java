@@ -58,37 +58,33 @@ public interface ExoCreator {
    * Create a {@link MediaSource} from media {@link Uri}.
    *
    * @param uri the media {@link Uri}.
-   * @param extension optional (File) extension of the Uri.
+   * @param fileExt the optional (File) extension of the media Uri.
    * @return a {@link MediaSource} for media {@link Uri}.
    */
-  @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String extension);
+  @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String fileExt);
 
   // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
 
   /**
-   * Create a {@link Playable} for a media {@link Uri} that uses {@link SimpleExoPlayerView}. Client
-   * should always use this method for
-   * quick and simple setup. Only use {@link #createMediaSource(Uri, String)} and/or {@link
-   * #createPlayer()}
-   * when necessary.
+   * Create a {@link Playable} for a media {@link Uri} that uses {@link SimpleExoPlayerView}.
+   * Client should always use this method for quick and simple setup. Only use
+   * {@link #createMediaSource(Uri, String)} and/or {@link #createPlayer()} when necessary.
    *
    * @param uri the media {@link Uri}.
    * @return the {@link Playable} to manage the media {@link Uri}.
    */
-  @NonNull Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri,
-      @Nullable String extension);
+  @NonNull Playable<SimpleExoPlayerView> createPlayable(@NonNull Uri uri, @Nullable String fileExt);
 
   // Support custom PlayerView.
 
   /**
    * Create a {@link Playable} for a media {@link Uri} that uses {@link PlayerView}. Client should
-   * always use this method for
-   * quick and simple setup. Only use {@link #createMediaSource(Uri, String)} and/or {@link
-   * #createPlayer()}
-   * when necessary.
+   * always use this method for quick and simple setup. Only use {@link #createMediaSource(Uri, String)}
+   * and/or {@link #createPlayer()} when necessary.
    *
    * @param uri the media {@link Uri}.
+   * @param fileExt the optional (File) extension of the media Uri.
    * @return the {@link Playable} to manage the media {@link Uri}.
    */
-  @NonNull Playable<PlayerView> createPlayableCompat(@NonNull Uri uri, @Nullable String extension);
+  @NonNull Playable<PlayerView> createPlayableCompat(@NonNull Uri uri, @Nullable String fileExt);
 }

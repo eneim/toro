@@ -14,13 +14,8 @@
   ~ limitations under the License.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="toro.demo.exoplayer.playable.PlayableDemoActivity">
-  <item
-      android:id="@+id/action_settings"
-      android:orderInCategory="100"
-      android:title="@string/action_settings"
-      app:showAsAction="never"/>
-</menu>
+<resources>
+  <dimen name="app_bar_height">180dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
+  <dimen name="text_margin">16dp</dimen>
+</resources>

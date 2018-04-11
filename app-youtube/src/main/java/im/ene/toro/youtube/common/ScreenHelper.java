@@ -17,6 +17,7 @@
 package im.ene.toro.youtube.common;
 
 import android.graphics.Point;
+import android.util.Log;
 import android.view.Display;
 
 /**
@@ -25,7 +26,7 @@ import android.view.Display;
 
 @SuppressWarnings("unused") public class ScreenHelper {
 
-  private static final String TAG = "Toro:Fb:Screen";
+  private static final String TAG = "YouT:Screen";
 
   private ScreenHelper() {
     throw new RuntimeException("Meh!");
@@ -37,6 +38,7 @@ import android.view.Display;
   public static boolean shouldUseBigPlayer(Display display) {
     Point displaySize = new Point();
     display.getSize(displaySize);
+    Log.i(TAG, "shouldUseBigPlayer: " + displaySize);
     return displaySize.x >= displaySize.y;
   }
 }

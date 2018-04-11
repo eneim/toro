@@ -34,14 +34,14 @@ import toro.demo.exoplayer.R;
 /**
  * @author eneim (2018/02/07).
  *
- *         Demo for {@link ExoCreator}, written in Java.
+ * Demo for {@link ExoCreator}, written in Java.
  */
 
 public class CreatorDemoActivity extends AppCompatActivity {
 
-  static final Uri videoUri =
-      Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
-      // Uri.parse("file:///android_asset/bbb/video.mp4");
+  static final Uri videoUri = Uri.parse(
+      "https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
+  // Uri.parse("file:///android_asset/bbb/video.mp4");
 
   PlayerView playerView;
 

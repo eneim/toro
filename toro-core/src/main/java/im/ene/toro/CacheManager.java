@@ -24,14 +24,14 @@ import im.ene.toro.widget.Container;
 import java.util.LinkedHashMap;
 
 /**
- * @author eneim (7/5/17).
+ * {@link CacheManager} is a helper interface used by {@link Container} to manage the
+ * {@link PlaybackInfo} of {@link ToroPlayer}s. For each {@link ToroPlayer},
+ * {@link CacheManager} will ask for a unique key for its {@link PlaybackInfo} cache.
+ * {@link Container} uses a {@link LinkedHashMap} to implement the caching mechanism, so
+ * {@link CacheManager} must provide keys which are uniquely distinguished by
+ * {@link Object#equals(Object)}.
  *
- *         {@link CacheManager} is a helper interface used by {@link Container} to manage the
- *         {@link PlaybackInfo} of {@link ToroPlayer}s. For each {@link ToroPlayer}, {@link
- *         CacheManager} will ask for a unique key for its {@link PlaybackInfo} cache. {@link
- *         Container} uses a {@link LinkedHashMap} to implement the caching mechanism, so {@link
- *         CacheManager} must provide keys which are uniquely distint by
- *         {@link Object#equals(Object)}.
+ * @author eneim (7/5/17).
  */
 public interface CacheManager {
 

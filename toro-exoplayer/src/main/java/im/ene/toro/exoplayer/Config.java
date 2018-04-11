@@ -27,6 +27,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
+import im.ene.toro.annotations.Beta;
+import java.util.Arrays;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -39,6 +41,7 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  * @since 3.4.0
  */
 
+@SuppressWarnings("SimplifiableIfStatement")  //
 public final class Config {
 
   // primitive flags
@@ -51,7 +54,7 @@ public final class Config {
 
   // Nullable options
   @SuppressWarnings("WeakerAccess") //
-  @Nullable final DrmSessionManager drmSessionManager;
+  @Nullable final DrmSessionManager[] drmSessionManagers;
   @Nullable final Cache cache; // null by default
   // If null, ExoCreator must come up with a default one.
   // This is to help customizing the Data source, for example using OkHttp extension.
@@ -59,13 +62,13 @@ public final class Config {
 
   Config(int extensionMode, @NonNull BaseMeter meter, @NonNull LoadControl loadControl,
       @Nullable DataSource.Factory dataSourceFactory, @NonNull MediaSourceBuilder mediaSourceBuilder,
-      @Nullable DrmSessionManager drmSessionManager, @Nullable Cache cache) {
+      @Nullable DrmSessionManager[] drmSessionManagers, @Nullable Cache cache) {
     this.extensionMode = extensionMode;
     this.meter = meter;
     this.loadControl = loadControl;
     this.dataSourceFactory = dataSourceFactory;
     this.mediaSourceBuilder = mediaSourceBuilder;
-    this.drmSessionManager = drmSessionManager;
+    this.drmSessionManagers = drmSessionManagers;
     this.cache = cache;
   }
 
@@ -79,28 +82,27 @@ public final class Config {
     if (!meter.equals(config.meter)) return false;
     if (!loadControl.equals(config.loadControl)) return false;
     if (!mediaSourceBuilder.equals(config.mediaSourceBuilder)) return false;
-    if (drmSessionManager != null ? !drmSessionManager.equals(config.drmSessionManager)
-        : config.drmSessionManager != null) {
-      return false;
-    }
-    return cache != null ? cache.equals(config.cache) : config.cache == null;
+    // Probably incorrect - comparing Object[] arrays with Arrays.equals
+    if (!Arrays.equals(drmSessionManagers, config.drmSessionManagers)) return false;
+    if (cache != null ? !cache.equals(config.cache) : config.cache != null) return false;
+    return dataSourceFactory != null ? dataSourceFactory.equals(config.dataSourceFactory)
+        : config.dataSourceFactory == null;
   }
 
-  // This method doesn't really help, because the default implementation of loadControl, cache and
-  // drmSessionManager don't guarantee the hashCode identity. We put it here for future.
   @Override public int hashCode() {
     int result = extensionMode;
     result = 31 * result + meter.hashCode();
     result = 31 * result + loadControl.hashCode();
     result = 31 * result + mediaSourceBuilder.hashCode();
-    result = 31 * result + (drmSessionManager != null ? drmSessionManager.hashCode() : 0);
+    result = 31 * result + Arrays.hashCode(drmSessionManagers);
     result = 31 * result + (cache != null ? cache.hashCode() : 0);
+    result = 31 * result + (dataSourceFactory != null ? dataSourceFactory.hashCode() : 0);
     return result;
   }
 
   @SuppressWarnings("unused") public Builder newBuilder() {
     return new Builder().setCache(this.cache)
-        .setDrmSessionManager(this.drmSessionManager)
+        .setDrmSessionManagers(this.drmSessionManagers)
         .setExtensionMode(this.extensionMode)
         .setLoadControl(this.loadControl)
         .setMediaSourceBuilder(this.mediaSourceBuilder)
@@ -117,7 +119,7 @@ public final class Config {
     private LoadControl loadControl = new DefaultLoadControl();
     private DataSource.Factory dataSourceFactory = null;
     private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
-    private DrmSessionManager drmSessionManager = null;
+    private DrmSessionManager[] drmSessionManagers = null;
     private Cache cache = null;
 
     public Builder setExtensionMode(@ExtensionRendererMode int extensionMode) {
@@ -147,8 +149,9 @@ public final class Config {
       return this;
     }
 
-    public Builder setDrmSessionManager(@Nullable DrmSessionManager drmSessionManager) {
-      this.drmSessionManager = drmSessionManager;
+    @Beta
+    public Builder setDrmSessionManagers(@Nullable DrmSessionManager[] drmSessionManagers) {
+      this.drmSessionManagers = drmSessionManagers;
       return this;
     }
 
@@ -159,7 +162,7 @@ public final class Config {
 
     public Config build() {
       return new Config(extensionMode, meter, loadControl, dataSourceFactory,
-          mediaSourceBuilder, drmSessionManager, cache);
+          mediaSourceBuilder, drmSessionManagers, cache);
     }
   }
 }

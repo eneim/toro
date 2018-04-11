@@ -17,12 +17,16 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
+import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
+import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
@@ -31,7 +35,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 
 import static com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS;
-import static im.ene.toro.exoplayer.DefaultExoCreator.isBehindLiveWindow;
 import static im.ene.toro.exoplayer.ToroExo.toro;
 
 /**
@@ -42,9 +45,9 @@ import static im.ene.toro.exoplayer.ToroExo.toro;
  * @since 3.4.0
  */
 
-public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
+public class ExoPlayable extends PlayableImpl {
 
-  private static final String TAG = "ToroExo:Playable";
+  @SuppressWarnings("unused") private static final String TAG = "ToroExo:Playable";
 
   private EventListener listener;
 
@@ -102,8 +105,12 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
   }
 
   @SuppressWarnings({ "WeakerAccess", "unused" }) //
-  protected void onErrorMessage(String message) {
-    // Do nothing. Child class may need to do something with this, show a Toast maybe.
+  protected void onErrorMessage(@NonNull String message) {
+    // Sub class can have custom reaction about the error here, including not to show this toast
+    // (by not calling super.onErrorMessage(message)).
+    if (playerView != null) {
+      Toast.makeText(playerView.getContext(), message, Toast.LENGTH_SHORT).show();
+    }
   }
 
   private class Listener extends DefaultEventListener {
@@ -180,5 +187,15 @@ public class ExoPlayable extends DefaultExoCreator.PlayableImpl {
 
       super.onPositionDiscontinuity(reason);
     }
+  }
+
+  @SuppressWarnings("WeakerAccess") static boolean isBehindLiveWindow(ExoPlaybackException error) {
+    if (error.type != ExoPlaybackException.TYPE_SOURCE) return false;
+    Throwable cause = error.getSourceException();
+    while (cause != null) {
+      if (cause instanceof BehindLiveWindowException) return true;
+      cause = cause.getCause();
+    }
+    return false;
   }
 }

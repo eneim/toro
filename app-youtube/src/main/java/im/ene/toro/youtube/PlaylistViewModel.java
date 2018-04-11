@@ -74,36 +74,40 @@ public class PlaylistViewModel extends ViewModel {
     JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
     HttpTransport httpTransport = AndroidHttp.newCompatibleTransport();
     ytApi = new YouTube.Builder(httpTransport, jsonFactory, null).setApplicationName(
-        "Toro Youtube Demo").build();
+        "Toro Youtube Demo, " + BuildConfig.VERSION_NAME).build();
     disposables = new CompositeDisposable();
   }
 
-  LiveData<VideoListResponse> getPlaylist() throws IOException {
+  LiveData<VideoListResponse> getPlaylist() {
     return liveData;
   }
 
   void refresh() throws IOException {
-    Disposable disposable = Observable.just(ytApi.playlistItems()
-        .list(YOUTUBE_PLAYLIST_PART)
-        .setPlaylistId(YOUTUBE_PLAYLIST_ID)
-        .setPageToken(null)
-        .setFields(YOUTUBE_PLAYLIST_FIELDS)
-        .setMaxResults(YOUTUBE_PLAYLIST_MAX_RESULTS)
-        .setKey(API_KEY))
-        .map(AbstractGoogleClientRequest::execute)
-        .map(PlaylistItemListResponse::getItems)
-        .flatMap(playlistItems -> Observable.fromIterable(playlistItems)
-            .map(item -> item.getSnippet().getResourceId().getVideoId()))
-        .toList()
-        .map(ids -> ytApi.videos().list(YOUTUBE_VIDEOS_PART).setFields(YOUTUBE_VIDEOS_FIELDS) //
-            .setKey(API_KEY).setId(TextUtils.join(",", ids)).execute())
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnError(throwable -> Log.e(TAG, "accept() called with: throwable = [" + throwable + "]"))
-        .doOnSuccess(response -> Log.d(TAG, "accept() called with: response = [" + response + "]"))
-        .onErrorReturnItem(new VideoListResponse()) // Bad work around
-        .doOnSuccess(liveData::setValue)
-        .subscribe();
+    Disposable disposable = //
+        Observable.just(ytApi.playlistItems()
+            .list(YOUTUBE_PLAYLIST_PART)
+            .setPlaylistId(YOUTUBE_PLAYLIST_ID)
+            .setPageToken(null)
+            .setFields(YOUTUBE_PLAYLIST_FIELDS)
+            .setMaxResults(YOUTUBE_PLAYLIST_MAX_RESULTS)
+            .setKey(API_KEY)  //
+        )
+            .map(AbstractGoogleClientRequest::execute)
+            .map(PlaylistItemListResponse::getItems)
+            .flatMap(playlistItems -> Observable.fromIterable(playlistItems)
+                .map(item -> item.getSnippet().getResourceId().getVideoId()))
+            .toList()
+            .map(ids -> ytApi.videos().list(YOUTUBE_VIDEOS_PART).setFields(YOUTUBE_VIDEOS_FIELDS) //
+                .setKey(API_KEY).setId(TextUtils.join(",", ids)).execute())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError(
+                throwable -> Log.e(TAG, "accept() called with: throwable = [" + throwable + "]"))
+            .doOnSuccess(
+                response -> Log.d(TAG, "accept() called with: response = [" + response + "]"))
+            .onErrorReturnItem(new VideoListResponse()) // Bad work around
+            .doOnSuccess(liveData::setValue)
+            .subscribe();
     disposables.add(disposable);
   }
 }

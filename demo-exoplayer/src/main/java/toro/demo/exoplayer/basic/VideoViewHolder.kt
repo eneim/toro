@@ -36,86 +36,88 @@ import java.util.regex.Pattern
 /**
  * @author eneim (2018/01/23).
  */
-internal class VideoViewHolder(inflater: LayoutInflater?, parent: ViewGroup?) :
-        BaseViewHolder(inflater!!.inflate(R.layout.exo_article_part_video, parent, false)),
-        ToroPlayer {
+internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+    BaseViewHolder(inflater.inflate(R.layout.exo_article_part_video, parent, false)),
+    ToroPlayer {
 
-    companion object {
-        val regex = Pattern.compile("(\\d)+\\.(\\d+)")!!
-        const val defaultRatio = 100 * 165.78F / 360F
+  companion object {
+    val regex = Pattern.compile("(\\d)+\\.(\\d+)")!!
+    const val defaultRatio = 100 * 165.78F / 360F
+  }
+
+  private val playerFrame by lazy { itemView as AspectRatioFrameLayout }
+  private val player = itemView.findViewById(R.id.player) as PlayerView
+  private val status = itemView.findViewById(R.id.playerStatus) as TextView
+  private var helper: ExoPlayerViewHelper? = null
+  private var videoUri: Uri? = null
+
+  var listener: EventListener? = null
+
+  override fun bind(item: Any?) {
+    super.bind(item)
+    val videoUrl = (item as Element).select("video > source[type=video/mp4]").attr("src")
+    if (videoUrl !== null) videoUri = Uri.parse(videoUrl)
+    val style = item.getElementsByClass("qp-ui-video-player-mouse").attr("style")
+    if (style !== null) {
+      val match = regex.matcher(style)
+      var ratio = if (match.find()) match.group().toFloat() else null
+      if (ratio === null) ratio = defaultRatio
+      playerFrame.setAspectRatio(100F / ratio)
     }
+  }
 
-    private val playerFrame by lazy { itemView as AspectRatioFrameLayout }
-    private val player = itemView.findViewById(R.id.player) as PlayerView
-    private val status = itemView.findViewById(R.id.playerStatus) as TextView
-    private var helper: ExoPlayerViewHelper? = null
-    private var videoUri: Uri? = null
+  override fun getPlayerView() = player
 
-    var listener: EventListener? = null
+  override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
 
-    override fun bind(item: Any?) {
-        super.bind(item)
-        val videoUrl = (item as Element).select("video > source[type=video/mp4]").attr("src")
-        if (videoUrl !== null) videoUri = Uri.parse(videoUrl)
-        val style = item.getElementsByClass("qp-ui-video-player-mouse").attr("style")
-        if (style !== null) {
-            val match = regex.matcher(style)
-            var ratio = if (match.find()) match.group().toFloat() else null
-            if (ratio === null) ratio = defaultRatio
-            playerFrame.setAspectRatio(100F / ratio)
+  override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
+    if (helper == null) helper = ExoPlayerViewHelper(this, videoUri!!, null, DemoApp.config!!)
+    if (listener == null) {
+      listener = object : EventListener {
+        override fun onBuffering() {
+          status.text = "Buffering"
         }
-        helper = ExoPlayerViewHelper(this, videoUri!!, null, DemoApp.config!!)
-    }
 
-    override fun getPlayerView() = player
-
-    override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
-
-    override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
-        if (listener == null) {
-            listener = object : EventListener {
-                override fun onBuffering() {
-                    status.text = "Buffering"
-                }
-
-                override fun onPlaying() {
-                    status.text = "Playing"
-                }
-
-                override fun onPaused() {
-                    status.text = "Paused"
-                }
-
-                override fun onCompleted() {
-                    status.text = "Completed"
-                }
-
-            }
-            helper!!.addPlayerEventListener(listener!!)
+        override fun onPlaying() {
+          status.text = "Playing"
         }
-        helper!!.initialize(container, playbackInfo)
+
+        override fun onPaused() {
+          status.text = "Paused"
+        }
+
+        override fun onCompleted() {
+          status.text = "Completed"
+        }
+
+      }
+      helper!!.addPlayerEventListener(listener!!)
     }
+    helper!!.initialize(container, playbackInfo)
+  }
 
-    override fun play() {
-        helper!!.play()
+  override fun play() {
+    helper!!.play()
+  }
+
+  override fun pause() {
+    helper!!.pause()
+  }
+
+  override fun isPlaying() = helper?.isPlaying ?: false
+
+  override fun release() {
+    if (listener != null) {
+      helper?.removePlayerEventListener(listener)
+      listener = null
     }
+    helper?.release()
+    helper = null
+  }
 
-    override fun pause() {
-        helper!!.pause()
-    }
+  override fun wantsToPlay() = visibleAreaOffset(this, itemView.parent) >= 0.65
 
-    override fun isPlaying() = helper?.isPlaying ?: false
+  override fun getPlayerOrder() = adapterPosition
 
-    override fun release() {
-        if (listener != null) helper?.removePlayerEventListener(listener)
-        listener = null
-        helper?.release()
-        helper = null
-    }
-
-    override fun wantsToPlay() = visibleAreaOffset(this, itemView.parent) >= 0.65
-
-    override fun getPlayerOrder() = adapterPosition
-
-    override fun onSettled(container: Container?) {}
+  override fun onSettled(container: Container?) {}
 }
