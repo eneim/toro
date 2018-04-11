@@ -13,6 +13,7 @@ Changelog
 
 - **toro-core**
   - Add a mechanism to support the case ``Container`` is used in ``CoordinatorLayout`` with other Views, using ``Behavior``. Detail can be found on README.
+  - Add ``ToroUtil#wrapParamBehavior()`` to help shorten the setup of new ``Behavior`` above.
   - Add ``VolumeInfo`` for a tailored volume setup. It holds the 'mute' status as well as the actual volume value when the playback is unmuted.
   - Add ``ToroPlayer$OnVolumeChangeListener`` that listens to the change of internal ``VolumeInfo``. Instance of this interface is setup by ``ToroPlayerHelper`` and its variants.
   - ``Container`` will no longer start a delayed playback if the scroll is not idled.
