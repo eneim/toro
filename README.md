@@ -7,7 +7,8 @@
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)
-[![Join the chat at https://gitter.im/eneim/Toro](https://badges.gitter.im/eneim/Toro.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+[![Join the chat at https://gitter.im/eneim/Toro](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+
 
 ### Menu
 
@@ -99,6 +100,9 @@ dependencies {
 
 3. Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
 
+<details><summary>Demo code (click to expand)</summary>
+<p>
+
 ```java
 public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
@@ -165,6 +169,7 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   }
 }
 ```
+</p></details>
 
 More advanced View holder implementations can be found in **app**, **demo-??** module.
 
