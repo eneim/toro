@@ -137,11 +137,8 @@ public abstract class ToroPlayerHelper {
    * such cached information.
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead. From 3.5.0, this method
-   * will be downgraded to protected only.
    */
-  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated  //
-  public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
+  protected abstract void initialize(@Nullable PlaybackInfo playbackInfo);
 
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     this.container = container;
@@ -176,7 +173,8 @@ public abstract class ToroPlayerHelper {
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
-  public abstract void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
+  public abstract void addOnVolumeChangeListener(
+      @NonNull ToroPlayer.OnVolumeChangeListener listener);
 
   public abstract void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
 

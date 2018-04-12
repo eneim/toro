@@ -46,7 +46,7 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
     playable = checkNotNull(requirePlayable(creator, uri, extension));
   }
 
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@Nullable PlaybackInfo playbackInfo) {
     playable.addEventListener(listeners);
     playable.prepare(false);
     //noinspection unchecked

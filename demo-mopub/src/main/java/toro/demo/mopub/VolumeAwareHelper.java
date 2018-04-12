@@ -39,7 +39,7 @@ public class VolumeAwareHelper extends PlayerViewHelper implements OnVolumeChang
     super(player, uri);
   }
 
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@Nullable PlaybackInfo playbackInfo) {
     if (playbackInfo != null) {
       this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
       this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());

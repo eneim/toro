@@ -78,7 +78,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     this.onPreparedListener = onPreparedListener;
   }
 
-  @Override public void initialize(@Nullable final PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@Nullable final PlaybackInfo playbackInfo) {
     if (playbackInfo != null) {
       this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
     }
