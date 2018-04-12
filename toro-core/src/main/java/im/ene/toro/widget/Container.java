@@ -324,11 +324,6 @@ public class Container extends RecyclerView {
         playerManager.pause(player);
       }
     }
-
-    for (ToroPlayer player : playerManager.getPlayers()) {
-      // TODO [20180128, 3.4.0] remove this call from 3.5+
-      player.onSettled(this);
-    }
   }
 
   /**

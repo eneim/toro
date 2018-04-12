@@ -75,10 +75,6 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
 
   override fun getPlayerOrder() = adapterPosition
 
-  override fun onSettled(container: Container?) {
-    // Do nothing
-  }
-
   // API to call from Adapter
   fun bind(media: Media?) {
     if (media != null) {

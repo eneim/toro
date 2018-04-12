@@ -119,5 +119,4 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
   override fun getPlayerOrder() = adapterPosition
 
-  override fun onSettled(container: Container?) {}
 }
