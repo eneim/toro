@@ -545,8 +545,8 @@ public class Container extends RecyclerView {
   }
 
   /**
-   * This method supports the case that by some reasons, Container should changes it behaviour
-   * without any Activity recreation (so {@link #onSaveInstanceState()} and
+   * This method supports the case that by some reasons, Container should changes it behaviour not
+   * caused by any Activity recreation (so {@link #onSaveInstanceState()} and
    * {@link #onRestoreInstanceState(Parcelable)} could not help).
    *
    * This method is called when:
@@ -579,7 +579,7 @@ public class Container extends RecyclerView {
         // Container is focused in current Window
         && hasFocus()
         // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
-        // In that case, other triggers will supposed to be called and we are safe here.
+        // In that case, other triggers are supposed to be called and we are safe here.
         // Need further investigation if need.
         && hasWindowFocus()) {
       // tmpStates may be consumed already, if there is a good reason for that, so not a big deal.
@@ -842,7 +842,7 @@ public class Container extends RecyclerView {
    * {@link AppBarLayout}, in which {@link Container} will not receive any scrolling event update,
    * but just be shifted along the scrolling axis. This behavior results in a bad case that after
    * the AppBarLayout collapse its direct {@link CollapsingToolbarLayout}, the Video may be fully
-   * visible, but because the Container has no way to know about that update, there is no playback
+   * visible, but because the Container has no way to know about that event, there is no playback
    * update.
    *
    * @since 3.4.2
