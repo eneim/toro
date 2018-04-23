@@ -54,12 +54,13 @@ import im.ene.toro.widget.Container;
 /**
  * @author eneim (7/1/17).
  *
- *         A list of content that contains a {@link Container} as one of its child. We gonna use a
- *         {@link PagerSnapHelper} to mimic a Pager-inside-RecyclerView. Other contents will be
- *         normal text to preseve the performance and also to not make user confused.
+ * A list of content that contains a {@link Container} as one of its child. We gonna use a
+ * {@link PagerSnapHelper} to mimic a Pager-inside-RecyclerView. Other contents will be
+ * normal text to preseve the performance and also to not make user confused.
  */
 
-@SuppressWarnings("unused") public class CustomLayoutFragment extends BaseFragment {
+@SuppressWarnings("unused") //
+public class CustomLayoutFragment extends BaseFragment {
 
   static final int RQ_PLAYBACK_INFO = 100;
 
@@ -158,11 +159,10 @@ import im.ene.toro.widget.Container;
     viewPager.setAdapter(pagerAdapter);
 
     pageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
-
       @Override public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_IDLE) {
-          handler.obtainMessage(MSG_PAGER_PAGE_CHANGED, //
-              viewPager.getCurrentItem(), -1).sendToTarget();
+          handler.obtainMessage(  //
+              MSG_PAGER_PAGE_CHANGED, viewPager.getCurrentItem(), -1).sendToTarget();
         }
       }
     };
@@ -178,6 +178,7 @@ import im.ene.toro.widget.Container;
   }
 
   @Override public void onDestroyView() {
+    handler.removeCallbacksAndMessages(null);
     viewPager.removeOnPageChangeListener(pageChangeListener);
     pageChangeListener = null;
     snapHelper.attachToRecyclerView(null);
@@ -203,6 +204,7 @@ import im.ene.toro.widget.Container;
 
   public interface Callback {
 
+    // Callback when the Container instance is created and View state are restored.
     void onContainerAvailable(@NonNull Container container);
   }
 
@@ -244,11 +246,11 @@ import im.ene.toro.widget.Container;
       return adapter.getItemCount();
     }
 
-    @Override public boolean isViewFromObject(View view, Object object) {
+    @Override public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
       return object == view;
     }
 
-    @Override public Object instantiateItem(ViewGroup container, int position) {
+    @NonNull @Override public Object instantiateItem(@NonNull ViewGroup container, int position) {
       View view = LayoutInflater.from(container.getContext())
           .inflate(R.layout.widget_custom_video_license_text, container, false);
       TextView textView = view.findViewById(R.id.text_content);
@@ -258,7 +260,8 @@ import im.ene.toro.widget.Container;
       return view;
     }
 
-    @Override public void destroyItem(ViewGroup container, int position, Object object) {
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
       if (object instanceof View) {
         container.removeView((View) object);
       }
