@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.2.31'
+  ext.kotlin_version = '1.2.40'
   repositories {
     google()
     jcenter()
@@ -27,7 +27,7 @@ buildscript {
 
   dependencies {
     //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.1.1'
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha12'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     classpath "com.novoda:bintray-release:0.8.1"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -39,7 +39,7 @@ buildscript {
 ext {
   androidVersion = 27
   supportLibraryVersion = '27.1.1'
-  constrainLayoutVersion = '1.1.0-beta6'
+  constrainLayoutVersion = '1.1.0'
   archLibraryVersion = '1.1.1'
   exoPlayer2Version = '2.7.3'
   minSupportSDKVersion = 16
@@ -68,7 +68,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.4'
+  gradleVersion = '4.6'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }
