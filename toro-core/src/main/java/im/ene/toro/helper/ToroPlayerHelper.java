@@ -35,6 +35,8 @@ import java.util.ArrayList;
  * forwarding the playback state to the {@link ToroPlayer} if there is any {@link EventListener}
  * registered. It also requests the initialization for the Player.
  *
+ * From 3.4.0, this class can be reused as much as possible.
+ *
  * @author eneim | 6/11/17.
  */
 @SuppressWarnings("WeakerAccess") //
