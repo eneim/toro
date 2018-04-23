@@ -151,7 +151,7 @@ public class Container extends RecyclerView {
   @CallSuper @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     ViewGroup.LayoutParams params = getLayoutParams();
-    if (params != null && params instanceof CoordinatorLayout.LayoutParams) {
+    if (params instanceof CoordinatorLayout.LayoutParams) {
       CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
       if (behavior instanceof Behavior) {
         ((Behavior) behavior).onViewDetached(this);
@@ -232,6 +232,7 @@ public class Container extends RecyclerView {
     super.onChildDetachedFromWindow(child);
     child.removeOnLayoutChangeListener(childLayoutChangeListener);
     ViewHolder holder = getChildViewHolder(child);
+    //noinspection PointlessNullCheck
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
 
@@ -284,7 +285,7 @@ public class Container extends RecyclerView {
     for (int i = 0; i < childCount; i++) {
       View child = layout.getChildAt(i);
       ViewHolder holder = super.findContainingViewHolder(child);
-      if (holder != null && holder instanceof ToroPlayer) {
+      if (holder instanceof ToroPlayer) {
         ToroPlayer player = (ToroPlayer) holder;
         // Check candidate's condition
         if (Common.allowsToPlay(player)) {
@@ -784,8 +785,9 @@ public class Container extends RecyclerView {
 
     @Override public void onViewRecycled(ViewHolder holder) {
       if (this.delegate != null) this.delegate.onViewRecycled(holder);
-      if (!(holder instanceof ToroPlayer)) return;
-      this.container.playerManager.recycle((ToroPlayer) holder);
+      if (holder instanceof ToroPlayer) {
+        this.container.playerManager.recycle((ToroPlayer) holder);
+      }
     }
   }
 
