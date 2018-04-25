@@ -32,11 +32,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.view.AbsSavedState;
 import android.support.v4.view.WindowInsetsCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.POWER_SERVICE;
@@ -140,7 +139,7 @@ public class Container extends RecyclerView {
     playerManager.onAttach();
 
     ViewGroup.LayoutParams params = getLayoutParams();
-    if (params != null && params instanceof CoordinatorLayout.LayoutParams) {
+    if (params instanceof CoordinatorLayout.LayoutParams) {
       CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
       if (behavior instanceof Behavior) {
         ((Behavior) behavior).onViewAttached(this);
@@ -151,7 +150,7 @@ public class Container extends RecyclerView {
   @CallSuper @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     ViewGroup.LayoutParams params = getLayoutParams();
-    if (params != null && params instanceof CoordinatorLayout.LayoutParams) {
+    if (params instanceof CoordinatorLayout.LayoutParams) {
       CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
       if (behavior instanceof Behavior) {
         ((Behavior) behavior).onViewDetached(this);
@@ -198,10 +197,16 @@ public class Container extends RecyclerView {
     return result;
   }
 
+  // This method is called when:
+  // [1] A ViewHolder is newly created, bound and then attached to RecyclerView.
+  // [2] A ViewHolder is detached before, but still in bound state, not be recycled,
+  // and now be re-attached to RecyclerView.
+  // In either cases, PlayerManager should not manage the ViewHolder before this point.
   @CallSuper @Override public void onChildAttachedToWindow(final View child) {
     super.onChildAttachedToWindow(child);
     child.addOnLayoutChangeListener(childLayoutChangeListener);
     final ViewHolder holder = getChildViewHolder(child);
+    //noinspection PointlessNullCheck
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
     final View playerView = player.getPlayerView();
@@ -210,6 +215,8 @@ public class Container extends RecyclerView {
     }
 
     if (playerManager.manages(player)) {
+      // I don't expect this to be called. If this happens, make sure to note the scenario.
+      Log.w(TAG, "!!Already managed: player = [" + player + "]");
       // Only if container is in idle state and player is not playing.
       if (getScrollState() == SCROLL_STATE_IDLE && !player.isPlaying()) {
         playerManager.play(player, playerDispatcher.getDelayToPlay(player));
@@ -232,6 +239,7 @@ public class Container extends RecyclerView {
     super.onChildDetachedFromWindow(child);
     child.removeOnLayoutChangeListener(childLayoutChangeListener);
     ViewHolder holder = getChildViewHolder(child);
+    //noinspection PointlessNullCheck
     if (holder == null || !(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
 
@@ -250,6 +258,7 @@ public class Container extends RecyclerView {
     }
     // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
     // sometime it happens after all Animation, but we also need to update playback here.
+    // If there is no anymore child view, this call will end early.
     dispatchUpdateOnAnimationFinished(true);
     // finally release the player
     // if player manager could not manager player, release by itself.
@@ -258,7 +267,7 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
-    // Need to handle the dead playback even then the Container is still scrolling/flinging.
+    // Need to handle the dead playback even when the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
     for (int i = 0, size = players.size(); i < size; i++) {
@@ -268,7 +277,7 @@ public class Container extends RecyclerView {
         this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
       }
-      playerManager.release(player);
+      if (!playerManager.release(player)) player.release();
       playerManager.detachPlayer(player);
     }
 
@@ -277,14 +286,14 @@ public class Container extends RecyclerView {
     // current number of visible 'Virtual Children', or zero if there is no LayoutManager available.
     int childCount = layout != null ? layout.getChildCount() : 0;
     if (childCount <= 0 || state != SCROLL_STATE_IDLE) {
-      playerManager.postponeDelayedPlaybacks();
+      playerManager.deferPlaybacks();
       return;
     }
 
     for (int i = 0; i < childCount; i++) {
       View child = layout.getChildAt(i);
-      ViewHolder holder = super.findContainingViewHolder(child);
-      if (holder != null && holder instanceof ToroPlayer) {
+      ViewHolder holder = super.getChildViewHolder(child);
+      if (holder instanceof ToroPlayer) {
         ToroPlayer player = (ToroPlayer) holder;
         // Check candidate's condition
         if (Common.allowsToPlay(player)) {
@@ -317,17 +326,12 @@ public class Container extends RecyclerView {
     }
 
     source.removeAll(toPlay);
-
+    // Now 'source' contains only ones need to be paused.
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
         this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
       }
-    }
-
-    for (ToroPlayer player : playerManager.getPlayers()) {
-      // TODO [20180128, 3.4.0] remove this call from 3.5+
-      player.onSettled(this);
     }
   }
 
@@ -415,8 +419,13 @@ public class Container extends RecyclerView {
   }
 
   //// PlaybackInfo Cache implementation
+  /* pkg */ final PlaybackInfoCache playbackInfoCache = new PlaybackInfoCache(this);
+  /* pkg */ Initializer playerInitializer = Initializer.DEFAULT;
   private CacheManager cacheManager = null; // null by default
-  private Map<Object, PlaybackInfo> infoCache = new ArrayMap<>();
+
+  public final void setPlayerInitializer(@NonNull Initializer playerInitializer) {
+    this.playerInitializer = playerInitializer;
+  }
 
   /**
    * Save {@link PlaybackInfo} for the current {@link ToroPlayer} of a specific order.
@@ -425,9 +434,7 @@ public class Container extends RecyclerView {
    * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
    */
   public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-    if (cacheManager == null || order < 0) return;
-    Object key = cacheManager.getKeyForOrder(order);
-    if (key != null) infoCache.put(key, playbackInfo);
+    playbackInfoCache.savePlaybackInfo(order, playbackInfo);
   }
 
   /**
@@ -437,17 +444,7 @@ public class Container extends RecyclerView {
    * @return cached {@link PlaybackInfo} if available, a new one if there is no cached one.
    */
   @NonNull public PlaybackInfo getPlaybackInfo(int order) {
-    if (cacheManager == null || order < 0) return new PlaybackInfo();
-
-    Object key = cacheManager.getKeyForOrder(order);
-    if (key == null) return new PlaybackInfo();
-    PlaybackInfo info = infoCache.get(key);
-    if (info == null) {
-      info = new PlaybackInfo();
-      infoCache.put(key, info);
-    }
-
-    return info;
+    return playbackInfoCache.getPlaybackInfo(order);
   }
 
   /**
@@ -459,7 +456,7 @@ public class Container extends RecyclerView {
   @NonNull public List<Integer> getSavedPlayerOrders() {
     List<Integer> orders = new ArrayList<>();
     if (cacheManager == null) return orders;
-    for (Object key : infoCache.keySet()) {
+    for (Object key : playbackInfoCache.getCache().keySet()) {
       Integer order = cacheManager.getOrderForKey(key);
       if (order != null) orders.add(order);
     }
@@ -479,7 +476,7 @@ public class Container extends RecyclerView {
    */
   public final void setCacheManager(@Nullable CacheManager cacheManager) {
     if (this.cacheManager == cacheManager) return;
-    this.infoCache.clear();
+    this.playbackInfoCache.clearCache();
     this.cacheManager = cacheManager;
   }
 
@@ -544,8 +541,8 @@ public class Container extends RecyclerView {
   }
 
   /**
-   * This method supports the case that by some reasons, Container should changes it behaviour
-   * without any Activity recreation (so {@link #onSaveInstanceState()} and
+   * This method supports the case that by some reasons, Container should changes it behaviour not
+   * caused by any Activity recreation (so {@link #onSaveInstanceState()} and
    * {@link #onRestoreInstanceState(Parcelable)} could not help).
    *
    * This method is called when:
@@ -578,7 +575,7 @@ public class Container extends RecyclerView {
         // Container is focused in current Window
         && hasFocus()
         // In fact, Android 24+ supports multi-window mode in which visible Window may not have focus.
-        // In that case, other triggers will supposed to be called and we are safe here.
+        // In that case, other triggers are supposed to be called and we are safe here.
         // Need further investigation if need.
         && hasWindowFocus()) {
       // tmpStates may be consumed already, if there is a good reason for that, so not a big deal.
@@ -728,9 +725,16 @@ public class Container extends RecyclerView {
 
     final void registerAdapter(Adapter adapter) {
       if (this.adapter == adapter) return;
-      if (this.adapter != null) this.adapter.unregisterAdapterDataObserver(this);
+      if (this.adapter != null) {
+        this.adapter.unregisterAdapterDataObserver(this);
+        this.adapter.unregisterAdapterDataObserver(playbackInfoCache);
+      }
+
       this.adapter = adapter;
-      if (this.adapter != null) this.adapter.registerAdapterDataObserver(this);
+      if (this.adapter != null) {
+        this.adapter.registerAdapterDataObserver(this);
+        this.adapter.registerAdapterDataObserver(playbackInfoCache);
+      }
     }
 
     @Override public void onChanged() {
@@ -783,8 +787,10 @@ public class Container extends RecyclerView {
 
     @Override public void onViewRecycled(ViewHolder holder) {
       if (this.delegate != null) this.delegate.onViewRecycled(holder);
-      if (!(holder instanceof ToroPlayer)) return;
-      this.container.playerManager.recycle((ToroPlayer) holder);
+      if (holder instanceof ToroPlayer) {
+        this.container.playerManager.recycle((ToroPlayer) holder);
+        this.container.playbackInfoCache.onViewRecycled(holder);
+      }
     }
   }
 
@@ -841,7 +847,7 @@ public class Container extends RecyclerView {
    * {@link AppBarLayout}, in which {@link Container} will not receive any scrolling event update,
    * but just be shifted along the scrolling axis. This behavior results in a bad case that after
    * the AppBarLayout collapse its direct {@link CollapsingToolbarLayout}, the Video may be fully
-   * visible, but because the Container has no way to know about that update, there is no playback
+   * visible, but because the Container has no way to know about that event, there is no playback
    * update.
    *
    * @since 3.4.2
@@ -1062,6 +1068,17 @@ public class Container extends RecyclerView {
   public interface BehaviorCallback {
 
     void onFinishInteraction();
+  }
+
+  public interface Initializer {
+
+    @NonNull PlaybackInfo initPlaybackInfo(int order);
+
+    Initializer DEFAULT = new Initializer() {
+      @NonNull @Override public PlaybackInfo initPlaybackInfo(int order) {
+        return new PlaybackInfo();
+      }
+    };
   }
 
   static class ChildLayoutChangeListener implements OnLayoutChangeListener {

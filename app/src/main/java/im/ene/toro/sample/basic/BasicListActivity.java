@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.ene.toro.CacheManager;
+import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.widget.Container;
@@ -43,6 +45,8 @@ public class BasicListActivity extends BaseActivity {
     container.setLayoutManager(layoutManager);
     adapter = new BasicListAdapter();
     container.setAdapter(adapter);
+    // container.setCacheManager(CacheManager.DEFAULT);
+    container.setPlayerInitializer(order -> new PlaybackInfo(0, 5000));
   }
 
   @Override protected void onDestroy() {

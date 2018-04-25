@@ -49,6 +49,7 @@ final class PlayerManager implements Handler.Callback {
   }
 
   boolean detachPlayer(@NonNull ToroPlayer player) {
+    handler.removeCallbacksAndMessages(player);
     return players.remove(player);
   }
 
@@ -101,7 +102,7 @@ final class PlayerManager implements Handler.Callback {
 
   void recycle(ToroPlayer player) {
     // no-ops, place holder only.
-    if (handler != null) handler.removeCallbacksAndMessages(null);
+    if (handler != null) handler.removeCallbacksAndMessages(player);
   }
 
   void clear() {
@@ -109,7 +110,7 @@ final class PlayerManager implements Handler.Callback {
     this.players.clear();
   }
 
-  void postponeDelayedPlaybacks() {
+  void deferPlaybacks() {
     if (handler != null) handler.removeMessages(MSG_PLAY);
   }
 

@@ -92,10 +92,6 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
   }
 
-  @Override public void onSettled(Container container) {
-    // Do nothing
-  }
-
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }

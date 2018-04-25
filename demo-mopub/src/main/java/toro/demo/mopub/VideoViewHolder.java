@@ -101,7 +101,4 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
     return getAdapterPosition();
   }
 
-  @Override public void onSettled(Container container) {
-    // Do nothing
-  }
 }

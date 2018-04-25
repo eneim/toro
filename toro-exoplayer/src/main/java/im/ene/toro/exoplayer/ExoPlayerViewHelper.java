@@ -81,7 +81,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this.playable.setPlayerView((PlayerView) player.getPlayerView());
   }
 
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@Nullable PlaybackInfo playbackInfo) {
     playable.addEventListener(listeners);
     playable.prepare(false);
     if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);

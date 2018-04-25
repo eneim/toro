@@ -37,17 +37,13 @@ class CustomLayoutAdapter extends RecyclerView.Adapter<CustomExoPlayerViewHolder
   private final MediaList mediaList;
   private final ItemClickListener itemClickListener;
 
-  @Deprecated CustomLayoutAdapter(MediaList mediaList) {
-    this.mediaList = mediaList;
-    this.itemClickListener = null;
-  }
-
   CustomLayoutAdapter(MediaList mediaList, ItemClickListener itemClickListener) {
     this.mediaList = mediaList;
     this.itemClickListener = itemClickListener;
   }
 
-  @Override public CustomExoPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull @Override
+  public CustomExoPlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(CustomExoPlayerViewHolder.LAYOUT_RES, parent, false);
     CustomExoPlayerViewHolder viewHolder = new CustomExoPlayerViewHolder(view);
@@ -63,7 +59,7 @@ class CustomLayoutAdapter extends RecyclerView.Adapter<CustomExoPlayerViewHolder
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(CustomExoPlayerViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull CustomExoPlayerViewHolder holder, int position) {
     holder.bind(mediaList.get(position));
   }
 

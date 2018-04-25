@@ -28,7 +28,8 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:supportsRtl="true"
       android:theme="@style/AppTheme"
-      tools:replace="android:allowBackup">
+      tools:replace="android:allowBackup"
+      tools:ignore="GoogleAppIndexingWarning">
 
     <activity
         android:name=".MainActivity"
@@ -82,7 +83,7 @@
 
     <activity-alias
         android:name=".Launch"
-        android:targetActivity=".custom.CustomLayoutActivity">
+        android:targetActivity=".basic.BasicListActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

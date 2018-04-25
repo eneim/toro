@@ -35,6 +35,8 @@ import java.util.ArrayList;
  * forwarding the playback state to the {@link ToroPlayer} if there is any {@link EventListener}
  * registered. It also requests the initialization for the Player.
  *
+ * From 3.4.0, this class can be reused as much as possible.
+ *
  * @author eneim | 6/11/17.
  */
 @SuppressWarnings("WeakerAccess") //
@@ -137,11 +139,8 @@ public abstract class ToroPlayerHelper {
    * such cached information.
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead. From 3.5.0, this method
-   * will be downgraded to protected only.
    */
-  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated  //
-  public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
+  protected abstract void initialize(@Nullable PlaybackInfo playbackInfo);
 
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     this.container = container;
@@ -176,7 +175,8 @@ public abstract class ToroPlayerHelper {
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
-  public abstract void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
+  public abstract void addOnVolumeChangeListener(
+      @NonNull ToroPlayer.OnVolumeChangeListener listener);
 
   public abstract void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
 

@@ -119,9 +119,6 @@ final class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements To
     return getAdapterPosition();
   }
 
-  @Override public void onSettled(Container container) {
-  }
-
   void bind(@NonNull Video item) {
     this.videoId = item.getId();
     this.videoName.setText(item.getSnippet().getTitle());

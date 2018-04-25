@@ -76,13 +76,6 @@ public interface ToroPlayer {
   int getPlayerOrder();
 
   /**
-   * Notify a Player about its {@link Container}'s scroll state change.
-   *
-   * @deprecated no-longer used. Will be removed from 3.5.0
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated void onSettled(Container container);
-
-  /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
    */
   interface EventListener {
