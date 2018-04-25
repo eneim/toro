@@ -397,8 +397,6 @@ public class Container extends RecyclerView {
   private final ToroDataObserver dataObserver = new ToroDataObserver();
 
   /**
-   * {@inheritDoc}
-   *
    * See {@link Adapter#registerAdapterDataObserver(AdapterDataObserver)}
    * See {@link Adapter#unregisterAdapterDataObserver(AdapterDataObserver)}
    */
@@ -408,8 +406,6 @@ public class Container extends RecyclerView {
   }
 
   /**
-   * {@inheritDoc}
-   *
    * See {@link Container#setAdapter(Adapter)}
    */
   @CallSuper @Override public void swapAdapter(Adapter adapter,
@@ -503,8 +499,6 @@ public class Container extends RecyclerView {
   SparseArray<PlaybackInfo> tmpStates = null;
 
   /**
-   * {@inheritDoc}
-   *
    * In case user press "App Stack" button, this View's window will have visibility change from
    * {@link #VISIBLE} to {@link #INVISIBLE} to {@link #GONE}. When user is back from that state,
    * the visibility changes from {@link #GONE} to {@link #INVISIBLE} to {@link #VISIBLE}. A proper

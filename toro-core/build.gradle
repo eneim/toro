@@ -47,9 +47,12 @@ dependencies {
   implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
 
+  doc "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}:sources"
+  doc "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}:sources"
+
   testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:1.0.1'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 ext {

@@ -52,13 +52,20 @@ dependencies {
   // For native video. This will automatically also include native static
   implementation('com.mopub:mopub-sdk-native-video:4.20.0@aar')
 
-  implementation ("com.google.android.exoplayer:exoplayer:r2.4.4") {
+  implementation("com.google.android.exoplayer:exoplayer:r2.4.4") {
     exclude group: 'com.android.support'
   }
 
+  //noinspection GradleDependency
+  doc "com.google.android.exoplayer:exoplayer-core:r2.4.4:sources"
+  doc "com.google.android.exoplayer:exoplayer-ui:r2.4.4:sources"
+  doc "com.google.android.exoplayer:exoplayer-dash:r2.4.4:sources"
+  doc "com.google.android.exoplayer:exoplayer-hls:r2.4.4:sources"
+  doc "com.google.android.exoplayer:exoplayer-smoothstreaming:r2.4.4:sources"
+
   testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:1.0.1'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 ext {
