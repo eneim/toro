@@ -127,4 +127,6 @@ public class PlaybackInfo implements Parcelable {
       return new PlaybackInfo[size];
     }
   };
+
+  public static final PlaybackInfo SCRAP = new PlaybackInfo();
 }

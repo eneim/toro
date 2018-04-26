@@ -28,7 +28,7 @@ import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * General definition of a helper class for a specific {@link ToroPlayer}. This class helps
@@ -88,7 +88,7 @@ public abstract class ToroPlayerHelper {
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
 
-  final ArrayList<EventListener> eventListeners = new ArrayList<>();
+  final HashSet<EventListener> eventListeners = new HashSet<>();
   final EventListener internalListener = new EventListener() {
     @Override public void onBuffering() {
       // do nothing
@@ -107,18 +107,16 @@ public abstract class ToroPlayerHelper {
 
     @Override public void onCompleted() {
       if (container != null) {
-        container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+        // Save PlaybackInfo.SCRAP to mark this player to be re-init.
+        // Customer behaviour may override this to match specific requirement.
+        // TODO [20180426]: make this overridable.
+        container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
       }
     }
   };
 
   public ToroPlayerHelper(@NonNull ToroPlayer player) {
     this.player = player;
-  }
-
-  // Hook into the scroll state change event. Called by the enclosing ToroPlayer.
-  public void onSettled() {
-    // Do nothing, sub class can override this.
   }
 
   @SuppressWarnings("ConstantConditions")

@@ -171,7 +171,10 @@ public class Container extends RecyclerView {
     if (!players.isEmpty()) {
       for (int size = players.size(), i = size - 1; i >= 0; i--) {
         ToroPlayer player = players.get(i);
-        if (player.isPlaying()) playerManager.pause(player);
+        if (player.isPlaying()) {
+          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          playerManager.pause(player);
+        }
         playerManager.release(player);
       }
       playerManager.clear();
@@ -206,8 +209,8 @@ public class Container extends RecyclerView {
     super.onChildAttachedToWindow(child);
     child.addOnLayoutChangeListener(childLayoutChangeListener);
     final ViewHolder holder = getChildViewHolder(child);
-    //noinspection PointlessNullCheck
-    if (holder == null || !(holder instanceof ToroPlayer)) return;
+    if (!(holder instanceof ToroPlayer)) return;
+
     final ToroPlayer player = (ToroPlayer) holder;
     final View playerView = player.getPlayerView();
     if (playerView == null) {
@@ -222,6 +225,7 @@ public class Container extends RecyclerView {
         playerManager.play(player, playerDispatcher.getDelayToPlay(player));
       }
     } else {
+      playbackInfoCache.onPlayerAttached(player);
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -249,13 +253,14 @@ public class Container extends RecyclerView {
         throw new IllegalStateException(
             "Player is playing while it is not in managed state: " + player);
       }
-      // save playback info
+      // FIXME [2018/04/26] commented out, double check this and un-comment if need.
       this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-      playerManager.pause(player);
+      playerManager.pause(player);  // TODO check if this call will also trigger the info saving.
     }
     if (playerManaged) {
       playerManager.detachPlayer(player);
     }
+    playbackInfoCache.onPlayerDetached(player);
     // RecyclerView#onChildDetachedFromWindow(View) is called after other removal finishes, so
     // sometime it happens after all Animation, but we also need to update playback here.
     // If there is no anymore child view, this call will end early.
@@ -434,6 +439,7 @@ public class Container extends RecyclerView {
    * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
    */
   public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+    Log.w(TAG, "savePlaybackInfo() called with: order = [" + order + "]");
     playbackInfoCache.savePlaybackInfo(order, playbackInfo);
   }
 
@@ -599,18 +605,18 @@ public class Container extends RecyclerView {
     final SparseArray<PlaybackInfo> states = new SparseArray<>();
 
     List<ToroPlayer> source = playerManager.getPlayers();
-    List<Integer> playingOrders = new ArrayList<>();
+    // List<Integer> playingOrders = new ArrayList<>();
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
-        playingOrders.add(player.getPlayerOrder());
+        // playingOrders.add(player.getPlayerOrder());
         PlaybackInfo info = player.getCurrentPlaybackInfo();
         this.savePlaybackInfo(player.getPlayerOrder(), info);
-        states.put(player.getPlayerOrder(), info);
+        // states.put(player.getPlayerOrder(), info);
         playerManager.pause(player);
       }
     }
 
-    savedOrders.removeAll(playingOrders);
+    // savedOrders.removeAll(playingOrders);
 
     for (Integer order : savedOrders) {
       states.put(order, this.getPlaybackInfo(order));
@@ -788,8 +794,9 @@ public class Container extends RecyclerView {
     @Override public void onViewRecycled(ViewHolder holder) {
       if (this.delegate != null) this.delegate.onViewRecycled(holder);
       if (holder instanceof ToroPlayer) {
-        this.container.playerManager.recycle((ToroPlayer) holder);
-        this.container.playbackInfoCache.onViewRecycled(holder);
+        ToroPlayer player = (ToroPlayer) holder;
+        this.container.playbackInfoCache.onPlayerRecycled(player);
+        this.container.playerManager.recycle(player);
       }
     }
   }

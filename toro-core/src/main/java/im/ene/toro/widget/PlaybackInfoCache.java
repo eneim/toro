@@ -20,142 +20,156 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnChildAttachStateChangeListener;
-import android.support.v7.widget.RecyclerView.RecyclerListener;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
+import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import java.util.HashMap;
 
+import static im.ene.toro.media.PlaybackInfo.SCRAP;
+
 /**
  * @author eneim (2018/04/24).
+ *
+ * Design Target:
+ *
+ * [1] Manage the {@link PlaybackInfo} of current {@link ToroPlayer}. Should match 1-1 with the
+ * {@link ToroPlayer}s that {@link PlayerManager} is managing.
+ *
+ * [2] If a non-null {@link CacheManager} provided to the {@link Container}, this class must
+ * properly manage the {@link PlaybackInfo} of detached {@link ToroPlayer} and restore it to
+ * previous state when being re-attached.
  */
 final class PlaybackInfoCache extends RecyclerView.AdapterDataObserver
-    implements OnAttachStateChangeListener, OnChildAttachStateChangeListener, RecyclerListener {
+    implements OnAttachStateChangeListener {
 
   @SuppressWarnings("unused") //
   private static final String TAG = "ToroLib:InfoCache";
-  // Mark an entry as scrap playback info, so that it requires an initialization.
-  private static final PlaybackInfo SCRAP = new PlaybackInfo();
 
   @NonNull private final Container container;
-  private HashMap<Object, PlaybackInfo> cache;
-  private HashMap<Integer, PlaybackInfo> liveCache; // only cache attached Views.
+  private HashMap<Object, PlaybackInfo> coldCache;
+  private HashMap<Integer, PlaybackInfo> hotCache; // only cache attached Views.
 
   PlaybackInfoCache(@NonNull Container container) {
     this.container = container;
     // Setup
     this.container.addOnAttachStateChangeListener(this);
-    this.container.addOnChildAttachStateChangeListener(this);
   }
 
   @SuppressLint("UseSparseArrays")  //
   @Override public void onViewAttachedToWindow(View v) {
-    liveCache = new HashMap<>();
+    hotCache = new DebugHashMap<>();
   }
 
   @Override public void onViewDetachedFromWindow(View v) {
     this.container.removeOnAttachStateChangeListener(this);
-    if (liveCache != null) {
-      liveCache.clear();
-      liveCache = null;
+    if (hotCache != null) {
+      hotCache.clear();
+      hotCache = null;
     }
   }
 
-  // Get called after Container#onChildViewAttachedToWindow(View).
-  @Override public void onChildViewAttachedToWindow(View view) {
-    RecyclerView.ViewHolder viewHolder = this.container.getChildViewHolder(view);
-    if (!(viewHolder instanceof ToroPlayer)) return;
-    final ToroPlayer player = (ToroPlayer) viewHolder;
+  final void onPlayerAttached(ToroPlayer player) {
     Integer playerOrder = player.getPlayerOrder();
+    // [1] Check if there is cold cache for this player
     Object key = getKey(playerOrder);
-
-    if (key == null) return;
-
-    if (!getCache().containsKey(key)) {
-      getCache().put(key, SCRAP);
+    PlaybackInfo cache = key == null ? null : getCache().get(key);
+    if (cache == null || cache == SCRAP) {
+      // We init this even if there is no CacheManager available, because this is what User expects.
+      cache = container.playerInitializer.initPlaybackInfo(playerOrder);
+      // Only save to cold cache when there is a valid CacheManager (key is not null).
+      if (key != null) getCache().put(key, cache);
     }
 
-    PlaybackInfo current = getCache().get(key);
-    if (current == null) throw new IllegalStateException("Unstable cache state: " + playerOrder);
-    if (current == SCRAP) {
-      current = container.playerInitializer.initPlaybackInfo(playerOrder);
-      getCache().put(key, current);
+    if (hotCache != null) hotCache.put(playerOrder, cache);
+  }
+
+  // Will be called from Container#onChildViewDetachedFromWindow(View)
+  // Therefore, it may not be called on all views. For example: when user close the App, by default
+  // when RecyclerView is detached from Window, it will not call onChildViewDetachedFromWindow for
+  // its children.
+  // This method will:
+  // [1] Take current hot cache entry of the player, and put back to cold cache.
+  // [2] Remove the hot cache entry of the player.
+  final void onPlayerDetached(ToroPlayer player) {
+    Integer playerOrder = player.getPlayerOrder();
+    if (hotCache != null && hotCache.containsKey(playerOrder)) {
+      PlaybackInfo cache = hotCache.remove(playerOrder);
+      Object key = getKey(playerOrder);
+      if (key != null) getCache().put(key, cache);
     }
-
-    // this.savePlaybackInfo(playerOrder, current);
-    if (liveCache != null) liveCache.put(playerOrder, current);
   }
 
-  @Override public void onChildViewDetachedFromWindow(View view) {
-    // no-ops
-    RecyclerView.ViewHolder viewHolder = this.container.getChildViewHolder(view);
-    if (!(viewHolder instanceof ToroPlayer)) return;
-    final ToroPlayer player = (ToroPlayer) viewHolder;
-    Integer playerOrder = player.getPlayerOrder();
-    if (liveCache != null) liveCache.remove(playerOrder);
-  }
-
-  @Override public void onViewRecycled(RecyclerView.ViewHolder holder) {
-    if (!(holder instanceof ToroPlayer)) return;
-    final ToroPlayer player = (ToroPlayer) holder;
-    Integer playerOrder = player.getPlayerOrder();
-    getCache().put(getKey(playerOrder), SCRAP);
-    if (liveCache != null) liveCache.remove(playerOrder);
+  @SuppressWarnings("unused") final void onPlayerRecycled(ToroPlayer player) {
+    // TODO do anything here?
   }
 
   @Override public void onChanged() {
-    super.onChanged();
-    this.clearCache(); // we have no idea what is changed, so back to empty until we are all set.
+    // TODO implement this
   }
 
   @Override public void onItemRangeChanged(int positionStart, int itemCount) {
-    for (int i = 0; i < itemCount; i++) {
-      getCache().put(getKey(positionStart + i), SCRAP);
-    }
+    // TODO implement this
   }
 
   @Override public void onItemRangeInserted(int positionStart, int itemCount) {
-    for (int i = 0; i < itemCount; i++) {
-      getCache().put(getKey(positionStart + i), SCRAP);
-    }
+    // TODO implement this
   }
 
   @Override public void onItemRangeRemoved(int positionStart, int itemCount) {
-    for (int i = 0; i < itemCount; i++) {
-      getCache().remove(getKey(positionStart + i));
-    }
+    // TODO implement this
   }
 
   @Override public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount) {
     // TODO implement this.
   }
 
-  @SuppressLint("UseSparseArrays") @NonNull final HashMap<Object, PlaybackInfo> getCache() {
-    if (this.cache == null) this.cache = new HashMap<>();
-    return this.cache;
+  @SuppressLint("UseSparseArrays") @NonNull //
+  final HashMap<Object, PlaybackInfo> getCache() {
+    if (this.coldCache == null) this.coldCache = new HashMap<>();
+    return this.coldCache;
   }
 
   @Nullable private Object getKey(int position) {
-    return container.getCacheManager() == null ? null
-        : container.getCacheManager().getKeyForOrder(position);
+    return position == RecyclerView.NO_POSITION ? null :  //
+        container.getCacheManager() == null ? null
+            : container.getCacheManager().getKeyForOrder(position);
   }
 
   @NonNull final PlaybackInfo getPlaybackInfo(int position) {
+    if (position >= 0 && (hotCache != null && !hotCache.containsKey(position))) {
+      throw new IllegalStateException("Unstable cache state: position is not in hot cache.");
+    }
+
     Object key = getKey(position);
-    PlaybackInfo liveCached = liveCache != null ? liveCache.get(position) : new PlaybackInfo();
-    return liveCached != null ? liveCached :  //
-        key == null ? container.playerInitializer.initPlaybackInfo(position) : getCache().get(key);
+    PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;
+    if (info != null && info == SCRAP) {
+      info = container.playerInitializer.initPlaybackInfo(position);
+    }
+
+    return info != null ? info :  //
+        key != null ? getCache().get(key) : container.playerInitializer.initPlaybackInfo(position);
   }
 
   final void savePlaybackInfo(int position, @NonNull PlaybackInfo playbackInfo) {
-    getCache().put(getKey(position), ToroUtil.checkNotNull(playbackInfo));
-    if (liveCache != null) liveCache.put(position, playbackInfo);
+    Object key = getKey(position);
+    if (key != null) getCache().put(key, ToroUtil.checkNotNull(playbackInfo));
+    if (hotCache != null) hotCache.put(position, playbackInfo);
   }
 
   final void clearCache() {
     getCache().clear();
+    if (hotCache != null) hotCache.clear();
+  }
+
+  static class DebugHashMap<K, V> extends HashMap<K, V> {
+
+    @Override public V put(K key, V value) {
+      Log.d(TAG, "put() called with: key = [" + key + "], value = [" + value + "]");
+      return super.put(key, value);
+    }
   }
 }
