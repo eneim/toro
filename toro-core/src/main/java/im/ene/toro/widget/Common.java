@@ -62,7 +62,7 @@ final class Common {
     dummyRect.setEmpty();
     dummyPoint.set(0, 0);
     //noinspection ConstantConditions
-    boolean valid = player != null && player instanceof RecyclerView.ViewHolder;  // Should be true
+    boolean valid = player instanceof RecyclerView.ViewHolder;  // Should be true
     if (valid) valid = ((RecyclerView.ViewHolder) player).itemView.getParent() != null;
     if (valid) valid = player.getPlayerView().getGlobalVisibleRect(dummyRect, dummyPoint);
     return valid;

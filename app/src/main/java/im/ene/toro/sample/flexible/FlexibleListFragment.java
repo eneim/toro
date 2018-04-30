@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
+ *
  *        http://www.apache.org/licenses/LICENSE-2.0
- *        
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -103,9 +103,8 @@ public class FlexibleListFragment extends BaseFragment {
         Point videoSize = new Point(view.getWidth(), view.getHeight());
         if (view instanceof PlayerView && ((PlayerView) view).getPlayer() != null) {
           Player player = ((PlayerView) view).getPlayer();
-          Format videoFormat =  //
-              player instanceof SimpleExoPlayer ? ((SimpleExoPlayer) player).getVideoFormat()
-                  : null;
+          Format videoFormat = player instanceof SimpleExoPlayer ?  //
+              ((SimpleExoPlayer) player).getVideoFormat() : null;
           if (videoFormat != null
               && videoFormat.width != Format.NO_VALUE
               && videoFormat.height != Format.NO_VALUE) {
@@ -113,18 +112,18 @@ public class FlexibleListFragment extends BaseFragment {
           }
         }
 
-        Intent intent = createIntent(getContext(), position, media.mediaUri,  //
+        Intent intent = createIntent(requireContext(), position, media.mediaUri,  //
             content, info, viewSize, videoSize, true);
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-            makeSceneTransitionAnimation(getActivity(), view, ViewCompat.getTransitionName(view));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation( //
+            requireActivity(), view, ViewCompat.getTransitionName(view));
         startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());
       }
     });
     container.setAdapter(adapter);
     container.setCacheManager(adapter);
 
-    itemTouchHelper =
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(UP | DOWN | LEFT | RIGHT, 0) {
+    itemTouchHelper = new ItemTouchHelper(  //
+        new ItemTouchHelper.SimpleCallback(UP | DOWN | LEFT | RIGHT, 0) {
           @Override public boolean onMove(RecyclerView recyclerView, //
               RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             return adapter.swap(viewHolder.getAdapterPosition(), target.getAdapterPosition());

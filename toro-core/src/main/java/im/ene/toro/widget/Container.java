@@ -217,6 +217,7 @@ public class Container extends RecyclerView {
       throw new NullPointerException("Expected non-null playerView, found null for: " + player);
     }
 
+    playbackInfoCache.onPlayerAttached(player);
     if (playerManager.manages(player)) {
       // I don't expect this to be called. If this happens, make sure to note the scenario.
       Log.w(TAG, "!!Already managed: player = [" + player + "]");
@@ -225,7 +226,6 @@ public class Container extends RecyclerView {
         playerManager.play(player, playerDispatcher.getDelayToPlay(player));
       }
     } else {
-      playbackInfoCache.onPlayerAttached(player);
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -439,7 +439,6 @@ public class Container extends RecyclerView {
    * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
    */
   public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-    Log.w(TAG, "savePlaybackInfo() called with: order = [" + order + "]");
     playbackInfoCache.savePlaybackInfo(order, playbackInfo);
   }
 
@@ -462,7 +461,7 @@ public class Container extends RecyclerView {
   @NonNull public List<Integer> getSavedPlayerOrders() {
     List<Integer> orders = new ArrayList<>();
     if (cacheManager == null) return orders;
-    for (Object key : playbackInfoCache.getCache().keySet()) {
+    for (Object key : playbackInfoCache.coldCache.keySet()) {
       Integer order = cacheManager.getOrderForKey(key);
       if (order != null) orders.add(order);
     }
