@@ -459,13 +459,7 @@ public class Container extends RecyclerView {
    * @return list of {@link ToroPlayer}s' orders.
    */
   @NonNull public List<Integer> getSavedPlayerOrders() {
-    List<Integer> orders = new ArrayList<>();
-    if (cacheManager == null) return orders;
-    for (Object key : playbackInfoCache.coldCache.keySet()) {
-      Integer order = cacheManager.getOrderForKey(key);
-      if (order != null) orders.add(order);
-    }
-    return orders;
+    return new ArrayList<>(playbackInfoCache.coldKeyToOrderMap.keySet());
   }
 
   /**
@@ -598,28 +592,15 @@ public class Container extends RecyclerView {
 
   @Override protected Parcelable onSaveInstanceState() {
     Parcelable superState = super.onSaveInstanceState();
-    final Collection<Integer> savedOrders = this.getSavedPlayerOrders();
-    if (savedOrders.isEmpty()) return superState;
-    // Process saving playback state from here since Client wants this.
-    final SparseArray<PlaybackInfo> states = new SparseArray<>();
-
     List<ToroPlayer> source = playerManager.getPlayers();
-    // List<Integer> playingOrders = new ArrayList<>();
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
-        // playingOrders.add(player.getPlayerOrder());
-        PlaybackInfo info = player.getCurrentPlaybackInfo();
-        this.savePlaybackInfo(player.getPlayerOrder(), info);
-        // states.put(player.getPlayerOrder(), info);
+        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
         playerManager.pause(player);
       }
     }
 
-    // savedOrders.removeAll(playingOrders);
-
-    for (Integer order : savedOrders) {
-      states.put(order, this.getPlaybackInfo(order));
-    }
+    final SparseArray<PlaybackInfo> states = playbackInfoCache.saveStates();
 
     boolean recreating =
         getContext() instanceof Activity && ((Activity) getContext()).isChangingConfigurations();
@@ -656,14 +637,7 @@ public class Container extends RecyclerView {
     PlayerViewState viewState = (PlayerViewState) state;
     super.onRestoreInstanceState(viewState.getSuperState());
     SparseArray<?> saveStates = viewState.statesCache;
-    int cacheSize;
-    if (saveStates != null && (cacheSize = saveStates.size()) > 0) {
-      for (int i = 0; i < cacheSize; i++) {
-        int order = saveStates.keyAt(i);
-        PlaybackInfo playbackInfo = (PlaybackInfo) saveStates.get(order);
-        this.savePlaybackInfo(order, playbackInfo);
-      }
-    }
+    playbackInfoCache.restoreStates(saveStates);
   }
 
   /**

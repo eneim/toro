@@ -111,7 +111,7 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     this.initPosition = -1;
-    if (playbackInfo != null && playbackInfo instanceof ExtraPlaybackInfo) {
+    if (playbackInfo instanceof ExtraPlaybackInfo) {
       //noinspection unchecked
       SparseArray<PlaybackInfo> cache = ((ExtraPlaybackInfo) playbackInfo).actualInfo;
       if (cache != null) {

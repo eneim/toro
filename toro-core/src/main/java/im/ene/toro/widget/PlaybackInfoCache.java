@@ -21,7 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
-import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
 import im.ene.toro.CacheManager;
@@ -51,8 +51,6 @@ import static im.ene.toro.media.PlaybackInfo.SCRAP;
  */
 @SuppressWarnings({ "WeakerAccess", "unused" }) @SuppressLint("UseSparseArrays")
 final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachStateChangeListener {
-
-  private static final String TAG = "ToroLib:InfoCache";
 
   private static final Comparator<Integer> ORDER_COMPARATOR = new Comparator<Integer>() {
     @Override public int compare(Integer o1, Integer o2) {
@@ -335,17 +333,12 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
   }
 
   @NonNull final PlaybackInfo getPlaybackInfo(int position) {
-    if (position >= 0 && (hotCache != null && !hotCache.containsKey(position))) {
-      Log.e(TAG, "getPlaybackInfo: " + "Position is not in hot cache: " + position);
-      hotCache.put(position, SCRAP);  // should not happen.
-    }
-
-    Object key = getKey(position);
     PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;
     if (info != null && info == SCRAP) {  // has hot cache, but was SCRAP.
       info = container.playerInitializer.initPlaybackInfo(position);
     }
 
+    Object key = getKey(position);
     return info != null ? info :  //
         key != null ? coldCache.get(key) : container.playerInitializer.initPlaybackInfo(position);
   }
@@ -355,7 +348,30 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     ToroUtil.checkNotNull(playbackInfo);
     if (hotCache != null) hotCache.put(position, playbackInfo);
     Object key = getKey(position);
-    if (key != null) coldCache.put(key, playbackInfo);
+    if (key != null) {
+      coldCache.put(key, playbackInfo);
+    }
+  }
+
+  @NonNull SparseArray<PlaybackInfo> saveStates() {
+    SparseArray<PlaybackInfo> states = new SparseArray<>();
+    for (Map.Entry<Integer, Object> entry : coldKeyToOrderMap.entrySet()) {
+      states.put(entry.getKey(), coldCache.get(entry.getValue()));
+    }
+    return states;
+  }
+
+  void restoreStates(@Nullable SparseArray<?> savedStates) {
+    int cacheSize;
+    if (savedStates != null && (cacheSize = savedStates.size()) > 0) {
+      for (int i = 0; i < cacheSize; i++) {
+        int order = savedStates.keyAt(i);
+        Object key = getKey(order);
+        coldKeyToOrderMap.put(order, key);
+        PlaybackInfo playbackInfo = (PlaybackInfo) savedStates.get(order);
+        this.savePlaybackInfo(order, playbackInfo);
+      }
+    }
   }
 
   final void clearCache() {
