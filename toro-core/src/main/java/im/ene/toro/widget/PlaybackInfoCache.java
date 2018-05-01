@@ -28,7 +28,6 @@ import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +35,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import static im.ene.toro.media.PlaybackInfo.SCRAP;
+import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
 
 /**
  * @author eneim (2018/04/24).
@@ -52,16 +52,10 @@ import static im.ene.toro.media.PlaybackInfo.SCRAP;
 @SuppressWarnings({ "WeakerAccess", "unused" }) @SuppressLint("UseSparseArrays")
 final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachStateChangeListener {
 
-  private static final Comparator<Integer> ORDER_COMPARATOR = new Comparator<Integer>() {
-    @Override public int compare(Integer o1, Integer o2) {
-      return o1.compareTo(o2);
-    }
-  };
-
   @NonNull private final Container container;
   /* pkg */ Map<Object, PlaybackInfo> coldCache = new HashMap<>();
   /* pkg */ Map<Integer, PlaybackInfo> hotCache; // only cache attached Views.
-  /* pkg */ Map<Integer, Object> coldKeyToOrderMap = new TreeMap<>(ORDER_COMPARATOR);
+  /* pkg */ Map<Integer, Object> coldKeyToOrderMap = new TreeMap<>(ORDER_COMPARATOR_INT);
 
   PlaybackInfoCache(@NonNull Container container) {
     this.container = container;
@@ -69,7 +63,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
   }
 
   @Override public void onViewAttachedToWindow(View v) {
-    hotCache = new TreeMap<>(ORDER_COMPARATOR);
+    hotCache = new TreeMap<>(ORDER_COMPARATOR_INT);
   }
 
   @Override public void onViewDetachedFromWindow(View v) {
@@ -136,7 +130,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
   @Override public void onItemRangeChanged(final int positionStart, final int itemCount) {
     if (itemCount == 0) return;
     if (container.getCacheManager() != null) {
-      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : coldKeyToOrderMap.keySet()) {
         if (key >= positionStart && key < positionStart + itemCount) {
           changedColdKeys.add(key);
@@ -150,7 +144,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     }
 
     if (hotCache != null) {
-      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : hotCache.keySet()) {
         if (key >= positionStart && key < positionStart + itemCount) {
           changedHotKeys.add(key);
@@ -169,7 +163,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     if (container.getCacheManager() != null) {
       // [1] Take keys of old one.
       // 1.1 Extract subset of keys only:
-      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : coldKeyToOrderMap.keySet()) {
         if (key >= positionStart) {
           changedColdKeys.add(key);
@@ -197,7 +191,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     if (hotCache != null) {
       // [2] Shift cache by specific number
       Map<Integer, PlaybackInfo> changedHotEntriesCache = new HashMap<>();
-      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : hotCache.keySet()) {
         if (key >= positionStart) {
           changedHotKeys.add(key);
@@ -220,7 +214,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     if (container.getCacheManager() != null) {
       // [1] Take keys of old one.
       // 1.1 Extract subset of keys only:
-      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : coldKeyToOrderMap.keySet()) {
         if (key >= positionStart + itemCount) changedColdKeys.add(key);
       }
@@ -249,7 +243,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
 
       // [2] Shift cache by specific number
       Map<Integer, PlaybackInfo> changedHotEntriesCache = new HashMap<>();
-      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : hotCache.keySet()) {
         if (key >= positionStart + itemCount) changedHotKeys.add(key);
       }
@@ -274,7 +268,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     // [1] Migrate cold cache.
     if (container.getCacheManager() != null) {
       // 1.1 Extract subset of keys only:
-      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : coldKeyToOrderMap.keySet()) {
         if (key >= left && key <= right) changedColdKeys.add(key);
       }
@@ -301,7 +295,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
 
     // Update hot cache.
     if (hotCache != null) {
-      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR);
+      Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : hotCache.keySet()) {
         if (key >= left && key <= right) changedHotKeys.add(key);
       }
@@ -348,9 +342,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     ToroUtil.checkNotNull(playbackInfo);
     if (hotCache != null) hotCache.put(position, playbackInfo);
     Object key = getKey(position);
-    if (key != null) {
-      coldCache.put(key, playbackInfo);
-    }
+    if (key != null) coldCache.put(key, playbackInfo);
   }
 
   @NonNull SparseArray<PlaybackInfo> saveStates() {

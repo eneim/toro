@@ -58,6 +58,12 @@ final class Common {
     }
   };
 
+  static final Comparator<Integer> ORDER_COMPARATOR_INT = new Comparator<Integer>() {
+    @Override public int compare(Integer o1, Integer o2) {
+      return o1.compareTo(o2);
+    }
+  };
+
   static boolean allowsToPlay(@NonNull ToroPlayer player) {
     dummyRect.setEmpty();
     dummyPoint.set(0, 0);
