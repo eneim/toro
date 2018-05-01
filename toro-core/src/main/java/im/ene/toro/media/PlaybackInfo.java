@@ -18,6 +18,7 @@ package im.ene.toro.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * @author eneim | 6/6/17.
@@ -31,15 +32,15 @@ public class PlaybackInfo implements Parcelable {
 
   private int resumeWindow;
   private long resumePosition;
-  private VolumeInfo volumeInfo;
+  @NonNull private VolumeInfo volumeInfo;
 
-  public PlaybackInfo(int resumeWindow, long resumePosition) {
+  @Deprecated public PlaybackInfo(int resumeWindow, long resumePosition) {
     this.resumeWindow = resumeWindow;
     this.resumePosition = resumePosition;
     this.volumeInfo = new VolumeInfo(false, 1.f);
   }
 
-  public PlaybackInfo(int resumeWindow, long resumePosition, VolumeInfo volumeInfo) {
+  public PlaybackInfo(int resumeWindow, long resumePosition, @NonNull VolumeInfo volumeInfo) {
     this.resumeWindow = resumeWindow;
     this.resumePosition = resumePosition;
     this.volumeInfo = volumeInfo;
@@ -50,7 +51,7 @@ public class PlaybackInfo implements Parcelable {
   }
 
   public PlaybackInfo(PlaybackInfo other) {
-    this(other.getResumeWindow(), other.getResumePosition(), other.volumeInfo);
+    this(other.getResumeWindow(), other.getResumePosition(), other.getVolumeInfo());
   }
 
   public int getResumeWindow() {
@@ -69,21 +70,30 @@ public class PlaybackInfo implements Parcelable {
     this.resumePosition = resumePosition;
   }
 
-  public VolumeInfo getVolumeInfo() {
+  @NonNull public VolumeInfo getVolumeInfo() {
     return volumeInfo;
   }
 
-  public void setVolumeInfo(VolumeInfo volumeInfo) {
+  public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     this.volumeInfo = volumeInfo;
   }
 
   public void reset() {
     resumeWindow = INDEX_UNSET;
     resumePosition = TIME_UNSET;
+    volumeInfo = new VolumeInfo(false, 1.f);
   }
 
   @Override public String toString() {
-    return "State{" + "window=" + resumeWindow + ", position=" + resumePosition + '}';
+    return this == SCRAP ? "Info:SCRAP" : //
+        "Info{"
+            + "window="
+            + resumeWindow
+            + ", position="
+            + resumePosition
+            + ", volume="
+            + volumeInfo
+            + '}';
   }
 
   @Override public boolean equals(Object o) {

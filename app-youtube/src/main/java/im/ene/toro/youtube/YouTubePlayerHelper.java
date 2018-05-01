@@ -70,11 +70,9 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     this.videoId = videoId;
   }
 
-  @Override protected void initialize(@Nullable PlaybackInfo playbackInfo) {
-    if (playbackInfo != null) {
-      this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
-      this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
-    }
+  @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
+    this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
+    this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
     playWhenReady.set(false);
     if (handler == null) handler = new Handler(this);
     handler.sendEmptyMessageDelayed(MSG_INIT, MSG_DELAY);

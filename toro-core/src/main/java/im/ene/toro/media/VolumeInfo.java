@@ -46,6 +46,10 @@ public final class VolumeInfo implements Parcelable {
     this.volume = volume;
   }
 
+  public VolumeInfo(VolumeInfo other) {
+    this(other.isMute(), other.getVolume());
+  }
+
   public boolean isMute() {
     return mute;
   }

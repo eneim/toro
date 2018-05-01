@@ -60,3 +60,5 @@
 !/gradle.properties
 /.idea/markdown-navigator/
 /.idea/vcs.xml
+/.idea/markdown-navigator.xml
+/.idea/kotlinc.xml

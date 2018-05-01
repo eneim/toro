@@ -24,19 +24,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
+import im.ene.toro.exoplayer.PlayerViewHelper;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.media.PlaybackInfo;
-import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 
 /**
  * @author eneim (2018/03/13).
  */
 
+@SuppressWarnings("WeakerAccess") //
 public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
 
   protected final PlayerView playerView;
-  protected VolumeAwareHelper helper;
+  protected PlayerViewHelper helper;
   private Uri videoUri;
 
   VideoViewHolder(ViewGroup parent, LayoutInflater inflater, int layoutRes) {
@@ -54,24 +55,16 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
-    return helper != null ? helper.getLatestPlaybackInfo() : new PlaybackInfo();
+    return helper != null ? helper.getLatestPlaybackInfo() : PlaybackInfo.SCRAP;
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (videoUri == null) throw new IllegalStateException("Video is null.");
     if (helper == null) {
-      helper = new VolumeAwareHelper(this, videoUri);
+      helper = new PlayerViewHelper(this, videoUri);
     }
     helper.initialize(container, playbackInfo);
-    // Always do this after initialize.
-    // [Restore user's Volume] if playbackInfo is a VolumeAwarePlaybackInfo --> it was cached and returned here.
-    // This case, there will be a saved VolumeInfo so we use it instead.
-    if (playbackInfo instanceof VolumeAwarePlaybackInfo) {
-      helper.setVolumeInfo(((VolumeAwarePlaybackInfo) playbackInfo).getVolumeInfo());
-    } else {
-      helper.setVolumeInfo(new VolumeInfo(true, 0.75f));
-    }
   }
 
   @Override public void play() {
@@ -100,5 +93,4 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }
-
 }

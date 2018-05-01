@@ -49,7 +49,7 @@ public interface ToroPlayer {
    * @param container the RecyclerView contains this Player.
    * @param playbackInfo initialize info for the preparation.
    */
-  void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo);
+  void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
 
   /**
    * Start playback or resume from a pausing state.

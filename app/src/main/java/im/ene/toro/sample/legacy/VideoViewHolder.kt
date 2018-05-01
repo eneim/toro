@@ -46,7 +46,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
 
   override fun getCurrentPlaybackInfo() = playerHelper?.latestPlaybackInfo ?: PlaybackInfo()
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
+  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
     if (mediaUri == null) throw NullPointerException("MediaUri is null.")
     if (playerHelper == null) {
       playerHelper = LegacyVideoViewHelper(this, mediaUri!!)

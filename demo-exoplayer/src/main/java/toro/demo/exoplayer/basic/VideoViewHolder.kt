@@ -70,7 +70,7 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
   override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
+  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
     if (helper == null) helper = ExoPlayerViewHelper(this, videoUri!!, null, DemoApp.config!!)
     if (listener == null) {
       listener = object : EventListener {

@@ -62,7 +62,7 @@ public class NestedPlayerViewHolder extends BaseViewHolder implements ToroPlayer
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new ExoPlayerViewHelper(this, mediaUri);
     }

@@ -70,7 +70,8 @@ import static im.ene.toro.mopub.BuildConfig.LIB_NAME;
  * This class will be removed from 3.5.0.
  */
 
-@Deprecated @SuppressWarnings("WeakerAccess") public class ExoPlayerHelper {
+@Deprecated @SuppressWarnings("WeakerAccess") //
+public class ExoPlayerHelper {
 
   private static final String TAG = "ToroLib:ExoPlayer";
 
@@ -224,7 +225,8 @@ import static im.ene.toro.mopub.BuildConfig.LIB_NAME;
   @NonNull public PlaybackInfo getPlaybackInfo() {
     updateResumePosition();
     // return a copy only.
-    return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+    return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition(),
+        playbackInfo.getVolumeInfo());
   }
 
   public void addEventListener(@NonNull ExoPlayer.EventListener eventListener) {

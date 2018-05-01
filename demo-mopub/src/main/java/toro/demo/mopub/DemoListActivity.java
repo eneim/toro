@@ -23,9 +23,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroUtil;
+import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
+import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
 public class DemoListActivity extends AppCompatActivity {
 
@@ -49,9 +53,13 @@ public class DemoListActivity extends AppCompatActivity {
     container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
     container.setPlayerDispatcher(__ -> 500); // The playback will be delayed 500ms.
+    container.setPlayerInitializer(order -> {
+      VolumeInfo volumeInfo = new VolumeInfo(true, 0.75f);
+      PlaybackInfo playbackInfo = new PlaybackInfo(INDEX_UNSET, TIME_UNSET, volumeInfo);
+      return playbackInfo;
+    });
 
     // Only when you use Container inside a CoordinatorLayout and depends on Behavior.
-    ToroUtil.wrapParamBehavior(container,
-        () -> container.onScrollStateChanged(SCROLL_STATE_IDLE));
+    ToroUtil.wrapParamBehavior(container, () -> container.onScrollStateChanged(SCROLL_STATE_IDLE));
   }
 }

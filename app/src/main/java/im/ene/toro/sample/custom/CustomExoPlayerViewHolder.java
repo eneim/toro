@@ -65,7 +65,7 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new LoopingPlayerHelper(this, mediaUri);
     }

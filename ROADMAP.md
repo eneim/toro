@@ -9,5 +9,5 @@ TODO 20180413
 ```
 
 - [ ] **MUST**: Reuse Helper/Playable on config change.
-- [ ] **MUST**: Ability to init custom PlaybackInfo.
-- [ ] **MUST**: Put VolumeInfo into PlaybackInfo.
+- [x] **MUST**: Ability to init custom PlaybackInfo.
+- [x] **MUST**: Put VolumeInfo into PlaybackInfo.

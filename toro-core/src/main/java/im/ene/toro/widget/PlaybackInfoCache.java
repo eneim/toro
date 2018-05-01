@@ -342,7 +342,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
 
     Object key = getKey(position);
     PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;
-    if (info != null && info == SCRAP) {
+    if (info != null && info == SCRAP) {  // has hot cache, but was SCRAP.
       info = container.playerInitializer.initPlaybackInfo(position);
     }
 

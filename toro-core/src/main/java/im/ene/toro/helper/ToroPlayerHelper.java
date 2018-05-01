@@ -21,7 +21,6 @@ import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
@@ -138,9 +137,9 @@ public abstract class ToroPlayerHelper {
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
    */
-  protected abstract void initialize(@Nullable PlaybackInfo playbackInfo);
+  protected abstract void initialize(@NonNull PlaybackInfo playbackInfo);
 
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     this.container = container;
     this.initialize(playbackInfo);
   }

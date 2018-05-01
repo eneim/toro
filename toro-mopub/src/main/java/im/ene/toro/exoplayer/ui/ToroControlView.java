@@ -137,7 +137,7 @@ public class ToroControlView extends PlaybackControlView {
 
     @Override public void onClick(View v) {
       ExoPlayer player = getPlayer();
-      if (player == null || !(player instanceof SimpleExoPlayer)) return;
+      if (!(player instanceof SimpleExoPlayer)) return;
       if (v == volumeOffButton) {  // click to vol Off --> unmute
         volumeInfo.setTo(false, volumeInfo.getVolume());
       } else if (v == volumeUpButton) {  // click to vol Up --> mute

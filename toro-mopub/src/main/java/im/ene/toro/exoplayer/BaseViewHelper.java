@@ -18,7 +18,6 @@ package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
@@ -46,12 +45,12 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
     playable = checkNotNull(requirePlayable(creator, uri, extension));
   }
 
-  @Override protected void initialize(@Nullable PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
+    playable.setPlaybackInfo(playbackInfo);
     playable.addEventListener(listeners);
     playable.prepare(false);
     //noinspection unchecked
     playable.setPlayerView((VIEW) player.getPlayerView());
-    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
   @Override public void release() {
@@ -93,13 +92,13 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
     return playable.getPlaybackInfo();
   }
 
-  @SuppressWarnings("WeakerAccess") //
+  @SuppressWarnings({ "WeakerAccess", "unused" }) //
   public void addEventListener(@NonNull Playable.EventListener listener) {
     //noinspection ConstantConditions
     if (listener != null) this.listeners.add(listener);
   }
 
-  @SuppressWarnings("WeakerAccess") //
+  @SuppressWarnings({ "WeakerAccess", "unused" }) //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
   }
