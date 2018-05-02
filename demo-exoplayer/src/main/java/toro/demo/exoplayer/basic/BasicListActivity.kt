@@ -47,7 +47,7 @@ class BasicListActivity : AppCompatActivity() {
 
     disposable.add(Motion.contents()
         .subscribeOn(io()).observeOn(mainThread())
-        .doOnNext { it -> adapter.updateElements(it) }
+        .doOnNext { adapter.updateElements(it) }
         .subscribe()
     )
   }

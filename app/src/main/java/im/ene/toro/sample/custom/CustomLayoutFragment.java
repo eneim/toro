@@ -89,7 +89,7 @@ public class CustomLayoutFragment extends BaseFragment {
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_custom_layout, container, false);
   }
@@ -106,7 +106,7 @@ public class CustomLayoutFragment extends BaseFragment {
   private ViewPager.OnPageChangeListener pageChangeListener;
   private RecyclerView.OnScrollListener onScrollListener;
 
-  @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     layoutManager = new CardSliderLayoutManager(
         getResources().getDimensionPixelOffset(R.dimen.custom_card_left),

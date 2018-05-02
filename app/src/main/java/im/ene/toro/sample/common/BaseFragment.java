@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -67,7 +68,7 @@ public class BaseFragment extends Fragment {
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     if (D) {
       Log.wtf(TAG, "onCreateView() called with: inflater = ["
@@ -83,7 +84,7 @@ public class BaseFragment extends Fragment {
 
   private Unbinder unbinder;
 
-  @CallSuper @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @CallSuper @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     if (D) {
       Log.wtf(TAG, "onViewCreated() called with: view = [" + view + "], bundle = [" + bundle + "]");
@@ -104,7 +105,7 @@ public class BaseFragment extends Fragment {
     if (D) Log.wtf(TAG, "onViewStateRestored() called with: bundle = [" + bundle + "]");
   }
 
-  @Override public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     if (D) Log.wtf(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]");
     outState.putBoolean(STATE_VIEW_PAGER_MODE, this.viewPagerMode);

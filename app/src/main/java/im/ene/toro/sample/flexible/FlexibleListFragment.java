@@ -74,7 +74,7 @@ public class FlexibleListFragment extends BaseFragment {
       { R.string.license_tos, R.string.license_bbb, R.string.license_cosmos };
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_flexible, container, false);
   }
@@ -85,7 +85,7 @@ public class FlexibleListFragment extends BaseFragment {
   FlexibleListAdapter adapter;
   ItemTouchHelper itemTouchHelper;
 
-  @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     toolbarLayout.setTitle(getString(R.string.title_flexible_grid));
 

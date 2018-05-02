@@ -18,6 +18,7 @@ package im.ene.toro.sample.intro;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -64,12 +65,12 @@ public class IntroFragment extends BaseFragment {
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_intro, container, false);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     if (callback != null) callback.onToolbarCreated(toolbar);
     LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
