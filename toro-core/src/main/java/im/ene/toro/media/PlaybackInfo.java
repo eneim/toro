@@ -138,5 +138,6 @@ public class PlaybackInfo implements Parcelable {
     }
   };
 
+  // A default PlaybackInfo instance, only use this to mark un-initialized players.
   public static final PlaybackInfo SCRAP = new PlaybackInfo();
 }

@@ -73,4 +73,4 @@ ext {
   releaseDescription = 'The Toro Extension for Mopub (ExoPlayer v2)'
 }
 
-// apply from: '../gradle/script/publish.gradle'
+apply from: '../gradle/script/publish.gradle'

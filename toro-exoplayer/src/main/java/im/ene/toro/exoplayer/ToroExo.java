@@ -276,4 +276,14 @@ public final class ToroExo {
       }
     }
   }
+
+  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
+    if (player instanceof ToroExoPlayer) {
+      return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());
+    } else {
+      float volume = player.getVolume();
+      return new VolumeInfo(volume == 0, volume);
+    }
+  }
 }

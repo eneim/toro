@@ -52,7 +52,6 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 class PlayableImpl implements Playable {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
-  private final VolumeInfo volumeInfo = new VolumeInfo(false, 1); // init value.
 
   protected final EventListeners listeners = new EventListeners();  // original listener.
   // Use a Set to prevent duplicated setup.
@@ -163,14 +162,17 @@ class PlayableImpl implements Playable {
 
   @CallSuper @NonNull @Override public PlaybackInfo getPlaybackInfo() {
     updatePlaybackInfo();
-    return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+    return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition(),
+        playbackInfo.getVolumeInfo());
   }
 
   @CallSuper @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
     this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
     this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
+    this.playbackInfo.setVolumeInfo(playbackInfo.getVolumeInfo());
 
     if (player != null) {
+      ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
       boolean haveResumePosition = this.playbackInfo.getResumeWindow() != INDEX_UNSET;
       if (haveResumePosition) {
         player.seekTo(this.playbackInfo.getResumeWindow(), this.playbackInfo.getResumePosition());
@@ -189,8 +191,8 @@ class PlayableImpl implements Playable {
 
   @CallSuper @Override public void setVolume(float volume) {
     checkNotNull(player, "Playable#setVolume(): Player is null!");
-    this.volumeInfo.setTo(volume == 0, volume);
-    ToroExo.setVolumeInfo(player, this.volumeInfo);
+    playbackInfo.getVolumeInfo().setTo(volume == 0, volume);
+    ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
   }
 
   @CallSuper @Override public float getVolume() {
@@ -199,16 +201,16 @@ class PlayableImpl implements Playable {
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     checkNotNull(player, "Playable#setVolumeInfo(): Player is null!");
-    boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
+    boolean changed = !this.playbackInfo.getVolumeInfo().equals(checkNotNull(volumeInfo));
     if (changed) {
-      this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      ToroExo.setVolumeInfo(player, this.volumeInfo);
+      this.playbackInfo.getVolumeInfo().setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
     }
     return changed;
   }
 
   @NonNull @Override public VolumeInfo getVolumeInfo() {
-    return this.volumeInfo;
+    return this.playbackInfo.getVolumeInfo();
   }
 
   @Override public void setParameters(@Nullable PlaybackParameters parameters) {
@@ -224,7 +226,7 @@ class PlayableImpl implements Playable {
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
     if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
     volumeChangeListeners.add(ToroUtil.checkNotNull(listener));
-    if (this.player != null && this.player instanceof ToroExoPlayer) {
+    if (this.player instanceof ToroExoPlayer) {
       ((ToroExoPlayer) this.player).addOnVolumeChangeListener(listener);
     }
   }
@@ -233,7 +235,7 @@ class PlayableImpl implements Playable {
   public void removeOnVolumeChangeListener(@Nullable ToroPlayer.OnVolumeChangeListener listener) {
     if (volumeChangeListeners != null) {
       volumeChangeListeners.remove(listener);
-      if (this.player != null && this.player instanceof ToroExoPlayer) {
+      if (this.player instanceof ToroExoPlayer) {
         ((ToroExoPlayer) this.player).removeOnVolumeChangeListener(listener);
       }
     }
@@ -248,6 +250,7 @@ class PlayableImpl implements Playable {
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
     playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
         Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
+    playbackInfo.setVolumeInfo(ToroExo.getVolumeInfo(player));
   }
 
   private void ensurePlayerView() {

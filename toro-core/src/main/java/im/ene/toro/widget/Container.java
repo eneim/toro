@@ -255,9 +255,8 @@ public class Container extends RecyclerView {
         throw new IllegalStateException(
             "Player is playing while it is not in managed state: " + player);
       }
-      // FIXME [2018/04/26] commented out, double check this and un-comment if need.
       this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-      playerManager.pause(player);  // TODO check if this call will also trigger the info saving.
+      playerManager.pause(player);
     }
     if (playerManaged) {
       playerManager.detachPlayer(player);

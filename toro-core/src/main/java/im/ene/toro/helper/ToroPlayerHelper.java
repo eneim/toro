@@ -24,6 +24,7 @@ import android.support.annotation.NonNull;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
@@ -153,12 +154,14 @@ public abstract class ToroPlayerHelper {
   /**
    * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
    */
-  @Deprecated public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  @RemoveIn(version = "3.6.0") @Deprecated  //
+  public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
   /**
    * @deprecated use {@link #getVolumeInfo()} instead.
    */
-  @Deprecated public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
+  @RemoveIn(version = "3.6.0") @Deprecated  //
+  public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   public abstract void setVolumeInfo(@NonNull VolumeInfo volumeInfo);
 

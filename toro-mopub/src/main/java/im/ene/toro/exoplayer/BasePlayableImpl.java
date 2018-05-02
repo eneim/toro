@@ -38,7 +38,10 @@ import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
 import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
 /**
+ * Base implementation for {@link Playable}
+ *
  * @author eneim (2018/04/30).
+ * @since 3.5.0
  */
 @SuppressWarnings("WeakerAccess") //
 abstract class BasePlayableImpl<VIEW> implements Playable<VIEW> {
