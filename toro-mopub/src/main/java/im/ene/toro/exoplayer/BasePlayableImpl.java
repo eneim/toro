@@ -21,11 +21,10 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
@@ -39,17 +38,13 @@ import static im.ene.toro.media.PlaybackInfo.INDEX_UNSET;
 import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
 /**
- * [20180225]
+ * Base implementation for {@link Playable}
  *
- * Default implementation of {@link Playable}.
- *
- * Instance of {@link Playable} should be reusable. Retaining instance of Playable across config
- * change must guarantee that all {@link EventListener} are cleaned up on config change.
- *
- * @author eneim (2018/02/25).
+ * @author eneim (2018/04/30).
+ * @since 3.5.0
  */
 @SuppressWarnings("WeakerAccess") //
-class PlayableImpl implements Playable {
+abstract class BasePlayableImpl<VIEW> implements Playable<VIEW> {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
@@ -63,11 +58,11 @@ class PlayableImpl implements Playable {
 
   protected SimpleExoPlayer player; // on-demand, cached
   protected MediaSource mediaSource;  // on-demand
-  protected PlayerView playerView; // on-demand, not always required.
+  protected VIEW playerView; // on-demand, not always required.
 
   private boolean listenerApplied = false;
 
-  PlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
+  BasePlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
     this.creator = creator;
     this.mediaUri = uri;
     this.fileExt = fileExt;
@@ -77,21 +72,24 @@ class PlayableImpl implements Playable {
     if (player == null) {
       player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
-      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
+      if (player instanceof ToroExoPlayer) {
+        if (volumeChangeListeners != null) {
+          for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+            ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
+          }
         }
       }
     }
 
     if (!listenerApplied) {
       player.addListener(listeners);
-      player.addVideoListener(listeners);
-      player.addTextOutput(listeners);
-      player.addMetadataOutput(listeners);
+      player.setVideoListener(listeners);
+      player.setTextOutput(listeners);
+      player.setMetadataOutput(listeners);
       listenerApplied = true;
     }
 
+    ToroExo.setVolumeInfo(player, playbackInfo.getVolumeInfo());
     boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
@@ -103,21 +101,8 @@ class PlayableImpl implements Playable {
     }
   }
 
-  @CallSuper @Override public void setPlayerView(@Nullable PlayerView playerView) {
-    if (this.playerView == playerView) return;
-    if (playerView == null) {
-      this.playerView.setPlayer(null);
-    } else {
-      if (this.player != null) {
-        PlayerView.switchTargetView(this.player, this.playerView, playerView);
-      }
-    }
-
-    this.playerView = playerView;
-  }
-
-  @Override public final PlayerView getPlayerView() {
-    return this.playerView;
+  @Nullable @Override public VIEW getPlayerView() {
+    return playerView;
   }
 
   @CallSuper @Override public void play() {
@@ -133,24 +118,22 @@ class PlayableImpl implements Playable {
 
   @CallSuper @Override public void reset() {
     this.playbackInfo.reset();
-    if (player != null) player.stop(true);
-    // TODO [20180214] double check this when ExoPlayer 2.7.0 is released.
-    // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
+    if (player != null) player.stop();
     this.mediaSource = null; // so it will be re-prepared when play() is called.
   }
 
   @CallSuper @Override public void release() {
     this.setPlayerView(null);
     if (this.player != null) {
-      this.player.stop(true);
+      this.player.stop();
       if (this.player instanceof ToroExoPlayer) {
         ((ToroExoPlayer) this.player).clearOnVolumeChangeListener();
       }
       if (listenerApplied) {
         player.removeListener(listeners);
-        player.removeVideoListener(listeners);
-        player.removeTextOutput(listeners);
-        player.removeMetadataOutput(listeners);
+        player.setVideoListener(null);
+        player.setTextOutput(null);
+        player.setMetadataOutput(null);
         listenerApplied = false;
       }
       with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
@@ -246,16 +229,14 @@ class PlayableImpl implements Playable {
   }
 
   final void updatePlaybackInfo() {
-    if (player == null || player.getPlaybackState() == Player.STATE_IDLE) return;
+    if (player == null || player.getPlaybackState() == ExoPlayer.STATE_IDLE) return;
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
     playbackInfo.setResumePosition(player.isCurrentWindowSeekable() ? //
         Math.max(0, player.getCurrentPosition()) : TIME_UNSET);
     playbackInfo.setVolumeInfo(ToroExo.getVolumeInfo(player));
   }
 
-  private void ensurePlayerView() {
-    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
-  }
+  protected abstract void ensurePlayerView();
 
   private void ensureMediaSource() {
     if (mediaSource == null) {  // Only actually prepare the source when play() is called.

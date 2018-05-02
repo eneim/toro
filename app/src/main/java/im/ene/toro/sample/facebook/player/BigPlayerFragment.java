@@ -121,7 +121,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_dialog_facebook_bigplayer, container, false);
   }
@@ -129,7 +129,7 @@ public class BigPlayerFragment extends BlackBoardDialogFragment {
   @BindView(R.id.big_player) PlayerView playerView;
   Playable playerHelper;
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     if (callback != null) {
       callback.onBigPlayerCreated();

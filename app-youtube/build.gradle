@@ -54,6 +54,8 @@ android {
 
     manifestPlaceholders += ["fabric_api_key": propOrDef("toro_fabric_api_key", "")]
     ext.enableCrashlytics = false
+
+    multiDexEnabled true
   }
 
   buildTypes {

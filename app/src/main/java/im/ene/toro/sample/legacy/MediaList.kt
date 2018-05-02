@@ -16,7 +16,7 @@
 
 package im.ene.toro.sample.legacy
 
-import java.util.*
+import java.util.ArrayList
 
 /**
  * @author eneim (7/7/17).

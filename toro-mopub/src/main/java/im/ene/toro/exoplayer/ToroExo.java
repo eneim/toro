@@ -283,8 +283,8 @@ public final class ToroExo {
   }
 
   // Share the code of setting Volume. For use inside library only.
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public static void setVolumeInfo(@NonNull SimpleExoPlayer player, @NonNull VolumeInfo volumeInfo) {
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public static void setVolumeInfo(
+      @NonNull SimpleExoPlayer player, @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
       ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
     } else {
@@ -293,6 +293,16 @@ public final class ToroExo {
       } else {
         player.setVolume(volumeInfo.getVolume());
       }
+    }
+  }
+
+  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
+    if (player instanceof ToroExoPlayer) {
+      return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());
+    } else {
+      float volume = player.getVolume();
+      return new VolumeInfo(volume == 0, volume);
     }
   }
 }

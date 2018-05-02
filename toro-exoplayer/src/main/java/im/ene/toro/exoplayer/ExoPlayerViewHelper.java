@@ -18,10 +18,10 @@ package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
@@ -44,7 +44,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @NonNull private final MyEventListeners listeners;
 
   // Container is no longer required for constructing new instance.
-  @SuppressWarnings("unused") @Deprecated //
+  @SuppressWarnings("unused") @RemoveIn(version = "3.6.0") @Deprecated  //
   public ExoPlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
     this(player, uri);
   }
@@ -78,13 +78,13 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     listeners = new MyEventListeners();
     this.playable = playable;
-    this.playable.setPlayerView((PlayerView) player.getPlayerView());
   }
 
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
+    playable.setPlaybackInfo(playbackInfo);
     playable.addEventListener(listeners);
     playable.prepare(false);
-    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
+    playable.setPlayerView((PlayerView) player.getPlayerView());
   }
 
   @Override public void release() {

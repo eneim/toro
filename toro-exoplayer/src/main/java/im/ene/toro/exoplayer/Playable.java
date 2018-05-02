@@ -34,9 +34,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.video.VideoListener;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -158,7 +159,8 @@ public interface Playable {
    * @param volume the volume value to be set. Must be a {@code float} of range from 0 to 1.
    * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
    */
-  @Deprecated void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  @RemoveIn(version = "3.6.0") @Deprecated  //
+  void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
   /**
    * Obtain current volume value. The returned value is a {@code float} of range from 0 to 1.
@@ -166,7 +168,8 @@ public interface Playable {
    * @return current volume value.
    * @deprecated use {@link #getVolumeInfo()} instead.
    */
-  @Deprecated @FloatRange(from = 0.0, to = 1.0) float getVolume();
+  @RemoveIn(version = "3.6.0") @Deprecated  //
+  @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   /**
    * Update playback's volume.
@@ -259,7 +262,7 @@ public interface Playable {
   }
 
   /** List of EventListener */
-  class EventListeners extends ArrayList<EventListener> implements EventListener {
+  class EventListeners extends HashSet<EventListener> implements EventListener {
 
     EventListeners() {
     }

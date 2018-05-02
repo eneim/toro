@@ -78,10 +78,8 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     this.onPreparedListener = onPreparedListener;
   }
 
-  @Override public void initialize(@Nullable final PlaybackInfo playbackInfo) {
-    if (playbackInfo != null) {
-      this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
-    }
+  @Override protected void initialize(@NonNull final PlaybackInfo playbackInfo) {
+    this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
 
     final LegacyVideoViewHelper helper = LegacyVideoViewHelper.this;
     // On Complete event, we reset the player, re-prepare the VideoView so that it can be re-used.

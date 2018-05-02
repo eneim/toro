@@ -104,7 +104,7 @@ public final class ToroUtil {
       final Container.BehaviorCallback callback) {
     container.setBehaviorCallback(callback);
     ViewGroup.LayoutParams params = container.getLayoutParams();
-    if (params != null && params instanceof LayoutParams) {
+    if (params instanceof LayoutParams) {
       CoordinatorLayout.Behavior temp = ((LayoutParams) params).getBehavior();
       if (temp != null) {
         ((LayoutParams) params).setBehavior(new Container.Behavior(temp));

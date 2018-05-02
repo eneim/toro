@@ -58,11 +58,17 @@ final class Common {
     }
   };
 
+  static final Comparator<Integer> ORDER_COMPARATOR_INT = new Comparator<Integer>() {
+    @Override public int compare(Integer o1, Integer o2) {
+      return o1.compareTo(o2);
+    }
+  };
+
   static boolean allowsToPlay(@NonNull ToroPlayer player) {
     dummyRect.setEmpty();
     dummyPoint.set(0, 0);
     //noinspection ConstantConditions
-    boolean valid = player != null && player instanceof RecyclerView.ViewHolder;  // Should be true
+    boolean valid = player instanceof RecyclerView.ViewHolder;  // Should be true
     if (valid) valid = ((RecyclerView.ViewHolder) player).itemView.getParent() != null;
     if (valid) valid = player.getPlayerView().getGlobalVisibleRect(dummyRect, dummyPoint);
     return valid;

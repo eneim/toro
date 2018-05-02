@@ -34,7 +34,6 @@ import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -83,38 +82,24 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @NonNull @Override public PlaybackInfo getCurrentPlaybackInfo() {
-    Collection<Integer> cached = container.getSavedPlayerOrders();
-    if (cached.isEmpty()) {
-      return new PlaybackInfo();
-    } else {
-      SparseArray<PlaybackInfo> actualInfos = new SparseArray<>();
-      ExtraPlaybackInfo resultInfo = new ExtraPlaybackInfo(actualInfos);
+    SparseArray<PlaybackInfo> actualInfos = container.getLatestPlaybackInfos();
+    ExtraPlaybackInfo resultInfo = new ExtraPlaybackInfo(actualInfos);
 
-      List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
-      for (ToroPlayer player : activePlayers) {
-        actualInfos.put(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-        cached.remove(player.getPlayerOrder());
-      }
-
-      for (Integer order : cached) {
-        actualInfos.put(order, container.getPlaybackInfo(order));
-      }
-
-      if (activePlayers.size() >= 1) {
-        resultInfo.setResumeWindow(activePlayers.get(0).getPlayerOrder());
-      }
-
-      return resultInfo;
+    List<ToroPlayer> activePlayers = container.filterBy(Container.Filter.PLAYING);
+    if (activePlayers.size() >= 1) {
+      resultInfo.setResumeWindow(activePlayers.get(0).getPlayerOrder());
     }
+
+    return resultInfo;
   }
 
   @Override
   public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     this.initPosition = -1;
-    if (playbackInfo != null && playbackInfo instanceof ExtraPlaybackInfo) {
+    if (playbackInfo instanceof ExtraPlaybackInfo) {
       //noinspection unchecked
       SparseArray<PlaybackInfo> cache = ((ExtraPlaybackInfo) playbackInfo).actualInfo;
-      if (cache != null) {
+      if (cache != null && cache.size() > 0) {
         for (int i = 0; i < cache.size(); i++) {
           int key = cache.keyAt(i);
           this.container.savePlaybackInfo(key, cache.get(key));
@@ -156,10 +141,6 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
   }
 
-  @Override public void onSettled(Container container) {
-    // Do nothing
-  }
-
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }
@@ -176,7 +157,8 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
       this.mediaList = mediaList;
     }
 
-    @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull @Override
+    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
       if (inflater == null || inflater.getContext() != parent.getContext()) {
         inflater = LayoutInflater.from(parent.getContext());
       }
@@ -197,7 +179,7 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
       return viewHolder;
     }
 
-    @Override public void onBindViewHolder(BaseViewHolder holder, int position) {
+    @Override public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
       holder.bind(position, mediaList.get(position));
     }
 

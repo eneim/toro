@@ -21,19 +21,21 @@ import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * General definition of a helper class for a specific {@link ToroPlayer}. This class helps
  * forwarding the playback state to the {@link ToroPlayer} if there is any {@link EventListener}
  * registered. It also requests the initialization for the Player.
+ *
+ * From 3.4.0, this class can be reused as much as possible.
  *
  * @author eneim | 6/11/17.
  */
@@ -86,7 +88,7 @@ public abstract class ToroPlayerHelper {
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
 
-  final ArrayList<EventListener> eventListeners = new ArrayList<>();
+  final HashSet<EventListener> eventListeners = new HashSet<>();
   final EventListener internalListener = new EventListener() {
     @Override public void onBuffering() {
       // do nothing
@@ -105,18 +107,16 @@ public abstract class ToroPlayerHelper {
 
     @Override public void onCompleted() {
       if (container != null) {
-        container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+        // Save PlaybackInfo.SCRAP to mark this player to be re-init.
+        // Customer behaviour may override this to match specific requirement.
+        // TODO [20180426]: make this overridable.
+        container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
       }
     }
   };
 
   public ToroPlayerHelper(@NonNull ToroPlayer player) {
     this.player = player;
-  }
-
-  // Hook into the scroll state change event. Called by the enclosing ToroPlayer.
-  public void onSettled() {
-    // Do nothing, sub class can override this.
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -137,13 +137,10 @@ public abstract class ToroPlayerHelper {
    * such cached information.
    *
    * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead. From 3.5.0, this method
-   * will be downgraded to protected only.
    */
-  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated  //
-  public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
+  protected abstract void initialize(@NonNull PlaybackInfo playbackInfo);
 
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     this.container = container;
     this.initialize(playbackInfo);
   }
@@ -157,12 +154,14 @@ public abstract class ToroPlayerHelper {
   /**
    * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
    */
-  @Deprecated public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
+  @RemoveIn(version = "3.6.0") @Deprecated  //
+  public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
   /**
    * @deprecated use {@link #getVolumeInfo()} instead.
    */
-  @Deprecated public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
+  @RemoveIn(version = "3.6.0") @Deprecated  //
+  public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
 
   public abstract void setVolumeInfo(@NonNull VolumeInfo volumeInfo);
 
@@ -176,7 +175,8 @@ public abstract class ToroPlayerHelper {
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
-  public abstract void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
+  public abstract void addOnVolumeChangeListener(
+      @NonNull ToroPlayer.OnVolumeChangeListener listener);
 
   public abstract void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
 

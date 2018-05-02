@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.toro;
+package im.ene.toro.annotations;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * This annotation is to mark deprecated objects to be removed from library from a certain version,
+ * specific by {@link #version()}. This is to help quickly navigate through them, and to make it clear.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @author eneim (2018/05/01).
  */
-public class ExampleUnitTest {
-  @Test public void addition_isCorrect() throws Exception {
-    assertEquals(4, 2 + 2);
-  }
+@Retention(RetentionPolicy.SOURCE)  //
+public @interface RemoveIn {
+
+  String version();
 }

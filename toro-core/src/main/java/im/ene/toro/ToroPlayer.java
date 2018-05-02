@@ -49,7 +49,7 @@ public interface ToroPlayer {
    * @param container the RecyclerView contains this Player.
    * @param playbackInfo initialize info for the preparation.
    */
-  void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo);
+  void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
 
   /**
    * Start playback or resume from a pausing state.
@@ -74,13 +74,6 @@ public interface ToroPlayer {
    * @return prefer playback order in list. Can be customized.
    */
   int getPlayerOrder();
-
-  /**
-   * Notify a Player about its {@link Container}'s scroll state change.
-   *
-   * @deprecated no-longer used. Will be removed from 3.5.0
-   */
-  @SuppressWarnings("DeprecatedIsStillUsed") @Deprecated void onSettled(Container container);
 
   /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.

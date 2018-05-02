@@ -18,6 +18,7 @@ package im.ene.toro.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * @author eneim | 6/6/17.
@@ -31,10 +32,18 @@ public class PlaybackInfo implements Parcelable {
 
   private int resumeWindow;
   private long resumePosition;
+  @NonNull private VolumeInfo volumeInfo;
 
   public PlaybackInfo(int resumeWindow, long resumePosition) {
     this.resumeWindow = resumeWindow;
     this.resumePosition = resumePosition;
+    this.volumeInfo = new VolumeInfo(false, 1.f);
+  }
+
+  public PlaybackInfo(int resumeWindow, long resumePosition, @NonNull VolumeInfo volumeInfo) {
+    this.resumeWindow = resumeWindow;
+    this.resumePosition = resumePosition;
+    this.volumeInfo = volumeInfo;
   }
 
   public PlaybackInfo() {
@@ -42,36 +51,8 @@ public class PlaybackInfo implements Parcelable {
   }
 
   public PlaybackInfo(PlaybackInfo other) {
-    this(other.getResumeWindow(), other.getResumePosition());
+    this(other.getResumeWindow(), other.getResumePosition(), other.getVolumeInfo());
   }
-
-  protected PlaybackInfo(Parcel in) {
-    resumeWindow = in.readInt();
-    resumePosition = in.readLong();
-  }
-
-  @Override public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(resumeWindow);
-    dest.writeLong(resumePosition);
-  }
-
-  @Override public int describeContents() {
-    return 0;
-  }
-
-  public static final Creator<PlaybackInfo> CREATOR = new ClassLoaderCreator<PlaybackInfo>() {
-    @Override public PlaybackInfo createFromParcel(Parcel source, ClassLoader loader) {
-      return new PlaybackInfo(source);
-    }
-
-    @Override public PlaybackInfo createFromParcel(Parcel source) {
-      return new PlaybackInfo(source);
-    }
-
-    @Override public PlaybackInfo[] newArray(int size) {
-      return new PlaybackInfo[size];
-    }
-  };
 
   public int getResumeWindow() {
     return resumeWindow;
@@ -89,13 +70,30 @@ public class PlaybackInfo implements Parcelable {
     this.resumePosition = resumePosition;
   }
 
+  @NonNull public VolumeInfo getVolumeInfo() {
+    return volumeInfo;
+  }
+
+  public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    this.volumeInfo = volumeInfo;
+  }
+
   public void reset() {
     resumeWindow = INDEX_UNSET;
     resumePosition = TIME_UNSET;
+    volumeInfo = new VolumeInfo(false, 1.f);
   }
 
   @Override public String toString() {
-    return "State{" + "window=" + resumeWindow + ", position=" + resumePosition + '}';
+    return this == SCRAP ? "Info:SCRAP" : //
+        "Info{"
+            + "window="
+            + resumeWindow
+            + ", position="
+            + resumePosition
+            + ", volume="
+            + volumeInfo
+            + '}';
   }
 
   @Override public boolean equals(Object o) {
@@ -113,4 +111,33 @@ public class PlaybackInfo implements Parcelable {
     result = 31 * result + (int) (resumePosition ^ (resumePosition >>> 32));
     return result;
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeInt(this.resumeWindow);
+    dest.writeLong(this.resumePosition);
+    dest.writeParcelable(this.volumeInfo, flags);
+  }
+
+  protected PlaybackInfo(Parcel in) {
+    this.resumeWindow = in.readInt();
+    this.resumePosition = in.readLong();
+    this.volumeInfo = in.readParcelable(VolumeInfo.class.getClassLoader());
+  }
+
+  public static final Creator<PlaybackInfo> CREATOR = new Creator<PlaybackInfo>() {
+    @Override public PlaybackInfo createFromParcel(Parcel source) {
+      return new PlaybackInfo(source);
+    }
+
+    @Override public PlaybackInfo[] newArray(int size) {
+      return new PlaybackInfo[size];
+    }
+  };
+
+  // A default PlaybackInfo instance, only use this to mark un-initialized players.
+  public static final PlaybackInfo SCRAP = new PlaybackInfo();
 }

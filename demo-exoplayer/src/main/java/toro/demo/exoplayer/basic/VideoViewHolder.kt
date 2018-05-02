@@ -41,8 +41,8 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     ToroPlayer {
 
   companion object {
-    val regex = Pattern.compile("(\\d)+\\.(\\d+)")!!
-    const val defaultRatio = 100 * 165.78F / 360F
+    val ratioRegex = Pattern.compile("(\\d)+\\.(\\d+)")!!
+    const val defaultRatio = 100 * 165.78F / 360F // magic number.
   }
 
   private val playerFrame by lazy { itemView as AspectRatioFrameLayout }
@@ -59,7 +59,7 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     if (videoUrl !== null) videoUri = Uri.parse(videoUrl)
     val style = item.getElementsByClass("qp-ui-video-player-mouse").attr("style")
     if (style !== null) {
-      val match = regex.matcher(style)
+      val match = ratioRegex.matcher(style)
       var ratio = if (match.find()) match.group().toFloat() else null
       if (ratio === null) ratio = defaultRatio
       playerFrame.setAspectRatio(100F / ratio)
@@ -70,7 +70,7 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
   override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
+  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
     if (helper == null) helper = ExoPlayerViewHelper(this, videoUri!!, null, DemoApp.config!!)
     if (listener == null) {
       listener = object : EventListener {
@@ -119,5 +119,4 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
   override fun getPlayerOrder() = adapterPosition
 
-  override fun onSettled(container: Container?) {}
 }

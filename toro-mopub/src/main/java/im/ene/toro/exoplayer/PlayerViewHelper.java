@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.ExoPlayer;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.exoplayer.ui.PlayerView;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.widget.Container;
@@ -39,7 +40,7 @@ import static im.ene.toro.exoplayer.ToroExo.with;
 
 public class PlayerViewHelper extends BaseViewHelper<PlayerView> {
 
-  @SuppressWarnings("unused") @Deprecated
+  @SuppressWarnings("unused") @RemoveIn(version = "3.6.0") @Deprecated  //
   public PlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
     this(player, uri, null, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
