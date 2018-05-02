@@ -36,7 +36,6 @@
       tools:ignore="AllowBackup,GoogleAppIndexingWarning">
     <activity
         android:name=".DemoListActivity"
-        android:label="@string/title_activity_demo_list"
         android:theme="@style/AppTheme">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
