@@ -33,6 +33,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.PlayerSelector;
+import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.MainActivity;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
@@ -78,7 +79,10 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
     drawer.addDrawerListener(containerToggle);
 
     navView.inflateHeaderView(R.layout.widget_space_4dp);
-    navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
+    View header1 = navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
+    TextView header1Text = header1.findViewById(R.id.text_content);
+    header1Text.setText(getString(R.string.lib_info_version, BuildConfig.VERSION_NAME));
+
     navView.inflateHeaderView(R.layout.widget_hom_nav_header_2);
     navView.getHeaderView(3).<TextView>findViewById(R.id.text_content).setText(
         Html.fromHtml(getString(R.string.lib_info_license)));

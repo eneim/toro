@@ -43,8 +43,7 @@ artifactory {
   }
 }
 
-artifactoryPublish.dependsOn('build',
-    'releaseAndroidJavadocs', 'releaseAndroidJavadocsJar', 'releaseAndroidSourcesJar')
+artifactoryPublish.dependsOn('build', 'install')
 
 task androidSourcesJar(type: Jar) {
   classifier = 'sources'

@@ -77,7 +77,7 @@
   <string name="more_demos">Open demos</string>
   <string name="lib_name">eneim/toro</string>
   <string name="lib_description">Video list auto playback made simple, specially built for RecyclerView</string>
-  <string name="lib_info_version">Latest: 3.0.0, Android: 16+ (4.1+)</string>
+  <string name="lib_info_version">Latest: %s, Android: 16+ (4.1+)</string>
   <string name="lib_info_license">
     <![CDATA[
       <h3>License</h3>
