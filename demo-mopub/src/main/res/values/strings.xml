@@ -15,7 +15,7 @@
   -->
 
 <resources>
-  <string name="app_name">Mopub Extension Demo</string>
+  <string name="app_name">Toro for Mopub Extension Demo</string>
   <string name="title_activity_demo_list">Demo List Activity</string>
   <!-- Need this text to be long enough, so that Video will not be visible enough to start playback -->
   <string name="small_text">
