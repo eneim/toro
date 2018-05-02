@@ -19,12 +19,12 @@ package im.ene.toro.sample.complex;
 import java.util.ArrayList;
 
 /**
- * @author eneim (7/1/17).
+ * A special {@link ArrayList}
  *
- *         A special {@link ArrayList}
+ * @author eneim (7/1/17).
  */
 
-public final class MediaList extends ArrayList<Content.Media> {
+final class MediaList extends ArrayList<Content.Media> {
 
   @Override public int size() {
     return Integer.MAX_VALUE;

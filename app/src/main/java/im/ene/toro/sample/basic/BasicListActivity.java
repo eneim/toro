@@ -45,8 +45,6 @@ public class BasicListActivity extends BaseActivity {
     container.setLayoutManager(layoutManager);
     adapter = new BasicListAdapter();
     container.setAdapter(adapter);
-    container.setCacheManager(CacheManager.DEFAULT);
-    container.setPlayerInitializer(order -> new PlaybackInfo(0, 5000));
   }
 
   @Override protected void onDestroy() {

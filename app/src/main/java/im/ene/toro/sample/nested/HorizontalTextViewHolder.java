@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample.nested;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -37,7 +38,7 @@ public class HorizontalTextViewHolder extends BaseViewHolder {
     ButterKnife.bind(this, itemView);
   }
 
-  @Override void bind(int position, Object object) {
+  @SuppressLint("SetTextI18n") @Override void bind(int position, Object object) {
     textView.setText(
         "Open source software powers the internet. Anyone using a computer uses open source, "
             + "either directly or indirectly. Although it has become the industry standard, "

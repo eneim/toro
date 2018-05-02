@@ -34,7 +34,7 @@ public class PlaybackInfo implements Parcelable {
   private long resumePosition;
   @NonNull private VolumeInfo volumeInfo;
 
-  @Deprecated public PlaybackInfo(int resumeWindow, long resumePosition) {
+  public PlaybackInfo(int resumeWindow, long resumePosition) {
     this.resumeWindow = resumeWindow;
     this.resumePosition = resumePosition;
     this.volumeInfo = new VolumeInfo(false, 1.f);

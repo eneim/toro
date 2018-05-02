@@ -36,7 +36,7 @@ public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
   private LayoutInflater inflater;
   private final MediaList mediaList = new MediaList();
 
-  @Override public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull @Override public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     if (inflater == null || inflater.getContext() != parent.getContext()) {
       inflater = LayoutInflater.from(parent.getContext());
     }
@@ -54,7 +54,7 @@ public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(BaseViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
     holder.bind(position, position == MEDIA_LIST_POSITION ? mediaList : getClass().getSimpleName());
   }
 
@@ -66,14 +66,14 @@ public class NestedListAdapter extends RecyclerView.Adapter<BaseViewHolder>
     return Integer.MAX_VALUE;
   }
 
-  @Override public void onViewDetachedFromWindow(BaseViewHolder holder) {
+  @Override public void onViewDetachedFromWindow(@NonNull BaseViewHolder holder) {
     super.onViewDetachedFromWindow(holder);
     if (holder instanceof MediaListViewHolder) {
       ((MediaListViewHolder) holder).onDetached();
     }
   }
 
-  @Override public void onViewAttachedToWindow(BaseViewHolder holder) {
+  @Override public void onViewAttachedToWindow(@NonNull BaseViewHolder holder) {
     super.onViewAttachedToWindow(holder);
     if (holder instanceof MediaListViewHolder) {
       ((MediaListViewHolder) holder).onAttached();

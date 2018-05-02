@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample.basic;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +31,13 @@ class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
   private MediaList mediaList = new MediaList();
 
-  @Override public BasicPlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull @Override public BasicPlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(BasicPlayerViewHolder.LAYOUT_RES, parent, false);
     return new BasicPlayerViewHolder(view);
   }
 
-  @Override public void onBindViewHolder(BasicPlayerViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull BasicPlayerViewHolder holder, int position) {
     holder.bind(mediaList.get(position));
   }
 

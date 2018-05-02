@@ -32,11 +32,11 @@ import im.ene.toro.widget.Container;
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
- * @author eneim (7/1/17).
+ * A list of content that contains a {@link Container} as one of its child. We gonna use a
+ * {@link PagerSnapHelper} to mimic a Pager-inside-RecyclerView. Other contents will be
+ * normal text to preserve the performance and also to not make user confused.
  *
- *         A list of content that contains a {@link Container} as one of its child. We gonna use a
- *         {@link PagerSnapHelper} to mimic a Pager-inside-RecyclerView. Other contents will be
- *         normal text to preseve the performance and also to not make user confused.
+ * @author eneim (7/1/17).
  */
 
 @SuppressWarnings("unused") public class NestedListFragment extends BaseFragment {

@@ -79,7 +79,7 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     Integer playerOrder = player.getPlayerOrder();
     // [1] Check if there is cold cache for this player
     Object key = getKey(playerOrder);
-    coldKeyToOrderMap.put(playerOrder, key);
+    if (key != null) coldKeyToOrderMap.put(playerOrder, key);
 
     PlaybackInfo cache = key == null ? null : coldCache.get(key);
     if (cache == null || cache == SCRAP) {
@@ -347,8 +347,14 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
 
   @NonNull SparseArray<PlaybackInfo> saveStates() {
     SparseArray<PlaybackInfo> states = new SparseArray<>();
-    for (Map.Entry<Integer, Object> entry : coldKeyToOrderMap.entrySet()) {
-      states.put(entry.getKey(), coldCache.get(entry.getValue()));
+    if (container.getCacheManager() != null) {
+      for (Map.Entry<Integer, Object> entry : coldKeyToOrderMap.entrySet()) {
+        states.put(entry.getKey(), coldCache.get(entry.getValue()));
+      }
+    } else if (hotCache != null) {
+      for (Map.Entry<Integer, PlaybackInfo> entry : hotCache.entrySet()) {
+        states.put(entry.getKey(), entry.getValue());
+      }
     }
     return states;
   }

@@ -170,7 +170,7 @@ public class TimelineFragment extends BaseFragment
     // If there is DialogFragment showing, we save stuff from it here.
     Fragment playerFragment =
         getChildFragmentManager().findFragmentByTag(BigPlayerFragment.FRAGMENT_TAG);
-    if (playerFragment != null && playerFragment instanceof BigPlayerFragment) {
+    if (playerFragment instanceof BigPlayerFragment) {
       Bundle playerBundle = ((BigPlayerFragment) playerFragment).getCurrentState();
       outState.putBundle(STATE_KEY_BIG_PLAYER_BUNDLE, playerBundle);
     }
