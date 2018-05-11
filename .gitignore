@@ -66,3 +66,7 @@
 /toro-core/src/test/
 /demo-exoplayer/src/androidTest/
 /demo-exoplayer/src/test/
+/demo-pixabay/src/test/
+/demo-pixabay/libs/
+/demo-pixabay/proguard-rules.pro
+/demo-pixabay/src/androidTest/

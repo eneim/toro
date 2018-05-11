@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,26 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':app-youtube', ':toro-exoplayer', ':toro-mopub', ':demo-exoplayer', ':demo-mopub', ':demo-pixabay'
+package toro.pixabay.data
+
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
+import toro.pixabay.data.entity.PhotoSearchResult
+
+/**
+ * @author eneim (2018/05/02).
+ */
+interface Api {
+
+  companion object {
+    const val BASE_URL = "https://pixabay.com"
+  }
+
+  @GET("/api")
+  fun searchPhoto(
+      @Query("q") query: String,
+      @Query("page") page: Int,
+      @Query("per_page") perPage: Int
+  ): Call<PhotoSearchResult>
+}

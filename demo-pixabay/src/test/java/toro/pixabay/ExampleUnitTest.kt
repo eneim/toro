@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,20 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':app-youtube', ':toro-exoplayer', ':toro-mopub', ':demo-exoplayer', ':demo-mopub', ':demo-pixabay'
+package toro.pixabay
+
+import org.junit.Test
+
+import org.junit.Assert.*
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+  @Test
+  fun addition_isCorrect() {
+    assertEquals(4, 2 + 2)
+  }
+}

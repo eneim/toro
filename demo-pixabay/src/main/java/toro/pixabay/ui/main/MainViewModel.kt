@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,14 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':app-youtube', ':toro-exoplayer', ':toro-mopub', ':demo-exoplayer', ':demo-mopub', ':demo-pixabay'
+package toro.pixabay.ui.main
+
+import android.arch.lifecycle.ViewModel
+import javax.inject.Inject
+
+class MainViewModel @Inject constructor(
+    private val repo: MainRepository
+) : ViewModel() {
+
+  fun searchPhotos(query: String) = repo.searchPhotos(query)
+}

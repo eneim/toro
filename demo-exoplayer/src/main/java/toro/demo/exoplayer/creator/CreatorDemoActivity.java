@@ -39,9 +39,11 @@ import toro.demo.exoplayer.R;
 
 public class CreatorDemoActivity extends AppCompatActivity {
 
-  static final Uri videoUri = Uri.parse(
-      "https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
-  // Uri.parse("file:///android_asset/bbb/video.mp4");
+  static final Uri videoUri =
+      // Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
+      // Uri.parse("file:///android_asset/bbb/video.mp4");
+      Uri.parse(
+          "https://player.vimeo.com/external/262150448.hd.mp4?s=2c50d6eb623251f4557653c9db92b588cb66e620&profile_id=172");
 
   PlayerView playerView;
 
