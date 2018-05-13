@@ -18,11 +18,17 @@ package toro.pixabay.ui.main
 
 import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
+import com.bumptech.glide.request.RequestOptions
 
 /**
  * @author eneim (2018/05/11).
  */
 abstract class BaseViewHolder(view: View): ViewHolder(view) {
 
-  abstract fun bind(item: Any?)
+  companion object {
+    val options = RequestOptions().centerCrop().autoClone()
+  }
+
+  @Suppress("UNUSED_PARAMETER")
+  open fun bind(item: Any?) {}
 }

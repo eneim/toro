@@ -16,12 +16,9 @@
 
 package toro.pixabay.ui.main
 
-import android.arch.lifecycle.ViewModel
-import javax.inject.Inject
+import android.view.View
 
-class MainViewModel @Inject constructor(
-    private val repo: MainRepository
-) : ViewModel() {
-
-  fun search(query: String) = repo.getItems(query)
-}
+/**
+ * @author eneim (2018/05/11).
+ */
+class LoadingViewHolder(view: View) : BaseViewHolder(view)

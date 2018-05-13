@@ -30,11 +30,11 @@ public class PhotoItem {
   @Json(name = "webformatWidth") private Integer webformatWidth;
   @Json(name = "likes") private Integer likes;
   @Json(name = "imageWidth") private Integer imageWidth;
-  @PrimaryKey @NonNull @Json(name = "id") private Integer id;
+  @Json(name = "id") private Integer id;
   @Json(name = "user_id") private Integer userId;
   @Json(name = "views") private Integer views;
   @Json(name = "comments") private Integer comments;
-  @Json(name = "pageURL") private String pageURL;
+  @PrimaryKey @NonNull @Json(name = "pageURL") private String pageURL;
   @Json(name = "imageHeight") private Integer imageHeight;
   @Json(name = "webformatURL") private String webformatURL;
   @Json(name = "type") private String type;

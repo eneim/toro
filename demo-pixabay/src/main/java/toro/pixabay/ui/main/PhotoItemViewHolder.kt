@@ -21,7 +21,6 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import toro.pixabay.R
 import toro.pixabay.data.entity.PhotoItem
 
@@ -30,20 +29,14 @@ import toro.pixabay.data.entity.PhotoItem
  */
 class PhotoItemViewHolder(view: View) : BaseViewHolder(view) {
 
-  companion object {
-    val options = RequestOptions()
-  }
-
   private val imageView = itemView.findViewById(R.id.imageView) as ImageView
-  private val imageContainer = itemView.findViewById<AspectRatioFrameLayout>(R.id.imageContainer)
 
   override fun bind(item: Any?) {
     val photo = item as PhotoItem?
     if (photo != null) {
-      imageContainer.setAspectRatio(photo.ratio())
       Glide.with(imageView).load(photo.largeImageURL)
           .transition(DrawableTransitionOptions.withCrossFade())
-          .thumbnail(0.2f)
+          .thumbnail(0.15f)
           .apply(options).into(imageView)
     }
   }

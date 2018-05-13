@@ -32,12 +32,12 @@ import com.squareup.moshi.Json;
   @Json(name = "likes") private Integer likes;
   @Json(name = "favorites") private Integer favorites;
   @Json(name = "duration") private Integer duration;
-  @PrimaryKey @NonNull @Json(name = "id") private Integer id;
+  @Json(name = "id") private Integer id;
   @Json(name = "user_id") private Integer userId;
   @Json(name = "views") private Integer views;
   @Json(name = "comments") private Integer comments;
   @Json(name = "userImageURL") private String userImageURL;
-  @Json(name = "pageURL") private String pageURL;
+  @PrimaryKey @NonNull @Json(name = "pageURL") private String pageURL;
   @Json(name = "type") private String type;
   @Json(name = "user") private String user;
 

@@ -20,10 +20,14 @@ package toro.pixabay.di
 
 import android.app.Application
 import android.arch.persistence.room.Room
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
 import dagger.Module
 import dagger.Provides
+import im.ene.toro.exoplayer.MediaSourceBuilder
+import im.ene.toro.exoplayer.ToroExo
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -116,4 +120,14 @@ class AppModule {
   @Provides
   @Singleton
   fun provideDao(db: PixabayDb) = db.getDao()
+
+  @Provides
+  @Singleton
+  fun provideExoCreator(app: Application) = ToroExo.with(app).getCreator(
+      ToroExo.with(app).defaultConfig.newBuilder()
+          .setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
+          .setCache(SimpleCache(File(app.cacheDir, "toro_cache"),
+              LeastRecentlyUsedCacheEvictor(8 * 1024 * 1024)))
+          .build()
+  )
 }

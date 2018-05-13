@@ -20,6 +20,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 import toro.pixabay.data.entity.PhotoSearchResult
+import toro.pixabay.data.entity.VideoSearchResult
 
 /**
  * @author eneim (2018/05/02).
@@ -30,10 +31,17 @@ interface Api {
     const val BASE_URL = "https://pixabay.com"
   }
 
-  @GET("/api")
+  @GET("/api?image_type=photo")
   fun searchPhoto(
       @Query("q") query: String,
       @Query("page") page: Int,
       @Query("per_page") perPage: Int
   ): Call<PhotoSearchResult>
+
+  @GET("/api/videos/?video_type=film")
+  fun searchVideo(
+      @Query("q") query: String,
+      @Query("page") page: Int,
+      @Query("per_page") perPage: Int
+  ): Call<VideoSearchResult>
 }

@@ -15,8 +15,19 @@
   ~ limitations under the License.
   -->
 
-<resources>
-  <color name="colorPrimary">#006064</color>
-  <color name="colorPrimaryDark">#00363a</color>
-  <color name="colorAccent">#428e92</color>
-</resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="200dp"
+    android:padding="16dp"
+    >
+
+  <ProgressBar
+      android:id="@+id/progress_bar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      style="?android:attr/progressBarStyle"
+      />
+
+</FrameLayout>

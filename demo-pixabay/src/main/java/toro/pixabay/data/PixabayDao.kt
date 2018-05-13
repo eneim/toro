@@ -22,6 +22,8 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import toro.pixabay.data.entity.PhotoItem
+import toro.pixabay.data.entity.PixabayItem
+import toro.pixabay.data.entity.VideoItem
 
 /**
  * @author eneim (2018/05/10).
@@ -34,4 +36,25 @@ abstract class PixabayDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   abstract fun insertPhotoItems(items: List<PhotoItem>)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  abstract fun insertPhotoItem(item: PhotoItem)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  abstract fun insertVideoItems(items: List<VideoItem>)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  abstract fun insertVideoItem(item: VideoItem)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  abstract fun insertItems(items: List<PixabayItem>)
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  abstract fun insertItems(vararg item: PixabayItem)
+
+  @Query("SELECT * FROM pixabay_item")
+  abstract fun getItems(): DataSource.Factory<Int, PixabayItem>
+
+  @Query("SELECT * FROM pixabay_item WHERE pixabay_item.`query` == :query")
+  abstract fun getItemsForQuery(query: String): DataSource.Factory<Int, PixabayItem>
 }

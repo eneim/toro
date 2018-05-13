@@ -19,10 +19,12 @@ package toro.pixabay.ui.main
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.GridLayoutManager.SpanSizeLookup
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import im.ene.toro.exoplayer.ExoCreator
 import im.ene.toro.widget.Container
 import toro.pixabay.Injectable
 import toro.pixabay.R
@@ -35,6 +37,8 @@ class MainFragment : Fragment(), Injectable {
     fun newInstance() = MainFragment()
   }
 
+  @Inject
+  lateinit var creator: ExoCreator
   @Inject
   lateinit var factory: ViewModelFactory
   private lateinit var viewModel: MainViewModel
@@ -54,11 +58,21 @@ class MainFragment : Fragment(), Injectable {
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
     viewModel = factory.create(MainViewModel::class.java)
-    val adapter = MainAdapter()
-    viewModel.searchPhotos("Universe").items.observe(this, Observer { adapter.submitList(it) })
+    val adapter = MainAdapter(creator)
+    val listModel = viewModel.search("Summer")
+
+    listModel.items.observe(this, Observer { adapter.submitList(it) })
+    listModel.networkState.observe(this, Observer { adapter.setNetworkState(it) })
 
     container!!.adapter = adapter
-    container!!.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+    container!!.layoutManager = GridLayoutManager(requireContext(), 2).also {
+      it.spanSizeLookup = object : SpanSizeLookup() {
+        override fun getSpanSize(pos: Int): Int {
+          return if (pos % 5 == 4 || adapter.getItemViewType(pos) == R.layout.holder_loading) 2
+          else 1
+        }
+      }
+    }
   }
 
 }

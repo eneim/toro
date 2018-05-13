@@ -21,6 +21,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.TypeConverter
 import android.arch.persistence.room.TypeConverters
 import toro.pixabay.data.entity.PhotoItem
+import toro.pixabay.data.entity.PixabayItem
 import toro.pixabay.data.entity.VideoItem
 import toro.pixabay.data.entity.VideoSize
 import toro.pixabay.data.entity.VideoSizes
@@ -30,6 +31,7 @@ import toro.pixabay.data.entity.VideoSizes
  */
 @Database(
     entities = [
+      PixabayItem::class,
       PhotoItem::class,
       VideoItem::class,
       VideoSizes::class,
