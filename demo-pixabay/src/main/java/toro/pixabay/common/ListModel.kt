@@ -24,5 +24,8 @@ import android.arch.paging.PagedList
  */
 data class ListModel<T>(
     val items: LiveData<PagedList<T>>,
-    val networkState: LiveData<NetworkState>
+    val networkState: LiveData<NetworkState>,
+    val refreshState: LiveData<NetworkState>,
+    val refresh: () -> Unit,
+    val retry: () -> Unit
 )

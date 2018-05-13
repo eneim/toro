@@ -20,7 +20,6 @@ import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
 import toro.pixabay.R
 import toro.pixabay.data.entity.PhotoItem
 
@@ -29,7 +28,7 @@ import toro.pixabay.data.entity.PhotoItem
  */
 class PhotoItemViewHolder(view: View) : BaseViewHolder(view) {
 
-  private val imageView = itemView.findViewById(R.id.imageView) as ImageView
+  private val imageView = itemView.findViewById<ImageView>(R.id.imageView)
 
   override fun bind(item: Any?) {
     val photo = item as PhotoItem?
@@ -37,11 +36,8 @@ class PhotoItemViewHolder(view: View) : BaseViewHolder(view) {
       Glide.with(imageView).load(photo.largeImageURL)
           .transition(DrawableTransitionOptions.withCrossFade())
           .thumbnail(0.15f)
-          .apply(options).into(imageView)
+          .apply(options.placeholder(R.drawable.side_nav_bar))
+          .into(imageView)
     }
   }
-}
-
-fun PhotoItem.ratio(): Float {
-  return this.imageWidth / (this.imageHeight.toFloat())
 }

@@ -16,6 +16,9 @@
 
 package toro.pixabay.ui.main
 
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
+import android.arch.lifecycle.Transformations.switchMap
 import android.arch.lifecycle.ViewModel
 import javax.inject.Inject
 
@@ -23,5 +26,20 @@ class MainViewModel @Inject constructor(
     private val repo: MainRepository
 ) : ViewModel() {
 
-  fun search(query: String) = repo.getItems(query)
+  val query = MutableLiveData<String>()
+  private val results = Transformations.map(query, { input -> repo.getItems(input) })
+
+  val items = switchMap(results, { input -> input.items })!!
+  val networkState = switchMap(results, { input -> input.networkState })!!
+  val refreshState = switchMap(results, { it.refreshState })!!
+
+  fun search(query: String): Boolean {
+    if (this.query.value == query) return false
+    this.query.value = query
+    return true
+  }
+
+  fun refresh() {
+    results.value?.refresh?.invoke()
+  }
 }

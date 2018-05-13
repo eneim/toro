@@ -21,11 +21,16 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
+import kotlinx.android.synthetic.main.main_activity.searchFab
 import kotlinx.android.synthetic.main.main_activity.toolbar
 import toro.pixabay.R
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragment.Callback {
+
+  override fun onSearchQuery(query: String) {
+    title = "Query: $query"
+  }
 
   @Inject
   lateinit var injector: DispatchingAndroidInjector<Fragment>
@@ -37,10 +42,22 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
     setContentView(R.layout.main_activity)
     setSupportActionBar(toolbar)
 
-    if (savedInstanceState == null) {
+    var mainFragment = supportFragmentManager.findFragmentById(R.id.container) as MainFragment?
+
+    if (mainFragment == null) {
+      mainFragment = MainFragment.newInstance()
       supportFragmentManager.beginTransaction()
-          .replace(R.id.container, MainFragment.newInstance())
+          .replace(R.id.container, mainFragment)
           .commit()
+    }
+
+    searchFab.setOnClickListener {
+      mainFragment.onUserRequestSearch()
+    }
+
+    toolbar.setOnTouchListener { _, _ ->
+      mainFragment.scrollToTop()
+      true
     }
   }
 }

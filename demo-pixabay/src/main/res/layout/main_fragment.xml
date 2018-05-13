@@ -15,12 +15,24 @@
   ~ limitations under the License.
   -->
 
-<im.ene.toro.widget.Container
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeToRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainFragment"
+    android:clipToPadding="false"
+    android:padding="2dp"
     >
-</im.ene.toro.widget.Container>
+
+  <im.ene.toro.widget.Container
+      android:id="@+id/container"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:context=".ui.main.MainFragment"
+      app:layoutManager="GridLayoutManager"
+      app:spanCount="3"
+      >
+  </im.ene.toro.widget.Container>
+</android.support.v4.widget.SwipeRefreshLayout>

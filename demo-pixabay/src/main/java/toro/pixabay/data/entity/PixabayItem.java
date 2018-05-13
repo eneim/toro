@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "pixabay_item") public class PixabayItem {
 
   private int type; // 1: Photo, 2: Video
+  private long timeStamp;
 
   @PrimaryKey @NonNull private String pageUrl;
 
@@ -76,8 +77,17 @@ import android.support.annotation.NonNull;
     this.query = query;
   }
 
+  public long getTimeStamp() {
+    return timeStamp;
+  }
+
+  public void setTimeStamp(long timeStamp) {
+    this.timeStamp = timeStamp;
+  }
+
   public static PixabayItem fromPhotoItem(PhotoItem item) {
     PixabayItem result = new PixabayItem();
+    result.timeStamp = System.nanoTime();
     result.type = 1;
     result.pageUrl = item.getPageURL();
     result.photoItem = item;
@@ -87,6 +97,7 @@ import android.support.annotation.NonNull;
 
   public static PixabayItem fromVideoItem(VideoItem item) {
     PixabayItem result = new PixabayItem();
+    result.timeStamp = System.nanoTime();
     result.type = 2;
     result.pageUrl = item.getPageURL();
     result.videoItem = item;

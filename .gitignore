@@ -70,3 +70,4 @@
 /demo-pixabay/libs/
 /demo-pixabay/proguard-rules.pro
 /demo-pixabay/src/androidTest/
+/.idea/assetWizardSettings.xml

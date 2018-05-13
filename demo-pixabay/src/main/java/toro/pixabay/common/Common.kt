@@ -35,10 +35,10 @@ data class NetworkState constructor(
   }
 }
 
-private fun getErrorMessage(report: PagingRequestHelper.StatusReport): String {
+private fun getErrorMessage(report: PagingRequestHelper.StatusReport): String? {
   return PagingRequestHelper.RequestType.values().mapNotNull {
     report.getErrorFor(it)?.message
-  }.first()
+  }.firstOrNull()
 }
 
 fun PagingRequestHelper.createStatusLiveData(): LiveData<NetworkState> {

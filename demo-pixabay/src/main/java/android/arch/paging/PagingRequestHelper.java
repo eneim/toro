@@ -155,8 +155,8 @@ public class PagingRequestHelper {
    * @param request The request to run.
    * @return True if the request is run, false otherwise.
    */
-  @SuppressWarnings("WeakerAccess") @AnyThread public boolean runIfNotRunning(
-      @NonNull RequestType type, @NonNull Request request) {
+  @SuppressWarnings("WeakerAccess") @AnyThread  //
+  public boolean runIfNotRunning(@NonNull RequestType type, @NonNull Request request) {
     boolean hasListeners = !mListeners.isEmpty();
     StatusReport report = null;
     synchronized (mLock) {
