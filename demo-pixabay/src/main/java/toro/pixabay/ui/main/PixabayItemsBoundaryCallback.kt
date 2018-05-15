@@ -30,6 +30,7 @@ import toro.pixabay.data.entity.VideoSearchResult
 import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicInteger
 
+@Suppress("CanBeParameter")
 class PixabayItemsBoundaryCallback(
     private val query: String,
     private val api: Api,
@@ -37,10 +38,11 @@ class PixabayItemsBoundaryCallback(
     private val diskExecutor: Executor,
     private val helper: PagingRequestHelper,
     private val handleResponse: (List<PixabayItem>?) -> Unit,
-    @Suppress("CanBeParameter") private val networkPageSize: Int
+    private val networkPageSize: Int
 ) : BoundaryCallback<PixabayItem>() {
 
   private val pageNumber = AtomicInteger(1)
+  // Combine result from photo search and video search, and every 3 photo item I insert 1 video item.
   private val photoPageSize = networkPageSize * 3
   private val videoPageSize = networkPageSize
 

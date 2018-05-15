@@ -93,7 +93,7 @@ class MainFragment : Fragment(), Injectable {
 
   override fun onActivityCreated(state: Bundle?) {
     super.onActivityCreated(state)
-    model.search(state?.getString(STATE_QUERY) ?: "Summer")
+    model.search(state?.getString(STATE_QUERY) ?: "Holiday")
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
