@@ -24,7 +24,7 @@ android {
 
   defaultConfig {
     applicationId "toro.pixabay"
-    minSdkVersion 19
+    minSdkVersion 21
     targetSdkVersion rootProject.ext.androidVersion
     versionCode 1
     versionName "1.0"
@@ -98,11 +98,11 @@ dependencies {
   implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
   implementation 'com.squareup.moshi:moshi-adapters:1.5.0'
 
-  implementation 'com.google.dagger:dagger:2.15'
-  implementation 'com.google.dagger:dagger-android:2.15'
-  implementation 'com.google.dagger:dagger-android-support:2.15'
-  kapt 'com.google.dagger:dagger-compiler:2.15'
-  kapt 'com.google.dagger:dagger-android-processor:2.15'
+  implementation 'com.google.dagger:dagger:2.16'
+  implementation 'com.google.dagger:dagger-android:2.16'
+  implementation 'com.google.dagger:dagger-android-support:2.16'
+  kapt 'com.google.dagger:dagger-compiler:2.16'
+  kapt 'com.google.dagger:dagger-android-processor:2.16'
 
   testImplementation 'junit:junit:4.12'
   androidTestImplementation 'com.android.support.test:runner:1.0.2'

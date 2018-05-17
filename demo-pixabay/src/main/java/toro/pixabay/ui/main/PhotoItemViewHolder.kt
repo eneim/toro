@@ -16,28 +16,63 @@
 
 package toro.pixabay.ui.main
 
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.view.View.OnClickListener
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import toro.pixabay.R
 import toro.pixabay.data.entity.PhotoItem
+import toro.pixabay.ui.main.MainAdapter.ViewHolderListener
 
 /**
  * @author eneim (2018/05/11).
  */
-class PhotoItemViewHolder(view: View) : BaseViewHolder(view) {
+class PhotoItemViewHolder(val view: View, val listener: ViewHolderListener) : BaseViewHolder(
+    view), OnClickListener {
+  val imageView = itemView.findViewById<ImageView>(R.id.imageView)
 
-  private val imageView = itemView.findViewById<ImageView>(R.id.imageView)
+  init {
+    itemView.setOnClickListener(this)
+  }
 
   override fun bind(item: Any?) {
     val photo = item as PhotoItem?
     if (photo != null) {
+      imageView.transitionName = photo.pageURL
       Glide.with(imageView).load(photo.largeImageURL)
           .transition(DrawableTransitionOptions.withCrossFade())
-          .thumbnail(0.15f)
+          .thumbnail(0.25f)
           .apply(options.placeholder(R.drawable.side_nav_bar))
+          .listener(object : RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?,
+                isFirstResource: Boolean): Boolean {
+              listener.onLoadCompleted(imageView, adapterPosition)
+              return false
+            }
+
+            override fun onResourceReady(resource: Drawable?, model: Any?,
+                target: Target<Drawable>?, dataSource: DataSource?,
+                isFirstResource: Boolean): Boolean {
+              listener.onLoadCompleted(imageView, adapterPosition)
+              return false
+            }
+          })
           .into(imageView)
     }
   }
+
+  override fun onClick(v: View?) {
+    listener.onItemClicked(v!!, adapterPosition)
+  }
+}
+
+fun PhotoItem.getRatio(): Float {
+  return this.imageWidth / this.imageHeight.toFloat()
 }

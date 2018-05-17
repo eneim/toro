@@ -18,43 +18,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="2dp"
+    android:layout_height="match_parent"
     >
-
   <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-      android:id="@+id/videoContainer"
+      android:id="@+id/photoContainer"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:minHeight="200dp"
+      android:layout_height="match_parent"
+      android:layout_gravity="center"
       app:resize_mode="fixed_width"
       >
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/playerView"
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@id/photoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:use_controller="false"
-        >
-      <android.support.v7.widget.AppCompatImageView
-          android:id="@+id/thumbnail"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:scaleType="centerCrop"
-          />
-
-      <android.support.v7.widget.AppCompatTextView
-          android:id="@+id/status"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="bottom|start"
-          android:layout_margin="4dp"
-          android:background="#80000000"
-          android:paddingBottom="4dp"
-          android:paddingEnd="8dp"
-          android:paddingStart="8dp"
-          android:paddingTop="4dp"
-          android:textColor="@android:color/white"
-          />
-    </com.google.android.exoplayer2.ui.PlayerView>
+        android:scaleType="centerCrop"
+        />
   </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 </FrameLayout>

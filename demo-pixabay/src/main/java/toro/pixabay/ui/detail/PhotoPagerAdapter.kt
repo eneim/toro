@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package toro.pixabay.di
+package toro.pixabay.ui.detail
 
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import toro.pixabay.ui.detail.ImagePagerFragment
-import toro.pixabay.ui.main.MainActivity
-import toro.pixabay.ui.main.MainFragment
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentStatePagerAdapter
+import toro.pixabay.data.entity.PixabayItem
 
 /**
- * @author eneim (2018/05/02).
+ * @author eneim (2018/05/15).
  */
-@Suppress("unused")
-@Module
-abstract class ActivityModule {
+class PhotoPagerAdapter(fragment: Fragment, val item: PixabayItem) : FragmentStatePagerAdapter(
+    fragment.childFragmentManager) {
 
-  @ContributesAndroidInjector
-  abstract fun contributeMainActivity(): MainActivity
+  override fun getCount(): Int {
+    return if (item.type == 1) 1 else 0
+  }
 
-  @ContributesAndroidInjector
-  abstract fun contributeRepoFragment(): MainFragment
+  override fun getItem(position: Int): Fragment {
+    return PhotoItemFragment.newInstance(item)
+  }
 
-  @ContributesAndroidInjector
-  abstract fun contributePhotoDetailFragment(): ImagePagerFragment
 }

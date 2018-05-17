@@ -16,6 +16,7 @@
 
 package toro.pixabay.data
 
+import android.arch.lifecycle.LiveData
 import android.arch.paging.DataSource
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
@@ -60,4 +61,7 @@ abstract class PixabayDao {
 
   @Query("DELETE FROM pixabay_item WHERE pixabay_item.`query` == :query")
   abstract fun deleteItemsForQuery(query: String)
+
+  @Query("SELECT * FROM pixabay_item WHERE pageUrl == :pageUrl LIMIT 1")
+  abstract fun getItem(pageUrl: String): LiveData<PixabayItem>
 }

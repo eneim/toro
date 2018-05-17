@@ -17,15 +17,23 @@
 package toro.pixabay.ui.main
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
-import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.main_activity.searchFab
+import kotlinx.android.synthetic.main.main_activity.toolbar
 import toro.pixabay.R
 import javax.inject.Inject
 
+
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragment.Callback {
+
+  companion object {
+    var currentPosition = -1
+    const val EXTRA_CURRENT_POSITION = "toro.pixabay:extra:current_position"
+  }
 
   override fun onSearchQuery(query: String) {
     title = "Query: $query"
@@ -41,11 +49,14 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
     setContentView(R.layout.main_activity)
     setSupportActionBar(toolbar)
 
-    var mainFragment = supportFragmentManager.findFragmentById(R.id.container) as MainFragment?
+    var mainFragment = supportFragmentManager.findFragmentById(
+        R.id.fragmentContainer) as MainFragment?
 
     if (mainFragment == null) {
       mainFragment = MainFragment.newInstance()
-      supportFragmentManager.beginTransaction().replace(R.id.container, mainFragment).commit()
+      supportFragmentManager.beginTransaction()
+          .add(R.id.fragmentContainer, mainFragment, MainFragment::class.java.simpleName)
+          .commit()
     }
 
     searchFab.setOnClickListener {
@@ -56,5 +67,10 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
       mainFragment.scrollToTop()
       true
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+    super.onSaveInstanceState(outState, outPersistentState)
+    outState.putInt(EXTRA_CURRENT_POSITION, currentPosition)
   }
 }

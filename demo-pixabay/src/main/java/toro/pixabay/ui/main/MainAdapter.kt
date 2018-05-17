@@ -17,18 +17,25 @@
 package toro.pixabay.ui.main
 
 import android.arch.paging.PagedListAdapter
+import android.support.transition.TransitionSet
+import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import im.ene.toro.exoplayer.ExoCreator
 import toro.pixabay.R
 import toro.pixabay.common.NetworkState
 import toro.pixabay.data.entity.PixabayItem
+import toro.pixabay.ui.detail.ImagePagerFragment
+import java.util.concurrent.atomic.AtomicBoolean
+
 
 /**
  * @author eneim (2018/05/11).
  */
-class MainAdapter(private val creator: ExoCreator) :  //
+class MainAdapter(private val creator: ExoCreator, private val fragment: Fragment) :  //
     PagedListAdapter<PixabayItem, BaseViewHolder>(DIFF_CALLBACK) {
 
   companion object {
@@ -75,7 +82,8 @@ class MainAdapter(private val creator: ExoCreator) :  //
 
     val view = inflater!!.inflate(viewType, parent, false)
     return when (viewType) {
-      R.layout.holder_photo_item -> PhotoItemViewHolder(view)
+      R.layout.holder_photo_item -> PhotoItemViewHolder(view,
+          ViewHolderListenerImpl(fragment, this))
       R.layout.holder_video_item -> VideoItemViewHolder(view, creator)
       R.layout.holder_loading -> LoadingViewHolder(view)
       else -> throw IllegalArgumentException("unknown view type $viewType")
@@ -101,6 +109,63 @@ class MainAdapter(private val creator: ExoCreator) :  //
         2 -> R.layout.holder_video_item
         else -> itemType
       }
+    }
+  }
+
+  /**
+   * A listener that is attached to all ViewHolders to handle image loading events and clicks.
+   */
+  interface ViewHolderListener {
+
+    fun onLoadCompleted(view: ImageView, adapterPosition: Int)
+
+    fun onItemClicked(view: View, adapterPosition: Int)
+  }
+
+  /**
+   * Default [ViewHolderListener] implementation.
+   */
+  private class ViewHolderListenerImpl(
+      private val fragment: Fragment,
+      private val adapter: MainAdapter) : ViewHolderListener {
+    private val enterTransitionStarted: AtomicBoolean = AtomicBoolean()
+
+    override fun onLoadCompleted(view: ImageView, adapterPosition: Int) {
+      // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
+      if (MainActivity.currentPosition != adapterPosition) {
+        return
+      }
+      if (enterTransitionStarted.getAndSet(true)) {
+        return
+      }
+      fragment.startPostponedEnterTransition()
+    }
+
+    /**
+     * Handles a view click by setting the current position to the given `position` and
+     * starting a [ImagePagerFragment] which displays the image at the position.
+     *
+     * @param view the clicked [ImageView] (the shared element view will be re-mapped at the
+     * GridFragment's SharedElementCallback)
+     * @param adapterPosition the selected view position
+     */
+    override fun onItemClicked(view: View, adapterPosition: Int) {
+      // Update the position.
+      MainActivity.currentPosition = adapterPosition
+
+      // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
+      // instead of fading out with the rest to prevent an overlapping animation of fade and move).
+      (fragment.exitTransition as TransitionSet).excludeTarget(view, true)
+
+      val transitioningView = view.findViewById<ImageView>(R.id.imageView)
+      fragment.fragmentManager!!.beginTransaction()
+          .setReorderingAllowed(true) // Optimize for shared element transition
+          .addSharedElement(transitioningView, transitioningView.transitionName)
+          .replace(R.id.fragmentContainer,
+              ImagePagerFragment.newInstance(adapter.getItem(adapterPosition)!!),
+              ImagePagerFragment::class.java.simpleName)
+          .addToBackStack(null)
+          .commit()
     }
   }
 }

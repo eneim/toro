@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-package toro.pixabay.di
+package toro.pixabay.ui.detail
 
-import dagger.Module
-import dagger.android.ContributesAndroidInjector
-import toro.pixabay.ui.detail.ImagePagerFragment
-import toro.pixabay.ui.main.MainActivity
-import toro.pixabay.ui.main.MainFragment
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
+import android.arch.lifecycle.ViewModel
+import toro.pixabay.data.PixabayDao
+import javax.inject.Inject
 
 /**
- * @author eneim (2018/05/02).
+ * @author eneim (2018/05/15).
  */
-@Suppress("unused")
-@Module
-abstract class ActivityModule {
+class DetailViewModel @Inject constructor(
+    private val dao: PixabayDao
+) : ViewModel() {
 
-  @ContributesAndroidInjector
-  abstract fun contributeMainActivity(): MainActivity
-
-  @ContributesAndroidInjector
-  abstract fun contributeRepoFragment(): MainFragment
-
-  @ContributesAndroidInjector
-  abstract fun contributePhotoDetailFragment(): ImagePagerFragment
+  val pageUrl = MutableLiveData<String>()
+  val photoItem = Transformations.switchMap(pageUrl, { input -> dao.getItem(input) })!!
 }

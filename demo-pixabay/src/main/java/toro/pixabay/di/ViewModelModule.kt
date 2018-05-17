@@ -21,6 +21,7 @@ import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import toro.pixabay.ui.detail.DetailViewModel
 import toro.pixabay.ui.main.MainViewModel
 
 /**
@@ -37,4 +38,9 @@ abstract class ViewModelModule {
   @IntoMap
   @ViewModelKey(MainViewModel::class)
   abstract fun bindUserViewModel(mainViewModel: MainViewModel): ViewModel
+
+  @Binds
+  @IntoMap
+  @ViewModelKey(DetailViewModel::class)
+  abstract fun bindDetailViewModel(detailViewModel: DetailViewModel): ViewModel
 }

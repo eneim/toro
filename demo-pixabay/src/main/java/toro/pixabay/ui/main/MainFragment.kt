@@ -19,7 +19,9 @@ package toro.pixabay.ui.main
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
+import android.support.transition.TransitionInflater
 import android.support.v4.app.Fragment
+import android.support.v4.app.SharedElementCallback
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatEditText
@@ -27,6 +29,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.GridLayoutManager.SpanSizeLookup
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnLayoutChangeListener
 import android.view.ViewGroup
 import im.ene.toro.exoplayer.ExoCreator
 import im.ene.toro.widget.Container
@@ -35,6 +38,7 @@ import toro.pixabay.R
 import toro.pixabay.common.NetworkState
 import toro.pixabay.di.ViewModelFactory
 import javax.inject.Inject
+
 
 class MainFragment : Fragment(), Injectable {
 
@@ -70,11 +74,16 @@ class MainFragment : Fragment(), Injectable {
     model = factory.create(MainViewModel::class.java)
 
     container = view.findViewById(R.id.container)
+
+    prepareTransitions()
+    postponeEnterTransition()
+    scrollToPosition()
+
     container!!.setPlayerDispatcher { 250 }
 
     swipeToRefresh = view.findViewById(R.id.swipeToRefresh)
 
-    val adapter = MainAdapter(creator)
+    val adapter = MainAdapter(creator, this)
     model.items.observe(this, Observer { adapter.submitList(it) })
     model.networkState.observe(this, Observer { adapter.setNetworkState(it) })
 
@@ -126,6 +135,65 @@ class MainFragment : Fragment(), Injectable {
 
   fun scrollToTop() {
     container?.smoothScrollToPosition(0)
+  }
+
+  /**
+   * Scrolls the recycler view to show the last viewed item in the grid. This is important when
+   * navigating back from the grid.
+   */
+  private fun scrollToPosition() {
+    val container = container!!
+    container.addOnLayoutChangeListener(object : OnLayoutChangeListener {
+      override fun onLayoutChange(v: View,
+          left: Int,
+          top: Int,
+          right: Int,
+          bottom: Int,
+          oldLeft: Int,
+          oldTop: Int,
+          oldRight: Int,
+          oldBottom: Int) {
+        container.removeOnLayoutChangeListener(this)
+        val layoutManager = container.layoutManager
+        val viewAtPosition = layoutManager.findViewByPosition(MainActivity.currentPosition)
+        // Scroll to position if the view for the current position is null (not currently part of
+        // layout manager children), or it's not completely visible.
+        if (viewAtPosition == null || //
+            layoutManager.isViewPartiallyVisible(viewAtPosition, false, true)) {
+          container.post({ layoutManager.scrollToPosition(MainActivity.currentPosition) })
+        }
+      }
+    })
+  }
+
+  /**
+   * Prepares the shared element transition to the pager fragment, as well as the other transitions
+   * that affect the flow.
+   */
+  private fun prepareTransitions() {
+    val container = container!! // A local immutable copy.
+    // Hmm Google https://stackoverflow.com/questions/49461738/transitionset-arraylist-size-on-a-null-object-reference
+    val transition = TransitionInflater.from(requireContext())
+        .inflateTransition(R.transition.grid_exit_transition)
+    transition.duration = 375
+    exitTransition = transition
+
+    // A similar mapping is set at the ImagePagerFragment with a setEnterSharedElementCallback.
+    setExitSharedElementCallback(object : SharedElementCallback() {
+      override fun onMapSharedElements(names: MutableList<String>?,
+          sharedElements: MutableMap<String, View>?) {
+        // Locate the ViewHolder for the clicked position.
+        val selectedViewHolder = container
+            .findViewHolderForAdapterPosition(MainActivity.currentPosition)
+        if (selectedViewHolder?.itemView == null) {
+          return
+        }
+
+        // Map the first shared element name to the child ImageView.
+        sharedElements?.put(names?.get(0)!!,
+            selectedViewHolder.itemView.findViewById(R.id.imageView))
+      }
+    })
   }
 
   interface Callback {

@@ -16,6 +16,7 @@
 
 package toro.pixabay.ui.main
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
@@ -39,12 +40,14 @@ import toro.pixabay.data.entity.VideoSize
 /**
  * @author eneim (2018/05/12).
  */
+@Suppress("MemberVisibilityCanBePrivate")
+@SuppressLint("SetTextI18n")
 class VideoItemViewHolder(view: View, val creator: ExoCreator) : BaseViewHolder(view), ToroPlayer {
 
-  val container = itemView.findViewById<AspectRatioFrameLayout>(R.id.videoContainer)
-  val playerView = itemView.findViewById<PlayerView>(R.id.playerView)
-  val thumbnail = itemView.findViewById<ImageView>(R.id.thumbnail)
-  val status = itemView.findViewById<TextView>(R.id.status)
+  val container: AspectRatioFrameLayout = itemView.findViewById(R.id.videoContainer)
+  val playerView: PlayerView = itemView.findViewById(R.id.playerView)
+  val thumbnail: ImageView = itemView.findViewById(R.id.thumbnail)
+  val status: TextView = itemView.findViewById(R.id.status)
 
   val eventListener = object : EventListener {
     override fun onBuffering() {
