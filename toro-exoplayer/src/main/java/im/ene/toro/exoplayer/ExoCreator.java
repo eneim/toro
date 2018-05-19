@@ -61,7 +61,7 @@ public interface ExoCreator {
    */
   @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String fileExt);
 
-  // Client just needs this method to work with Toro, but I prepare both 2 above for custom use-cases.
+  // Client just needs the method below to work with Toro, but I prepare both 2 above for custom use-cases.
 
   /**
    * Create a {@link Playable} for a media {@link Uri}. Client should always use this method for

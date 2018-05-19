@@ -22,8 +22,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
 import android.util.SparseArray;
-import android.view.View;
-import android.view.View.OnAttachStateChangeListener;
 import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -42,32 +40,37 @@ import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
  *
  * Design Target:
  *
- * [1] Manage the {@link PlaybackInfo} of current {@link ToroPlayer}. Should match 1-1 with the
+ * [1] Manage the {@link PlaybackInfo} of current {@link ToroPlayer}s. Should match 1-1 with the
  * {@link ToroPlayer}s that {@link PlayerManager} is managing.
  *
  * [2] If a non-null {@link CacheManager} provided to the {@link Container}, this class must
  * properly manage the {@link PlaybackInfo} of detached {@link ToroPlayer} and restore it to
- * previous state when being re-attached.
+ * previous state after being re-attached.
  */
 @SuppressWarnings({ "WeakerAccess", "unused" }) @SuppressLint("UseSparseArrays")
-final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachStateChangeListener {
+final class PlaybackInfoCache extends AdapterDataObserver {
 
   @NonNull private final Container container;
+  // Cold cache represents the map between key obtain from CacheManager and PlaybackInfo. If the
+  // CacheManager is null, this cache will hold nothing.
   /* pkg */ Map<Object, PlaybackInfo> coldCache = new HashMap<>();
+
+  // Hot cache represents the map between Player's order and its PlaybackInfo. A key-value map only
+  // lives between a Player's attached state.
   /* pkg */ Map<Integer, PlaybackInfo> hotCache; // only cache attached Views.
+
+  // Holds the map between Player's key and its key obtain from CacheManager.
   /* pkg */ Map<Integer, Object> coldKeyToOrderMap = new TreeMap<>(ORDER_COMPARATOR_INT);
 
   PlaybackInfoCache(@NonNull Container container) {
     this.container = container;
-    this.container.addOnAttachStateChangeListener(this);
   }
 
-  @Override public void onViewAttachedToWindow(View v) {
+  final void onAttach() {
     hotCache = new TreeMap<>(ORDER_COMPARATOR_INT);
   }
 
-  @Override public void onViewDetachedFromWindow(View v) {
-    this.container.removeOnAttachStateChangeListener(this);
+  final void onDetach() {
     if (hotCache != null) {
       hotCache.clear();
       hotCache = null;
@@ -112,11 +115,14 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     // TODO do anything here?
   }
 
+  /// Adapter change events handling
+
   @Override public void onChanged() {
     if (container.getCacheManager() != null) {
       for (Integer key : coldKeyToOrderMap.keySet()) {
-        coldCache.put(getKey(key), SCRAP);
-        coldKeyToOrderMap.put(key, getKey(key));
+        Object cacheKey = getKey(key);
+        coldCache.put(cacheKey, SCRAP);
+        coldKeyToOrderMap.put(key, cacheKey);
       }
     }
 
@@ -138,8 +144,9 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
       }
 
       for (Integer key : changedColdKeys) {
-        coldCache.put(getKey(key), SCRAP);
-        coldKeyToOrderMap.put(key, getKey(key));
+        Object cacheKey = getKey(key);
+        coldCache.put(cacheKey, SCRAP);
+        coldKeyToOrderMap.put(key, cacheKey);
       }
     }
 
@@ -261,29 +268,29 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
   // Dude I wanna test this thing >.<
   @Override public void onItemRangeMoved(final int fromPos, final int toPos, int itemCount) {
     if (fromPos == toPos) return;
-    final int left = fromPos < toPos ? fromPos : toPos;
-    final int right = fromPos + toPos - left;
-    final int shift = fromPos < toPos ? -1 : 1;  // how item will be shifted
+    final int low = fromPos < toPos ? fromPos : toPos;
+    final int high = fromPos + toPos - low;
+    final int shift = fromPos < toPos ? -1 : 1;  // how item will be shifted due to the move
 
     // [1] Migrate cold cache.
     if (container.getCacheManager() != null) {
       // 1.1 Extract subset of keys only:
       Set<Integer> changedColdKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : coldKeyToOrderMap.keySet()) {
-        if (key >= left && key <= right) changedColdKeys.add(key);
+        if (key >= low && key <= high) changedColdKeys.add(key);
       }
       // 1.2 Extract entries from cold cache to a temp cache.
-      final Map<Object, PlaybackInfo> changeColdEntriesCache = new HashMap<>();
+      final Map<Object, PlaybackInfo> changeColdEntries = new HashMap<>();
       for (Integer key : changedColdKeys) {
-        changeColdEntriesCache.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
+        changeColdEntries.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
       }
 
       // 1.2 Update cold Cache with new keys
       for (Integer key : changedColdKeys) {
-        if (key == left) {
-          coldCache.put(getKey(right), changeColdEntriesCache.get(key));
+        if (key == low) {
+          coldCache.put(getKey(high), changeColdEntries.get(key));
         } else {
-          coldCache.put(getKey(key + shift), changeColdEntriesCache.get(key));
+          coldCache.put(getKey(key + shift), changeColdEntries.get(key));
         }
       }
 
@@ -293,11 +300,11 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
       }
     }
 
-    // Update hot cache.
+    // [2] Migrate hot cache.
     if (hotCache != null) {
       Set<Integer> changedHotKeys = new TreeSet<>(ORDER_COMPARATOR_INT);
       for (Integer key : hotCache.keySet()) {
-        if (key >= left && key <= right) changedHotKeys.add(key);
+        if (key >= low && key <= high) changedHotKeys.add(key);
       }
 
       Map<Integer, PlaybackInfo> changedHotEntriesCache = new HashMap<>();
@@ -306,8 +313,8 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
       }
 
       for (Integer key : changedHotKeys) {
-        if (key == left) {
-          hotCache.put(right, changedHotEntriesCache.get(key));
+        if (key == low) {
+          hotCache.put(high, changedHotEntriesCache.get(key));
         } else {
           hotCache.put(key + shift, changedHotEntriesCache.get(key));
         }
@@ -315,16 +322,15 @@ final class PlaybackInfoCache extends AdapterDataObserver implements OnAttachSta
     }
   }
 
-  /* pkg */
-  @Nullable Object getKey(int position) {
+  @Nullable private Object getKey(int position) {
     return position == RecyclerView.NO_POSITION ? null : container.getCacheManager() == null ? null
         : container.getCacheManager().getKeyForOrder(position);
   }
 
-  @Nullable private Integer getOrder(Object key) {
-    return container.getCacheManager() == null ? null
-        : container.getCacheManager().getOrderForKey(key);
-  }
+  //@Nullable private Integer getOrder(Object key) {
+  //  return container.getCacheManager() == null ? null
+  //      : container.getCacheManager().getOrderForKey(key);
+  //}
 
   @NonNull final PlaybackInfo getPlaybackInfo(int position) {
     PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;

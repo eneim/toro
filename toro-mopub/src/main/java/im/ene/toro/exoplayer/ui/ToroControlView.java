@@ -110,7 +110,7 @@ public class ToroControlView extends PlaybackControlView {
     ExoPlayer current = super.getPlayer();
     if (current == player) return;
 
-    if (current != null && current instanceof ToroExoPlayer) {
+    if (current instanceof ToroExoPlayer) {
       ((ToroExoPlayer) current).removeOnVolumeChangeListener(componentListener);
     }
 
@@ -171,8 +171,7 @@ public class ToroControlView extends PlaybackControlView {
 
   @Override protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
     super.onVisibilityChanged(changedView, visibility);
-    if (changedView != this) return;
-    updateVolumeButtons();
+    if (changedView == this) updateVolumeButtons();
   }
 
   @SuppressLint("LogNotTimber") @SuppressWarnings("ConstantConditions") //

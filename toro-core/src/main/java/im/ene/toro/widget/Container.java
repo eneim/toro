@@ -138,6 +138,8 @@ public class Container extends RecyclerView {
       recyclerListener.delegate = NULL; // mark as it is set by Toro, not user.
       super.setRecyclerListener(recyclerListener);  // must be a super call
     }
+
+    playbackInfoCache.onAttach();
     playerManager.onAttach();
 
     ViewGroup.LayoutParams params = getLayoutParams();
@@ -182,6 +184,7 @@ public class Container extends RecyclerView {
       playerManager.clear();
     }
     playerManager.onDetach();
+    playbackInfoCache.onDetach();
     dataObserver.registerAdapter(null);
     childLayoutChangeListener.containerRef.clear();
   }

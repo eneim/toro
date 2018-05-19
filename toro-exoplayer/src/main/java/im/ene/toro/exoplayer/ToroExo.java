@@ -27,7 +27,6 @@ import android.support.annotation.RestrictTo;
 import android.support.annotation.StringRes;
 import android.support.v4.util.Pools;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -198,7 +197,8 @@ public final class ToroExo {
    * Get a possibly-non-localized String from existing resourceId.
    */
   /* pkg */ String getString(@StringRes int resId, @Nullable Object... params) {
-    return params == null ? this.context.getString(resId) : this.context.getString(resId, params);
+    return params == null || params.length < 1 ?  //
+        this.context.getString(resId) : this.context.getString(resId, params);
   }
 
   /**
@@ -242,7 +242,6 @@ public final class ToroExo {
       String error = TextUtils.isEmpty(subString) ? context.getString(errorStringId)
           : context.getString(errorStringId) + ": " + subString;
       Toast.makeText(context, error, LENGTH_SHORT).show();
-      Log.e(TAG, "createDrmSessionManager: " + error);
     }
 
     return drmSessionManager;
@@ -264,8 +263,9 @@ public final class ToroExo {
   }
 
   // Share the code of setting Volume. For use inside library only.
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-  public static void setVolumeInfo(@NonNull SimpleExoPlayer player, @NonNull VolumeInfo volumeInfo) {
+  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  public static void setVolumeInfo(@NonNull SimpleExoPlayer player,
+      @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
       ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
     } else {
@@ -277,7 +277,7 @@ public final class ToroExo {
     }
   }
 
-  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
     if (player instanceof ToroExoPlayer) {
       return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());

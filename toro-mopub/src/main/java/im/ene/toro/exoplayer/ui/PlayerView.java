@@ -57,7 +57,6 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.mopub.R;
 import java.util.List;
 

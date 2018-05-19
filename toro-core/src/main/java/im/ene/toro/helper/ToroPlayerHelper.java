@@ -17,12 +17,14 @@
 package im.ene.toro.helper;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
+import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
@@ -42,7 +44,7 @@ import java.util.HashSet;
 @SuppressWarnings("WeakerAccess") //
 public abstract class ToroPlayerHelper {
 
-  private final Handler handler = new Handler(new Handler.Callback() {
+  private final Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
@@ -108,8 +110,6 @@ public abstract class ToroPlayerHelper {
     @Override public void onCompleted() {
       if (container != null) {
         // Save PlaybackInfo.SCRAP to mark this player to be re-init.
-        // Customer behaviour may override this to match specific requirement.
-        // TODO [20180426]: make this overridable.
         container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
       }
     }
@@ -133,13 +133,14 @@ public abstract class ToroPlayerHelper {
    * ExoPlayer instance for SimpleExoPlayerView. The initialization is feed by an initial playback
    * info, telling if the playback should start from a specific position or from beginning.
    *
-   * Normally this info can be obtained from cache if there is cache manager, or null if there is no
-   * such cached information.
+   * Normally this info can be obtained from cache if there is cache manager, or {@link PlaybackInfo#SCRAP}
+   * if there is no such cached information.
    *
-   * @param playbackInfo the initial playback info. {@code null} if no such info available.
+   * @param playbackInfo the initial playback info.
    */
   protected abstract void initialize(@NonNull PlaybackInfo playbackInfo);
 
+  @CallSuper
   public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     this.container = container;
     this.initialize(playbackInfo);
@@ -175,10 +176,9 @@ public abstract class ToroPlayerHelper {
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
-  public abstract void addOnVolumeChangeListener(
-      @NonNull ToroPlayer.OnVolumeChangeListener listener);
+  public abstract void addOnVolumeChangeListener(@NonNull OnVolumeChangeListener listener);
 
-  public abstract void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
+  public abstract void removeOnVolumeChangeListener(OnVolumeChangeListener listener);
 
   // Mimic ExoPlayer
   @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,
