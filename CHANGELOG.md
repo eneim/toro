@@ -1,7 +1,7 @@
 Changelog
 ===========
 
-3.5.0 (2018/XX/XX)
+3.5.0 (2018/05/18)
 ------------------
 
 **TL,DR:** From **Toro 3.5.0**, client can actively prepare a ``PlaybackInfo`` for ``ToroPlayer`` by its order, using the newly added ``Container$Initializer`` interface.
