@@ -5,10 +5,22 @@ Changelog
 ------------------
 
 **TL,DR:** From **Toro 3.5.0**, client can actively prepare a ``PlaybackInfo`` for ``ToroPlayer`` by its order, using the newly added ``Container$Initializer`` interface.
+
+Custom initial PlaybackInfo sample:
+
+```java
+container.setPlayerInitializer(order -> {
+  VolumeInfo volumeInfo = new VolumeInfo(true, 0.75f); // mute by default, but will be 0.75 when un-mute
+  return new PlaybackInfo(INDEX_UNSET, TIME_UNSET, volumeInfo);
+});
+```
+
 **Toro** is also updated with improved PlaybackInfo in-memory caching mechanism, giving client better performance and correctness.
 
+**DETAILS**
+
 - Toro is now developed using Android Studio 3.2
-- ExoPlayer extension now depends on ExoPlayer 2.7.3.
+- ExoPlayer extension now depends on ExoPlayer 2.7.3. (2.8.0 is a breaking change and will be support in next major release).
 
 - ToroPlayer:
   - ``ToroPlayer#initialize(Container, PlaybackInfo)`` now has non-null PlaybackInfo (was null-able).
@@ -27,7 +39,7 @@ Changelog
   - ``Playable$EventListeners`` now extends a ``HashSet`` instead of ``ArrayList``, to guarantee the uniqueness of listener to be added by its hash value.
 
 - Add ``RemoveIn`` annotation so that user of **Toro** would know when a deprecated item will be removed.
-- Other improvements and also deprecated class(es) are removed.
+- Some internal methods are changed to final, other improvements and also deprecated class(es) are removed.
 
 3.4.2 (2018/04/11)
 ------------------
