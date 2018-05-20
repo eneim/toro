@@ -33,6 +33,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import im.ene.toro.PlayerSelector;
+import im.ene.toro.sample.BuildConfig;
 import im.ene.toro.sample.MainActivity;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
@@ -78,7 +79,10 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
     drawer.addDrawerListener(containerToggle);
 
     navView.inflateHeaderView(R.layout.widget_space_4dp);
-    navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
+    View header1 = navView.inflateHeaderView(R.layout.widget_hom_nav_header_1);
+    TextView header1Text = header1.findViewById(R.id.text_content);
+    header1Text.setText(getString(R.string.lib_info_version, BuildConfig.VERSION_NAME));
+
     navView.inflateHeaderView(R.layout.widget_hom_nav_header_2);
     navView.getHeaderView(3).<TextView>findViewById(R.id.text_content).setText(
         Html.fromHtml(getString(R.string.lib_info_license)));
@@ -92,15 +96,16 @@ public class CustomLayoutActivity extends BaseActivity implements CustomLayoutFr
   }
 
   // It is said that this method should not be used at Application.
-  // In fact, only here we can ensure that Activity's Views have finish the restore of its state if any.
+  // In fact, only here we can ensure that Activity's Views have finished restoring its state.
   // In this case, the drawer will be re-open after recreation IF it was opened before. But before
-  // this method is called (eg. onStart), state of navView is still 'closed' (drawer.isDrawerOpen(navView)
-  // returns false), which is unexpected.
+  // this method is called (eg. onStart), state of navView is still 'closed'
+  // (drawer.isDrawerOpen(navView) returns false), which is unexpected.
   // With that in mind, the "syncState" call should also be called here as well.
   @Override protected void onPostCreate(@Nullable Bundle bundle) {
     super.onPostCreate(bundle);
     drawerToggle.syncState();
     //noinspection ConstantConditions
+    // check drawer state after recreation, and pause playback if need.
     if (this.container != null && drawer.isDrawerOpen(navView)) {
       this.container.setPlayerSelector(PlayerSelector.NONE);
     }

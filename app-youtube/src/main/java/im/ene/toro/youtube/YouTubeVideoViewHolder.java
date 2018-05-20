@@ -28,41 +28,40 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.api.services.youtube.model.Thumbnail;
 import com.google.api.services.youtube.model.Video;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import im.ene.toro.youtube.common.AspectRatioFrameLayout;
 import im.ene.toro.youtube.common.ViewUtil;
+
+import static im.ene.toro.ToroUtil.visibleAreaOffset;
 
 /**
  * @author eneim (8/1/17).
  */
 
 @SuppressWarnings({ "WeakerAccess", "unused" }) //
-public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
+final class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements ToroPlayer {
 
   private static final String TAG = "YouT:ViewHolder";
 
   static final int LAYOUT_RES = R.layout.view_holder_youtube_player_full;
 
-  private final YouTubePlayerManager manager;
-  private String videoId;
-
-  YouTubePlayerHelper helper;
-
   private final RequestOptions options =
       new RequestOptions().fitCenter().placeholder(R.drawable.ic_launcher_background);
+  private final YouTubePlayerManager helperManager;
 
-  AspectRatioFrameLayout playerViewContainer;
-  TextView videoName;
-  TextView videoCaption;
-  ImageView thumbnailView;
+  String videoId;
+  YouTubePlayerHelper helper;
 
+  final TextView videoName;
+  final TextView videoCaption;
+  final ImageView thumbnailView;
   final FrameLayout playerView;
+  final AspectRatioFrameLayout playerViewContainer;
 
-  YouTubeVideoViewHolder(YouTubePlayerManager manager, View itemView) {
+  YouTubeVideoViewHolder(YouTubePlayerManager helperManager, View itemView) {
     super(itemView);
-    this.manager = manager;
+    this.helperManager = helperManager;
     playerViewContainer = itemView.findViewById(R.id.player_container);
     videoName = itemView.findViewById(R.id.video_id);
     videoCaption = itemView.findViewById(R.id.video_description);
@@ -82,9 +81,9 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = manager.obtainHelper(this, this.videoId);
+      helper = helperManager.obtainHelper(this, this.videoId);
     }
 
     helper.initialize(container, playbackInfo);
@@ -97,8 +96,8 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
   }
 
   @Override public void pause() {
-    thumbnailView.setVisibility(View.VISIBLE);
     if (helper != null) helper.pause();
+    thumbnailView.setVisibility(View.VISIBLE);
   }
 
   @Override public boolean isPlaying() {
@@ -107,35 +106,32 @@ public class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements T
 
   @Override public void release() {
     thumbnailView.setVisibility(View.VISIBLE);
-    manager.releaseHelper(this);
+    helperManager.releaseHelper(this);
     this.helper = null;
   }
 
   @Override public boolean wantsToPlay() {
-    return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.999;
+    // YouTube Player API requires the player view to be fully visible.
+    return visibleAreaOffset(this, itemView.getParent()) >= 0.999;
   }
 
   @Override public int getPlayerOrder() {
     return getAdapterPosition();
   }
 
-  @Override public void onSettled(Container container) {
-    if (helper != null) helper.onSettled();
-  }
-
-  void bind(Video item) {
+  void bind(@NonNull Video item) {
     this.videoId = item.getId();
     this.videoName.setText(item.getSnippet().getTitle());
     this.videoCaption.setText(item.getSnippet().getDescription());
 
     Thumbnail thumbnail = item.getSnippet().getThumbnails().getHigh();
-    if (thumbnail != null) {
+    if (thumbnail != null && thumbnail.getHeight() > 0) {
       playerViewContainer.setAspectRatio(thumbnail.getWidth() / (float) thumbnail.getHeight());
       Glide.with(itemView).load(thumbnail.getUrl()).apply(options).into(thumbnailView);
     }
   }
 
   @Override public String toString() {
-    return "Player{" + "playerOrder=" + getPlayerOrder() + '}';
+    return "Player{" + "videoId='" + videoId + '\'' + ", order=" + getPlayerOrder() + '}';
   }
 }

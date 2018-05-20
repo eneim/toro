@@ -78,17 +78,16 @@ public class TimelineFragment extends BaseFragment
     super.onAttach(context);
     // !IMPORTANT: don't remove these lines.
     this.TAG = "Toro:Fb:TimelineFragment";
-    Log.wtf(TAG, "onAttach() called with: context = [" + context + "]");
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_facebook_timeline, container, false);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     toolbarLayout.setTitle(getString(R.string.title_timeline));
 
@@ -165,12 +164,12 @@ public class TimelineFragment extends BaseFragment
   }
 
   // Memo: This method is called before children Fragments' onSaveInstanceState.
-  @Override public void onSaveInstanceState(Bundle outState) {
+  @Override public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     // If there is DialogFragment showing, we save stuff from it here.
     Fragment playerFragment =
         getChildFragmentManager().findFragmentByTag(BigPlayerFragment.FRAGMENT_TAG);
-    if (playerFragment != null && playerFragment instanceof BigPlayerFragment) {
+    if (playerFragment instanceof BigPlayerFragment) {
       Bundle playerBundle = ((BigPlayerFragment) playerFragment).getCurrentState();
       outState.putBundle(STATE_KEY_BIG_PLAYER_BUNDLE, playerBundle);
     }

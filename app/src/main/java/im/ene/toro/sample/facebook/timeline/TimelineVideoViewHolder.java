@@ -46,18 +46,16 @@ import static java.lang.String.format;
 @SuppressWarnings("WeakerAccess") //
 public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroPlayer {
 
-  @Nullable ExoPlayerViewHelper helper;
-  @Nullable private Uri mediaUri;
-
   @BindView(R.id.fb_video_player) PlayerView playerView;
   @BindView(R.id.player_state) TextView state;
-
-  private Playable.EventListener listener = new Playable.DefaultEventListener() {
+  private final Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
       state.setText(format(Locale.getDefault(), "STATE: %d・PWR: %s", playbackState, playWhenReady));
     }
   };
+  @Nullable private ExoPlayerViewHelper helper;
+  @Nullable private Uri mediaUri;
 
   TimelineVideoViewHolder(View itemView) {
     super(itemView);
@@ -72,7 +70,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override void bind(TimelineAdapter adapter, FbItem item, List<Object> payloads) {
     super.bind(adapter, item, payloads);
-    if (item != null && item instanceof FbVideo) {
+    if (item instanceof FbVideo) {
       MediaUrl url = ((FbVideo) item).getMediaUrl();
       mediaUri = url.getUri();
       userProfile.setText(format("%s・%s", getRelativeTimeSpanString(item.timeStamp), url.name()));
@@ -88,7 +86,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
       helper = new ExoPlayerViewHelper(this, mediaUri);
@@ -119,10 +117,6 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override public boolean wantsToPlay() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
-  }
-
-  @Override public void onSettled(Container container) {
-    // Do nothing
   }
 
   @Override public int getPlayerOrder() {

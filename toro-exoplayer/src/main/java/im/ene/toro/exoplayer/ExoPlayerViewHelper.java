@@ -18,12 +18,13 @@ package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -43,7 +44,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @NonNull private final MyEventListeners listeners;
 
   // Container is no longer required for constructing new instance.
-  @SuppressWarnings("unused") @Deprecated //
+  @SuppressWarnings("unused") @RemoveIn(version = "3.6.0") @Deprecated  //
   public ExoPlayerViewHelper(Container container, @NonNull ToroPlayer player, @NonNull Uri uri) {
     this(player, uri);
   }
@@ -57,11 +58,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   /** Config instance should be kept as global instance. */
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt, @NonNull Config config) {
-    this(player, uri, fileExt, with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
+      @NonNull Config config) {
+    this(player, uri, fileExt,
+        with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt, @NonNull ExoCreator creator) {
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
+      @NonNull ExoCreator creator) {
     this(player, new ExoPlayable(creator, uri, fileExt));
   }
 
@@ -76,11 +80,11 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this.playable = playable;
   }
 
-  @Override public void initialize(@Nullable PlaybackInfo playbackInfo) {
+  @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
+    playable.setPlaybackInfo(playbackInfo);
     playable.addEventListener(listeners);
     playable.prepare(false);
     playable.setPlayerView((PlayerView) player.getPlayerView());
-    if (playbackInfo != null) playable.setPlaybackInfo(playbackInfo);
   }
 
   @Override public void release() {
@@ -110,6 +114,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     return playable.getVolume();
   }
 
+  @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    playable.setVolumeInfo(volumeInfo);
+  }
+
+  @Override @NonNull public VolumeInfo getVolumeInfo() {
+    return playable.getVolumeInfo();
+  }
+
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     return playable.getPlaybackInfo();
   }
@@ -123,6 +135,15 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @SuppressWarnings("WeakerAccess") //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
+  }
+
+  @Override
+  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
+    this.playable.addOnVolumeChangeListener(checkNotNull(listener));
+  }
+
+  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    this.playable.removeOnVolumeChangeListener(listener);
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

@@ -20,10 +20,10 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseDialogFragment;
 
 /**
- * @author eneim | 6/18/17.
+ * A default full screen dialog fragment with black background.
+ * See {@link R.style#Toro_Theme_Board}.
  *
- *         A default full screen dialog fragment with black background.
- *         See {@link R.style#Toro_Theme_Board}.
+ * @author eneim | 6/18/17.
  */
 
 public abstract class BlackBoardDialogFragment extends BaseDialogFragment {

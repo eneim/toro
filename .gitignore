@@ -56,3 +56,13 @@
 /demo-mopub/.gitignore
 /demo-mopub/src/androidTest/
 /demo-mopub/src/test/
+/.idea/caches/build_file_checksums.ser
+!/gradle.properties
+/.idea/markdown-navigator/
+/.idea/vcs.xml
+/.idea/markdown-navigator.xml
+/.idea/kotlinc.xml
+/toro-core/src/androidTest/
+/toro-core/src/test/
+/demo-exoplayer/src/androidTest/
+/demo-exoplayer/src/test/

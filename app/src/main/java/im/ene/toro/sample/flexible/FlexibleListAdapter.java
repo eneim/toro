@@ -47,7 +47,8 @@ class FlexibleListAdapter extends RecyclerView.Adapter<FlexiblePlayerViewHolder>
     this.itemClickListener = null;
   }
 
-  @Override public FlexiblePlayerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull @Override
+  public FlexiblePlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(FlexiblePlayerViewHolder.LAYOUT_RES, parent, false);
     FlexiblePlayerViewHolder viewHolder = new FlexiblePlayerViewHolder(view);
@@ -63,7 +64,7 @@ class FlexibleListAdapter extends RecyclerView.Adapter<FlexiblePlayerViewHolder>
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(FlexiblePlayerViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull FlexiblePlayerViewHolder holder, int position) {
     holder.bind(items.get(position), position);
   }
 

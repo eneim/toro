@@ -17,43 +17,72 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.2.30'
+  ext.kotlin_version = '1.2.41'
   repositories {
     google()
     jcenter()
+    maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://oss.jfrog.org/artifactory/plugins-release' }
+    mavenCentral()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.0.1'
+    //noinspection GradleDependency
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha15'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
-    classpath "com.novoda:bintray-release:0.8.0"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.7.0"
+
+    classpath 'io.fabric.tools:gradle:1.25.1'
   }
+}
+
+ext {
+  androidVersion = 27
+  supportLibraryVersion = '27.1.1'
+  constrainLayoutVersion = '1.1.0'
+  archLibraryVersion = '1.1.1'
+  exoPlayer2Version = '2.7.3'
+  minSupportSDKVersion = 16
 }
 
 allprojects {
   repositories {
     google()
     jcenter()
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+  }
+
+  configurations {
+    doc {
+      transitive false
+    }
   }
 
   project.ext {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.4.1'
-    releaseVersionCode = 341
+    releaseVersion = '3.5.0' /* '3.5.0' */
+    releaseVersionCode = 350
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
-  }
-}
 
-ext {
-  androidVersion = 27
-  buildToolVersion = '27.0.2'
-  supportLibraryVersion = '27.1.0'
-  exoPlayer2Version = '2.7.0'
-  minSupportSDKVersion = 16
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+
+    developerId = 'eneim'
+    developerName = 'Nam Nguyen Hoai'
+    developerEmail = 'nam@ene.im'
+
+    siteUrl = 'https://github.com/eneim/toro'
+    gitUrl = 'https://github.com/eneim/toro.git'
+    issueTracker = 'https://github.com/eneim/toro/issues'
+  }
 }
 
 task clean(type: Delete) {
@@ -61,7 +90,14 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.4'
+  gradleVersion = '4.6'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
+}
+
+// copy from https://github.com/chrisbanes/tivi
+// read from gradle.properties for a value, or use default instead.
+String propOrDef(String propertyName, String defaultValue) {
+  def propertyValue = project.properties[propertyName]
+  return propertyValue != null ? propertyValue : defaultValue
 }

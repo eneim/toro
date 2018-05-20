@@ -51,7 +51,7 @@ public class ComplexListFragment extends BaseFragment {
   }
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_complex, container, false);
   }
@@ -61,7 +61,7 @@ public class ComplexListFragment extends BaseFragment {
   GridLayoutManager layoutManager;
   ComplexListAdapter adapter;
 
-  @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     toolbarLayout.setTitle(getString(R.string.title_complex_grid));
 

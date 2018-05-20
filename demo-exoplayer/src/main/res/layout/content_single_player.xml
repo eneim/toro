@@ -22,8 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="toro.demo.exoplayer.playable.PlayableDemoActivity"
-    tools:showIn="@layout/activity_single_player"
+    tools:showIn="@layout/activity_demo_creator"
     >
 
   <android.support.v7.widget.LinearLayoutCompat

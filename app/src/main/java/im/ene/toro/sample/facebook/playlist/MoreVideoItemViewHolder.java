@@ -106,7 +106,7 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
       helper = new ExoPlayerViewHelper(this, mediaUri);
@@ -164,10 +164,6 @@ public class MoreVideoItemViewHolder extends RecyclerView.ViewHolder implements 
 
   @Override public boolean wantsToPlay() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
-  }
-
-  @Override public void onSettled(Container container) {
-    // Do nothing
   }
 
   @Override public int getPlayerOrder() {

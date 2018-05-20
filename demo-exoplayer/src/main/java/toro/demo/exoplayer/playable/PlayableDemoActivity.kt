@@ -16,80 +16,120 @@
 
 package toro.demo.exoplayer.playable
 
-import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.google.android.exoplayer2.ui.PlayerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import butterknife.ButterKnife
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ui.DebugTextViewHelper
+import im.ene.toro.exoplayer.ExoPlayable
 import im.ene.toro.exoplayer.Playable
-import im.ene.toro.exoplayer.Playable.DefaultEventListener
-import kotlinx.android.synthetic.main.activity_single_player.toolbar
-import kotlinx.android.synthetic.main.activity_single_player_landscape.player_view
-import kotlinx.android.synthetic.main.content_single_player.playerView
-import toro.demo.exoplayer.DemoApp
+import im.ene.toro.exoplayer.ToroExo
+import im.ene.toro.media.VolumeInfo
+import kotlinx.android.synthetic.main.activity_demo_playable.debugText
+import kotlinx.android.synthetic.main.activity_demo_playable.playerView
 import toro.demo.exoplayer.R
 
 /**
- * Demo for @see [Playable]. Written in Kotlin.
+ * @author eneim (2018/02/25).
  */
+
 class PlayableDemoActivity : AppCompatActivity() {
+  companion object {
+    private val video =
+    // Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4");
+        Uri.parse("file:///android_asset/bbb/video.mp4")
+  }
 
-    companion object {
-        private val videoUri = Uri.parse("file:///android_asset/bbb/video.mp4")
+  var playable: Playable? = null
+  var helper: DebugTextViewHelper? = null
+
+  private fun release() {
+    if (playable != null) {
+      playable!!.pause()
+      playable!!.release()
+      playable = null
     }
 
-    private var playable: Playable? = null
-    private var exoPlayerView: PlayerView? = null
+    ToroExo.with(this).cleanUp()
+  }
 
-    private val listener = object : DefaultEventListener() {
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            exoPlayerView!!.keepScreenOn = playWhenReady
-        }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_demo_playable)
+    ButterKnife.bind(this)
+
+    playable = lastCustomNonConfigurationInstance as Playable?
+    if (playable == null) {
+      playable = ExoPlayable(
+          /* DemoApp.exoCreator */ // un-comment to use custom ExoCreator
+          ToroExo.with(this).defaultCreator, video, "mp4")
+          .also {
+            it.prepare(true)
+            it.play()
+          }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val windowSize = Point()
-        window.windowManager.defaultDisplay.getSize(windowSize)
-        val landscape = windowSize.y < windowSize.x
-        exoPlayerView = //
-                if (landscape) {
-                    setContentView(R.layout.activity_single_player_landscape)
-                    player_view
-                } else {
-                    setContentView(R.layout.activity_single_player)
-                    setSupportActionBar(toolbar)
-                    playerView
-                }
+    playable!!.playerView = playerView
+    helper = DebugTextViewHelper(playerView!!.player as SimpleExoPlayer, debugText)
+    preparePlayableControlButtons()
+  }
 
-        playable = lastCustomNonConfigurationInstance as Playable?
-        if (playable == null) {
-            playable = DemoApp.exoCreator!!.createPlayable(videoUri, null)
-            playable!!.prepare(true)
-        }
-        playable!!.addEventListener(listener)
-    }
+  override fun onStart() {
+    super.onStart()
+    helper?.start()
+  }
 
-    override fun onStart() {
-        super.onStart()
-        playable!!.playerView = exoPlayerView
-        if (!playable!!.isPlaying) playable!!.play()
-    }
+  override fun onStop() {
+    super.onStop()
+    helper?.stop()
+  }
 
-    override fun onStop() {
-        super.onStop()
-        // If the activity is not finishing, we keep it playing.
-        if (isFinishing) playable!!.pause()
-        playable!!.playerView = null
-    }
+  override fun onDestroy() {
+    super.onDestroy()
+    if (isFinishing) release()
+  }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        playable!!.removeEventListener(listener)
-        if (isFinishing) playable!!.release()
-    }
+  // Save this for config change.
+  override fun onRetainCustomNonConfigurationInstance(): Any? {
+    return playable
+  }
 
-    override fun onRetainCustomNonConfigurationInstance(): Any {
-        return playable!!
-    }
+  // Dynamically add buttons to control the Playable instance.
+  private fun preparePlayableControlButtons() {
+    val buttonContainer = findViewById<ViewGroup>(R.id.buttonContainer)
+    buttonContainer.removeAllViews()
+    val inflater = LayoutInflater.from(buttonContainer.context)
+
+    buttonContainer.addCustomButton(inflater, "Play", { playable!!.play() })
+    buttonContainer.addCustomButton(inflater, "Pause", { playable!!.pause() })
+    buttonContainer.addCustomButton(inflater, "Mute",
+        { playable!!.volumeInfo = VolumeInfo(true, 0.0F) })
+    buttonContainer.addCustomButton(inflater, "Un Mute",
+        { playable!!.volumeInfo = VolumeInfo(false, 1.0F) })
+
+    // Immediately reset current playback and start it all over again
+    buttonContainer.addCustomButton(inflater, "Replay", {
+      if (playable != null) (playable as Playable).apply {
+        this.pause()
+        this.reset()
+        this.play()
+      }
+    })
+  }
+}
+
+// A extension function for our ViewGroup.
+fun ViewGroup.addCustomButton(inflater: LayoutInflater, name: String,
+    action: (View) -> Unit) {
+  (inflater.inflate(R.layout.widget_debug_button, this, false) as Button)
+      .apply {
+        this.text = name
+        this.setOnClickListener { action.invoke(it) }
+      }
+      .run { this@addCustomButton.addView(this) }
 }

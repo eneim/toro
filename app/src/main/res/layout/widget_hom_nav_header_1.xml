@@ -38,7 +38,6 @@
       android:layout_height="wrap_content"
       android:gravity="center"
       android:minHeight="32dp"
-      android:text="@string/lib_info_version"
       android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
       />
 

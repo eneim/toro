@@ -1,6 +1,80 @@
 Changelog
 ===========
 
+3.5.0 (2018/05/18)
+------------------
+
+**TL,DR:** From **Toro 3.5.0**, client can actively prepare a ``PlaybackInfo`` for ``ToroPlayer`` by its order, using the newly added ``Container$Initializer`` interface.
+
+Custom initial PlaybackInfo sample:
+
+```java
+container.setPlayerInitializer(order -> {
+  VolumeInfo volumeInfo = new VolumeInfo(true, 0.75f); // mute by default, but will be 0.75 when un-mute
+  return new PlaybackInfo(INDEX_UNSET, TIME_UNSET, volumeInfo);
+});
+```
+
+**Toro** is also updated with improved PlaybackInfo in-memory caching mechanism, giving client better performance and correctness.
+
+**DETAILS**
+
+- Toro is now developed using Android Studio 3.2
+- ExoPlayer extension now depends on ExoPlayer 2.7.3. (2.8.0 is a breaking change and will be support in next major release).
+
+- ToroPlayer:
+  - ``ToroPlayer#initialize(Container, PlaybackInfo)`` now has non-null PlaybackInfo (was null-able).
+  - ``ToroPlayerHelper#initialize(Container, PlaybackInfo)`` now has non-null PlaybackInfo (was null-able).
+  - ``ToroPlayerHelper#initialize(PlaybackInfo)`` now has non-null PlaybackInfo (was null-able).
+
+- PlaybackInfo:
+  - **NEW**: ``PlaybackInfo`` has been updated with ``VolumeInfo`` as a field.
+  - **NEW**: Add ``PlaybackInfo#SCRAP`` object, which is a default, trivial static instance of PlaybackInfo. This instance should be used only to mark a player as un-initialized.
+
+- Container:
+  - **NEW**: Add ``Container#getLatestPlaybackInfos()`` as a utility method so that client can get current playback info of all possible players at any time.
+  - **NEW**: Add ``Container$Initializer`` interface. This interface, when set, will request client to initialize the ``PlaybackInfo`` for a ``ToroPlayer`` by its order, via ``Initializer#initPlaybackInfo(int)``. Default implementation return a trivial ``PlaybackInfo``.
+
+- ExoPlayer extension:
+  - ``Playable$EventListeners`` now extends a ``HashSet`` instead of ``ArrayList``, to guarantee the uniqueness of listener to be added by its hash value.
+
+- Add ``RemoveIn`` annotation so that user of **Toro** would know when a deprecated item will be removed.
+- Some internal methods are changed to final, other improvements and also deprecated class(es) are removed.
+
+3.4.2 (2018/04/11)
+------------------
+
+> Toro 3.4.2 and above will be developed by Android Studio 3.1.0+, and maybe kotlin as well.
+
+- **Development**
+  - Migrate the repo to Android Studio 3.1.1.
+  - Remove ``gradle.properties-sample`` and some internal change so contributor can start forking and contributing more easily.
+  - **Toro** is now distributed to SNAPSHOT channel as well for early builds. This enables user to try latest updates with ease. Detail can be found on README.
+
+- **toro-core**
+  - Add a mechanism to support the case ``Container`` is used in ``CoordinatorLayout`` with other Views, using ``Behavior``. Detail can be found on README.
+  - Add ``ToroUtil#wrapParamBehavior()`` to help shorten the setup of new ``Behavior`` above.
+  - Add ``VolumeInfo`` for a tailored volume setup. It holds the 'mute' status as well as the actual volume value when the playback is unmuted.
+  - Add ``ToroPlayer$OnVolumeChangeListener`` that listens to the change of internal ``VolumeInfo``. Instance of this interface is setup by ``ToroPlayerHelper`` and its variants.
+  - ``Container`` will no longer start a delayed playback if the scroll is not idled.
+
+- **toro-exoplayer**
+  - ``Config`` now accepts an array of ``DrmSessionManager``s instead of a single ``DrmSessionManager``. This is an experiment.
+  - Add ``Playable#setParameters()`` and ``Playable#getParameters`` to match ExoPlayer behaviour.
+  - Add ``ToroExoPlayer`` which extends ``SimpleExoPlayer`` and provides the ability to work with ``VolumeInfo``.
+  - ``Playable`` and default implementations are updated to work with ``VolumeInfo``.
+
+- **toro-mopub**
+  - Add custom UI components: ``PlayerView`` and ``ToroControlView`` that combines ExoPlayer r2.4.4 implementation with some fixes from ExoPlayer 2.7.0.
+  - Add ``Playable#setParameters()`` and ``Playable#getParameters`` to match ExoPlayer behaviour.
+  - Add ``ToroExoPlayer`` which extends ``SimpleExoPlayer`` and provides the ability to work with ``VolumeInfo``.
+  - ``Playable`` and default implementations are updated to work with ``VolumeInfo``.
+  - Demo app is updated using new UI components as well as ``VolumeInfo``.
+
+- **Others**: minor performance improvement update.
+
+- Detail implementation and suggested usage can be found on demo applications.
+
 3.4.1 (2018/03/06)
 --------------
 

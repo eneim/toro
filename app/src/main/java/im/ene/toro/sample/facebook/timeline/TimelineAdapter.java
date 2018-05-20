@@ -59,7 +59,8 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineViewHolder>
     return position;
   }
 
-  @Override public TimelineViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull @Override
+  public TimelineViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     final TimelineViewHolder viewHolder = TimelineViewHolder.createViewHolder(parent, viewType);
     viewHolder.setClickListener(v -> {
       int pos = viewHolder.getAdapterPosition();
@@ -75,11 +76,11 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineViewHolder>
     return item instanceof FbVideo ? TYPE_VIDEO : TYPE_OTHER;
   }
 
-  @Override public void onBindViewHolder(TimelineViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull TimelineViewHolder holder, int position) {
     holder.bind(this, getItem(position), null);
   }
 
-  @Override public void onViewRecycled(TimelineViewHolder holder) {
+  @Override public void onViewRecycled(@NonNull TimelineViewHolder holder) {
     holder.onRecycled();
   }
 

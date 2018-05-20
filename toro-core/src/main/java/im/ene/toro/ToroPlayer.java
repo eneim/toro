@@ -21,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,7 +49,7 @@ public interface ToroPlayer {
    * @param container the RecyclerView contains this Player.
    * @param playbackInfo initialize info for the preparation.
    */
-  void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo);
+  void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
 
   /**
    * Start playback or resume from a pausing state.
@@ -75,13 +76,6 @@ public interface ToroPlayer {
   int getPlayerOrder();
 
   /**
-   * Notify a Player about its {@link Container}'s scroll state change.
-   *
-   * @deprecated no-longer used.
-   */
-  @Deprecated void onSettled(Container container);
-
-  /**
    * A convenient callback to help {@link ToroPlayer} to listen to different playback states.
    */
   interface EventListener {
@@ -93,6 +87,11 @@ public interface ToroPlayer {
     void onPaused();  // ExoPlayer state: 3, play flag: false
 
     void onCompleted(); // ExoPlayer state: 4
+  }
+
+  interface OnVolumeChangeListener {
+
+    void onVolumeChanged(@NonNull VolumeInfo volumeInfo);
   }
 
   // Adapt from ExoPlayer.

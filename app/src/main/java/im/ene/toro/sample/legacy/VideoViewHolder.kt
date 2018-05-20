@@ -26,7 +26,6 @@ import im.ene.toro.helper.ToroPlayerHelper
 import im.ene.toro.media.PlaybackInfo
 import im.ene.toro.sample.R
 import im.ene.toro.widget.Container
-
 import android.view.LayoutInflater.from as inflater
 
 /**
@@ -39,18 +38,18 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
         inflater(viewGroup.context).inflate(R.layout.view_holder_legacy_basic, viewGroup, false))
   }
 
-  var videoView: ToroVideoView = itemView.findViewById(R.id.video_view)
+  private val videoView: ToroVideoView = itemView.findViewById(R.id.video_view) as ToroVideoView
+  private var playerHelper: ToroPlayerHelper? = null
   var mediaUri: Uri? = null
-  var playerHelper: ToroPlayerHelper? = null
 
   override fun getPlayerView() = videoView
 
   override fun getCurrentPlaybackInfo() = playerHelper?.latestPlaybackInfo ?: PlaybackInfo()
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo?) {
+  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
     if (mediaUri == null) throw NullPointerException("MediaUri is null.")
     if (playerHelper == null) {
-      playerHelper = LegacyVideoViewHelper(container, this, mediaUri!!)
+      playerHelper = LegacyVideoViewHelper(this, mediaUri!!)
     }
     playerHelper!!.initialize(container, playbackInfo)
   }
@@ -75,10 +74,6 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
   }
 
   override fun getPlayerOrder() = adapterPosition
-
-  override fun onSettled(container: Container?) {
-    // Do nothing
-  }
 
   // API to call from Adapter
   fun bind(media: Media?) {

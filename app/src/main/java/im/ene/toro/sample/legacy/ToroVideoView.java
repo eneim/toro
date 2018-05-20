@@ -21,13 +21,14 @@ import android.util.AttributeSet;
 import android.widget.VideoView;
 
 /**
- * @author eneim | 6/11/17.
+ * A simple wrapper on top of {@link VideoView} to catch the start/pause actions.
  *
- *         A simple wrapper on top of {@link VideoView} to catch the start/pause actions.
- *         {@inheritDoc}
+ * @author eneim | 6/11/17.
  */
 
 public class ToroVideoView extends VideoView {
+
+  private PlayerEventListener playerEventListener;
 
   public ToroVideoView(Context context) {
     super(context);
@@ -70,8 +71,6 @@ public class ToroVideoView extends VideoView {
       this.playerEventListener.onPlay();
     }
   }
-
-  private PlayerEventListener playerEventListener;
 
   public void setPlayerEventListener(PlayerEventListener playerEventListener) {
     this.playerEventListener = playerEventListener;

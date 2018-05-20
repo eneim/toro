@@ -31,7 +31,6 @@ class SectionContentAdapter : Adapter<BaseViewHolder>() {
 
     companion object {
         const val videoItem = "div > video"
-
         const val typeText = 1
         const val typeVideo = 2
     }
@@ -53,8 +52,8 @@ class SectionContentAdapter : Adapter<BaseViewHolder>() {
             inflater = LayoutInflater.from(parent.context)
         }
 
-        return if (viewType == typeVideo) VideoViewHolder(inflater, parent)
-        else TextViewHolder(inflater, parent)
+        return if (viewType == typeVideo) VideoViewHolder(inflater!!, parent)
+        else TextViewHolder(inflater!!, parent)
     }
 
     override fun getItemCount() = this.elements.size

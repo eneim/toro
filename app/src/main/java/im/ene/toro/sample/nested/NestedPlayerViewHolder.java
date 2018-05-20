@@ -18,7 +18,6 @@ package im.ene.toro.sample.nested;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -62,7 +61,7 @@ public class NestedPlayerViewHolder extends BaseViewHolder implements ToroPlayer
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new ExoPlayerViewHelper(this, mediaUri);
     }
@@ -90,10 +89,6 @@ public class NestedPlayerViewHolder extends BaseViewHolder implements ToroPlayer
 
   @Override public boolean wantsToPlay() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
-  }
-
-  @Override public void onSettled(Container container) {
-    // Do nothing
   }
 
   @Override public int getPlayerOrder() {

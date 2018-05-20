@@ -17,29 +17,34 @@
 package im.ene.toro.helper;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
+import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
 import im.ene.toro.ToroPlayer.State;
+import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * General definition of a helper class for a specific {@link ToroPlayer}. This class helps
  * forwarding the playback state to the {@link ToroPlayer} if there is any {@link EventListener}
  * registered. It also requests the initialization for the Player.
  *
+ * From 3.4.0, this class can be reused as much as possible.
+ *
  * @author eneim | 6/11/17.
  */
 @SuppressWarnings("WeakerAccess") //
 public abstract class ToroPlayerHelper {
 
-  private final Handler handler = new Handler(new Handler.Callback() {
+  private final Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
     @Override public boolean handleMessage(Message msg) {
       boolean playWhenReady = (boolean) msg.obj;
       switch (msg.what) {
@@ -85,7 +90,7 @@ public abstract class ToroPlayerHelper {
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
 
-  final ArrayList<EventListener> eventListeners = new ArrayList<>();
+  final HashSet<EventListener> eventListeners = new HashSet<>();
   final EventListener internalListener = new EventListener() {
     @Override public void onBuffering() {
       // do nothing
@@ -97,22 +102,21 @@ public abstract class ToroPlayerHelper {
 
     @Override public void onPaused() {
       player.getPlayerView().setKeepScreenOn(false);
+      if (container != null) {
+        container.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+      }
     }
 
     @Override public void onCompleted() {
       if (container != null) {
-        container.savePlaybackInfo(player.getPlayerOrder(), new PlaybackInfo());
+        // Save PlaybackInfo.SCRAP to mark this player to be re-init.
+        container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
       }
     }
   };
 
   public ToroPlayerHelper(@NonNull ToroPlayer player) {
     this.player = player;
-  }
-
-  // Hook into the scroll state change event. Called by the enclosing ToroPlayer.
-  public void onSettled() {
-    // Do nothing, sub class can override this.
   }
 
   @SuppressWarnings("ConstantConditions")
@@ -129,16 +133,15 @@ public abstract class ToroPlayerHelper {
    * ExoPlayer instance for SimpleExoPlayerView. The initialization is feed by an initial playback
    * info, telling if the playback should start from a specific position or from beginning.
    *
-   * Normally this info can be obtained from cache if there is cache manager, or null if there is no
-   * such cached information.
+   * Normally this info can be obtained from cache if there is cache manager, or {@link PlaybackInfo#SCRAP}
+   * if there is no such cached information.
    *
-   * @param playbackInfo the initial playback info. {@code null} if no such info available.
-   * @deprecated use {@link #initialize(Container, PlaybackInfo)} instead.
+   * @param playbackInfo the initial playback info.
    */
-  @Deprecated  //
-  public abstract void initialize(@Nullable PlaybackInfo playbackInfo);
+  protected abstract void initialize(@NonNull PlaybackInfo playbackInfo);
 
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  @CallSuper
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     this.container = container;
     this.initialize(playbackInfo);
   }
@@ -149,9 +152,21 @@ public abstract class ToroPlayerHelper {
 
   public abstract boolean isPlaying();
 
+  /**
+   * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.
+   */
+  @RemoveIn(version = "3.6.0") @Deprecated  //
   public abstract void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume);
 
+  /**
+   * @deprecated use {@link #getVolumeInfo()} instead.
+   */
+  @RemoveIn(version = "3.6.0") @Deprecated  //
   public abstract @FloatRange(from = 0.0, to = 1.0) float getVolume();
+
+  public abstract void setVolumeInfo(@NonNull VolumeInfo volumeInfo);
+
+  @NonNull public abstract VolumeInfo getVolumeInfo();
 
   /**
    * Get latest playback info. Either on-going playback info if current player is playing, or latest
@@ -160,6 +175,10 @@ public abstract class ToroPlayerHelper {
    * @return latest {@link PlaybackInfo} of current Player.
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
+
+  public abstract void addOnVolumeChangeListener(@NonNull OnVolumeChangeListener listener);
+
+  public abstract void removeOnVolumeChangeListener(OnVolumeChangeListener listener);
 
   // Mimic ExoPlayer
   @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,
@@ -173,6 +192,6 @@ public abstract class ToroPlayerHelper {
   }
 
   @Override public String toString() {
-    return "Toro:Helper{" + "player=" + player + ", container=" + container + '}';
+    return "ToroLib:Helper{" + "player=" + player + ", container=" + container + '}';
   }
 }

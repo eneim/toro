@@ -17,6 +17,7 @@
 package im.ene.toro.sample.pagers;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -45,12 +46,12 @@ public class MainPageFragment extends BaseFragment {
   SubPagerAdapter pagerAdapter;
 
   @Nullable @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
       @Nullable Bundle bundle) {
     return inflater.inflate(R.layout.fragment_viewpager, container, false);
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle bundle) {
+  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle bundle) {
     super.onViewCreated(view, bundle);
     pagerAdapter = new SubPagerAdapter(getChildFragmentManager());
     viewPager.setAdapter(pagerAdapter);

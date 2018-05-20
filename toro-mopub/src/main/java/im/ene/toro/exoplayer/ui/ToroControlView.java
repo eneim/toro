@@ -18,6 +18,7 @@ package im.ene.toro.exoplayer.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -28,11 +29,14 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
+import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
+import im.ene.toro.exoplayer.ToroExo;
+import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.mopub.R;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * An extension of {@link PlaybackControlView} that adds Volume control buttons. It works on-par
@@ -46,8 +50,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ToroControlView extends PlaybackControlView {
 
   static final String TAG = "ToroExo:Control";
-  // TODO gracefully save & restore volume setup in config change.
-  static final String STATE_VOLUME_WHEN_UP = "toro:ui:control:volume";
 
   static Method hideAfterTimeoutMethod; // from parent ...
   static boolean hideMethodFetched;
@@ -58,8 +60,7 @@ public class ToroControlView extends PlaybackControlView {
   final View volumeUpButton;
   final View volumeOffButton;
   final TimeBar volumeBar;
-  final AtomicInteger volume = new AtomicInteger(100);  // in the ruler of 100.
-  boolean scrubEnabled = true;
+  final VolumeInfo volumeInfo = new VolumeInfo(false, 1);
 
   public ToroControlView(Context context) {
     this(context, null);
@@ -84,7 +85,7 @@ public class ToroControlView extends PlaybackControlView {
     if (volumeOffButton != null) volumeOffButton.setOnClickListener(componentListener);
     if (volumeBar != null) volumeBar.setListener(componentListener);
 
-    updateVolumeButton();
+    updateVolumeButtons();
   }
 
   @Override public void onDetachedFromWindow() {
@@ -92,6 +93,7 @@ public class ToroControlView extends PlaybackControlView {
     if (volumeUpButton != null) volumeUpButton.setOnClickListener(null);
     if (volumeOffButton != null) volumeOffButton.setOnClickListener(null);
     if (volumeBar != null) volumeBar.setListener(null);
+    this.setPlayer(null);
   }
 
   @SuppressLint("ClickableViewAccessibility") @Override
@@ -104,33 +106,45 @@ public class ToroControlView extends PlaybackControlView {
     return true;
   }
 
-  protected final float getVolume() {
-    return getPlayer() instanceof SimpleExoPlayer ? ((SimpleExoPlayer) getPlayer()).getVolume() : 1;
-  }
+  @Override public void setPlayer(ExoPlayer player) {
+    ExoPlayer current = super.getPlayer();
+    if (current == player) return;
 
-  protected final void setVolume(int position) {
-    if (getPlayer() instanceof SimpleExoPlayer) {
-      ((SimpleExoPlayer) getPlayer()).setVolume(position / (float) 100);
-      volume.set(position);
+    if (current instanceof ToroExoPlayer) {
+      ((ToroExoPlayer) current).removeOnVolumeChangeListener(componentListener);
     }
+
+    super.setPlayer(player);
+
+    current = super.getPlayer();
+    @NonNull final VolumeInfo tempVol;
+    if (current instanceof ToroExoPlayer) {
+      tempVol = ((ToroExoPlayer) current).getVolumeInfo();
+      ((ToroExoPlayer) current).addOnVolumeChangeListener(componentListener);
+    } else if (current instanceof SimpleExoPlayer) {
+      float volume = ((SimpleExoPlayer) current).getVolume();
+      tempVol = new VolumeInfo(volume == 0, volume);
+    } else {
+      tempVol = new VolumeInfo(false, 1f);
+    }
+
+    this.volumeInfo.setTo(tempVol.isMute(), tempVol.getVolume());
+    updateVolumeButtons();
   }
 
-  private class ComponentListener implements OnClickListener, TimeBar.OnScrubListener {
+  private class ComponentListener
+      implements OnClickListener, TimeBar.OnScrubListener, OnVolumeChangeListener {
 
     @Override public void onClick(View v) {
       ExoPlayer player = getPlayer();
-      if (player == null || !(player instanceof SimpleExoPlayer)) return;
-      SimpleExoPlayer exoPlayer = (SimpleExoPlayer) player;
+      if (!(player instanceof SimpleExoPlayer)) return;
       if (v == volumeOffButton) {  // click to vol Off --> unmute
-        exoPlayer.setVolume(volume.get() / (float) 100);
-        scrubEnabled = true;
+        volumeInfo.setTo(false, volumeInfo.getVolume());
       } else if (v == volumeUpButton) {  // click to vol Up --> mute
-        volume.set((int) (exoPlayer.getVolume() * 100));
-        exoPlayer.setVolume(0);
-        scrubEnabled = false;
+        volumeInfo.setTo(true, volumeInfo.getVolume());
       }
-
-      updateVolumeButton();
+      ToroExo.setVolumeInfo((SimpleExoPlayer) player, volumeInfo);
+      updateVolumeButtons();
     }
 
     /// TimeBar.OnScrubListener
@@ -144,17 +158,30 @@ public class ToroControlView extends PlaybackControlView {
     }
 
     @Override public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
-      // no-ops
+      dispatchOnScrubStop(position);
+    }
+
+    /// ToroPlayer.OnVolumeChangeListener
+
+    @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
+      ToroControlView.this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      updateVolumeButtons();
     }
   }
 
-  @SuppressWarnings("ConstantConditions") void updateVolumeButton() {
+  @Override protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+    super.onVisibilityChanged(changedView, visibility);
+    if (changedView == this) updateVolumeButtons();
+  }
+
+  @SuppressLint("LogNotTimber") @SuppressWarnings("ConstantConditions") //
+  void updateVolumeButtons() {
     if (!isVisible() || !ViewCompat.isAttachedToWindow(this)) {
       return;
     }
     boolean requestButtonFocus = false;
-    boolean muted =
-        getVolume() == 0;  // muted then show volumeOffButton, or else show volumeUpButton
+    // if muted then show volumeOffButton, or else show volumeUpButton
+    boolean muted = volumeInfo.isMute();
     if (volumeOffButton != null) {
       requestButtonFocus |= muted && volumeOffButton.isFocused();
       volumeOffButton.setVisibility(muted ? View.VISIBLE : View.GONE);
@@ -166,11 +193,7 @@ public class ToroControlView extends PlaybackControlView {
 
     if (volumeBar != null) {
       volumeBar.setDuration(100);
-      volumeBar.setPosition(volume.get());
-    }
-
-    if (volumeBar != null) {
-      volumeBar.setEnabled(scrubEnabled);
+      volumeBar.setPosition(muted ? 0 : (long) (volumeInfo.getVolume() * 100));
     }
 
     if (requestButtonFocus) {
@@ -203,7 +226,7 @@ public class ToroControlView extends PlaybackControlView {
   }
 
   private void requestButtonFocus() {
-    boolean muted = getVolume() == 0;
+    boolean muted = volumeInfo.isMute();
     if (!muted && volumeUpButton != null) {
       volumeUpButton.requestFocus();
     } else if (muted && volumeOffButton != null) {
@@ -223,7 +246,7 @@ public class ToroControlView extends PlaybackControlView {
       }
       hideActionFetched = true;
     }
-    
+
     if (hideActionField != null) {
       try {
         removeCallbacks((Runnable) hideActionField.get(this));
@@ -233,10 +256,21 @@ public class ToroControlView extends PlaybackControlView {
     }
   }
 
+  // Scrub Move will always modify actual Volume, there is no 'mute-with-non-zero-volume' state.
   void dispatchOnScrubMove(long position) {
     if (position > 100) position = 100;
     if (position < 0) position = 0;
-    setVolume((int) position);
-    updateVolumeButton();
+
+    float actualVolume = position / (float) 100;
+    this.volumeInfo.setTo(actualVolume == 0, actualVolume);
+    if (getPlayer() instanceof SimpleExoPlayer) {
+      ToroExo.setVolumeInfo((SimpleExoPlayer) getPlayer(), this.volumeInfo);
+    }
+
+    updateVolumeButtons();
+  }
+
+  void dispatchOnScrubStop(long position) {
+    this.dispatchOnScrubMove(position);
   }
 }

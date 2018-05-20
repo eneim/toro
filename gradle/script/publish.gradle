@@ -14,20 +14,143 @@
  * limitations under the License.
  */
 
-apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.jfrog.artifactory"
+apply plugin: 'com.jfrog.bintray'
 
-publish {
-  artifactId = releaseArtifact  // library
-  description = releaseDescription  // by library
-  repoName = releaseRepoName  // by library
-  userOrg = releaseUserOrg  // shared
-  groupId = releaseGroupId  // shared
-  version = releaseVersion  // shared
-  website = releaseWebsite  // shared
-  licences = releaseLicense // shared
+group = releaseGroupId
+version = releaseVersion
 
-  bintrayUser = bintray_user
-  bintrayKey = bintray_apikey
-
-  dryRun = false
+artifactory {
+  contextUrl = "https://oss.jfrog.org/artifactory"
+  //The base Artifactory URL if not overridden by the publisher/resolver
+  publish {
+    repository {
+      repoKey = 'oss-snapshot-local'
+      username = "${bintray_user}"
+      password = "${bintray_apikey}"
+      maven = true
+    }
+  }
+  resolve {
+    repository {
+      repoKey = 'libs-snapshot'
+      username = "${bintray_user}"
+      password = "${bintray_apikey}"
+      maven = true
+    }
+  }
 }
+
+artifactoryPublish.dependsOn('build', 'install')
+
+task androidSourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.java.srcDirs
+}
+
+publishing {
+  publications {
+    aar(MavenPublication) {
+      groupId = releaseGroupId
+      artifactId = releaseArtifact
+      version = releaseVersion
+      // Tell maven to prepare the generated "*.aar" file for publishing
+      artifact(androidSourcesJar)
+      artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+    }
+  }
+}
+
+artifactoryPublish {
+  publications(publishing.publications.aar)
+}
+
+install {
+  repositories.mavenInstaller {
+    pom.project {
+      packaging 'aar'
+      groupId releaseGroupId
+      artifactId releaseArtifact
+
+      name releaseArtifact
+      description releaseDescription
+      url releaseWebsite
+
+      licenses {
+        license {
+          name licenseName
+          url licenseUrl
+        }
+      }
+
+      developers {
+        developer {
+          id developerId
+          name developerName
+          email developerEmail
+        }
+      }
+
+      scm {
+        connection gitUrl
+        developerConnection gitUrl
+        url siteUrl
+      }
+    }
+  }
+}
+
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+  source = android.sourceSets.main.java.srcDirs
+  classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+javadoc {
+  source configurations.doc.collect { zipTree(it) }
+  include '**/*.java'
+  options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives javadocJar
+  archives sourcesJar
+}
+
+bintray {
+  user = "${bintray_user}"
+  key = "${bintray_apikey}"
+
+  configurations = ['archives']
+  pkg {
+    repo = releaseRepoName
+    userOrg = releaseUserOrg
+    name = releaseArtifact
+    desc = releaseDescription
+    websiteUrl = siteUrl
+    vcsUrl = gitUrl
+    issueTrackerUrl = issueTracker
+    githubReleaseNotesFile = 'CHANGELOG.md'
+    licenses = allLicenses
+    dryRun = false
+    publish = true
+    override = false
+    publicDownloadNumbers = false
+    version {
+      desc = releaseDescription
+    }
+  }
+}
+
+bintrayUpload.dependsOn('install')

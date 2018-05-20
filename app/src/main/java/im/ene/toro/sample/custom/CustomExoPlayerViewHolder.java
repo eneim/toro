@@ -18,7 +18,6 @@ package im.ene.toro.sample.custom;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
@@ -65,7 +64,7 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new LoopingPlayerHelper(this, mediaUri);
     }
@@ -93,10 +92,6 @@ public class CustomExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
   @Override public boolean wantsToPlay() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
-  }
-
-  @Override public void onSettled(Container container) {
-    // Do nothing
   }
 
   @Override public int getPlayerOrder() {

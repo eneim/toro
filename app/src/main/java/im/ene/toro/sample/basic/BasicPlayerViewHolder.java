@@ -18,12 +18,11 @@ package im.ene.toro.sample.basic;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
@@ -46,7 +45,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   ToroPlayerHelper helper;
   Uri mediaUri;
 
-  @BindView(R.id.player) SimpleExoPlayerView playerView;
+  @BindView(R.id.player) PlayerView playerView;
 
   public BasicPlayerViewHolder(View itemView) {
     super(itemView);
@@ -62,7 +61,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   }
 
   @Override
-  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       helper = new ExoPlayerViewHelper(this, mediaUri);
     }
@@ -90,10 +89,6 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   @Override public boolean wantsToPlay() {
     return ToroUtil.visibleAreaOffset(this, itemView.getParent()) >= 0.85;
-  }
-
-  @Override public void onSettled(Container container) {
-    // Do nothing
   }
 
   @Override public int getPlayerOrder() {

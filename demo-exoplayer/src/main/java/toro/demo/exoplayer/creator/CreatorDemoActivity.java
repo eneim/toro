@@ -34,20 +34,20 @@ import toro.demo.exoplayer.R;
 /**
  * @author eneim (2018/02/07).
  *
- *         Demo for {@link ExoCreator}, written in Java.
+ * Demo for {@link ExoCreator}, written in Java.
  */
 
 public class CreatorDemoActivity extends AppCompatActivity {
 
   static final Uri videoUri =
-      Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
-      // Uri.parse("file:///android_asset/bbb/video.mp4");
+      // Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
+      Uri.parse("file:///android_asset/bbb/video.mp4");
 
   PlayerView playerView;
 
   ExoCreator creator;
-  SimpleExoPlayer exoPlayer;
   MediaSource mediaSource;
+  SimpleExoPlayer exoPlayer;
 
   final Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -59,7 +59,7 @@ public class CreatorDemoActivity extends AppCompatActivity {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_single_player);
+    setContentView(R.layout.activity_demo_creator);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -87,6 +87,6 @@ public class CreatorDemoActivity extends AppCompatActivity {
     super.onDestroy();
     playerView.setPlayer(null);
     exoPlayer.removeListener(listener);
-    exoPlayer.release();
+    ToroExo.with(this).releasePlayer(creator, exoPlayer);
   }
 }

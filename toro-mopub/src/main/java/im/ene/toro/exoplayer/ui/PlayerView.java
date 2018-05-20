@@ -71,62 +71,62 @@ import java.util.List;
  * The following attributes can be set on a SimpleExoPlayerView when used in a layout XML file:
  * <p>
  * <ul>
- *   <li><b>{@code use_artwork}</b> - Whether artwork is used if available in audio streams.
- *       <ul>
- *         <li>Corresponding method: {@link #setUseArtwork(boolean)}</li>
- *         <li>Default: {@code true}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code default_artwork}</b> - Default artwork to use if no artwork available in audio
- *       streams.
- *       <ul>
- *         <li>Corresponding method: {@link #setDefaultArtwork(Bitmap)}</li>
- *         <li>Default: {@code null}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code use_controller}</b> - Whether the playback controls can be shown.
- *       <ul>
- *         <li>Corresponding method: {@link #setUseController(boolean)}</li>
- *         <li>Default: {@code true}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code hide_on_touch}</b> - Whether the playback controls are hidden by touch events.
- *       <ul>
- *         <li>Corresponding method: {@link #setControllerHideOnTouch(boolean)}</li>
- *         <li>Default: {@code true}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code resize_mode}</b> - Controls how video and album art is resized within the view.
- *       Valid values are {@code fit}, {@code fixed_width}, {@code fixed_height} and {@code fill}.
- *       <ul>
- *         <li>Corresponding method: {@link #setResizeMode(int)}</li>
- *         <li>Default: {@code fit}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code surface_type}</b> - The type of surface view used for video playbacks. Valid
- *       values are {@code surface_view}, {@code texture_view} and {@code none}. Using {@code none}
- *       is recommended for audio only applications, since creating the surface can be expensive.
- *       Using {@code surface_view} is recommended for video applications.
- *       <ul>
- *         <li>Corresponding method: None</li>
- *         <li>Default: {@code surface_view}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code player_layout_id}</b> - Specifies the id of the layout to be inflated. See below
- *       for more details.
- *       <ul>
- *         <li>Corresponding method: None</li>
- *         <li>Default: {@code R.id.exo_simple_player_view}</li>
- *       </ul>
- *   <li><b>{@code controller_layout_id}</b> - Specifies the id of the layout resource to be
- *       inflated by the child {@link PlaybackControlView}. See below for more details.
- *       <ul>
- *         <li>Corresponding method: None</li>
- *         <li>Default: {@code R.id.exo_playback_control_view}</li>
- *       </ul>
- *   <li>All attributes that can be set on a {@link PlaybackControlView} can also be set on a
- *       SimpleExoPlayerView, and will be propagated to the inflated {@link PlaybackControlView}.
- *   </li>
+ * <li><b>{@code use_artwork}</b> - Whether artwork is used if available in audio streams.
+ * <ul>
+ * <li>Corresponding method: {@link #setUseArtwork(boolean)}</li>
+ * <li>Default: {@code true}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code default_artwork}</b> - Default artwork to use if no artwork available in audio
+ * streams.
+ * <ul>
+ * <li>Corresponding method: {@link #setDefaultArtwork(Bitmap)}</li>
+ * <li>Default: {@code null}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code use_controller}</b> - Whether the playback controls can be shown.
+ * <ul>
+ * <li>Corresponding method: {@link #setUseController(boolean)}</li>
+ * <li>Default: {@code true}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code hide_on_touch}</b> - Whether the playback controls are hidden by touch events.
+ * <ul>
+ * <li>Corresponding method: {@link #setControllerHideOnTouch(boolean)}</li>
+ * <li>Default: {@code true}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code resize_mode}</b> - Controls how video and album art is resized within the view.
+ * Valid values are {@code fit}, {@code fixed_width}, {@code fixed_height} and {@code fill}.
+ * <ul>
+ * <li>Corresponding method: {@link #setResizeMode(int)}</li>
+ * <li>Default: {@code fit}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code surface_type}</b> - The type of surface view used for video playbacks. Valid
+ * values are {@code surface_view}, {@code texture_view} and {@code none}. Using {@code none}
+ * is recommended for audio only applications, since creating the surface can be expensive.
+ * Using {@code surface_view} is recommended for video applications.
+ * <ul>
+ * <li>Corresponding method: None</li>
+ * <li>Default: {@code surface_view}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code player_layout_id}</b> - Specifies the id of the layout to be inflated. See below
+ * for more details.
+ * <ul>
+ * <li>Corresponding method: None</li>
+ * <li>Default: {@code R.id.exo_simple_player_view}</li>
+ * </ul>
+ * <li><b>{@code controller_layout_id}</b> - Specifies the id of the layout resource to be
+ * inflated by the child {@link PlaybackControlView}. See below for more details.
+ * <ul>
+ * <li>Corresponding method: None</li>
+ * <li>Default: {@code R.id.exo_playback_control_view}</li>
+ * </ul>
+ * <li>All attributes that can be set on a {@link PlaybackControlView} can also be set on a
+ * SimpleExoPlayerView, and will be propagated to the inflated {@link PlaybackControlView}.
+ * </li>
  * </ul>
  *
  * <h3>Overriding the layout file</h3>
@@ -137,42 +137,42 @@ import java.util.List;
  * binds its children by looking for the following ids:
  * <p>
  * <ul>
- *   <li><b>{@code exo_content_frame}</b> - A frame whose aspect ratio is resized based on the video
- *       or album art of the media being played, and the configured {@code resize_mode}. The video
- *       surface view is inflated into this frame as its first child.
- *       <ul>
- *         <li>Type: {@link AspectRatioFrameLayout}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code exo_shutter}</b> - A view that's made visible when video should be hidden. This
- *       view is typically an opaque view that covers the video surface view, thereby obscuring it
- *       when visible.
- *       <ul>
- *        <li>Type: {@link View}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code exo_subtitles}</b> - Displays subtitles.
- *       <ul>
- *        <li>Type: {@link SubtitleView}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code exo_artwork}</b> - Displays album art.
- *       <ul>
- *        <li>Type: {@link ImageView}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code exo_controller_placeholder}</b> - A placeholder that's replaced with the inflated
- *       {@link PlaybackControlView}.
- *       <ul>
- *        <li>Type: {@link View}</li>
- *       </ul>
- *   </li>
- *   <li><b>{@code exo_overlay}</b> - A {@link FrameLayout} positioned on top of the player which
- *       the app can access via {@link #getOverlayFrameLayout()}, provided for convenience.
- *       <ul>
- *        <li>Type: {@link FrameLayout}</li>
- *       </ul>
- *   </li>
+ * <li><b>{@code exo_content_frame}</b> - A frame whose aspect ratio is resized based on the video
+ * or album art of the media being played, and the configured {@code resize_mode}. The video
+ * surface view is inflated into this frame as its first child.
+ * <ul>
+ * <li>Type: {@link AspectRatioFrameLayout}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code exo_shutter}</b> - A view that's made visible when video should be hidden. This
+ * view is typically an opaque view that covers the video surface view, thereby obscuring it
+ * when visible.
+ * <ul>
+ * <li>Type: {@link View}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code exo_subtitles}</b> - Displays subtitles.
+ * <ul>
+ * <li>Type: {@link SubtitleView}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code exo_artwork}</b> - Displays album art.
+ * <ul>
+ * <li>Type: {@link ImageView}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code exo_controller_placeholder}</b> - A placeholder that's replaced with the inflated
+ * {@link PlaybackControlView}.
+ * <ul>
+ * <li>Type: {@link View}</li>
+ * </ul>
+ * </li>
+ * <li><b>{@code exo_overlay}</b> - A {@link FrameLayout} positioned on top of the player which
+ * the app can access via {@link #getOverlayFrameLayout()}, provided for convenience.
+ * <ul>
+ * <li>Type: {@link FrameLayout}</li>
+ * </ul>
+ * </li>
  * </ul>
  * <p>
  * All child views are optional and so can be omitted if not required, however where defined they
@@ -430,6 +430,11 @@ import java.util.List;
       // Work around https://github.com/google/ExoPlayer/issues/3160.
       surfaceView.setVisibility(visibility);
     }
+  }
+
+  @Override protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    this.setPlayer(null);
   }
 
   /**
