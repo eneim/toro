@@ -62,6 +62,7 @@ dependencies {
 
   implementation project(':toro-core')
   implementation project(':toro-exoplayer')
+  // implementation "im.ene.toro3:toro-ext-exoplayer:3.5.0"
 
   //noinspection GradleDependency
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"

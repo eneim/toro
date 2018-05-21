@@ -99,6 +99,16 @@ install {
         url siteUrl
       }
     }
+
+    pom.whenConfigured { pom ->
+      pom.dependencies.each { dep ->
+        println("Processing ${dep}")
+        if (dep.getGroupId() == releaseGroupId && dep.getArtifactId() == "toro-core") {
+          dep.setArtifactId("toro")
+          println("Updated ${dep}")
+        }
+      }
+    }
   }
 }
 
