@@ -1,8 +1,10 @@
 Changelog
 ===========
 
-3.5.0 (2018/05/18)
+~~3.5.0 (2018/05/18)~~  3.5.2 (2018/05/21)
 ------------------
+
+**README**: Release 3.5.0 and 3.5.1 was not correctly distributed to jcenter (3.5.1 was an attempt to fix 3.5.0 but also failed).
 
 **TL,DR:** From **Toro 3.5.0**, client can actively prepare a ``PlaybackInfo`` for ``ToroPlayer`` by its order, using the newly added ``Container$Initializer`` interface.
 

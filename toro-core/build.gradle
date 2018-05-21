@@ -61,4 +61,6 @@ ext {
   releaseDescription = 'The Toro core library.'
 }
 
+project.archivesBaseName = "toro"
+
 apply from: '../gradle/script/publish.gradle'

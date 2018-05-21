@@ -66,8 +66,8 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.5.0' /* '3.5.0' */
-    releaseVersionCode = 350
+    releaseVersion = '3.5.2' /* '3.5.2' */
+    releaseVersionCode = 352
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 
