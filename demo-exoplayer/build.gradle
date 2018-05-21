@@ -60,9 +60,10 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-  implementation project(':toro-core')
-  implementation project(':toro-exoplayer')
-  // implementation "im.ene.toro3:toro-ext-exoplayer:3.5.0"
+  // implementation project(':toro-core')
+  // implementation project(':toro-exoplayer')
+  implementation "im.ene.toro3:toro:3.5.2"
+  implementation "im.ene.toro3:toro-ext-exoplayer:3.5.2"
 
   //noinspection GradleDependency
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"

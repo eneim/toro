@@ -56,4 +56,6 @@ ext {
   releaseDescription = 'The Toro Extension for ExoPlayer v2.'
 }
 
+project.archivesBaseName = "toro-ext-exoplayer"
+
 apply from: '../gradle/script/publish.gradle'
