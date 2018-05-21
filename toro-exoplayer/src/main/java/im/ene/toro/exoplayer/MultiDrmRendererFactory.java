@@ -36,7 +36,7 @@ import java.util.Set;
  *
  * @author eneim (2018/03/05).
  */
-
+@Deprecated
 final class MultiDrmRendererFactory extends DefaultRenderersFactory {
 
   private final ArrayList<DrmSessionManager<FrameworkMediaCrypto>> drmSessionManagers;
