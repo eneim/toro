@@ -45,7 +45,7 @@ ext {
   supportLibraryVersion = '27.1.1'
   constrainLayoutVersion = '1.1.0'
   archLibraryVersion = '1.1.1'
-  exoPlayer2Version = '2.7.3'
+  exoPlayer2Version = '2.8.0'
   minSupportSDKVersion = 16
 }
 

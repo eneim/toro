@@ -21,13 +21,13 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.BehindLiveWindowException;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -59,6 +59,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   private final RenderersFactory renderersFactory;  // stateless
   private final DataSource.Factory mediaDataSourceFactory;  // stateless
   private final DataSource.Factory manifestDataSourceFactory; // stateless
+  private final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
 
   @SuppressWarnings("unchecked")  //
   public DefaultExoCreator(ToroExo toro, Config config) {
@@ -66,8 +67,11 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
-        config.drmSessionManagers, config.extensionMode);
+    //renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
+    //    config.drmSessionManagers, config.extensionMode);
+    drmSessionManager = config.drmSessionManagers != null && config.drmSessionManagers.length >= 1
+        ? config.drmSessionManagers[0] : null;
+    renderersFactory = new DefaultRenderersFactory(toro.context, config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -119,7 +123,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
     // return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl);
+    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl, drmSessionManager);
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
@@ -133,7 +137,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   /// MediaSourceEventListener
 
-  @Override
+  /* @Override */
   public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
       int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
       long mediaEndTimeMs, long elapsedRealtimeMs) {
@@ -141,6 +145,12 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @Override
+  public void onLoadStarted(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
+
+  }
+
+  /* @Override */
   public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
       int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
       long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
@@ -148,6 +158,12 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @Override
+  public void onLoadCompleted(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
+
+  }
+
+  /* @Override */
   public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
       int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
       long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
@@ -155,6 +171,12 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @Override
+  public void onLoadCanceled(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
+
+  }
+
+  /* @Override */
   public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
       int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
       long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded,
@@ -163,13 +185,45 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @Override
+  public void onLoadError(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData, IOException error,
+      boolean wasCanceled) {
+
+  }
+
+  /* @Override */
   public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
     // no-ops
   }
 
   @Override
+  public void onUpstreamDiscarded(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId,
+      MediaLoadData mediaLoadData) {
+
+  }
+
+  /* @Override */
   public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason,
       Object trackSelectionData, long mediaTimeMs) {
     // no-ops
+  }
+
+  @Override public void onDownstreamFormatChanged(int windowIndex,
+      @Nullable MediaSource.MediaPeriodId mediaPeriodId, MediaLoadData mediaLoadData) {
+
+  }
+
+  @Override
+  public void onMediaPeriodCreated(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
+
+  }
+
+  @Override
+  public void onMediaPeriodReleased(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
+
+  }
+
+  @Override public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
+
   }
 }
