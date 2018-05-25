@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
 
   companion object {
     var currentPosition = -1
+    var currentPositionOffset = 0
     const val EXTRA_CURRENT_POSITION = "toro.pixabay:extra:current_position"
+    const val EXTRA_CURRENT_POSITION_OFFSET = "toro.pixabay:extra:current_position_offset"
   }
 
   override fun onSearchQuery(query: String) {
@@ -59,6 +61,11 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
           .commit()
     }
 
+    if (savedInstanceState != null) {
+      currentPosition = savedInstanceState.getInt(EXTRA_CURRENT_POSITION, 0)
+      currentPositionOffset = savedInstanceState.getInt(EXTRA_CURRENT_POSITION_OFFSET, 0)
+    }
+
     searchFab.setOnClickListener {
       mainFragment.onUserRequestSearch()
     }
@@ -72,5 +79,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector, MainFragme
   override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
     super.onSaveInstanceState(outState, outPersistentState)
     outState.putInt(EXTRA_CURRENT_POSITION, currentPosition)
+    outState.putInt(EXTRA_CURRENT_POSITION_OFFSET, currentPositionOffset)
   }
 }

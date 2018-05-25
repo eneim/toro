@@ -39,13 +39,13 @@ import toro.pixabay.ui.main.getRatio
 class PhotoItemFragment : Fragment() {
 
   companion object {
-    const val KEY_IMAGE_RES = "com.google.samples.gridtopager.key.imageRes"
+    const val KEY_IMAGE_URI = "toro.pixabay:item:uri"
     const val KEY_IMAGE_RATIO = "toro.pixabay:item_detail:ratio"
 
     fun newInstance(item: PixabayItem): PhotoItemFragment {
       val fragment = PhotoItemFragment()
       val bundle = Bundle().also {
-        it.putString(KEY_IMAGE_RES, item.photoItem.largeImageURL)
+        it.putString(KEY_IMAGE_URI, item.photoItem.largeImageURL)
         it.putFloat(KEY_IMAGE_RATIO, item.photoItem.getRatio())
       }
       fragment.arguments = bundle
@@ -61,7 +61,7 @@ class PhotoItemFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     val bundle = arguments
-    val imageUrl = bundle?.getString(KEY_IMAGE_RES, "") ?: ""
+    val imageUrl = bundle?.getString(KEY_IMAGE_URI, "") ?: ""
     val imageRatio = bundle?.getFloat(KEY_IMAGE_RATIO) ?: 1.0f
 
     val imageView = view.findViewById<ImageView>(R.id.photoView)

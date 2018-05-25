@@ -152,6 +152,7 @@ class MainAdapter(private val creator: ExoCreator, private val fragment: Fragmen
     override fun onItemClicked(view: View, adapterPosition: Int) {
       // Update the position.
       MainActivity.currentPosition = adapterPosition
+      MainActivity.currentPositionOffset = view.top
 
       // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
       // instead of fading out with the rest to prevent an overlapping animation of fade and move).

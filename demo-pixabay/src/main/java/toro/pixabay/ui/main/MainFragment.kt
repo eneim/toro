@@ -27,6 +27,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.AppCompatEditText
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.GridLayoutManager.SpanSizeLookup
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnLayoutChangeListener
@@ -154,13 +155,16 @@ class MainFragment : Fragment(), Injectable {
           oldRight: Int,
           oldBottom: Int) {
         container.removeOnLayoutChangeListener(this)
-        val layoutManager = container.layoutManager
+        val layoutManager = container.layoutManager as LinearLayoutManager
         val viewAtPosition = layoutManager.findViewByPosition(MainActivity.currentPosition)
         // Scroll to position if the view for the current position is null (not currently part of
         // layout manager children), or it's not completely visible.
         if (viewAtPosition == null || //
             layoutManager.isViewPartiallyVisible(viewAtPosition, false, true)) {
-          container.post({ layoutManager.scrollToPosition(MainActivity.currentPosition) })
+          container.postDelayed({
+            layoutManager.scrollToPositionWithOffset(MainActivity.currentPosition,
+                MainActivity.currentPositionOffset)
+          }, 200)
         }
       }
     })
