@@ -18,34 +18,45 @@ package im.ene.toro.exoplayer;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroUtil;
 import im.ene.toro.media.VolumeInfo;
 import java.util.HashSet;
 import java.util.Set;
+
+import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * A custom {@link SimpleExoPlayer} that also notify the change of Volume.
  *
  * @author eneim (2018/03/27).
  */
+@SuppressWarnings("WeakerAccess") //
 public class ToroExoPlayer extends SimpleExoPlayer {
 
   @SuppressWarnings("WeakerAccess")
   protected ToroExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
       LoadControl loadControl) {
-    super(renderersFactory, trackSelector, loadControl);
+    super(renderersFactory, trackSelector, loadControl, null);
+  }
+
+  protected ToroExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
+      LoadControl loadControl,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
+    super(renderersFactory, trackSelector, loadControl, drmSessionManager);
   }
 
   private Set<ToroPlayer.OnVolumeChangeListener> listeners;
 
   public final void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
     if (this.listeners == null) this.listeners = new HashSet<>();
-    this.listeners.add(ToroUtil.checkNotNull(listener));
+    this.listeners.add(checkNotNull(listener));
   }
 
   public final void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
@@ -56,16 +67,14 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     if (this.listeners != null) this.listeners.clear();
   }
 
-  @CallSuper
-  @Override public void setVolume(float audioVolume) {
+  @CallSuper @Override public void setVolume(float audioVolume) {
     this.setVolumeInfo(new VolumeInfo(audioVolume == 0, audioVolume));
   }
 
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
-  @SuppressWarnings("UnusedReturnValue")  //
-  @CallSuper
-  public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+  @SuppressWarnings("UnusedReturnValue")
+  public final boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     boolean changed = !this.volumeInfo.equals(volumeInfo);
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
@@ -80,7 +89,7 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     return changed;
   }
 
-  @SuppressWarnings("unused") @NonNull public VolumeInfo getVolumeInfo() {
+  @SuppressWarnings("unused") @NonNull public final VolumeInfo getVolumeInfo() {
     return volumeInfo;
   }
 }

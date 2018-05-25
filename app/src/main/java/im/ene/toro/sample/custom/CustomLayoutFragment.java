@@ -134,9 +134,8 @@ public class CustomLayoutFragment extends BaseFragment {
         Point videoSize = new Point(view.getWidth(), view.getHeight());
         if (view instanceof PlayerView && ((PlayerView) view).getPlayer() != null) {
           Player player = ((PlayerView) view).getPlayer();
-          Format videoFormat =  //
-              player instanceof SimpleExoPlayer ? ((SimpleExoPlayer) player).getVideoFormat()
-                  : null;
+          Format videoFormat = player instanceof SimpleExoPlayer ?  //
+              ((SimpleExoPlayer) player).getVideoFormat() : null;
           if (videoFormat != null
               && videoFormat.width != Format.NO_VALUE
               && videoFormat.height != Format.NO_VALUE) {

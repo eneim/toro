@@ -55,8 +55,7 @@ public class DemoListActivity extends AppCompatActivity {
     container.setPlayerDispatcher(__ -> 500); // The playback will be delayed 500ms.
     container.setPlayerInitializer(order -> {
       VolumeInfo volumeInfo = new VolumeInfo(true, 0.75f);
-      PlaybackInfo playbackInfo = new PlaybackInfo(INDEX_UNSET, TIME_UNSET, volumeInfo);
-      return playbackInfo;
+      return new PlaybackInfo(INDEX_UNSET, TIME_UNSET, volumeInfo);
     });
 
     // Only when you use Container inside a CoordinatorLayout and depends on Behavior.

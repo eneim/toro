@@ -41,15 +41,13 @@ public class CreatorDemoActivity extends AppCompatActivity {
 
   static final Uri videoUri =
       // Uri.parse("https://storage.googleapis.com/material-design/publish/material_v_12/assets/0B14F_FSUCc01SWc0N29QR3pZT2s/materialmotionhero-spec-0505.mp4");
-      // Uri.parse("file:///android_asset/bbb/video.mp4");
-      Uri.parse(
-          "https://player.vimeo.com/external/262150448.hd.mp4?s=2c50d6eb623251f4557653c9db92b588cb66e620&profile_id=172");
+      Uri.parse("file:///android_asset/bbb/video.mp4");
 
   PlayerView playerView;
 
   ExoCreator creator;
-  SimpleExoPlayer exoPlayer;
   MediaSource mediaSource;
+  SimpleExoPlayer exoPlayer;
 
   final Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -61,7 +59,7 @@ public class CreatorDemoActivity extends AppCompatActivity {
 
   @Override protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_single_player);
+    setContentView(R.layout.activity_demo_creator);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
@@ -89,6 +87,6 @@ public class CreatorDemoActivity extends AppCompatActivity {
     super.onDestroy();
     playerView.setPlayer(null);
     exoPlayer.removeListener(listener);
-    exoPlayer.release();
+    ToroExo.with(this).releasePlayer(creator, exoPlayer);
   }
 }
