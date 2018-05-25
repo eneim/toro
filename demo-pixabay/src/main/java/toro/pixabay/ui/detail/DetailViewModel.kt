@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,21 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':app-youtube', ':toro-exoplayer', ':toro-mopub', ':demo-exoplayer', ':demo-mopub', ':demo-pixabay'
+package toro.pixabay.ui.detail
+
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
+import android.arch.lifecycle.ViewModel
+import toro.pixabay.data.PixabayDao
+import javax.inject.Inject
+
+/**
+ * @author eneim (2018/05/15).
+ */
+class DetailViewModel @Inject constructor(
+    private val dao: PixabayDao
+) : ViewModel() {
+
+  val pageUrl = MutableLiveData<String>()
+  val photoItem = Transformations.switchMap(pageUrl, { input -> dao.getItem(input) })!!
+}

@@ -1,0 +1,110 @@
+/*
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+  compileSdkVersion rootProject.ext.androidVersion
+
+  defaultConfig {
+    applicationId "toro.pixabay"
+    minSdkVersion 21
+    targetSdkVersion rootProject.ext.androidVersion
+    versionCode 1
+    versionName "1.0"
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    buildConfigField("String", "API_KEY", "\"${pixabay_apikey}\"")
+    vectorDrawables.useSupportLibrary = true
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  packagingOptions {
+    exclude 'META-INF/services/javax.annotation.processing.Processor'
+  }
+
+  lintOptions {
+    disable 'InvalidPackage'
+    abortOnError false
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+dependencies {
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
+  implementation project(':toro-core')
+  implementation project(':toro-exoplayer')
+  // additional dependencies.
+  //noinspection GradleDependency
+  implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
+
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+  implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.constrainLayoutVersion}"
+
+  def lifecycle_version = "1.1.1"
+  // ViewModel and LiveData
+  implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+  kapt "android.arch.lifecycle:compiler:$lifecycle_version"
+
+  def room_version = "1.1.0"
+  implementation "android.arch.persistence.room:runtime:$room_version"
+  kapt "android.arch.persistence.room:compiler:$room_version"
+
+  def paging_version = "1.0.0"
+
+  implementation "android.arch.paging:runtime:$paging_version"
+
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+  testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
+  implementation 'com.github.bumptech.glide:glide:4.7.1'
+  kapt 'com.github.bumptech.glide:compiler:4.7.1'
+
+  // Retrofit and companions
+  implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+  implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
+  implementation 'com.squareup.moshi:moshi-adapters:1.5.0'
+
+  implementation 'com.google.dagger:dagger:2.16'
+  implementation 'com.google.dagger:dagger-android:2.16'
+  implementation 'com.google.dagger:dagger-android-support:2.16'
+  kapt 'com.google.dagger:dagger-compiler:2.16'
+  kapt 'com.google.dagger:dagger-android-processor:2.16'
+
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}

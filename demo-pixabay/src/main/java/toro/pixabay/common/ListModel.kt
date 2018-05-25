@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,18 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':app-youtube', ':toro-exoplayer', ':toro-mopub', ':demo-exoplayer', ':demo-mopub', ':demo-pixabay'
+package toro.pixabay.common
+
+import android.arch.lifecycle.LiveData
+import android.arch.paging.PagedList
+
+/**
+ * @author eneim (2018/05/10).
+ */
+data class ListModel<T>(
+    val items: LiveData<PagedList<T>>,
+    val networkState: LiveData<NetworkState>,
+    val refreshState: LiveData<NetworkState>,
+    val refresh: () -> Unit,
+    val retry: () -> Unit
+)
