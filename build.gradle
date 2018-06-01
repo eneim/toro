@@ -28,7 +28,7 @@ buildscript {
 
   dependencies {
     //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.2.0-alpha15'
+    classpath 'com.android.tools.build:gradle:3.2.0-alpha16'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
@@ -66,8 +66,8 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.5.2' /* '3.5.2' */
-    releaseVersionCode = 352
+    releaseVersion = '3.5.3-SNAPSHOT' /* '3.5.3' */
+    releaseVersionCode = 353
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 
@@ -90,7 +90,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.6'
+  gradleVersion = '4.7'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }

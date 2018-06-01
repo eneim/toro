@@ -477,9 +477,11 @@ public class Container extends RecyclerView {
   @NonNull public SparseArray<PlaybackInfo> getLatestPlaybackInfos() {
     SparseArray<PlaybackInfo> cache = new SparseArray<>();
     List<ToroPlayer> activePlayers = this.filterBy(Container.Filter.PLAYING);
+    // This will update hotCache and coldCache if they are available.
     for (ToroPlayer player : activePlayers) {
       this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
     }
+
     if (cacheManager == null) {
       if (playbackInfoCache.hotCache != null) {
         for (Map.Entry<Integer, PlaybackInfo> entry : playbackInfoCache.hotCache.entrySet()) {
@@ -523,9 +525,9 @@ public class Container extends RecyclerView {
 
   /**
    * Temporary save current playback infos when the App is stopped but not re-created. (For example:
-   * User press App Stack). If not {@code null} then user is back from a living-but-stopped state.
+   * User press App Stack). If not {@code empty} then user is back from a living-but-stopped state.
    */
-  SparseArray<PlaybackInfo> tmpStates = null;
+  final SparseArray<PlaybackInfo> tmpStates = new SparseArray<>();
 
   /**
    * In case user press "App Stack" button, this View's window will have visibility change from
@@ -545,14 +547,14 @@ public class Container extends RecyclerView {
         }
       }
     } else if (visibility == View.VISIBLE) {
-      if (tmpStates != null && tmpStates.size() > 0) {
+      if (tmpStates.size() > 0) {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
           this.savePlaybackInfo(order, playbackInfo);
         }
       }
-      tmpStates = null;
+      tmpStates.clear();
       dispatchUpdateOnAnimationFinished(true);
     }
 
@@ -611,14 +613,14 @@ public class Container extends RecyclerView {
         // Need further investigation if need.
         && hasWindowFocus()) {
       // tmpStates may be consumed already, if there is a good reason for that, so not a big deal.
-      if (tmpStates != null && tmpStates.size() > 0) {
+      if (tmpStates.size() > 0) {
         for (int i = 0, size = tmpStates.size(); i < size; i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
           this.savePlaybackInfo(order, playbackInfo);
         }
       }
-      tmpStates = null;
+      tmpStates.clear();
       dispatchUpdateOnAnimationFinished(true);
     }
   }
@@ -647,7 +649,7 @@ public class Container extends RecyclerView {
     // We only need to release current resources when the recreation happens.
     if (recreating) {
       for (ToroPlayer player : source) {
-        playerManager.release(player);
+        if (!playerManager.release(player)) player.release();
         playerManager.detachPlayer(player);
       }
     }
@@ -657,7 +659,14 @@ public class Container extends RecyclerView {
     playerViewState.statesCache = states;
 
     // To mark that this method was called. An activity recreation will clear this.
-    tmpStates = states;
+    if (states != null && states.size() > 0) {
+      for (int i = 0; i < states.size(); i++) {
+        PlaybackInfo value = states.valueAt(i);
+        // FIXME [20180601] make sure all value are not null. It should not happen to be null though.
+        if (value != null) tmpStates.put(states.keyAt(i), value);
+      }
+    }
+
     return playerViewState;
   }
 
@@ -670,7 +679,7 @@ public class Container extends RecyclerView {
     PlayerViewState viewState = (PlayerViewState) state;
     super.onRestoreInstanceState(viewState.getSuperState());
     SparseArray<?> saveStates = viewState.statesCache;
-    playbackInfoCache.restoreStates(saveStates);
+    if (saveStates != null) playbackInfoCache.restoreStates(saveStates);
   }
 
   /**
