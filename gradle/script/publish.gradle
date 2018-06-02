@@ -58,7 +58,7 @@ publishing {
       version = releaseVersion
       // Tell maven to prepare the generated "*.aar" file for publishing
       artifact(androidSourcesJar)
-      artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+      artifact("$buildDir/outputs/aar/${project.archivesBaseName}-release.aar")
     }
   }
 }
