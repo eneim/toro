@@ -21,16 +21,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.AdapterDataObserver;
+import android.util.Log;
 import android.util.SparseArray;
-import im.ene.toro.CacheManager;
-import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroUtil;
-import im.ene.toro.media.PlaybackInfo;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import im.ene.toro.CacheManager;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.media.PlaybackInfo;
 
 import static im.ene.toro.media.PlaybackInfo.SCRAP;
 import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
@@ -49,6 +51,8 @@ import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
  */
 @SuppressWarnings({ "WeakerAccess", "unused" }) @SuppressLint("UseSparseArrays")
 final class PlaybackInfoCache extends AdapterDataObserver {
+
+  private static final String TAG = "ToroLib:PlaybackInfoCac";
 
   @NonNull private final Container container;
   // Cold cache represents the map between key obtain from CacheManager and PlaybackInfo. If the
@@ -345,8 +349,12 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   }
 
   // Call by Container#savePlaybackInfo and that method is called right before any pausing.
-  final void savePlaybackInfo(int position, @NonNull PlaybackInfo playbackInfo) {
-    ToroUtil.checkNotNull(playbackInfo);
+  final void savePlaybackInfo(int position, @Nullable PlaybackInfo playbackInfo) {
+    if (playbackInfo == null) {
+      Log.w(TAG, "!! playbackInfo is null");
+      return;
+    }
+
     if (hotCache != null) hotCache.put(position, playbackInfo);
     Object key = getKey(position);
     if (key != null) coldCache.put(key, playbackInfo);

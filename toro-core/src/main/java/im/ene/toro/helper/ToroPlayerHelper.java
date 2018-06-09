@@ -22,6 +22,10 @@ import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.util.HashSet;
+
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
@@ -30,9 +34,6 @@ import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.util.HashSet;
-
-import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * General definition of a helper class for a specific {@link ToroPlayer}. This class helps
@@ -106,7 +107,7 @@ public abstract class ToroPlayerHelper {
       player.getPlayerView().setKeepScreenOn(false);
       if (container != null) {
         container.savePlaybackInfo(player.getPlayerOrder(),
-            checkNotNull(player.getCurrentPlaybackInfo()));
+                player.getCurrentPlaybackInfo());
       }
     }
 
@@ -141,10 +142,10 @@ public abstract class ToroPlayerHelper {
    *
    * @param playbackInfo the initial playback info.
    */
-  protected abstract void initialize(@NonNull PlaybackInfo playbackInfo);
+  protected abstract void initialize(@Nullable PlaybackInfo playbackInfo);
 
   @CallSuper
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo) {
     this.container = container;
     this.initialize(playbackInfo);
   }

@@ -20,11 +20,13 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * Definition of a Player used in Toro. Besides common playback command ({@link #play()}, {@link
@@ -38,7 +40,7 @@ public interface ToroPlayer {
 
   @NonNull View getPlayerView();
 
-  @NonNull PlaybackInfo getCurrentPlaybackInfo();
+  @Nullable PlaybackInfo getCurrentPlaybackInfo();
 
   /**
    * Initialize resource for the incoming playback. After this point, {@link ToroPlayer} should be
@@ -49,7 +51,7 @@ public interface ToroPlayer {
    * @param container the RecyclerView contains this Player.
    * @param playbackInfo initialize info for the preparation.
    */
-  void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo);
+  void initialize(@NonNull Container container, @Nullable PlaybackInfo playbackInfo);
 
   /**
    * Start playback or resume from a pausing state.
