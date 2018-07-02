@@ -662,7 +662,6 @@ public class Container extends RecyclerView {
     if (states != null && states.size() > 0) {
       for (int i = 0; i < states.size(); i++) {
         PlaybackInfo value = states.valueAt(i);
-        // FIXME [20180601] make sure all value are not null. It should not happen to be null though.
         if (value != null) tmpStates.put(states.keyAt(i), value);
       }
     }
