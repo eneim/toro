@@ -42,12 +42,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import im.ene.toro.CacheManager;
-import im.ene.toro.PlayerDispatcher;
-import im.ene.toro.PlayerSelector;
-import im.ene.toro.ToroPlayer;
-import im.ene.toro.annotations.RemoveIn;
-import im.ene.toro.media.PlaybackInfo;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +50,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import im.ene.toro.CacheManager;
+import im.ene.toro.PlayerDispatcher;
+import im.ene.toro.PlayerSelector;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.RemoveIn;
+import im.ene.toro.media.PlaybackInfo;
 
 import static android.content.Context.POWER_SERVICE;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -442,7 +444,7 @@ public class Container extends RecyclerView {
    * @param order order of the {@link ToroPlayer}.
    * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
    */
-  public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+  public void savePlaybackInfo(int order, @Nullable PlaybackInfo playbackInfo) {
     playbackInfoCache.savePlaybackInfo(order, playbackInfo);
   }
 

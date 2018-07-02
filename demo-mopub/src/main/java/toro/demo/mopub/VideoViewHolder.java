@@ -18,10 +18,10 @@ package toro.demo.mopub;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.PlayerViewHelper;
@@ -59,7 +59,7 @@ public class VideoViewHolder extends BaseViewHolder implements ToroPlayer {
   }
 
   @Override
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  public void initialize(@NonNull Container container, PlaybackInfo playbackInfo) {
     if (videoUri == null) throw new IllegalStateException("Video is null.");
     if (helper == null) {
       helper = new PlayerViewHelper(this, videoUri);
