@@ -228,7 +228,7 @@ public class Container extends RecyclerView {
       Log.w(TAG, "!!Already managed: player = [" + player + "]");
       // Only if container is in idle state and player is not playing.
       if (getScrollState() == SCROLL_STATE_IDLE && !player.isPlaying()) {
-        playerManager.play(player, playerDispatcher.getDelayToPlay(player));
+        playerManager.play(player, playerDispatcher);
       }
     } else {
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -331,7 +331,7 @@ public class Container extends RecyclerView {
     Collection<ToroPlayer> toPlay = playerSelector != null ? playerSelector.select(this, candidates)
         : Collections.<ToroPlayer>emptyList();
     for (ToroPlayer player : toPlay) {
-      if (!player.isPlaying()) playerManager.play(player, playerDispatcher.getDelayToPlay(player));
+      if (!player.isPlaying()) playerManager.play(player, playerDispatcher);
     }
 
     source.removeAll(toPlay);

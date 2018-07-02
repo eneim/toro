@@ -70,7 +70,12 @@ final class PlayerManager implements Handler.Callback {
     player.initialize(container, container.getPlaybackInfo(player.getPlayerOrder()));
   }
 
-  void play(@NonNull ToroPlayer player, int delay) {
+  // 2018.07.02 Directly pass PlayerDispatcher so that we can easily expand the ability in the future.
+  void play(@NonNull ToroPlayer player, PlayerDispatcher dispatcher) {
+    this.play(player, dispatcher.getDelayToPlay(player));
+  }
+
+  private void play(@NonNull ToroPlayer player, int delay) {
     if (delay < PlayerDispatcher.DELAY_INFINITE) throw new IllegalArgumentException("Too negative");
     if (handler == null) return;
     handler.removeMessages(MSG_PLAY, player); // remove undone msg for this player
