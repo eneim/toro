@@ -374,7 +374,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
         Object key = getKey(order);
         coldKeyToOrderMap.put(order, key);
         PlaybackInfo playbackInfo = (PlaybackInfo) savedStates.get(order);
-        this.savePlaybackInfo(order, playbackInfo);
+        if (playbackInfo != null) this.savePlaybackInfo(order, playbackInfo);
       }
     }
   }

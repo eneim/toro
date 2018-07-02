@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity
     super.onPostCreate(state);
     if (state != null) {
       YouTubePlayerDialog.InitData savedData = state.getParcelable(STATE_SAVED_DATA);
-      if (savedData != null) {
+      if (savedData != null && savedData.playbackInfo != null) {
         container.savePlaybackInfo(savedData.adapterOrder, savedData.playbackInfo);
       }
     }
@@ -133,7 +133,7 @@ public class HomeActivity extends AppCompatActivity
   @Override
   public void onBigPlayerDestroyed(int videoOrder, String baseItem, PlaybackInfo latestInfo) {
     container.setVisibility(View.VISIBLE);
-    container.savePlaybackInfo(videoOrder, latestInfo);
+    if (latestInfo != null) container.savePlaybackInfo(videoOrder, latestInfo);
     // HelperManager need access to FragmentManager, and setPlayerSelector will trigger it.
     // If we doing this in the state that FragmentManager is also executing tasks, it will throw
     // IllegalStateException.
@@ -147,7 +147,7 @@ public class HomeActivity extends AppCompatActivity
     super.onSaveInstanceState(outState);
     if (initData != null) outState.putParcelable(STATE_INIT_DATA, initData);
     Fragment fragment = getSupportFragmentManager().findFragmentByTag(YouTubePlayerDialog.TAG);
-    if (fragment != null && fragment instanceof YouTubePlayerDialog) {
+    if (fragment instanceof YouTubePlayerDialog) {
       YouTubePlayerDialog.InitData data = ((YouTubePlayerDialog) fragment).getLatestData();
       outState.putParcelable(STATE_SAVED_DATA, data);
     }

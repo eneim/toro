@@ -136,6 +136,7 @@ class PlayableImpl implements Playable {
     if (player != null) player.stop(true);
     // TODO [20180214] double check this when ExoPlayer 2.7.0 is released.
     // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
+    // TODO [20180702] back to this after updating ExoPlayer to 2.8.x
     this.mediaSource = null; // so it will be re-prepared when play() is called.
   }
 

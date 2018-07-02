@@ -176,7 +176,7 @@ public class Container extends RecyclerView {
       for (int size = players.size(), i = size - 1; i >= 0; i--) {
         ToroPlayer player = players.get(i);
         if (player.isPlaying()) {
-          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
           playerManager.pause(player);
         }
         playerManager.release(player);
@@ -258,7 +258,7 @@ public class Container extends RecyclerView {
         throw new IllegalStateException(
             "Player is playing while it is not in managed state: " + player);
       }
-      this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+      savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
       playerManager.pause(player);
     }
     if (playerManaged) {
@@ -283,7 +283,7 @@ public class Container extends RecyclerView {
       ToroPlayer player = players.get(i);
       if (Common.allowsToPlay(player)) continue;
       if (player.isPlaying()) {
-        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+        savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
         playerManager.pause(player);
       }
       if (!playerManager.release(player)) player.release();
@@ -338,7 +338,7 @@ public class Container extends RecyclerView {
     // Now 'source' contains only ones need to be paused.
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
-        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+        savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
         playerManager.pause(player);
       }
     }
@@ -442,8 +442,8 @@ public class Container extends RecyclerView {
    * @param order order of the {@link ToroPlayer}.
    * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
    */
-  public void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
-    playbackInfoCache.savePlaybackInfo(order, playbackInfo);
+  public final void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+    if (playbackInfo != null) playbackInfoCache.savePlaybackInfo(order, playbackInfo);
   }
 
   /**
@@ -452,7 +452,7 @@ public class Container extends RecyclerView {
    * @param order order of the {@link ToroPlayer} to get the cached {@link PlaybackInfo}.
    * @return cached {@link PlaybackInfo} if available, a new one if there is no cached one.
    */
-  @NonNull public PlaybackInfo getPlaybackInfo(int order) {
+  @NonNull public final PlaybackInfo getPlaybackInfo(int order) {
     return playbackInfoCache.getPlaybackInfo(order);
   }
 
@@ -479,7 +479,7 @@ public class Container extends RecyclerView {
     List<ToroPlayer> activePlayers = this.filterBy(Container.Filter.PLAYING);
     // This will update hotCache and coldCache if they are available.
     for (ToroPlayer player : activePlayers) {
-      this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+      savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
     }
 
     if (cacheManager == null) {
@@ -542,7 +542,7 @@ public class Container extends RecyclerView {
       // if onSaveInstanceState is called before, source will contain no item, just fine.
       for (ToroPlayer player : players) {
         if (player.isPlaying()) {
-          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
           playerManager.pause(player);
         }
       }
@@ -551,7 +551,7 @@ public class Container extends RecyclerView {
         for (int i = 0; i < tmpStates.size(); i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
-          this.savePlaybackInfo(order, playbackInfo);
+          if (playbackInfo != null) savePlaybackInfo(order, playbackInfo);
         }
       }
       tmpStates.clear();
@@ -601,7 +601,7 @@ public class Container extends RecyclerView {
       List<ToroPlayer> players = playerManager.getPlayers();
       for (ToroPlayer player : players) {
         if (player.isPlaying()) {
-          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
           playerManager.pause(player);
         }
       }
@@ -617,7 +617,7 @@ public class Container extends RecyclerView {
         for (int i = 0, size = tmpStates.size(); i < size; i++) {
           int order = tmpStates.keyAt(i);
           PlaybackInfo playbackInfo = tmpStates.get(order);
-          this.savePlaybackInfo(order, playbackInfo);
+          if (playbackInfo != null) savePlaybackInfo(order, playbackInfo);
         }
       }
       tmpStates.clear();
@@ -630,7 +630,7 @@ public class Container extends RecyclerView {
     List<ToroPlayer> source = playerManager.getPlayers();
     for (ToroPlayer player : source) {
       if (player.isPlaying()) {
-        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+        savePlaybackInfo(player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
         playerManager.pause(player);
       }
     }
@@ -662,7 +662,6 @@ public class Container extends RecyclerView {
     if (states != null && states.size() > 0) {
       for (int i = 0; i < states.size(); i++) {
         PlaybackInfo value = states.valueAt(i);
-        // FIXME [20180601] make sure all value are not null. It should not happen to be null though.
         if (value != null) tmpStates.put(states.keyAt(i), value);
       }
     }

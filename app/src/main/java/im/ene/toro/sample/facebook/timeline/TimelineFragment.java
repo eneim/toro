@@ -218,7 +218,7 @@ public class TimelineFragment extends BaseFragment
 
   @Override
   public void onPlaylistDestroyed(int basePosition, FbVideo baseItem, PlaybackInfo latestInfo) {
-    container.savePlaybackInfo(basePosition, latestInfo);
+    if (latestInfo != null) container.savePlaybackInfo(basePosition, latestInfo);
     container.setPlayerSelector(selector);
   }
 
@@ -230,7 +230,7 @@ public class TimelineFragment extends BaseFragment
 
   @Override
   public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
-    container.savePlaybackInfo(videoOrder, latestInfo);
+    if (latestInfo != null) container.savePlaybackInfo(videoOrder, latestInfo);
     container.setPlayerSelector(selector);
   }
 
