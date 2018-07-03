@@ -74,30 +74,8 @@ class PlayableImpl implements Playable {
   }
 
   @CallSuper @Override public void prepare(boolean prepareSource) {
-    if (player == null) {
-      player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
-          .requestPlayer(creator);
-      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
-        }
-      }
-    }
-
-    if (!listenerApplied) {
-      player.addListener(listeners);
-      player.addVideoListener(listeners);
-      player.addTextOutput(listeners);
-      player.addMetadataOutput(listeners);
-      listenerApplied = true;
-    }
-
-    boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
-    if (haveResumePosition) {
-      player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
-    }
-
     if (prepareSource) {
+      ensurePlayer();
       ensurePlayerView();
       ensureMediaSource();
     }
@@ -121,14 +99,15 @@ class PlayableImpl implements Playable {
   }
 
   @CallSuper @Override public void play() {
-    checkNotNull(player, "Playable#play(): Player is null!");
     ensurePlayerView();
     ensureMediaSource();
+    checkNotNull(player, "Playable#play(): Player is null!");
     player.setPlayWhenReady(true);
   }
 
   @CallSuper @Override public void pause() {
-    checkNotNull(player, "Playable#pause(): Player is null!").setPlayWhenReady(false);
+    // Player is not required to be non-null here.
+    if (player != null) player.setPlayWhenReady(false);
   }
 
   @CallSuper @Override public void reset() {
@@ -255,13 +234,42 @@ class PlayableImpl implements Playable {
   }
 
   private void ensurePlayerView() {
-    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
+    if (playerView != null) {
+      ensurePlayer();
+      if (playerView.getPlayer() != player) playerView.setPlayer(player);
+    }
   }
 
   private void ensureMediaSource() {
     if (mediaSource == null) {  // Only actually prepare the source when play() is called.
+      ensurePlayer();
       mediaSource = creator.createMediaSource(mediaUri, fileExt);
       player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
+    }
+  }
+
+  private void ensurePlayer() {
+    if (player == null) {
+      player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+          .requestPlayer(creator);
+      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
+        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
+        }
+      }
+    }
+
+    if (!listenerApplied) {
+      player.addListener(listeners);
+      player.addVideoListener(listeners);
+      player.addTextOutput(listeners);
+      player.addMetadataOutput(listeners);
+      listenerApplied = true;
+    }
+
+    boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
+    if (haveResumePosition) {
+      player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
   }
 }
