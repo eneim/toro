@@ -59,6 +59,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   Handler handler;
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
+  ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId) {
     super(player);
@@ -176,7 +177,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
           @Override public void onInitializationFailure(Provider provider,
               YouTubeInitializationResult result) {
-            throw new RuntimeException("YouTube init error: " + result.name());
+            errorListeners.onError(new RuntimeException("YouTube init error: " + result.name()));
           }
         });
         break;
@@ -220,6 +221,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
     @Override public void onError(YouTubePlayer.ErrorReason reason) {
       // if (BuildConfig.DEBUG) throw new RuntimeException("YouTubePlayer Error: " + reason);
+      errorListeners.onError(new RuntimeException(reason.toString()));
       if (ytFragment != null && ytFragment.isAdded()) {
         Toast.makeText(ytFragment.requireContext(), "Error: " + reason, Toast.LENGTH_SHORT).show();
       }
@@ -247,6 +249,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     @Override public void onSeekTo(int i) {
 
     }
+  }
+
+  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
+    errorListeners.add(ToroUtil.checkNotNull(errorListener));
+  }
+
+  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
+    errorListeners.remove(errorListener);
   }
 
   // Ensure that we are in the good situation.

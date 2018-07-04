@@ -56,6 +56,7 @@ class PlayableImpl implements Playable {
   protected final EventListeners listeners = new EventListeners();  // original listener.
   // Use a Set to prevent duplicated setup.
   protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
+  protected ToroPlayer.ErrorListeners errorListeners;
 
   protected final Uri mediaUri; // immutable, parcelable
   protected final String fileExt;
@@ -225,6 +226,17 @@ class PlayableImpl implements Playable {
     return player != null && player.getPlayWhenReady();
   }
 
+  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener) {
+    if (this.errorListeners == null) {
+      this.errorListeners = new ToroPlayer.ErrorListeners();
+    }
+    this.errorListeners.add(checkNotNull(listener));
+  }
+
+  @Override public void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener) {
+    if (this.errorListeners != null) this.errorListeners.remove(listener);
+  }
+
   final void updatePlaybackInfo() {
     if (player == null || player.getPlaybackState() == Player.STATE_IDLE) return;
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
@@ -257,6 +269,7 @@ class PlayableImpl implements Playable {
           ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
         }
       }
+      listenerApplied = false;
     }
 
     if (!listenerApplied) {

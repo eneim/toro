@@ -16,7 +16,6 @@
 
 package im.ene.toro.exoplayer;
 
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -108,7 +107,9 @@ public class ExoPlayable extends PlayableImpl {
   protected void onErrorMessage(@NonNull String message) {
     // Sub class can have custom reaction about the error here, including not to show this toast
     // (by not calling super.onErrorMessage(message)).
-    if (playerView != null) {
+    if (this.errorListeners != null && this.errorListeners.size() > 0) {
+      this.errorListeners.onError(new RuntimeException(message));
+    } else if (playerView != null) {
       Toast.makeText(playerView.getContext(), message, Toast.LENGTH_SHORT).show();
     }
   }
@@ -122,7 +123,7 @@ public class ExoPlayable extends PlayableImpl {
       lastSeenTrackGroupArray = trackGroups;
       if (!(creator instanceof DefaultExoCreator)) return;
       TrackSelector selector = ((DefaultExoCreator) creator).getTrackSelector();
-      if (selector != null && selector instanceof DefaultTrackSelector) {
+      if (selector instanceof DefaultTrackSelector) {
         MappedTrackInfo trackInfo = ((DefaultTrackSelector) selector).getCurrentMappedTrackInfo();
         if (trackInfo != null) {
           if (trackInfo.getTrackTypeRendererSupport(C.TRACK_TYPE_VIDEO)

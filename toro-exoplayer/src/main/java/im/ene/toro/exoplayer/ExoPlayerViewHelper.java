@@ -146,6 +146,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this.playable.removeOnVolumeChangeListener(listener);
   }
 
+  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
+    this.playable.addErrorListener(errorListener);
+  }
+
+  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
+    this.playable.removeErrorListener(errorListener);
+  }
+
   // A proxy, to also hook into ToroPlayerHelper's state change event.
   private class MyEventListeners extends Playable.EventListeners {
 
