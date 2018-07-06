@@ -231,6 +231,7 @@ public class Container extends RecyclerView {
         playerManager.play(player, playerDispatcher);
       }
     } else {
+      // LeakCanary report a leak of OnGlobalLayoutListener but I cannot figure out why ...
       child.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
         @Override public void onGlobalLayout() {
           child.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -919,7 +920,8 @@ public class Container extends RecyclerView {
       return true;
     }
 
-    /* No default constructor. Using this class from xml will result in error. */
+    /* No default constructors. Using this class from xml will result in error. */
+
     // public Behavior() {
     // }
     //

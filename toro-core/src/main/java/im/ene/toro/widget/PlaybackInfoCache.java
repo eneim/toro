@@ -56,7 +56,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   /* pkg */ HashMap<Object, PlaybackInfo> coldCache = new HashMap<>();
 
   // Hot cache represents the map between Player's order and its PlaybackInfo. A key-value map only
-  // lives between a Player's attached state.
+  // lives within a Player's attached state.
   // Being a TreeMap because we need to traversal through it in order sometime.
   /* pkg */ TreeMap<Integer, PlaybackInfo> hotCache; // only cache attached Views.
 
