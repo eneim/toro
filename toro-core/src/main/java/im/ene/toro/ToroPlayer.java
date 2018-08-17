@@ -18,13 +18,13 @@ package im.ene.toro;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Definition of a Player used in Toro. Besides common playback command ({@link #play()}, {@link
@@ -92,6 +92,21 @@ public interface ToroPlayer {
   interface OnVolumeChangeListener {
 
     void onVolumeChanged(@NonNull VolumeInfo volumeInfo);
+  }
+
+  interface OnErrorListener {
+
+    void onError(Exception error);
+  }
+
+  class ErrorListeners extends CopyOnWriteArraySet<OnErrorListener>
+      implements ToroPlayer.OnErrorListener {
+
+    @Override public void onError(Exception error) {
+      for (ToroPlayer.OnErrorListener listener : this) {
+        listener.onError(error);
+      }
+    }
   }
 
   // Adapt from ExoPlayer.

@@ -20,7 +20,6 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
@@ -53,6 +52,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   MediaPlayer mediaPlayer;  // obtain from onPrepared, free at release.
   MediaPlayer.OnCompletionListener onCompletionListener;
   MediaPlayer.OnPreparedListener onPreparedListener;
+  ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   @State int playerState = State.STATE_IDLE;
   boolean playWhenReady = false;  // mimic the ExoPlayer
@@ -131,6 +131,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     }
 
     this.playerView.setOnErrorListener((mp, what, extra) -> {
+      errorListeners.onError(new RuntimeException("Error: " + what + ", " + extra));
       return true;  // prevent the system error dialog.
     });
 
@@ -208,6 +209,14 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
     if (volumeChangeListeners != null) volumeChangeListeners.remove(listener);
+  }
+
+  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
+    this.errorListeners.add(checkNotNull(errorListener));
+  }
+
+  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
+    this.errorListeners.remove(errorListener);
   }
 
   void updateResumePosition() {

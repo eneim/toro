@@ -258,7 +258,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
 
   @Override
   public void onBigPlayerDestroyed(int videoOrder, FbVideo baseItem, PlaybackInfo latestInfo) {
-    if (latestInfo != null) container.savePlaybackInfo(videoOrder, latestInfo);
+    container.savePlaybackInfo(videoOrder, latestInfo);
     container.setPlayerSelector(selector);
   }
 }

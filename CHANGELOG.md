@@ -1,6 +1,13 @@
 Changelog
 ===========
 
+3.5.3 (2018/08/xx)
+------------------
+
+- Introduce ToroPlayer.OnErrorListener and add/remove methods for it.
+- Container#savePlaybackInfo now accepts Nullable PlaybackInfo but it will be ignored.
+
+
 ~~3.5.0 (2018/05/18)~~  3.5.2 (2018/05/21)
 ------------------
 

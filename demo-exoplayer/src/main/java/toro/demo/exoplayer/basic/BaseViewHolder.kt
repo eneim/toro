@@ -24,5 +24,5 @@ import android.view.View
  */
 abstract class BaseViewHolder(itemView: View) : ViewHolder(itemView) {
 
-    open fun bind(item: Any?) {}
+  open fun bind(item: Any?) {}
 }

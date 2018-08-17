@@ -41,7 +41,7 @@ class SectionContentAdapter : Adapter<BaseViewHolder>() {
         val oldLength = this.elements.size
         this.elements.clear()
         super.notifyItemRangeRemoved(0, oldLength)
-        elements.forEach({ it -> Motion.flatten(this.elements, it.second) })
+        elements.forEach { it -> Motion.flatten(this.elements, it.second) }
         super.notifyItemRangeInserted(0, this.elements.size)
     }
 
