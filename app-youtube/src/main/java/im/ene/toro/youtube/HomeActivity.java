@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity
     super.onPostCreate(state);
     if (state != null) {
       YouTubePlayerDialog.InitData savedData = state.getParcelable(STATE_SAVED_DATA);
-      if (savedData != null && savedData.playbackInfo != null) {
+      if (savedData != null) {
         container.savePlaybackInfo(savedData.adapterOrder, savedData.playbackInfo);
       }
     }
