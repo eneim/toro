@@ -107,7 +107,6 @@ final class PlayerManager implements Handler.Callback {
   }
 
   void recycle(ToroPlayer player) {
-    // no-ops, place holder only.
     if (handler != null) handler.removeCallbacksAndMessages(player);
   }
 

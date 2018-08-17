@@ -441,9 +441,9 @@ public class Container extends RecyclerView {
    * Save {@link PlaybackInfo} for the current {@link ToroPlayer} of a specific order.
    *
    * @param order order of the {@link ToroPlayer}.
-   * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}.
+   * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}. Null info will be ignored.
    */
-  public final void savePlaybackInfo(int order, @NonNull PlaybackInfo playbackInfo) {
+  public final void savePlaybackInfo(int order, @Nullable PlaybackInfo playbackInfo) {
     if (playbackInfo != null) playbackInfoCache.savePlaybackInfo(order, playbackInfo);
   }
 

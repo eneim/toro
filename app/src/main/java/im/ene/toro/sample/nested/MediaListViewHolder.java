@@ -103,7 +103,7 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
         for (int i = 0; i < cache.size(); i++) {
           int key = cache.keyAt(i);
           PlaybackInfo info = cache.get(key);
-          if (info != null) this.container.savePlaybackInfo(key, info);
+          this.container.savePlaybackInfo(key, info);
         }
       }
       this.initPosition = playbackInfo.getResumeWindow();
@@ -131,8 +131,7 @@ class MediaListViewHolder extends BaseViewHolder implements ToroPlayer {
     for (ToroPlayer player : managed) {
       if (player.isPlaying()) {
         PlaybackInfo info = player.getCurrentPlaybackInfo();
-        //noinspection ConstantConditions
-        if (info != null) this.container.savePlaybackInfo(player.getPlayerOrder(), info);
+        this.container.savePlaybackInfo(player.getPlayerOrder(), info);
         player.pause();
       }
       player.release();

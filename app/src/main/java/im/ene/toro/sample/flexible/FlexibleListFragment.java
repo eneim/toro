@@ -199,7 +199,7 @@ public class FlexibleListFragment extends BaseFragment {
       int order = data.getIntExtra(RESULT_EXTRA_PLAYER_ORDER, -1);
       if (order >= 0 && container != null) {
         container.setPlayerSelector(PlayerSelector.NONE);
-        if (info != null) container.savePlaybackInfo(order, info);
+        container.savePlaybackInfo(order, info);
         container.setPlayerSelector(selector);
       }
     }
