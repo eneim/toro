@@ -133,7 +133,7 @@ public class HomeActivity extends AppCompatActivity
   @Override
   public void onBigPlayerDestroyed(int videoOrder, String baseItem, PlaybackInfo latestInfo) {
     container.setVisibility(View.VISIBLE);
-    if (latestInfo != null) container.savePlaybackInfo(videoOrder, latestInfo);
+    container.savePlaybackInfo(videoOrder, latestInfo);
     // HelperManager need access to FragmentManager, and setPlayerSelector will trigger it.
     // If we doing this in the state that FragmentManager is also executing tasks, it will throw
     // IllegalStateException.
