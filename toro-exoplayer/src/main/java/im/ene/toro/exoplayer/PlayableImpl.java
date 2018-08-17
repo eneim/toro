@@ -76,9 +76,8 @@ class PlayableImpl implements Playable {
 
   @CallSuper @Override public void prepare(boolean prepareSource) {
     if (prepareSource) {
-      ensurePlayer();
-      ensurePlayerView();
       ensureMediaSource();
+      ensurePlayerView();
     }
   }
 
@@ -100,8 +99,8 @@ class PlayableImpl implements Playable {
   }
 
   @CallSuper @Override public void play() {
-    ensurePlayerView();
     ensureMediaSource();
+    ensurePlayerView();
     checkNotNull(player, "Playable#play(): Player is null!");
     player.setPlayWhenReady(true);
   }
@@ -246,10 +245,7 @@ class PlayableImpl implements Playable {
   }
 
   private void ensurePlayerView() {
-    if (playerView != null) {
-      ensurePlayer();
-      if (playerView.getPlayer() != player) playerView.setPlayer(player);
-    }
+    if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
   }
 
   private void ensureMediaSource() {

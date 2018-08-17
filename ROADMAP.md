@@ -1,6 +1,7 @@
 # 3.5.0 --> x.x.x
 
-TBD
+- [ ] 3.5.3 to support ExoPlayer 2.7.4, and 3.6.0 to support ExoPlayer 2.8.3.
+- [ ] Mopub: to support ExoPlayer 2.8.2 in 3.6.0.
 
 # 3.4.2 --> 3.5.0
 
