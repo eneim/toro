@@ -51,6 +51,7 @@ import java.util.List;
  * @since 3.4.0
  */
 
+@SuppressWarnings("unused") //
 public interface Playable {
 
   /**

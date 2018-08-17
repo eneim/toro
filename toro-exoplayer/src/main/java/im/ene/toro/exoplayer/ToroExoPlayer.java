@@ -18,9 +18,12 @@ package im.ene.toro.exoplayer;
 
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.VolumeInfo;
@@ -39,8 +42,9 @@ public class ToroExoPlayer extends SimpleExoPlayer {
 
   @SuppressWarnings("WeakerAccess")
   protected ToroExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
-      LoadControl loadControl) {
-    super(renderersFactory, trackSelector, loadControl);
+      LoadControl loadControl,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
+    super(renderersFactory, trackSelector, loadControl, drmSessionManager);
   }
 
   private Set<ToroPlayer.OnVolumeChangeListener> listeners;

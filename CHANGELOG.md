@@ -1,6 +1,14 @@
 Changelog
 ===========
 
+3.6.0.2802 (2018/08/xx)
+-----------------------
+
+- [Update] Now use ExoPlayer 2.8.2
+- Change version name format to indicate which version of ExoPlayer is supported.
+- [Change] Config (in toro extension for exoplayer) no longer use array of DrmSessionManager.
+- [Change] ToroExo#createDrmSessionManager no longer requires Handler parameter.
+
 3.5.3 (2018/08/xx)
 ------------------
 

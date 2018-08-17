@@ -53,6 +53,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this(player, uri, null);
   }
 
+  @SuppressWarnings("WeakerAccess")
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt) {
     this(player, uri, fileExt, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
@@ -64,6 +65,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
         with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
+  @SuppressWarnings("WeakerAccess")
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
       @NonNull ExoCreator creator) {
     this(player, new ExoPlayable(creator, uri, fileExt));

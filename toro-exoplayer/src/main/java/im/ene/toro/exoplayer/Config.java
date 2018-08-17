@@ -18,17 +18,18 @@ package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ObjectsCompat;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory.ExtensionRendererMode;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import im.ene.toro.annotations.Beta;
-import java.util.Arrays;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -54,21 +55,22 @@ public final class Config {
 
   // Nullable options
   @SuppressWarnings("WeakerAccess") //
-  @Nullable final DrmSessionManager[] drmSessionManagers;
+  @Nullable final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
   @Nullable final Cache cache; // null by default
   // If null, ExoCreator must come up with a default one.
   // This is to help customizing the Data source, for example using OkHttp extension.
   @Nullable final DataSource.Factory dataSourceFactory;
 
-  Config(int extensionMode, @NonNull BaseMeter meter, @NonNull LoadControl loadControl,
-      @Nullable DataSource.Factory dataSourceFactory, @NonNull MediaSourceBuilder mediaSourceBuilder,
-      @Nullable DrmSessionManager[] drmSessionManagers, @Nullable Cache cache) {
+  @SuppressWarnings("WeakerAccess") Config(int extensionMode, @NonNull BaseMeter meter,
+      @NonNull LoadControl loadControl, @Nullable DataSource.Factory dataSourceFactory,
+      @NonNull MediaSourceBuilder mediaSourceBuilder,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, @Nullable Cache cache) {
     this.extensionMode = extensionMode;
     this.meter = meter;
     this.loadControl = loadControl;
     this.dataSourceFactory = dataSourceFactory;
     this.mediaSourceBuilder = mediaSourceBuilder;
-    this.drmSessionManagers = drmSessionManagers;
+    this.drmSessionManager = drmSessionManager;
     this.cache = cache;
   }
 
@@ -83,7 +85,7 @@ public final class Config {
     if (!loadControl.equals(config.loadControl)) return false;
     if (!mediaSourceBuilder.equals(config.mediaSourceBuilder)) return false;
     // Probably incorrect - comparing Object[] arrays with Arrays.equals
-    if (!Arrays.equals(drmSessionManagers, config.drmSessionManagers)) return false;
+    if (!ObjectsCompat.equals(drmSessionManager, config.drmSessionManager)) return false;
     if (cache != null ? !cache.equals(config.cache) : config.cache != null) return false;
     return dataSourceFactory != null ? dataSourceFactory.equals(config.dataSourceFactory)
         : config.dataSourceFactory == null;
@@ -94,7 +96,7 @@ public final class Config {
     result = 31 * result + meter.hashCode();
     result = 31 * result + loadControl.hashCode();
     result = 31 * result + mediaSourceBuilder.hashCode();
-    result = 31 * result + Arrays.hashCode(drmSessionManagers);
+    result = 31 * result + (drmSessionManager != null ? drmSessionManager.hashCode() : 0);
     result = 31 * result + (cache != null ? cache.hashCode() : 0);
     result = 31 * result + (dataSourceFactory != null ? dataSourceFactory.hashCode() : 0);
     return result;
@@ -102,7 +104,7 @@ public final class Config {
 
   @SuppressWarnings("unused") public Builder newBuilder() {
     return new Builder().setCache(this.cache)
-        .setDrmSessionManagers(this.drmSessionManagers)
+        .setDrmSessionManager(this.drmSessionManager)
         .setExtensionMode(this.extensionMode)
         .setLoadControl(this.loadControl)
         .setMediaSourceBuilder(this.mediaSourceBuilder)
@@ -119,7 +121,7 @@ public final class Config {
     private LoadControl loadControl = new DefaultLoadControl();
     private DataSource.Factory dataSourceFactory = null;
     private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
-    private DrmSessionManager[] drmSessionManagers = null;
+    private DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     private Cache cache = null;
 
     public Builder setExtensionMode(@ExtensionRendererMode int extensionMode) {
@@ -149,9 +151,9 @@ public final class Config {
       return this;
     }
 
-    @Beta
-    public Builder setDrmSessionManagers(@Nullable DrmSessionManager[] drmSessionManagers) {
-      this.drmSessionManagers = drmSessionManagers;
+    @Beta public Builder setDrmSessionManager(
+        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
+      this.drmSessionManager = drmSessionManager;
       return this;
     }
 
@@ -161,8 +163,8 @@ public final class Config {
     }
 
     public Config build() {
-      return new Config(extensionMode, meter, loadControl, dataSourceFactory,
-          mediaSourceBuilder, drmSessionManagers, cache);
+      return new Config(extensionMode, meter, loadControl, dataSourceFactory, mediaSourceBuilder,
+          drmSessionManager, cache);
     }
   }
 }

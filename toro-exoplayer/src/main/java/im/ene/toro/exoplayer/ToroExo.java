@@ -19,7 +19,6 @@ package im.ene.toro.exoplayer;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -126,7 +125,7 @@ public final class ToroExo {
     return creator;
   }
 
-  public final Config getDefaultConfig() {
+  @SuppressWarnings("WeakerAccess") public final Config getDefaultConfig() {
     if (defaultConfig == null) defaultConfig = new Config.Builder().build();
     return defaultConfig;
   }
@@ -206,33 +205,33 @@ public final class ToroExo {
    *
    * Usage:
    * <pre><code>
-   *   DrmSessionManager manager = ToroExo.with(context).createDrmSessionManager(mediaDrm, null);
-   *   Config config = new Config.Builder().setDrmSessionManagers([manager]);
+   *   DrmSessionManager manager = ToroExo.with(context).createDrmSessionManager(mediaDrm);
+   *   Config config = new Config.Builder().setDrmSessionManager(manager);
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @RequiresApi(18) @Nullable public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(
-      @NonNull DrmMedia drmMedia, @Nullable Handler handler) {
+  @SuppressWarnings("unused") @RequiresApi(18) @Nullable //
+  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull DrmMedia drm) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
     String subString = null;
     if (Util.SDK_INT < 18) {
       errorStringId = R.string.error_drm_not_supported;
     } else {
-      UUID drmSchemeUuid = getDrmUuid(checkNotNull(drmMedia).getType());
+      UUID drmSchemeUuid = getDrmUuid(checkNotNull(drm).getType());
       if (drmSchemeUuid == null) {
         errorStringId = R.string.error_drm_unsupported_scheme;
       } else {
         HttpDataSource.Factory factory = new DefaultHttpDataSourceFactory(appName);
         try {
-          drmSessionManager = buildDrmSessionManagerV18(drmSchemeUuid, drmMedia.getLicenseUrl(),
-              drmMedia.getKeyRequestPropertiesArray(), drmMedia.multiSession(), factory, handler);
+          drmSessionManager = buildDrmSessionManagerV18(drmSchemeUuid, drm.getLicenseUrl(),
+              drm.getKeyRequestPropertiesArray(), drm.multiSession(), factory);
         } catch (UnsupportedDrmException e) {
           e.printStackTrace();
           errorStringId = e.reason == REASON_UNSUPPORTED_SCHEME ? //
               R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
           if (e.reason == REASON_UNSUPPORTED_SCHEME) {
-            subString = drmMedia.getType();
+            subString = drm.getType();
           }
         }
       }
@@ -249,8 +248,8 @@ public final class ToroExo {
 
   @RequiresApi(18) private static DrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
       @NonNull UUID uuid, @Nullable String licenseUrl, @Nullable String[] keyRequestPropertiesArray,
-      boolean multiSession, @NonNull HttpDataSource.Factory httpDataSourceFactory,
-      @Nullable Handler handler) throws UnsupportedDrmException {
+      boolean multiSession, @NonNull HttpDataSource.Factory httpDataSourceFactory)
+      throws UnsupportedDrmException {
     HttpMediaDrmCallback drmCallback = new HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory);
     if (keyRequestPropertiesArray != null) {
       for (int i = 0; i < keyRequestPropertiesArray.length - 1; i += 2) {
@@ -259,7 +258,7 @@ public final class ToroExo {
       }
     }
     return new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback,
-        null, handler, null, multiSession);
+        null, multiSession);
   }
 
   // Share the code of setting Volume. For use inside library only.
