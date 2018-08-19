@@ -21,12 +21,12 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Beta;
-import im.ene.toro.widget.InteractivePlayerSelector;
+import im.ene.toro.widget.PressablePlayerSelector;
 
 /**
  * @author eneim (2018/08/18).
  *
- * Work with {@link InteractivePlayerSelector} and {@link PlayerView} to handle user's custom playback
+ * Work with {@link PressablePlayerSelector} and {@link PlayerView} to handle user's custom playback
  * interaction. A common usecase is when user clicks the Play button to manually start a playback.
  * We should respect this by putting the {@link ToroPlayer}'s priority to highest, and request a
  * refresh for all {@link ToroPlayer}.
@@ -34,15 +34,15 @@ import im.ene.toro.widget.InteractivePlayerSelector;
  * The same behaviour should be handled for the case user clicks the Pause button.
  *
  * All behaviour should be cleared once user scroll the selection out of playable region. This is
- * already handled by {@link InteractivePlayerSelector}.
+ * already handled by {@link PressablePlayerSelector}.
  */
 @Beta //
 public class ExoPlayerDispatcher extends DefaultControlDispatcher {
 
-  private final InteractivePlayerSelector playerSelector;
+  private final PressablePlayerSelector playerSelector;
   private final ToroPlayer toroPlayer;
 
-  public ExoPlayerDispatcher(InteractivePlayerSelector playerSelector, ToroPlayer toroPlayer) {
+  public ExoPlayerDispatcher(PressablePlayerSelector playerSelector, ToroPlayer toroPlayer) {
     this.playerSelector = playerSelector;
     this.toroPlayer = toroPlayer;
   }

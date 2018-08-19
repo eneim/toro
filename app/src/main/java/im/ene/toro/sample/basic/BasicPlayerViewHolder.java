@@ -31,7 +31,7 @@ import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
-import im.ene.toro.widget.InteractivePlayerSelector;
+import im.ene.toro.widget.PressablePlayerSelector;
 
 /**
  * @author eneim (7/1/17).
@@ -44,13 +44,13 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
 
-  final InteractivePlayerSelector selector;
+  final PressablePlayerSelector selector;
   ToroPlayerHelper helper;
   Uri mediaUri;
 
   @BindView(R.id.player) PlayerView playerView;
 
-  public BasicPlayerViewHolder(View itemView, InteractivePlayerSelector selector) {
+  public BasicPlayerViewHolder(View itemView, PressablePlayerSelector selector) {
     super(itemView);
     this.selector = selector;
     ButterKnife.bind(this, itemView);

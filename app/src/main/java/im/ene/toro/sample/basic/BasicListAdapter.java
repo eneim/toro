@@ -21,7 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import im.ene.toro.widget.InteractivePlayerSelector;
+import im.ene.toro.widget.PressablePlayerSelector;
 
 /**
  * @author eneim (7/1/17).
@@ -32,9 +32,9 @@ class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
   private MediaList mediaList = new MediaList();
 
-  private final InteractivePlayerSelector selector;
+  private final PressablePlayerSelector selector;
 
-  BasicListAdapter(InteractivePlayerSelector selector) {
+  BasicListAdapter(PressablePlayerSelector selector) {
     this.selector = selector;
   }
 

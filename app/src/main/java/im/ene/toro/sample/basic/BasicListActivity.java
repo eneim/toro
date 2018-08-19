@@ -24,7 +24,7 @@ import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.widget.Container;
-import im.ene.toro.widget.InteractivePlayerSelector;
+import im.ene.toro.widget.PressablePlayerSelector;
 
 /**
  * @author eneim (7/2/17).
@@ -36,7 +36,7 @@ public class BasicListActivity extends BaseActivity {
   LinearLayoutManager layoutManager;
   BasicListAdapter adapter;
 
-  InteractivePlayerSelector selector;
+  PressablePlayerSelector selector;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -45,7 +45,7 @@ public class BasicListActivity extends BaseActivity {
 
     layoutManager = new LinearLayoutManager(this);
     container.setLayoutManager(layoutManager);
-    selector = new InteractivePlayerSelector(container, PlayerSelector.DEFAULT);
+    selector = new PressablePlayerSelector(container);
     container.setPlayerSelector(selector);
 
     adapter = new BasicListAdapter(selector);
