@@ -21,19 +21,15 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
@@ -53,6 +49,7 @@ import static im.ene.toro.exoplayer.ToroExo.with;
 public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   final ToroExo toro;  // per application
+  final Config config;
   private final TrackSelector trackSelector;  // 'maybe' stateless
   private final LoadControl loadControl;  // stateless
   private final MediaSourceBuilder mediaSourceBuilder;  // stateless
@@ -61,13 +58,13 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   private final DataSource.Factory manifestDataSourceFactory; // stateless
 
   @SuppressWarnings("unchecked")  //
-  public DefaultExoCreator(ToroExo toro, Config config) {
+  public DefaultExoCreator(@NonNull ToroExo toro, @NonNull Config config) {
     this.toro = checkNotNull(toro);
+    this.config = checkNotNull(config);
     trackSelector = new DefaultTrackSelector(config.meter);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new MultiDrmRendererFactory(this.toro.context, //
-        config.drmSessionManagers, config.extensionMode);
+    renderersFactory = new DefaultRenderersFactory(this.toro.context, config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -118,8 +115,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
-    // return ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl);
+    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl,
+        config.drmSessionManager);
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
@@ -127,49 +124,60 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
         manifestDataSourceFactory, mediaDataSourceFactory, this);
   }
 
-  @NonNull @Override public Playable createPlayable(@NonNull Uri uri, String fileExt) {
+  @NonNull @Override //
+  public Playable createPlayable(@NonNull Uri uri, String fileExt) {
     return new PlayableImpl(this, uri, fileExt);
   }
 
   /// MediaSourceEventListener
 
   @Override
-  public void onLoadStarted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
-      int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
-      long mediaEndTimeMs, long elapsedRealtimeMs) {
+  public void onLoadStarted(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
     // no-ops
   }
 
   @Override
-  public void onLoadCompleted(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
-      int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
-      long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
+  public void onLoadCompleted(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
     // no-ops
   }
 
   @Override
-  public void onLoadCanceled(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
-      int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
-      long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded) {
+  public void onLoadCanceled(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData) {
     // no-ops
   }
 
   @Override
-  public void onLoadError(DataSpec dataSpec, int dataType, int trackType, Format trackFormat,
-      int trackSelectionReason, Object trackSelectionData, long mediaStartTimeMs,
-      long mediaEndTimeMs, long elapsedRealtimeMs, long loadDurationMs, long bytesLoaded,
-      IOException error, boolean wasCanceled) {
+  public void onLoadError(int windowIndex, @Nullable MediaSource.MediaPeriodId mediaPeriodId,
+      LoadEventInfo loadEventInfo, MediaLoadData mediaLoadData, IOException error,
+      boolean wasCanceled) {
+    // no-ops
+  }
+
+  @Override public void onReadingStarted(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
     // no-ops
   }
 
   @Override
-  public void onUpstreamDiscarded(int trackType, long mediaStartTimeMs, long mediaEndTimeMs) {
+  public void onUpstreamDiscarded(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId,
+      MediaLoadData mediaLoadData) {
+    // no-ops
+  }
+
+  @Override public void onDownstreamFormatChanged(int windowIndex,
+      @Nullable MediaSource.MediaPeriodId mediaPeriodId, MediaLoadData mediaLoadData) {
     // no-ops
   }
 
   @Override
-  public void onDownstreamFormatChanged(int trackType, Format trackFormat, int trackSelectionReason,
-      Object trackSelectionData, long mediaTimeMs) {
+  public void onMediaPeriodCreated(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
+    // no-ops
+  }
+
+  @Override
+  public void onMediaPeriodReleased(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
     // no-ops
   }
 }

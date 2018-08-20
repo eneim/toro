@@ -45,7 +45,7 @@ ext {
   supportLibraryVersion = '27.1.1'
   constrainLayoutVersion = '1.1.2'
   archLibraryVersion = '1.1.1'
-  exoPlayer2Version = '2.7.3'
+  exoPlayer2Version = '2.8.2'
   minSupportSDKVersion = 16
 }
 
@@ -66,8 +66,8 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.5.3-SNAPSHOT' /* '3.5.3' */
-    releaseVersionCode = 353
+    releaseVersion = '3.6.0.2802-SNAPSHOT' /* '3.6.0.2802' */
+    releaseVersionCode = 306002802 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 

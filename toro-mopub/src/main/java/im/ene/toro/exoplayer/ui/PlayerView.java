@@ -53,6 +53,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.ResizeMode;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.PlaybackControlView.VisibilityListener;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
@@ -603,11 +604,11 @@ import java.util.List;
   }
 
   /**
-   * Set the {@link PlaybackControlView.VisibilityListener}.
+   * Set the {@link VisibilityListener}.
    *
    * @param listener The listener to be notified about visibility changes.
    */
-  public void setControllerVisibilityListener(PlaybackControlView.VisibilityListener listener) {
+  public void setControllerVisibilityListener(VisibilityListener listener) {
     Assertions.checkState(controller != null);
     controller.setVisibilityListener(listener);
   }

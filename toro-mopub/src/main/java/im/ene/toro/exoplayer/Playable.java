@@ -52,7 +52,7 @@ import java.util.List;
  * @since 3.4.0
  */
 
-@SuppressWarnings("DeprecatedIsStillUsed")  //
+@SuppressWarnings({ "DeprecatedIsStillUsed", "unused" })  //
 public interface Playable<T> {
 
   /**
