@@ -44,7 +44,6 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   static final int LAYOUT_RES = R.layout.view_holder_exoplayer_basic;
 
-  final PressablePlayerSelector selector;
   ToroPlayerHelper helper;
   Uri mediaUri;
 
@@ -52,9 +51,8 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   public BasicPlayerViewHolder(View itemView, PressablePlayerSelector selector) {
     super(itemView);
-    this.selector = selector;
     ButterKnife.bind(this, itemView);
-    playerView.setControlDispatcher(new ExoPlayerDispatcher(selector, this));
+    if (selector != null) playerView.setControlDispatcher(new ExoPlayerDispatcher(selector, this));
   }
 
   @NonNull @Override public View getPlayerView() {
