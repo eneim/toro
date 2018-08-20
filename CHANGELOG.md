@@ -4,13 +4,16 @@ Changelog
 3.6.0.2802 (2018/08/xx)
 -----------------------
 
-- [Update] Now use ExoPlayer 2.8.2
-- Change version name format to indicate which version of ExoPlayer is supported.
-- [New] Introduce ToroPlayer.OnErrorListener and add/remove methods for it.
-- [Update] Container#savePlaybackInfo now accepts Nullable PlaybackInfo but it will be ignored.
-- [Change] Config (in toro extension for exoplayer) no longer use array of DrmSessionManager.
-- [Change] ToroExo#createDrmSessionManager no longer requires Handler parameter.
-- [New] ``ToroControlView`` now also available for toro-exoplayer. Clients can simply use ``PlayerView`` with 'player_layout_id' to be ``@layout/toro_exo_player_view``. ``ToroControlView`` is an extension of ``PlayerControlView`` that is empowered with the ability to change Volume and mute/un-mute switching.
+- **[Update]** Now use ExoPlayer 2.8.2
+- **[Update]** Version name format to indicate which version of ExoPlayer is supported.
+- **[Update]** Container#savePlaybackInfo now accepts Nullable PlaybackInfo but it will be ignored.
+- **[Change]** Config (in toro extension for exoplayer) no longer use array of DrmSessionManager.
+- **[Change]** ToroExo#createDrmSessionManager no longer requires Handler parameter.
+- **[New]** Introduce ToroPlayer.OnErrorListener and add/remove methods for it.
+- **[New]** ``ToroControlView`` now also available for toro-exoplayer. Clients can simply use ``PlayerView`` with 'player_layout_id' to be ``@layout/toro_exo_player_view``. ``ToroControlView`` is an extension of ``PlayerControlView`` that is empowered with the ability to change Volume and mute/un-mute switching.
+- **[New]** Add new built-in PlayerSelector: ``PressablePlayerSelector`` which is also a ``View.OnLongClickListener``. This can be used when client allows user to long-press to a ``ToroPlayer`` to make it starts playing.
+- **[New]** Add new ``ExoPlayerDispatcher`` which is a ``ControlDispatcher`` for ExoPlayer ``PlayerControlView``. Use this with ``PlayerView`` to allow user to control the playback using the UI. ``ExoPlayerDispatcher`` connects to ``Container`` to correctly update the playback position.
+
 
 
 ~~3.5.0 (2018/05/18)~~  3.5.2 (2018/05/21)
