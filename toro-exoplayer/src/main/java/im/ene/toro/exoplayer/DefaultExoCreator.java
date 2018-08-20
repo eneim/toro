@@ -124,7 +124,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
         manifestDataSourceFactory, mediaDataSourceFactory, this);
   }
 
-  @NonNull @Override public Playable createPlayable(@NonNull Uri uri, String fileExt) {
+  @NonNull @Override //
+  public Playable createPlayable(@NonNull Uri uri, String fileExt) {
     return new PlayableImpl(this, uri, fileExt);
   }
 

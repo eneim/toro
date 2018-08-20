@@ -39,6 +39,7 @@ android {
 
 dependencies {
   implementation project(':toro-core')
+  implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
     exclude group: 'com.android.support'
   }

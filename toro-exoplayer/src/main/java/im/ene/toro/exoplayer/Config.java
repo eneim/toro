@@ -61,9 +61,9 @@ public final class Config {
   // This is to help customizing the Data source, for example using OkHttp extension.
   @Nullable final DataSource.Factory dataSourceFactory;
 
-  @SuppressWarnings("WeakerAccess") Config(int extensionMode, @NonNull BaseMeter meter,
-      @NonNull LoadControl loadControl, @Nullable DataSource.Factory dataSourceFactory,
-      @NonNull MediaSourceBuilder mediaSourceBuilder,
+  @SuppressWarnings("WeakerAccess") //
+  Config(int extensionMode, @NonNull BaseMeter meter, @NonNull LoadControl loadControl,
+      @Nullable DataSource.Factory dataSourceFactory, @NonNull MediaSourceBuilder mediaSourceBuilder,
       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, @Nullable Cache cache) {
     this.extensionMode = extensionMode;
     this.meter = meter;
@@ -84,7 +84,6 @@ public final class Config {
     if (!meter.equals(config.meter)) return false;
     if (!loadControl.equals(config.loadControl)) return false;
     if (!mediaSourceBuilder.equals(config.mediaSourceBuilder)) return false;
-    // Probably incorrect - comparing Object[] arrays with Arrays.equals
     if (!ObjectsCompat.equals(drmSessionManager, config.drmSessionManager)) return false;
     if (cache != null ? !cache.equals(config.cache) : config.cache != null) return false;
     return dataSourceFactory != null ? dataSourceFactory.equals(config.dataSourceFactory)
@@ -151,7 +150,8 @@ public final class Config {
       return this;
     }
 
-    @Beta public Builder setDrmSessionManager(
+    @Beta //
+    public Builder setDrmSessionManager(
         @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
       this.drmSessionManager = drmSessionManager;
       return this;
@@ -163,8 +163,8 @@ public final class Config {
     }
 
     public Config build() {
-      return new Config(extensionMode, meter, loadControl, dataSourceFactory, mediaSourceBuilder,
-          drmSessionManager, cache);
+      return new Config(extensionMode, meter, loadControl, dataSourceFactory,
+          mediaSourceBuilder, drmSessionManager, cache);
     }
   }
 }

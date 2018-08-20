@@ -21,40 +21,39 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
-import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.exoplayer.R;
 import im.ene.toro.exoplayer.ToroExo;
 import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.media.VolumeInfo;
-import im.ene.toro.mopub.R;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * An extension of {@link PlaybackControlView} that adds Volume control buttons. It works on-par
- * with {@link PlayerView}. The reason is the original {@link SimpleExoPlayerView} doesn't accept
- * custom {@link PlaybackControlView} by default. {@link PlayerView} copies its best and add some
- * improvement on top of it. Any other behavior should be the same.
+ * An extension of {@link PlayerControlView} that adds Volume control buttons. It works on-par
+ * with {@link PlayerView}. Will be automatically inflated when client uses {@link R.layout.toro_exo_player_view}
+ * for {@link PlayerView} layout.
  *
- * @author eneim (2018/02/28).
+ * @author eneim (2018/08/20).
+ * @since 3.6.0.2802
  */
+public class ToroControlView extends PlayerControlView {
 
-public class ToroControlView extends PlaybackControlView {
+  @SuppressWarnings("unused") static final String TAG = "ToroExo:Control";
 
-  static final String TAG = "ToroExo:Control";
-
-  static Method hideAfterTimeoutMethod; // from parent ...
-  static boolean hideMethodFetched;
-  static Field hideActionField;
-  static boolean hideActionFetched;
+  // Statically obtain from super class.
+  protected static Method hideAfterTimeoutMethod; // from parent ...
+  protected static boolean hideMethodFetched;
+  protected static Field hideActionField;
+  protected static boolean hideActionFetched;
 
   final ComponentListener componentListener;
   final View volumeUpButton;
@@ -82,7 +81,7 @@ public class ToroControlView extends PlaybackControlView {
     super.onAttachedToWindow();
     if (volumeUpButton != null) volumeUpButton.setOnClickListener(componentListener);
     if (volumeOffButton != null) volumeOffButton.setOnClickListener(componentListener);
-    if (volumeBar != null) volumeBar.setListener(componentListener);
+    if (volumeBar != null) volumeBar.addListener(componentListener);
 
     updateVolumeButtons();
   }
@@ -91,7 +90,7 @@ public class ToroControlView extends PlaybackControlView {
     super.onDetachedFromWindow();
     if (volumeUpButton != null) volumeUpButton.setOnClickListener(null);
     if (volumeOffButton != null) volumeOffButton.setOnClickListener(null);
-    if (volumeBar != null) volumeBar.setListener(null);
+    if (volumeBar != null) volumeBar.removeListener(componentListener);
     this.setPlayer(null);
   }
 
@@ -105,8 +104,8 @@ public class ToroControlView extends PlaybackControlView {
     return true;
   }
 
-  @Override public void setPlayer(ExoPlayer player) {
-    ExoPlayer current = super.getPlayer();
+  @Override public void setPlayer(Player player) {
+    Player current = super.getPlayer();
     if (current == player) return;
 
     if (current instanceof ToroExoPlayer) {
@@ -130,49 +129,17 @@ public class ToroControlView extends PlaybackControlView {
     updateVolumeButtons();
   }
 
-  private class ComponentListener
-      implements OnClickListener, TimeBar.OnScrubListener, OnVolumeChangeListener {
-
-    @Override public void onClick(View v) {
-      ExoPlayer player = getPlayer();
-      if (!(player instanceof SimpleExoPlayer)) return;
-      if (v == volumeOffButton) {  // click to vol Off --> unmute
-        volumeInfo.setTo(false, volumeInfo.getVolume());
-      } else if (v == volumeUpButton) {  // click to vol Up --> mute
-        volumeInfo.setTo(true, volumeInfo.getVolume());
-      }
-      ToroExo.setVolumeInfo((SimpleExoPlayer) player, volumeInfo);
-      updateVolumeButtons();
-    }
-
-    /// TimeBar.OnScrubListener
-
-    @Override public void onScrubStart(TimeBar timeBar, long position) {
-      dispatchOnScrubStart();
-    }
-
-    @Override public void onScrubMove(TimeBar timeBar, long position) {
-      dispatchOnScrubMove(position);
-    }
-
-    @Override public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
-      dispatchOnScrubStop(position);
-    }
-
-    /// ToroPlayer.OnVolumeChangeListener
-
-    @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
-      ToroControlView.this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      updateVolumeButtons();
-    }
-  }
-
   @Override protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
     super.onVisibilityChanged(changedView, visibility);
     if (changedView == this) updateVolumeButtons();
   }
 
-  @SuppressLint("LogNotTimber") @SuppressWarnings("ConstantConditions") //
+  @Override public void onVisibilityAggregated(boolean isVisible) {
+    super.onVisibilityAggregated(isVisible);
+    updateVolumeButtons();
+  }
+
+  @SuppressWarnings("ConstantConditions") //
   void updateVolumeButtons() {
     if (!isVisible() || !ViewCompat.isAttachedToWindow(this)) {
       return;
@@ -198,18 +165,16 @@ public class ToroControlView extends PlaybackControlView {
       requestButtonFocus();
     }
 
-    // A hack to access PlaybackControlView's hideAfterTimeout. Don't want to re-implement it.
+    // A hack to access PlayerControlView's hideAfterTimeout. Don't want to re-implement it.
     // Reflection happens once for all instances, so it should not affect the performance.
     if (!hideMethodFetched) {
-      long start = System.nanoTime();
       try {
-        hideAfterTimeoutMethod = PlaybackControlView.class.getDeclaredMethod("hideAfterTimeout");
+        hideAfterTimeoutMethod = PlayerControlView.class.getDeclaredMethod("hideAfterTimeout");
         hideAfterTimeoutMethod.setAccessible(true);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       }
       hideMethodFetched = true;
-      Log.i(TAG, "reflection time: " + (System.nanoTime() - start) + "ns");
     }
 
     if (hideAfterTimeoutMethod != null) {
@@ -237,7 +202,7 @@ public class ToroControlView extends PlaybackControlView {
     // behaviour when user does something.
     if (!hideActionFetched) {
       try {
-        hideActionField = PlaybackControlView.class.getDeclaredField("hideAction");
+        hideActionField = PlayerControlView.class.getDeclaredField("hideAction");
         hideActionField.setAccessible(true);
       } catch (NoSuchFieldException e) {
         e.printStackTrace();
@@ -270,5 +235,42 @@ public class ToroControlView extends PlaybackControlView {
 
   void dispatchOnScrubStop(long position) {
     this.dispatchOnScrubMove(position);
+  }
+
+  private class ComponentListener
+      implements OnClickListener, TimeBar.OnScrubListener, ToroPlayer.OnVolumeChangeListener {
+
+    @Override public void onClick(View v) {
+      Player player = ToroControlView.super.getPlayer();
+      if (!(player instanceof SimpleExoPlayer)) return;
+      if (v == volumeOffButton) {  // click to vol Off --> unmute
+        volumeInfo.setTo(false, volumeInfo.getVolume());
+      } else if (v == volumeUpButton) {  // click to vol Up --> mute
+        volumeInfo.setTo(true, volumeInfo.getVolume());
+      }
+      ToroExo.setVolumeInfo((SimpleExoPlayer) player, volumeInfo);
+      updateVolumeButtons();
+    }
+
+    /// TimeBar.OnScrubListener
+
+    @Override public void onScrubStart(TimeBar timeBar, long position) {
+      dispatchOnScrubStart();
+    }
+
+    @Override public void onScrubMove(TimeBar timeBar, long position) {
+      dispatchOnScrubMove(position);
+    }
+
+    @Override public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+      dispatchOnScrubStop(position);
+    }
+
+    /// ToroPlayer.OnVolumeChangeListener
+
+    @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
+      ToroControlView.this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      updateVolumeButtons();
+    }
   }
 }
