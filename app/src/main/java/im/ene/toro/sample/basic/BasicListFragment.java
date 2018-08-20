@@ -61,7 +61,7 @@ public class BasicListFragment extends BaseFragment {
 
     layoutManager = new LinearLayoutManager(getContext());
     container.setLayoutManager(layoutManager);
-    adapter = new BasicListAdapter();
+    adapter = new BasicListAdapter(null);
     container.setAdapter(adapter);
 
     // FIXME Only use the following workaround when using this Fragment in ViewPager.
