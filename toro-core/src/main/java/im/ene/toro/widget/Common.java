@@ -19,6 +19,7 @@ package im.ene.toro.widget;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.support.v7.widget.RecyclerView;
 import im.ene.toro.ToroPlayer;
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * @author eneim | 6/2/17.
  *
- *         A hub for internal convenient methods.
+ * A hub for internal convenient methods.
  */
 
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
@@ -41,6 +42,11 @@ final class Common {
   // Keep static values to reduce instance initialization. We don't need to access its value.
   private static final Rect dummyRect = new Rect();
   private static final Point dummyPoint = new Point();
+
+  interface Filter<T> {
+
+    boolean accept(T target);
+  }
 
   static int compare(int x, int y) {
     //noinspection UseCompareMethod
@@ -72,5 +78,13 @@ final class Common {
     if (valid) valid = ((RecyclerView.ViewHolder) player).itemView.getParent() != null;
     if (valid) valid = player.getPlayerView().getGlobalVisibleRect(dummyRect, dummyPoint);
     return valid;
+  }
+
+  @Nullable static <T> T findFirst(List<T> source, Filter<T> filter) {
+    for (T t : source) {
+      if (filter.accept(t)) return t;
+    }
+
+    return null;
   }
 }
