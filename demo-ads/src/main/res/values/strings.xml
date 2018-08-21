@@ -1,0 +1,61 @@
+<!--
+  ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+  <string name="app_name">Ads demo</string>
+  <string name="large_text">
+    "A material metaphor is the unifying theory of a rationalized space and a system of motion."
+    "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
+    "technologically advanced and open to imagination and magic.\n"
+    "Surfaces and edges of the material provide visual cues that are grounded in reality. The "
+    "use of familiar tactile attributes helps users quickly understand affordances. Yet the "
+    "flexibility of the material creates new affordances that supercede those in the physical "
+    "world, without breaking the rules of physics.\n"
+    "The fundamentals of light, surface, and movement are key to conveying how objects move, "
+    "interact, and exist in space and in relation to each other. Realistic lighting shows "
+    "seams, divides space, and indicates moving parts."
+  </string>
+  <string name="action_settings">Settings</string>
+
+  <string name="keywords">Keywords (optional)</string>
+  <string name="user_data_keywords">User Data Keywords (optional)</string>
+  <string name="custom_data">Custom Data (optional)</string>
+  <string name="load_ad">Load Ad</string>
+  <string name="refresh_ad">Refresh Ad</string>
+  <string name="switch_layout">Switch Layout</string>
+  <string name="show_ad">Show Ad</string>
+  <string name="native_icon_image">native_icon_image</string>
+  <string name="native_main_image">native_main_image</string>
+  <string name="native_privacy_information_icon_image">Privacy Information Icon image</string>
+  <string name="learn_more">Learn More</string>
+  <string name="save">Save Ad Unit</string>
+  <string name="ad_unit_id">Ad Unit Id:</string>
+  <string name="ad_unit_hint">Enter Ad Unit Id</string>
+  <string name="ad_unit_name">Name:</string>
+  <string name="ad_unit_name_hint">Enter Name</string>
+  <string name="ad_type">Ad Type:</string>
+  <string name="add_ad_unit_title">Add an Ad Unit</string>
+  <string name="add_ad_unit_button">Add an Ad Unit</string>
+  <string name="ad_unit_id_banner">b195f8dd8ded45fe847ad89ed1d016da</string>
+  <string name="ad_unit_id_mrect">252412d5e9364a05ab77d9396346d73d</string>
+  <string name="ad_unit_id_leaderboard">a8919cca19784497872ae69d48f678e1</string>
+  <string name="ad_unit_id_interstitial">24534e1901884e398f1253216226017e</string>
+  <string name="ad_unit_id_rewarded_video">920b6145fb1546cf8b5cf2ac34638bb7</string>
+  <string name="ad_unit_id_rewarded_rich_media">15173ac6d3e54c9389b9a5ddca69b34b</string>
+  <string name="ad_unit_id_native">11a17b188668469fb0412708c3d16813</string>
+  <string name="swipe_text"><![CDATA[< Swipe Left & Right >]]></string>
+
+</resources>
