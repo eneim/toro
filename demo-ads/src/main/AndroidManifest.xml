@@ -38,7 +38,7 @@
       tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
     <activity
         android:name=".DemoActivity"
-        android:label="@string/screen_mopub"
+        android:label="@string/activity_base"
         android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -46,6 +46,16 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+
+    <activity
+        android:name=".mopub.MoPubDemoActivity"
+        android:label="@string/screen_mopub"
+        android:theme="@style/AppTheme.NoActionBar"/>
+
+    <activity
+        android:name=".ima.ImaDemoActivity"
+        android:label="@string/screen_ima"
+        android:theme="@style/AppTheme.NoActionBar"/>
 
     <activity
         android:name="com.mopub.mobileads.MoPubActivity"

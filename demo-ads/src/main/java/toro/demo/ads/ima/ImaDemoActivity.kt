@@ -14,28 +14,32 @@
  * limitations under the License.
  */
 
-package toro.demo.ads
+package toro.demo.ads.ima
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_base.startImaDemo
-import kotlinx.android.synthetic.main.activity_base.startMopubDemo
+import kotlinx.android.synthetic.main.activity_demo.toolbar
+import toro.demo.ads.R
 import toro.demo.ads.common.BaseActivity
-import toro.demo.ads.ima.ImaDemoActivity
-import toro.demo.ads.mopub.MoPubDemoActivity
 
+/**
+ * @author eneim (2018/08/22).
+ */
+class ImaDemoActivity : BaseActivity() {
 
-class DemoActivity : BaseActivity() {
+  companion object {
+    fun createIntent(context: Context) = Intent(context, ImaDemoActivity::class.java)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_base)
-
-    startMopubDemo.setOnClickListener {
-      startActivity(MoPubDemoActivity.createIntent(this))
-    }
-
-    startImaDemo.setOnClickListener {
-      startActivity(ImaDemoActivity.createIntent(this))
+    setContentView(R.layout.activity_demo)
+    setSupportActionBar(toolbar)
+    if (savedInstanceState == null) {
+      supportFragmentManager.beginTransaction()
+          .replace(R.id.container, ImaDemoFragment.newInstance())
+          .commit()
     }
   }
 }

@@ -16,7 +16,9 @@
 
 <resources>
   <string name="app_name">Ads demo</string>
+  <string name="activity_base">Toro with Ads demo</string>
   <string name="screen_mopub">MoPub with Toro demo</string>
+  <string name="screen_ima">IMA with Toro demo</string>
   <string name="large_text">
     "A material metaphor is the unifying theory of a rationalized space and a system of motion."
     "The material is grounded in tactile reality, inspired by the study of paper and ink, yet "
