@@ -77,7 +77,7 @@ Application's build.gradle
 
 ```groovy
 ext {
-  latest_snapshot = '3.5.3-SNAPSHOT' // TODO check above for latest version
+  latest_snapshot = '3.6.0.2802-SNAPSHOT' // TODO check above for latest version
   // below: other dependencies' versions maybe
 }
 
