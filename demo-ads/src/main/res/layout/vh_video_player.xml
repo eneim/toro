@@ -20,8 +20,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="0dp"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="1dp"
     app:cardElevation="1dp"
+    app:cardPreventCornerOverlap="true"
     >
 
   <android.support.v7.widget.LinearLayoutCompat
@@ -30,14 +32,26 @@
       android:layout_height="wrap_content"
       android:orientation="vertical"
       >
+
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="200dp"
+        app:keep_content_on_player_reset="true"
+        app:resize_mode="fixed_width"
+        app:show_buffering="true"
         app:surface_type="texture_view"
         app:use_controller="false"
-        />
+        >
+      <android.support.v7.widget.AppCompatImageView
+          android:id="@+id/posterView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:adjustViewBounds="true"
+          android:scaleType="centerCrop"
+          />
+    </com.google.android.exoplayer2.ui.PlayerView>
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="match_parent"

@@ -69,15 +69,18 @@
         android:textColor="@android:color/darker_gray"
         />
 
-    <com.mopub.nativeads.MediaLayout
-        android:id="@+id/native_media_layout"
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/native_main_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/native_main_image_height"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/native_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:background="#000000"
+        android:background="@null"
+        android:contentDescription="@string/native_main_image"
+        android:scaleType="centerCrop"
         />
 
     <android.support.v7.widget.AppCompatImageView

@@ -181,6 +181,7 @@ class MoPubSampleAdUnit implements Comparable<MoPubSampleAdUnit> {
     return builder.build();
   }
 
+  @SuppressWarnings("SameParameterValue")
   static MoPubSampleAdUnit fromBundle(@Nullable Bundle bundle) {
     if (bundle == null) return fromNull();
     final Long id = bundle.getLong(ID, -1L);

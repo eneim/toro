@@ -26,16 +26,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.mopub.common.MoPub;
 import com.mopub.common.util.DeviceUtils;
 import com.mopub.nativeads.MediaViewBinder;
 import com.mopub.nativeads.MoPubNativeAdPositioning;
 import com.mopub.nativeads.MoPubRecyclerAdapter;
+import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.MoPubVideoNativeAdRenderer;
+import com.mopub.nativeads.ViewBinder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import toro.demo.ads.R;
 import toro.demo.ads.common.BaseFragment;
 
@@ -100,6 +100,15 @@ public class MopubNativeRecyclerViewFragment extends BaseFragment {
     recyclerAdapter = new MoPubRecyclerAdapter(requireActivity(), originalAdapter,
         new MoPubNativeAdPositioning.MoPubServerPositioning());
 
+    // Set up a renderer for a static native ad.
+    MoPubStaticNativeAdRenderer staticNativeAdRenderer = new MoPubStaticNativeAdRenderer(
+        new ViewBinder.Builder(R.layout.native_ad_list_item).titleId(R.id.native_title)
+            .textId(R.id.native_text)
+            .mainImageId(R.id.native_main_image)
+            .iconImageId(R.id.native_icon_image)
+            .privacyInformationIconImageId(R.id.native_privacy_information_icon_image)
+            .build());
+
     // Set up a renderer for a video native ad.
     MoPubVideoNativeAdRenderer videoNativeAdRenderer = new MoPubVideoNativeAdRenderer(
         new MediaViewBinder.Builder(R.layout.video_ad_list_item).titleId(R.id.native_title)
@@ -111,6 +120,8 @@ public class MopubNativeRecyclerViewFragment extends BaseFragment {
             .build());
 
     recyclerAdapter.registerAdRenderer(videoNativeAdRenderer);
+    recyclerAdapter.registerAdRenderer(staticNativeAdRenderer);
+
     recyclerView.setAdapter(recyclerAdapter);
     recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     recyclerAdapter.loadAds(adConfig.getAdUnitId());
@@ -120,38 +131,5 @@ public class MopubNativeRecyclerViewFragment extends BaseFragment {
     // You must call this or the ad adapter may cause a memory leak.
     recyclerAdapter.destroy();
     super.onDestroyView();
-  }
-
-  static class DemoRecyclerAdapter extends RecyclerView.Adapter<DemoViewHolder> {
-    private static final int ITEM_COUNT = 150;
-
-    @NonNull @Override
-    public DemoViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
-      final View itemView = LayoutInflater.from(parent.getContext())
-          .inflate(android.R.layout.simple_list_item_1, parent, false);
-      return new DemoViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull final DemoViewHolder holder, final int position) {
-      holder.textView.setText(String.format(Locale.US, "Content Item #%d", position));
-    }
-
-    @Override public long getItemId(final int position) {
-      return (long) position;
-    }
-
-    @Override public int getItemCount() {
-      return ITEM_COUNT;
-    }
-  }
-
-  static class DemoViewHolder extends RecyclerView.ViewHolder {
-    final TextView textView;
-
-    DemoViewHolder(final View itemView) {
-      super(itemView);
-      textView = itemView.findViewById(android.R.id.text1);
-    }
   }
 }

@@ -38,7 +38,7 @@
       tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
     <activity
         android:name=".DemoActivity"
-        android:label="@string/app_name"
+        android:label="@string/screen_mopub"
         android:theme="@style/AppTheme.NoActionBar">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -47,22 +47,29 @@
       </intent-filter>
     </activity>
 
-    <activity android:name="com.mopub.mobileads.MoPubActivity"
+    <activity
+        android:name="com.mopub.mobileads.MoPubActivity"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
-    <activity android:name="com.mopub.mobileads.MraidActivity"
+    <activity
+        android:name="com.mopub.mobileads.MraidActivity"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
-    <activity android:name="com.mopub.common.MoPubBrowser"
+    <activity
+        android:name="com.mopub.common.MoPubBrowser"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
-    <activity android:name="com.mopub.mobileads.MraidVideoPlayerActivity"
+    <activity
+        android:name="com.mopub.mobileads.MraidVideoPlayerActivity"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
-    <activity android:name="com.mopub.mobileads.RewardedMraidActivity"
+    <activity
+        android:name="com.mopub.mobileads.RewardedMraidActivity"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
 
-    <activity android:name="com.mopub.common.privacy.ConsentDialogActivity"
+    <activity
+        android:name="com.mopub.common.privacy.ConsentDialogActivity"
         android:configChanges="keyboardHidden|orientation|screenSize"/>
 
-    <meta-data android:name="com.google.android.gms.version"
-        android:value="@integer/google_play_services_version" />
+    <meta-data
+        android:name="com.google.android.gms.version"
+        android:value="@integer/google_play_services_version"/>
   </application>
 
 </manifest>

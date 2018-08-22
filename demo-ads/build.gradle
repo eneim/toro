@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-repositories {
-  google()
-  jcenter()
-  maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -98,6 +92,9 @@ dependencies {
   implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.8.7") {
     exclude group: 'com.android.support'
   }
+
+  implementation 'com.github.bumptech.glide:glide:4.8.0'
+  kapt 'com.github.bumptech.glide:compiler:4.8.0'
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
   // Because RxAndroid releases are few and far between, it is recommended you also
