@@ -22,10 +22,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
+import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Beta;
+import im.ene.toro.helper.ToroPlayerHelper;
 
 /**
+ * A {@link ToroPlayerHelper} to integrate ExoPlayer IMA Extension. Work together with {@link AdsPlayable}.
+ *
  * @author eneim (2018/08/22).
  * @since 3.6.0.2802
  */
@@ -69,6 +73,12 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
   }
 
   // Neither ExoCreator nor Config are provided.
+
+  /**
+   * Create new {@link AdsExoPlayerViewHelper} for a {@link ToroPlayer} and {@link AdsLoader}.
+   *
+   * @param adContainer if {@code null} then overlay of {@link PlayerView} will be used.
+   */
   public AdsExoPlayerViewHelper(        //
       @NonNull ToroPlayer player,       //
       @NonNull Uri uri,                 //
@@ -80,6 +90,12 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
   }
 
   // ExoCreator is provided.
+
+  /**
+   * Create new {@link AdsExoPlayerViewHelper} for a {@link ToroPlayer} and {@link AdsLoader}.
+   *
+   * @param adContainer if {@code null} then overlay of {@link PlayerView} will be used.
+   */
   public AdsExoPlayerViewHelper(        //
       @NonNull ToroPlayer player,       //
       @NonNull Uri uri,                 //
@@ -92,6 +108,12 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
   }
 
   // Config is provided.
+
+  /**
+   * Create new {@link AdsExoPlayerViewHelper} for a {@link ToroPlayer} and {@link AdsLoader}.
+   *
+   * @param adContainer if {@code null} then overlay of {@link PlayerView} will be used.
+   */
   public AdsExoPlayerViewHelper(        //
       @NonNull ToroPlayer player,       //
       @NonNull Uri uri,                 //
