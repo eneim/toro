@@ -25,9 +25,10 @@ import im.ene.toro.widget.PressablePlayerSelector;
 
 /**
  * @author eneim (2018/08/18).
+ * @since 3.6.0.2802
  *
  * Work with {@link PressablePlayerSelector} and {@link PlayerView} to handle user's custom playback
- * interaction. A common usecase is when user clicks the Play button to manually start a playback.
+ * interaction. A common use-case is when user clicks the Play button to manually start a playback.
  * We should respect this by putting the {@link ToroPlayer}'s priority to highest, and request a
  * refresh for all {@link ToroPlayer}.
  *

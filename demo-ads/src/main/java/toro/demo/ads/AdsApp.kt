@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,5 +14,23 @@
  * limitations under the License.
  */
 
-include ':app', ':toro-core', ':app-youtube', ':toro-exoplayer', ':toro-mopub', ':demo-exoplayer', ':demo-mopub',
-    ':demo-ads'
+package toro.demo.ads
+
+import android.app.Application
+import com.mopub.common.MoPub
+import com.mopub.common.SdkConfiguration
+
+
+/**
+ * @author eneim (2018/08/21).
+ */
+class AdsApp : Application() {
+
+  override fun onCreate() {
+    super.onCreate()
+    if (!MoPub.isSdkInitialized()) {
+      val configuration = SdkConfiguration.Builder("b195f8dd8ded45fe847ad89ed1d016da").build()
+      MoPub.initializeSdk(this, configuration, null)
+    }
+  }
+}

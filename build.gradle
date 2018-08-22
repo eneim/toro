@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.2.60'
+  ext.kotlin_version = '1.2.61'
   repositories {
     google()
     jcenter()
@@ -29,7 +29,7 @@ buildscript {
   dependencies {
     //noinspection GradleDependency
     classpath 'com.android.tools.build:gradle:3.2.0-beta05'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.3'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
     classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
@@ -42,18 +42,23 @@ buildscript {
 
 ext {
   androidVersion = 27
+  minSupportSDKVersion = 16
+  demoMinSDK = 21
   supportLibraryVersion = '27.1.1'
   constrainLayoutVersion = '1.1.2'
   archLibraryVersion = '1.1.1'
   exoPlayer2Version = '2.8.2'
-  minSupportSDKVersion = 16
+  googleApiClient = '1.24.1'
+  glide = '4.8.0'
 }
 
 allprojects {
   repositories {
     google()
     jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
     maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+    maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
   }
 
   configurations {

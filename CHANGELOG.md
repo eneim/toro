@@ -11,10 +11,10 @@ Changelog
 - **[Change]** ToroExo#createDrmSessionManager no longer requires Handler parameter.
 - **[New]** Introduce ToroPlayer.OnErrorListener and add/remove methods for it.
 - **[New]** ``ToroControlView`` now also available for toro-exoplayer. Clients can simply use ``PlayerView`` with 'player_layout_id' to be ``@layout/toro_exo_player_view``. ``ToroControlView`` is an extension of ``PlayerControlView`` that is empowered with the ability to change Volume and mute/un-mute switching.
-- **[New]** Add new built-in PlayerSelector: ``PressablePlayerSelector`` which is also a ``View.OnLongClickListener``. This can be used when client allows user to long-press to a ``ToroPlayer`` to make it starts playing.
-- **[New]** Add new ``ExoPlayerDispatcher`` which is a ``ControlDispatcher`` for ExoPlayer ``PlayerControlView``. Use this with ``PlayerView`` to allow user to control the playback using the UI. ``ExoPlayerDispatcher`` connects to ``Container`` to correctly update the playback position.
-
-
+- **[New/Beta]** Add new built-in PlayerSelector: ``PressablePlayerSelector`` which is also a ``View.OnLongClickListener``. This can be used when client allows user to long-press to a ``ToroPlayer`` to make it starts playing.
+- **[New/Beta]** Add new ``ExoPlayerDispatcher`` which is a ``ControlDispatcher`` for ExoPlayer ``PlayerControlView``. Use this with ``PlayerView`` to allow user to control the playback using the UI. ``ExoPlayerDispatcher`` connects to ``Container`` to correctly update the playback position.
+- **[New/Beta]** Add ``AdsExoPlayerViewHelper`` that integrate with ExoPlayer IMA Extension.
+- **[New/Beta]** Add ``AdsPlayable`` that integrate with ExoPlayer IMA Extension. This ``Playable`` works together with ``AdsExoPlayerViewHelper``.
 
 ~~3.5.0 (2018/05/18)~~  3.5.2 (2018/05/21)
 ------------------

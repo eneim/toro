@@ -66,3 +66,8 @@
 /toro-core/src/test/
 /demo-exoplayer/src/androidTest/
 /demo-exoplayer/src/test/
+/demo-ads/src/test/
+/demo-ads/proguard-rules.pro
+/demo-ads/src/androidTest/
+/demo-ads/.gitignore
+/demo-ads/build/

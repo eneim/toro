@@ -25,7 +25,7 @@ android {
 
   defaultConfig {
     applicationId "toro.demo.exoplayer"
-    minSdkVersion rootProject.ext.minSupportSDKVersion
+    minSdkVersion rootProject.ext.demoMinSDK
     targetSdkVersion rootProject.ext.androidVersion
     versionCode releaseVersionCode
     versionName "v" + releaseVersion
