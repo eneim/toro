@@ -30,16 +30,19 @@ import im.ene.toro.annotations.Beta;
  * Only use this inside a {@link AdsExoPlayerViewHelper}.
  *
  * @author eneim (2018/08/22).
+ * @since 3.6.0.2802
  */
-@SuppressWarnings("WeakerAccess") @Beta //
+@Beta //
 class AdsPlayable extends ExoPlayable {
 
   static class FactoryImpl implements AdsMediaSource.MediaSourceFactory {
 
     final ExoCreator creator;
+    final ToroPlayer player;
 
-    FactoryImpl(ExoCreator creator) {
+    FactoryImpl(ExoCreator creator, ToroPlayer player) {
       this.creator = creator;
+      this.player = player;
     }
 
     @Override public MediaSource createMediaSource(Uri uri) {
@@ -52,14 +55,23 @@ class AdsPlayable extends ExoPlayable {
     }
   }
 
+  private final AdsLoader adsLoader;
+  private final FactoryImpl factory;
+
   /* package */ AdsPlayable(ExoCreator creator, Uri uri, String fileExt, ToroPlayer player,
       AdsLoader adsLoader) {
     super(creator, uri, fileExt);
-    this.mediaSource = createAdsMediaSource(creator, uri, fileExt, player, adsLoader,
-        new FactoryImpl(this.creator));
+    this.adsLoader = adsLoader;
+    this.factory = new FactoryImpl(this.creator, player);
   }
 
-  static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
+  @Override public void prepare(boolean prepareSource) {
+    this.mediaSource =
+        createAdsMediaSource(creator, mediaUri, fileExt, factory.player, adsLoader, factory);
+    super.prepare(prepareSource);
+  }
+
+  private static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
       ToroPlayer player, AdsLoader adsLoader, AdsMediaSource.MediaSourceFactory factory) {
     MediaSource original = creator.createMediaSource(uri, fileExt);
     View playerView = player.getPlayerView();

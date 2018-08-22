@@ -26,6 +26,7 @@ import im.ene.toro.annotations.Beta;
 
 /**
  * @author eneim (2018/08/22).
+ * @since 3.6.0.2802
  */
 @Beta //
 public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {

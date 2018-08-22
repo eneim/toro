@@ -66,6 +66,7 @@ class PlayableImpl implements Playable {
   protected MediaSource mediaSource;  // on-demand, since we do not reuse MediaSource now.
   protected PlayerView playerView; // on-demand, not always required.
 
+  private boolean sourcePrepared = false;
   private boolean listenerApplied = false;
 
   PlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
@@ -117,6 +118,7 @@ class PlayableImpl implements Playable {
     // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
     // TODO [20180702] back to this after updating ExoPlayer to 2.8.x
     this.mediaSource = null; // so it will be re-prepared when play() is called.
+    this.sourcePrepared = false;
   }
 
   @CallSuper @Override public void release() {
@@ -138,6 +140,7 @@ class PlayableImpl implements Playable {
     }
     this.player = null;
     this.mediaSource = null;
+    this.sourcePrepared = false;
   }
 
   @CallSuper @NonNull @Override public PlaybackInfo getPlaybackInfo() {
@@ -251,17 +254,20 @@ class PlayableImpl implements Playable {
   // TODO [20180822] Double check this.
   private void ensureMediaSource() {
     if (mediaSource == null) {  // Only actually prepare the source when play() is called.
+      sourcePrepared = false;
       mediaSource = creator.createMediaSource(mediaUri, fileExt);
     }
 
-    if (player == null) {
-      ensurePlayer();
+    if (!sourcePrepared) {
+      ensurePlayer(); // sourcePrepared is set to false only when player is null.
       player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
+      sourcePrepared = true;
     }
   }
 
   private void ensurePlayer() {
     if (player == null) {
+      sourcePrepared = false;
       player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
       if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
