@@ -63,7 +63,7 @@ class PlayableImpl implements Playable {
   protected final ExoCreator creator; // required, cached
 
   protected SimpleExoPlayer player; // on-demand, cached
-  protected MediaSource mediaSource;  // on-demand
+  protected MediaSource mediaSource;  // on-demand, since we do not reuse MediaSource now.
   protected PlayerView playerView; // on-demand, not always required.
 
   private boolean listenerApplied = false;
@@ -248,10 +248,14 @@ class PlayableImpl implements Playable {
     if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
   }
 
+  // TODO [20180822] Double check this.
   private void ensureMediaSource() {
     if (mediaSource == null) {  // Only actually prepare the source when play() is called.
-      ensurePlayer();
       mediaSource = creator.createMediaSource(mediaUri, fileExt);
+    }
+
+    if (player == null) {
+      ensurePlayer();
       player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
     }
   }

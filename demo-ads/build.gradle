@@ -89,9 +89,7 @@ dependencies {
 
   implementation "com.google.android.gms:play-services-ads:15.0.1"
   implementation "com.google.android.gms:play-services-base:15.0.1"
-  implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.8.7") {
-    exclude group: 'com.android.support'
-  }
+  implementation "com.android.support:customtabs:${rootProject.ext.supportLibraryVersion}"
 
   implementation 'com.github.bumptech.glide:glide:4.8.0'
   kapt 'com.github.bumptech.glide:compiler:4.8.0'

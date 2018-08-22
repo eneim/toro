@@ -24,6 +24,8 @@ import java.util.Comparator;
 import java.util.Locale;
 
 /**
+ * Just copy from MoPub demo.
+ *
  * @author eneim (2018/08/21).
  */
 @SuppressWarnings("WeakerAccess") //
@@ -37,7 +39,7 @@ class MoPubSampleAdUnit implements Comparable<MoPubSampleAdUnit> {
 
   // Note that entries are also sorted in this order
   enum AdType {
-    RECYCLER_VIEW("Native RecyclerView", MopubNativeRecyclerViewFragment.class);
+    RECYCLER_VIEW("Native RecyclerView", MoPubNativeRecyclerViewFragment.class);
 
     String getName() {
       return name;

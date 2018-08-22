@@ -46,7 +46,7 @@ import static com.mopub.common.Constants.UNUSED_REQUEST_CODE;
 /**
  * @author eneim (2018/08/21).
  */
-public class MopubNativeRecyclerViewFragment extends BaseFragment {
+public class MoPubNativeRecyclerViewFragment extends BaseFragment {
 
   private static final List<String> REQUIRED_DANGEROUS_PERMISSIONS = new ArrayList<>();
 
@@ -55,9 +55,9 @@ public class MopubNativeRecyclerViewFragment extends BaseFragment {
     REQUIRED_DANGEROUS_PERMISSIONS.add(WRITE_EXTERNAL_STORAGE);
   }
 
-  public static MopubNativeRecyclerViewFragment newInstance() {
+  public static MoPubNativeRecyclerViewFragment newInstance() {
     Bundle args = new Bundle();
-    MopubNativeRecyclerViewFragment fragment = new MopubNativeRecyclerViewFragment();
+    MoPubNativeRecyclerViewFragment fragment = new MoPubNativeRecyclerViewFragment();
     fragment.setArguments(args);
     return fragment;
   }
@@ -95,7 +95,7 @@ public class MopubNativeRecyclerViewFragment extends BaseFragment {
     super.onViewCreated(view, savedInstanceState);
     adConfig = MoPubSampleAdUnit.fromBundle(null);
     RecyclerView recyclerView = view.findViewById(R.id.native_recycler_view);
-    final RecyclerView.Adapter originalAdapter = new DemoRecyclerAdapter();
+    final RecyclerView.Adapter originalAdapter = new MoPubDemoAdapter();
 
     recyclerAdapter = new MoPubRecyclerAdapter(requireActivity(), originalAdapter,
         new MoPubNativeAdPositioning.MoPubServerPositioning());

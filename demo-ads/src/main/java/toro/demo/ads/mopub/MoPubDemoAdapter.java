@@ -22,22 +22,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import toro.demo.ads.R;
+import toro.demo.ads.common.BaseViewHolder;
 
 /**
  * @author eneim (2018/08/21).
  */
-class DemoRecyclerAdapter extends RecyclerView.Adapter<VideoViewHolder> {
+class MoPubDemoAdapter extends RecyclerView.Adapter<BaseViewHolder> {
   private static final int ITEM_COUNT = 150;
 
   @NonNull @Override
-  public VideoViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
+  public BaseViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
     final View itemView =
         LayoutInflater.from(parent.getContext()).inflate(R.layout.vh_video_player, parent, false);
     return new VideoViewHolder(itemView);
   }
 
-  @Override
-  public void onBindViewHolder(@NonNull final VideoViewHolder holder, final int position) {
+  @Override public void onBindViewHolder(@NonNull final BaseViewHolder holder, final int position) {
     holder.onBind(position);
   }
 

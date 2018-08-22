@@ -19,7 +19,7 @@ package toro.demo.ads
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_demo.toolbar
 import toro.demo.ads.common.BaseActivity
-import toro.demo.ads.mopub.MopubNativeRecyclerViewFragment
+import toro.demo.ads.ima.ImaDemoFragment
 
 
 class DemoActivity : BaseActivity() {
@@ -30,7 +30,7 @@ class DemoActivity : BaseActivity() {
     setSupportActionBar(toolbar)
     if (savedInstanceState == null) {
       supportFragmentManager.beginTransaction()
-          .replace(R.id.container, MopubNativeRecyclerViewFragment.newInstance())
+          .replace(R.id.container, ImaDemoFragment.newInstance())
           .commit()
     }
   }
