@@ -47,7 +47,7 @@ import static java.util.Collections.singletonList;
  *
  * This class also have a {@link #toPause} field to handle the case where User want to specifically
  * pause a {@link ToroPlayer}. This selection will also be cleared with the same rules of toPlay.
- * @since 3.5.3 and 3.6.0.2802
+ * @since 3.6.0.2802
  */
 @SuppressWarnings("WeakerAccess") @Beta //
 public class PressablePlayerSelector implements PlayerSelector, OnLongClickListener {
@@ -101,12 +101,12 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
     if (container != this.weakContainer.get()) return new ArrayList<>();
 
     // If there is a request to pause, we need to prioritize that first.
-    if (toPause.get() > 0) {
-      ToroPlayer toPauseCandidate = findFirst(items, filterToPause);
-      if (toPauseCandidate != null) {
-        items.remove(toPauseCandidate); // remove the one to pause.
-      } else {
-        toPause.set(NO_POSITION); // always clear this after the list is refreshed.
+    ToroPlayer toPauseCandidate = null;
+    if (toPause.get() >= 0) {
+      toPauseCandidate = findFirst(items, filterToPause);
+      if (toPauseCandidate == null) {
+        // the order to pause doesn't present in candidate, we clear the selection.
+        toPause.set(NO_POSITION); // remove the paused one.
       }
     }
 
@@ -115,15 +115,16 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
       if (toPlayCandidate != null) {
         if (allowsToPlay(toPlayCandidate)) {
           return singletonList(toPlayCandidate);
-        } else {
-          container.smoothScrollToPosition(toPlayCandidate.getPlayerOrder());
         }
       }
     }
     // In the list of candidates, selected item no longer presents or is not allowed to play,
     // we should reset the selection.
     toPlay.set(NO_POSITION);
-    return delegate.select(container, items);
+    // Wrap by an ArrayList to make it modifiable.
+    Collection<ToroPlayer> selected = new ArrayList<>(delegate.select(container, items));
+    if (toPauseCandidate != null) selected.remove(toPauseCandidate);
+    return selected;
   }
 
   @Override @NonNull public PlayerSelector reverse() {
@@ -142,10 +143,8 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
     return false;
   }
 
-  public void toPause(@SuppressWarnings("unused") int position) {
+  public void toPause(int position) {
     toPlay.set(NO_POSITION);
     toPause.set(position);
-    Container container = weakContainer.get();
-    if (container != null) container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);
   }
 }

@@ -91,8 +91,8 @@ dependencies {
   implementation "com.google.android.gms:play-services-base:15.0.1"
   implementation "com.android.support:customtabs:${rootProject.ext.supportLibraryVersion}"
 
-  implementation 'com.github.bumptech.glide:glide:4.8.0'
-  kapt 'com.github.bumptech.glide:compiler:4.8.0'
+  implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
+  kapt "com.github.bumptech.glide:compiler:${rootProject.ext.glide}"
 
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
   // Because RxAndroid releases are few and far between, it is recommended you also

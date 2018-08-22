@@ -49,6 +49,7 @@ ext {
   archLibraryVersion = '1.1.1'
   exoPlayer2Version = '2.8.2'
   googleApiClient = '1.24.1'
+  glide = '4.8.0'
 }
 
 allprojects {

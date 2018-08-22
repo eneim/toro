@@ -105,8 +105,8 @@ dependencies {
 
   implementation "android.arch.lifecycle:extensions:${rootProject.ext.archLibraryVersion}"
 
-  implementation 'com.github.bumptech.glide:glide:4.8.0'
-  annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+  implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
+  annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glide}"
 
   // rxJava 2
   implementation("io.reactivex.rxjava2:rxandroid:2.1.0", {

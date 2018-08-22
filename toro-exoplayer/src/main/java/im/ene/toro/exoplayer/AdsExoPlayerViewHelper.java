@@ -20,6 +20,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.ViewGroup;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Beta;
@@ -31,37 +32,74 @@ import im.ene.toro.annotations.Beta;
 @Beta //
 public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
 
-  private static AdsPlayable createPlayable(ToroPlayer player, ExoCreator creator, Uri contentUri,
-      String fileExt, AdsLoader adsLoader) {
-    return new AdsPlayable(creator, contentUri, fileExt, player, adsLoader);
+  private static AdsPlayable createPlayable(  ///
+      ToroPlayer player,      //
+      ExoCreator creator,     //
+      Uri contentUri,         //
+      String fileExt,         //
+      AdsLoader adsLoader,    //
+      ViewGroup adContainer   //
+  ) {
+    return new AdsPlayable(creator, contentUri, fileExt, player, adsLoader, adContainer);
   }
 
-  private static AdsPlayable createPlayable(ToroPlayer player, Config config, Uri contentUri,
-      String fileExt, AdsLoader adsLoader) {
+  private static AdsPlayable createPlayable(  //
+      ToroPlayer player,      //
+      Config config,          //
+      Uri contentUri,         //
+      String fileExt,         //
+      AdsLoader adsLoader,    //
+      ViewGroup adContainer   //
+  ) {
     Context context = player.getPlayerView().getContext();
     return createPlayable(player, ToroExo.with(context).getCreator(config), contentUri, fileExt,
-        adsLoader);
+        adsLoader, adContainer);
   }
 
-  private static AdsPlayable createPlayable(ToroPlayer player, Uri contentUri, String fileExt,
-      AdsLoader adsLoader) {
+  private static AdsPlayable createPlayable(  //
+      ToroPlayer player,      //
+      Uri contentUri,         //
+      String fileExt,         //
+      AdsLoader adsLoader,    //
+      ViewGroup adContainer   //
+  ) {
     Context context = player.getPlayerView().getContext();
     return createPlayable(player, ToroExo.with(context).getDefaultCreator(), contentUri, fileExt,
-        adsLoader);
+        adsLoader, adContainer);
   }
 
-  public AdsExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @Nullable String fileExt, @Nullable AdsLoader adsLoader) {
-    super(player, createPlayable(player, uri, fileExt, adsLoader));
+  // Neither ExoCreator nor Config are provided.
+  public AdsExoPlayerViewHelper(        //
+      @NonNull ToroPlayer player,       //
+      @NonNull Uri uri,                 //
+      @Nullable String fileExt,         //
+      @NonNull AdsLoader adsLoader,     //
+      @Nullable ViewGroup adContainer   //
+  ) {
+    super(player, createPlayable(player, uri, fileExt, adsLoader, adContainer));
   }
 
-  public AdsExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @Nullable String fileExt, @NonNull ExoCreator creator, AdsLoader adsLoader) {
-    super(player, createPlayable(player, creator, uri, fileExt, adsLoader));
+  // ExoCreator is provided.
+  public AdsExoPlayerViewHelper(        //
+      @NonNull ToroPlayer player,       //
+      @NonNull Uri uri,                 //
+      @Nullable String fileExt,         //
+      @NonNull AdsLoader adsLoader,     //
+      @Nullable ViewGroup adContainer,  //
+      @NonNull ExoCreator creator       //
+  ) {
+    super(player, createPlayable(player, creator, uri, fileExt, adsLoader, adContainer));
   }
 
-  public AdsExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
-      @Nullable String fileExt, @NonNull Config config, AdsLoader adsLoader) {
-    super(player, createPlayable(player, config, uri, fileExt, adsLoader));
+  // Config is provided.
+  public AdsExoPlayerViewHelper(        //
+      @NonNull ToroPlayer player,       //
+      @NonNull Uri uri,                 //
+      @Nullable String fileExt,         //
+      @NonNull AdsLoader adsLoader,     //
+      @Nullable ViewGroup adContainer,  //
+      @NonNull Config config            //
+  ) {
+    super(player, createPlayable(player, config, uri, fileExt, adsLoader, adContainer));
   }
 }

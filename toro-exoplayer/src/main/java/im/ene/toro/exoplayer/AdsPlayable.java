@@ -17,7 +17,10 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewGroup;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
@@ -37,10 +40,10 @@ class AdsPlayable extends ExoPlayable {
 
   static class FactoryImpl implements AdsMediaSource.MediaSourceFactory {
 
-    final ExoCreator creator;
-    final ToroPlayer player;
+    @NonNull final ExoCreator creator;
+    @NonNull final ToroPlayer player;
 
-    FactoryImpl(ExoCreator creator, ToroPlayer player) {
+    FactoryImpl(@NonNull ExoCreator creator, @NonNull ToroPlayer player) {
       this.creator = creator;
       this.player = player;
     }
@@ -55,24 +58,27 @@ class AdsPlayable extends ExoPlayable {
     }
   }
 
-  private final AdsLoader adsLoader;
-  private final FactoryImpl factory;
+  @NonNull private final AdsLoader adsLoader;
+  @NonNull private final FactoryImpl factory;
+  @Nullable private final ViewGroup adsContainer;
 
   /* package */ AdsPlayable(ExoCreator creator, Uri uri, String fileExt, ToroPlayer player,
-      AdsLoader adsLoader) {
+      @NonNull AdsLoader adsLoader, @Nullable ViewGroup adsContainer) {
     super(creator, uri, fileExt);
     this.adsLoader = adsLoader;
+    this.adsContainer = adsContainer;
     this.factory = new FactoryImpl(this.creator, player);
   }
 
   @Override public void prepare(boolean prepareSource) {
-    this.mediaSource =
-        createAdsMediaSource(creator, mediaUri, fileExt, factory.player, adsLoader, factory);
+    this.mediaSource = createAdsMediaSource(creator, mediaUri, fileExt, //
+        factory.player, adsLoader, adsContainer, factory);
     super.prepare(prepareSource);
   }
 
   private static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
-      ToroPlayer player, AdsLoader adsLoader, AdsMediaSource.MediaSourceFactory factory) {
+      ToroPlayer player, AdsLoader adsLoader, ViewGroup adContainer,
+      AdsMediaSource.MediaSourceFactory factory) {
     MediaSource original = creator.createMediaSource(uri, fileExt);
     View playerView = player.getPlayerView();
     if (!(playerView instanceof PlayerView)) {
@@ -80,6 +86,6 @@ class AdsPlayable extends ExoPlayable {
     }
 
     return new AdsMediaSource(original, factory, adsLoader,
-        ((PlayerView) playerView).getOverlayFrameLayout());
+        adContainer == null ? ((PlayerView) playerView).getOverlayFrameLayout() : adContainer);
   }
 }

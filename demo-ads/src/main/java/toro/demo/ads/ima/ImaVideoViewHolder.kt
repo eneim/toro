@@ -49,7 +49,7 @@ class ImaVideoViewHolder(itemView: View) : BaseViewHolder(itemView), ToroPlayer 
 
   override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
     (helper ?: AdsExoPlayerViewHelper(this, mediaUri, null,
-        adLoader).also { helper = it }).initialize(container, playbackInfo)
+        adLoader, null).also { helper = it }).initialize(container, playbackInfo)
   }
 
   override fun play() {
