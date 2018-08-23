@@ -9,7 +9,7 @@
 [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)[ ![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)[ ![Join the chat at https://gitter.im/eneim/Toro](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)[ ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)[ ![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Feneim%2Ftoro.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Feneim%2Ftoro?ref=badge_shield)
 
 
-### Menu
+## Menu
 
 * [Features](#features)
 * [Demo](#demo-youtube-video)
@@ -20,7 +20,7 @@
 * [Hall of Fame](#hall-of-fame)
 * [License](#license)
 
-### Features
+## Features
 
 Core:
   - Auto start/pause Media playback on user interaction: scroll, open/close App.
@@ -33,13 +33,13 @@ Core:
 Plus alpha:
   - First class support for ExoPlayer 2. 
 
-### Demo (Youtube Video)
+## Demo (Youtube Video)
 
 [![](https://img.youtube.com/vi/gw0awL_89V4/0.jpg)](https://www.youtube.com/watch?v=gw0awL_89V4)
 
-### Getting start, basic implementation
+## Getting start, basic implementation
 
-1. Update module build.gradle.
+#### 1. Update module build.gradle.
 
 Latest version:
  [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)
@@ -47,7 +47,6 @@ Latest version:
 ```groovy
 ext {
   latest_release = '3.5.2' // TODO check above for latest version
-  // below: other dependencies' versions maybe
 }
 
 dependencies {
@@ -87,7 +86,7 @@ dependencies {
 }
 ```
 
-2. Using ```Container``` in place of Video list/RecyclerView. 
+#### 2. Using ```Container``` in place of Video list/RecyclerView. 
 
 ```xml
 <im.ene.toro.widget.Container
@@ -97,9 +96,9 @@ dependencies {
 />
 ```
 
-3. Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
+#### 3. Implement ```ToroPlayer``` to ViewHolder that should be a Video player.
 
-<details><summary>Demo code (click to expand)</summary>
+<details><summary>Sample ToroPlayer implementation (click to expand)</summary>
 <p>
 
 ```java
@@ -172,19 +171,19 @@ public class SimpleExoPlayerViewHolder extends RecyclerView.ViewHolder implement
 
 More advanced View holder implementations can be found in **app**, **demo-??** module.
 
-4. Setup Adapter to use the ViewHolder above, and setup Container to use that Adapter.
+#### 4. Setup Adapter to use the ``ViewHolder`` above, and setup ``Container`` to use that ``Adapter``.
 
 That's all. Your View should be ready to play.
 
-### Advance topics
+## Advance topics
 
-1. Enable playback position save/restore
+#### 1. Enable playback position save/restore
 
 By default, **toro**'s Container will always start a playback from beginning.
  
 The implementation is simple: create a class implementing ```CacheManager```, then set it to the Container using ```Container#setCacheManager(CacheManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
 
-2. Multiple simultaneous playback
+#### 2. Multiple simultaneous playback
 
 ***Playing multiple Videos at once is considered bad practice***. It is a heavy power consuming task and also unfriendly to hardware. In fact, each device has its own limitation of multiple decoding ability, so developer must be aware of what you are doing. I don't officially support this behaviour. Developer should own the video source to optimize the video for this purpose.
 
@@ -234,11 +233,11 @@ Behaviour:
 
 ![](/extra/demo-player-selector.gif)
 
-3. Enable/Disable the auto-play on demand
+#### 3. Enable/Disable the auto-play on demand
 
 To disable the autoplay, simply use the ```PlayerSelector.NONE``` for the Container. To enable it again, just use a Selector that actually select the player. There is ```PlayerSelector.DEFAULT``` built-in.
 
-4. Start playback with delay
+#### 4. Start playback with delay
 
 It is expected that: when user scrolls so that the Player view is in playable state (maybe because it is fully visual), there should be a small delay before the Player starts playing. Toro supports this out of the box using ``PlayerDispatcher`` and via ``Container#setPlayerDispatcher()``. Further more, the delay ca be flexibly configured by per-Player. The snippet below shows how to use ``PlayerDispatcher``:
   
@@ -247,7 +246,7 @@ It is expected that: when user scrolls so that the Player view is in playable st
 container.setPlayerDispatcher(player -> player.getPlayerOrder() % 3 == 0 ? 250 : 1000);
 ```
 
-5. Works with ``CoordinatorLayout``
+#### 5. Works with ``CoordinatorLayout``
 
 When using a ``Container`` in the following View hierarchy
 
@@ -295,7 +294,7 @@ Below is the behavior before and after we apply the code above:
 |---|---|
 |![](/extra/behaviour_before.gif)|![](/extra/behaviour_after.gif)|
 
-### Contribution
+## Contribution
 
 - For development:
   - Fork the repo, clone it to your machine and execute ``./gradlew clean build`` to start.
@@ -305,17 +304,17 @@ Below is the behavior before and after we apply the code above:
 
 - For Pull Requests, this project uses 2-space indent and **no** Hungarian naming convention.
 
-### Donation
+## Donation
 
 - You can always **buy me some coffee** for shorter update cycle ...
 
 <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-### Hall of Fame
+## Hall of Fame
 
 > Email to nam@ene.im with the description of your App using Toro to list it here.
 
-### License
+## License
 
 > Copyright 2017 eneim@Eneim Labs, nam@ene.im
 
@@ -330,6 +329,3 @@ Below is the behavior before and after we apply the code above:
 > WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 > See the License for the specific language governing permissions and
 > limitations under the License.
-
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Feneim%2Ftoro.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Feneim%2Ftoro?ref=badge_large)
