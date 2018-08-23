@@ -15,29 +15,64 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="8dp"
+    android:fitsSystemWindows="true"
+    tools:context=".DemoActivity"
     >
 
-  <android.support.v7.widget.AppCompatButton
-      android:id="@+id/startMopubDemo"
+  <android.support.design.widget.AppBarLayout
+      android:id="@+id/app_bar"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_margin="8dp"
-      android:minHeight="120dp"
-      android:text="@string/screen_mopub"
-      />
+      android:fitsSystemWindows="false"
+      android:theme="@style/AppTheme.AppBarOverlay"
+      >
 
-  <android.support.v7.widget.AppCompatButton
-      android:id="@+id/startImaDemo"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_collapseMode="pin"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        />
+
+  </android.support.design.widget.AppBarLayout>
+
+  <android.support.v4.widget.NestedScrollView
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_margin="8dp"
-      android:minHeight="120dp"
-      android:text="@string/screen_ima"
-      />
+      android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"
+      >
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        >
 
-</android.support.v7.widget.LinearLayoutCompat>
+      <android.support.v7.widget.AppCompatButton
+          android:id="@+id/startMopubDemo"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_margin="8dp"
+          android:minHeight="120dp"
+          android:text="@string/screen_mopub"
+          />
+
+      <android.support.v7.widget.AppCompatButton
+          android:id="@+id/startImaDemo"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_margin="8dp"
+          android:minHeight="120dp"
+          android:text="@string/screen_ima"
+          />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+  </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

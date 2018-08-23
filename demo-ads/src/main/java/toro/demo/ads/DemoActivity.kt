@@ -19,6 +19,7 @@ package toro.demo.ads
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_base.startImaDemo
 import kotlinx.android.synthetic.main.activity_base.startMopubDemo
+import kotlinx.android.synthetic.main.activity_base.toolbar
 import toro.demo.ads.common.BaseActivity
 import toro.demo.ads.ima.ImaDemoActivity
 import toro.demo.ads.mopub.MoPubDemoActivity
@@ -29,6 +30,7 @@ class DemoActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_base)
+    setSupportActionBar(toolbar)
 
     startMopubDemo.setOnClickListener {
       startActivity(MoPubDemoActivity.createIntent(this))
