@@ -98,7 +98,7 @@ dependencies {
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
 
-  implementation "com.google.apis:google-api-services-youtube:v3-rev205-1.24.1"
+  implementation "com.google.apis:google-api-services-youtube:v3-rev205-${rootProject.ext.googleApiClient}"
   implementation "com.google.http-client:google-http-client-android:${rootProject.ext.googleApiClient}"
   implementation "com.google.api-client:google-api-client-android:${rootProject.ext.googleApiClient}"
   implementation "com.google.api-client:google-api-client-gson:${rootProject.ext.googleApiClient}"
@@ -128,6 +128,10 @@ dependencies {
   implementation('com.crashlytics.sdk.android:crashlytics-ndk:2.0.4@aar') {
     transitive = true
   }
+
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:${rootProject.ext.leackCanary}"
+  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
+  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
 
   // implementation "com.android.support:multidex:1.0.3"
 }

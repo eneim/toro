@@ -17,6 +17,7 @@
 package toro.demo.ads.ima
 
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ui.PlayerView
@@ -39,7 +40,9 @@ class ImaVideoViewHolder(itemView: View) : BaseViewHolder(itemView), ToroPlayer 
 
   val mediaUri = Uri.parse(itemView.context.getString(R.string.ima_content_url))!!
   val adTagUri = Uri.parse(itemView.context.getString(R.string.ima_ad_tag_url))!!
-  val adLoader = ImaAdsLoader(itemView.context, adTagUri)
+  val adLoader = ImaAdsLoader.Builder(itemView.context)
+      .setAdEventListener { Log.d("Toro:VH:$adapterPosition", "ev: $it") }
+      .buildForAdTag(adTagUri)!!
 
   override fun getPlayerView() = this.exoPlayerView
 

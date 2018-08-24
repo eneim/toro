@@ -30,8 +30,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -54,8 +53,8 @@ class PlayableImpl implements Playable {
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
   protected final EventListeners listeners = new EventListeners();  // original listener.
-  // Use a Set to prevent duplicated setup.
-  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
+  // Use a CopyOnWriteArraySet to prevent duplicated setup and modify while iterating.
+  protected CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
   protected ToroPlayer.ErrorListeners errorListeners;
 
   protected final Uri mediaUri; // immutable, parcelable
@@ -207,7 +206,7 @@ class PlayableImpl implements Playable {
 
   @Override
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
+    if (volumeChangeListeners == null) volumeChangeListeners = new CopyOnWriteArraySet<>();
     volumeChangeListeners.add(ToroUtil.checkNotNull(listener));
     if (this.player instanceof ToroExoPlayer) {
       ((ToroExoPlayer) this.player).addOnVolumeChangeListener(listener);

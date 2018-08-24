@@ -100,6 +100,10 @@ dependencies {
   // (see https://github.com/ReactiveX/RxJava/releases for latest 2.x.x version)
   implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
 
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:${rootProject.ext.leackCanary}"
+  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
+  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
+
   testImplementation 'junit:junit:4.12'
   androidTestImplementation 'com.android.support.test:runner:1.0.2'
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

@@ -160,8 +160,8 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
         // Since this is Fragment transaction, it will be handled by the Manager.
         break;
       case MSG_PLAY:
-        if (ytFragment == null || !ytFragment.isVisible()) break;
-        final YouTubePlayerHelper helper = YouTubePlayerHelper.this; // make a local access
+        if (ytFragment == null || !ytFragment.isVisible()) break; // Not visible, do nothing.
+        final YouTubePlayerHelper helper = YouTubePlayerHelper.this; // Make a local copy.
         ytFragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
           @Override
           public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
@@ -170,14 +170,15 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
             player.setPlayerStateChangeListener(new StateChangeListenerImpl());
             player.setPlaybackEventListener(new PlaybackEventListenerImpl());
             player.setShowFullscreenButton(false);  // fullscreen requires more work ...
-            if (shouldPlay()) { // make sure YouTubePlayerView is fully visible.
+            if (shouldPlay()) { // Make sure YouTubePlayerView is playable at this moment.
               player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
             }
           }
 
           @Override public void onInitializationFailure(Provider provider,
               YouTubeInitializationResult result) {
-            errorListeners.onError(new RuntimeException("YouTube init error: " + result.name()));
+            Exception error = new RuntimeException("YouTube init error: " + result.name());
+            errorListeners.onError(error);
           }
         });
         break;
@@ -263,7 +264,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   boolean shouldPlay() {
     if (ytFragment == null || !ytFragment.isVisible()) return false;
     View ytView = ytFragment.getView();
-    return ytView != null && visibleAreaOffset(ytView) >= 0.999;
+    return ytView != null && visibleAreaOffset(ytView) >= 0.999;  // fully visible.
   }
 
   @Override public String toString() {

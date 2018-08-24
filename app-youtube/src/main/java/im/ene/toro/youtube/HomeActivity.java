@@ -63,10 +63,11 @@ public class HomeActivity extends AppCompatActivity
 
     // Prepare Container
     playerManager = new YouTubePlayerManager(getSupportFragmentManager(), this);
-    container = findViewById(R.id.container);
     adapter = new YouTubePlaylistAdapter(playerManager);
     int spanCount = getResources().getInteger(R.integer.span_count);
     layoutManager = new StaggeredGridLayoutManager(spanCount, VERTICAL);
+
+    container = findViewById(R.id.container);
     container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
     container.setCacheManager(CacheManager.DEFAULT);
