@@ -18,9 +18,13 @@ package toro.demo.ads.ima
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.ads.interactivemedia.v3.api.AdEvent
+import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import im.ene.toro.widget.Container
 import toro.demo.ads.R
 import toro.demo.ads.common.BaseFragment
@@ -28,7 +32,7 @@ import toro.demo.ads.common.BaseFragment
 /**
  * @author eneim (2018/08/22).
  */
-class ImaDemoFragment : BaseFragment() {
+class ImaDemoFragment : BaseFragment(), AdEventListener {
 
   companion object {
     fun newInstance() = ImaDemoFragment()
@@ -43,7 +47,11 @@ class ImaDemoFragment : BaseFragment() {
     super.onViewCreated(view, savedInstanceState)
     val container = view.findViewById<Container>(R.id.native_recycler_view)
     container.layoutManager = LinearLayoutManager(requireContext())
-    val adapter = ImaDemoAdapter()
+    val adapter = ImaDemoAdapter(ImaAdsLoader.Builder(requireContext()).setAdEventListener(this))
     container.adapter = adapter
+  }
+
+  override fun onAdEvent(event: AdEvent?) {
+    Log.d("Toro:Ads", "ev: $event")
   }
 }

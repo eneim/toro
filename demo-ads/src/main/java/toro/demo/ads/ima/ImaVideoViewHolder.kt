@@ -33,16 +33,14 @@ import toro.demo.ads.common.BaseViewHolder
  * @author eneim (2018/08/22).
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class ImaVideoViewHolder(itemView: View) : BaseViewHolder(itemView), ToroPlayer {
+class ImaVideoViewHolder(itemView: View, builder: ImaAdsLoader.Builder) : BaseViewHolder(itemView), ToroPlayer {
 
   var helper: AdsExoPlayerViewHelper? = null
   val exoPlayerView: PlayerView = itemView.findViewById(R.id.playerView)
 
   val mediaUri = Uri.parse(itemView.context.getString(R.string.ima_content_url))!!
   val adTagUri = Uri.parse(itemView.context.getString(R.string.ima_ad_tag_url))!!
-  val adLoader = ImaAdsLoader.Builder(itemView.context)
-      .setAdEventListener { Log.d("Toro:VH:$adapterPosition", "ev: $it") }
-      .buildForAdTag(adTagUri)!!
+  val adLoader = builder.buildForAdTag(adTagUri)!!
 
   override fun getPlayerView() = this.exoPlayerView
 
