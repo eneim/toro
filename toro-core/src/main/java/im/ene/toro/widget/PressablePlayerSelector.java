@@ -74,7 +74,11 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
   }
 
   public PressablePlayerSelector(Container container, PlayerSelector delegate) {
-    this.weakContainer = new WeakReference<>(ToroUtil.checkNotNull(container));
+    this(new WeakReference<>(ToroUtil.checkNotNull(container)), ToroUtil.checkNotNull(delegate));
+  }
+
+  PressablePlayerSelector(WeakReference<Container> container, PlayerSelector delegate) {
+    this.weakContainer = container;
     this.delegate = ToroUtil.checkNotNull(delegate);
   }
 
@@ -128,7 +132,7 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
   }
 
   @Override @NonNull public PlayerSelector reverse() {
-    return delegate.reverse();
+    return new PressablePlayerSelector(this.weakContainer, delegate.reverse());
   }
 
   public boolean toPlay(int position) {

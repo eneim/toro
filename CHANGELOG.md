@@ -17,7 +17,7 @@ Changelog
 - **[New/Beta]** Add new built-in PlayerSelector: ``PressablePlayerSelector`` which is also a ``View.OnLongClickListener``. This can be used when client allows user to long-press to a ``ToroPlayer`` to make it starts playing.
 - **[New/Beta]** Add new ``ExoPlayerDispatcher`` which is a ``ControlDispatcher`` for ExoPlayer ``PlayerControlView``. Use this with ``PlayerView`` to allow user to control the playback using the UI. ``ExoPlayerDispatcher`` connects to ``Container`` to correctly update the playback position.
 - **[New/Beta]** Add ``AdsExoPlayerViewHelper`` that integrate with ExoPlayer IMA Extension.
-- **[New/Beta]** Add ``AdsPlayable`` that integrate with ExoPlayer IMA Extension. This ``Playable`` works together with ``AdsExoPlayerViewHelper``.
+- **[New/Beta]** Add ``AdsPlayable`` that integrate with ExoPlayer IMA Extension. This ``Playable`` can be used together with ``AdsExoPlayerViewHelper`` or standalone.
 
 ~~3.5.0 (2018/05/18)~~  3.5.2 (2018/05/21)
 ------------------
