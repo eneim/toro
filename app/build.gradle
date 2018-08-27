@@ -24,7 +24,7 @@ android {
 
   defaultConfig {
     applicationId "im.ene.toro.sample"
-    minSdkVersion rootProject.ext.minSupportSDKVersion
+    minSdkVersion rootProject.ext.demoMinSDK
     targetSdkVersion rootProject.ext.androidVersion
     versionCode releaseVersionCode
     versionName releaseVersion
@@ -79,32 +79,32 @@ dependencies {
   implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.constrainLayoutVersion}"
 
-  implementation ('net.opacapp:multiline-collapsingtoolbar:1.6.0') {
+  implementation ('net.opacapp:multiline-collapsingtoolbar:27.1.1') {
     transitive = false
   }
 
   // additional dependencies.
+  //noinspection GradleDependency
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
 
   implementation 'com.jakewharton:butterknife:8.8.1'
   kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // rxJava 2
-  implementation ("io.reactivex.rxjava2:rxandroid:2.0.2", {
+  implementation ("io.reactivex.rxjava2:rxandroid:2.1.0", {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
 
-  // https://mvnrepository.com/artifact/org.jsoup/jsoup
-  implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.2'
+  implementation "org.jsoup:jsoup:1.11.3"
 
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
-  testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+  debugImplementation "com.squareup.leakcanary:leakcanary-android:${rootProject.ext.leackCanary}"
+  releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
+  testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
 
-  implementation 'com.github.bumptech.glide:glide:4.6.1'
-  kapt 'com.github.bumptech.glide:compiler:4.6.1'
+  implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
+  kapt "com.github.bumptech.glide:compiler:${rootProject.ext.glide}"
 
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

@@ -51,6 +51,7 @@ import java.util.List;
  * @since 3.4.0
  */
 
+@SuppressWarnings("unused") //
 public interface Playable {
 
   /**
@@ -193,6 +194,10 @@ public interface Playable {
    * Same as {@link Player#getPlaybackParameters()}
    */
   @Nullable PlaybackParameters getParameters();
+
+  void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener);
+
+  void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener);
 
   // Combine necessary interfaces.
   interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {

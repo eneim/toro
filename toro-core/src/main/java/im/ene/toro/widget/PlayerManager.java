@@ -49,7 +49,7 @@ final class PlayerManager implements Handler.Callback {
   }
 
   boolean detachPlayer(@NonNull ToroPlayer player) {
-    handler.removeCallbacksAndMessages(player);
+    if (handler != null) handler.removeCallbacksAndMessages(player);
     return players.remove(player);
   }
 
@@ -70,9 +70,14 @@ final class PlayerManager implements Handler.Callback {
     player.initialize(container, container.getPlaybackInfo(player.getPlayerOrder()));
   }
 
-  void play(@NonNull ToroPlayer player, int delay) {
+  // 2018.07.02 Directly pass PlayerDispatcher so that we can easily expand the ability in the future.
+  void play(@NonNull ToroPlayer player, PlayerDispatcher dispatcher) {
+    this.play(player, dispatcher.getDelayToPlay(player));
+  }
+
+  private void play(@NonNull ToroPlayer player, int delay) {
     if (delay < PlayerDispatcher.DELAY_INFINITE) throw new IllegalArgumentException("Too negative");
-    if (handler == null) return;
+    if (handler == null) return;  // equals to that this is not attached yet.
     handler.removeMessages(MSG_PLAY, player); // remove undone msg for this player
     if (delay == PlayerDispatcher.DELAY_INFINITE) {
       // do nothing
@@ -84,7 +89,8 @@ final class PlayerManager implements Handler.Callback {
   }
 
   void pause(@NonNull ToroPlayer player) {
-    handler.removeCallbacksAndMessages(player); // remove all msg sent for the player
+    // remove all msg sent for the player
+    if (handler != null) handler.removeCallbacksAndMessages(player);
     player.pause();
   }
 
@@ -101,7 +107,6 @@ final class PlayerManager implements Handler.Callback {
   }
 
   void recycle(ToroPlayer player) {
-    // no-ops, place holder only.
     if (handler != null) handler.removeCallbacksAndMessages(player);
   }
 

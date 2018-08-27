@@ -20,9 +20,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.widget.Container;
+import im.ene.toro.widget.PressablePlayerSelector;
 
 /**
  * @author eneim (7/2/17).
@@ -34,6 +36,8 @@ public class BasicListActivity extends BaseActivity {
   LinearLayoutManager layoutManager;
   BasicListAdapter adapter;
 
+  PressablePlayerSelector selector;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.fragment_basic);
@@ -41,13 +45,17 @@ public class BasicListActivity extends BaseActivity {
 
     layoutManager = new LinearLayoutManager(this);
     container.setLayoutManager(layoutManager);
-    adapter = new BasicListAdapter();
+    selector = new PressablePlayerSelector(container);
+    container.setPlayerSelector(selector);
+
+    adapter = new BasicListAdapter(selector);
     container.setAdapter(adapter);
   }
 
   @Override protected void onDestroy() {
     layoutManager = null;
     adapter = null;
+    selector = null;
     super.onDestroy();
   }
 }

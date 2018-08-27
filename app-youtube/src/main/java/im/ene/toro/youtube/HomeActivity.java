@@ -63,10 +63,11 @@ public class HomeActivity extends AppCompatActivity
 
     // Prepare Container
     playerManager = new YouTubePlayerManager(getSupportFragmentManager(), this);
-    container = findViewById(R.id.container);
     adapter = new YouTubePlaylistAdapter(playerManager);
     int spanCount = getResources().getInteger(R.integer.span_count);
     layoutManager = new StaggeredGridLayoutManager(spanCount, VERTICAL);
+
+    container = findViewById(R.id.container);
     container.setLayoutManager(layoutManager);
     container.setAdapter(adapter);
     container.setCacheManager(CacheManager.DEFAULT);
@@ -147,7 +148,7 @@ public class HomeActivity extends AppCompatActivity
     super.onSaveInstanceState(outState);
     if (initData != null) outState.putParcelable(STATE_INIT_DATA, initData);
     Fragment fragment = getSupportFragmentManager().findFragmentByTag(YouTubePlayerDialog.TAG);
-    if (fragment != null && fragment instanceof YouTubePlayerDialog) {
+    if (fragment instanceof YouTubePlayerDialog) {
       YouTubePlayerDialog.InitData data = ((YouTubePlayerDialog) fragment).getLatestData();
       outState.putParcelable(STATE_SAVED_DATA, data);
     }

@@ -53,14 +53,15 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   @NonNull private final Container container;
   // Cold cache represents the map between key obtain from CacheManager and PlaybackInfo. If the
   // CacheManager is null, this cache will hold nothing.
-  /* pkg */ Map<Object, PlaybackInfo> coldCache = new HashMap<>();
+  /* pkg */ HashMap<Object, PlaybackInfo> coldCache = new HashMap<>();
 
   // Hot cache represents the map between Player's order and its PlaybackInfo. A key-value map only
-  // lives between a Player's attached state.
-  /* pkg */ Map<Integer, PlaybackInfo> hotCache; // only cache attached Views.
+  // lives within a Player's attached state.
+  // Being a TreeMap because we need to traversal through it in order sometime.
+  /* pkg */ TreeMap<Integer, PlaybackInfo> hotCache; // only cache attached Views.
 
-  // Holds the map between Player's key and its key obtain from CacheManager.
-  /* pkg */ Map<Integer, Object> coldKeyToOrderMap = new TreeMap<>(ORDER_COMPARATOR_INT);
+  // Holds the map between Player's order and its key obtain from CacheManager.
+  /* pkg */ TreeMap<Integer, Object> coldKeyToOrderMap = new TreeMap<>(ORDER_COMPARATOR_INT);
 
   PlaybackInfoCache(@NonNull Container container) {
     this.container = container;
@@ -79,7 +80,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   }
 
   final void onPlayerAttached(ToroPlayer player) {
-    Integer playerOrder = player.getPlayerOrder();
+    int playerOrder = player.getPlayerOrder();
     // [1] Check if there is cold cache for this player
     Object key = getKey(playerOrder);
     if (key != null) coldKeyToOrderMap.put(playerOrder, key);
@@ -103,7 +104,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   // [1] Take current hot cache entry of the player, and put back to cold cache.
   // [2] Remove the hot cache entry of the player.
   final void onPlayerDetached(ToroPlayer player) {
-    Integer playerOrder = player.getPlayerOrder();
+    int playerOrder = player.getPlayerOrder();
     if (hotCache != null && hotCache.containsKey(playerOrder)) {
       PlaybackInfo cache = hotCache.remove(playerOrder);
       Object key = getKey(playerOrder);
@@ -373,7 +374,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
         Object key = getKey(order);
         coldKeyToOrderMap.put(order, key);
         PlaybackInfo playbackInfo = (PlaybackInfo) savedStates.get(order);
-        this.savePlaybackInfo(order, playbackInfo);
+        if (playbackInfo != null) this.savePlaybackInfo(order, playbackInfo);
       }
     }
   }

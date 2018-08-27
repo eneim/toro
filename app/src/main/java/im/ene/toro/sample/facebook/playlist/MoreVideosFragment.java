@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample.facebook.playlist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -159,9 +160,9 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
     container.savePlaybackInfo(0, baseInfo);
 
     adapter.setOnCompleteCallback(new MoreVideosAdapter.OnCompleteCallback() {
-      @Override void onCompleted(ToroPlayer player) {
+      @SuppressLint("CheckResult") @Override void onCompleted(ToroPlayer player) {
         int position = adapter.findNextPlayerPosition(player.getPlayerOrder());
-        //noinspection Convert2MethodRef
+        //noinspection Convert2MethodRef,ResultOfMethodCallIgnored
         Observable.just(container)
             .delay(250, TimeUnit.MILLISECONDS)
             .filter(c -> c != null)

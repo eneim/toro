@@ -18,6 +18,7 @@ package im.ene.toro.exoplayer;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
@@ -53,18 +54,21 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this(player, uri, null);
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt) {
+  @SuppressWarnings("WeakerAccess")
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
+      @Nullable String fileExt) {
     this(player, uri, fileExt, with(player.getPlayerView().getContext()).getDefaultCreator());
   }
 
   /** Config instance should be kept as global instance. */
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @Nullable String fileExt,
       @NonNull Config config) {
     this(player, uri, fileExt,
         with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
-  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, String fileExt,
+  @SuppressWarnings("WeakerAccess")
+  public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @Nullable String fileExt,
       @NonNull ExoCreator creator) {
     this(player, new ExoPlayable(creator, uri, fileExt));
   }
@@ -144,6 +148,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
   @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
     this.playable.removeOnVolumeChangeListener(listener);
+  }
+
+  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
+    this.playable.addErrorListener(errorListener);
+  }
+
+  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
+    this.playable.removeErrorListener(errorListener);
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

@@ -75,7 +75,6 @@ public class ToroControlView extends PlaybackControlView {
     volumeOffButton = findViewById(R.id.exo_volume_off);
     volumeUpButton = findViewById(R.id.exo_volume_up);
     volumeBar = findViewById(R.id.volume_bar);
-
     componentListener = new ComponentListener();
   }
 
@@ -115,7 +114,6 @@ public class ToroControlView extends PlaybackControlView {
     }
 
     super.setPlayer(player);
-
     current = super.getPlayer();
     @NonNull final VolumeInfo tempVol;
     if (current instanceof ToroExoPlayer) {
@@ -206,10 +204,10 @@ public class ToroControlView extends PlaybackControlView {
       long start = System.nanoTime();
       try {
         hideAfterTimeoutMethod = PlaybackControlView.class.getDeclaredMethod("hideAfterTimeout");
+        hideAfterTimeoutMethod.setAccessible(true);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       }
-      hideAfterTimeoutMethod.setAccessible(true);
       hideMethodFetched = true;
       Log.i(TAG, "reflection time: " + (System.nanoTime() - start) + "ns");
     }

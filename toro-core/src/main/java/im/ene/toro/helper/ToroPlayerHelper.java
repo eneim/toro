@@ -32,6 +32,8 @@ import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
 import java.util.HashSet;
 
+import static im.ene.toro.ToroUtil.checkNotNull;
+
 /**
  * General definition of a helper class for a specific {@link ToroPlayer}. This class helps
  * forwarding the playback state to the {@link ToroPlayer} if there is any {@link EventListener}
@@ -103,7 +105,8 @@ public abstract class ToroPlayerHelper {
     @Override public void onPaused() {
       player.getPlayerView().setKeepScreenOn(false);
       if (container != null) {
-        container.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+        container.savePlaybackInfo( //
+            player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
       }
     }
 
@@ -179,6 +182,10 @@ public abstract class ToroPlayerHelper {
   public abstract void addOnVolumeChangeListener(@NonNull OnVolumeChangeListener listener);
 
   public abstract void removeOnVolumeChangeListener(OnVolumeChangeListener listener);
+
+  public abstract void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener);
+
+  public abstract void removeErrorListener(ToroPlayer.OnErrorListener errorListener);
 
   // Mimic ExoPlayer
   @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,

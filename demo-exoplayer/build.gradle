@@ -25,7 +25,7 @@ android {
 
   defaultConfig {
     applicationId "toro.demo.exoplayer"
-    minSdkVersion rootProject.ext.minSupportSDKVersion
+    minSdkVersion rootProject.ext.demoMinSDK
     targetSdkVersion rootProject.ext.androidVersion
     versionCode releaseVersionCode
     versionName "v" + releaseVersion
@@ -60,10 +60,10 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-  // implementation project(':toro-core')
-  // implementation project(':toro-exoplayer')
-  implementation "im.ene.toro3:toro:3.5.2"
-  implementation "im.ene.toro3:toro-ext-exoplayer:3.5.2"
+  implementation project(':toro-core')
+  implementation project(':toro-exoplayer')
+  // implementation "im.ene.toro3:toro:3.5.2"
+  // implementation "im.ene.toro3:toro-ext-exoplayer:3.5.2"
 
   //noinspection GradleDependency
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
@@ -75,21 +75,16 @@ dependencies {
   implementation "androidx.constraintlayout:constraintlayout:${rootProject.ext.constrainLayoutVersion}"
 
   implementation group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
-  implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+  implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
   // 2.1.12 results in Multidex ...
   //noinspection GradleDependency
-  implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
 
   implementation 'com.jakewharton:butterknife:8.8.1'
   kapt 'com.jakewharton:butterknife-compiler:8.8.1'
 
   implementation "android.arch.lifecycle:extensions:${rootProject.ext.archLibraryVersion}"
   kapt "android.arch.lifecycle:compiler:${rootProject.ext.archLibraryVersion}"
-  // Paging
-  // implementation "android.arch.paging:runtime:1.0.0-alpha6"
-
-  // implementation "com.squareup.moshi:moshi:1.5.0"
-  // implementation "com.squareup.moshi:moshi-kotlin:1.5.0"
 
   implementation 'com.google.android:flexbox:1.0.0'
 

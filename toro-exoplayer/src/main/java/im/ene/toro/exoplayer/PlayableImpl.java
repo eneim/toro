@@ -30,8 +30,7 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -54,17 +53,19 @@ class PlayableImpl implements Playable {
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
   protected final EventListeners listeners = new EventListeners();  // original listener.
-  // Use a Set to prevent duplicated setup.
-  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
+  // Use a CopyOnWriteArraySet to prevent duplicated setup and modify while iterating.
+  protected CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
+  protected ToroPlayer.ErrorListeners errorListeners;
 
   protected final Uri mediaUri; // immutable, parcelable
   protected final String fileExt;
   protected final ExoCreator creator; // required, cached
 
   protected SimpleExoPlayer player; // on-demand, cached
-  protected MediaSource mediaSource;  // on-demand
+  protected MediaSource mediaSource;  // on-demand, since we do not reuse MediaSource now.
   protected PlayerView playerView; // on-demand, not always required.
 
+  private boolean sourcePrepared = false;
   private boolean listenerApplied = false;
 
   PlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
@@ -74,32 +75,9 @@ class PlayableImpl implements Playable {
   }
 
   @CallSuper @Override public void prepare(boolean prepareSource) {
-    if (player == null) {
-      player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
-          .requestPlayer(creator);
-      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
-        }
-      }
-    }
-
-    if (!listenerApplied) {
-      player.addListener(listeners);
-      player.addVideoListener(listeners);
-      player.addTextOutput(listeners);
-      player.addMetadataOutput(listeners);
-      listenerApplied = true;
-    }
-
-    boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
-    if (haveResumePosition) {
-      player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
-    }
-
     if (prepareSource) {
-      ensurePlayerView();
       ensureMediaSource();
+      ensurePlayerView();
     }
   }
 
@@ -121,14 +99,15 @@ class PlayableImpl implements Playable {
   }
 
   @CallSuper @Override public void play() {
-    checkNotNull(player, "Playable#play(): Player is null!");
-    ensurePlayerView();
     ensureMediaSource();
+    ensurePlayerView();
+    checkNotNull(player, "Playable#play(): Player is null!");
     player.setPlayWhenReady(true);
   }
 
   @CallSuper @Override public void pause() {
-    checkNotNull(player, "Playable#pause(): Player is null!").setPlayWhenReady(false);
+    // Player is not required to be non-null here.
+    if (player != null) player.setPlayWhenReady(false);
   }
 
   @CallSuper @Override public void reset() {
@@ -136,7 +115,9 @@ class PlayableImpl implements Playable {
     if (player != null) player.stop(true);
     // TODO [20180214] double check this when ExoPlayer 2.7.0 is released.
     // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
+    // TODO [20180702] back to this after updating ExoPlayer to 2.8.x
     this.mediaSource = null; // so it will be re-prepared when play() is called.
+    this.sourcePrepared = false;
   }
 
   @CallSuper @Override public void release() {
@@ -158,6 +139,7 @@ class PlayableImpl implements Playable {
     }
     this.player = null;
     this.mediaSource = null;
+    this.sourcePrepared = false;
   }
 
   @CallSuper @NonNull @Override public PlaybackInfo getPlaybackInfo() {
@@ -224,7 +206,7 @@ class PlayableImpl implements Playable {
 
   @Override
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
+    if (volumeChangeListeners == null) volumeChangeListeners = new CopyOnWriteArraySet<>();
     volumeChangeListeners.add(ToroUtil.checkNotNull(listener));
     if (this.player instanceof ToroExoPlayer) {
       ((ToroExoPlayer) this.player).addOnVolumeChangeListener(listener);
@@ -245,6 +227,17 @@ class PlayableImpl implements Playable {
     return player != null && player.getPlayWhenReady();
   }
 
+  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener) {
+    if (this.errorListeners == null) {
+      this.errorListeners = new ToroPlayer.ErrorListeners();
+    }
+    this.errorListeners.add(checkNotNull(listener));
+  }
+
+  @Override public void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener) {
+    if (this.errorListeners != null) this.errorListeners.remove(listener);
+  }
+
   final void updatePlaybackInfo() {
     if (player == null || player.getPlaybackState() == Player.STATE_IDLE) return;
     playbackInfo.setResumeWindow(player.getCurrentWindowIndex());
@@ -257,10 +250,44 @@ class PlayableImpl implements Playable {
     if (playerView != null && playerView.getPlayer() != player) playerView.setPlayer(player);
   }
 
+  // TODO [20180822] Double check this.
   private void ensureMediaSource() {
     if (mediaSource == null) {  // Only actually prepare the source when play() is called.
+      sourcePrepared = false;
       mediaSource = creator.createMediaSource(mediaUri, fileExt);
+    }
+
+    if (!sourcePrepared) {
+      ensurePlayer(); // sourcePrepared is set to false only when player is null.
       player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
+      sourcePrepared = true;
+    }
+  }
+
+  private void ensurePlayer() {
+    if (player == null) {
+      sourcePrepared = false;
+      player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+          .requestPlayer(creator);
+      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
+        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
+        }
+      }
+      listenerApplied = false;
+    }
+
+    if (!listenerApplied) {
+      player.addListener(listeners);
+      player.addVideoListener(listeners);
+      player.addTextOutput(listeners);
+      player.addMetadataOutput(listeners);
+      listenerApplied = true;
+    }
+
+    boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
+    if (haveResumePosition) {
+      player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
   }
 }
