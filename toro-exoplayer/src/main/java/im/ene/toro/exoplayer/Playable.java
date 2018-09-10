@@ -37,8 +37,8 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link PlayerView}.
@@ -267,7 +267,7 @@ public interface Playable {
   }
 
   /** List of EventListener */
-  class EventListeners extends HashSet<EventListener> implements EventListener {
+  class EventListeners extends CopyOnWriteArraySet<EventListener> implements EventListener {
 
     EventListeners() {
     }

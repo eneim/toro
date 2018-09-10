@@ -112,7 +112,11 @@ class PlayableImpl implements Playable {
 
   @CallSuper @Override public void reset() {
     this.playbackInfo.reset();
-    if (player != null) player.stop(true);
+    if (player != null) {
+      // reset volume to default
+      ToroExo.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
+      player.stop(true);
+    }
     // TODO [20180214] double check this when ExoPlayer 2.7.0 is released.
     // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
     // TODO [20180702] back to this after updating ExoPlayer to 2.8.x
@@ -123,6 +127,8 @@ class PlayableImpl implements Playable {
   @CallSuper @Override public void release() {
     this.setPlayerView(null);
     if (this.player != null) {
+      // reset volume to default
+      ToroExo.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
       this.player.stop(true);
       if (this.player instanceof ToroExoPlayer) {
         ((ToroExoPlayer) this.player).clearOnVolumeChangeListener();
@@ -274,6 +280,7 @@ class PlayableImpl implements Playable {
           ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
         }
       }
+      ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
       listenerApplied = false;
     }
 
