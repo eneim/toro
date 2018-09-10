@@ -16,6 +16,7 @@
 
 package im.ene.toro.sample.legacy;
 
+import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
+import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
 import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
@@ -78,6 +80,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     this.onPreparedListener = onPreparedListener;
   }
 
+  @SuppressLint("ObsoleteSdkInt")
   @Override protected void initialize(@NonNull final PlaybackInfo playbackInfo) {
     this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
 
@@ -120,6 +123,9 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
           case MEDIA_INFO_BUFFERING_END:
             playerState = State.STATE_READY;
             onPlayerStateUpdated(playWhenReady, playerState);
+            handled = true;
+            break;
+          case MEDIA_INFO_VIDEO_RENDERING_START:
             handled = true;
             break;
           default:

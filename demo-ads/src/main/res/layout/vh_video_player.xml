@@ -42,7 +42,8 @@
         app:resize_mode="fixed_width"
         app:show_buffering="true"
         app:surface_type="texture_view"
-        app:use_controller="false"
+        app:use_controller="true"
+        app:player_layout_id="@layout/toro_exo_player_view"
         >
       <android.support.v7.widget.AppCompatImageView
           android:id="@+id/posterView"
