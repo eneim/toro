@@ -51,7 +51,7 @@ import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
 final class PlaybackInfoCache extends AdapterDataObserver {
 
   @NonNull private final Container container;
-  // Cold cache represents the map between key obtain from CacheManager and PlaybackInfo. If the
+  // Cold cache represents the map between key obtained from CacheManager and PlaybackInfo. If the
   // CacheManager is null, this cache will hold nothing.
   /* pkg */ HashMap<Object, PlaybackInfo> coldCache = new HashMap<>();
 

@@ -34,6 +34,8 @@ import com.mopub.nativeads.MoPubRecyclerAdapter;
 import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.MoPubVideoNativeAdRenderer;
 import com.mopub.nativeads.ViewBinder;
+import im.ene.toro.CacheManager;
+import im.ene.toro.widget.Container;
 import java.util.ArrayList;
 import java.util.List;
 import toro.demo.ads.R;
@@ -94,7 +96,7 @@ public class MoPubNativeRecyclerViewFragment extends BaseFragment {
   @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     adConfig = MoPubSampleAdUnit.fromBundle(null);
-    RecyclerView recyclerView = view.findViewById(R.id.native_recycler_view);
+    Container container = view.findViewById(R.id.native_recycler_view);
     final RecyclerView.Adapter originalAdapter = new MoPubDemoAdapter();
 
     recyclerAdapter = new MoPubRecyclerAdapter(requireActivity(), originalAdapter,
@@ -122,8 +124,9 @@ public class MoPubNativeRecyclerViewFragment extends BaseFragment {
     recyclerAdapter.registerAdRenderer(videoNativeAdRenderer);
     recyclerAdapter.registerAdRenderer(staticNativeAdRenderer);
 
-    recyclerView.setAdapter(recyclerAdapter);
-    recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    container.setAdapter(recyclerAdapter);
+    container.setLayoutManager(new LinearLayoutManager(requireContext()));
+    container.setCacheManager(CacheManager.DEFAULT);
     recyclerAdapter.loadAds(adConfig.getAdUnitId());
   }
 

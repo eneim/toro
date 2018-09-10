@@ -19,6 +19,7 @@ package im.ene.toro.exoplayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
@@ -77,7 +78,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     super(player);
     //noinspection ConstantConditions
     if (player.getPlayerView() == null || !(player.getPlayerView() instanceof PlayerView)) {
-      throw new IllegalArgumentException("Require non-null SimpleExoPlayerView");
+      throw new IllegalArgumentException("Require non-null PlayerView");
     }
 
     listeners = new MyEventListeners();
@@ -167,6 +168,11 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       ExoPlayerViewHelper.super.onPlayerStateUpdated(playWhenReady, playbackState); // important
       super.onPlayerStateChanged(playWhenReady, playbackState);
+    }
+
+    @Override public void onRenderedFirstFrame() {
+      super.onRenderedFirstFrame();
+      Log.d("Toro:ExoHelper", "onRenderedFirstFrame() called");
     }
   }
 }

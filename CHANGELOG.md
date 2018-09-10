@@ -1,7 +1,12 @@
 Changelog
 ===========
 
-3.6.0.2802 (2018/08/xx)
+3.6.1.2802 (2018/09/11)
+-----------------------
+
+- **[Fix]** Fix a bug that allow ExoPlayer instance to reuse VolumeInfo of a Player for other Player.
+
+3.6.0.2802 (2018/08/27)
 -----------------------
 
 - **[Update]** Now use ExoPlayer 2.8.2
