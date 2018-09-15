@@ -172,7 +172,10 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     @Override public void onRenderedFirstFrame() {
       super.onRenderedFirstFrame();
-      Log.d("Toro:ExoHelper", "onRenderedFirstFrame() called");
+      internalListener.onFirstFrameRendered();
+      for (ToroPlayer.EventListener listener : eventListeners) {
+        listener.onFirstFrameRendered();
+      }
     }
   }
 }

@@ -22,6 +22,7 @@ import android.os.Message;
 import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.RestrictTo;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
@@ -30,7 +31,8 @@ import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 
@@ -55,8 +57,8 @@ public abstract class ToroPlayerHelper {
           break;
         case State.STATE_BUFFERING /* Player.STATE_BUFFERING */:
           internalListener.onBuffering();
-          for (EventListener callback : eventListeners) {
-            callback.onBuffering();
+          for (EventListener listener : eventListeners) {
+            listener.onBuffering();
           }
           break;
         case State.STATE_READY /*  Player.STATE_READY */:
@@ -66,18 +68,18 @@ public abstract class ToroPlayerHelper {
             internalListener.onPaused();
           }
 
-          for (EventListener callback : eventListeners) {
+          for (EventListener listener : eventListeners) {
             if (playWhenReady) {
-              callback.onPlaying();
+              listener.onPlaying();
             } else {
-              callback.onPaused();
+              listener.onPaused();
             }
           }
           break;
         case State.STATE_END /* Player.STATE_ENDED */:
           internalListener.onCompleted();
-          for (EventListener callback : eventListeners) {
-            callback.onCompleted();
+          for (EventListener listener : eventListeners) {
+            listener.onCompleted();
           }
           break;
         default:
@@ -92,31 +94,38 @@ public abstract class ToroPlayerHelper {
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
 
-  final HashSet<EventListener> eventListeners = new HashSet<>();
-  final EventListener internalListener = new EventListener() {
-    @Override public void onBuffering() {
-      // do nothing
-    }
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) protected final Set<EventListener> eventListeners =
+      new CopyOnWriteArraySet<>();
 
-    @Override public void onPlaying() {
-      player.getPlayerView().setKeepScreenOn(true);
-    }
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) protected final EventListener internalListener =
+      new EventListener() {
+        @Override public void onFirstFrameRendered() {
 
-    @Override public void onPaused() {
-      player.getPlayerView().setKeepScreenOn(false);
-      if (container != null) {
-        container.savePlaybackInfo( //
-            player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
-      }
-    }
+        }
 
-    @Override public void onCompleted() {
-      if (container != null) {
-        // Save PlaybackInfo.SCRAP to mark this player to be re-init.
-        container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
-      }
-    }
-  };
+        @Override public void onBuffering() {
+          // do nothing
+        }
+
+        @Override public void onPlaying() {
+          player.getPlayerView().setKeepScreenOn(true);
+        }
+
+        @Override public void onPaused() {
+          player.getPlayerView().setKeepScreenOn(false);
+          if (container != null) {
+            container.savePlaybackInfo( //
+                player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
+          }
+        }
+
+        @Override public void onCompleted() {
+          if (container != null) {
+            // Save PlaybackInfo.SCRAP to mark this player to be re-init.
+            container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
+          }
+        }
+      };
 
   public ToroPlayerHelper(@NonNull ToroPlayer player) {
     this.player = player;
@@ -143,8 +152,7 @@ public abstract class ToroPlayerHelper {
    */
   protected abstract void initialize(@NonNull PlaybackInfo playbackInfo);
 
-  @CallSuper
-  public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
+  public final void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     this.container = container;
     this.initialize(playbackInfo);
   }

@@ -113,11 +113,11 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   }
 
   @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    // TODO
+    this.playable.addErrorListener(checkNotNull(errorListener));
   }
 
   @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    // TODO
+    this.playable.removeErrorListener(errorListener);
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

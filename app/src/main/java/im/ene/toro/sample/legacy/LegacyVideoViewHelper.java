@@ -126,6 +126,11 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
             handled = true;
             break;
           case MEDIA_INFO_VIDEO_RENDERING_START:
+            // Call immediately.
+            helper.internalListener.onFirstFrameRendered();
+            for (ToroPlayer.EventListener listener : helper.eventListeners) {
+              listener.onFirstFrameRendered();
+            }
             handled = true;
             break;
           default:

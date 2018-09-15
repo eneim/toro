@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.2.61'
+  ext.kotlin_version = '1.2.70'
   repositories {
     google()
     jcenter()
@@ -28,7 +28,7 @@ buildscript {
 
   dependencies {
     //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.3.0-alpha08'
+    classpath 'com.android.tools.build:gradle:3.3.0-alpha10'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.3'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
@@ -47,7 +47,7 @@ ext {
   supportLibraryVersion = '27.1.1'
   constrainLayoutVersion = '1.1.3'
   archLibraryVersion = '1.1.1'
-  exoPlayer2Version = '2.8.2'
+  exoPlayer2Version = '2.8.4'
   googleApiClient = '1.24.1'
   glide = '4.8.0'
   leackCanary = '1.6.1'
@@ -72,8 +72,8 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.6.1.2802'
-    releaseVersionCode = 306012802 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
+    releaseVersion = '3.6.2.2804-SNAPSHOT'
+    releaseVersionCode = 306022804 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 
@@ -96,7 +96,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.9'
+  gradleVersion = '4.10'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }

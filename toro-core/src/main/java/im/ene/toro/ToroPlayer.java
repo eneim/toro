@@ -80,6 +80,8 @@ public interface ToroPlayer {
    */
   interface EventListener {
 
+    void onFirstFrameRendered();
+
     void onBuffering(); // ExoPlayer state: 2
 
     void onPlaying(); // ExoPlayer state: 3, play flag: true

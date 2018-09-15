@@ -30,6 +30,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.ErrorListeners;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
@@ -59,7 +60,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   Handler handler;
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
-  ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
+  ErrorListeners errorListeners = new ErrorListeners();
 
   YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId) {
     super(player);
@@ -213,7 +214,10 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
 
     @Override public void onVideoStarted() {
-
+      YouTubePlayerHelper.super.internalListener.onFirstFrameRendered();
+      for (ToroPlayer.EventListener listener : YouTubePlayerHelper.super.eventListeners) {
+        listener.onFirstFrameRendered();
+      }
     }
 
     @Override public void onVideoEnded() {
