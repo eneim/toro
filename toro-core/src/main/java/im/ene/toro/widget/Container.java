@@ -374,7 +374,7 @@ public class Container extends RecyclerView {
     this.playerSelector = playerSelector;
     // dispatchUpdateOnAnimationFinished(true); // doesn't work well :(
     // Immediately update.
-    int state = Math.min(this.triggerScrollState, SCROLL_STATE_SETTLING);
+    int state = Math.min(this.triggerScrollState, getScrollState());
     this.onScrollStateChanged(state);
   }
 
@@ -810,7 +810,7 @@ public class Container extends RecyclerView {
     }
 
     @Override public boolean handleMessage(Message msg) {
-      int state = Math.min(container.triggerScrollState, SCROLL_STATE_SETTLING);
+      int state = Math.min(container.triggerScrollState, container.getScrollState());
       this.container.onScrollStateChanged(state);
       return true;
     }
