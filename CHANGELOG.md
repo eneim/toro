@@ -4,7 +4,9 @@ Changelog
 3.7.0.2804 (2018/xx/xx)
 -----------------------
 
-- **[Update]** Add ``trigger_scroll_state`` as xml attribute for ``Container``. Setting this will tell **Toro** at which scroll state of the ``Container`` should the playback to be refreshed. Default value is ``state_idle`` (same as RecyclerView.SCROLL_STATE_IDLE). 
+- **[Update]** Add ``trigger_scroll_state`` as xml attribute for ``Container``. Setting this will tell **Toro** at which scroll state of the ``Container`` should the playback to be refreshed. Available values are ``state_idle`` (same as RecyclerView.SCROLL_STATE_IDLE), ``state_dragging`` (same as RecyclerView.SCROLL_STATE_DRAGGING), ``state_setting`` (same as RecyclerView.SCROLL_STATE_SETTLING), ``state_any`` (reserve value for any available state). Default value is ``state_idle``.
+
+- **[Update]** Android dependencies is updated to Platform version 28 and Compat libraries version 28.0.0-rc2. 
 
 3.6.2.2804 (2018/xx/xx)
 -----------------------
