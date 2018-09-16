@@ -1,6 +1,11 @@
 Changelog
 ===========
 
+3.7.0.2804 (2018/xx/xx)
+-----------------------
+
+- **[Update]** Add ``trigger_scroll_state`` as xml attribute for ``Container``. Setting this will tell **Toro** at which scroll state of the ``Container`` should the playback to be refreshed. Default value is ``state_idle`` (same as RecyclerView.SCROLL_STATE_IDLE). 
+
 3.6.2.2804 (2018/xx/xx)
 -----------------------
 
