@@ -4,6 +4,8 @@
 
 <img src="/extra/web_hi_res_512.png" width="256">
 
+<a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi5.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+
 [ ![Download](https://api.bintray.com/packages/eneimlabs/Toro/toro/images/download.svg) ](https://bintray.com/eneimlabs/Toro/toro/_latestVersion)[ ![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Toro-green.svg?style=true)](https://android-arsenal.com/details/1/3106)[ ![Join the chat at https://gitter.im/eneim/Toro](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/eneim/Toro?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)[ ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ## Menu
@@ -300,6 +302,10 @@ Below is the behavior before and after we apply the code above:
 - Issue report and Pull Requests are welcome. Please follow issue format for quick response.
 
 - For Pull Requests, this project uses 2-space indent and **no** Hungarian naming convention.
+
+- Or buy me a coffee for faster feature shipping: 
+
+     <a href='https://ko-fi.com/A342OWW' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi5.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
 ## Hall of Fame
 
