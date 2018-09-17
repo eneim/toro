@@ -46,9 +46,11 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.PlayerSelector;
+import im.ene.toro.PreLoader;
 import im.ene.toro.R;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.RemoveIn;
+import im.ene.toro.helper.HelperManager;
 import im.ene.toro.media.PlaybackInfo;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ public class Container extends RecyclerView {
   private static final String TAG = "ToroLib:Container";
 
   static final int SOME_BLINKS = 50;  // 3 frames ...
+  static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
 
   /* package */ final PlayerManager playerManager;
   /* package */ final ChildLayoutChangeListener childLayoutChangeListener;
@@ -99,6 +102,8 @@ public class Container extends RecyclerView {
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
   /* package */ Handler animatorFinishHandler;  // null = not attached/detached
   /* package */ BehaviorCallback behaviorCallback;
+  /* package */ PreLoader preLoader = new HelperManager();
+  /* package */
 
   public Container(Context context) {
     this(context, null);
@@ -134,6 +139,10 @@ public class Container extends RecyclerView {
     if (recyclerListener == null) recyclerListener = new RecyclerListenerImpl(this);
     recyclerListener.delegate = listener;
     super.setRecyclerListener(recyclerListener);
+  }
+
+  public final void setPreLoader(PreLoader preLoader) {
+    this.preLoader = preLoader;
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
@@ -295,6 +304,7 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
+    Log.w(TAG, "onScrollStateChanged() called with: state = [" + state + "]");
     // Need to handle the dead playback even when the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
@@ -338,29 +348,44 @@ public class Container extends RecyclerView {
 
     final List<ToroPlayer> source = playerManager.getPlayers();
     int count = source.size();
-    if (count < 1) return;  // No available player, return.
 
-    List<ToroPlayer> candidates = new ArrayList<>();
-    for (int i = 0; i < count; i++) {
-      ToroPlayer player = source.get(i);
-      if (player.wantsToPlay()) candidates.add(player);
-    }
-    Collections.sort(candidates, Common.ORDER_COMPARATOR);
+    int preloadRight = count - 1; // reserve value, will update according to the candidate list.
+    int preloadLeft = preloadRight - 1;
+    int limit = 1;
+    if (count >= 1) {
+      List<ToroPlayer> candidates = new ArrayList<>();
+      for (int i = 0; i < count; i++) {
+        ToroPlayer player = source.get(i);
+        if (player.wantsToPlay()) candidates.add(player);
+      }
+      Collections.sort(candidates, Common.ORDER_COMPARATOR);
 
-    Collection<ToroPlayer> toPlay = playerSelector != null ? playerSelector.select(this, candidates)
-        : Collections.<ToroPlayer>emptyList();
-    for (ToroPlayer player : toPlay) {
-      if (!player.isPlaying()) playerManager.play(player, playerDispatcher);
-    }
+      if (candidates.size() > 0) {
+        // Prepare PreLoad indexes
+        preloadLeft = candidates.get(0).getPlayerOrder();
+        preloadRight = candidates.get(candidates.size() - 1).getPlayerOrder();
+        // Need to make sure the small-big relationship.
+        if (preloadRight <= preloadLeft) preloadRight = preloadLeft + 1;
+      }
 
-    source.removeAll(toPlay);
-    // Now 'source' contains only ones need to be paused.
-    for (ToroPlayer player : source) {
-      if (player.isPlaying()) {
-        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-        playerManager.pause(player);
+      Collection<ToroPlayer> toPlay = playerSelector != null ? //
+          playerSelector.select(this, candidates) : Collections.<ToroPlayer>emptyList();
+      limit = Math.max(2, PROCESSOR_COUNT - toPlay.size());
+      for (ToroPlayer player : toPlay) {
+        if (!player.isPlaying()) playerManager.play(player, playerDispatcher);
+      }
+
+      source.removeAll(toPlay);
+      // Now 'source' contains only ones need to be paused.
+      for (ToroPlayer player : source) {
+        if (player.isPlaying()) {
+          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          playerManager.pause(player);
+        }
       }
     }
+
+    if (this.preLoader != null) this.preLoader.prepareAround(preloadLeft, preloadRight, limit);
   }
 
   /**
