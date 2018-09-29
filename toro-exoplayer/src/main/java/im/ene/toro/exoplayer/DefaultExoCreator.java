@@ -19,6 +19,7 @@ package im.ene.toro.exoplayer;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -115,8 +116,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
-    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl,
-        config.drmSessionManager);
+    return new ToroExoPlayer(toro.context, renderersFactory, trackSelector, loadControl,
+        config.meter, config.drmSessionManager, Looper.myLooper());
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
