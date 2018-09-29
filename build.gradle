@@ -44,7 +44,7 @@ ext {
   androidVersion = 28
   minSupportSDKVersion = 16
   demoMinSDK = 21
-  supportLibraryVersion = '28.0.0-rc02'
+  supportLibraryVersion = '28.0.0'
   constrainLayoutVersion = '1.1.3'
   archLibraryVersion = '1.1.1'
   exoPlayer2Version = '2.8.4'
