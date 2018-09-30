@@ -72,9 +72,9 @@ allprojects {
   project.ext {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
-    releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.7.0.2900-SNAPSHOT'
-    releaseVersionCode = 307002900 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
+    releaseGroupId = 'im.ene.toro4'
+    releaseVersion = '4.0.0.2900-SNAPSHOT'
+    releaseVersionCode = 400002900 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 

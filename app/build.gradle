@@ -68,8 +68,13 @@ dependencies {
   // implementation "im.ene.toro3:toro-ext-exoplayer:3.5.0-SNAPSHOT"
 
   testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:1.0.2'
-  androidTestImplementation 'com.android.support.test:rules:1.0.2'
+  androidTestImplementation ('com.android.support.test:runner:1.0.2') {
+    transitive = false
+  }
+  androidTestImplementation ('com.android.support.test:rules:1.0.2') {
+    transitive = false
+  }
+
   androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
   androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.2'
 
@@ -95,7 +100,7 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
 
   implementation "org.jsoup:jsoup:1.11.3"
 
