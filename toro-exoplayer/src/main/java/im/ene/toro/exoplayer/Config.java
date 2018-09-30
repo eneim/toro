@@ -116,7 +116,7 @@ public final class Config {
     @ExtensionRendererMode private int extensionMode = EXTENSION_RENDERER_MODE_OFF;
     private final DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
     @SuppressWarnings("unchecked")  //
-    private BaseMeter meter = new BaseMeter(bandwidthMeter, bandwidthMeter);
+    private BaseMeter meter = new BaseMeter(bandwidthMeter);
     private LoadControl loadControl = new DefaultLoadControl();
     private DataSource.Factory dataSourceFactory = null;
     private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
