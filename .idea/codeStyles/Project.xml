@@ -104,9 +104,6 @@
       <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="999" />
       <option name="IMPORT_NESTED_CLASSES" value="true" />
     </JetCodeStyleSettings>
-    <MarkdownNavigatorCodeStyleSettings>
-      <option name="RIGHT_MARGIN" value="72" />
-    </MarkdownNavigatorCodeStyleSettings>
     <Objective-C-extensions>
       <file>
         <option name="com.jetbrains.cidr.lang.util.OCDeclarationKind" value="Import" />
@@ -208,6 +205,7 @@
       <option name="ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE" value="true" />
       <option name="ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE" value="true" />
       <option name="ASSIGNMENT_WRAP" value="1" />
+      <option name="WRAP_COMMENTS" value="true" />
       <option name="ASSERT_STATEMENT_WRAP" value="1" />
       <option name="IF_BRACE_FORCE" value="1" />
       <option name="DOWHILE_BRACE_FORCE" value="1" />

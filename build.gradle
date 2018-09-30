@@ -97,7 +97,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.10'
+  gradleVersion = '4.10.1'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }
