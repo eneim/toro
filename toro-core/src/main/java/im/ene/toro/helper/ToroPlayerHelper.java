@@ -94,38 +94,38 @@ public abstract class ToroPlayerHelper {
   // This instance should be setup from #initialize and cleared from #release
   protected Container container;
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) protected final Set<EventListener> eventListeners =
-      new CopyOnWriteArraySet<>();
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  protected final Set<EventListener> eventListeners = new CopyOnWriteArraySet<>();
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) protected final EventListener internalListener =
-      new EventListener() {
-        @Override public void onFirstFrameRendered() {
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  protected final EventListener internalListener = new EventListener() {
+    @Override public void onFirstFrameRendered() {
 
-        }
+    }
 
-        @Override public void onBuffering() {
-          // do nothing
-        }
+    @Override public void onBuffering() {
+      // do nothing
+    }
 
-        @Override public void onPlaying() {
-          player.getPlayerView().setKeepScreenOn(true);
-        }
+    @Override public void onPlaying() {
+      player.getPlayerView().setKeepScreenOn(true);
+    }
 
-        @Override public void onPaused() {
-          player.getPlayerView().setKeepScreenOn(false);
-          if (container != null) {
-            container.savePlaybackInfo( //
-                player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
-          }
-        }
+    @Override public void onPaused() {
+      player.getPlayerView().setKeepScreenOn(false);
+      if (container != null) {
+        container.savePlaybackInfo( //
+            player.getPlayerOrder(), checkNotNull(player.getCurrentPlaybackInfo()));
+      }
+    }
 
-        @Override public void onCompleted() {
-          if (container != null) {
-            // Save PlaybackInfo.SCRAP to mark this player to be re-init.
-            container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
-          }
-        }
-      };
+    @Override public void onCompleted() {
+      if (container != null) {
+        // Save PlaybackInfo.SCRAP to mark this player to be re-init.
+        container.savePlaybackInfo(player.getPlayerOrder(), PlaybackInfo.SCRAP);
+      }
+    }
+  };
 
   public ToroPlayerHelper(@NonNull ToroPlayer player) {
     this.player = player;
@@ -145,7 +145,8 @@ public abstract class ToroPlayerHelper {
    * ExoPlayer instance for SimpleExoPlayerView. The initialization is feed by an initial playback
    * info, telling if the playback should start from a specific position or from beginning.
    *
-   * Normally this info can be obtained from cache if there is cache manager, or {@link PlaybackInfo#SCRAP}
+   * Normally this info can be obtained from cache if there is cache manager, or {@link
+   * PlaybackInfo#SCRAP}
    * if there is no such cached information.
    *
    * @param playbackInfo the initial playback info.

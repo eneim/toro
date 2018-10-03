@@ -31,4 +31,5 @@
 
   <string name="exo_controls_volume_up_description">Volume Up</string>
   <string name="exo_controls_volume_off_description">Volume Off</string>
+  <string name="download_start_error">Failed to start download</string>
 </resources>

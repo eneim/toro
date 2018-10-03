@@ -43,9 +43,9 @@ android {
 }
 
 dependencies {
-  implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  implementation "com.android.support:design:${supportLibraryVersion}"
+  implementation "com.android.support:recyclerview-v7:${supportLibraryVersion}"
+  implementation "com.android.support:support-annotations:${supportLibraryVersion}"
 
   // doc "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}:sources"
   // doc "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}:sources"

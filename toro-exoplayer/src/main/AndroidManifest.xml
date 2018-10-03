@@ -14,4 +14,13 @@
   ~ limitations under the License.
   -->
 
-<manifest package="im.ene.toro.exoplayer"/>
+<manifest package="im.ene.toro.exoplayer">
+
+  <!-- Developers must declare these permissions by themselves -->
+
+  <!--<uses-permission android:name="android.permission.INTERNET"/>-->
+  <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
+  <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
+  <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>-->
+  <!--<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
+</manifest>

@@ -20,15 +20,15 @@ buildscript {
   ext.kotlin_version = '1.2.71'
   repositories {
     google()
+    jcenter()
     maven { url 'https://maven.fabric.io/public' }
     maven { url 'https://oss.jfrog.org/artifactory/plugins-release' }
     mavenCentral()
-    jcenter()
   }
 
   dependencies {
     //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.3.0-alpha10'
+    classpath 'com.android.tools.build:gradle:3.3.0-alpha13'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.3'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
@@ -51,6 +51,8 @@ ext {
   googleApiClient = '1.24.1'
   glide = '4.8.0'
   leackCanary = '1.6.1'
+
+  androidx = '1.0.0'
 }
 
 allprojects {

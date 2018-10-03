@@ -32,6 +32,8 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
 import im.ene.toro.widget.PressablePlayerSelector;
+import toro.v4.Media;
+import toro.v4.MediaHub;
 
 /**
  * @author eneim (7/1/17).
@@ -66,7 +68,8 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   @Override
   public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(this, mediaUri);
+      // helper = new ExoPlayerViewHelper(this, mediaUri);
+      helper = MediaHub.getHub(itemView.getContext()).requestHelper(this, new Media(mediaUri, null));
     }
     helper.initialize(container, playbackInfo);
   }
@@ -85,7 +88,8 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   @Override public void release() {
     if (helper != null) {
-      helper.release();
+      MediaHub.getHub(itemView.getContext()).releaseHelper(helper);
+      // helper.release();
       helper = null;
     }
   }

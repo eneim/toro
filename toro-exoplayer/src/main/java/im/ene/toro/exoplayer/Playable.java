@@ -41,7 +41,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link PlayerView}.
+ * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link
+ * PlayerView}.
  *
  * This interface is designed to be reused across Config change. Implementation must not hold any
  * strong reference to Activity, and if it supports any kind of that, make sure to implicitly clean
@@ -269,7 +270,7 @@ public interface Playable {
   /** List of EventListener */
   class EventListeners extends CopyOnWriteArraySet<EventListener> implements EventListener {
 
-    EventListeners() {
+    protected EventListeners() {
     }
 
     @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
