@@ -270,7 +270,7 @@ public interface Playable {
   /** List of EventListener */
   class EventListeners extends CopyOnWriteArraySet<EventListener> implements EventListener {
 
-    protected EventListeners() {
+    public EventListeners() {
     }
 
     @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,

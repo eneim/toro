@@ -20,8 +20,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -49,12 +51,15 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   ToroPlayerHelper helper;
   Uri mediaUri;
 
+  @BindView(R.id.thumbnail) ImageView thumbnail;
   @BindView(R.id.player) PlayerView playerView;
 
   public BasicPlayerViewHolder(View itemView, PressablePlayerSelector selector) {
     super(itemView);
     ButterKnife.bind(this, itemView);
     if (selector != null) playerView.setControlDispatcher(new ExoPlayerDispatcher(selector, this));
+    playerView.removeView(thumbnail);
+    playerView.getOverlayFrameLayout().addView(thumbnail);
   }
 
   @NonNull @Override public View getPlayerView() {
@@ -70,7 +75,29 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
     if (helper == null) {
       // helper = new ExoPlayerViewHelper(this, mediaUri);
       helper = MediaHub.getHub(itemView.getContext()).requestHelper(this, new Media(mediaUri, null));
+      helper.addPlayerEventListener(new EventListener() {
+        @Override public void onFirstFrameRendered() {
+          thumbnail.setVisibility(View.GONE);
+        }
+
+        @Override public void onBuffering() {
+
+        }
+
+        @Override public void onPlaying() {
+          thumbnail.setVisibility(View.GONE);
+        }
+
+        @Override public void onPaused() {
+          thumbnail.setVisibility(View.VISIBLE);
+        }
+
+        @Override public void onCompleted() {
+
+        }
+      });
     }
+    thumbnail.setVisibility(View.VISIBLE);
     helper.initialize(container, playbackInfo);
   }
 
@@ -87,6 +114,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   }
 
   @Override public void release() {
+    thumbnail.setVisibility(View.VISIBLE);
     if (helper != null) {
       MediaHub.getHub(itemView.getContext()).releaseHelper(helper);
       // helper.release();
@@ -108,5 +136,6 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   void bind(Content.Media media) {
     this.mediaUri = media.mediaUri;
+    Glide.with(itemView).load("https://cdn.pixabay.com/photo/2018/02/06/22/43/painting-3135875_960_720.jpg").into(thumbnail);
   }
 }

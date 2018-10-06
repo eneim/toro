@@ -112,7 +112,8 @@ final class PlaybackInfoCache extends AdapterDataObserver {
     }
   }
 
-  @SuppressWarnings("unused") final void onPlayerRecycled(ToroPlayer player) {
+  @SuppressWarnings("unused") //
+  final void onPlayerRecycled(ToroPlayer player) {
     // TODO do anything here?
   }
 
@@ -335,13 +336,22 @@ final class PlaybackInfoCache extends AdapterDataObserver {
 
   @NonNull final PlaybackInfo getPlaybackInfo(int position) {
     PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;
-    if (info != null && info == SCRAP) {  // has hot cache, but was SCRAP.
+    if (info == SCRAP) {  // has hot cache, but was SCRAP.
       info = container.playerInitializer.initPlaybackInfo(position);
     }
 
     Object key = getKey(position);
-    return info != null ? info :  //
-        key != null ? coldCache.get(key) : container.playerInitializer.initPlaybackInfo(position);
+
+    if (info != null) {
+      return info;
+    } else {
+      if (key != null) info = coldCache.get(key);
+      if (info != null) {
+        return info;
+      } else {
+        return container.playerInitializer.initPlaybackInfo(position);
+      }
+    }
   }
 
   // Call by Container#savePlaybackInfo and that method is called right before any pausing.

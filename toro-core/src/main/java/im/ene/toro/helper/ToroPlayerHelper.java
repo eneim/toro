@@ -31,7 +31,6 @@ import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -95,7 +94,7 @@ public abstract class ToroPlayerHelper {
   protected Container container;
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  protected final Set<EventListener> eventListeners = new CopyOnWriteArraySet<>();
+  protected final CopyOnWriteArraySet<EventListener> eventListeners = new CopyOnWriteArraySet<>();
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   protected final EventListener internalListener = new EventListener() {

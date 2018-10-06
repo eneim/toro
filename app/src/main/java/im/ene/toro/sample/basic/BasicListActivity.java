@@ -25,6 +25,7 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseActivity;
 import im.ene.toro.widget.Container;
 import im.ene.toro.widget.PressablePlayerSelector;
+import toro.v4.MediaHub;
 
 /**
  * @author eneim (7/2/17).
@@ -48,8 +49,9 @@ public class BasicListActivity extends BaseActivity {
     selector = new PressablePlayerSelector(container);
     container.setPlayerSelector(selector);
 
-    adapter = new BasicListAdapter(selector);
+    adapter = new BasicListAdapter(selector, MediaHub.getHub(this));
     container.setAdapter(adapter);
+    container.setPreLoader(adapter);
   }
 
   @Override protected void onDestroy() {

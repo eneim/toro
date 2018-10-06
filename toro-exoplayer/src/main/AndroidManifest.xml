@@ -14,13 +14,30 @@
   ~ limitations under the License.
   -->
 
-<manifest package="im.ene.toro.exoplayer">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="im.ene.toro.exoplayer">
+
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
   <!-- Developers must declare these permissions by themselves -->
-
-  <!--<uses-permission android:name="android.permission.INTERNET"/>-->
-  <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
   <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
   <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>-->
   <!--<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>-->
+
+  <application>
+    <service
+        android:name="toro.v4.offline.MediaDownloadService"
+        android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.android.exoplayer.downloadService.action.RESTART"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </service>
+
+    <service
+        android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
+        android:exported="true"
+        android:permission="android.permission.BIND_JOB_SERVICE"/>
+  </application>
 </manifest>
