@@ -95,6 +95,8 @@ public abstract class ToroPlayerHelper {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   protected final CopyOnWriteArraySet<EventListener> eventListeners = new CopyOnWriteArraySet<>();
+  protected final ToroPlayer.VolumeChangeListeners volumeChangeListeners = new ToroPlayer.VolumeChangeListeners();
+  protected final ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   protected final EventListener internalListener = new EventListener() {
@@ -137,6 +139,22 @@ public abstract class ToroPlayerHelper {
 
   public final void removePlayerEventListener(EventListener eventListener) {
     this.eventListeners.remove(eventListener);
+  }
+
+  public final void addOnVolumeChangeListener(@NonNull OnVolumeChangeListener listener) {
+    this.volumeChangeListeners.add(listener);
+  }
+
+  public final void removeOnVolumeChangeListener(OnVolumeChangeListener listener) {
+    this.volumeChangeListeners.remove(listener);
+  }
+
+  public final void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
+    this.errorListeners.add(errorListener);
+  }
+
+  public final void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
+    this.errorListeners.remove(errorListener);
   }
 
   /**
@@ -187,14 +205,6 @@ public abstract class ToroPlayerHelper {
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
 
-  public abstract void addOnVolumeChangeListener(@NonNull OnVolumeChangeListener listener);
-
-  public abstract void removeOnVolumeChangeListener(OnVolumeChangeListener listener);
-
-  public abstract void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener);
-
-  public abstract void removeErrorListener(ToroPlayer.OnErrorListener errorListener);
-
   // Mimic ExoPlayer
   @CallSuper protected final void onPlayerStateUpdated(boolean playWhenReady,
       @State int playbackState) {
@@ -206,7 +216,7 @@ public abstract class ToroPlayerHelper {
     this.container = null;
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "ToroLib:Helper{" + "player=" + player + ", container=" + container + '}';
   }
 }

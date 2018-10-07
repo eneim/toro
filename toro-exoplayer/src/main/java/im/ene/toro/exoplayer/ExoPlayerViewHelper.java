@@ -19,7 +19,6 @@ package im.ene.toro.exoplayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
@@ -86,8 +85,11 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
-    playable.setPlaybackInfo(playbackInfo);
+    playable.addOnVolumeChangeListener(this.volumeChangeListeners);
     playable.addEventListener(listeners);
+    playable.addErrorListener(this.errorListeners);
+
+    playable.setPlaybackInfo(playbackInfo);
     playable.prepare(false);
     playable.setPlayerView((PlayerView) player.getPlayerView());
   }
@@ -95,7 +97,10 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @Override public void release() {
     super.release();
     playable.setPlayerView(null);
+
+    playable.removeErrorListener(this.errorListeners);
     playable.removeEventListener(listeners);
+    playable.removeOnVolumeChangeListener(this.volumeChangeListeners);
     playable.release();
   }
 
@@ -140,23 +145,6 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @SuppressWarnings("WeakerAccess") //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
-  }
-
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    this.playable.addOnVolumeChangeListener(checkNotNull(listener));
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    this.playable.removeOnVolumeChangeListener(listener);
-  }
-
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    this.playable.addErrorListener(errorListener);
-  }
-
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    this.playable.removeErrorListener(errorListener);
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

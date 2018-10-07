@@ -101,12 +101,20 @@ public interface ToroPlayer {
     void onError(Exception error);
   }
 
-  class ErrorListeners extends CopyOnWriteArraySet<OnErrorListener>
-      implements ToroPlayer.OnErrorListener {
+  class ErrorListeners extends CopyOnWriteArraySet<OnErrorListener> implements OnErrorListener {
 
     @Override public void onError(Exception error) {
-      for (ToroPlayer.OnErrorListener listener : this) {
+      for (OnErrorListener listener : this) {
         listener.onError(error);
+      }
+    }
+  }
+
+  class VolumeChangeListeners extends CopyOnWriteArraySet<OnVolumeChangeListener> implements OnVolumeChangeListener {
+
+    @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
+      for (OnVolumeChangeListener volumeChangeListener : this) {
+        volumeChangeListener.onVolumeChanged(volumeInfo);
       }
     }
   }

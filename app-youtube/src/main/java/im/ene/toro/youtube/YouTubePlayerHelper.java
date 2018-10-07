@@ -30,7 +30,6 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.ToroPlayer.ErrorListeners;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
@@ -60,7 +59,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   Handler handler;
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
-  ErrorListeners errorListeners = new ErrorListeners();
 
   YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId) {
     super(player);
@@ -107,15 +105,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
 
   @NonNull @Override public VolumeInfo getVolumeInfo() {
     return volumeInfo;
-  }
-
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    throw new UnsupportedOperationException("YouTube helper doesn't allow to do this.");
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    throw new UnsupportedOperationException("YouTube helper doesn't allow to do this.");
   }
 
   @Override public boolean isPlaying() {
@@ -256,14 +245,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     }
   }
 
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    errorListeners.add(ToroUtil.checkNotNull(errorListener));
-  }
-
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    errorListeners.remove(errorListener);
-  }
-
   // Ensure that we are in the good situation.
   boolean shouldPlay() {
     if (ytFragment == null || !ytFragment.isVisible()) return false;
@@ -271,7 +252,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return ytView != null && visibleAreaOffset(ytView) >= 0.999;  // fully visible.
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "Toro:Yt:Helper{" + "videoId='" + videoId + '\'' + ", player=" + player + '}';
   }
 

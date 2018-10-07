@@ -42,8 +42,11 @@ final class PlayerHelper extends ToroPlayerHelper {
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
-    playable.setPlaybackInfo(playbackInfo);
+    playable.addOnVolumeChangeListener(this.volumeChangeListeners);
     playable.addEventListener(listeners);
+    playable.addErrorListener(this.errorListeners);
+
+    playable.setPlaybackInfo(playbackInfo);
     playable.prepare(false);
     playable.setPlayerView((PlayerView) player.getPlayerView());
   }
@@ -51,7 +54,10 @@ final class PlayerHelper extends ToroPlayerHelper {
   @Override public void release() {
     super.release();
     playable.setPlayerView(null);
+
+    playable.removeErrorListener(this.errorListeners);
     playable.removeEventListener(listeners);
+    playable.removeOnVolumeChangeListener(this.volumeChangeListeners);
     playable.release();
   }
 
@@ -85,23 +91,6 @@ final class PlayerHelper extends ToroPlayerHelper {
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     return playable.getPlaybackInfo();
-  }
-
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    playable.addOnVolumeChangeListener(listener);
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    playable.removeOnVolumeChangeListener(listener);
-  }
-
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    playable.addErrorListener(errorListener);
-  }
-
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    playable.removeErrorListener(errorListener);
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.
