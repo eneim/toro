@@ -60,6 +60,10 @@ public class Media implements Parcelable {
     return result;
   }
 
+  @Override public String toString() {
+    return "Media{" + "uri=" + uri + ", extension='" + extension + '\'' + '}';
+  }
+
   @Override public int describeContents() {
     return 0;
   }
