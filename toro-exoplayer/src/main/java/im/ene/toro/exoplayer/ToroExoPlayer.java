@@ -24,16 +24,13 @@ import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.util.Clock;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.VolumeChangeListeners;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 
@@ -52,37 +49,10 @@ public class ToroExoPlayer extends SimpleExoPlayer {
         looper);
   }
 
-  public ToroExoPlayer(Context context, RenderersFactory renderersFactory,
-      TrackSelector trackSelector, LoadControl loadControl,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-      BandwidthMeter bandwidthMeter, AnalyticsCollector.Factory analyticsCollectorFactory,
-      Looper looper) {
-    super(context, renderersFactory, trackSelector, loadControl, drmSessionManager, bandwidthMeter,
-        analyticsCollectorFactory, looper);
-  }
-
-  public ToroExoPlayer(Context context, RenderersFactory renderersFactory,
-      TrackSelector trackSelector, LoadControl loadControl,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
-      BandwidthMeter bandwidthMeter, AnalyticsCollector.Factory analyticsCollectorFactory,
-      Clock clock, Looper looper) {
-    super(context, renderersFactory, trackSelector, loadControl, drmSessionManager, bandwidthMeter,
-        analyticsCollectorFactory, clock, looper);
-  }
-
-  @SuppressWarnings("WeakerAccess")
-  //protected ToroExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
-  //    LoadControl loadControl,
-  //    @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
-  //  super(renderersFactory, trackSelector, loadControl, drmSessionManager);
-  //}
-
-
-
-  private Set<ToroPlayer.OnVolumeChangeListener> listeners;
+  private VolumeChangeListeners listeners;
 
   public final void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (this.listeners == null) this.listeners = new HashSet<>();
+    if (this.listeners == null) this.listeners = new VolumeChangeListeners();
     this.listeners.add(checkNotNull(listener));
   }
 
@@ -94,7 +64,7 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     if (this.listeners != null) this.listeners.clear();
   }
 
-  @CallSuper @Override public void setVolume(float audioVolume) {
+  @CallSuper @Override public final void setVolume(float audioVolume) {
     this.setVolumeInfo(new VolumeInfo(audioVolume == 0, audioVolume));
   }
 
@@ -105,6 +75,7 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     boolean changed = !this.volumeInfo.equals(volumeInfo);
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      // Must be super, to prevent infinite loop.
       super.setVolume(volumeInfo.isMute() ? 0 : volumeInfo.getVolume());
       if (listeners != null) {
         for (ToroPlayer.OnVolumeChangeListener listener : this.listeners) {

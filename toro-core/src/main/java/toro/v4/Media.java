@@ -21,19 +21,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import im.ene.toro.media.DrmMedia;
 
 /**
  * @author eneim (2018/10/02).
- * @since 4.0.0
+ * @since 3.7.0
  */
 public class Media implements Parcelable {
 
   @NonNull private final Uri uri;
   @Nullable private final String extension;
+  @Nullable private final DrmMedia drmMedia;
 
   public Media(@NonNull Uri uri, @Nullable String extension) {
     this.uri = uri;
     this.extension = extension;
+    this.drmMedia = null;
+  }
+
+  public Media(@NonNull Uri uri, @Nullable String extension, @Nullable DrmMedia drmMedia) {
+    this.uri = uri;
+    this.extension = extension;
+    this.drmMedia = drmMedia;
   }
 
   @NonNull public Uri getUri() {
@@ -44,6 +53,10 @@ public class Media implements Parcelable {
     return extension;
   }
 
+  @Nullable public DrmMedia getDrmMedia() {
+    return drmMedia;
+  }
+
   @Override public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
@@ -51,17 +64,17 @@ public class Media implements Parcelable {
     Media media = (Media) o;
 
     if (!uri.equals(media.uri)) return false;
-    return extension != null ? extension.equals(media.extension) : media.extension == null;
+    if (extension != null ? !extension.equals(media.extension) : media.extension != null) {
+      return false;
+    }
+    return drmMedia != null ? drmMedia.equals(media.drmMedia) : media.drmMedia == null;
   }
 
   @Override public int hashCode() {
     int result = uri.hashCode();
     result = 31 * result + (extension != null ? extension.hashCode() : 0);
+    result = 31 * result + (drmMedia != null ? drmMedia.hashCode() : 0);
     return result;
-  }
-
-  @Override public String toString() {
-    return "Media{" + "uri=" + uri + ", extension='" + extension + '\'' + '}';
   }
 
   @Override public int describeContents() {
@@ -71,12 +84,14 @@ public class Media implements Parcelable {
   @Override public void writeToParcel(Parcel dest, int flags) {
     dest.writeParcelable(this.uri, flags);
     dest.writeString(this.extension);
+    dest.writeParcelable(this.drmMedia, flags);
   }
 
   protected Media(Parcel in) {
     //noinspection ConstantConditions
     this.uri = in.readParcelable(Uri.class.getClassLoader());
     this.extension = in.readString();
+    this.drmMedia = in.readParcelable(DrmMedia.class.getClassLoader());
   }
 
   public static final Creator<Media> CREATOR = new Creator<Media>() {

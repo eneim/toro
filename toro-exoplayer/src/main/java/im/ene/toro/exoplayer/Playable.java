@@ -24,6 +24,8 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -107,7 +109,7 @@ public interface Playable {
 
   /**
    * Release all resource. After this, the SimpleExoPlayer is released to the Player pool and the
-   * Playable must call {@link #prepare(boolean)} again to use it again.
+   * Playable must call {@link #prepare(boolean)} again to reuse this.
    */
   void release();
 
@@ -201,7 +203,12 @@ public interface Playable {
   void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener);
 
   // Combine necessary interfaces.
-  interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {
+  interface EventListener extends //
+      Player.EventListener, //
+      VideoListener, //
+      AudioListener, //
+      TextOutput, //
+      MetadataOutput {
 
   }
 
@@ -263,6 +270,18 @@ public interface Playable {
     }
 
     @Override public void onMetadata(Metadata metadata) {
+
+    }
+
+    @Override public void onAudioSessionId(int audioSessionId) {
+
+    }
+
+    @Override public void onAudioAttributesChanged(AudioAttributes audioAttributes) {
+
+    }
+
+    @Override public void onVolumeChanged(float volume) {
 
     }
   }
@@ -357,6 +376,24 @@ public interface Playable {
     @Override public void onMetadata(Metadata metadata) {
       for (EventListener eventListener : this) {
         eventListener.onMetadata(metadata);
+      }
+    }
+
+    @Override public void onAudioSessionId(int audioSessionId) {
+      for (EventListener eventListener : this) {
+        eventListener.onAudioSessionId(audioSessionId);
+      }
+    }
+
+    @Override public void onAudioAttributesChanged(AudioAttributes audioAttributes) {
+      for (EventListener eventListener : this) {
+        eventListener.onAudioAttributesChanged(audioAttributes);
+      }
+    }
+
+    @Override public void onVolumeChanged(float volume) {
+      for (EventListener eventListener : this) {
+        eventListener.onVolumeChanged(volume);
       }
     }
   }

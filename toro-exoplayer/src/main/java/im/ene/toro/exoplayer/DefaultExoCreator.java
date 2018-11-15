@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RestrictTo;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
@@ -33,8 +34,11 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import java.io.IOException;
+import toro.v4.Media;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -46,14 +50,15 @@ import static im.ene.toro.exoplayer.ToroExo.with;
  * @since 3.4.0
  */
 
+@Deprecated
 @SuppressWarnings({ "unused", "WeakerAccess" }) //
 public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   final ToroExo toro;  // per application
   final Config config;
+
   private final TrackSelector trackSelector;  // 'maybe' stateless
   private final LoadControl loadControl;  // stateless
-  private final MediaSourceBuilder mediaSourceBuilder;  // stateless
   private final RenderersFactory renderersFactory;  // stateless
   private final DataSource.Factory mediaDataSourceFactory;  // stateless
   private final DataSource.Factory manifestDataSourceFactory; // stateless
@@ -62,19 +67,26 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   public DefaultExoCreator(@NonNull ToroExo toro, @NonNull Config config) {
     this.toro = checkNotNull(toro);
     this.config = checkNotNull(config);
-    trackSelector = new DefaultTrackSelector(config.meter);
+    trackSelector = new DefaultTrackSelector();
     loadControl = config.loadControl;
-    mediaSourceBuilder = config.mediaSourceBuilder;
     renderersFactory = new DefaultRenderersFactory(this.toro.context, config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
-      baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
+      baseFactory = new DefaultHttpDataSourceFactory(toro.appName);
     }
-    DataSource.Factory factory = new DefaultDataSourceFactory(this.toro.context,  //
-        config.meter, baseFactory);
-    if (config.cache != null) factory = new CacheDataSourceFactory(config.cache, factory);
+    DataSource.Factory factory =
+        new DefaultDataSourceFactory(this.toro.context, config.meter, baseFactory);
+    if (config.cache != null) {
+      factory = new CacheDataSourceFactory(config.cache, factory, new FileDataSourceFactory(),
+          /* cacheWriteDataSinkFactory= */ null, CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
+          /* eventListener= */ null);
+    }
     mediaDataSourceFactory = factory;
     manifestDataSourceFactory = new DefaultDataSourceFactory(this.toro.context, this.toro.appName);
+  }
+
+  public DefaultExoCreator(@NonNull ToroExo toro) {
+    this(toro, toro.getDefaultConfig());
   }
 
   public DefaultExoCreator(Context context, Config config) {
@@ -88,9 +100,9 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     DefaultExoCreator that = (DefaultExoCreator) o;
 
     if (!toro.equals(that.toro)) return false;
+    if (!config.equals(that.config)) return false;
     if (!trackSelector.equals(that.trackSelector)) return false;
     if (!loadControl.equals(that.loadControl)) return false;
-    if (!mediaSourceBuilder.equals(that.mediaSourceBuilder)) return false;
     if (!renderersFactory.equals(that.renderersFactory)) return false;
     if (!mediaDataSourceFactory.equals(that.mediaDataSourceFactory)) return false;
     return manifestDataSourceFactory.equals(that.manifestDataSourceFactory);
@@ -100,18 +112,22 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     int result = toro.hashCode();
     result = 31 * result + trackSelector.hashCode();
     result = 31 * result + loadControl.hashCode();
-    result = 31 * result + mediaSourceBuilder.hashCode();
+    result = 31 * result + config.mediaSourceBuilder.hashCode();
     result = 31 * result + renderersFactory.hashCode();
     result = 31 * result + mediaDataSourceFactory.hashCode();
     result = 31 * result + manifestDataSourceFactory.hashCode();
     return result;
   }
 
-  final TrackSelector getTrackSelector() {
+  @RestrictTo(RestrictTo.Scope.LIBRARY) public final TrackSelector getTrackSelector() {
     return trackSelector;
   }
 
   @Nullable @Override public Context getContext() {
+    return toro.context;
+  }
+
+  @NonNull @Override public Context requestContext() {
     return toro.context;
   }
 
@@ -121,8 +137,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
-    return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, fileExt, new Handler(),
-        manifestDataSourceFactory, mediaDataSourceFactory, this);
+    return config.mediaSourceBuilder.buildMediaSource(this.toro.context, uri, fileExt,
+        new Handler(), manifestDataSourceFactory, mediaDataSourceFactory, this);
   }
 
   @NonNull @Override //
@@ -180,5 +196,19 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   @Override
   public void onMediaPeriodReleased(int windowIndex, MediaSource.MediaPeriodId mediaPeriodId) {
     // no-ops
+  }
+
+  ////
+
+  @NonNull @Override public SimpleExoPlayer createPlayer(@NonNull Media media) {
+    return null;
+  }
+
+  @NonNull @Override public MediaSource createMediaSource(@NonNull Media media) {
+    return null;
+  }
+
+  @NonNull @Override public Playable createPlayable(@NonNull Media media) {
+    return null;
   }
 }

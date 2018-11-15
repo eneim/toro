@@ -28,14 +28,13 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.ExoPlayerDispatcher;
-import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
 import im.ene.toro.widget.PressablePlayerSelector;
 import toro.v4.Media;
-import toro.v4.MediaHub;
+import toro.v4.exo.MediaHub;
 
 /**
  * @author eneim (7/1/17).
@@ -50,6 +49,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   ToroPlayerHelper helper;
   Uri mediaUri;
+  Media media;
 
   @BindView(R.id.thumbnail) ImageView thumbnail;
   @BindView(R.id.player) PlayerView playerView;
@@ -74,7 +74,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
       // helper = new ExoPlayerViewHelper(this, mediaUri);
-      helper = MediaHub.getHub(itemView.getContext()).requestHelper(this, new Media(mediaUri, null));
+      helper = MediaHub.get(itemView.getContext()).requestHelper(this, media);
       helper.addPlayerEventListener(new EventListener() {
         @Override public void onFirstFrameRendered() {
           thumbnail.setVisibility(View.GONE);
@@ -93,7 +93,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
         }
 
         @Override public void onCompleted() {
-
+          thumbnail.setVisibility(View.VISIBLE);
         }
       });
     }
@@ -116,8 +116,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   @Override public void release() {
     thumbnail.setVisibility(View.VISIBLE);
     if (helper != null) {
-      MediaHub.getHub(itemView.getContext()).releaseHelper(helper);
-      // helper.release();
+      helper.release();
       helper = null;
     }
   }
@@ -130,12 +129,15 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
     return getAdapterPosition();
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
   void bind(Content.Media media) {
     this.mediaUri = media.mediaUri;
-    Glide.with(itemView).load("https://cdn.pixabay.com/photo/2018/02/06/22/43/painting-3135875_960_720.jpg").into(thumbnail);
+    this.media = new Media(this.mediaUri, null);
+    Glide.with(itemView)
+        .load("https://cdn.pixabay.com/photo/2018/02/06/22/43/painting-3135875_960_720.jpg")
+        .into(thumbnail);
   }
 }

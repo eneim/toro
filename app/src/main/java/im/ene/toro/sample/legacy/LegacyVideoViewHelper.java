@@ -141,11 +141,13 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     });
 
     this.playerView.setPlayerEventListener(new ToroVideoView.PlayerEventListener() {
+      @SuppressWarnings("ConstantConditions") //
       @Override public void onPlay() {
         playWhenReady = true;
         LegacyVideoViewHelper.super.onPlayerStateUpdated(playWhenReady, playerState);
       }
 
+      @SuppressWarnings("ConstantConditions") //
       @Override public void onPause() {
         playWhenReady = false;
         LegacyVideoViewHelper.super.onPlayerStateUpdated(playWhenReady, playerState);
@@ -178,13 +180,11 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     return new PlaybackInfo(C.INDEX_UNSET, playbackInfo.getResumePosition());
   }
 
-  @Deprecated
-  @Override public void setVolume(float volume) {
+  @Deprecated @Override public void setVolume(float volume) {
     this.setVolumeInfo(new VolumeInfo(volume == 0, volume));
   }
 
-  @Deprecated
-  @Override public float getVolume() {
+  @Deprecated @Override public float getVolume() {
     return volumeInfo.getVolume();
   }
 
@@ -195,10 +195,8 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
       mediaPlayer.setVolume(volume, volume);
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      if (volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          listener.onVolumeChanged(volumeInfo);
-        }
+      for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+        listener.onVolumeChanged(volumeInfo);
       }
     }
   }

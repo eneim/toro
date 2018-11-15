@@ -48,7 +48,6 @@ import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.R;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -303,7 +302,6 @@ public class Container extends RecyclerView {
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
-    Log.w(TAG, "onScrollStateChanged() called with: state = [" + state + "]");
     // Need to handle the dead playback even when the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
     // 1. Find players those are managed but not qualified to play anymore.
@@ -345,11 +343,20 @@ public class Container extends RecyclerView {
       }
     }
 
+    int[] bound = preLoader != null ? preLoader.getOrderBound(this) : null;
+    if (bound != null) {
+      if (bound.length != 2) throw new IllegalArgumentException("Bound length must be 2.");
+    }
+
     final List<ToroPlayer> source = playerManager.getPlayers();
     int count = source.size();
 
-    int preloadRight = count - 1; // reserve value, will update according to the candidate list.
-    int preloadLeft = preloadRight - 1;
+    int preloadLeft = bound != null ? bound[0] : -1;
+    int preloadRight = bound != null ? bound[1] : -1;
+
+    if (preloadRight > count - 1) preloadRight = count - 1; // reserve value, will update according to the candidate list.
+    if (preloadLeft < preloadRight - 1) preloadLeft = preloadRight - 1;
+
     int limit = 1;
     if (count >= 1) {
       List<ToroPlayer> candidates = new ArrayList<>();
@@ -361,8 +368,10 @@ public class Container extends RecyclerView {
 
       if (candidates.size() > 0) {
         // Prepare PreLoad indexes
-        preloadLeft = candidates.get(0).getPlayerOrder();
-        preloadRight = candidates.get(candidates.size() - 1).getPlayerOrder();
+        int firstCandidate = candidates.get(0).getPlayerOrder();
+        if (preloadLeft < firstCandidate) preloadLeft = firstCandidate;
+        int lastCandidate = candidates.get(candidates.size() - 1).getPlayerOrder();
+        if (preloadRight > lastCandidate) preloadRight = lastCandidate;
         // Need to make sure the small-big relationship.
         if (preloadRight <= preloadLeft) preloadRight = preloadLeft + 1;
       }

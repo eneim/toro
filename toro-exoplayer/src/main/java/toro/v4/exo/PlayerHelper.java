@@ -14,41 +14,62 @@
  * limitations under the License.
  */
 
-package toro.v4;
+package toro.v4.exo;
 
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.Beta;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
+import toro.v4.Media;
+import toro.v4.exo.factory.ExoPlayerManager;
+import toro.v4.exo.factory.MediaSourceFactoryProvider;
 
 /**
  * @author eneim (2018/10/03).
- * @since 4.0.0
+ * @since 3.7.0
  */
-final class PlayerHelper extends ToroPlayerHelper {
+@SuppressWarnings("WeakerAccess") //
+public class PlayerHelper extends ToroPlayerHelper {
 
-  final Media media;
-  final Playable playable;
-  @NonNull private final MyEventListeners listeners;
+  @NonNull //
+  private final MyEventListeners listeners;
+  protected final boolean lazyPrepare;
+  protected final Playable playable;
 
-  PlayerHelper(@NonNull ToroPlayer player, Playable playable, Media media) {
+  public PlayerHelper(@NonNull ToroPlayer player, @NonNull Media media,
+      ExoPlayerManager playerProvider, MediaSourceFactoryProvider mediaSourceFactoryProvider,
+      boolean lazyPrepare) {
+    super(player);
+    this.playable = new DefaultPlayable( //
+        player.getPlayerView().getContext().getApplicationContext(), //
+        media, mediaSourceFactoryProvider, playerProvider);
+    this.listeners = new MyEventListeners();
+    this.lazyPrepare = lazyPrepare;
+  }
+
+  public PlayerHelper(@NonNull ToroPlayer player, Playable playable, boolean lazyPrepare) {
     super(player);
     this.playable = playable;
-    this.media = media;
     this.listeners = new MyEventListeners();
+    this.lazyPrepare = lazyPrepare;
+  }
+
+  public PlayerHelper(@NonNull ToroPlayer player, Playable playable) {
+    this(player, playable, true);
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
     playable.addOnVolumeChangeListener(this.volumeChangeListeners);
-    playable.addEventListener(listeners);
+    playable.addEventListener(this.listeners);
     playable.addErrorListener(this.errorListeners);
 
     playable.setPlaybackInfo(playbackInfo);
-    playable.prepare(false);
     playable.setPlayerView((PlayerView) player.getPlayerView());
+    playable.prepare(!this.lazyPrepare);
   }
 
   @Override public void release() {
@@ -56,41 +77,41 @@ final class PlayerHelper extends ToroPlayerHelper {
     playable.setPlayerView(null);
 
     playable.removeErrorListener(this.errorListeners);
-    playable.removeEventListener(listeners);
+    playable.removeEventListener(this.listeners);
     playable.removeOnVolumeChangeListener(this.volumeChangeListeners);
     playable.release();
   }
 
   @Override public void play() {
-    playable.play();
+    if (playable != null) playable.play();
   }
 
   @Override public void pause() {
-    playable.pause();
+    if (playable != null) playable.pause();
   }
 
   @Override public boolean isPlaying() {
-    return playable.isPlaying();
+    return playable != null && playable.isPlaying();
   }
 
   @Override public void setVolume(float volume) {
-    playable.setVolume(volume);
+    throw new UnsupportedOperationException("Deprecated");
   }
 
   @Override public float getVolume() {
-    return playable.getVolume();
+    throw new UnsupportedOperationException("Deprecated");
   }
 
   @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    playable.setVolumeInfo(volumeInfo);
+    if (playable != null) playable.setVolumeInfo(volumeInfo);
   }
 
   @NonNull @Override public VolumeInfo getVolumeInfo() {
-    return playable.getVolumeInfo();
+    return playable != null ? playable.getVolumeInfo() : new VolumeInfo(false, 1.0f);
   }
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
-    return playable.getPlaybackInfo();
+    return playable != null ? playable.getPlaybackInfo() : PlaybackInfo.SCRAP;
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.
@@ -108,5 +129,9 @@ final class PlayerHelper extends ToroPlayerHelper {
         listener.onFirstFrameRendered();
       }
     }
+  }
+
+  @Beta public Playable getPlayable() {
+    return playable;
   }
 }

@@ -37,18 +37,20 @@ public final class BaseMeter<T extends BandwidthMeter, S extends TransferListene
     implements BandwidthMeter, TransferListener {
 
   @NonNull protected final T bandwidthMeter;
-  @NonNull protected final S transferListener;
+  @NonNull protected final TransferListener transferListener;
 
-  @SuppressWarnings("WeakerAccess") //
-  @Deprecated public BaseMeter(@NonNull T bandwidthMeter, @NonNull S transferListener) {
+  @SuppressWarnings({ "WeakerAccess" }) //
+  @Deprecated public BaseMeter(@NonNull T bandwidthMeter,
+      @SuppressWarnings("unused") @NonNull S transferListener) {
     this.bandwidthMeter = bandwidthMeter;
-    this.transferListener = transferListener;
+    //noinspection ConstantConditions,unchecked
+    this.transferListener = bandwidthMeter.getTransferListener();
   }
 
   public BaseMeter(@NonNull T bandwidthMeter) {
     this.bandwidthMeter = bandwidthMeter;
     //noinspection ConstantConditions,unchecked
-    this.transferListener = (S) this.bandwidthMeter.getTransferListener();
+    this.transferListener = this.bandwidthMeter.getTransferListener();
   }
 
   @Override public long getBitrateEstimate() {

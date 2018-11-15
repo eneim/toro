@@ -26,13 +26,13 @@ import android.widget.Button
 import butterknife.ButterKnife
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.DebugTextViewHelper
-import im.ene.toro.exoplayer.ExoPlayable
 import im.ene.toro.exoplayer.Playable
-import im.ene.toro.exoplayer.ToroExo
 import im.ene.toro.media.VolumeInfo
 import kotlinx.android.synthetic.main.activity_demo_playable.debugText
 import kotlinx.android.synthetic.main.activity_demo_playable.playerView
 import toro.demo.exoplayer.R
+import toro.v4.Media
+import toro.v4.exo.MediaHub
 
 /**
  * @author eneim (2018/02/25).
@@ -41,21 +41,22 @@ import toro.demo.exoplayer.R
 class PlayableDemoActivity : AppCompatActivity() {
   companion object {
     private val video =
-    // Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4");
-        Uri.parse("file:///android_asset/bbb/video.mp4")
+        Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4")
+    //     Uri.parse("file:///android_asset/bbb/video.mp4")
+
+    private val media = Media(video, "mp4")
   }
 
   var playable: Playable? = null
   var helper: DebugTextViewHelper? = null
 
   private fun release() {
-    if (playable != null) {
-      playable!!.pause()
-      playable!!.release()
-      playable = null
+    playable?.run {
+      this.pause()
+      this.release()
     }
-
-    ToroExo.with(this).cleanUp()
+    playable = null
+    MediaHub.get(this).cleanUp()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,18 +64,14 @@ class PlayableDemoActivity : AppCompatActivity() {
     setContentView(R.layout.activity_demo_playable)
     ButterKnife.bind(this)
 
-    playable = lastCustomNonConfigurationInstance as Playable?
-    if (playable == null) {
-      playable = ExoPlayable(
-          /* DemoApp.exoCreator */ // un-comment to use custom ExoCreator
-          ToroExo.with(this).defaultCreator, video, "mp4")
-          .also {
-            it.prepare(true)
-            it.play()
-          }
+    // Get from cache or create new.
+    val playable = lastCustomNonConfigurationInstance as? Playable ?: //
+    MediaHub.get(this).createPlayable(media).also { it.prepare(true) }
+    // Update Playable to newly created Activity.
+    this.playable = playable.also {
+      it.playerView = playerView
     }
-
-    playable!!.playerView = playerView
+    // Playable must be prepared, and its MediaSource is also prepared already.
     helper = DebugTextViewHelper(playerView!!.player as SimpleExoPlayer, debugText)
     preparePlayableControlButtons()
   }
@@ -91,13 +88,11 @@ class PlayableDemoActivity : AppCompatActivity() {
 
   override fun onDestroy() {
     super.onDestroy()
-    if (isFinishing) release()
+    if (!isChangingConfigurations) release()
   }
 
   // Save this for config change.
-  override fun onRetainCustomNonConfigurationInstance(): Any? {
-    return playable
-  }
+  override fun onRetainCustomNonConfigurationInstance() = this.playable
 
   // Dynamically add buttons to control the Playable instance.
   private fun preparePlayableControlButtons() {
@@ -105,21 +100,21 @@ class PlayableDemoActivity : AppCompatActivity() {
     buttonContainer.removeAllViews()
     val inflater = LayoutInflater.from(buttonContainer.context)
 
-    buttonContainer.addCustomButton(inflater, "Play", { playable!!.play() })
-    buttonContainer.addCustomButton(inflater, "Pause", { playable!!.pause() })
-    buttonContainer.addCustomButton(inflater, "Mute",
-        { playable!!.volumeInfo = VolumeInfo(true, 0.0F) })
-    buttonContainer.addCustomButton(inflater, "Un Mute",
-        { playable!!.volumeInfo = VolumeInfo(false, 1.0F) })
+    buttonContainer.addCustomButton(inflater, "Play") { playable!!.play() }
+    buttonContainer.addCustomButton(inflater, "Pause") { playable!!.pause() }
+    buttonContainer.addCustomButton(inflater, "Mute"
+    ) { playable!!.volumeInfo = VolumeInfo(true, 0.0F) }
+    buttonContainer.addCustomButton(inflater, "Un Mute"
+    ) { playable!!.volumeInfo = VolumeInfo(false, 1.0F) }
 
     // Immediately reset current playback and start it all over again
-    buttonContainer.addCustomButton(inflater, "Replay", {
-      if (playable != null) (playable as Playable).apply {
+    buttonContainer.addCustomButton(inflater, "Replay") {
+      playable?.run {
         this.pause()
         this.reset()
         this.play()
       }
-    })
+    }
   }
 }
 

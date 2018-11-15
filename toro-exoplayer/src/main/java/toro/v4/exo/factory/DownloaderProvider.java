@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,17 @@
  * limitations under the License.
  */
 
-package im.ene.toro.media;
+package toro.v4.exo.factory;
 
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import java.util.HashMap;
+import com.google.android.exoplayer2.offline.DownloadManager;
 
 /**
- * @author eneim | 6/5/17.
- *
- * A definition of DRM media type.
+ * @author eneim (2018/10/13).
  */
+public interface DownloaderProvider {
 
-public interface DrmMedia extends Parcelable {
+  @Nullable Downloader provideDownloader();
 
-  // DRM Scheme
-  @NonNull String getType();
-
-  @Nullable String getLicenseUrl();
-
-  // Array --> Serializable
-  @Nullable String[] getKeyRequestPropertiesArray();
-
-  // Serializable
-  @Nullable HashMap<String, String> getOptionalKeyRequestParameters();
-
-  boolean multiSession();
+  @Nullable DownloadManager provideDownloadManager();
 }

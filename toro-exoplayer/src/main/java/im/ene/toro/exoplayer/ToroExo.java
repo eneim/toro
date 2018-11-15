@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import toro.v4.exo.MediaHub;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;
@@ -70,15 +71,16 @@ import static java.lang.Runtime.getRuntime;
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
+ * @deprecated use {@link MediaHub} instead.
  */
+@Deprecated public final class ToroExo {
 
-public final class ToroExo {
-
-  private static final String TAG = "ToroExo";
+  @SuppressWarnings("unused") private static final String TAG = "ToroExo";
 
   // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
   @SuppressWarnings("WeakerAccess") //
-  public static final int MAX_POOL_SIZE = Math.max(Util.SDK_INT / 6, getRuntime().availableProcessors());
+  public static final int MAX_POOL_SIZE =
+      Math.max(Util.SDK_INT / 6, getRuntime().availableProcessors());
   @SuppressLint("StaticFieldLeak")  //
   static volatile ToroExo toro;
 
@@ -96,7 +98,7 @@ public final class ToroExo {
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
 
-  private Config defaultConfig; // will be created on the first time it is used.
+  private Config defaultConfig;
 
   private ToroExo(@NonNull Context context /* Application context */) {
     this.context = context;
@@ -126,7 +128,7 @@ public final class ToroExo {
   }
 
   @SuppressWarnings("WeakerAccess") public final Config getDefaultConfig() {
-    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
+    if (defaultConfig == null) defaultConfig = new Config.Builder(this.context).build();
     return defaultConfig;
   }
 
@@ -147,7 +149,7 @@ public final class ToroExo {
    * @param creator the {@link ExoCreator} that is scoped to the {@link SimpleExoPlayer} config.
    * @return an usable {@link SimpleExoPlayer} instance.
    */
-  @NonNull  //
+  @Deprecated @NonNull //
   public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
     SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
     if (player == null) player = creator.createPlayer();
@@ -161,7 +163,7 @@ public final class ToroExo {
    * @param player the {@link SimpleExoPlayer} to be released back to the Pool
    * @return true if player is released to relevant Pool, false otherwise.
    */
-  @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
+  @Deprecated @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
   public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
     return getPool(checkNotNull(creator)).release(player);
   }
@@ -263,16 +265,19 @@ public final class ToroExo {
 
   // Share the code of setting Volume. For use inside library only.
   @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static void setVolumeInfo(@NonNull SimpleExoPlayer player,
+  public static boolean setVolumeInfo(@NonNull SimpleExoPlayer player,
       @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
-      ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
+      return ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
     } else {
+      float current = player.getVolume();
+      boolean changed = volumeInfo.getVolume() == current || (current == 0 && volumeInfo.isMute());
       if (volumeInfo.isMute()) {
         player.setVolume(0f);
       } else {
         player.setVolume(volumeInfo.getVolume());
       }
+      return changed;
     }
   }
 
@@ -285,4 +290,17 @@ public final class ToroExo {
       return new VolumeInfo(volume == 0, volume);
     }
   }
+
+  //// Added API 2018/10/11, v4
+
+  /// For a specific Media, we want to cache the ExoPlayer instance that is capable of playing it.
+  /// Also, [1] we need to have a way so that this ExoPlayer is also capable of using other Media as well.
+  /// [2] We may need more than one ExoPlayer instance for a Media in case the client plays the same
+  /// Media from 2 or more ToroPlayer.
+
+  /// [Media] --> [Config] --> [ExoCreator] --> [SimpleExoCreator]
+  /// Dependencies:
+  /// - From Media instance produce Config (interface: ConfigProvider).
+  /// - From Config instance produce ExoCreator (interface: ExoCreatorProvider).
+  /// - Using ExoCreator to create SimpleExoPlayer instance on demand.
 }

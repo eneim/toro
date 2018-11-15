@@ -22,6 +22,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import im.ene.toro.annotations.RemoveIn;
+import toro.v4.Media;
 
 /**
  * A simple interface whose implementation helps Client to easily create {@link SimpleExoPlayer}
@@ -32,7 +34,7 @@ import com.google.android.exoplayer2.source.MediaSource;
  * @author eneim (2018/02/04).
  * @since 3.4.0
  */
-
+@Deprecated //
 public interface ExoCreator {
 
   String TAG = "ToroExo:Creator";
@@ -41,7 +43,9 @@ public interface ExoCreator {
    * Return current Application context used in {@link ToroExo}. An {@link ExoCreator} must be used
    * within Application scope.
    */
-  @Nullable Context getContext();
+  @RemoveIn(version = "4.1.0") @Deprecated @Nullable Context getContext();
+
+  @NonNull Context requestContext();
 
   /**
    * Create a new {@link SimpleExoPlayer} instance. This method should always create new instance of
@@ -50,7 +54,9 @@ public interface ExoCreator {
    *
    * @return a new {@link SimpleExoPlayer} instance.
    */
-  @NonNull SimpleExoPlayer createPlayer();
+  @Deprecated @NonNull SimpleExoPlayer createPlayer();
+
+  @Deprecated @NonNull SimpleExoPlayer createPlayer(@NonNull Media media);
 
   /**
    * Create a {@link MediaSource} from media {@link Uri}.
@@ -59,7 +65,9 @@ public interface ExoCreator {
    * @param fileExt the optional (File) extension of the media Uri.
    * @return a {@link MediaSource} for media {@link Uri}.
    */
-  @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String fileExt);
+  @Deprecated @NonNull MediaSource createMediaSource(@NonNull Uri uri, @Nullable String fileExt);
+
+  @Deprecated @NonNull MediaSource createMediaSource(@NonNull Media media);
 
   // Client just needs the method below to work with Toro, but I prepare both 2 above for custom use-cases.
 
@@ -72,5 +80,7 @@ public interface ExoCreator {
    * @param fileExt the optional (File) extension of the media Uri.
    * @return the {@link Playable} to manage the media {@link Uri}.
    */
-  @NonNull Playable createPlayable(@NonNull Uri uri, @Nullable String fileExt);
+  @Deprecated @NonNull Playable createPlayable(@NonNull Uri uri, @Nullable String fileExt);
+
+  @Deprecated @NonNull Playable createPlayable(@NonNull Media media);
 }

@@ -62,6 +62,7 @@
           android:layout_margin="8dp"
           android:minHeight="120dp"
           android:text="@string/screen_mopub"
+          android:enabled="false"
           />
 
       <android.support.v7.widget.AppCompatButton

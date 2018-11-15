@@ -13,33 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package toro.v4.offline;
+package toro.v4.exo;
 
-import android.app.Notification;
 import android.support.annotation.RequiresPermission;
 import com.google.android.exoplayer2.offline.DownloadManager;
 import com.google.android.exoplayer2.offline.DownloadManager.TaskState;
 import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.scheduler.PlatformScheduler;
-import com.google.android.exoplayer2.ui.DownloadNotificationUtil;
-import com.google.android.exoplayer2.util.NotificationUtil;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.exoplayer.R;
-import toro.v4.MediaHub;
+import im.ene.toro.annotations.Beta;
 
 /** A service for downloading media. */
-public class MediaDownloadService extends DownloadService {
+@Beta public class MediaDownloadService extends DownloadService {
 
-  private static final String CHANNEL_ID = "download_channel";
   private static final int JOB_ID = 1;
-  private static final int FOREGROUND_NOTIFICATION_ID = 0; // Just background ...
 
   public MediaDownloadService() {
     super(FOREGROUND_NOTIFICATION_ID_NONE);
   }
 
   @Override protected DownloadManager getDownloadManager() {
-    return MediaHub.getHub(this).mediaManager.getDownloadManager();
+    return null;
   }
 
   @Override @RequiresPermission(android.Manifest.permission.RECEIVE_BOOT_COMPLETED)
@@ -47,28 +41,15 @@ public class MediaDownloadService extends DownloadService {
     return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
   }
 
-  @Override protected Notification getForegroundNotification(TaskState[] taskStates) {
-    return DownloadNotificationUtil.buildProgressNotification(
-        /* context= */ this, R.drawable.exo_controls_play, CHANNEL_ID,
-        /* contentIntent= */ null,
-        /* message= */ null, taskStates);
-  }
-
+  @SuppressWarnings("StatementWithEmptyBody") //
   @Override protected void onTaskStateChanged(TaskState taskState) {
     if (taskState.action.isRemoveAction) {
       return;
     }
-    Notification notification = null;
     if (taskState.state == TaskState.STATE_COMPLETED) {
-      notification = DownloadNotificationUtil.buildDownloadCompletedNotification(
-          /* context= */ this, R.drawable.exo_controls_play, CHANNEL_ID,
-          /* contentIntent= */ null, Util.fromUtf8Bytes(taskState.action.data));
+      // TODO [20181008] handle this.
     } else if (taskState.state == TaskState.STATE_FAILED) {
-      notification = DownloadNotificationUtil.buildDownloadFailedNotification(
-          /* context= */ this, R.drawable.exo_controls_play, CHANNEL_ID,
-          /* contentIntent= */ null, Util.fromUtf8Bytes(taskState.action.data));
+      // TODO [20181008] handle this
     }
-    int notificationId = FOREGROUND_NOTIFICATION_ID + 1 + taskState.taskId;
-    NotificationUtil.setNotification(this, notificationId, notification);
   }
 }

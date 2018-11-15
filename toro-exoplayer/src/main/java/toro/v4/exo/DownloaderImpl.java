@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package toro.v4.offline;
+package toro.v4.exo;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
@@ -39,8 +40,8 @@ import com.google.android.exoplayer2.source.smoothstreaming.offline.SsDownloadHe
 import com.google.android.exoplayer2.ui.DefaultTrackNameProvider;
 import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+import im.ene.toro.annotations.Beta;
 import im.ene.toro.exoplayer.R;
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
+import toro.v4.Media;
+import toro.v4.exo.factory.Downloader;
 
 import static com.google.android.exoplayer2.offline.DownloadAction.getDefaultDeserializers;
 import static com.google.android.exoplayer2.util.Util.getUtf8Bytes;
@@ -60,53 +63,56 @@ import static com.google.android.exoplayer2.util.Util.getUtf8Bytes;
  * it's expected that state will be stored directly in the application's media database, so that it
  * can be queried efficiently together with other information about the media.
  */
-public class DownloadTracker implements DownloadManager.Listener {
+@Beta class DownloaderImpl implements Downloader {
 
   /** Listens for changes in the tracked downloads. */
   public interface Listener {
 
     /** Called when the tracked downloads changed. */
-    void onDownloadsChanged();
+    void onDownloadsChanged(Uri uri);
   }
 
   private static final String TAG = "Toro:Lib:Tracker";
 
-  @SuppressWarnings("WeakerAccess") final Context context;
-  @SuppressWarnings("WeakerAccess") final ActionFile actionFile;
-  @SuppressWarnings("WeakerAccess") final TrackNameProvider trackNameProvider;
+  @SuppressWarnings("WeakerAccess") //
+  final ActionFile actionFile;
+  @SuppressWarnings("WeakerAccess") //
+  final Context context;
+  @SuppressWarnings({ "FieldCanBeLocal", "unused" }) //
+  private final TrackNameProvider trackNameProvider;
   private final Handler actionFileWriteHandler;
-  private final DataSource.Factory dataSourceFactory;
+  private final DataSource.Factory manifestDataSourceFactory;
   private final HashMap<Uri, DownloadAction> trackedDownloadStates;
   private final CopyOnWriteArraySet<Listener> listeners;
 
-  DownloadTracker(Context context, DataSource.Factory dataSourceFactory, File actionFile,
+  DownloaderImpl(Context context, DataSource.Factory manifestDataSourceFactory, File actionFile,
       DownloadAction.Deserializer... deserializers) {
     this.context = context.getApplicationContext();
-    this.dataSourceFactory = dataSourceFactory;
+    this.manifestDataSourceFactory = manifestDataSourceFactory;
     this.actionFile = new ActionFile(actionFile);
     trackNameProvider = new DefaultTrackNameProvider(context.getResources());
     listeners = new CopyOnWriteArraySet<>();
     trackedDownloadStates = new HashMap<>();
-    HandlerThread actionFileWriteThread = new HandlerThread("DownloadTracker");
+    HandlerThread actionFileWriteThread = new HandlerThread("Toro:DownloadTracker");
     actionFileWriteThread.start();
     actionFileWriteHandler = new Handler(actionFileWriteThread.getLooper());
     loadTrackedActions(deserializers.length > 0 ? deserializers : getDefaultDeserializers());
   }
 
-  public void addListener(Listener listener) {
+  void addListener(Listener listener) {
     listeners.add(listener);
   }
 
-  public void removeListener(Listener listener) {
+  void removeListener(Listener listener) {
     listeners.remove(listener);
   }
 
-  public boolean isDownloaded(Uri uri) {
+  private boolean isDownloaded(Uri uri) {
     return trackedDownloadStates.containsKey(uri);
   }
 
   // This method is used to create MediaSource for downloaded Media/Uri.
-  public List<StreamKey> getOfflineStreamKeys(Uri uri) {
+  @Override public List<StreamKey> getOfflineStreamKeys(Uri uri) {
     if (!trackedDownloadStates.containsKey(uri)) {
       return Collections.emptyList();
     }
@@ -114,14 +120,23 @@ public class DownloadTracker implements DownloadManager.Listener {
     return trackedDownloadStates.get(uri).getKeys();
   }
 
-  public void toggleDownload(String name, Uri uri, String extension) {
-    if (isDownloaded(uri)) {
-      DownloadAction removeAction = getDownloadHelper(uri, extension) //
-          .getRemoveAction(getUtf8Bytes(name));
-      startServiceWithAction(removeAction);
-    } else {
-      HelperCallbackImpl helper = new HelperCallbackImpl(getDownloadHelper(uri, extension), name);
+  @Override public void download(Media media) {
+    if (!isDownloaded(media.getUri())) {
+      HelperCallbackImpl helper =
+          new HelperCallbackImpl(getDownloadHelper(media.getUri(), media.getExtension()),
+              media.toString());
       helper.prepare();
+    } else {
+      // Do nothing
+    }
+  }
+
+  @Override public void unload(Media media) {
+    if (isDownloaded(media.getUri())) {
+      DownloadAction removeAction =
+          getDownloadHelper(media.getUri(), media.getExtension()).getRemoveAction(
+              getUtf8Bytes(media.toString()));
+      startServiceWithAction(removeAction);
     }
   }
 
@@ -137,7 +152,7 @@ public class DownloadTracker implements DownloadManager.Listener {
         || (!action.isRemoveAction && taskState.state == TaskState.STATE_FAILED)) {
       // A download has been removed, or has failed. Stop tracking it.
       if (trackedDownloadStates.remove(uri) != null) {
-        handleTrackedDownloadStatesChanged();
+        handleTrackedDownloadStatesChanged(uri);
       }
     }
   }
@@ -159,9 +174,9 @@ public class DownloadTracker implements DownloadManager.Listener {
     }
   }
 
-  private void handleTrackedDownloadStatesChanged() {
+  private void handleTrackedDownloadStatesChanged(Uri uri) {
     for (Listener listener : listeners) {
-      listener.onDownloadsChanged();
+      listener.onDownloadsChanged(uri);
     }
 
     final DownloadAction[] actions = trackedDownloadStates.values().toArray(new DownloadAction[0]);
@@ -176,31 +191,30 @@ public class DownloadTracker implements DownloadManager.Listener {
     });
   }
 
-  @SuppressWarnings("WeakerAccess") void startDownload(DownloadAction action) {
+  @SuppressWarnings("WeakerAccess") //
+  void startDownload(DownloadAction action) {
     if (trackedDownloadStates.containsKey(action.uri)) {
       // This content is already being downloaded. Do nothing.
       return;
     }
     trackedDownloadStates.put(action.uri, action);
-    handleTrackedDownloadStatesChanged();
+    handleTrackedDownloadStatesChanged(action.uri);
     startServiceWithAction(action);
   }
 
   private void startServiceWithAction(DownloadAction action) {
-    android.util.Log.d(TAG, "startServiceWithAction() called with: action = [" + action + "]");
     DownloadService.startWithAction(context, MediaDownloadService.class, action, false);
   }
 
-  // FIXME [20181003]
   private DownloadHelper getDownloadHelper(Uri uri, String extension) {
     int type = Util.inferContentType(uri, extension);
     switch (type) {
       case C.TYPE_DASH:
-        return new DashDownloadHelper(uri, dataSourceFactory);
+        return new DashDownloadHelper(uri, manifestDataSourceFactory);
       case C.TYPE_SS:
-        return new SsDownloadHelper(uri, dataSourceFactory);
+        return new SsDownloadHelper(uri, manifestDataSourceFactory);
       case C.TYPE_HLS:
-        return new HlsDownloadHelper(uri, dataSourceFactory);
+        return new HlsDownloadHelper(uri, manifestDataSourceFactory);
       case C.TYPE_OTHER:
         return new ProgressiveDownloadHelper(uri);
       default:
@@ -237,9 +251,9 @@ public class DownloadTracker implements DownloadManager.Listener {
           }
         }
       }
-      DownloadAction downloadAction =
-          this.downloadHelper.getDownloadAction(getUtf8Bytes(name), trackKeys);
-      startDownload(downloadAction);
+
+      DownloadAction action = this.downloadHelper.getDownloadAction(getUtf8Bytes(name), trackKeys);
+      startDownload(action);
     }
 
     private boolean shouldDownload(Format track) {

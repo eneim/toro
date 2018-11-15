@@ -31,6 +31,7 @@ import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import java.util.concurrent.CopyOnWriteArraySet;
+import toro.v4.exo.DefaultPlayable;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -46,9 +47,10 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
  * change must guarantee that all {@link EventListener} are cleaned up on config change.
  *
  * @author eneim (2018/02/25).
+ * @deprecated use {@link DefaultPlayable} instead.
  */
 @SuppressWarnings("WeakerAccess") //
-class PlayableImpl implements Playable {
+@Deprecated class PlayableImpl implements Playable {
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
@@ -77,6 +79,7 @@ class PlayableImpl implements Playable {
   @CallSuper @Override public void prepare(boolean prepareSource) {
     if (prepareSource) {
       ensureMediaSource();
+      // player instance will be nonnull here.
       ensurePlayerView();
     }
   }
@@ -140,7 +143,7 @@ class PlayableImpl implements Playable {
         player.removeMetadataOutput(listeners);
         listenerApplied = false;
       }
-      with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+      with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
           .releasePlayer(this.creator, this.player);
     }
     this.player = null;
@@ -273,7 +276,7 @@ class PlayableImpl implements Playable {
   private void ensurePlayer() {
     if (player == null) {
       sourcePrepared = false;
-      player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+      player = with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
       if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
         for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {

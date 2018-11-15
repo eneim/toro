@@ -23,6 +23,10 @@ import im.ene.toro.widget.Container;
  */
 public interface PreLoader {
 
+  // Return an array of 2 integers, that are the first and last completely visible item positions.
+  // Result must be of length 2.
+  int[] getOrderBound(Container container);
+
   /**
    * Called by {@link Container} to request for Player preload. Implement of this interface should
    * consider to prepare any Players whose orders are less than beforeOrder and bigger than

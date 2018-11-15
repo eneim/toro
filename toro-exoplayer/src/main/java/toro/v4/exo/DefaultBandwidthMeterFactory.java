@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Nam Nguyen, nam@ene.im
+ * Copyright (c) 2018 Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,31 +14,19 @@
  * limitations under the License.
  */
 
-package im.ene.toro.media;
+package toro.v4.exo;
 
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import java.util.HashMap;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import toro.v4.exo.factory.BandwidthMeterFactory;
 
 /**
- * @author eneim | 6/5/17.
- *
- * A definition of DRM media type.
+ * @author eneim (2018/11/01).
  */
+public class DefaultBandwidthMeterFactory implements BandwidthMeterFactory {
 
-public interface DrmMedia extends Parcelable {
-
-  // DRM Scheme
-  @NonNull String getType();
-
-  @Nullable String getLicenseUrl();
-
-  // Array --> Serializable
-  @Nullable String[] getKeyRequestPropertiesArray();
-
-  // Serializable
-  @Nullable HashMap<String, String> getOptionalKeyRequestParameters();
-
-  boolean multiSession();
+  @NonNull @Override public BandwidthMeter createBandwidthMeter() {
+    return new DefaultBandwidthMeter();
+  }
 }
