@@ -50,8 +50,7 @@ import static im.ene.toro.exoplayer.ToroExo.with;
  * @since 3.4.0
  */
 
-@Deprecated
-@SuppressWarnings({ "unused", "WeakerAccess" }) //
+@Deprecated @SuppressWarnings({ "unused", "WeakerAccess" }) //
 public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   final ToroExo toro;  // per application

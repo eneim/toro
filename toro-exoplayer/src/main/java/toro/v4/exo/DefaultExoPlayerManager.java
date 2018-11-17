@@ -83,7 +83,7 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
         drmSessionManagerProvider, //
         new DefaultLoadControl(), //
         new DefaultTrackSelector(), //
-        new DefaultRenderersFactory(context, EXTENSION_RENDERER_MODE_ON) //
+        new DefaultRenderersFactory(context.getApplicationContext(), EXTENSION_RENDERER_MODE_ON) //
     );
   }
 

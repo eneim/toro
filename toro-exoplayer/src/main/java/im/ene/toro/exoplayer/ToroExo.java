@@ -37,7 +37,7 @@ import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.media.DrmMedia;
+import im.ene.toro.media.MediaDrm;
 import im.ene.toro.media.VolumeInfo;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -213,7 +213,7 @@ import static java.lang.Runtime.getRuntime;
    * </code></pre>
    */
   @SuppressWarnings("unused") @RequiresApi(18) @Nullable //
-  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull DrmMedia drm) {
+  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull MediaDrm drm) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
     String subString = null;

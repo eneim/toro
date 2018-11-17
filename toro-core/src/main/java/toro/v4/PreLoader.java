@@ -16,12 +16,13 @@
 
 package toro.v4;
 
+import im.ene.toro.annotations.Beta;
 import im.ene.toro.widget.Container;
 
 /**
  * @author eneim (2018/10/04).
  */
-public interface PreLoader {
+@Beta public interface PreLoader {
 
   // Return an array of 2 integers, that are the first and last completely visible item positions.
   // Result must be of length 2.

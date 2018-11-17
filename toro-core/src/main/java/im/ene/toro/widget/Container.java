@@ -139,7 +139,8 @@ public class Container extends RecyclerView {
     super.setRecyclerListener(recyclerListener);
   }
 
-  public final void setPreLoader(@Nullable PreLoader preLoader) {
+  // When it is ready, make this public.
+  /* package private */ final void setPreLoader(@Nullable PreLoader preLoader) {
     this.preLoader = preLoader;
   }
 

@@ -29,6 +29,7 @@ import im.ene.toro.widget.Container
 import toro.demo.ads.R
 import toro.demo.ads.common.BaseViewHolder
 import toro.v4.Media
+import toro.v4.MediaItem
 import toro.v4.exo.MediaHub
 
 /**
@@ -43,7 +44,7 @@ class ImaVideoViewHolder( //
   val exoPlayerView: PlayerView = itemView.findViewById(R.id.playerView)
 
   val mediaUri = Uri.parse(itemView.context.getString(R.string.ima_content_url))!!
-  val media = Media(mediaUri, null)
+  val media = MediaItem(mediaUri, null) as Media
   val adTagUri = Uri.parse(itemView.context.getString(R.string.ima_ad_tag_url))!!
   val adLoader = builder.buildForAdTag(adTagUri)!!
 

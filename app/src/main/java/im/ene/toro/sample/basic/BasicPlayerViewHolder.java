@@ -34,6 +34,7 @@ import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
 import im.ene.toro.widget.PressablePlayerSelector;
 import toro.v4.Media;
+import toro.v4.MediaItem;
 import toro.v4.exo.MediaHub;
 
 /**
@@ -135,7 +136,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   void bind(Content.Media media) {
     this.mediaUri = media.mediaUri;
-    this.media = new Media(this.mediaUri, null);
+    this.media = new MediaItem(this.mediaUri, null);
     Glide.with(itemView)
         .load("https://cdn.pixabay.com/photo/2018/02/06/22/43/painting-3135875_960_720.jpg")
         .into(thumbnail);

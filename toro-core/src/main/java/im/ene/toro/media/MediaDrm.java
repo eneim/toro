@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package toro.v4;
+package im.ene.toro.media;
 
-import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import im.ene.toro.media.MediaDrm;
+import java.util.HashMap;
 
 /**
  * @author eneim (2018/11/16).
  */
-public interface Media extends Parcelable {
+public interface MediaDrm extends Parcelable {
 
-  @NonNull Uri getUri();
+  // DRM Scheme
+  @NonNull String getType();
 
-  @Nullable String getExtension();
+  @Nullable String getLicenseUrl();
 
-  @Nullable MediaDrm getMediaDrm();
+  // Array --> Serializable
+  @Nullable String[] getKeyRequestPropertiesArray();
+
+  // Serializable
+  @Nullable HashMap<String, String> getOptionalKeyRequestParameters();
+
+  boolean multiSession();
 }

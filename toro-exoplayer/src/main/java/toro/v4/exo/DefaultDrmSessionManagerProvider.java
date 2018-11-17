@@ -31,7 +31,7 @@ import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.exoplayer.R;
-import im.ene.toro.media.DrmMedia;
+import im.ene.toro.media.MediaDrm;
 import java.util.HashMap;
 import java.util.UUID;
 import toro.v4.Media;
@@ -58,7 +58,7 @@ public class DefaultDrmSessionManagerProvider implements DrmSessionManagerProvid
 
   @Nullable @Override
   public DrmSessionManager<FrameworkMediaCrypto> provideDrmSessionManager(@NonNull Media media) {
-    DrmMedia drm = media.getDrmMedia();
+    MediaDrm drm = media.getMediaDrm();
     if (drm == null) return null;
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;

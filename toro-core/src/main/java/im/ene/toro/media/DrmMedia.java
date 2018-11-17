@@ -16,29 +16,11 @@
 
 package im.ene.toro.media;
 
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import java.util.HashMap;
-
 /**
  * @author eneim | 6/5/17.
  *
  * A definition of DRM media type.
+ * @deprecated Use {@link MediaDrm} instead.
  */
-
-public interface DrmMedia extends Parcelable {
-
-  // DRM Scheme
-  @NonNull String getType();
-
-  @Nullable String getLicenseUrl();
-
-  // Array --> Serializable
-  @Nullable String[] getKeyRequestPropertiesArray();
-
-  // Serializable
-  @Nullable HashMap<String, String> getOptionalKeyRequestParameters();
-
-  boolean multiSession();
+@Deprecated public interface DrmMedia extends MediaDrm {
 }

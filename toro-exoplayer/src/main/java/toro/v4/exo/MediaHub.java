@@ -50,7 +50,7 @@ import toro.v4.exo.factory.DrmSessionManagerProvider;
 import toro.v4.exo.factory.ExoPlayerManager;
 import toro.v4.exo.factory.MediaSourceFactoryProvider;
 
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
+import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 
 /**
  * @author eneim (2018/09/30).
@@ -122,11 +122,11 @@ public final class MediaHub {
     AdsMediaSource.MediaSourceFactory adsMediaSourceFactory;
 
     public Builder(Context context) {
-      this(context, Util.getUserAgent(context, BuildConfig.LIB_NAME));
+      this(context, Util.getUserAgent(context.getApplicationContext(), BuildConfig.LIB_NAME));
     }
 
     public Builder(Context context, String userAgent) {
-      this.context = context;
+      this.context = context.getApplicationContext();
       this.userAgent = userAgent;
 
       // Common components
@@ -144,7 +144,7 @@ public final class MediaHub {
           drmSessionManagerProvider, //
           new DefaultLoadControl(), //
           new DefaultTrackSelector(), //
-          new DefaultRenderersFactory(context, EXTENSION_RENDERER_MODE_PREFER) //
+          new DefaultRenderersFactory(this.context, EXTENSION_RENDERER_MODE_OFF) //
       );
 
       // MediaSourceFactoryProvider
@@ -225,7 +225,7 @@ public final class MediaHub {
         drmSessionManagerProvider, //
         new DefaultLoadControl(), //
         new DefaultTrackSelector(), //
-        new DefaultRenderersFactory(context, EXTENSION_RENDERER_MODE_PREFER) //
+        new DefaultRenderersFactory(this.context, EXTENSION_RENDERER_MODE_OFF) //
     );
 
     // MediaSourceFactoryProvider

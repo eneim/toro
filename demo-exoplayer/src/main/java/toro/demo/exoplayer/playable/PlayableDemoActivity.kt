@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.activity_demo_playable.debugText
 import kotlinx.android.synthetic.main.activity_demo_playable.playerView
 import toro.demo.exoplayer.R
 import toro.v4.Media
+import toro.v4.MediaItem
 import toro.v4.exo.MediaHub
 
 /**
@@ -44,7 +45,7 @@ class PlayableDemoActivity : AppCompatActivity() {
         Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4")
     //     Uri.parse("file:///android_asset/bbb/video.mp4")
 
-    private val media = Media(video, "mp4")
+    private val media = MediaItem(video, "mp4") as Media
   }
 
   var playable: Playable? = null
