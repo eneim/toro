@@ -685,7 +685,7 @@ public class Container extends RecyclerView {
 
     // Release current players on recreation event only.
     // Note that there are cases where this method is called without the activity destroying/recreating.
-    // For example: in API 26 (my test mostly run on 8.0), when user click to "App Stack" button,
+    // For example: in API 26 (my test mostly run on 8.0), when user click to "Current Apps" button,
     // current Activity will enter the "Stop" state but not be destroyed/recreated and View hierarchy
     // state will be saved (this method is called).
     //

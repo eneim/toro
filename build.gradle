@@ -20,10 +20,10 @@ buildscript {
   ext.kotlin_version = '1.3.10'
   repositories {
     google()
+    mavenCentral()
     jcenter()
     maven { url 'https://maven.fabric.io/public' }
     maven { url 'https://oss.jfrog.org/artifactory/plugins-release' }
-    mavenCentral()
   }
 
   dependencies {
@@ -60,11 +60,11 @@ ext {
 allprojects {
   repositories {
     google()
+    mavenCentral()
+    jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
     maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
-    mavenCentral()
-    jcenter()
   }
 
   configurations {
@@ -101,7 +101,7 @@ task clean(type: Delete) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '4.10.1'
+  gradleVersion = '4.10.2'
   //noinspection GroovyAccessibility
   distributionType = 'ALL'
 }

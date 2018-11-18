@@ -90,7 +90,9 @@ dependencies {
 
   // additional dependencies.
   //noinspection GradleDependency
-  implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
+  implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
+    exclude group: 'com.android.support'
+  }
 
   implementation 'com.jakewharton:butterknife:8.8.1'
   kapt 'com.jakewharton:butterknife-compiler:8.8.1'

@@ -64,7 +64,9 @@ dependencies {
   implementation project(':toro-exoplayer')
 
   //noinspection GradleDependency
-  implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
+  implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
+    exclude group: 'com.android.support'
+  }
 
   implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"

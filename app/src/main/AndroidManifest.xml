@@ -84,7 +84,7 @@
 
     <activity-alias
         android:name=".Launch"
-        android:targetActivity=".basic.BasicListActivity">
+        android:targetActivity=".custom.CustomLayoutActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
