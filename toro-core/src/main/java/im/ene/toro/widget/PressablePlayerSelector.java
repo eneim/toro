@@ -95,7 +95,7 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
     int position = handled ? viewHolder.getAdapterPosition() : NO_POSITION;
     if (handled) handled = position != toPlay.getAndSet(position);
 
-    if (handled) container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);
+    if (handled) container.dispatchLocalScrollChange(RecyclerView.SCROLL_STATE_IDLE);
     return handled;
   }
 
@@ -140,7 +140,7 @@ public class PressablePlayerSelector implements PlayerSelector, OnLongClickListe
     Container container = weakContainer.get();
     if (container == null) return false;
     if (position != toPlay.getAndSet(position)) {
-      container.onScrollStateChanged(RecyclerView.SCROLL_STATE_IDLE);
+      container.dispatchLocalScrollChange(RecyclerView.SCROLL_STATE_IDLE);
       return true;
     }
 

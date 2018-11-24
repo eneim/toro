@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.Pools;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -37,6 +38,7 @@ import toro.v4.exo.factory.BandwidthMeterFactory;
 import toro.v4.exo.factory.DrmSessionManagerProvider;
 import toro.v4.exo.factory.ExoPlayerManager;
 
+import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
 
 /**
@@ -56,8 +58,8 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
   private final DrmSessionManagerProvider drmSessionManagerProvider;
 
   // Cache...
-  private final Pools.Pool<SimpleExoPlayer> plainPlayerPool = new Pools.SimplePool<>(3);
-  private final WeakHashMap<SimpleExoPlayer, Long> drmPlayerCache = new WeakHashMap<>();
+  private final Pools.Pool<ExoPlayer> plainPlayerPool = new Pools.SimplePool<>(3);
+  private final WeakHashMap<ExoPlayer, Long> drmPlayerCache = new WeakHashMap<>();
 
   public DefaultExoPlayerManager( //
       Context context, //
@@ -83,25 +85,32 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
         drmSessionManagerProvider, //
         new DefaultLoadControl(), //
         new DefaultTrackSelector(), //
-        new DefaultRenderersFactory(context.getApplicationContext(), EXTENSION_RENDERER_MODE_ON) //
+        new DefaultRenderersFactory(context.getApplicationContext(), EXTENSION_RENDERER_MODE_OFF) //
     );
   }
 
-  @SuppressWarnings("unused")
   public DefaultExoPlayerManager(Context context, BandwidthMeterFactory bandwidthMeterFactory) {
     this(context, bandwidthMeterFactory, null);
   }
 
-  @NonNull @Override public SimpleExoPlayer acquireExoPlayer(@NonNull Media media) {
+  @SuppressWarnings("unused") public DefaultExoPlayerManager(Context context) {
+    this(context, new DefaultBandwidthMeterFactory());
+  }
+
+  /* package */ TrackSelector getTrackSelector() {
+    return trackSelector;
+  }
+
+  @NonNull @Override public ExoPlayer acquireExoPlayer(@NonNull Media media) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager =
         drmSessionManagerProvider == null ? null
             : drmSessionManagerProvider.provideDrmSessionManager(media);
 
     if (drmSessionManager == null) { // No DRM support requires, use Pool to cache plain Player.
       // use Pool for plain player
-      SimpleExoPlayer player = plainPlayerPool.acquire();
+      ExoPlayer player = plainPlayerPool.acquire();
       if (player == null) {
-        player = new ToroExoPlayer( //
+        player = new LazyPlayer( //
             this.context, //
             this.renderersFactory, //
             this.trackSelector, //
@@ -114,7 +123,7 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
       return player;
     } else {
       // Need DRM support, we'd better use clean/new Player instances.
-      SimpleExoPlayer player = new ToroExoPlayer( //
+      ExoPlayer player = new LazyPlayer( //
           this.context, //
           this.renderersFactory, //
           this.trackSelector, //
@@ -128,7 +137,7 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
     }
   }
 
-  @Override public void releasePlayer(@NonNull Media media, @NonNull SimpleExoPlayer player) {
+  @Override public void releasePlayer(@NonNull Media media, @NonNull ExoPlayer player) {
     player.stop(true);
     if (drmPlayerCache.containsKey(player)) {
       player.release();
@@ -139,12 +148,12 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
   }
 
   @Override public final void cleanUp() {
-    for (Map.Entry<SimpleExoPlayer, Long> entry : drmPlayerCache.entrySet()) {
-      SimpleExoPlayer key = entry.getKey();
+    for (Map.Entry<ExoPlayer, Long> entry : drmPlayerCache.entrySet()) {
+      ExoPlayer key = entry.getKey();
       if (key != null) key.release();
     }
     drmPlayerCache.clear();
-    SimpleExoPlayer player;
+    ExoPlayer player;
     while ((player = plainPlayerPool.acquire()) != null) {
       player.release();
     }

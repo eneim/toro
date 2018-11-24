@@ -27,6 +27,7 @@ import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
+import toro.v4.exo.PlayerHelper;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -37,8 +38,9 @@ import static im.ene.toro.exoplayer.ToroExo.with;
  *
  * @author eneim (2018/01/24).
  * @since 3.4.0
+ * @deprecated Use {@link PlayerHelper} instead.
  */
-
+@Deprecated
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
   @NonNull private final ExoPlayable playable;
@@ -145,6 +147,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @SuppressWarnings("WeakerAccess") //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
+  }
+
+  @Override public void setRepeatMode(int repeatMode) {
+    this.playable.setRepeatMode(repeatMode);
+  }
+
+  @Override public int getRepeatMode() {
+    return this.playable.getRepeatMode();
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

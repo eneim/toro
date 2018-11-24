@@ -17,17 +17,18 @@
 package toro.v4.exo.factory;
 
 import android.support.annotation.NonNull;
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ExoPlayer;
 import toro.v4.Media;
 
 /**
  * @author eneim (2018/10/12).
+ * @since 3.7.0.2901
  */
 public interface ExoPlayerManager {
 
-  @NonNull SimpleExoPlayer acquireExoPlayer(@NonNull Media media);
+  @NonNull ExoPlayer acquireExoPlayer(@NonNull Media media);
 
-  void releasePlayer(@NonNull Media media, @NonNull SimpleExoPlayer player);
+  void releasePlayer(@NonNull Media media, @NonNull ExoPlayer player);
 
   void cleanUp();
 }

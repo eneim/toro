@@ -62,8 +62,16 @@ public class DefaultAdsPlayable extends DefaultPlayable {
   }
 
   @CallSuper @Override public void prepare(boolean prepareSource) {
-    this.mediaSource = createAdsMediaSource(media, adsLoader, adsContainer, mediaSourceFactory,
-        adsMediaSourceFactory);
+    // Trick here: we create the MediaSource in advance so parent class won't do this by itself.
+    // Only by this, we can inject the Ads related resource into the playback.
+    // This is not a best way to go, but it is simple enough.
+    this.mediaSource = createAdsMediaSource(
+        media,
+        adsLoader,
+        adsContainer,
+        mediaSourceFactory,
+        adsMediaSourceFactory
+    );
     super.prepare(prepareSource);
   }
 

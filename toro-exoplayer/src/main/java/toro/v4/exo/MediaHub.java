@@ -18,14 +18,16 @@ package toro.v4.exo;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.view.ViewGroup;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
-import com.google.android.exoplayer2.source.ads.AdsMediaSource;
+import com.google.android.exoplayer2.source.ads.AdsMediaSource.MediaSourceFactory;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -43,10 +45,11 @@ import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.VolumeInfo;
 import java.io.File;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import toro.v4.Media;
-import toro.v4.exo.factory.BandwidthMeterFactory;
-import toro.v4.exo.factory.DownloaderProvider;
-import toro.v4.exo.factory.DrmSessionManagerProvider;
+import toro.v4.MediaItem;
 import toro.v4.exo.factory.ExoPlayerManager;
 import toro.v4.exo.factory.MediaSourceFactoryProvider;
 
@@ -56,14 +59,13 @@ import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RE
  * @author eneim (2018/09/30).
  * @since 3.7.0.2900
  *
- * A helper class to access to default implementations of {@link DownloaderProvider}, {@link
- * ExoPlayerManager}, {@link MediaSourceFactoryProvider} and other dependencies with ease.
+ * A helper class to access to default implementations of {@link ExoPlayerManager}, {@link
+ * MediaSourceFactoryProvider} and other dependencies with ease.
  *
  * Client can now create a {@link ToroPlayerHelper} by calling {@link #requestHelper(ToroPlayer,
  * Media)} or build a custom {@link Playable} and use it to create a {@link ToroPlayerHelper} by
  * calling {@link #requestHelper(ToroPlayer, Playable)}.
  */
-@SuppressWarnings({ "unused", "WeakerAccess" }) //
 public final class MediaHub {
 
   private static final String CONTENT_DIR = "toro_content";
@@ -79,17 +81,18 @@ public final class MediaHub {
 
   // On Demand
   private DataSource.Factory upstreamFactory;
-  private AdsMediaSource.MediaSourceFactory adsMediaSourceFactory;
+  private MediaSourceFactory adsMediaSourceFactory;
 
   public static MediaHub get(Context context) {
     if (mediaHub != null && mediaHub.context != context.getApplicationContext()) {
+      // FIXME I think we should through an exception here, as the app context is not consistent.
       mediaHub.cleanUp();
       mediaHub = null;
     }
 
     if (mediaHub == null) {
       synchronized (MediaHub.class) {
-        if (mediaHub == null) mediaHub = new MediaHub(context);
+        if (mediaHub == null) mediaHub = new MediaHub.Builder(context).build();
       }
     }
     return mediaHub;
@@ -107,7 +110,7 @@ public final class MediaHub {
    * // Use
    * MediaHub hub = MediaHub.get(context)
    */
-  public static void setSingleton(MediaHub hub) {
+  @SuppressWarnings("unused") public static void setSingleton(MediaHub hub) {
     if (mediaHub == hub) return;
     if (mediaHub != null) mediaHub.cleanUp();
     mediaHub = hub;
@@ -119,7 +122,7 @@ public final class MediaHub {
 
     ExoPlayerManager playerManager;
     MediaSourceFactoryProvider mediaSourceFactoryProvider;
-    AdsMediaSource.MediaSourceFactory adsMediaSourceFactory;
+    MediaSourceFactory adsMediaSourceFactory;
 
     public Builder(Context context) {
       this(context, Util.getUserAgent(context.getApplicationContext(), BuildConfig.LIB_NAME));
@@ -134,14 +137,11 @@ public final class MediaHub {
       HttpDataSource.Factory httpDataSource =
           new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter.getTransferListener());
 
-      // ExoPlayerProvider
-      DrmSessionManagerProvider drmSessionManagerProvider =
-          new DefaultDrmSessionManagerProvider(this.context, httpDataSource);
-      BandwidthMeterFactory meterFactory = new DefaultBandwidthMeterFactory();
+      // ExoPlayerManager
       playerManager = new DefaultExoPlayerManager( //
           this.context, //
-          meterFactory, //
-          drmSessionManagerProvider, //
+          new DefaultBandwidthMeterFactory(), //
+          new DefaultDrmSessionManagerProvider(this.context, httpDataSource), //
           new DefaultLoadControl(), //
           new DefaultTrackSelector(), //
           new DefaultRenderersFactory(this.context, EXTENSION_RENDERER_MODE_OFF) //
@@ -154,23 +154,24 @@ public final class MediaHub {
       Cache mediaCache = new SimpleCache(contentDir, new LeastRecentlyUsedCacheEvictor(CACHE_SIZE));
       DataSource.Factory upstreamFactory = new DefaultDataSourceFactory(this.context, //
           bandwidthMeter.getTransferListener(), httpDataSource);
-      mediaSourceFactoryProvider = new DefaultMediaSourceFactoryProvider( //
-          this.context, upstreamFactory, mediaCache);
+      mediaSourceFactoryProvider =
+          new DefaultMediaSourceFactoryProvider(this.context, upstreamFactory, mediaCache);
     }
 
+    @SuppressWarnings("unused")
     public Builder setPlayerManager(ExoPlayerManager playerManager) {
       this.playerManager = playerManager;
       return this;
     }
 
-    public Builder setMediaSourceFactoryProvider(
-        MediaSourceFactoryProvider mediaSourceFactoryProvider) {
-      this.mediaSourceFactoryProvider = mediaSourceFactoryProvider;
+    @SuppressWarnings("unused")
+    public Builder setMediaSourceFactoryProvider(MediaSourceFactoryProvider factoryProvider) {
+      this.mediaSourceFactoryProvider = factoryProvider;
       return this;
     }
 
-    public Builder setAdsMediaSourceFactory(
-        AdsMediaSource.MediaSourceFactory adsMediaSourceFactory) {
+    @SuppressWarnings("unused")
+    public Builder setAdsMediaSourceFactory(MediaSourceFactory adsMediaSourceFactory) {
       this.adsMediaSourceFactory = adsMediaSourceFactory;
       return this;
     }
@@ -186,74 +187,52 @@ public final class MediaHub {
     }
   }
 
-  MediaHub(@NonNull Context context, @NonNull String userAgent,
+  @SuppressWarnings("WeakerAccess") MediaHub(
+      @NonNull Context context,
+      @NonNull String userAgent,
       @NonNull ExoPlayerManager playerManager,
       @NonNull MediaSourceFactoryProvider mediaSourceFactoryProvider,
-      AdsMediaSource.MediaSourceFactory adsMediaSourceFactory) {
+      MediaSourceFactory adsMediaSourceFactory
+  ) {
     this.context = context.getApplicationContext();
     this.userAgent = userAgent;
     this.playerManager = playerManager;
     this.mediaSourceFactoryProvider = mediaSourceFactoryProvider;
     this.adsMediaSourceFactory = adsMediaSourceFactory;
+
+    // Adapt from ExoPlayer demo app. Start this on demand.
+    CookieManager cookieManager = new CookieManager();
+    cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+    if (CookieHandler.getDefault() != cookieManager) {
+      CookieHandler.setDefault(cookieManager);
+    }
   }
 
-  MediaHub(@NonNull Context context, @NonNull String userAgent,
-      @NonNull ExoPlayerManager playerManager,
-      @NonNull MediaSourceFactoryProvider mediaSourceFactoryProvider) {
-    this.context = context.getApplicationContext();
-    this.userAgent = userAgent;
-    this.playerManager = playerManager;
-    this.mediaSourceFactoryProvider = mediaSourceFactoryProvider;
-  }
-
-  MediaHub(Context context) {
-    this.context = context.getApplicationContext();
-    this.userAgent = Util.getUserAgent(this.context, BuildConfig.LIB_NAME);
-
-    // Common components
-    DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-    HttpDataSource.Factory httpDataSource =
-        new DefaultHttpDataSourceFactory(userAgent, bandwidthMeter.getTransferListener());
-
-    // ExoPlayerProvider
-    DrmSessionManagerProvider drmSessionManagerProvider =
-        new DefaultDrmSessionManagerProvider(this.context, httpDataSource);
-    BandwidthMeterFactory meterFactory = new DefaultBandwidthMeterFactory();
-    playerManager = new DefaultExoPlayerManager( //
-        this.context, //
-        meterFactory, //
-        drmSessionManagerProvider, //
-        new DefaultLoadControl(), //
-        new DefaultTrackSelector(), //
-        new DefaultRenderersFactory(this.context, EXTENSION_RENDERER_MODE_OFF) //
-    );
-
-    // MediaSourceFactoryProvider
-    File tempDir = this.context.getExternalFilesDir(null);
-    if (tempDir == null) tempDir = this.context.getFilesDir();
-    File contentDir = new File(tempDir, CONTENT_DIR);
-    Cache mediaCache = new SimpleCache(contentDir, new LeastRecentlyUsedCacheEvictor(CACHE_SIZE));
-    upstreamFactory = new DefaultDataSourceFactory(this.context, //
-        bandwidthMeter.getTransferListener(), httpDataSource);
-    mediaSourceFactoryProvider = new DefaultMediaSourceFactoryProvider( //
-        this.context, upstreamFactory, mediaCache);
-  }
-
-  @NonNull public ToroPlayerHelper requestHelper(ToroPlayer player, Media media) {
-    return this.requestHelper(player, media, true);
-  }
-
-  @NonNull public ToroPlayerHelper requestHelper(ToroPlayer player, Media media, boolean lazy) {
-    return new PlayerHelper(player, media, playerManager, mediaSourceFactoryProvider, lazy);
-  }
-
-  @NonNull public ToroPlayerHelper requestHelper(ToroPlayer player, Playable playable) {
-    return this.requestHelper(player, playable, true);
+  @SuppressWarnings("unused") @NonNull
+  public ToroPlayerHelper requestHelper(ToroPlayer player, Uri mediaUri) {
+    return this.requestHelper(player, new MediaItem(mediaUri, null));
   }
 
   @NonNull
-  public ToroPlayerHelper requestHelper(ToroPlayer player, Playable playable, boolean lazy) {
-    return new PlayerHelper(player, playable, lazy);
+  public ToroPlayerHelper requestHelper(ToroPlayer player, Media media) {
+    return this.requestHelper(player, media, true);
+  }
+
+  @SuppressWarnings("WeakerAccess") @NonNull
+  public ToroPlayerHelper requestHelper(ToroPlayer player, Media media, boolean lazyPrepare) {
+    Playable playable =
+        new DefaultPlayable(this.context, media, mediaSourceFactoryProvider, playerManager);
+    return this.requestHelper(player, playable, lazyPrepare);
+  }
+
+  @SuppressWarnings("WeakerAccess") @NonNull
+  public ToroPlayerHelper requestHelper(ToroPlayer player, Playable playable, boolean lazyPrepare) {
+    return new PlayerHelper(player, playable, lazyPrepare);
+  }
+
+  @NonNull
+  public ToroPlayerHelper requestHelper(ToroPlayer player, Playable playable) {
+    return this.requestHelper(player, playable, true);
   }
 
   public Playable createAdsPlayable(Media media, AdsLoader adsLoader, ViewGroup adsContainer) {
@@ -272,7 +251,7 @@ public final class MediaHub {
     return upstreamFactory;
   }
 
-  private AdsMediaSource.MediaSourceFactory tryGetAdsMediaSourceFactory() {
+  private MediaSourceFactory tryGetAdsMediaSourceFactory() {
     if (adsMediaSourceFactory == null) {
       adsMediaSourceFactory = new DefaultAdsPlayable.AdsMediaSourceFactory(tryGetUpstreamFactory());
     }
@@ -280,29 +259,34 @@ public final class MediaHub {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static boolean setVolumeInfo(@NonNull SimpleExoPlayer player,
+  public static boolean setVolumeInfo(@NonNull ExoPlayer player,
       @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
       return ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
-    } else {
-      float current = player.getVolume();
+    } else if (player instanceof SimpleExoPlayer) {
+      SimpleExoPlayer simpleExoPlayer = (SimpleExoPlayer) player;
+      float current = simpleExoPlayer.getVolume();
       boolean changed = volumeInfo.getVolume() == current || (current == 0 && volumeInfo.isMute());
       if (volumeInfo.isMute()) {
-        player.setVolume(0f);
+        simpleExoPlayer.setVolume(0f);
       } else {
-        player.setVolume(volumeInfo.getVolume());
+        simpleExoPlayer.setVolume(volumeInfo.getVolume());
       }
       return changed;
+    } else {
+      return false;
     }
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) @NonNull
+  public static VolumeInfo getVolumeInfo(ExoPlayer player) {
     if (player instanceof ToroExoPlayer) {
       return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());
-    } else {
-      float volume = player.getVolume();
+    } else if (player instanceof SimpleExoPlayer) {
+      float volume = ((SimpleExoPlayer) player).getVolume();
       return new VolumeInfo(volume == 0, volume);
+    } else {
+      return new VolumeInfo(false, 1.0f);
     }
   }
 }

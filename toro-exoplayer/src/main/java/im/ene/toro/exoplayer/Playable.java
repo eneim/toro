@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.metadata.Metadata;
@@ -36,6 +37,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.video.VideoListener;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.Beta;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
@@ -198,6 +200,10 @@ public interface Playable {
    */
   @Nullable PlaybackParameters getParameters();
 
+  void setRepeatMode(@ToroPlayer.RepeatMode int repeatMode);
+
+  int getRepeatMode();
+
   void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener);
 
   void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener);
@@ -210,6 +216,11 @@ public interface Playable {
       TextOutput, //
       MetadataOutput {
 
+  }
+
+  // Not in use yet.
+  @Beta
+  interface BigCallback extends AnalyticsListener, ToroPlayer.EventListener {
   }
 
   /** Default empty implementation */

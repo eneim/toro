@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedT
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import toro.v4.exo.DefaultPlayable;
 
 import static com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS;
 import static im.ene.toro.exoplayer.ToroExo.toro;
@@ -42,8 +43,9 @@ import static im.ene.toro.exoplayer.ToroExo.toro;
  *
  * @author eneim (2018/02/26).
  * @since 3.4.0
+ * @deprecated Use {@link DefaultPlayable} instead.
  */
-
+@Deprecated
 public class ExoPlayable extends PlayableImpl {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroExo:Playable";

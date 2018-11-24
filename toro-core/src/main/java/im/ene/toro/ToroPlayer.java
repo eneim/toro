@@ -162,4 +162,12 @@ public interface ToroPlayer {
     int STATE_READY = 3;
     int STATE_END = 4;
   }
+
+  @Retention(RetentionPolicy.SOURCE)  //
+  @IntDef({ RepeatMode.REPEAT_MODE_OFF, RepeatMode.REPEAT_MODE_ONE, RepeatMode.REPEAT_MODE_ALL })
+  @interface RepeatMode {
+    int REPEAT_MODE_OFF = 0;
+    int REPEAT_MODE_ONE = 1;
+    int REPEAT_MODE_ALL = 2;
+  }
 }

@@ -94,8 +94,9 @@ public class Container extends RecyclerView {
   static final int PROCESSOR_COUNT = Runtime.getRuntime().availableProcessors();
 
   /* package */ final PlayerManager playerManager;
-  /* package */ final ChildLayoutChangeListener childLayoutChangeListener;
   /* package */ final int triggerScrollState;
+  /* package */ ChildLayoutChangeListener childLayoutChangeListener;
+  /* package */ BehaviorCallback defaultBehaviorCallback;
   /* package */ PlayerDispatcher playerDispatcher = PlayerDispatcher.DEFAULT;
   /* package */ RecyclerListenerImpl recyclerListener;  // null = not attached/detached
   /* package */ PlayerSelector playerSelector = PlayerSelector.DEFAULT;   // null = do nothing
@@ -129,7 +130,6 @@ public class Container extends RecyclerView {
 
     this.triggerScrollState = triggerState;
     playerManager = new PlayerManager();
-    childLayoutChangeListener = new ChildLayoutChangeListener(this);
     requestDisallowInterceptTouchEvent(true);
   }
 
@@ -140,12 +140,15 @@ public class Container extends RecyclerView {
   }
 
   // When it is ready, make this public.
-  /* package private */ final void setPreLoader(@Nullable PreLoader preLoader) {
+  /* package private */
+  final void setPreLoader(@Nullable PreLoader preLoader) {
     this.preLoader = preLoader;
   }
 
   @CallSuper @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    childLayoutChangeListener = new ChildLayoutChangeListener(this);
+    defaultBehaviorCallback = new DefaultBehaviorCallback(this);
     if (getAdapter() != null) dataObserver.registerAdapter(getAdapter());
     if (animatorFinishHandler == null) {
       animatorFinishHandler = new Handler(new AnimatorHelper(this));
@@ -168,6 +171,8 @@ public class Container extends RecyclerView {
     playbackInfoCache.onAttach();
     playerManager.onAttach();
 
+    if (behaviorCallback != null) behaviorCallback = defaultBehaviorCallback;
+
     ViewGroup.LayoutParams params = getLayoutParams();
     if (params instanceof CoordinatorLayout.LayoutParams) {
       CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) params).getBehavior();
@@ -186,6 +191,8 @@ public class Container extends RecyclerView {
         ((Behavior) behavior).onViewDetached(this);
       }
     }
+
+    this.behaviorCallback = null;
 
     if (recyclerListener != null && recyclerListener.delegate == NULL) {  // set by Toro, not user.
       super.setRecyclerListener(null);  // must be a super call
@@ -301,27 +308,61 @@ public class Container extends RecyclerView {
     if (!playerManager.release(player)) player.release();
   }
 
+  static long maxRt = 0;
+
+  @Override public void onScrolled(int dx, int dy) {
+    super.onScrolled(dx, dy);
+    long start = System.nanoTime();
+    this.dispatchLocalScrollChange(getScrollState());
+    long rt = System.nanoTime() - start;
+    if (rt >= 5000000) {
+      maxRt = rt;
+      Log.i(TAG, "scroll: " + maxRt / 1000000.0 + " ms");
+    }
+  }
+
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
+    long start = System.nanoTime();
+    this.dispatchLocalScrollChange(state);
+    long rt = System.nanoTime() - start;
+    if (maxRt < rt) {
+      maxRt = rt;
+      Log.d(TAG, "scroll: " + maxRt / 1000000.0 + " ms");
+    }
+  }
+
+  // This method does the following things:
+  // [1] On every scroll, re-check the playability of current managed ToroPlayers and update them.
+  // [2] Depending on scroll state, and triggerScrollState, refresh the playback.
+  final void dispatchLocalScrollChange(int scrollState) {
     // Need to handle the dead playback even when the Container is still scrolling/flinging.
     List<ToroPlayer> players = playerManager.getPlayers();
-    // 1. Find players those are managed but not qualified to play anymore.
     for (int i = 0, size = players.size(); i < size; i++) {
       ToroPlayer player = players.get(i);
-      if (Common.allowsToPlay(player)) continue;
-      if (player.isPlaying()) {
-        this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
-        playerManager.pause(player);
+      if (!Common.allowsToPlay(player)) { // player is out of the screen
+        if (player.isPlaying()) {
+          this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+          playerManager.pause(player);
+        }
+        if (!playerManager.release(player)) player.release();
+        playerManager.detachPlayer(player);
+      } else {
+        if (!player.wantsToPlay()) { // player doesn't want to play anymore.
+          if (player.isPlaying()) {
+            this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
+            playerManager.pause(player);
+          }
+        }
       }
-      if (!playerManager.release(player)) player.release();
-      playerManager.detachPlayer(player);
     }
 
     // 2. Refresh the good players list.
     LayoutManager layout = super.getLayoutManager();
     // current number of visible 'Virtual Children', or zero if there is no LayoutManager available.
     int childCount = layout != null ? layout.getChildCount() : 0;
-    if (childCount <= 0 || state > this.triggerScrollState) {
+    if (childCount <= 0 || scrollState > this.triggerScrollState) {
+      // Should not continue the queued playback, we defer them all.
       playerManager.deferPlaybacks();
       return;
     }
@@ -349,13 +390,15 @@ public class Container extends RecyclerView {
       if (bound.length != 2) throw new IllegalArgumentException("Bound length must be 2.");
     }
 
-    final List<ToroPlayer> source = playerManager.getPlayers();
-    int count = source.size();
-
     int preloadLeft = bound != null ? bound[0] : -1;
     int preloadRight = bound != null ? bound[1] : -1;
 
-    if (preloadRight > count - 1) preloadRight = count - 1; // reserve value, will update according to the candidate list.
+    final List<ToroPlayer> source = playerManager.getPlayers();
+    int count = source.size();
+
+    if (preloadRight > count - 1) {
+      preloadRight = count - 1; // reserve value, will update according to the candidate list.
+    }
     if (preloadLeft < preloadRight - 1) preloadLeft = preloadRight - 1;
 
     int limit = 1;
@@ -410,7 +453,7 @@ public class Container extends RecyclerView {
     // dispatchUpdateOnAnimationFinished(true); // doesn't work well :(
     // Immediately update.
     int state = Math.min(this.triggerScrollState, getScrollState());
-    this.onScrollStateChanged(state);
+    this.dispatchLocalScrollChange(state);
   }
 
   /**
@@ -429,6 +472,7 @@ public class Container extends RecyclerView {
   /** Define the callback that to be used later by {@link Behavior} if setup. */
   public final void setBehaviorCallback(@Nullable BehaviorCallback behaviorCallback) {
     this.behaviorCallback = behaviorCallback;
+    if (this.behaviorCallback == null) this.behaviorCallback = defaultBehaviorCallback;
   }
 
   ////// Handle update after data change animation
@@ -835,7 +879,7 @@ public class Container extends RecyclerView {
 
     @Override public boolean handleMessage(Message msg) {
       int state = Math.min(container.triggerScrollState, container.getScrollState());
-      this.container.onScrollStateChanged(state);
+      this.container.dispatchLocalScrollChange(state);
       return true;
     }
   }
@@ -922,7 +966,7 @@ public class Container extends RecyclerView {
       implements Handler.Callback {
 
     @NonNull final CoordinatorLayout.Behavior<? super Container> delegate;
-    @Nullable BehaviorCallback callback;
+    Container container;
 
     static final int EVENT_IDLE = 1;
     static final int EVENT_SCROLL = 2;
@@ -935,7 +979,7 @@ public class Container extends RecyclerView {
 
     void onViewAttached(Container container) {
       if (handler == null) handler = new Handler(this);
-      this.callback = container.behaviorCallback;
+      this.container = container;
     }
 
     void onViewDetached(Container container) {
@@ -943,10 +987,11 @@ public class Container extends RecyclerView {
         handler.removeCallbacksAndMessages(null);
         handler = null;
       }
-      this.callback = null;
+      this.container = null;
     }
 
     @Override public boolean handleMessage(Message msg) {
+      BehaviorCallback callback = this.container != null ? this.container.behaviorCallback : null;
       if (callback == null) return true;
       switch (msg.what) {
         case EVENT_SCROLL:
@@ -1153,6 +1198,19 @@ public class Container extends RecyclerView {
         return new PlaybackInfo();
       }
     };
+  }
+
+  static class DefaultBehaviorCallback implements BehaviorCallback {
+    final WeakReference<Container> containerRef;
+
+    public DefaultBehaviorCallback(Container container) {
+      this.containerRef = new WeakReference<>(container);
+    }
+
+    @Override public void onFinishInteraction() {
+      Container container = this.containerRef.get();
+      if (container != null) container.dispatchLocalScrollChange(SCROLL_STATE_IDLE);
+    }
   }
 
   static class ChildLayoutChangeListener implements OnLayoutChangeListener {

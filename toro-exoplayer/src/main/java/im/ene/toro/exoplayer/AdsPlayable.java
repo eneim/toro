@@ -28,15 +28,16 @@ import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.annotations.Beta;
+import toro.v4.exo.DefaultAdsPlayable;
 
 /**
  * A {@link Playable} that is able to integrate with {@link AdsLoader}.
  *
  * @author eneim (2018/08/22).
  * @since 3.6.0.2802
+ * @deprecated Use {@link DefaultAdsPlayable} instead.
  */
-@Beta //
+@Deprecated //
 public class AdsPlayable extends ExoPlayable {
 
   static class FactoryImpl implements AdsMediaSource.MediaSourceFactory {

@@ -16,6 +16,7 @@
 
 package im.ene.toro.exoplayer;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -52,6 +53,9 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 @SuppressWarnings("WeakerAccess") //
 @Deprecated class PlayableImpl implements Playable {
 
+  static final int MODE_MASK =
+      Player.REPEAT_MODE_OFF | Player.REPEAT_MODE_ONE | Player.REPEAT_MODE_ALL;
+
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
   protected final EventListeners listeners = new EventListeners();  // original listener.
@@ -69,6 +73,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
   private boolean sourcePrepared = false;
   private boolean listenerApplied = false;
+  private int repeatMode = ToroPlayer.RepeatMode.REPEAT_MODE_OFF;
 
   PlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
     this.creator = creator;
@@ -169,6 +174,15 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
         player.seekTo(this.playbackInfo.getResumeWindow(), this.playbackInfo.getResumePosition());
       }
     }
+  }
+
+  @SuppressLint("WrongConstant") @Override public void setRepeatMode(int repeatMode) {
+    this.repeatMode = repeatMode;
+    if (player != null) player.setRepeatMode(this.repeatMode & MODE_MASK);
+  }
+
+  @Override public int getRepeatMode() {
+    return this.repeatMode;
   }
 
   @Override public final void addEventListener(@NonNull EventListener listener) {
@@ -273,7 +287,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     }
   }
 
-  private void ensurePlayer() {
+  @SuppressLint("WrongConstant") private void ensurePlayer() {
     if (player == null) {
       sourcePrepared = false;
       player = with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
@@ -299,5 +313,6 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
+    player.setRepeatMode(this.repeatMode & MODE_MASK);
   }
 }

@@ -61,14 +61,14 @@ public class DefaultMediaSourceFactoryProvider implements MediaSourceFactoryProv
 
     if (this.mediaCache != null) {
       this.dataSourceFactory = new CacheDataSourceFactory( //
-          this.mediaCache, upstreamFactory, //
+          this.mediaCache, this.upstreamFactory, //
           new FileDataSourceFactory(), //
           /* cacheWriteDataSinkFactory= */ null, //
           CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, //
           /* eventListener= */ null //
       );
     } else {
-      this.dataSourceFactory = upstreamFactory;
+      this.dataSourceFactory = this.upstreamFactory;
     }
   }
 

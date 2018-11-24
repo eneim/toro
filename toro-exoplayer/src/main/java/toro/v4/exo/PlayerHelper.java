@@ -17,6 +17,8 @@
 package toro.v4.exo;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.View;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Beta;
@@ -24,38 +26,35 @@ import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import toro.v4.Media;
-import toro.v4.exo.factory.ExoPlayerManager;
-import toro.v4.exo.factory.MediaSourceFactoryProvider;
 
 /**
  * @author eneim (2018/10/03).
- * @since 3.7.0
+ * @since 3.7.0.2900
  */
 @SuppressWarnings("WeakerAccess") //
 public class PlayerHelper extends ToroPlayerHelper {
 
-  @NonNull //
-  private final MyEventListeners listeners;
+  private static final String TAG = "ToroLib:X:Helper";
+
+  @NonNull protected final Playable playable;
+  @NonNull protected final PlayerView playerView;
   protected final boolean lazyPrepare;
-  protected final Playable playable;
 
-  public PlayerHelper(@NonNull ToroPlayer player, @NonNull Media media,
-      ExoPlayerManager playerProvider, MediaSourceFactoryProvider mediaSourceFactoryProvider,
-      boolean lazyPrepare) {
-    super(player);
-    this.playable = new DefaultPlayable( //
-        player.getPlayerView().getContext().getApplicationContext(), //
-        media, mediaSourceFactoryProvider, playerProvider);
-    this.listeners = new MyEventListeners();
-    this.lazyPrepare = lazyPrepare;
-  }
+  @NonNull
+  private final MyEventListeners listeners;
 
-  public PlayerHelper(@NonNull ToroPlayer player, Playable playable, boolean lazyPrepare) {
+  // Build this Helper with custom Playable. This can be used with DefaultAdsPlayable to
+  // support Ads.
+  public PlayerHelper(@NonNull ToroPlayer player, @NonNull Playable playable, boolean lazyPrepare) {
     super(player);
+    View view = player.getPlayerView();
+    if (!(view instanceof PlayerView)) {
+      throw new IllegalArgumentException("Require PlayerView, found: " + view);
+    }
+    this.playerView = (PlayerView) view;
     this.playable = playable;
-    this.listeners = new MyEventListeners();
     this.lazyPrepare = lazyPrepare;
+    this.listeners = new MyEventListeners();
   }
 
   public PlayerHelper(@NonNull ToroPlayer player, Playable playable) {
@@ -68,7 +67,7 @@ public class PlayerHelper extends ToroPlayerHelper {
     playable.addErrorListener(this.errorListeners);
 
     playable.setPlaybackInfo(playbackInfo);
-    playable.setPlayerView((PlayerView) player.getPlayerView());
+    playable.setPlayerView(this.playerView);
     playable.prepare(!this.lazyPrepare);
   }
 
@@ -83,15 +82,15 @@ public class PlayerHelper extends ToroPlayerHelper {
   }
 
   @Override public void play() {
-    if (playable != null) playable.play();
+    playable.play();
   }
 
   @Override public void pause() {
-    if (playable != null) playable.pause();
+    playable.pause();
   }
 
   @Override public boolean isPlaying() {
-    return playable != null && playable.isPlaying();
+    return playable.isPlaying();
   }
 
   @Override public void setVolume(float volume) {
@@ -103,15 +102,23 @@ public class PlayerHelper extends ToroPlayerHelper {
   }
 
   @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    if (playable != null) playable.setVolumeInfo(volumeInfo);
+    playable.setVolumeInfo(volumeInfo);
   }
 
   @NonNull @Override public VolumeInfo getVolumeInfo() {
-    return playable != null ? playable.getVolumeInfo() : new VolumeInfo(false, 1.0f);
+    return playable.getVolumeInfo();
   }
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
-    return playable != null ? playable.getPlaybackInfo() : PlaybackInfo.SCRAP;
+    return playable.getPlaybackInfo();
+  }
+
+  @Override public void setRepeatMode(int repeatMode) {
+    this.playable.setRepeatMode(repeatMode);
+  }
+
+  @Override public int getRepeatMode() {
+    return this.playable.getRepeatMode();
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.
@@ -131,7 +138,7 @@ public class PlayerHelper extends ToroPlayerHelper {
     }
   }
 
-  @Beta public Playable getPlayable() {
+  @NonNull @Beta public Playable getPlayable() {
     return playable;
   }
 }

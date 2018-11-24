@@ -21,7 +21,9 @@ import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
+import android.support.v4.os.TraceCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import im.ene.toro.ToroPlayer;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,6 +72,7 @@ final class Common {
     }
   };
 
+  // RT less than 0.5ms, most of the time < 0.1ms
   static boolean allowsToPlay(@NonNull ToroPlayer player) {
     dummyRect.setEmpty();
     dummyPoint.set(0, 0);

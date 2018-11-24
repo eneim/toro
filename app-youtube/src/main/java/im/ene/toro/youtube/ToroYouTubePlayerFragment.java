@@ -28,7 +28,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
 public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
 
-  // This instance lives out of the lifecycle callbacks, but must be released and cleared before
+  // This instance is independent to the lifecycle callbacks, but must be released and cleared before
   // any destroying event (onDestroyView/onDestroy)
   private YouTubePlayerHelper playerHelper;
 
@@ -40,7 +40,7 @@ public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
     return new ToroYouTubePlayerFragment();
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "YouT:Fragment{" + "helper=" + playerHelper + '}';
   }
 
@@ -51,7 +51,7 @@ public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
 
   @Override public void onStop() {
     super.onStop();
-    // A stopped player need to be release or else it will throw error when resume. It is weird ...
+    // A stopped player need to be release or else it will throw error when resume. Weird ...
     if (this.playerHelper != null) this.playerHelper.release();
   }
 

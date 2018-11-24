@@ -73,7 +73,7 @@ import static java.lang.Runtime.getRuntime;
  * @since 3.4.0
  * @deprecated use {@link MediaHub} instead.
  */
-@Deprecated public final class ToroExo {
+@SuppressWarnings("DeprecatedIsStillUsed") @Deprecated public final class ToroExo {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroExo";
 
@@ -114,9 +114,16 @@ import static java.lang.Runtime.getRuntime;
     }
   }
 
+  // Proxy method to request for MediaHub for current ToroExo's clients.
+  // It is recommended to call MediaHub.get(context) directly.
+  public final MediaHub getHub() {
+    return MediaHub.get(this.context);
+  }
+
   /**
    * Utility method to produce {@link ExoCreator} instance from a {@link Config}.
    */
+  @Deprecated
   public final ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
@@ -127,6 +134,7 @@ import static java.lang.Runtime.getRuntime;
     return creator;
   }
 
+  @Deprecated
   @SuppressWarnings("WeakerAccess") public final Config getDefaultConfig() {
     if (defaultConfig == null) defaultConfig = new Config.Builder(this.context).build();
     return defaultConfig;
@@ -135,6 +143,7 @@ import static java.lang.Runtime.getRuntime;
   /**
    * Get the default {@link ExoCreator}. This ExoCreator is configured by {@link #defaultConfig}.
    */
+  @Deprecated
   public final ExoCreator getDefaultCreator() {
     return getCreator(getDefaultConfig());
   }
@@ -172,6 +181,7 @@ import static java.lang.Runtime.getRuntime;
    * Release and clear all current cached ExoPlayer instances. This should be called when
    * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
    */
+  @Deprecated
   public final void cleanUp() {
     // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
     for (Iterator<Map.Entry<ExoCreator, Pools.Pool<SimpleExoPlayer>>> it =
@@ -212,7 +222,7 @@ import static java.lang.Runtime.getRuntime;
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @SuppressWarnings("unused") @RequiresApi(18) @Nullable //
+  @SuppressWarnings("unused") @Deprecated @RequiresApi(18) @Nullable //
   public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull MediaDrm drm) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
@@ -264,7 +274,7 @@ import static java.lang.Runtime.getRuntime;
   }
 
   // Share the code of setting Volume. For use inside library only.
-  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  @SuppressWarnings("WeakerAccess") @Deprecated @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   public static boolean setVolumeInfo(@NonNull SimpleExoPlayer player,
       @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
@@ -281,7 +291,7 @@ import static java.lang.Runtime.getRuntime;
     }
   }
 
-  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  @SuppressWarnings("WeakerAccess") @Deprecated @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
     if (player instanceof ToroExoPlayer) {
       return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());
@@ -290,17 +300,4 @@ import static java.lang.Runtime.getRuntime;
       return new VolumeInfo(volume == 0, volume);
     }
   }
-
-  //// Added API 2018/10/11, v4
-
-  /// For a specific Media, we want to cache the ExoPlayer instance that is capable of playing it.
-  /// Also, [1] we need to have a way so that this ExoPlayer is also capable of using other Media as well.
-  /// [2] We may need more than one ExoPlayer instance for a Media in case the client plays the same
-  /// Media from 2 or more ToroPlayer.
-
-  /// [Media] --> [Config] --> [ExoCreator] --> [SimpleExoCreator]
-  /// Dependencies:
-  /// - From Media instance produce Config (interface: ConfigProvider).
-  /// - From Config instance produce ExoCreator (interface: ExoCreatorProvider).
-  /// - Using ExoCreator to create SimpleExoPlayer instance on demand.
 }

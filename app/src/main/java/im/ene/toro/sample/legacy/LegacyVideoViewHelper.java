@@ -23,6 +23,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.RepeatMode;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
@@ -31,6 +32,7 @@ import im.ene.toro.media.VolumeInfo;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
+import static im.ene.toro.ToroPlayer.RepeatMode.REPEAT_MODE_OFF;
 import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
@@ -54,6 +56,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   MediaPlayer.OnPreparedListener onPreparedListener;
 
   @State int playerState = State.STATE_IDLE;
+  @RepeatMode int repeatMode = REPEAT_MODE_OFF;
   boolean playWhenReady = false;  // mimic the ExoPlayer
   final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
@@ -99,6 +102,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       super.onPlayerStateUpdated(playWhenReady, playerState);
 
       mediaPlayer = mp;
+      mediaPlayer.setLooping(repeatMode != REPEAT_MODE_OFF);
       if (helper.onPreparedListener != null) {
         helper.onPreparedListener.onPrepared(mp);
       }
@@ -136,6 +140,9 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     }
 
     this.playerView.setOnErrorListener((mp, what, extra) -> {
+      playerState = State.STATE_IDLE;
+      // TODO how to reset resource so that the MediaPlayer can be reused?
+      super.onPlayerStateUpdated(playWhenReady, playerState);
       errorListeners.onError(new RuntimeException("Error: " + what + ", " + extra));
       return true;  // prevent the system error dialog.
     });
@@ -203,6 +210,17 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @NonNull @Override public VolumeInfo getVolumeInfo() {
     return this.volumeInfo;
+  }
+
+  @Override public void setRepeatMode(int repeatMode) {
+    this.repeatMode = repeatMode;
+    if (this.mediaPlayer != null) {
+      this.mediaPlayer.setLooping(this.repeatMode != REPEAT_MODE_OFF);
+    }
+  }
+
+  @Override public int getRepeatMode() {
+    return this.repeatMode;
   }
 
   void updateResumePosition() {

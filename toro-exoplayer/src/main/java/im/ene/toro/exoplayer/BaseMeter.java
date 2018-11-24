@@ -30,9 +30,11 @@ import com.google.android.exoplayer2.upstream.TransferListener;
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
+ * @deprecated In 3.7.0 Toro suggests to use the mechanism of Providers. This class is no longer
+ * required there.
  */
 
-@SuppressWarnings("WeakerAccess") //
+@Deprecated @SuppressWarnings("WeakerAccess") //
 public final class BaseMeter<T extends BandwidthMeter, S extends TransferListener>
     implements BandwidthMeter, TransferListener {
 

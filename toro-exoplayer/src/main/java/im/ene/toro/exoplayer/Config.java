@@ -47,7 +47,7 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  * @since 3.4.0
  */
 
-@SuppressWarnings("SimplifiableIfStatement")  //
+@Deprecated @SuppressWarnings("SimplifiableIfStatement")  //
 public final class Config {
 
   final Context context;

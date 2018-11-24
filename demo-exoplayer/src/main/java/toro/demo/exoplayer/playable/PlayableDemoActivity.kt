@@ -42,7 +42,7 @@ import toro.v4.exo.MediaHub
 class PlayableDemoActivity : AppCompatActivity() {
   companion object {
     private val video =
-        Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4")
+      Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4")
     //     Uri.parse("file:///android_asset/bbb/video.mp4")
 
     private val media = MediaItem(video, "mp4") as Media
@@ -57,7 +57,8 @@ class PlayableDemoActivity : AppCompatActivity() {
       this.release()
     }
     playable = null
-    MediaHub.get(this).cleanUp()
+    MediaHub.get(this)
+        .cleanUp()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,9 +104,11 @@ class PlayableDemoActivity : AppCompatActivity() {
 
     buttonContainer.addCustomButton(inflater, "Play") { playable!!.play() }
     buttonContainer.addCustomButton(inflater, "Pause") { playable!!.pause() }
-    buttonContainer.addCustomButton(inflater, "Mute"
+    buttonContainer.addCustomButton(
+        inflater, "Mute"
     ) { playable!!.volumeInfo = VolumeInfo(true, 0.0F) }
-    buttonContainer.addCustomButton(inflater, "Un Mute"
+    buttonContainer.addCustomButton(
+        inflater, "Un Mute"
     ) { playable!!.volumeInfo = VolumeInfo(false, 1.0F) }
 
     // Immediately reset current playback and start it all over again
@@ -120,8 +123,11 @@ class PlayableDemoActivity : AppCompatActivity() {
 }
 
 // A extension function for our ViewGroup.
-fun ViewGroup.addCustomButton(inflater: LayoutInflater, name: String,
-    action: (View) -> Unit) {
+fun ViewGroup.addCustomButton(
+  inflater: LayoutInflater,
+  name: String,
+  action: (View) -> Unit
+) {
   (inflater.inflate(R.layout.widget_debug_button, this, false) as Button)
       .apply {
         this.text = name

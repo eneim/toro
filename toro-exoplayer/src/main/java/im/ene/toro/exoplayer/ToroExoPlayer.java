@@ -39,14 +39,20 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  *
  * @author eneim (2018/03/27).
  */
-@SuppressWarnings("WeakerAccess") //
 public class ToroExoPlayer extends SimpleExoPlayer {
 
   public ToroExoPlayer(Context context, RenderersFactory renderersFactory,
       TrackSelector trackSelector, LoadControl loadControl, BandwidthMeter bandwidthMeter,
       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Looper looper) {
-    super(context, renderersFactory, trackSelector, loadControl, bandwidthMeter, drmSessionManager,
-        looper);
+    super(
+        context,
+        renderersFactory,
+        trackSelector,
+        loadControl,
+        bandwidthMeter,
+        drmSessionManager,
+        looper
+    );
   }
 
   private VolumeChangeListeners listeners;
@@ -89,5 +95,9 @@ public class ToroExoPlayer extends SimpleExoPlayer {
 
   @SuppressWarnings("unused") @NonNull public final VolumeInfo getVolumeInfo() {
     return volumeInfo;
+  }
+
+  @NonNull @Override public String toString() {
+    return "TORO:EXP:" + Integer.toHexString(hashCode());
   }
 }

@@ -22,9 +22,10 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 
 /**
  * Factory to create {@link BandwidthMeter} for a {@link SimpleExoPlayer}.
+ * It is suggested to not have many Player instance to use the same {@link BandwidthMeter} instance.
  *
  * @author eneim (2018/11/01).
- * @since 3.7.0.290
+ * @since 3.7.0.2901
  */
 public interface BandwidthMeterFactory {
 

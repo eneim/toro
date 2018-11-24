@@ -25,6 +25,7 @@ import toro.v4.Media;
 
 /**
  * @author eneim (2018/10/08).
+ * @since 3.7.0.2901
  */
 @Beta public interface DrmSessionManagerProvider {
 

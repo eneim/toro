@@ -26,6 +26,7 @@ import android.support.annotation.RestrictTo;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
+import im.ene.toro.ToroPlayer.RepeatMode;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
@@ -95,7 +96,8 @@ public abstract class ToroPlayerHelper {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   protected final CopyOnWriteArraySet<EventListener> eventListeners = new CopyOnWriteArraySet<>();
-  protected final ToroPlayer.VolumeChangeListeners volumeChangeListeners = new ToroPlayer.VolumeChangeListeners();
+  protected final ToroPlayer.VolumeChangeListeners volumeChangeListeners =
+      new ToroPlayer.VolumeChangeListeners();
   protected final ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
@@ -180,6 +182,10 @@ public abstract class ToroPlayerHelper {
   public abstract void pause();
 
   public abstract boolean isPlaying();
+
+  public abstract void setRepeatMode(@RepeatMode int repeatMode);
+
+  @RepeatMode public abstract int getRepeatMode();
 
   /**
    * @deprecated use {@link #setVolumeInfo(VolumeInfo)} instead.

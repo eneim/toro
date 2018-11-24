@@ -22,6 +22,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -62,7 +63,7 @@ public class CreatorDemoActivity extends AppCompatActivity {
   PlayerView playerView;
 
   MediaSource mediaSource;
-  SimpleExoPlayer player;
+  ExoPlayer player;
 
   final Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
