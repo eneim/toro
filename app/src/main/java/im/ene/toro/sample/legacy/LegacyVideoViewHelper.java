@@ -128,7 +128,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
           case MEDIA_INFO_VIDEO_RENDERING_START:
             // Call immediately.
             helper.internalListener.onFirstFrameRendered();
-            for (ToroPlayer.EventListener listener : helper.eventListeners) {
+            for (ToroPlayer.EventListener listener : helper.getEventListeners()) {
               listener.onFirstFrameRendered();
             }
             handled = true;
@@ -212,24 +212,6 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   // Use a Set to prevent duplicated setup.
   protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
 
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners == null) volumeChangeListeners = new HashSet<>();
-    volumeChangeListeners.add(checkNotNull(listener));
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners != null) volumeChangeListeners.remove(listener);
-  }
-
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    this.errorListeners.add(checkNotNull(errorListener));
-  }
-
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    this.errorListeners.remove(errorListener);
-  }
-
   void updateResumePosition() {
     try {
       if (mediaPlayer != null) playbackInfo.setResumePosition(mediaPlayer.getCurrentPosition());
@@ -238,6 +220,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     }
   }
 
+  @SuppressLint("ObsoleteSdkInt")
   @Override public void release() {
     this.playerView.setOnCompletionListener(null);
     this.playerView.setOnPreparedListener(null);

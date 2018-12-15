@@ -144,8 +144,7 @@ public interface ToroPlayer {
     }
   }
 
-  class VolumeChangeListeners
-      extends CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener>
+  class VolumeChangeListeners extends CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener>
       implements ToroPlayer.OnVolumeChangeListener {
 
     @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
