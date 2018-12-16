@@ -19,6 +19,7 @@
 * [Features](#features)
 * [Demo](#demo-youtube-video)
 * [Getting start, basic implementation](#getting-start-basic-implementation)
+* [Proguard](#proguard)
 * [Advance topics](#advance-topics)
 * [Contribution](#contribution)
 * [Support](#support)
@@ -180,6 +181,17 @@ More advanced View holder implementations can be found in **app**, **demo-xxx** 
 #### 4. Setup Adapter to use the ``ViewHolder`` above, and setup ``Container`` to use that ``Adapter``.
 
 That's all. Your Videos should be ready to play.
+
+## Proguard
+
+If you need to enable proguard in your app, put below rules to your proguard-rules.pro
+
+```proguard
+-keepclassmembernames class com.google.android.exoplayer2.ui.PlayerControlView {
+  java.lang.Runnable hideAction;
+  void hideAfterTimeout();
+}
+```
 
 ## Advance topics
 
