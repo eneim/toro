@@ -18,6 +18,8 @@ package im.ene.toro.sample;
 
 import android.app.Application;
 import com.squareup.leakcanary.LeakCanary;
+import im.ene.toro.exoplayer.Config;
+import im.ene.toro.exoplayer.MediaSourceBuilder;
 import im.ene.toro.exoplayer.ToroExo;
 
 /**
@@ -28,9 +30,14 @@ public class ToroDemo extends Application {
 
   private static ToroDemo singleton;
 
+  public Config config;
+
   @Override public void onCreate() {
     super.onCreate();
     singleton = this;
+    config = ToroExo.with(this).getDefaultConfig().newBuilder()
+        .setMediaSourceBuilder(MediaSourceBuilder.LOOPING).build();
+
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       // You should not init your app in this process.

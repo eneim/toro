@@ -134,11 +134,6 @@ public class ToroControlView extends PlayerControlView {
     if (changedView == this) updateVolumeButtons();
   }
 
-  @Override public void onVisibilityAggregated(boolean isVisible) {
-    super.onVisibilityAggregated(isVisible);
-    updateVolumeButtons();
-  }
-
   @SuppressWarnings("ConstantConditions") //
   void updateVolumeButtons() {
     if (!isVisible() || !ViewCompat.isAttachedToWindow(this)) {

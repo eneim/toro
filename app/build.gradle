@@ -20,6 +20,22 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
+  signingConfigs {
+    release {
+      keyAlias "debug"
+      keyPassword "android"
+      storeFile file("debug.jks")
+      storePassword "android"
+    }
+
+    debug {
+      keyAlias "debug"
+      keyPassword "android"
+      storeFile file("debug.jks")
+      storePassword "android"
+    }
+  }
+
   compileSdkVersion rootProject.ext.androidVersion
 
   defaultConfig {
@@ -35,11 +51,14 @@ android {
 
   buildTypes {
     release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.release
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
 
     debug {
+      applicationIdSuffix ".debug"
+      signingConfig signingConfigs.debug
       // multiDexEnabled true
       minifyEnabled false
     }
@@ -67,12 +86,6 @@ dependencies {
   // implementation "im.ene.toro3:toro:3.5.0-SNAPSHOT"
   // implementation "im.ene.toro3:toro-ext-exoplayer:3.5.0-SNAPSHOT"
 
-  testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:1.0.2'
-  androidTestImplementation 'com.android.support.test:rules:1.0.2'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.2'
-
   implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
@@ -85,7 +98,9 @@ dependencies {
 
   // additional dependencies.
   //noinspection GradleDependency
-  implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
+  implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
+    exclude group: 'com.android.support'
+  }
 
   implementation 'com.jakewharton:butterknife:8.8.1'
   kapt 'com.jakewharton:butterknife-compiler:8.8.1'
@@ -95,7 +110,7 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
 
   implementation "org.jsoup:jsoup:1.11.3"
 
@@ -110,4 +125,10 @@ dependencies {
 
   // Custom LayoutManager
   // compile 'com.google.android:flexbox:0.3.0'
+
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test:rules:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.2'
 }

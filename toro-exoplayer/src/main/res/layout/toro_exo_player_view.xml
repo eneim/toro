@@ -48,14 +48,6 @@
         android:layout_height="match_parent"
         />
 
-    <ProgressBar
-        android:id="@id/exo_buffering"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        />
-
     <android.support.v7.widget.AppCompatTextView
         android:id="@id/exo_error_message"
         android:layout_width="match_parent"
@@ -72,6 +64,14 @@
       android:id="@id/exo_overlay"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      />
+
+  <ProgressBar
+      android:id="@id/exo_buffering"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:indeterminate="true"
       />
 
   <im.ene.toro.exoplayer.ui.ToroControlView

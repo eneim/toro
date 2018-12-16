@@ -47,10 +47,10 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     super(renderersFactory, trackSelector, loadControl, drmSessionManager);
   }
 
-  private Set<ToroPlayer.OnVolumeChangeListener> listeners;
+  private ToroPlayer.VolumeChangeListeners listeners;
 
   public final void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (this.listeners == null) this.listeners = new HashSet<>();
+    if (this.listeners == null) this.listeners = new ToroPlayer.VolumeChangeListeners();
     this.listeners.add(checkNotNull(listener));
   }
 

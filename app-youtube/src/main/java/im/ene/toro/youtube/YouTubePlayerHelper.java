@@ -41,7 +41,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 @SuppressWarnings("WeakerAccess") //
-final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Callback {
+final class YouTubePlayerHelper extends ToroPlayerHelper
+    implements Handler.Callback, YouTubePlayer.OnInitializedListener, PlayerStateChangeListener,
+    YouTubePlayer.PlaybackEventListener {
 
   static final int MSG_INIT = 1000;
   static final int MSG_PLAY = 1001;
@@ -59,7 +61,6 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
   Handler handler;
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
-  ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId) {
     super(player);
@@ -108,17 +109,8 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return volumeInfo;
   }
 
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    throw new UnsupportedOperationException("YouTube helper doesn't allow to do this.");
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    throw new UnsupportedOperationException("YouTube helper doesn't allow to do this.");
-  }
-
   @Override public boolean isPlaying() {
-    return youTubePlayer != null;
+    return youTubePlayer != null && playWhenReady.get();
   }
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
@@ -146,7 +138,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     // But in case the Fragment is released by System, "pause()" is not called yet, we use
     // Fragment Lifecycle callback to ask the Adapter to do the cleanup and it will call this method.
     if (youTubePlayer != null) {
-      youTubePlayer.release();
+      releasePlayer();
       youTubePlayer = null;
       if (callback != null) callback.onPlayerDestroyed(this);
     }
@@ -161,33 +153,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
         break;
       case MSG_PLAY:
         if (ytFragment == null || !ytFragment.isVisible()) break; // Not visible, do nothing.
-        final YouTubePlayerHelper helper = YouTubePlayerHelper.this; // Make a local copy.
-        ytFragment.initialize(BuildConfig.API_KEY, new YouTubePlayer.OnInitializedListener() {
-          @Override
-          public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean b) {
-            helper.youTubePlayer = player;
-            if (helper.callback != null) helper.callback.onPlayerCreated(helper, player);
-            player.setPlayerStateChangeListener(new StateChangeListenerImpl());
-            player.setPlaybackEventListener(new PlaybackEventListenerImpl());
-            player.setShowFullscreenButton(false);  // fullscreen requires more work ...
-            if (shouldPlay()) { // Make sure YouTubePlayerView is playable at this moment.
-              player.loadVideo(videoId, (int) helper.playbackInfo.getResumePosition());
-            }
-          }
-
-          @Override public void onInitializationFailure(Provider provider,
-              YouTubeInitializationResult result) {
-            Exception error = new RuntimeException("YouTube init error: " + result.name());
-            errorListeners.onError(error);
-          }
-        });
+        ytFragment.initialize(BuildConfig.API_KEY, YouTubePlayerHelper.this);
         break;
       case MSG_PAUSE:
         updateResumePosition();
         // Because YoutubePlayerSDK allows up to one player instance to be used at once.
         // We need to release current player so that other widget can be playable.
         if (youTubePlayer != null) {
-          youTubePlayer.release();
+          releasePlayer();
           youTubePlayer = null;
           if (callback != null) callback.onPlayerDestroyed(this);
         }
@@ -198,67 +171,83 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return true;
   }
 
-  class StateChangeListenerImpl implements PlayerStateChangeListener {
-
-    @Override public void onLoading() {
-
-    }
-
-    @Override public void onLoaded(String videoId) {
-
-    }
-
-    @Override public void onAdStarted() {
-
-    }
-
-    @Override public void onVideoStarted() {
-
-    }
-
-    @Override public void onVideoEnded() {
-
-    }
-
-    @Override public void onError(YouTubePlayer.ErrorReason reason) {
-      // if (BuildConfig.DEBUG) throw new RuntimeException("YouTubePlayer Error: " + reason);
-      errorListeners.onError(new RuntimeException(reason.toString()));
-      if (ytFragment != null && ytFragment.isAdded()) {
-        Toast.makeText(ytFragment.requireContext(), "Error: " + reason, Toast.LENGTH_SHORT).show();
-      }
+  @Override
+  public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean restored) {
+    this.youTubePlayer = player;
+    if (this.callback != null) this.callback.onPlayerCreated(this, player);
+    player.setPlayerStateChangeListener(this);
+    player.setPlaybackEventListener(this);
+    player.setManageAudioFocus(true);
+    player.setShowFullscreenButton(false);  // fullscreen requires more work ...
+    if (shouldPlay()) { // Make sure YouTubePlayerView is playable at this moment.
+      player.loadVideo(videoId, (int) this.playbackInfo.getResumePosition());
     }
   }
 
-  class PlaybackEventListenerImpl implements YouTubePlayer.PlaybackEventListener {
+  @Override
+  public void onInitializationFailure(Provider provider, YouTubeInitializationResult result) {
+    Exception error = new RuntimeException("YouTube init error: " + result.name());
+    getErrorListeners().onError(error);
+  }
 
-    @Override public void onPlaying() {
-      onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_READY);
-    }
+  // [BEGIN] PlayerStateChangeListener
 
-    @Override public void onPaused() {
-      onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_READY);
-    }
+  @Override public void onLoading() {
 
-    @Override public void onStopped() {
-      onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_END);
-    }
+  }
 
-    @Override public void onBuffering(boolean b) {
-      onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_BUFFERING);
-    }
+  @Override public void onLoaded(String s) {
 
-    @Override public void onSeekTo(int i) {
+  }
 
+  @Override public void onAdStarted() {
+
+  }
+
+  @Override public void onVideoStarted() {
+    super.internalListener.onFirstFrameRendered();
+    for (ToroPlayer.EventListener listener : super.getEventListeners()) {
+      listener.onFirstFrameRendered();
     }
   }
 
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    errorListeners.add(ToroUtil.checkNotNull(errorListener));
+  @Override public void onVideoEnded() {
+
   }
 
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    errorListeners.remove(errorListener);
+  @Override public void onError(YouTubePlayer.ErrorReason reason) {
+    // if (BuildConfig.DEBUG) throw new RuntimeException("YouTubePlayer Error: " + reason);
+    getErrorListeners().onError(new RuntimeException(reason.toString()));
+    if (ytFragment != null && ytFragment.isAdded()) {
+      Toast.makeText(ytFragment.requireContext(), "Error: " + reason, Toast.LENGTH_SHORT).show();
+    }
   }
+
+  // [END] PlayerStateChangeListener
+
+  // [BEGIN] PlaybackEventListener
+
+  @Override public void onPlaying() {
+    onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_READY);
+  }
+
+  @Override public void onPaused() {
+    onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_READY);
+  }
+
+  @Override public void onStopped() {
+    onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_END);
+  }
+
+  @Override public void onBuffering(boolean b) {
+    onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_BUFFERING);
+  }
+
+  @Override public void onSeekTo(int i) {
+
+  }
+
+  // [END] PlaybackEventListener
 
   // Ensure that we are in the good situation.
   boolean shouldPlay() {
@@ -267,7 +256,17 @@ final class YouTubePlayerHelper extends ToroPlayerHelper implements Handler.Call
     return ytView != null && visibleAreaOffset(ytView) >= 0.999;  // fully visible.
   }
 
-  @Override public String toString() {
+  // Calling this requires non-null youTubePlayer
+  void releasePlayer() {
+    youTubePlayer.setManageAudioFocus(false);
+    youTubePlayer.setOnFullscreenListener(null);
+    youTubePlayer.setPlaybackEventListener(null);
+    youTubePlayer.setPlayerStateChangeListener(null);
+    youTubePlayer.setPlaylistEventListener(null);
+    youTubePlayer.release();
+  }
+
+  @NonNull @Override public String toString() {
     return "Toro:Yt:Helper{" + "videoId='" + videoId + '\'' + ", player=" + player + '}';
   }
 
