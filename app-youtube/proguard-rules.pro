@@ -7,8 +7,8 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
--optimizationpasses 6
--repackageclasses 'nah'
+-optimizationpasses 5
+-repackageclasses 'wow'
 
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
