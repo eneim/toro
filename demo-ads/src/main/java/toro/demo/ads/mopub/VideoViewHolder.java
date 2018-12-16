@@ -48,6 +48,8 @@ class VideoViewHolder extends BaseViewHolder implements ToroPlayer, ToroPlayer.E
     super(itemView);
     playerView = itemView.findViewById(R.id.playerView);
     posterView = itemView.findViewById(R.id.posterView);
+    playerView.removeView(posterView);
+    playerView.getOverlayFrameLayout().addView(posterView);
   }
 
   @NonNull @Override public View getPlayerView() {
@@ -98,8 +100,12 @@ class VideoViewHolder extends BaseViewHolder implements ToroPlayer, ToroPlayer.E
     return getAdapterPosition();
   }
 
-  @Override public void onBuffering() {
+  @Override public void onFirstFrameRendered() {
     posterView.setVisibility(View.GONE);
+  }
+
+  @Override public void onBuffering() {
+    // posterView.setVisibility(View.GONE);
   }
 
   @Override public void onPlaying() {
@@ -111,7 +117,7 @@ class VideoViewHolder extends BaseViewHolder implements ToroPlayer, ToroPlayer.E
   }
 
   @Override public void onCompleted() {
-    posterView.setVisibility(View.VISIBLE);
+    // posterView.setVisibility(View.VISIBLE);
   }
 
   @Override public void onBind(@Nullable Object payload) {

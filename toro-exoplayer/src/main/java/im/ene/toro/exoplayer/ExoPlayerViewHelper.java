@@ -19,7 +19,6 @@ package im.ene.toro.exoplayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
@@ -44,6 +43,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
   @NonNull private final ExoPlayable playable;
   @NonNull private final MyEventListeners listeners;
+  private final boolean lazyPrepare;
 
   // Container is no longer required for constructing new instance.
   @SuppressWarnings("unused") @RemoveIn(version = "3.6.0") @Deprecated  //
@@ -83,18 +83,23 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     listeners = new MyEventListeners();
     this.playable = playable;
+    this.lazyPrepare = true;
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
     playable.setPlaybackInfo(playbackInfo);
     playable.addEventListener(listeners);
-    playable.prepare(false);
+    playable.addErrorListener(super.getErrorListeners());
+    playable.addOnVolumeChangeListener(super.getVolumeChangeListeners());
+    playable.prepare(!lazyPrepare);
     playable.setPlayerView((PlayerView) player.getPlayerView());
   }
 
   @Override public void release() {
     super.release();
     playable.setPlayerView(null);
+    playable.removeOnVolumeChangeListener(super.getVolumeChangeListeners());
+    playable.removeErrorListener(super.getErrorListeners());
     playable.removeEventListener(listeners);
     playable.release();
   }
@@ -142,23 +147,6 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this.listeners.remove(listener);
   }
 
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    this.playable.addOnVolumeChangeListener(checkNotNull(listener));
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    this.playable.removeOnVolumeChangeListener(listener);
-  }
-
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    this.playable.addErrorListener(errorListener);
-  }
-
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    this.playable.removeErrorListener(errorListener);
-  }
-
   // A proxy, to also hook into ToroPlayerHelper's state change event.
   private class MyEventListeners extends Playable.EventListeners {
 
@@ -172,7 +160,10 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     @Override public void onRenderedFirstFrame() {
       super.onRenderedFirstFrame();
-      Log.d("Toro:ExoHelper", "onRenderedFirstFrame() called");
+      internalListener.onFirstFrameRendered();
+      for (ToroPlayer.EventListener listener : ExoPlayerViewHelper.super.getEventListeners()) {
+        listener.onFirstFrameRendered();
+      }
     }
   }
 }

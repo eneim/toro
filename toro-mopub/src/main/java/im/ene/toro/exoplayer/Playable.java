@@ -196,6 +196,10 @@ public interface Playable<T> {
    */
   @Nullable PlaybackParameters getParameters();
 
+  void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener);
+
+  void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener);
+
   // Combine necessary interfaces.
   interface EventListener
       extends ExoPlayer.EventListener, SimpleExoPlayer.VideoListener, TextRenderer.Output,

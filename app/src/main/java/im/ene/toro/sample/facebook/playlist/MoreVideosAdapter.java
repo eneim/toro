@@ -40,13 +40,13 @@ import java.util.List;
   private final long initTimeStamp;
   private final List<FbVideo> items = new ArrayList<>();
 
-  OnCompleteCallback onCompleteCallback;
+  @SuppressWarnings("WeakerAccess") OnCompleteCallback onCompleteCallback;
 
-  public void setOnCompleteCallback(OnCompleteCallback onCompleteCallback) {
+  void setOnCompleteCallback(OnCompleteCallback onCompleteCallback) {
     this.onCompleteCallback = onCompleteCallback;
   }
 
-  public MoreVideosAdapter(@NonNull FbVideo baseItem, long initTimeStamp) {
+  MoreVideosAdapter(@NonNull FbVideo baseItem, long initTimeStamp) {
     super();
     setHasStableIds(true);
     this.initTimeStamp = initTimeStamp;
@@ -69,11 +69,16 @@ import java.util.List;
     return items.get(posInList);
   }
 
-  @Override public MoreVideoItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull @Override
+  public MoreVideoItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(MoreVideoItemViewHolder.LAYOUT_RES, parent, false);
     MoreVideoItemViewHolder viewHolder = new MoreVideoItemViewHolder(view);
     viewHolder.setEventListener(new ToroPlayer.EventListener() {
+      @Override public void onFirstFrameRendered() {
+
+      }
+
       @Override public void onBuffering() {
 
       }
@@ -94,7 +99,7 @@ import java.util.List;
     return viewHolder;
   }
 
-  @Override public void onBindViewHolder(MoreVideoItemViewHolder holder, int position) {
+  @Override public void onBindViewHolder(@NonNull MoreVideoItemViewHolder holder, int position) {
     holder.bind(this, getItem(position), null);
   }
 

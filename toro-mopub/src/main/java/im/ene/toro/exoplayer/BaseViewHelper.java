@@ -48,6 +48,8 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
     playable.setPlaybackInfo(playbackInfo);
     playable.addEventListener(listeners);
+    playable.addErrorListener(super.getErrorListeners());
+    playable.addOnVolumeChangeListener(super.getVolumeChangeListeners());
     playable.prepare(false);
     //noinspection unchecked
     playable.setPlayerView((VIEW) player.getPlayerView());
@@ -56,6 +58,8 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   @Override public void release() {
     super.release();
     playable.setPlayerView(null);
+    playable.removeOnVolumeChangeListener(super.getVolumeChangeListeners());
+    playable.removeErrorListener(super.getErrorListeners());
     playable.removeEventListener(listeners);
     playable.release();
   }
@@ -101,23 +105,6 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   @SuppressWarnings({ "WeakerAccess", "unused" }) //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
-  }
-
-  @Override
-  public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    this.playable.addOnVolumeChangeListener(checkNotNull(listener));
-  }
-
-  @Override public void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
-    this.playable.removeOnVolumeChangeListener(listener);
-  }
-
-  @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener errorListener) {
-    // TODO
-  }
-
-  @Override public void removeErrorListener(ToroPlayer.OnErrorListener errorListener) {
-    // TODO
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

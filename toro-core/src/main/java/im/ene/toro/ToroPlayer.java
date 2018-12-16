@@ -80,6 +80,8 @@ public interface ToroPlayer {
    */
   interface EventListener {
 
+    void onFirstFrameRendered();
+
     void onBuffering(); // ExoPlayer state: 2
 
     void onPlaying(); // ExoPlayer state: 3, play flag: true
@@ -99,12 +101,55 @@ public interface ToroPlayer {
     void onError(Exception error);
   }
 
+  class EventListeners extends CopyOnWriteArraySet<EventListener> implements EventListener {
+
+    @Override public void onFirstFrameRendered() {
+      for (EventListener listener : this) {
+        listener.onFirstFrameRendered();
+      }
+    }
+
+    @Override public void onBuffering() {
+      for (EventListener listener : this) {
+        listener.onBuffering();
+      }
+    }
+
+    @Override public void onPlaying() {
+      for (EventListener listener : this) {
+        listener.onPlaying();
+      }
+    }
+
+    @Override public void onPaused() {
+      for (EventListener listener : this) {
+        listener.onPaused();
+      }
+    }
+
+    @Override public void onCompleted() {
+      for (EventListener listener : this) {
+        listener.onCompleted();
+      }
+    }
+  }
+
   class ErrorListeners extends CopyOnWriteArraySet<OnErrorListener>
       implements ToroPlayer.OnErrorListener {
 
     @Override public void onError(Exception error) {
       for (ToroPlayer.OnErrorListener listener : this) {
         listener.onError(error);
+      }
+    }
+  }
+
+  class VolumeChangeListeners extends CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener>
+      implements ToroPlayer.OnVolumeChangeListener {
+
+    @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
+      for (ToroPlayer.OnVolumeChangeListener listener : this) {
+        listener.onVolumeChanged(volumeInfo);
       }
     }
   }

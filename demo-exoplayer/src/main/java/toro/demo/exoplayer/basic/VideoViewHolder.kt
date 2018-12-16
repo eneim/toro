@@ -74,6 +74,10 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     if (helper == null) helper = ExoPlayerViewHelper(this, videoUri!!, null, DemoApp.config!!)
     if (listener == null) {
       listener = object : EventListener {
+        override fun onFirstFrameRendered() {
+          status.text = "First frame rendered"
+        }
+
         override fun onBuffering() {
           status.text = "Buffering"
         }
