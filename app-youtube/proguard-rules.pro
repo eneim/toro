@@ -7,49 +7,8 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# Add any project specific keep options here:
-
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-#-injars      build/intermediates/bin/classes
-#-injars      libs
-#-outjars     bin/classes-processed.jar
-
-# This is a configuration file for ProGuard.
-# http://proguard.sourceforge.net/index.html#manual/usage.html
--dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
--verbose
-# Optimization is turned off by default. Dex does not like code run
-# through the ProGuard optimize and preverify steps (and performs some
-# of these optimizations on its own).
-#-dontoptimize
--dontpreverify
-#-dontobfuscate
-
-# If you want to enable optimization, you should include the
-# following:
-
-# 2015-12-01
--optimizationpasses 8
--allowaccessmodification
--optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*,*
-#-optimizations !code/simplification/arithmetic
-#-flattenpackagehierarchy xyz
-#-repackageclasses xyz
--keepattributes *Annotation*
--keepattributes Signature
-
-# -keepnames class * extends java.lang.Throwable
-
--keepnames class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
+-optimizationpasses 6
+-repackageclasses 'nah'
 
 # Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
@@ -58,6 +17,7 @@
   **[] $VALUES;
   public *;
 }
+-dontnote com.bumptech.glide.*
 
 # Needed to keep generic types and @Key annotations accessed via reflection
 
@@ -89,6 +49,9 @@
 -dontnote sun.misc.Unsafe
 -dontwarn sun.misc.Unsafe
 
+-dontwarn com.google.common.**
+-dontwarn com.google.api.client.json.**
+
 # https://stackoverflow.com/a/24109609/1553254
 
 -keep class * extends java.util.ListResourceBundle {
@@ -102,5 +65,17 @@
 -dontwarn org.apache.http.**
 -dontwarn org.apache.**
 # -dontwarn android.net.http.AndroidHttpClient
-
 -dontwarn java.lang.invoke.**
+
+-dontwarn com.google.errorprone.annotations.*
+-dontwarn org.apache.log4j.**
+
+-dontnote io.fabric.sdk.android.*
+-dontnote io.fabric.sdk.android.services.common.*
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-dontwarn com.google.api.client.repackaged.com.google.common.base.Converter
