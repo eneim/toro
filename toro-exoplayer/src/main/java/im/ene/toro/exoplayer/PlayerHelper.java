@@ -60,9 +60,9 @@ public class PlayerHelper extends ToroPlayerHelper {
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
-    playable.addOnVolumeChangeListener(this.volumeChangeListeners);
+    playable.addOnVolumeChangeListener(this.getVolumeChangeListeners());
     playable.addEventListener(this.listeners);
-    playable.addErrorListener(this.errorListeners);
+    playable.addErrorListener(this.getErrorListeners());
 
     playable.setPlaybackInfo(playbackInfo);
     playable.setPlayerView(this.playerView);
@@ -73,9 +73,9 @@ public class PlayerHelper extends ToroPlayerHelper {
     super.release();
     playable.setPlayerView(null);
 
-    playable.removeErrorListener(this.errorListeners);
+    playable.removeErrorListener(this.getErrorListeners());
     playable.removeEventListener(this.listeners);
-    playable.removeOnVolumeChangeListener(this.volumeChangeListeners);
+    playable.removeOnVolumeChangeListener(this.getVolumeChangeListeners());
     playable.release();
   }
 
@@ -130,7 +130,7 @@ public class PlayerHelper extends ToroPlayerHelper {
     @Override public void onRenderedFirstFrame() {
       super.onRenderedFirstFrame();
       internalListener.onFirstFrameRendered();
-      for (ToroPlayer.EventListener listener : eventListeners) {
+      for (ToroPlayer.EventListener listener : getEventListeners()) {
         listener.onFirstFrameRendered();
       }
     }
