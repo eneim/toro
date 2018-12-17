@@ -24,6 +24,9 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -34,6 +37,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.video.VideoListener;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.annotations.Beta;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
@@ -41,7 +45,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link PlayerView}.
+ * Define an interface to control a playback, specific for {@link SimpleExoPlayer} and {@link
+ * PlayerView}.
  *
  * This interface is designed to be reused across Config change. Implementation must not hold any
  * strong reference to Activity, and if it supports any kind of that, make sure to implicitly clean
@@ -106,7 +111,7 @@ public interface Playable {
 
   /**
    * Release all resource. After this, the SimpleExoPlayer is released to the Player pool and the
-   * Playable must call {@link #prepare(boolean)} again to use it again.
+   * Playable must call {@link #prepare(boolean)} again to reuse this.
    */
   void release();
 
@@ -195,13 +200,27 @@ public interface Playable {
    */
   @Nullable PlaybackParameters getParameters();
 
+  void setRepeatMode(@ToroPlayer.RepeatMode int repeatMode);
+
+  int getRepeatMode();
+
   void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener);
 
   void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener);
 
   // Combine necessary interfaces.
-  interface EventListener extends Player.EventListener, VideoListener, TextOutput, MetadataOutput {
+  interface EventListener extends //
+      Player.EventListener, //
+      VideoListener, //
+      AudioListener, //
+      TextOutput, //
+      MetadataOutput {
 
+  }
+
+  // Not in use yet.
+  @Beta
+  interface BigCallback extends AnalyticsListener, ToroPlayer.EventListener {
   }
 
   /** Default empty implementation */
@@ -264,12 +283,24 @@ public interface Playable {
     @Override public void onMetadata(Metadata metadata) {
 
     }
+
+    @Override public void onAudioSessionId(int audioSessionId) {
+
+    }
+
+    @Override public void onAudioAttributesChanged(AudioAttributes audioAttributes) {
+
+    }
+
+    @Override public void onVolumeChanged(float volume) {
+
+    }
   }
 
   /** List of EventListener */
   class EventListeners extends CopyOnWriteArraySet<EventListener> implements EventListener {
 
-    EventListeners() {
+    public EventListeners() {
     }
 
     @Override public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees,
@@ -356,6 +387,24 @@ public interface Playable {
     @Override public void onMetadata(Metadata metadata) {
       for (EventListener eventListener : this) {
         eventListener.onMetadata(metadata);
+      }
+    }
+
+    @Override public void onAudioSessionId(int audioSessionId) {
+      for (EventListener eventListener : this) {
+        eventListener.onAudioSessionId(audioSessionId);
+      }
+    }
+
+    @Override public void onAudioAttributesChanged(AudioAttributes audioAttributes) {
+      for (EventListener eventListener : this) {
+        eventListener.onAudioAttributesChanged(audioAttributes);
+      }
+    }
+
+    @Override public void onVolumeChanged(float volume) {
+      for (EventListener eventListener : this) {
+        eventListener.onVolumeChanged(volume);
       }
     }
   }

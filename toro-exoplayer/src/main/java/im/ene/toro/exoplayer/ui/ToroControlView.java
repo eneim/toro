@@ -30,17 +30,17 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.exoplayer.R;
-import im.ene.toro.exoplayer.ToroExo;
-import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.media.VolumeInfo;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import im.ene.toro.exoplayer.MediaHub;
+import im.ene.toro.exoplayer.VolumeInfoController;
 
 /**
- * An extension of {@link PlayerControlView} that adds Volume control buttons. It works on-par
- * with {@link PlayerView}. Will be automatically inflated when client uses {@link R.layout.toro_exo_player_view}
- * for {@link PlayerView} layout.
+ * An extension of {@link PlayerControlView} that adds Volume control buttons. It works
+ * with {@link PlayerView}. Will be automatically inflated when client uses {@link
+ * R.layout.toro_exo_player_view} for {@link PlayerView} layout.
  *
  * @author eneim (2018/08/20).
  * @since 3.6.0.2802
@@ -108,16 +108,16 @@ public class ToroControlView extends PlayerControlView {
     Player current = super.getPlayer();
     if (current == player) return;
 
-    if (current instanceof ToroExoPlayer) {
-      ((ToroExoPlayer) current).removeOnVolumeChangeListener(componentListener);
+    if (current instanceof VolumeInfoController) {
+      ((VolumeInfoController) current).removeOnVolumeChangeListener(componentListener);
     }
 
     super.setPlayer(player);
     current = super.getPlayer();
     @NonNull final VolumeInfo tempVol;
-    if (current instanceof ToroExoPlayer) {
-      tempVol = ((ToroExoPlayer) current).getVolumeInfo();
-      ((ToroExoPlayer) current).addOnVolumeChangeListener(componentListener);
+    if (current instanceof VolumeInfoController) {
+      tempVol = ((VolumeInfoController) current).getVolumeInfo();
+      ((VolumeInfoController) current).addOnVolumeChangeListener(componentListener);
     } else if (current instanceof SimpleExoPlayer) {
       float volume = ((SimpleExoPlayer) current).getVolume();
       tempVol = new VolumeInfo(volume == 0, volume);
@@ -160,7 +160,7 @@ public class ToroControlView extends PlayerControlView {
       requestButtonFocus();
     }
 
-    // A hack to access PlayerControlView's hideAfterTimeout. Don't want to re-implement it.
+    // A hack to access PlayerControlView's hideAfterTimeout. Need to sync with parent's behaviour.
     // Reflection happens once for all instances, so it should not affect the performance.
     if (!hideMethodFetched) {
       try {
@@ -221,9 +221,7 @@ public class ToroControlView extends PlayerControlView {
 
     float actualVolume = position / (float) 100;
     this.volumeInfo.setTo(actualVolume == 0, actualVolume);
-    if (getPlayer() instanceof SimpleExoPlayer) {
-      ToroExo.setVolumeInfo((SimpleExoPlayer) getPlayer(), this.volumeInfo);
-    }
+    MediaHub.setVolumeInfo(getPlayer(), this.volumeInfo);
 
     updateVolumeButtons();
   }
@@ -238,12 +236,12 @@ public class ToroControlView extends PlayerControlView {
     @Override public void onClick(View v) {
       Player player = ToroControlView.super.getPlayer();
       if (!(player instanceof SimpleExoPlayer)) return;
-      if (v == volumeOffButton) {  // click to vol Off --> unmute
+      if (v == volumeOffButton) {  // click to vol Off --> un-mute
         volumeInfo.setTo(false, volumeInfo.getVolume());
       } else if (v == volumeUpButton) {  // click to vol Up --> mute
         volumeInfo.setTo(true, volumeInfo.getVolume());
       }
-      ToroExo.setVolumeInfo((SimpleExoPlayer) player, volumeInfo);
+      MediaHub.setVolumeInfo(player, volumeInfo);
       updateVolumeButtons();
     }
 

@@ -112,7 +112,8 @@ final class PlaybackInfoCache extends AdapterDataObserver {
     }
   }
 
-  @SuppressWarnings("unused") final void onPlayerRecycled(ToroPlayer player) {
+  @SuppressWarnings("unused") //
+  final void onPlayerRecycled(ToroPlayer player) {
     // TODO do anything here?
   }
 
@@ -281,17 +282,17 @@ final class PlaybackInfoCache extends AdapterDataObserver {
         if (key >= low && key <= high) changedColdKeys.add(key);
       }
       // 1.2 Extract entries from cold cache to a temp cache.
-      final Map<Object, PlaybackInfo> changeColdEntries = new HashMap<>();
+      final Map<Object, PlaybackInfo> changedColdEntries = new HashMap<>();
       for (Integer key : changedColdKeys) {
-        changeColdEntries.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
+        changedColdEntries.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
       }
 
       // 1.2 Update cold Cache with new keys
       for (Integer key : changedColdKeys) {
         if (key == low) {
-          coldCache.put(getKey(high), changeColdEntries.get(key));
+          coldCache.put(getKey(high), changedColdEntries.get(key));
         } else {
-          coldCache.put(getKey(key + shift), changeColdEntries.get(key));
+          coldCache.put(getKey(key + shift), changedColdEntries.get(key));
         }
       }
 
@@ -324,8 +325,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   }
 
   @Nullable private Object getKey(int position) {
-    return position == RecyclerView.NO_POSITION ? null : container.getCacheManager() == null ? null
-        : container.getCacheManager().getKeyForOrder(position);
+    return position == RecyclerView.NO_POSITION ? null :
+        (container.getCacheManager() == null ? null
+            : container.getCacheManager().getKeyForOrder(position));
   }
 
   //@Nullable private Integer getOrder(Object key) {
@@ -335,13 +337,22 @@ final class PlaybackInfoCache extends AdapterDataObserver {
 
   @NonNull final PlaybackInfo getPlaybackInfo(int position) {
     PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;
-    if (info != null && info == SCRAP) {  // has hot cache, but was SCRAP.
+    if (info == SCRAP) {  // has hot cache, but was SCRAP.
       info = container.playerInitializer.initPlaybackInfo(position);
     }
 
     Object key = getKey(position);
-    return info != null ? info :  //
-        key != null ? coldCache.get(key) : container.playerInitializer.initPlaybackInfo(position);
+
+    if (info != null) {
+      return info;
+    } else {
+      if (key != null) info = coldCache.get(key);
+      if (info != null) {
+        return info;
+      } else {
+        return container.playerInitializer.initPlaybackInfo(position);
+      }
+    }
   }
 
   // Call by Container#savePlaybackInfo and that method is called right before any pausing.

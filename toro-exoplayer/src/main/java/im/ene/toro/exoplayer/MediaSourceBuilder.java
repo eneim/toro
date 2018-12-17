@@ -40,8 +40,9 @@ import static com.google.android.exoplayer2.util.Util.inferContentType;
 /**
  * @author eneim (2018/01/24).
  * @since 3.4.0
+ * @deprecated Use {@link MediaSourceFactoryProvider} instead. See {@link MediaHub} for more information.
  */
-
+@Deprecated
 public interface MediaSourceBuilder {
 
   @NonNull MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,

@@ -37,8 +37,9 @@ import static im.ene.toro.exoplayer.ToroExo.with;
  *
  * @author eneim (2018/01/24).
  * @since 3.4.0
+ * @deprecated Use {@link PlayerHelper} instead.
  */
-
+@Deprecated
 public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
   @NonNull private final ExoPlayable playable;
@@ -87,10 +88,10 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
-    playable.setPlaybackInfo(playbackInfo);
     playable.addEventListener(listeners);
     playable.addErrorListener(super.getErrorListeners());
     playable.addOnVolumeChangeListener(super.getVolumeChangeListeners());
+    playable.setPlaybackInfo(playbackInfo);
     playable.prepare(!lazyPrepare);
     playable.setPlayerView((PlayerView) player.getPlayerView());
   }
@@ -145,6 +146,14 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
   @SuppressWarnings("WeakerAccess") //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
+  }
+
+  @Override public void setRepeatMode(int repeatMode) {
+    this.playable.setRepeatMode(repeatMode);
+  }
+
+  @Override public int getRepeatMode() {
+    return this.playable.getRepeatMode();
   }
 
   // A proxy, to also hook into ToroPlayerHelper's state change event.

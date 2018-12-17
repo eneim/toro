@@ -20,18 +20,22 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.exoplayer.ExoPlayerDispatcher;
-import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
 import im.ene.toro.widget.PressablePlayerSelector;
+import im.ene.toro.media.Media;
+import im.ene.toro.media.MediaItem;
+import im.ene.toro.exoplayer.MediaHub;
 
 /**
  * @author eneim (7/1/17).
@@ -46,13 +50,17 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
 
   ToroPlayerHelper helper;
   Uri mediaUri;
+  Media media;
 
+  @BindView(R.id.thumbnail) ImageView thumbnail;
   @BindView(R.id.player) PlayerView playerView;
 
   public BasicPlayerViewHolder(View itemView, PressablePlayerSelector selector) {
     super(itemView);
     ButterKnife.bind(this, itemView);
     if (selector != null) playerView.setControlDispatcher(new ExoPlayerDispatcher(selector, this));
+    playerView.removeView(thumbnail);
+    playerView.getOverlayFrameLayout().addView(thumbnail);
   }
 
   @NonNull @Override public View getPlayerView() {
@@ -66,7 +74,29 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   @Override
   public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(this, mediaUri);
+      // helper = new ExoPlayerViewHelper(this, mediaUri); <-- deprecated.
+      helper = MediaHub.get(itemView.getContext()).requestHelper(this, media);
+      helper.addPlayerEventListener(new EventListener() {
+        @Override public void onFirstFrameRendered() {
+          thumbnail.setVisibility(View.GONE);
+        }
+
+        @Override public void onBuffering() {
+
+        }
+
+        @Override public void onPlaying() {
+          thumbnail.setVisibility(View.GONE);
+        }
+
+        @Override public void onPaused() {
+
+        }
+
+        @Override public void onCompleted() {
+          thumbnail.setVisibility(View.VISIBLE);
+        }
+      });
     }
     helper.initialize(container, playbackInfo);
   }
@@ -84,6 +114,7 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
   }
 
   @Override public void release() {
+    thumbnail.setVisibility(View.VISIBLE);
     if (helper != null) {
       helper.release();
       helper = null;
@@ -98,11 +129,15 @@ class BasicPlayerViewHolder extends RecyclerView.ViewHolder implements ToroPlaye
     return getAdapterPosition();
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 
   void bind(Content.Media media) {
     this.mediaUri = media.mediaUri;
+    this.media = new MediaItem(this.mediaUri, null);
+    Glide.with(itemView)
+        .load("https://cdn.pixabay.com/photo/2018/02/06/22/43/painting-3135875_960_720.jpg")
+        .into(thumbnail);
   }
 }

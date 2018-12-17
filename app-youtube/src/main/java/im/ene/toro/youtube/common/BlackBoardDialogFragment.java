@@ -21,8 +21,8 @@ import im.ene.toro.youtube.R;
 /**
  * @author eneim | 6/18/17.
  *
- *         A full screen dialog fragment with black background.
- *         See {@link R.style#Toro_Theme_Board}.
+ * A full screen dialog fragment with black background.
+ * See {@link R.style#Toro_Theme_Board}.
  */
 
 public abstract class BlackBoardDialogFragment extends BaseDialogFragment {

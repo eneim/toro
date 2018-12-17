@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<android.support.v7.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    >
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/timeline_v2_key_line"
+      android:background="#e0e0e0"
+      />
+
+  <FrameLayout
+      android:id="@+id/fb_item_top"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_margin="8dp"
+      android:gravity="center_vertical"
+      android:padding="4dp"
+      >
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/fb_user_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/nam2018"
+        app:civ_border_color="@color/colorAccent"
+        app:civ_border_width="0.5dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:orientation="vertical"
+        android:padding="4dp"
+        >
+      <TextView
+          android:id="@+id/fb_user_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="eneim"
+          android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+          android:textStyle="bold"
+          tools:ignore="HardcodedText"
+          />
+      <TextView
+          android:id="@+id/fb_user_profile"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="the simple, the best・moments ago"
+          android:textAppearance="@style/TextAppearance.AppCompat.Small"
+          tools:ignore="HardcodedText"
+          />
+    </LinearLayout>
+  </FrameLayout>
+
+  <android.support.v7.widget.AppCompatTextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="0dp"
+      android:ellipsize="end"
+      android:lineSpacingMultiplier="1.15"
+      android:maxLines="4"
+      android:padding="4dp"
+      android:text="@string/large_text"
+      android:textAppearance="@style/TextAppearance.AppCompat.Small"
+      />
+
+  <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+      android:id="@+id/player_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:minHeight="@dimen/app_bar_height"
+      app:resize_mode="fixed_width"
+      >
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        app:default_artwork="@drawable/nam2018"
+        app:keep_content_on_player_reset="true"
+        app:resize_mode="fixed_height"
+        app:show_buffering="always"
+        app:surface_type="texture_view"
+        app:use_artwork="true"
+        app:use_controller="true"
+        app:player_layout_id="@layout/toro_exo_player_view"
+        />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        />
+  </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="0.5dp"
+      android:layout_marginEnd="@dimen/timeline_v2_key_line"
+      android:layout_marginStart="@dimen/timeline_v2_key_line"
+      android:background="#50a0a0a0"
+      />
+
+  <LinearLayout
+      android:id="@+id/fb_item_bottom"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical"
+      android:minHeight="40dp"
+      android:orientation="horizontal"
+      >
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/fb_button_like"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/fb_button_like"
+        style="@style/Facebook.Button.Feed"
+        />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/fb_button_comment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/fb_button_comment"
+        style="@style/Facebook.Button.Feed"
+        />
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/fb_button_share"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="@string/fb_button_share"
+        style="@style/Facebook.Button.Feed"
+        />
+  </LinearLayout>
+</android.support.v7.widget.LinearLayoutCompat>

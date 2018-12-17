@@ -37,7 +37,7 @@ import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.media.DrmMedia;
+import im.ene.toro.media.MediaDrm;
 import im.ene.toro.media.VolumeInfo;
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -70,15 +70,16 @@ import static java.lang.Runtime.getRuntime;
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
+ * @deprecated use {@link MediaHub} instead.
  */
+@SuppressWarnings("DeprecatedIsStillUsed") @Deprecated public final class ToroExo {
 
-public final class ToroExo {
-
-  private static final String TAG = "ToroExo";
+  @SuppressWarnings("unused") private static final String TAG = "ToroExo";
 
   // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
   @SuppressWarnings("WeakerAccess") //
-  static final int MAX_POOL_SIZE = Math.max(Util.SDK_INT / 6, getRuntime().availableProcessors());
+  public static final int MAX_POOL_SIZE =
+      Math.max(Util.SDK_INT / 6, getRuntime().availableProcessors());
   @SuppressLint("StaticFieldLeak")  //
   static volatile ToroExo toro;
 
@@ -96,7 +97,7 @@ public final class ToroExo {
   @NonNull private final Map<Config, ExoCreator> creators;
   @NonNull private final Map<ExoCreator, Pools.Pool<SimpleExoPlayer>> playerPools;
 
-  private Config defaultConfig; // will be created on the first time it is used.
+  private Config defaultConfig;
 
   private ToroExo(@NonNull Context context /* Application context */) {
     this.context = context;
@@ -112,9 +113,16 @@ public final class ToroExo {
     }
   }
 
+  // Proxy method to request for MediaHub for current ToroExo's clients.
+  // It is recommended to call MediaHub.get(context) directly.
+  public final MediaHub getHub() {
+    return MediaHub.get(this.context);
+  }
+
   /**
    * Utility method to produce {@link ExoCreator} instance from a {@link Config}.
    */
+  @Deprecated
   public final ExoCreator getCreator(Config config) {
     ExoCreator creator = this.creators.get(config);
     if (creator == null) {
@@ -125,14 +133,16 @@ public final class ToroExo {
     return creator;
   }
 
+  @Deprecated
   @SuppressWarnings("WeakerAccess") public final Config getDefaultConfig() {
-    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
+    if (defaultConfig == null) defaultConfig = new Config.Builder(this.context).build();
     return defaultConfig;
   }
 
   /**
    * Get the default {@link ExoCreator}. This ExoCreator is configured by {@link #defaultConfig}.
    */
+  @Deprecated
   public final ExoCreator getDefaultCreator() {
     return getCreator(getDefaultConfig());
   }
@@ -147,7 +157,7 @@ public final class ToroExo {
    * @param creator the {@link ExoCreator} that is scoped to the {@link SimpleExoPlayer} config.
    * @return an usable {@link SimpleExoPlayer} instance.
    */
-  @NonNull  //
+  @Deprecated @NonNull //
   public final SimpleExoPlayer requestPlayer(@NonNull ExoCreator creator) {
     SimpleExoPlayer player = getPool(checkNotNull(creator)).acquire();
     if (player == null) player = creator.createPlayer();
@@ -161,7 +171,7 @@ public final class ToroExo {
    * @param player the {@link SimpleExoPlayer} to be released back to the Pool
    * @return true if player is released to relevant Pool, false otherwise.
    */
-  @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
+  @Deprecated @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue" }) //
   public final boolean releasePlayer(@NonNull ExoCreator creator, @NonNull SimpleExoPlayer player) {
     return getPool(checkNotNull(creator)).release(player);
   }
@@ -170,6 +180,7 @@ public final class ToroExo {
    * Release and clear all current cached ExoPlayer instances. This should be called when
    * client Application runs out of memory ({@link Application#onTrimMemory(int)} for example).
    */
+  @Deprecated
   public final void cleanUp() {
     // TODO [2018/03/07] Test this. Ref: https://stackoverflow.com/a/1884916/1553254
     for (Iterator<Map.Entry<ExoCreator, Pools.Pool<SimpleExoPlayer>>> it =
@@ -210,8 +221,8 @@ public final class ToroExo {
    *   ExoCreator creator = ToroExo.with(context).getCreator(config);
    * </code></pre>
    */
-  @SuppressWarnings("unused") @RequiresApi(18) @Nullable //
-  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull DrmMedia drm) {
+  @SuppressWarnings("unused") @Deprecated @RequiresApi(18) @Nullable //
+  public DrmSessionManager<FrameworkMediaCrypto> createDrmSessionManager(@NonNull MediaDrm drm) {
     DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     int errorStringId = R.string.error_drm_unknown;
     String subString = null;
@@ -262,21 +273,24 @@ public final class ToroExo {
   }
 
   // Share the code of setting Volume. For use inside library only.
-  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static void setVolumeInfo(@NonNull SimpleExoPlayer player,
+  @SuppressWarnings("WeakerAccess") @Deprecated @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  public static boolean setVolumeInfo(@NonNull SimpleExoPlayer player,
       @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {
-      ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
+      return ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
     } else {
+      float current = player.getVolume();
+      boolean changed = volumeInfo.getVolume() == current || (current == 0 && volumeInfo.isMute());
       if (volumeInfo.isMute()) {
         player.setVolume(0f);
       } else {
         player.setVolume(volumeInfo.getVolume());
       }
+      return changed;
     }
   }
 
-  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  @SuppressWarnings("WeakerAccess") @Deprecated @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   public static VolumeInfo getVolumeInfo(SimpleExoPlayer player) {
     if (player instanceof ToroExoPlayer) {
       return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());

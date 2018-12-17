@@ -24,16 +24,17 @@ import android.view.ViewGroup;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.annotations.Beta;
 import im.ene.toro.helper.ToroPlayerHelper;
 
 /**
- * A {@link ToroPlayerHelper} to integrate ExoPlayer IMA Extension. Work together with {@link AdsPlayable}.
+ * A {@link ToroPlayerHelper} to integrate ExoPlayer IMA Extension. Work together with {@link
+ * AdsPlayable}.
  *
  * @author eneim (2018/08/22).
  * @since 3.6.0.2802
+ * @deprecated Use {@link PlayerHelper} with {@link DefaultAdsPlayable} instead.
  */
-@Beta //
+@Deprecated //
 public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
 
   private static AdsPlayable createPlayable(  ///

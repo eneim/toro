@@ -16,6 +16,8 @@
 
 package im.ene.toro.exoplayer;
 
+import android.content.Context;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,10 +27,10 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.VolumeChangeListeners;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 
@@ -37,42 +39,52 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  *
  * @author eneim (2018/03/27).
  */
-@SuppressWarnings("WeakerAccess") //
-public class ToroExoPlayer extends SimpleExoPlayer {
+public class ToroExoPlayer extends SimpleExoPlayer implements VolumeInfoController {
 
-  @SuppressWarnings("WeakerAccess")
-  protected ToroExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
-      LoadControl loadControl,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
-    super(renderersFactory, trackSelector, loadControl, drmSessionManager);
+  public ToroExoPlayer(Context context, RenderersFactory renderersFactory,
+      TrackSelector trackSelector, LoadControl loadControl, BandwidthMeter bandwidthMeter,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Looper looper) {
+    super(
+        context,
+        renderersFactory,
+        trackSelector,
+        loadControl,
+        bandwidthMeter,
+        drmSessionManager,
+        looper
+    );
   }
 
-  private ToroPlayer.VolumeChangeListeners listeners;
+  private VolumeChangeListeners listeners;
 
+  @Override
   public final void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (this.listeners == null) this.listeners = new ToroPlayer.VolumeChangeListeners();
+    if (this.listeners == null) this.listeners = new VolumeChangeListeners();
     this.listeners.add(checkNotNull(listener));
   }
 
+  @Override
   public final void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
     if (this.listeners != null) this.listeners.remove(listener);
   }
 
+  @Override
   public final void clearOnVolumeChangeListener() {
     if (this.listeners != null) this.listeners.clear();
   }
 
-  @CallSuper @Override public void setVolume(float audioVolume) {
+  @CallSuper @Override public final void setVolume(float audioVolume) {
     this.setVolumeInfo(new VolumeInfo(audioVolume == 0, audioVolume));
   }
 
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
-  @SuppressWarnings("UnusedReturnValue")
+  @Override
   public final boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     boolean changed = !this.volumeInfo.equals(volumeInfo);
     if (changed) {
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
+      // Must be super, to prevent infinite loop.
       super.setVolume(volumeInfo.isMute() ? 0 : volumeInfo.getVolume());
       if (listeners != null) {
         for (ToroPlayer.OnVolumeChangeListener listener : this.listeners) {
@@ -84,7 +96,11 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     return changed;
   }
 
-  @SuppressWarnings("unused") @NonNull public final VolumeInfo getVolumeInfo() {
+  @Override @NonNull public final VolumeInfo getVolumeInfo() {
     return volumeInfo;
+  }
+
+  @NonNull @Override public String toString() {
+    return "TORO:EXP:" + Integer.toHexString(hashCode());
   }
 }

@@ -17,6 +17,7 @@
 package im.ene.toro.youtube;
 
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -30,7 +31,6 @@ import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import im.ene.toro.youtube.common.AspectRatioFrameLayout;
-import im.ene.toro.youtube.common.ViewUtil;
 
 import static im.ene.toro.ToroUtil.visibleAreaOffset;
 
@@ -67,7 +67,7 @@ final class YouTubeVideoViewHolder extends RecyclerView.ViewHolder implements To
     thumbnailView = itemView.findViewById(R.id.thumbnail);
 
     playerView = itemView.findViewById(R.id.player_view);
-    int viewId = ViewUtil.generateViewId();
+    int viewId = ViewCompat.generateViewId();
     playerView.setId(viewId);
   }
 

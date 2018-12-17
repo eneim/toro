@@ -46,8 +46,8 @@ public class PlaylistViewModel extends ViewModel {
 
   private static final String TAG = "YouT:ViewModel";
 
-  // droidconNYC 2017 playlist
-  private static final String YOUTUBE_PLAYLIST_ID = "PLdb5m83JnoaATBUkWTVxT_kGyhYBozZ4F";
+  // Android Dev Summit 2018.
+  private static final String YOUTUBE_PLAYLIST_ID = "PLWz5rJ2EKKc8WFYCR9esqGGY0vOZm2l6e";
   private static final Long YOUTUBE_PLAYLIST_MAX_RESULTS = 20L;
 
   //see: https://developers.google.com/youtube/v3/docs/playlistItems/list
@@ -94,11 +94,20 @@ public class PlaylistViewModel extends ViewModel {
         )
             .map(AbstractGoogleClientRequest::execute)
             .map(PlaylistItemListResponse::getItems)
-            .flatMap(playlistItems -> Observable.fromIterable(playlistItems)
-                .map(item -> item.getSnippet().getResourceId().getVideoId()))
+            .flatMap( //
+                playlistItems -> Observable.fromIterable(playlistItems).map( //
+                    item -> item.getSnippet().getResourceId().getVideoId()
+                )
+            )
             .toList()
-            .map(ids -> ytApi.videos().list(YOUTUBE_VIDEOS_PART).setFields(YOUTUBE_VIDEOS_FIELDS) //
-                .setKey(API_KEY).setId(TextUtils.join(",", ids)).execute())
+            .map( //
+                ids -> ytApi.videos()
+                    .list(YOUTUBE_VIDEOS_PART)
+                    .setFields(YOUTUBE_VIDEOS_FIELDS)
+                    .setKey(API_KEY)
+                    .setId(TextUtils.join(",", ids))
+                    .execute()
+            )
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnError(

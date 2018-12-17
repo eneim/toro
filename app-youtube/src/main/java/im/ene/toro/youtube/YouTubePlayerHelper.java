@@ -36,6 +36,8 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static im.ene.toro.ToroPlayer.RepeatMode.REPEAT_MODE_OFF;
+
 /**
  * @author eneim (8/1/17).
  */
@@ -61,6 +63,7 @@ final class YouTubePlayerHelper extends ToroPlayerHelper
   Handler handler;
   YouTubePlayer youTubePlayer;
   ToroYouTubePlayerFragment ytFragment;
+  int repeatMode = REPEAT_MODE_OFF;
 
   YouTubePlayerHelper(@NonNull ToroPlayer player, String videoId) {
     super(player);
@@ -116,6 +119,14 @@ final class YouTubePlayerHelper extends ToroPlayerHelper
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     updateResumePosition();
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
+  }
+
+  @Override public void setRepeatMode(int repeatMode) {
+    this.repeatMode = repeatMode;
+  }
+
+  @Override public int getRepeatMode() {
+    return this.repeatMode;
   }
 
   public void setCallback(Callback callback) {
@@ -204,15 +215,22 @@ final class YouTubePlayerHelper extends ToroPlayerHelper
 
   }
 
+  @Override public void onVideoEnded() {
+    updateResumePosition();
+    if (repeatMode != REPEAT_MODE_OFF) {
+      playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
+      playbackInfo.setResumePosition(0);
+      play();
+    } else {
+      onPlayerStateUpdated(playWhenReady.get(), ToroPlayer.State.STATE_END);
+    }
+  }
+
   @Override public void onVideoStarted() {
     super.internalListener.onFirstFrameRendered();
     for (ToroPlayer.EventListener listener : super.getEventListeners()) {
       listener.onFirstFrameRendered();
     }
-  }
-
-  @Override public void onVideoEnded() {
-
   }
 
   @Override public void onError(YouTubePlayer.ErrorReason reason) {

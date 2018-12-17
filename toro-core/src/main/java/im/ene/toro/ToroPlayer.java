@@ -134,22 +134,21 @@ public interface ToroPlayer {
     }
   }
 
-  class ErrorListeners extends CopyOnWriteArraySet<OnErrorListener>
-      implements ToroPlayer.OnErrorListener {
+  class ErrorListeners extends CopyOnWriteArraySet<OnErrorListener> implements OnErrorListener {
 
     @Override public void onError(Exception error) {
-      for (ToroPlayer.OnErrorListener listener : this) {
+      for (OnErrorListener listener : this) {
         listener.onError(error);
       }
     }
   }
 
-  class VolumeChangeListeners extends CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener>
-      implements ToroPlayer.OnVolumeChangeListener {
+  class VolumeChangeListeners extends CopyOnWriteArraySet<OnVolumeChangeListener>
+      implements OnVolumeChangeListener {
 
     @Override public void onVolumeChanged(@NonNull VolumeInfo volumeInfo) {
-      for (ToroPlayer.OnVolumeChangeListener listener : this) {
-        listener.onVolumeChanged(volumeInfo);
+      for (OnVolumeChangeListener volumeChangeListener : this) {
+        volumeChangeListener.onVolumeChanged(volumeInfo);
       }
     }
   }
@@ -162,5 +161,13 @@ public interface ToroPlayer {
     int STATE_BUFFERING = 2;
     int STATE_READY = 3;
     int STATE_END = 4;
+  }
+
+  @Retention(RetentionPolicy.SOURCE)  //
+  @IntDef({ RepeatMode.REPEAT_MODE_OFF, RepeatMode.REPEAT_MODE_ONE, RepeatMode.REPEAT_MODE_ALL })
+  @interface RepeatMode {
+    int REPEAT_MODE_OFF = 0;
+    int REPEAT_MODE_ONE = 1;
+    int REPEAT_MODE_ALL = 2;
   }
 }

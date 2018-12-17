@@ -23,6 +23,7 @@ import im.ene.toro.exoplayer.Config;
 import im.ene.toro.exoplayer.ExoPlayable;
 import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer.MediaSourceBuilder;
+import im.ene.toro.sample.ToroDemo;
 
 /**
  * @author eneim (2018/01/05).
@@ -31,7 +32,8 @@ import im.ene.toro.exoplayer.MediaSourceBuilder;
 @SuppressWarnings("unused") class LoopingPlayerHelper extends ExoPlayerViewHelper {
 
   private static Config loopingConfig =
-      new Config.Builder().setMediaSourceBuilder(MediaSourceBuilder.LOOPING).build();
+      new Config.Builder(ToroDemo.getApp()).setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
+          .build();
 
   @SuppressWarnings("unused") //
   LoopingPlayerHelper(@NonNull ToroPlayer player, @NonNull Uri mediaUri) {

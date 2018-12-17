@@ -28,7 +28,9 @@
   <string name="error_unsupported_audio">Media includes audio tracks, but none are playable by this device</string>
   <string name="storage_permission_denied">Permission to access storage was denied</string>
   <string name="sample_list_load_error">One or more sample lists failed to load</string>
+  <string name="error_generic">Playback failed</string>
 
   <string name="exo_controls_volume_up_description">Volume Up</string>
   <string name="exo_controls_volume_off_description">Volume Off</string>
+  <string name="download_start_error">Failed to start download</string>
 </resources>

@@ -58,6 +58,7 @@
       android:id="@+id/player_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
+      app:trigger_scroll_state="state_idle"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       />
 

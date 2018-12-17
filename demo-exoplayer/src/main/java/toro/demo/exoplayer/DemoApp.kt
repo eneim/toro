@@ -16,6 +16,7 @@
 
 package toro.demo.exoplayer
 
+import android.annotation.SuppressLint
 import android.app.Application
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -33,6 +34,7 @@ class DemoApp : Application() {
   companion object {
     var cacheFile = 2 * 1024 * 1024.toLong() // size of each cache file.
     var demoApp: DemoApp? = null
+    @SuppressLint("StaticFieldLeak")
     var config: Config? = null
     var exoCreator: ExoCreator? = null
   }
@@ -42,7 +44,7 @@ class DemoApp : Application() {
     demoApp = this
     val cache = SimpleCache(File(filesDir.path + "/toro_cache"),
         LeastRecentlyUsedCacheEvictor(cacheFile))
-    config = Config.Builder()
+    config = Config.Builder(this)
         .setMediaSourceBuilder(MediaSourceBuilder.LOOPING)
         .setCache(cache)
         .build()

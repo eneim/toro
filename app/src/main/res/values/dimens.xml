@@ -17,7 +17,7 @@
 
 <resources>
   <!--<dimen name="video_min_height">184dp</dimen>-->
-  <dimen name="video_min_height">231dp</dimen>
+  <dimen name="video_min_height">140dp</dimen>
   <dimen name="app_bar_height">180dp</dimen>
   <dimen name="fab_margin">16dp</dimen>
   <dimen name="text_margin">16dp</dimen>
@@ -30,4 +30,6 @@
 
   <dimen name="toolbar_right">8dp</dimen>
   <dimen name="button_height">40dp</dimen>
+
+  <dimen name="timeline_v2_key_line">12dp</dimen>
 </resources>

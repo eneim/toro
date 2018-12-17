@@ -30,6 +30,8 @@ import im.ene.toro.widget.PressablePlayerSelector;
 
 class BasicListAdapter extends RecyclerView.Adapter<BasicPlayerViewHolder> {
 
+  private static final String TAG = "Toro:Demo:Basic";
+
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
   private MediaList mediaList = new MediaList();
 

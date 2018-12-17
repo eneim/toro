@@ -83,12 +83,12 @@ dependencies {
     exclude group: 'com.android.support'
   }
 
-  implementation("com.mopub:mopub-sdk:5.3.0@aar") {
+  implementation("com.mopub:mopub-sdk:5.4.0@aar") {
     transitive = true
   }
 
-  implementation "com.google.android.gms:play-services-ads:15.0.1"
-  implementation "com.google.android.gms:play-services-base:15.0.1"
+  implementation "com.google.android.gms:play-services-ads:17.1.1"
+  implementation "com.google.android.gms:play-services-base:16.0.1"
   implementation "com.android.support:customtabs:${rootProject.ext.supportLibraryVersion}"
 
   implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
@@ -98,7 +98,7 @@ dependencies {
   // Because RxAndroid releases are few and far between, it is recommended you also
   // explicitly depend on RxJava's latest version for bug fixes and new features.
   // (see https://github.com/ReactiveX/RxJava/releases for latest 2.x.x version)
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:${rootProject.ext.leackCanary}"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"

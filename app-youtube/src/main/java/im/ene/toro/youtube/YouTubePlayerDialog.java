@@ -83,13 +83,13 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
 
   final FragmentLifecycleCallbacks callbacks = new FragmentLifecycleCallbacks() {
 
-    @Override public void onFragmentStarted(FragmentManager fm, Fragment f) {
+    @Override public void onFragmentStarted(@NonNull FragmentManager fm, @NonNull Fragment f) {
       if (f == fragment && (f instanceof ToroYouTubePlayerFragment)) {
         maybeInitPlayer((ToroYouTubePlayerFragment) f);
       }
     }
 
-    @Override public void onFragmentStopped(FragmentManager fm, Fragment f) {
+    @Override public void onFragmentStopped(@NonNull FragmentManager fm, @NonNull Fragment f) {
       if (f == fragment && player != null) {
         player.release();
         player = null;
@@ -102,7 +102,7 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
     if (initData != null) requireActivity().setRequestedOrientation(initData.returnOrientation);
   }
 
-  InitData getDataFromArgs() {
+  @Nullable InitData getDataFromArgs() {
     Bundle args = getArguments();
     return args != null ? args.getParcelable(ARGS_INIT_DATA) : null;
   }
@@ -204,8 +204,8 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
   static class InitData implements Parcelable {
 
     final int adapterOrder;
-    final String videoId;
-    final PlaybackInfo playbackInfo;
+    @NonNull final String videoId;
+    @NonNull final PlaybackInfo playbackInfo;
     // Original orientation of requested Activity, used for restoring the orientation.
     final int returnOrientation;
 

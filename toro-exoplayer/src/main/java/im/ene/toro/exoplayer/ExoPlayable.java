@@ -42,8 +42,9 @@ import static im.ene.toro.exoplayer.ToroExo.toro;
  *
  * @author eneim (2018/02/26).
  * @since 3.4.0
+ * @deprecated Use {@link DefaultPlayable} instead.
  */
-
+@Deprecated
 public class ExoPlayable extends PlayableImpl {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroExo:Playable";

@@ -24,11 +24,27 @@ import android.net.Uri;
 
 public class Content {
 
-  private static final String MP4_BUNNY = "file:///android_asset/bbb.mp4";
+  // MPD: http://dash.akamaized.net/dash264/TestCasesHD/2b/qualcomm/1/MultiResMPEG2.mpd
+  // HLS: http://docs.evostream.com/sample_content/assets/hls-sintel-abr3/playlist.m3u8
+  // HLS: https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8
+  // HLS: https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8
+  // HLS: https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8
+
+  // private static final String MP4_BUNNY = "file:///android_asset/bbb.mp4";
+  private static final String MP4_BUNNY = "https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8";
   private static final String MP4_TOS = "file:///android_asset/tos.mp4";
   private static final String MP4_COSMOS = "file:///android_asset/cosmos.mp4";
 
-  static final String[] ITEMS = { MP4_TOS, MP4_BUNNY, MP4_COSMOS };
+  static final String[] ITEMS = {
+      "https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8",
+      "file:///android_asset/cosmos.mp4",
+      "http://dash.akamaized.net/dash264/TestCasesHD/2b/qualcomm/1/MultiResMPEG2.mpd",
+      "file:///android_asset/tos.mp4",
+      "https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8",
+      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+      "file:///android_asset/bbb.mp4",
+      // "http://docs.evostream.com/sample_content/assets/hls-sintel-abr3/playlist.m3u8"
+  };
 
   public static class Media {
     public final int index;

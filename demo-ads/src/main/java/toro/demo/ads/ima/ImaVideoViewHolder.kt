@@ -16,29 +16,35 @@
 
 package toro.demo.ads.ima
 
+import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ui.PlayerView
 import im.ene.toro.ToroPlayer
 import im.ene.toro.ToroUtil
-import im.ene.toro.exoplayer.AdsExoPlayerViewHelper
+import im.ene.toro.helper.ToroPlayerHelper
 import im.ene.toro.media.PlaybackInfo
 import im.ene.toro.widget.Container
 import toro.demo.ads.R
 import toro.demo.ads.common.BaseViewHolder
+import im.ene.toro.media.Media
+import im.ene.toro.media.MediaItem
+import im.ene.toro.exoplayer.MediaHub
 
 /**
  * @author eneim (2018/08/22).
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class ImaVideoViewHolder(itemView: View, builder: ImaAdsLoader.Builder) : BaseViewHolder(itemView), ToroPlayer {
+class ImaVideoViewHolder( //
+    itemView: View, builder: ImaAdsLoader.Builder //
+) : BaseViewHolder(itemView), ToroPlayer {
 
-  var helper: AdsExoPlayerViewHelper? = null
+  var helper: ToroPlayerHelper? = null
   val exoPlayerView: PlayerView = itemView.findViewById(R.id.playerView)
 
   val mediaUri = Uri.parse(itemView.context.getString(R.string.ima_content_url))!!
+  val media = MediaItem(mediaUri, null) as Media
   val adTagUri = Uri.parse(itemView.context.getString(R.string.ima_ad_tag_url))!!
   val adLoader = builder.buildForAdTag(adTagUri)!!
 
@@ -49,8 +55,14 @@ class ImaVideoViewHolder(itemView: View, builder: ImaAdsLoader.Builder) : BaseVi
   }
 
   override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
-    (helper ?: AdsExoPlayerViewHelper(this, mediaUri, null,
-        adLoader, null).also { helper = it }).initialize(container, playbackInfo)
+    (helper ?: createPlayerHelper(container.context).also { helper = it }) //
+        .initialize(container, playbackInfo)
+  }
+
+  fun createPlayerHelper(context: Context): ToroPlayerHelper {
+    val playable = MediaHub.get(context).createAdsPlayable(this.media, adLoader,
+        exoPlayerView.overlayFrameLayout)
+    return MediaHub.get(context).requestHelper(this, playable)
   }
 
   override fun play() {
@@ -69,6 +81,7 @@ class ImaVideoViewHolder(itemView: View, builder: ImaAdsLoader.Builder) : BaseVi
     helper?.run {
       this.release()
     }
+    helper = null
   }
 
   override fun wantsToPlay() = ToroUtil.visibleAreaOffset(this, itemView.parent) >= 0.75

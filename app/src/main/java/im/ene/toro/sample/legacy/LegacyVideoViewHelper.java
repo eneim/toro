@@ -23,16 +23,16 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.RepeatMode;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
 import static android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START;
+import static im.ene.toro.ToroPlayer.RepeatMode.REPEAT_MODE_OFF;
 import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
@@ -42,21 +42,21 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  * ToroVideoView} easier by wrapping all necessary components and functionality.
  */
 
-@SuppressWarnings({ "WeakerAccess", "ConstantConditions", "unused" }) //
+@SuppressWarnings({ "WeakerAccess", "unused" }) //
 public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   private static final String TAG = "Toro:Helper:Legacy";
 
-  final PlaybackInfo playbackInfo = new PlaybackInfo();
+  @NonNull final PlaybackInfo playbackInfo = new PlaybackInfo();
   @NonNull final ToroVideoView playerView;
   @NonNull final Uri mediaUri;
 
   MediaPlayer mediaPlayer;  // obtain from onPrepared, free at release.
   MediaPlayer.OnCompletionListener onCompletionListener;
   MediaPlayer.OnPreparedListener onPreparedListener;
-  ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   @State int playerState = State.STATE_IDLE;
+  @RepeatMode int repeatMode = REPEAT_MODE_OFF;
   boolean playWhenReady = false;  // mimic the ExoPlayer
   final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
@@ -65,11 +65,8 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     if (!(player.getPlayerView() instanceof ToroVideoView)) {
       throw new IllegalArgumentException("Only support ToroVideoView.");
     }
-    if (mediaUri == null) {
-      throw new IllegalArgumentException("Media Uri must not be null.");
-    }
     this.playerView = (ToroVideoView) player.getPlayerView();
-    this.mediaUri = mediaUri;
+    this.mediaUri = checkNotNull(mediaUri);
   }
 
   public void setOnCompletionListener(MediaPlayer.OnCompletionListener onCompletionListener) {
@@ -80,15 +77,15 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     this.onPreparedListener = onPreparedListener;
   }
 
-  @SuppressLint("ObsoleteSdkInt")
-  @Override protected void initialize(@NonNull final PlaybackInfo playbackInfo) {
+  @SuppressLint("ObsoleteSdkInt") @Override
+  protected void initialize(@NonNull final PlaybackInfo playbackInfo) {
     this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
 
     final LegacyVideoViewHelper helper = LegacyVideoViewHelper.this;
     // On Complete event, we reset the player, re-prepare the VideoView so that it can be re-used.
     this.playerView.setOnCompletionListener(mp -> {
       playerState = State.STATE_END;
-      onPlayerStateUpdated(playWhenReady, playerState);
+      super.onPlayerStateUpdated(playWhenReady, playerState);
       if (helper.onCompletionListener != null) {
         helper.onCompletionListener.onCompletion(mp);
       }
@@ -102,9 +99,10 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
     this.playerView.setOnPreparedListener(mp -> {
       playerState = State.STATE_READY;
-      onPlayerStateUpdated(playWhenReady, playerState);
+      super.onPlayerStateUpdated(playWhenReady, playerState);
 
       mediaPlayer = mp;
+      mediaPlayer.setLooping(repeatMode != REPEAT_MODE_OFF);
       if (helper.onPreparedListener != null) {
         helper.onPreparedListener.onPrepared(mp);
       }
@@ -117,12 +115,12 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
         switch (what) {
           case MEDIA_INFO_BUFFERING_START:
             playerState = State.STATE_BUFFERING;
-            onPlayerStateUpdated(playWhenReady, playerState);
+            super.onPlayerStateUpdated(playWhenReady, playerState);
             handled = true;
             break;
           case MEDIA_INFO_BUFFERING_END:
             playerState = State.STATE_READY;
-            onPlayerStateUpdated(playWhenReady, playerState);
+            super.onPlayerStateUpdated(playWhenReady, playerState);
             handled = true;
             break;
           case MEDIA_INFO_VIDEO_RENDERING_START:
@@ -142,23 +140,29 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     }
 
     this.playerView.setOnErrorListener((mp, what, extra) -> {
-      errorListeners.onError(new RuntimeException("Error: " + what + ", " + extra));
+      playerState = State.STATE_IDLE;
+      // TODO how to reset resource so that the MediaPlayer can be reused?
+      super.onPlayerStateUpdated(playWhenReady, playerState);
+      getErrorListeners().onError(new RuntimeException("Error: " + what + ", " + extra));
       return true;  // prevent the system error dialog.
     });
 
     this.playerView.setPlayerEventListener(new ToroVideoView.PlayerEventListener() {
+      @SuppressWarnings("ConstantConditions") //
       @Override public void onPlay() {
         playWhenReady = true;
-        onPlayerStateUpdated(playWhenReady, playerState);
+        LegacyVideoViewHelper.super.onPlayerStateUpdated(playWhenReady, playerState);
       }
 
+      @SuppressWarnings("ConstantConditions") //
       @Override public void onPause() {
         playWhenReady = false;
-        onPlayerStateUpdated(playWhenReady, playerState);
+        LegacyVideoViewHelper.super.onPlayerStateUpdated(playWhenReady, playerState);
       }
     });
 
     this.playerView.setVideoURI(mediaUri);
+    // Must call after 'setVideoURI' or else the playback info will be cleared.
     if (this.playbackInfo.getResumePosition() >= 0) {
       this.playerView.seekTo((int) this.playbackInfo.getResumePosition());
     }
@@ -174,7 +178,8 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   }
 
   @Override public boolean isPlaying() {
-    return playWhenReady || this.playerView.isPlaying(); // is actually playing or is buffering
+    // is actually playing or is buffering to play.
+    return playWhenReady || this.playerView.isPlaying();
   }
 
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
@@ -182,25 +187,23 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     return new PlaybackInfo(C.INDEX_UNSET, playbackInfo.getResumePosition());
   }
 
-  @Override public void setVolume(float volume) {
+  @Deprecated @Override public void setVolume(float volume) {
     this.setVolumeInfo(new VolumeInfo(volume == 0, volume));
   }
 
-  @Override public float getVolume() {
+  @Deprecated @Override public float getVolume() {
     return volumeInfo.getVolume();
   }
 
   @Override public void setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    if (mediaPlayer == null) return;
+    if (mediaPlayer == null) return; // Only process if MediaPlayer is valid.
     boolean changed = !this.volumeInfo.equals(checkNotNull(volumeInfo));
     if (changed) {
       float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
       mediaPlayer.setVolume(volume, volume);
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      if (volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          listener.onVolumeChanged(volumeInfo);
-        }
+      for (ToroPlayer.OnVolumeChangeListener listener : getVolumeChangeListeners()) {
+        listener.onVolumeChanged(volumeInfo);
       }
     }
   }
@@ -209,8 +212,16 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     return this.volumeInfo;
   }
 
-  // Use a Set to prevent duplicated setup.
-  protected Set<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
+  @Override public void setRepeatMode(int repeatMode) {
+    this.repeatMode = repeatMode;
+    if (this.mediaPlayer != null) {
+      this.mediaPlayer.setLooping(this.repeatMode != REPEAT_MODE_OFF);
+    }
+  }
+
+  @Override public int getRepeatMode() {
+    return this.repeatMode;
+  }
 
   void updateResumePosition() {
     try {

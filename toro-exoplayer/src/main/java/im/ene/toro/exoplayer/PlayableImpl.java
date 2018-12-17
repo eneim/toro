@@ -16,6 +16,7 @@
 
 package im.ene.toro.exoplayer;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
@@ -46,9 +47,13 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
  * change must guarantee that all {@link EventListener} are cleaned up on config change.
  *
  * @author eneim (2018/02/25).
+ * @deprecated use {@link DefaultPlayable} instead.
  */
 @SuppressWarnings("WeakerAccess") //
-class PlayableImpl implements Playable {
+@Deprecated class PlayableImpl implements Playable {
+
+  static final int MODE_MASK =
+      Player.REPEAT_MODE_OFF | Player.REPEAT_MODE_ONE | Player.REPEAT_MODE_ALL;
 
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
@@ -66,6 +71,7 @@ class PlayableImpl implements Playable {
 
   private boolean sourcePrepared = false;
   private boolean listenerApplied = false;
+  private int repeatMode = ToroPlayer.RepeatMode.REPEAT_MODE_OFF;
 
   PlayableImpl(ExoCreator creator, Uri uri, String fileExt) {
     this.creator = creator;
@@ -76,6 +82,7 @@ class PlayableImpl implements Playable {
   @CallSuper @Override public void prepare(boolean prepareSource) {
     if (prepareSource) {
       ensureMediaSource();
+      // player instance will be nonnull here.
       ensurePlayerView();
     }
   }
@@ -136,7 +143,7 @@ class PlayableImpl implements Playable {
         }
         listenerApplied = false;
       }
-      with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+      with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
           .releasePlayer(this.creator, this.player);
     }
     this.player = null;
@@ -162,6 +169,15 @@ class PlayableImpl implements Playable {
         player.seekTo(this.playbackInfo.getResumeWindow(), this.playbackInfo.getResumePosition());
       }
     }
+  }
+
+  @SuppressLint("WrongConstant") @Override public void setRepeatMode(int repeatMode) {
+    this.repeatMode = repeatMode;
+    if (player != null) player.setRepeatMode(this.repeatMode & MODE_MASK);
+  }
+
+  @Override public int getRepeatMode() {
+    return this.repeatMode;
   }
 
   @Override public final void addEventListener(@NonNull EventListener listener) {
@@ -254,10 +270,10 @@ class PlayableImpl implements Playable {
     }
   }
 
-  private void ensurePlayer() {
+  @SuppressLint("WrongConstant") private void ensurePlayer() {
     if (player == null) {
       sourcePrepared = false;
-      player = with(checkNotNull(creator.getContext(), "ExoCreator has no Context")) //
+      player = with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
       listenerApplied = false;
     }
@@ -278,5 +294,6 @@ class PlayableImpl implements Playable {
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
+    player.setRepeatMode(this.repeatMode & MODE_MASK);
   }
 }

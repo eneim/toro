@@ -16,8 +16,12 @@
 
 package im.ene.toro.exoplayer;
 
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.TransferListener;
@@ -27,34 +31,63 @@ import com.google.android.exoplayer2.upstream.TransferListener;
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
+ * @deprecated In 3.7.0 Toro suggests to use combinations of {@link PlayerHelper} with {@link
+ * Playable}, where {@link ExoPlayer} instances are managed by {@link ExoPlayerManager}. {@link
+ * MediaHub} is the default helper for all these.
  */
 
-@SuppressWarnings("WeakerAccess") //
-public final class BaseMeter<T extends BandwidthMeter, S extends TransferListener<Object>>
+@Deprecated @SuppressWarnings("WeakerAccess") //
+public final class BaseMeter<T extends BandwidthMeter, S extends TransferListener>
     implements BandwidthMeter, TransferListener {
 
   @NonNull protected final T bandwidthMeter;
-  @NonNull protected final S transferListener;
+  @NonNull protected final TransferListener transferListener;
 
-  @SuppressWarnings("WeakerAccess") //
-  public BaseMeter(@NonNull T bandwidthMeter, @NonNull S transferListener) {
+  @SuppressWarnings({ "WeakerAccess" }) //
+  @Deprecated public BaseMeter(@NonNull T bandwidthMeter,
+      @SuppressWarnings("unused") @NonNull S transferListener) {
     this.bandwidthMeter = bandwidthMeter;
-    this.transferListener = transferListener;
+    //noinspection ConstantConditions,unchecked
+    this.transferListener = bandwidthMeter.getTransferListener();
+  }
+
+  public BaseMeter(@NonNull T bandwidthMeter) {
+    this.bandwidthMeter = bandwidthMeter;
+    //noinspection ConstantConditions,unchecked
+    this.transferListener = this.bandwidthMeter.getTransferListener();
   }
 
   @Override public long getBitrateEstimate() {
     return bandwidthMeter.getBitrateEstimate();
   }
 
-  @Override public void onTransferStart(Object source, DataSpec dataSpec) {
-    transferListener.onTransferStart(source, dataSpec);
+  @Override @Nullable public TransferListener getTransferListener() {
+    return bandwidthMeter.getTransferListener();
   }
 
-  @Override public void onBytesTransferred(Object source, int bytesTransferred) {
-    transferListener.onBytesTransferred(source, bytesTransferred);
+  @Override public void addEventListener(Handler eventHandler, EventListener eventListener) {
+    bandwidthMeter.addEventListener(eventHandler, eventListener);
   }
 
-  @Override public void onTransferEnd(Object source) {
-    transferListener.onTransferEnd(source);
+  @Override public void removeEventListener(EventListener eventListener) {
+    bandwidthMeter.removeEventListener(eventListener);
+  }
+
+  @Override
+  public void onTransferInitializing(DataSource source, DataSpec dataSpec, boolean isNetwork) {
+    transferListener.onTransferInitializing(source, dataSpec, isNetwork);
+  }
+
+  @Override public void onTransferStart(DataSource source, DataSpec dataSpec, boolean isNetwork) {
+    transferListener.onTransferStart(source, dataSpec, isNetwork);
+  }
+
+  @Override public void onBytesTransferred(DataSource source, DataSpec dataSpec, boolean isNetwork,
+      int bytesTransferred) {
+    transferListener.onBytesTransferred(source, dataSpec, isNetwork, bytesTransferred);
+  }
+
+  @Override public void onTransferEnd(DataSource source, DataSpec dataSpec, boolean isNetwork) {
+    transferListener.onTransferEnd(source, dataSpec, isNetwork);
   }
 }
