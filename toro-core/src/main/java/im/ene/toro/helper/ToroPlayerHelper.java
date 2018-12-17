@@ -24,10 +24,12 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.ErrorListeners;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
 import im.ene.toro.ToroPlayer.RepeatMode;
 import im.ene.toro.ToroPlayer.State;
+import im.ene.toro.ToroPlayer.VolumeChangeListeners;
 import im.ene.toro.annotations.RemoveIn;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
@@ -96,9 +98,8 @@ public abstract class ToroPlayerHelper {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   protected final CopyOnWriteArraySet<EventListener> eventListeners = new CopyOnWriteArraySet<>();
-  protected final ToroPlayer.VolumeChangeListeners volumeChangeListeners =
-      new ToroPlayer.VolumeChangeListeners();
-  protected final ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
+  protected final VolumeChangeListeners volumeChangeListeners = new VolumeChangeListeners();
+  protected final ErrorListeners errorListeners = new ErrorListeners();
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   protected final EventListener internalListener = new EventListener() {

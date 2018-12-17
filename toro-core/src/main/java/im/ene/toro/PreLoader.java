@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4;
+package im.ene.toro;
 
 import im.ene.toro.annotations.Beta;
 import im.ene.toro.widget.Container;

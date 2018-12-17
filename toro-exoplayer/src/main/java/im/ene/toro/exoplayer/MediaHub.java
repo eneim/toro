@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RestrictTo;
 import android.view.ViewGroup;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource.MediaSourceFactory;
@@ -37,30 +38,27 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.exoplayer.BuildConfig;
-import im.ene.toro.exoplayer.Playable;
-import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.VolumeInfo;
 import java.io.File;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import toro.v4.Media;
-import toro.v4.MediaItem;
-import toro.v4.exo.factory.ExoPlayerManager;
-import toro.v4.exo.factory.MediaSourceFactoryProvider;
+import im.ene.toro.media.Media;
+import im.ene.toro.media.MediaItem;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+import static com.google.android.exoplayer2.util.Util.getUserAgent;
+import static im.ene.toro.ToroUtil.checkNotNull;
+import static im.ene.toro.exoplayer.BuildConfig.LIB_NAME;
 
 /**
  * @author eneim (2018/09/30).
  * @since 3.7.0.2900
  *
- * A helper class to access to default implementations of {@link ExoPlayerManager}, {@link
- * MediaSourceFactoryProvider} and other dependencies with ease.
+ * A helper class to access to default implementations of {@link ExoPlayerManager},
+ * {@link MediaSourceFactoryProvider} and other dependencies with ease.
  *
  * Client can now create a {@link ToroPlayerHelper} by calling {@link #requestHelper(ToroPlayer,
  * Media)} or build a custom {@link Playable} and use it to create a {@link ToroPlayerHelper} by
@@ -79,7 +77,7 @@ public final class MediaHub {
   @NonNull private final ExoPlayerManager playerManager;
   @NonNull private final MediaSourceFactoryProvider mediaSourceFactoryProvider;
 
-  // On Demand
+  // Create on demand
   private DataSource.Factory upstreamFactory;
   private MediaSourceFactory adsMediaSourceFactory;
 
@@ -110,13 +108,14 @@ public final class MediaHub {
    * // Use
    * MediaHub hub = MediaHub.get(context)
    */
-  @SuppressWarnings("unused") public static void setSingleton(MediaHub hub) {
-    if (mediaHub == hub) return;
+  @SuppressWarnings("unused")
+  public static void setSingleton(@NonNull MediaHub hub) {
+    if (mediaHub == checkNotNull(hub)) return;
     if (mediaHub != null) mediaHub.cleanUp();
     mediaHub = hub;
   }
 
-  public static class Builder {
+  public static final class Builder {
     final Context context;
     final String userAgent;
 
@@ -124,12 +123,12 @@ public final class MediaHub {
     MediaSourceFactoryProvider mediaSourceFactoryProvider;
     MediaSourceFactory adsMediaSourceFactory;
 
-    public Builder(Context context) {
-      this(context, Util.getUserAgent(context.getApplicationContext(), BuildConfig.LIB_NAME));
+    public Builder(@NonNull Context context) {
+      this(checkNotNull(context), getUserAgent(context.getApplicationContext(), LIB_NAME));
     }
 
-    public Builder(Context context, String userAgent) {
-      this.context = context.getApplicationContext();
+    public Builder(@NonNull Context context, @NonNull String userAgent) {
+      this.context = checkNotNull(context).getApplicationContext();
       this.userAgent = userAgent;
 
       // Common components
@@ -159,19 +158,20 @@ public final class MediaHub {
     }
 
     @SuppressWarnings("unused")
-    public Builder setPlayerManager(ExoPlayerManager playerManager) {
-      this.playerManager = playerManager;
+    public Builder setPlayerManager(@NonNull ExoPlayerManager playerManager) {
+      this.playerManager = checkNotNull(playerManager);
       return this;
     }
 
     @SuppressWarnings("unused")
-    public Builder setMediaSourceFactoryProvider(MediaSourceFactoryProvider factoryProvider) {
-      this.mediaSourceFactoryProvider = factoryProvider;
+    public Builder setMediaSourceFactoryProvider(
+        @NonNull MediaSourceFactoryProvider factoryProvider) {
+      this.mediaSourceFactoryProvider = checkNotNull(factoryProvider);
       return this;
     }
 
     @SuppressWarnings("unused")
-    public Builder setAdsMediaSourceFactory(MediaSourceFactory adsMediaSourceFactory) {
+    public Builder setAdsMediaSourceFactory(@Nullable MediaSourceFactory adsMediaSourceFactory) {
       this.adsMediaSourceFactory = adsMediaSourceFactory;
       return this;
     }
@@ -192,7 +192,7 @@ public final class MediaHub {
       @NonNull String userAgent,
       @NonNull ExoPlayerManager playerManager,
       @NonNull MediaSourceFactoryProvider mediaSourceFactoryProvider,
-      MediaSourceFactory adsMediaSourceFactory
+      @Nullable MediaSourceFactory adsMediaSourceFactory
   ) {
     this.context = context.getApplicationContext();
     this.userAgent = userAgent;
@@ -220,8 +220,7 @@ public final class MediaHub {
 
   @SuppressWarnings("WeakerAccess") @NonNull
   public ToroPlayerHelper requestHelper(ToroPlayer player, Media media, boolean lazyPrepare) {
-    Playable playable =
-        new DefaultPlayable(this.context, media, mediaSourceFactoryProvider, playerManager);
+    Playable playable = this.createPlayable(media);
     return this.requestHelper(player, playable, lazyPrepare);
   }
 
@@ -235,12 +234,13 @@ public final class MediaHub {
     return this.requestHelper(player, playable, true);
   }
 
+  @NonNull
   public Playable createAdsPlayable(Media media, AdsLoader adsLoader, ViewGroup adsContainer) {
     return new DefaultAdsPlayable(this.context, media, mediaSourceFactoryProvider, //
         playerManager, adsLoader, adsContainer, tryGetAdsMediaSourceFactory());
   }
 
-  public Playable createPlayable(Media media) {
+  @NonNull public Playable createPlayable(Media media) {
     return new DefaultPlayable(context, media, mediaSourceFactoryProvider, playerManager);
   }
 
@@ -259,10 +259,10 @@ public final class MediaHub {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
-  public static boolean setVolumeInfo(@NonNull ExoPlayer player,
+  public static boolean setVolumeInfo(@NonNull Player player,
       @NonNull VolumeInfo volumeInfo) {
-    if (player instanceof ToroExoPlayer) {
-      return ((ToroExoPlayer) player).setVolumeInfo(volumeInfo);
+    if (player instanceof VolumeInfoController) {
+      return ((LazyPlayer) player).setVolumeInfo(volumeInfo);
     } else if (player instanceof SimpleExoPlayer) {
       SimpleExoPlayer simpleExoPlayer = (SimpleExoPlayer) player;
       float current = simpleExoPlayer.getVolume();
@@ -279,14 +279,52 @@ public final class MediaHub {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) @NonNull
-  public static VolumeInfo getVolumeInfo(ExoPlayer player) {
-    if (player instanceof ToroExoPlayer) {
-      return new VolumeInfo(((ToroExoPlayer) player).getVolumeInfo());
+  public static VolumeInfo getVolumeInfo(Player player) {
+    if (player instanceof VolumeInfoController) {
+      return new VolumeInfo(((VolumeInfoController) player).getVolumeInfo());
     } else if (player instanceof SimpleExoPlayer) {
       float volume = ((SimpleExoPlayer) player).getVolume();
       return new VolumeInfo(volume == 0, volume);
     } else {
       return new VolumeInfo(false, 1.0f);
+    }
+  }
+
+  public static void addEventListener(Player player, Playable.EventListener listener) {
+    player.addListener(listener);
+
+    Player.VideoComponent videoComponent = player.getVideoComponent();
+    if (videoComponent != null) videoComponent.addVideoListener(listener);
+
+    Player.AudioComponent audioComponent = player.getAudioComponent();
+    if (audioComponent != null) audioComponent.addAudioListener(listener);
+
+    Player.TextComponent textComponent = player.getTextComponent();
+    if (textComponent != null) textComponent.addTextOutput(listener);
+
+    if (player instanceof SimpleExoPlayer) {
+      ((SimpleExoPlayer) player).addMetadataOutput(listener);
+    } else if (player instanceof LazyPlayer) {
+      ((LazyPlayer) player).addMetadataOutput(listener);
+    }
+  }
+
+  public static void removeEventListener(Player player, Playable.EventListener listener) {
+    player.removeListener(listener);
+
+    Player.VideoComponent videoComponent = player.getVideoComponent();
+    if (videoComponent != null) videoComponent.removeVideoListener(listener);
+
+    Player.AudioComponent audioComponent = player.getAudioComponent();
+    if (audioComponent != null) audioComponent.removeAudioListener(listener);
+
+    Player.TextComponent textComponent = player.getTextComponent();
+    if (textComponent != null) textComponent.removeTextOutput(listener);
+
+    if (player instanceof SimpleExoPlayer) {
+      ((SimpleExoPlayer) player).removeMetadataOutput(listener);
+    } else if (player instanceof LazyPlayer) {
+      ((LazyPlayer) player).removeMetadataOutput(listener);
     }
   }
 }

@@ -28,7 +28,6 @@ import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
-import toro.v4.exo.DefaultAdsPlayable;
 
 /**
  * A {@link Playable} that is able to integrate with {@link AdsLoader}.

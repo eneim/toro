@@ -40,8 +40,7 @@ import static com.google.android.exoplayer2.util.Util.inferContentType;
 /**
  * @author eneim (2018/01/24).
  * @since 3.4.0
- * @deprecated In 3.7.0 Toro suggests to use the mechanism of Providers. This class is no longer
- * required there.
+ * @deprecated Use {@link MediaSourceFactoryProvider} instead. See {@link MediaHub} for more information.
  */
 @Deprecated
 public interface MediaSourceBuilder {

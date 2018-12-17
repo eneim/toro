@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package toro.v4.exo.factory;
+package im.ene.toro.exoplayer;
 
-import com.google.android.exoplayer2.source.ads.AdsMediaSource;
-import toro.v4.Media;
+import android.support.annotation.NonNull;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 
 /**
- * @author eneim (2018/10/12).
- * @since 3.7.0.2901
+ * @author eneim (2018/11/01).
  */
-public interface MediaSourceFactoryProvider {
+public class DefaultBandwidthMeterFactory implements BandwidthMeterFactory {
 
-  AdsMediaSource.MediaSourceFactory provideMediaSourceFactory(Media media);
+  @NonNull @Override public BandwidthMeter createBandwidthMeter() {
+    return new DefaultBandwidthMeter();
+  }
 }

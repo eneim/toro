@@ -14,19 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.sample.facebook.v2;
 
-import android.support.annotation.NonNull;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import toro.v4.exo.factory.BandwidthMeterFactory;
-
-/**
- * @author eneim (2018/11/01).
- */
-public class DefaultBandwidthMeterFactory implements BandwidthMeterFactory {
-
-  @NonNull @Override public BandwidthMeter createBandwidthMeter() {
-    return new DefaultBandwidthMeter();
-  }
+class BaseItem {
 }

@@ -38,7 +38,7 @@ import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import java.io.IOException;
-import toro.v4.Media;
+import im.ene.toro.media.Media;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -48,6 +48,7 @@ import static im.ene.toro.exoplayer.ToroExo.with;
  *
  * @author eneim (2018/02/04).
  * @since 3.4.0
+ * @deprecated ExoCreator is no longer recommended. Use {@link MediaHub} instead.
  */
 
 @Deprecated @SuppressWarnings({ "unused", "WeakerAccess" }) //

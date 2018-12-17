@@ -19,6 +19,7 @@ package im.ene.toro.exoplayer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -30,8 +31,9 @@ import com.google.android.exoplayer2.upstream.TransferListener;
  *
  * @author eneim (2018/01/26).
  * @since 3.4.0
- * @deprecated In 3.7.0 Toro suggests to use the mechanism of Providers. This class is no longer
- * required there.
+ * @deprecated In 3.7.0 Toro suggests to use combinations of {@link PlayerHelper} with {@link
+ * Playable}, where {@link ExoPlayer} instances are managed by {@link ExoPlayerManager}. {@link
+ * MediaHub} is the default helper for all these.
  */
 
 @Deprecated @SuppressWarnings("WeakerAccess") //

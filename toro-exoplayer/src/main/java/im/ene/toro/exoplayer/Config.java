@@ -45,6 +45,7 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  *
  * @author eneim (2018/01/23).
  * @since 3.4.0
+ * @deprecated ExoCreator and {@link Config} are no longer recommended. Use {@link MediaHub} instead.
  */
 
 @Deprecated @SuppressWarnings("SimplifiableIfStatement")  //

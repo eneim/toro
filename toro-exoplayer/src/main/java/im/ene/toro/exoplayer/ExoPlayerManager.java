@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package toro.v4;
+package im.ene.toro.exoplayer;
 
-import android.net.Uri;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import im.ene.toro.media.MediaDrm;
+import com.google.android.exoplayer2.ExoPlayer;
+import im.ene.toro.media.Media;
 
 /**
- * @author eneim (2018/11/16).
+ * @author eneim (2018/10/12).
+ * @see DefaultPlayable
+ * @since 3.7.0.2901
+ *
+ * This interface is required in default implementation of {@link Playable} only.
  */
-public interface Media extends Parcelable {
+public interface ExoPlayerManager {
 
-  @NonNull Uri getUri();
+  @NonNull ExoPlayer acquireExoPlayer(@NonNull Media media);
 
-  @Nullable String getExtension();
+  void releasePlayer(@NonNull Media media, @NonNull ExoPlayer player);
 
-  @Nullable MediaDrm getMediaDrm();
+  /** Cleanup any cached {@link ExoPlayer} instance. Should be called when necessary only */
+  void cleanUp();
 }

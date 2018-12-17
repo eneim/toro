@@ -31,9 +31,9 @@ import im.ene.toro.media.VolumeInfo
 import kotlinx.android.synthetic.main.activity_demo_playable.debugText
 import kotlinx.android.synthetic.main.activity_demo_playable.playerView
 import toro.demo.exoplayer.R
-import toro.v4.Media
-import toro.v4.MediaItem
-import toro.v4.exo.MediaHub
+import im.ene.toro.media.Media
+import im.ene.toro.media.MediaItem
+import im.ene.toro.exoplayer.MediaHub
 
 /**
  * @author eneim (2018/02/25).

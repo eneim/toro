@@ -56,7 +56,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import toro.v4.PreLoader;
+import im.ene.toro.PreLoader;
 
 import static android.content.Context.POWER_SERVICE;
 import static im.ene.toro.ToroUtil.checkNotNull;

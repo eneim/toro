@@ -23,7 +23,7 @@ import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import im.ene.toro.annotations.RemoveIn;
-import toro.v4.Media;
+import im.ene.toro.media.Media;
 
 /**
  * A simple interface whose implementation helps Client to easily create {@link SimpleExoPlayer}
@@ -33,6 +33,7 @@ import toro.v4.Media;
  *
  * @author eneim (2018/02/04).
  * @since 3.4.0
+ * @deprecated Using {@link ExoCreator} is no longer recommended. Use {@link MediaHub} instead.
  */
 @Deprecated //
 public interface ExoCreator {

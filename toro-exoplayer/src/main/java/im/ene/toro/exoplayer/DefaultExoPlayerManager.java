@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.content.Context;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.util.Pools;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -25,21 +24,16 @@ import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import im.ene.toro.exoplayer.ToroExoPlayer;
+import com.google.android.exoplayer2.util.Util;
 import java.util.Map;
 import java.util.WeakHashMap;
-import toro.v4.Media;
-import toro.v4.exo.factory.BandwidthMeterFactory;
-import toro.v4.exo.factory.DrmSessionManagerProvider;
-import toro.v4.exo.factory.ExoPlayerManager;
+import im.ene.toro.media.Media;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
 
 /**
  * @author eneim (2018/10/12).
@@ -117,7 +111,7 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
             this.loadControl, //
             this.bandwidthMeterFactory.createBandwidthMeter(), //
             null, //
-            Looper.myLooper() //
+            Util.getLooper() //
         );
       }
       return player;
@@ -130,7 +124,7 @@ public class DefaultExoPlayerManager implements ExoPlayerManager {
           this.loadControl, //
           this.bandwidthMeterFactory.createBandwidthMeter(), //
           drmSessionManager, //
-          Looper.myLooper() //
+          Util.getLooper() //
       );
       drmPlayerCache.put(player, System.currentTimeMillis());
       return player;

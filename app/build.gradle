@@ -20,6 +20,22 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
+  signingConfigs {
+    release {
+      keyAlias "debug"
+      keyPassword "android"
+      storeFile file("debug.jks")
+      storePassword "android"
+    }
+
+    debug {
+      keyAlias "debug"
+      keyPassword "android"
+      storeFile file("debug.jks")
+      storePassword "android"
+    }
+  }
+
   compileSdkVersion rootProject.ext.androidVersion
 
   defaultConfig {
@@ -35,11 +51,14 @@ android {
 
   buildTypes {
     release {
-      minifyEnabled false
-      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      signingConfig signingConfigs.release
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
 
     debug {
+      applicationIdSuffix ".debug"
+      signingConfig signingConfigs.debug
       // multiDexEnabled true
       minifyEnabled false
     }
@@ -84,6 +103,9 @@ dependencies {
   implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
   implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.constrainLayoutVersion}"
 
+  implementation "android.arch.lifecycle:extensions:${rootProject.ext.archLibraryVersion}"
+  kapt "android.arch.lifecycle:compiler:${rootProject.ext.archLibraryVersion}"
+
   implementation ('net.opacapp:multiline-collapsingtoolbar:27.1.1') {
     transitive = false
   }
@@ -102,9 +124,11 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.3'
 
   implementation "org.jsoup:jsoup:1.11.3"
+  implementation "jp.wasabeef:takt:2.0.0"
+  implementation 'de.hdodenhof:circleimageview:2.2.0'
 
   debugImplementation "com.squareup.leakcanary:leakcanary-android:${rootProject.ext.leackCanary}"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"

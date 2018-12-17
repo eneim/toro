@@ -27,7 +27,7 @@ import im.ene.toro.sample.nested.NestedListFragment;
 /**
  * @author eneim | 6/6/17.
  *
- *         A "Deck" to "present" some demonstrations. Naming by the context, no big deal.
+ * A "Deck" to "present" some demonstrations. Naming by the context, no big deal.
  */
 
 public final class Deck {
@@ -48,12 +48,10 @@ public final class Deck {
       throw new ToroDemoException(e.getLocalizedMessage(), e);
     }
 
-    if (fragment != null) {
-      activity.getSupportFragmentManager().beginTransaction() //
-          .replace(android.R.id.content, fragment).commit();
-    } else {
-      activity.finish();
-    }
+    activity.getSupportFragmentManager()
+        .beginTransaction()
+        .replace(android.R.id.content, fragment)
+        .commit();
   }
 
   @SuppressWarnings("WeakerAccess") //

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Beta;
-import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;

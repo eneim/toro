@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package toro.v4.exo.factory;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import im.ene.toro.annotations.Beta;
-import toro.v4.Media;
+import im.ene.toro.media.Media;
 
 /**
  * @author eneim (2018/10/08).
  * @since 3.7.0.2901
+ *
+ * This interface is used in default implementation of {@link ExoPlayerManager} only.
+ *
+ * @see DefaultExoPlayerManager
  */
 @Beta public interface DrmSessionManagerProvider {
 

@@ -24,10 +24,7 @@ import android.view.ViewGroup;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
-import im.ene.toro.annotations.Beta;
 import im.ene.toro.helper.ToroPlayerHelper;
-import toro.v4.exo.DefaultAdsPlayable;
-import toro.v4.exo.PlayerHelper;
 
 /**
  * A {@link ToroPlayerHelper} to integrate ExoPlayer IMA Extension. Work together with {@link

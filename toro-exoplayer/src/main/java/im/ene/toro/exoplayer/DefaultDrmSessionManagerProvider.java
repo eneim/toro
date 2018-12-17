@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -30,12 +30,10 @@ import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import im.ene.toro.exoplayer.R;
 import im.ene.toro.media.MediaDrm;
 import java.util.HashMap;
 import java.util.UUID;
-import toro.v4.Media;
-import toro.v4.exo.factory.DrmSessionManagerProvider;
+import im.ene.toro.media.Media;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static com.google.android.exoplayer2.drm.UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME;

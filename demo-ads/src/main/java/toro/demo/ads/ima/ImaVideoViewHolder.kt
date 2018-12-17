@@ -28,9 +28,9 @@ import im.ene.toro.media.PlaybackInfo
 import im.ene.toro.widget.Container
 import toro.demo.ads.R
 import toro.demo.ads.common.BaseViewHolder
-import toro.v4.Media
-import toro.v4.MediaItem
-import toro.v4.exo.MediaHub
+import im.ene.toro.media.Media
+import im.ene.toro.media.MediaItem
+import im.ene.toro.exoplayer.MediaHub
 
 /**
  * @author eneim (2018/08/22).

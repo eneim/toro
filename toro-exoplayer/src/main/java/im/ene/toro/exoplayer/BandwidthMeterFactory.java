@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4.exo.factory;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -23,6 +23,8 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 /**
  * Factory to create {@link BandwidthMeter} for a {@link SimpleExoPlayer}.
  * It is suggested to not have many Player instance to use the same {@link BandwidthMeter} instance.
+ *
+ * This interface is used in {@link DefaultExoPlayerManager} only at the moment.
  *
  * @author eneim (2018/11/01).
  * @since 3.7.0.2901

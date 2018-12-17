@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package toro.v4.exo.factory;
+package im.ene.toro.exoplayer;
 
 import android.support.annotation.NonNull;
-import com.google.android.exoplayer2.ExoPlayer;
-import toro.v4.Media;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.media.VolumeInfo;
 
 /**
- * @author eneim (2018/10/12).
- * @since 3.7.0.2901
+ * General definition of a component that wishes to control the {@link VolumeInfo}.
  */
-public interface ExoPlayerManager {
+public interface VolumeInfoController {
 
-  @NonNull ExoPlayer acquireExoPlayer(@NonNull Media media);
+  void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener);
 
-  void releasePlayer(@NonNull Media media, @NonNull ExoPlayer player);
+  void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener);
 
-  void cleanUp();
+  void clearOnVolumeChangeListener();
+
+  boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo);
+
+  VolumeInfo getVolumeInfo();
 }

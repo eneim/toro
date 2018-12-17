@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.content.Context;
 import android.net.Uri;
@@ -33,10 +33,9 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Util;
 import im.ene.toro.annotations.Beta;
-import im.ene.toro.exoplayer.Playable;
-import toro.v4.Media;
-import toro.v4.exo.factory.ExoPlayerManager;
-import toro.v4.exo.factory.MediaSourceFactoryProvider;
+import im.ene.toro.media.Media;
+
+import static im.ene.toro.ToroUtil.checkNotNull;
 
 /**
  * @author eneim (2018/10/19).
@@ -62,7 +61,7 @@ public class DefaultAdsPlayable extends DefaultPlayable {
   }
 
   @CallSuper @Override public void prepare(boolean prepareSource) {
-    // Trick here: we create the MediaSource in advance so parent class won't do this by itself.
+    // Trick here: we create the MediaSource in advance so parent class won't do it again by itself.
     // Only by this, we can inject the Ads related resource into the playback.
     // This is not a best way to go, but it is simple enough.
     this.mediaSource = createAdsMediaSource(
@@ -76,18 +75,20 @@ public class DefaultAdsPlayable extends DefaultPlayable {
   }
 
   private static MediaSource createAdsMediaSource(Media media, AdsLoader adsLoader,
-      ViewGroup adContainer, MediaSourceFactory factory, MediaSourceFactory adsMediaSourceFactory) {
-    MediaSource original = factory.createMediaSource(media.getUri());
-    return new AdsMediaSource(original, adsMediaSourceFactory, adsLoader, adContainer);
+      ViewGroup adContainer, MediaSourceFactory mediaSourceFactory,
+      MediaSourceFactory adsMediaSourceFactory) {
+    MediaSource mediaSource = mediaSourceFactory.createMediaSource(media.getUri());
+    return new AdsMediaSource(mediaSource, adsMediaSourceFactory, adsLoader, adContainer);
   }
 
   // Used for Ads only.
-  public static class AdsMediaSourceFactory implements MediaSourceFactory {
+  public static final class AdsMediaSourceFactory implements MediaSourceFactory {
 
+    @NonNull
     private final DataSource.Factory dataSourceFactory;
 
-    public AdsMediaSourceFactory(DataSource.Factory dataSourceFactory) {
-      this.dataSourceFactory = dataSourceFactory;
+    public AdsMediaSourceFactory(@NonNull DataSource.Factory dataSourceFactory) {
+      this.dataSourceFactory = checkNotNull(dataSourceFactory);
     }
 
     @Override public MediaSource createMediaSource(Uri uri) {

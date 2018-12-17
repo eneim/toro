@@ -84,7 +84,7 @@
 
     <activity-alias
         android:name=".Launch"
-        android:targetActivity=".custom.CustomLayoutActivity">
+        android:targetActivity=".facebook.FacebookDemoActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

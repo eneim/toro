@@ -19,7 +19,7 @@ package im.ene.toro.sample.facebook;
 import android.os.Bundle;
 import im.ene.toro.sample.Deck;
 import im.ene.toro.sample.common.BaseActivity;
-import im.ene.toro.sample.facebook.timeline.TimelineFragment;
+import im.ene.toro.sample.facebook.v2.TimelineFragment;
 
 /**
  * @author eneim (7/2/17).

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -58,11 +58,20 @@ import com.google.android.exoplayer2.video.VideoFrameMetadataListener;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.exoplayer2.video.spherical.CameraMotionListener;
-import im.ene.toro.exoplayer.ToroExoPlayer;
+import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.OnVolumeChangeListener;
+import im.ene.toro.media.VolumeInfo;
 
-/** Same interface as {@link SimpleExoPlayer}, just lazily create stuff. */
-final class LazyPlayer extends BasePlayer
-    implements ExoPlayer, Player.AudioComponent, Player.VideoComponent, Player.TextComponent {
+/**
+ * @author eneim (2018/10/12).
+ * @since 3.7.0.2901
+ *
+ * Same interface as {@link SimpleExoPlayer}, has a {@link ToroExoPlayer} for delegating methods.
+ * This {@link ToroExoPlayer} is lazily created.
+ */
+@SuppressWarnings("ConstantConditions") //
+final class LazyPlayer extends BasePlayer implements ExoPlayer,
+    Player.AudioComponent, Player.VideoComponent, Player.TextComponent, VolumeInfoController {
 
   private ToroExoPlayer delegate;
 
@@ -101,6 +110,35 @@ final class LazyPlayer extends BasePlayer
     }
     return delegate;
   }
+
+  //// [BEGIN] VolumeInfoController
+
+  @Override
+  public final boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
+    return getDelegate().setVolumeInfo(volumeInfo);
+  }
+
+  @Override
+  @NonNull public final VolumeInfo getVolumeInfo() {
+    return getDelegate().getVolumeInfo();
+  }
+
+  @Override
+  public final void addOnVolumeChangeListener(@NonNull OnVolumeChangeListener listener) {
+    getDelegate().addOnVolumeChangeListener(listener);
+  }
+
+  @Override
+  public final void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
+    getDelegate().removeOnVolumeChangeListener(listener);
+  }
+
+  @Override
+  public final void clearOnVolumeChangeListener() {
+    getDelegate().clearOnVolumeChangeListener();
+  }
+
+  //// [END] VolumeInfoController
 
   @Nullable @Override public AudioComponent getAudioComponent() {
     return getDelegate().getAudioComponent();
@@ -429,7 +467,8 @@ final class LazyPlayer extends BasePlayer
   }
 
   @Override public void release() {
-    getDelegate().release();
+    // getDelegate().release(); <-- no need to create the delegate just to release it.
+    if (delegate != null) delegate.release();
   }
 
   @Override @Deprecated public void sendMessages(ExoPlayerMessage... messages) {

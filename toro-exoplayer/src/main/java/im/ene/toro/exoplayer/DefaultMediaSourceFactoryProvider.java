@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.content.Context;
 import android.net.Uri;
@@ -39,8 +39,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import java.util.Collections;
 import java.util.List;
-import toro.v4.Media;
-import toro.v4.exo.factory.MediaSourceFactoryProvider;
+import im.ene.toro.media.Media;
 
 /**
  * @author eneim (2018/11/10).

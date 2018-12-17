@@ -27,7 +27,6 @@ import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;
-import toro.v4.exo.PlayerHelper;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;

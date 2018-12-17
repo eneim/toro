@@ -39,7 +39,7 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  *
  * @author eneim (2018/03/27).
  */
-public class ToroExoPlayer extends SimpleExoPlayer {
+public class ToroExoPlayer extends SimpleExoPlayer implements VolumeInfoController {
 
   public ToroExoPlayer(Context context, RenderersFactory renderersFactory,
       TrackSelector trackSelector, LoadControl loadControl, BandwidthMeter bandwidthMeter,
@@ -57,15 +57,18 @@ public class ToroExoPlayer extends SimpleExoPlayer {
 
   private VolumeChangeListeners listeners;
 
+  @Override
   public final void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
     if (this.listeners == null) this.listeners = new VolumeChangeListeners();
     this.listeners.add(checkNotNull(listener));
   }
 
+  @Override
   public final void removeOnVolumeChangeListener(ToroPlayer.OnVolumeChangeListener listener) {
     if (this.listeners != null) this.listeners.remove(listener);
   }
 
+  @Override
   public final void clearOnVolumeChangeListener() {
     if (this.listeners != null) this.listeners.clear();
   }
@@ -76,7 +79,7 @@ public class ToroExoPlayer extends SimpleExoPlayer {
 
   private final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
-  @SuppressWarnings("UnusedReturnValue")
+  @Override
   public final boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
     boolean changed = !this.volumeInfo.equals(volumeInfo);
     if (changed) {
@@ -93,7 +96,7 @@ public class ToroExoPlayer extends SimpleExoPlayer {
     return changed;
   }
 
-  @SuppressWarnings("unused") @NonNull public final VolumeInfo getVolumeInfo() {
+  @Override @NonNull public final VolumeInfo getVolumeInfo() {
     return volumeInfo;
   }
 

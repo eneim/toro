@@ -282,17 +282,17 @@ final class PlaybackInfoCache extends AdapterDataObserver {
         if (key >= low && key <= high) changedColdKeys.add(key);
       }
       // 1.2 Extract entries from cold cache to a temp cache.
-      final Map<Object, PlaybackInfo> changeColdEntries = new HashMap<>();
+      final Map<Object, PlaybackInfo> changedColdEntries = new HashMap<>();
       for (Integer key : changedColdKeys) {
-        changeColdEntries.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
+        changedColdEntries.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
       }
 
       // 1.2 Update cold Cache with new keys
       for (Integer key : changedColdKeys) {
         if (key == low) {
-          coldCache.put(getKey(high), changeColdEntries.get(key));
+          coldCache.put(getKey(high), changedColdEntries.get(key));
         } else {
-          coldCache.put(getKey(key + shift), changeColdEntries.get(key));
+          coldCache.put(getKey(key + shift), changedColdEntries.get(key));
         }
       }
 
@@ -325,8 +325,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   }
 
   @Nullable private Object getKey(int position) {
-    return position == RecyclerView.NO_POSITION ? null : container.getCacheManager() == null ? null
-        : container.getCacheManager().getKeyForOrder(position);
+    return position == RecyclerView.NO_POSITION ? null :
+        (container.getCacheManager() == null ? null
+            : container.getCacheManager().getKeyForOrder(position));
   }
 
   //@Nullable private Integer getOrder(Object key) {

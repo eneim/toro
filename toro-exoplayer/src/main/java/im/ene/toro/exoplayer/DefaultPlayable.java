@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package toro.v4.exo;
+package im.ene.toro.exoplayer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 import com.google.android.exoplayer2.C;
@@ -29,14 +28,12 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource.MediaSourceFactory;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
@@ -45,14 +42,9 @@ import com.google.android.exoplayer2.util.ErrorMessageProvider;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.ErrorListeners;
 import im.ene.toro.ToroPlayer.VolumeChangeListeners;
-import im.ene.toro.exoplayer.Playable;
-import im.ene.toro.exoplayer.R;
-import im.ene.toro.exoplayer.ToroExoPlayer;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import toro.v4.Media;
-import toro.v4.exo.factory.ExoPlayerManager;
-import toro.v4.exo.factory.MediaSourceFactoryProvider;
+import im.ene.toro.media.Media;
 
 import static com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -181,32 +173,18 @@ public class DefaultPlayable implements Playable {
     }
     this.setPlayerView(null);
     if (this.player != null) {
-      // Reset volume to default
-      MediaHub.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
-      this.player.stop(true);
-      if (this.player instanceof ToroExoPlayer) {
-        ((ToroExoPlayer) this.player).clearOnVolumeChangeListener();
+      // Reset player volume to default
+      MediaHub.setVolumeInfo(player, new VolumeInfo(false, 1.f));
+      if (player instanceof VolumeInfoController) {
+        ((VolumeInfoController) player).clearOnVolumeChangeListener();
       }
       if (listenerApplied) {
-        player.removeListener(listeners);
-        if (player instanceof Player.VideoComponent) {
-          ((Player.VideoComponent) player).removeVideoListener(listeners);
-        }
-        if (player instanceof Player.AudioComponent) {
-          ((Player.AudioComponent) player).removeAudioListener(listeners);
-        }
-        if (player instanceof Player.TextComponent) {
-          ((Player.TextComponent) player).removeTextOutput(listeners);
-        }
-        if (player instanceof SimpleExoPlayer) {
-          ((SimpleExoPlayer) player).removeMetadataOutput(listeners);
-        } else if (player instanceof LazyPlayer) {
-          ((LazyPlayer) player).removeMetadataOutput(listeners);
-        }
+        MediaHub.removeEventListener(player, listeners);
         listenerApplied = false;
       }
+      player.stop(true);
       // This call will also call this.player.stop(true) to reset internal resource, still reusable.
-      playerManager.releasePlayer(this.media, this.player);
+      playerManager.releasePlayer(media, player);
     }
     this.player = null;
     this.mediaSource = null;
@@ -336,24 +314,10 @@ public class DefaultPlayable implements Playable {
     }
 
     if (!listenerApplied) {
-      if (player instanceof ToroExoPlayer) {
-        ((ToroExoPlayer) player).addOnVolumeChangeListener(volumeChangeListeners);
+      if (player instanceof VolumeInfoController) {
+        ((VolumeInfoController) player).addOnVolumeChangeListener(volumeChangeListeners);
       }
-      player.addListener(listeners);
-      if (player instanceof Player.VideoComponent) {
-        ((Player.VideoComponent) player).addVideoListener(listeners);
-      }
-      if (player instanceof Player.AudioComponent) {
-        ((Player.AudioComponent) player).addAudioListener(listeners);
-      }
-      if (player instanceof Player.TextComponent) {
-        ((Player.TextComponent) player).addTextOutput(listeners);
-      }
-      if (player instanceof SimpleExoPlayer) {
-        ((SimpleExoPlayer) player).addMetadataOutput(listeners);
-      } else if (player instanceof LazyPlayer) {
-        ((LazyPlayer) player).addMetadataOutput(listeners);
-      }
+      MediaHub.addEventListener(player, listeners);
       listenerApplied = true;
     }
 

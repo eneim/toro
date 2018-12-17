@@ -29,7 +29,7 @@ import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
 import im.ene.toro.widget.Container;
-import toro.v4.exo.MediaHub;
+import im.ene.toro.exoplayer.MediaHub;
 
 /**
  * @author eneim (7/1/17).
