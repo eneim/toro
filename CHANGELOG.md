@@ -1,14 +1,17 @@
 Changelog
 ===========
 
-3.6.2.2804 (2018/xx/xx)
+3.6.2.2804 (2018/12/16)
 -----------------------
 
-- **[Update]** Update to ExoPlayer 2.8.4, Android 28 and Support Libraries 28
-- **[Update]** Add ``onFirstFrameRendered()`` to ToroPlayer.EventListener. The method is called when the video is first rendered to the View. This is a signal to the client to hide the thumbnail view for example. When used with ``MediaPlayer`` this will only called on Android 17 and above.
+- **[Update]** Update to ExoPlayer 2.8.4, Android 28 and Support Libraries 28, Android Studio 3.3 RC2.
+- **[Update]** Add ``onFirstFrameRendered()`` to ToroPlayer.EventListener. The method is called when the video is first rendered to the View. This is a signal to the client to hide the thumbnail view for example. Implementation of Helper class is responsible for calling this callback. When used with ``MediaPlayer`` this will only called on Android 17 and above.
+- **[Update]** Add CopyOnWriteArraySet implementation for listeners of ToroPlayer. 
 - **[Update]** ``toro_exo_player_view`` has a change in layout structure: the ``ProgressBar`` is brought to the front, in front of ``exo_overlay`` FrameLayout.
 
-- **[Change/Breaking]** ``ToroPlayerHelper#initialize(Container, PlaybackInfo)`` is now final. Any implementation that override this method should be updated. The recommended way is to implement the ``ToroPlayerHelper#initialize(PlaybackInfo)`` only.
+- **[Change/Breaking]** ``ToroPlayerHelper#initialize(Container, PlaybackInfo)`` is now final. Any implementation that override this method should be updated. The recommended way is to override the ``ToroPlayerHelper#initialize(PlaybackInfo)`` only.
+
+- **[Demo App]** Better build config for app module. Proguard is included to demonstrate real life scenario. APK of this demo is included in the release tag.
 
 3.6.1.2802 (2018/09/11)
 -----------------------

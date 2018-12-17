@@ -44,6 +44,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
   @NonNull private final ExoPlayable playable;
   @NonNull private final MyEventListeners listeners;
+  private final boolean lazyPrepare;
 
   // Container is no longer required for constructing new instance.
   @SuppressWarnings("unused") @RemoveIn(version = "3.6.0") @Deprecated  //
@@ -83,25 +84,24 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
 
     listeners = new MyEventListeners();
     this.playable = playable;
+    this.lazyPrepare = true;
   }
 
   @Override protected void initialize(@NonNull PlaybackInfo playbackInfo) {
-    playable.addOnVolumeChangeListener(this.volumeChangeListeners);
     playable.addEventListener(listeners);
-    playable.addErrorListener(this.errorListeners);
-
+    playable.addErrorListener(super.getErrorListeners());
+    playable.addOnVolumeChangeListener(super.getVolumeChangeListeners());
     playable.setPlaybackInfo(playbackInfo);
-    playable.prepare(false);
+    playable.prepare(!lazyPrepare);
     playable.setPlayerView((PlayerView) player.getPlayerView());
   }
 
   @Override public void release() {
     super.release();
     playable.setPlayerView(null);
-
-    playable.removeErrorListener(this.errorListeners);
+    playable.removeOnVolumeChangeListener(super.getVolumeChangeListeners());
+    playable.removeErrorListener(super.getErrorListeners());
     playable.removeEventListener(listeners);
-    playable.removeOnVolumeChangeListener(this.volumeChangeListeners);
     playable.release();
   }
 
@@ -170,7 +170,7 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     @Override public void onRenderedFirstFrame() {
       super.onRenderedFirstFrame();
       internalListener.onFirstFrameRendered();
-      for (ToroPlayer.EventListener listener : eventListeners) {
+      for (ToroPlayer.EventListener listener : ExoPlayerViewHelper.super.getEventListeners()) {
         listener.onFirstFrameRendered();
       }
     }

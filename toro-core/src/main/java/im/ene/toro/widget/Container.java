@@ -537,6 +537,8 @@ public class Container extends RecyclerView {
 
   /**
    * Save {@link PlaybackInfo} for the current {@link ToroPlayer} of a specific order.
+   * If called with {@link PlaybackInfo#SCRAP}, it is a hint that the Player is completed and need
+   * to be re-initialized.
    *
    * @param order order of the {@link ToroPlayer}.
    * @param playbackInfo current {@link PlaybackInfo} of the {@link ToroPlayer}. Null info will be
@@ -560,7 +562,7 @@ public class Container extends RecyclerView {
    * Get a {@link SparseArray} contains cached {@link PlaybackInfo} of {@link ToroPlayer}s managed
    * by this {@link Container}. If there is non-null {@link CacheManager}, this method should
    * return the list of all {@link PlaybackInfo} cached by {@link PlaybackInfoCache}, otherwise,
-   * this method returns cached {@link PlaybackInfo} of attached {@link ToroPlayer} only.
+   * this method returns current {@link PlaybackInfo} of attached {@link ToroPlayer}s only.
    */
   @NonNull public SparseArray<PlaybackInfo> getLatestPlaybackInfos() {
     SparseArray<PlaybackInfo> cache = new SparseArray<>();

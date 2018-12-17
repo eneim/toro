@@ -18,6 +18,7 @@ package im.ene.toro.sample.facebook.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import im.ene.toro.sample.common.MediaUrl;
 
 /**
@@ -37,7 +38,7 @@ public class FbVideo extends FbItem implements Parcelable {
     return this.mediaUrl;
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "FbVideo{" + "media=" + mediaUrl.name() + '}';
   }
 

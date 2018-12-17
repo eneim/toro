@@ -28,10 +28,10 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
+import im.ene.toro.ToroPlayer.VolumeChangeListeners;
 import im.ene.toro.ToroUtil;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 import static im.ene.toro.exoplayer.ToroExo.with;
@@ -58,9 +58,8 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   private final PlaybackInfo playbackInfo = new PlaybackInfo(); // never expose to outside.
 
   protected final EventListeners listeners = new EventListeners();  // original listener.
-  // Use a CopyOnWriteArraySet to prevent duplicated setup and modify while iterating.
-  protected CopyOnWriteArraySet<ToroPlayer.OnVolumeChangeListener> volumeChangeListeners;
-  protected ToroPlayer.ErrorListeners errorListeners;
+  protected final VolumeChangeListeners volumeChangeListeners = new VolumeChangeListeners();
+  protected final ToroPlayer.ErrorListeners errorListeners = new ToroPlayer.ErrorListeners();
 
   protected final Uri mediaUri; // immutable, parcelable
   protected final String fileExt;
@@ -124,9 +123,6 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
       ToroExo.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
       player.stop(true);
     }
-    // TODO [20180214] double check this when ExoPlayer 2.7.0 is released.
-    // TODO [20180326] reusable MediaSource will be added after ExoPlayer 2.7.1.
-    // TODO [20180702] back to this after updating ExoPlayer to 2.8.x
     this.mediaSource = null; // so it will be re-prepared when play() is called.
     this.sourcePrepared = false;
   }
@@ -137,14 +133,14 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
       // reset volume to default
       ToroExo.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
       this.player.stop(true);
-      if (this.player instanceof ToroExoPlayer) {
-        ((ToroExoPlayer) this.player).clearOnVolumeChangeListener();
-      }
       if (listenerApplied) {
         player.removeListener(listeners);
         player.removeVideoListener(listeners);
         player.removeTextOutput(listeners);
         player.removeMetadataOutput(listeners);
+        if (this.player instanceof ToroExoPlayer) {
+          ((ToroExoPlayer) this.player).removeOnVolumeChangeListener(this.volumeChangeListeners);
+        }
         listenerApplied = false;
       }
       with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
@@ -228,21 +224,12 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
 
   @Override
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners == null) volumeChangeListeners = new CopyOnWriteArraySet<>();
     volumeChangeListeners.add(ToroUtil.checkNotNull(listener));
-    if (this.player instanceof ToroExoPlayer) {
-      ((ToroExoPlayer) this.player).addOnVolumeChangeListener(listener);
-    }
   }
 
   @Override
   public void removeOnVolumeChangeListener(@Nullable ToroPlayer.OnVolumeChangeListener listener) {
-    if (volumeChangeListeners != null) {
-      volumeChangeListeners.remove(listener);
-      if (this.player instanceof ToroExoPlayer) {
-        ((ToroExoPlayer) this.player).removeOnVolumeChangeListener(listener);
-      }
-    }
+    volumeChangeListeners.remove(listener);
   }
 
   @Override public boolean isPlaying() {
@@ -250,14 +237,11 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
   }
 
   @Override public void addErrorListener(@NonNull ToroPlayer.OnErrorListener listener) {
-    if (this.errorListeners == null) {
-      this.errorListeners = new ToroPlayer.ErrorListeners();
-    }
     this.errorListeners.add(checkNotNull(listener));
   }
 
   @Override public void removeErrorListener(@Nullable ToroPlayer.OnErrorListener listener) {
-    if (this.errorListeners != null) this.errorListeners.remove(listener);
+    this.errorListeners.remove(listener);
   }
 
   final void updatePlaybackInfo() {
@@ -291,16 +275,13 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
       sourcePrepared = false;
       player = with(checkNotNull(creator.requestContext(), "ExoCreator has no Context")) //
           .requestPlayer(creator);
-      if (player instanceof ToroExoPlayer && volumeChangeListeners != null) {
-        for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
-          ((ToroExoPlayer) player).addOnVolumeChangeListener(listener);
-        }
-      }
-      ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
       listenerApplied = false;
     }
 
     if (!listenerApplied) {
+      if (player instanceof ToroExoPlayer) {
+        ((ToroExoPlayer) player).addOnVolumeChangeListener(volumeChangeListeners);
+      }
       player.addListener(listeners);
       player.addVideoListener(listeners);
       player.addTextOutput(listeners);
@@ -308,6 +289,7 @@ import static im.ene.toro.media.PlaybackInfo.TIME_UNSET;
       listenerApplied = true;
     }
 
+    ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
     boolean haveResumePosition = playbackInfo.getResumeWindow() != C.INDEX_UNSET;
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());

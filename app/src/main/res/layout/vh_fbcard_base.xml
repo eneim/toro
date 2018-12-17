@@ -58,6 +58,7 @@
           android:layout_marginStart="40dp"
           android:orientation="vertical"
           android:padding="4dp"
+          tools:ignore="RtlHardcoded"
           >
         <TextView
             android:id="@+id/fb_user_name"
@@ -77,11 +78,21 @@
       </LinearLayout>
     </FrameLayout>
 
-    <FrameLayout
+    <android.support.v7.widget.LinearLayoutCompat
         android:id="@+id/fb_item_middle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         >
+      <TextView
+          android:id="@+id/fb_item_text"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:lineSpacingMultiplier="1.15"
+          android:maxLines="6"
+          android:padding="8dp"
+          android:text="@string/large_text"
+          />
       <com.google.android.exoplayer2.ui.PlayerView
           android:id="@+id/fb_video_player"
           android:layout_width="match_parent"
@@ -106,7 +117,7 @@
             android:textColor="#FFFF00"
             />
       </com.google.android.exoplayer2.ui.PlayerView>
-    </FrameLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
 
     <LinearLayout
         android:id="@+id/fb_item_bottom"

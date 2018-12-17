@@ -126,7 +126,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
           case MEDIA_INFO_VIDEO_RENDERING_START:
             // Call immediately.
             helper.internalListener.onFirstFrameRendered();
-            for (ToroPlayer.EventListener listener : helper.eventListeners) {
+            for (ToroPlayer.EventListener listener : helper.getEventListeners()) {
               listener.onFirstFrameRendered();
             }
             handled = true;
@@ -143,7 +143,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       playerState = State.STATE_IDLE;
       // TODO how to reset resource so that the MediaPlayer can be reused?
       super.onPlayerStateUpdated(playWhenReady, playerState);
-      errorListeners.onError(new RuntimeException("Error: " + what + ", " + extra));
+      getErrorListeners().onError(new RuntimeException("Error: " + what + ", " + extra));
       return true;  // prevent the system error dialog.
     });
 
@@ -202,7 +202,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
       float volume = volumeInfo.isMute() ? 0 : volumeInfo.getVolume();
       mediaPlayer.setVolume(volume, volume);
       this.volumeInfo.setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      for (ToroPlayer.OnVolumeChangeListener listener : volumeChangeListeners) {
+      for (ToroPlayer.OnVolumeChangeListener listener : getVolumeChangeListeners()) {
         listener.onVolumeChanged(volumeInfo);
       }
     }
@@ -231,7 +231,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
     }
   }
 
-  @SuppressLint("ObsoleteSdkInt") //
+  @SuppressLint("ObsoleteSdkInt")
   @Override public void release() {
     this.playerView.setOnCompletionListener(null);
     this.playerView.setOnPreparedListener(null);

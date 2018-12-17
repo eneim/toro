@@ -20,7 +20,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -60,7 +59,8 @@ public class TimelineViewHolder extends RecyclerView.ViewHolder {
   @BindView(R.id.fb_user_icon) ImageView userIcon;
   @BindView(R.id.fb_user_name) TextView userName;
   @BindView(R.id.fb_user_profile) TextView userProfile;
-  @BindView(R.id.fb_item_middle) FrameLayout container;
+  @BindView(R.id.fb_item_middle) ViewGroup container;
+  @BindView(R.id.fb_item_text) TextView itemText;
 
   TimelineViewHolder(View itemView) {
     super(itemView);

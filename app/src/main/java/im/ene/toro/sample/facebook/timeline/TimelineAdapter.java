@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import im.ene.toro.CacheManager;
 import im.ene.toro.sample.facebook.data.FbItem;
+import im.ene.toro.sample.facebook.data.FbUser;
 import im.ene.toro.sample.facebook.data.FbVideo;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +92,13 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineViewHolder>
   public FbItem getItem(int position) {
     if (position >= items.size()) {
       for (int i = items.size(); i <= position; i++) {
-        items.add(FbVideo.getItem(i, i, initTimeStamp + i * 60_000));
+        final FbItem item;
+        if (i % 4 != 0) {
+          item = new FbItem(FbUser.getUser(), i, initTimeStamp + i * 60_000);
+        } else {
+          item = FbVideo.getItem(i, i, initTimeStamp + i * 60_000);
+        }
+        items.add(item);
       }
     }
 

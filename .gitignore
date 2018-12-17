@@ -72,5 +72,7 @@
 /demo-ads/.gitignore
 /demo-ads/build/
 /ROADMAP.md
+!/app/proguard-rules.pro
+!/app-youtube/proguard-rules.pro
 /MEMO.md
 /docs/r370.2901.md

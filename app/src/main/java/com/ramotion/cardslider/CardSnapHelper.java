@@ -42,9 +42,9 @@ package com.ramotion.cardslider;
 import android.graphics.PointF;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.SmoothScroller.ScrollVectorProvider;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import java.security.InvalidParameterException;
@@ -92,10 +92,9 @@ public class CardSnapHelper extends LinearSnapHelper {
       return RecyclerView.NO_POSITION;
     }
 
-    final RecyclerView.SmoothScroller.ScrollVectorProvider vectorProvider =
-        (RecyclerView.SmoothScroller.ScrollVectorProvider) layoutManager;
+    final PointF vectorForEnd =
+        ((ScrollVectorProvider) lm).computeScrollVectorForPosition(itemCount - 1);
 
-    final PointF vectorForEnd = vectorProvider.computeScrollVectorForPosition(itemCount - 1);
     if (vectorForEnd == null) {
       return RecyclerView.NO_POSITION;
     }
@@ -104,9 +103,9 @@ public class CardSnapHelper extends LinearSnapHelper {
     int deltaJump;
 
     if (distance > 0) {
-      deltaJump = (int) Math.floor(distance / lm.getCardWidth());
+      deltaJump = (int) Math.floor((float) distance / lm.getCardWidth());
     } else {
-      deltaJump = (int) Math.ceil(distance / lm.getCardWidth());
+      deltaJump = (int) Math.ceil((float) distance / lm.getCardWidth());
     }
 
     final int deltaSign = Integer.signum(deltaJump);
@@ -167,7 +166,7 @@ public class CardSnapHelper extends LinearSnapHelper {
   }
 
   @Nullable @Override
-  protected LinearSmoothScroller createSnapScroller(RecyclerView.LayoutManager layoutManager) {
+  protected RecyclerView.SmoothScroller createScroller(RecyclerView.LayoutManager layoutManager) {
     return ((CardSliderLayoutManager) layoutManager).getSmoothScroller(recyclerView);
   }
 }
