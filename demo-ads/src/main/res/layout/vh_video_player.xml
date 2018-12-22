@@ -40,7 +40,7 @@
         android:minHeight="200dp"
         app:keep_content_on_player_reset="true"
         app:resize_mode="fixed_width"
-        app:show_buffering="true"
+        app:show_buffering="when_playing"
         app:surface_type="texture_view"
         app:use_controller="false"
         app:player_layout_id="@layout/toro_exo_player_view"
