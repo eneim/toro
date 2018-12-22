@@ -28,11 +28,8 @@ import jp.wasabeef.takt.Takt;
 
 public class ToroDemo extends Application {
 
-  private static ToroDemo singleton;
-
   @Override public void onCreate() {
     super.onCreate();
-    singleton = this;
     if (LeakCanary.isInAnalyzerProcess(this)) {
       // This process is dedicated to LeakCanary for heap analysis.
       // You should not init your app in this process.
@@ -43,12 +40,11 @@ public class ToroDemo extends Application {
     Takt.stock(this);
   }
 
-  public static ToroDemo getApp() {
-    return singleton;
-  }
-
   @Override public void onTrimMemory(int level) {
     super.onTrimMemory(level);
-    if (level >= TRIM_MEMORY_BACKGROUND) ToroExo.with(this).cleanUp();
+    if (level >= TRIM_MEMORY_BACKGROUND) {
+      ToroExo.with(this).cleanUp();
+      MediaHub.get(this).cleanUp();
+    }
   }
 }

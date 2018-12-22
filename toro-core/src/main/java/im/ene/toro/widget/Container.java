@@ -46,6 +46,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerDispatcher;
 import im.ene.toro.PlayerSelector;
+import im.ene.toro.PreLoader;
 import im.ene.toro.R;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -56,7 +57,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import im.ene.toro.PreLoader;
 
 import static android.content.Context.POWER_SERVICE;
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -308,28 +308,14 @@ public class Container extends RecyclerView {
     if (!playerManager.release(player)) player.release();
   }
 
-  static long maxRt = 0;
-
   @Override public void onScrolled(int dx, int dy) {
     super.onScrolled(dx, dy);
-    long start = System.nanoTime();
     this.dispatchLocalScrollChange(getScrollState());
-    long rt = System.nanoTime() - start;
-    if (rt >= 5000000) {
-      maxRt = rt;
-      Log.i(TAG, "scroll: " + maxRt / 1000000.0 + " ms");
-    }
   }
 
   @CallSuper @Override public void onScrollStateChanged(int state) {
     super.onScrollStateChanged(state);
-    long start = System.nanoTime();
     this.dispatchLocalScrollChange(state);
-    long rt = System.nanoTime() - start;
-    if (maxRt < rt) {
-      maxRt = rt;
-      Log.d(TAG, "scroll: " + maxRt / 1000000.0 + " ms");
-    }
   }
 
   // This method does the following things:
@@ -377,7 +363,7 @@ public class Container extends RecyclerView {
           if (!playerManager.manages(player)) {
             playerManager.attachPlayer(player);
           }
-          // Don't check the attach result, because the player may be managed already.
+          // Don't check for attaching result, because there players being managed already.
           if (!player.isPlaying()) {  // not playing or not ready to play.
             playerManager.initialize(player, Container.this);
           }
