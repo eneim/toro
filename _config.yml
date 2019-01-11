@@ -1,8 +1,0 @@
-title: Toro
-description: A Video List Manager, which will support auto play/pause on scrolling RecyclerView
-google_analytics: 
-show_downloads: true
-theme: jekyll-theme-cayman
-
-gems:
-  - jekyll-mentions
