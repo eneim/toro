@@ -1,6 +1,13 @@
 Changelog
 ===========
 
+3.6.2.2903 (2019/01/18)
+-----------------------
+
+## Happy New Year 2019, the first release this year just to make the lib work with latest ExoPlayer. 
+
+- **[Update]** Update to ExoPlayer 2.9.3, Android Studio 3.3 final.
+
 3.6.2.2804 (2018/12/16)
 -----------------------
 

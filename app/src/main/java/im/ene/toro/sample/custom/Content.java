@@ -28,6 +28,7 @@ public class Content {
   private static final String MP4_TOS = "file:///android_asset/tos.mp4";
   private static final String MP4_COSMOS = "file:///android_asset/cosmos.mp4";
 
+  @SuppressWarnings("WeakerAccess") //
   static final String[] ITEMS = { MP4_TOS, MP4_BUNNY, MP4_COSMOS };
 
   public static class Media {
