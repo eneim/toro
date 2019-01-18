@@ -16,6 +16,8 @@
 
 package im.ene.toro.exoplayer;
 
+import android.content.Context;
+import android.os.Looper;
 import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,10 +27,9 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
-import java.util.Set;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
 
@@ -40,11 +41,11 @@ import static im.ene.toro.ToroUtil.checkNotNull;
 @SuppressWarnings("WeakerAccess") //
 public class ToroExoPlayer extends SimpleExoPlayer {
 
-  @SuppressWarnings("WeakerAccess")
-  protected ToroExoPlayer(RenderersFactory renderersFactory, TrackSelector trackSelector,
-      LoadControl loadControl,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
-    super(renderersFactory, trackSelector, loadControl, drmSessionManager);
+  protected ToroExoPlayer(Context context, RenderersFactory renderersFactory,
+      TrackSelector trackSelector, LoadControl loadControl, BandwidthMeter bandwidthMeter,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, Looper looper) {
+    super(context, renderersFactory, trackSelector, loadControl, bandwidthMeter, drmSessionManager,
+        looper);
   }
 
   private ToroPlayer.VolumeChangeListeners listeners;

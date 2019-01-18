@@ -50,6 +50,7 @@ import im.ene.toro.sample.R;
 import im.ene.toro.sample.SinglePlayerActivity;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author eneim (7/1/17).
@@ -117,7 +118,7 @@ public class CustomLayoutFragment extends BaseFragment {
     snapHelper.attachToRecyclerView(container);
 
     onScrollListener = new RecyclerView.OnScrollListener() {
-      @Override public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+      @Override public void onScrollStateChanged(@NotNull RecyclerView recyclerView, int newState) {
         if (newState == RecyclerView.SCROLL_STATE_IDLE) {
           int pos = layoutManager.getActiveCardPosition();
           handler.obtainMessage(MSG_CONTAINER_SCROLL_IDLE, pos, -1).sendToTarget();

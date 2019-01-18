@@ -30,9 +30,11 @@ import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import java.io.IOException;
 
 import static im.ene.toro.ToroUtil.checkNotNull;
@@ -61,7 +63,7 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   public DefaultExoCreator(@NonNull ToroExo toro, @NonNull Config config) {
     this.toro = checkNotNull(toro);
     this.config = checkNotNull(config);
-    trackSelector = new DefaultTrackSelector(config.meter);
+    trackSelector = new DefaultTrackSelector();
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
     renderersFactory = new DefaultRenderersFactory(this.toro.context, config.extensionMode);
@@ -115,8 +117,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   }
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
-    return new ToroExoPlayer(renderersFactory, trackSelector, loadControl,
-        config.drmSessionManager);
+    return new ToroExoPlayer(toro.context, renderersFactory, trackSelector, loadControl,
+        new DefaultBandwidthMeter(), config.drmSessionManager, Util.getLooper());
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
