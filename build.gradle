@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.3.21'
+  ext.kotlin_version = '1.3.30'
   repositories {
     google()
     mavenCentral()
@@ -27,14 +27,13 @@ buildscript {
   }
 
   dependencies {
-    //noinspection GradleDependency
-    classpath 'com.android.tools.build:gradle:3.4.0-beta05'
-    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.5'
+    classpath 'com.android.tools.build:gradle:3.5.0-alpha12'
+    classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
     classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.8.1"
+    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.9.4"
 
     classpath 'io.fabric.tools:gradle:1.27.1'
   }
@@ -47,10 +46,10 @@ ext {
   supportLibraryVersion = '28.0.0'
   constrainLayoutVersion = '1.1.3'
   archLibraryVersion = '1.1.1'
-  exoPlayer2Version = '2.9.4'
+  exoPlayer2Version = '2.9.5'
   googleApiClient = '1.25.0'
-  glide = '4.8.0'
-  leackCanary = '1.6.2'
+  glide = '4.9.0'
+  leackCanary = '1.6.3'
 }
 
 allprojects {
@@ -73,8 +72,8 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.6.3.NEXT-SNAPSHOT'
-    releaseVersionCode = 306032904 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
+    releaseVersion = '3.6.3.2905-SNAPSHOT'
+    releaseVersionCode = 306032905 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 
