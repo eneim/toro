@@ -210,7 +210,7 @@ public class Container extends RecyclerView {
   // [2] A ViewHolder is detached before, but still in bound state, not be recycled,
   // and now be re-attached to RecyclerView.
   // In either cases, PlayerManager should not manage the ViewHolder before this point.
-  @CallSuper @Override public void onChildAttachedToWindow(final View child) {
+  @CallSuper @Override public void onChildAttachedToWindow(@NonNull final View child) {
     super.onChildAttachedToWindow(child);
     child.addOnLayoutChangeListener(childLayoutChangeListener);
     final ViewHolder holder = getChildViewHolder(child);
@@ -245,19 +245,19 @@ public class Container extends RecyclerView {
     }
   }
 
-  @CallSuper @Override public void onChildDetachedFromWindow(View child) {
+  @CallSuper @Override public void onChildDetachedFromWindow(@NonNull View child) {
     super.onChildDetachedFromWindow(child);
     child.removeOnLayoutChangeListener(childLayoutChangeListener);
     ViewHolder holder = getChildViewHolder(child);
-    //noinspection PointlessNullCheck
-    if (holder == null || !(holder instanceof ToroPlayer)) return;
+    if (!(holder instanceof ToroPlayer)) return;
     final ToroPlayer player = (ToroPlayer) holder;
 
     boolean playerManaged = playerManager.manages(player);
     if (player.isPlaying()) {
       if (!playerManaged) {
-        throw new IllegalStateException(
-            "Player is playing while it is not in managed state: " + player);
+        player.pause(); // Unstable state, so forcefully pause this by itself.
+        /* throw new IllegalStateException(
+            "Player is playing while it is not in managed state: " + player); */
       }
       this.savePlaybackInfo(player.getPlayerOrder(), player.getCurrentPlaybackInfo());
       playerManager.pause(player);
@@ -688,7 +688,6 @@ public class Container extends RecyclerView {
    * only when {@link #cacheManager} is not {@code null}. Extension of {@link Container} must
    * also have its own version of {@link SavedState} extends this {@link PlayerViewState}.
    */
-  @SuppressWarnings("WeakerAccess") //
   public static class PlayerViewState extends AbsSavedState {
 
     SparseArray<?> statesCache;
@@ -733,7 +732,7 @@ public class Container extends RecyclerView {
           }
         };
 
-    @Override public String toString() {
+    @NonNull @Override public String toString() {
       return "Cache{" + "states=" + statesCache + '}';
     }
   }
@@ -807,7 +806,7 @@ public class Container extends RecyclerView {
       this.container = container;
     }
 
-    @Override public void onViewRecycled(ViewHolder holder) {
+    @Override public void onViewRecycled(@NonNull ViewHolder holder) {
       if (this.delegate != null) this.delegate.onViewRecycled(holder);
       if (holder instanceof ToroPlayer) {
         ToroPlayer player = (ToroPlayer) holder;
@@ -819,7 +818,7 @@ public class Container extends RecyclerView {
 
   // This instance is to mark a RecyclerListenerImpl to be set by Toro, not by user.
   private static final RecyclerListener NULL = new RecyclerListener() {
-    @Override public void onViewRecycled(ViewHolder holder) {
+    @Override public void onViewRecycled(@NonNull ViewHolder holder) {
       // No-ops
     }
   };
@@ -875,7 +874,6 @@ public class Container extends RecyclerView {
    *
    * @since 3.4.2
    */
-  @SuppressWarnings("WeakerAccess") //
   public static class Behavior extends CoordinatorLayout.Behavior<Container>
       implements Handler.Callback {
 
@@ -936,8 +934,8 @@ public class Container extends RecyclerView {
 
     /// We only need to intercept the following 3 methods:
 
-    @Override public boolean onInterceptTouchEvent( //
-        CoordinatorLayout parent, Container child, MotionEvent ev) {
+    @Override public boolean onInterceptTouchEvent(@NonNull CoordinatorLayout parent,
+        @NonNull Container child, @NonNull MotionEvent ev) {
       if (this.handler != null) {
         this.handler.removeCallbacksAndMessages(null);
         this.handler.sendEmptyMessage(EVENT_TOUCH);
@@ -946,7 +944,8 @@ public class Container extends RecyclerView {
     }
 
     @Override
-    public boolean onTouchEvent(CoordinatorLayout parent, Container child, MotionEvent ev) {
+    public boolean onTouchEvent(@NonNull CoordinatorLayout parent, @NonNull Container child,
+        @NonNull MotionEvent ev) {
       if (this.handler != null) {
         this.handler.removeCallbacksAndMessages(null);
         this.handler.sendEmptyMessage(EVENT_TOUCH);
@@ -979,42 +978,48 @@ public class Container extends RecyclerView {
       delegate.onDetachedFromLayoutParams();
     }
 
-    @Override @ColorInt public int getScrimColor(CoordinatorLayout parent, Container child) {
+    @Override @ColorInt
+    public int getScrimColor(@NonNull CoordinatorLayout parent, @NonNull Container child) {
       return delegate.getScrimColor(parent, child);
     }
 
-    @Override @FloatRange(from = 0.0D, to = 1.0D)
-    public float getScrimOpacity(CoordinatorLayout parent, Container child) {
+    @Override
+    public float getScrimOpacity(@NonNull CoordinatorLayout parent, @NonNull Container child) {
       return delegate.getScrimOpacity(parent, child);
     }
 
-    @Override public boolean blocksInteractionBelow(CoordinatorLayout parent, Container child) {
+    @Override public boolean blocksInteractionBelow(@NonNull CoordinatorLayout parent,
+        @NonNull Container child) {
       return delegate.blocksInteractionBelow(parent, child);
     }
 
     @Override
-    public boolean layoutDependsOn(CoordinatorLayout parent, Container child, View dependency) {
+    public boolean layoutDependsOn(@NonNull CoordinatorLayout parent, @NonNull Container child,
+        @NonNull View dependency) {
       return delegate.layoutDependsOn(parent, child, dependency);
     }
 
-    @Override public boolean onDependentViewChanged(CoordinatorLayout parent, Container child,
-        View dependency) {
+    @Override public boolean onDependentViewChanged(@NonNull CoordinatorLayout parent,
+        @NonNull Container child, @NonNull View dependency) {
       return delegate.onDependentViewChanged(parent, child, dependency);
     }
 
     @Override
-    public void onDependentViewRemoved(CoordinatorLayout parent, Container child, View dependency) {
+    public void onDependentViewRemoved(@NonNull CoordinatorLayout parent, @NonNull Container child,
+        @NonNull View dependency) {
       delegate.onDependentViewRemoved(parent, child, dependency);
     }
 
-    @Override public boolean onMeasureChild(CoordinatorLayout parent, Container child,
+    @Override
+    public boolean onMeasureChild(@NonNull CoordinatorLayout parent, @NonNull Container child,
         int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
       return delegate.onMeasureChild(parent, child, parentWidthMeasureSpec, widthUsed,
           parentHeightMeasureSpec, heightUsed);
     }
 
     @Override
-    public boolean onLayoutChild(CoordinatorLayout parent, Container child, int layoutDirection) {
+    public boolean onLayoutChild(@NonNull CoordinatorLayout parent, @NonNull Container child,
+        int layoutDirection) {
       return delegate.onLayoutChild(parent, child, layoutDirection);
     }
 
@@ -1057,23 +1062,24 @@ public class Container extends RecyclerView {
     }
 
     @Override @NonNull
-    public WindowInsetsCompat onApplyWindowInsets(CoordinatorLayout layout, Container child,
-        WindowInsetsCompat insets) {
+    public WindowInsetsCompat onApplyWindowInsets(@NonNull CoordinatorLayout layout,
+        @NonNull Container child, @NonNull WindowInsetsCompat insets) {
       return delegate.onApplyWindowInsets(layout, child, insets);
     }
 
-    @Override
-    public boolean onRequestChildRectangleOnScreen(CoordinatorLayout layout, Container child,
-        Rect rectangle, boolean immediate) {
+    @Override public boolean onRequestChildRectangleOnScreen(@NonNull CoordinatorLayout layout,
+        @NonNull Container child, @NonNull Rect rectangle, boolean immediate) {
       return delegate.onRequestChildRectangleOnScreen(layout, child, rectangle, immediate);
     }
 
-    @Override public void onRestoreInstanceState(CoordinatorLayout parent, Container child,
-        Parcelable state) {
+    @Override
+    public void onRestoreInstanceState(@NonNull CoordinatorLayout parent, @NonNull Container child,
+        @NonNull Parcelable state) {
       delegate.onRestoreInstanceState(parent, child, state);
     }
 
-    @Override public Parcelable onSaveInstanceState(CoordinatorLayout parent, Container child) {
+    @Override public Parcelable onSaveInstanceState(@NonNull CoordinatorLayout parent,
+        @NonNull Container child) {
       return delegate.onSaveInstanceState(parent, child);
     }
 
