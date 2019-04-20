@@ -55,7 +55,6 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     this(player, uri, null);
   }
 
-  @SuppressWarnings("WeakerAccess")
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri,
       @Nullable String fileExt) {
     this(player, uri, fileExt, with(player.getPlayerView().getContext()).getDefaultCreator());
@@ -68,7 +67,6 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
         with(player.getPlayerView().getContext()).getCreator(checkNotNull(config)));
   }
 
-  @SuppressWarnings("WeakerAccess")
   public ExoPlayerViewHelper(@NonNull ToroPlayer player, @NonNull Uri uri, @Nullable String fileExt,
       @NonNull ExoCreator creator) {
     this(player, new ExoPlayable(creator, uri, fileExt));
@@ -136,13 +134,15 @@ public class ExoPlayerViewHelper extends ToroPlayerHelper {
     return playable.getPlaybackInfo();
   }
 
-  @SuppressWarnings("WeakerAccess") //
+  @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
+    this.playable.setPlaybackInfo(playbackInfo);
+  }
+
   public void addEventListener(@NonNull Playable.EventListener listener) {
     //noinspection ConstantConditions
     if (listener != null) this.listeners.add(listener);
   }
 
-  @SuppressWarnings("WeakerAccess") //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
   }

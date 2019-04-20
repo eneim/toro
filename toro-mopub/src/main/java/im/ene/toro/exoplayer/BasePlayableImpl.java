@@ -153,7 +153,7 @@ abstract class BasePlayableImpl<VIEW> implements Playable<VIEW> {
   @CallSuper @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
     this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
     this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
-    this.playbackInfo.setVolumeInfo(playbackInfo.getVolumeInfo());
+    this.setVolumeInfo(playbackInfo.getVolumeInfo());
 
     if (player != null) {
       ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());

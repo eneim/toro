@@ -118,6 +118,18 @@ final class YouTubePlayerHelper extends ToroPlayerHelper
     return new PlaybackInfo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
   }
 
+  @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
+    this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
+    this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
+    VolumeInfo newInfo = playbackInfo.getVolumeInfo();
+    this.playbackInfo.setVolumeInfo(newInfo);
+    this.volumeInfo.setTo(newInfo.isMute(), newInfo.getVolume());
+
+    if (youTubePlayer != null) {
+      youTubePlayer.seekToMillis((int) this.playbackInfo.getResumePosition());
+    }
+  }
+
   public void setCallback(Callback callback) {
     this.callback = callback;
   }

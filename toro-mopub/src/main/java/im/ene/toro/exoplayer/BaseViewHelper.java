@@ -77,10 +77,12 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
   }
 
   @Override public void setVolume(float volume) {
+    //noinspection deprecation
     playable.setVolume(volume);
   }
 
   @Override public float getVolume() {
+    //noinspection deprecation
     return playable.getVolume();
   }
 
@@ -96,13 +98,17 @@ abstract class BaseViewHelper<VIEW extends View> extends ToroPlayerHelper {
     return playable.getPlaybackInfo();
   }
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) //
+  @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
+    this.playable.setPlaybackInfo(playbackInfo);
+  }
+
+  @SuppressWarnings({ "unused" }) //
   public void addEventListener(@NonNull Playable.EventListener listener) {
     //noinspection ConstantConditions
     if (listener != null) this.listeners.add(listener);
   }
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) //
+  @SuppressWarnings({ "unused" }) //
   public void removeEventListener(Playable.EventListener listener) {
     this.listeners.remove(listener);
   }
