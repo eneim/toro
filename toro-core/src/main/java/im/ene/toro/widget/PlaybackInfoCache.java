@@ -47,8 +47,8 @@ import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
  * properly manage the {@link PlaybackInfo} of detached {@link ToroPlayer} and restore it to
  * previous state after being re-attached.
  */
-@SuppressWarnings({ "WeakerAccess", "unused" }) @SuppressLint("UseSparseArrays")
-final class PlaybackInfoCache extends AdapterDataObserver {
+@SuppressWarnings({ "unused" }) @SuppressLint("UseSparseArrays") final class PlaybackInfoCache
+    extends AdapterDataObserver {
 
   @NonNull private final Container container;
   // Cold cache represents the map between key obtained from CacheManager and PlaybackInfo. If the
@@ -167,6 +167,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
 
   @Override public void onItemRangeInserted(final int positionStart, final int itemCount) {
     if (itemCount == 0) return;
+    PlaybackInfo value;
     // Cold cache update
     if (container.getCacheManager() != null) {
       // [1] Take keys of old one.
@@ -181,7 +182,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
       // 1.2 Extract entries from cold cache to a temp cache.
       final Map<Object, PlaybackInfo> changeColdEntriesCache = new HashMap<>();
       for (Integer key : changedColdKeys) {
-        changeColdEntriesCache.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
+        if ((value = coldCache.remove(coldKeyToOrderMap.get(key))) != null) {
+          changeColdEntriesCache.put(key, value);
+        }
       }
 
       // 1.2 Update cold Cache with new keys
@@ -207,7 +210,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
       }
 
       for (Integer key : changedHotKeys) {
-        changedHotEntriesCache.put(key, hotCache.remove(key));
+        if ((value = hotCache.remove(key)) != null) {
+          changedHotEntriesCache.put(key, value);
+        }
       }
 
       for (Integer key : changedHotKeys) {
@@ -218,6 +223,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
 
   @Override public void onItemRangeRemoved(final int positionStart, final int itemCount) {
     if (itemCount == 0) return;
+    PlaybackInfo value;
     // Cold cache update
     if (container.getCacheManager() != null) {
       // [1] Take keys of old one.
@@ -229,7 +235,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
       // 1.2 Extract entries from cold cache to a temp cache.
       final Map<Object, PlaybackInfo> changeColdEntriesCache = new HashMap<>();
       for (Integer key : changedColdKeys) {
-        changeColdEntriesCache.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
+        if ((value = coldCache.remove(coldKeyToOrderMap.get(key))) != null) {
+          changeColdEntriesCache.put(key, value);
+        }
       }
 
       // 1.2 Update cold Cache with new keys
@@ -257,7 +265,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
       }
 
       for (Integer key : changedHotKeys) {
-        changedHotEntriesCache.put(key, hotCache.remove(key));
+        if ((value = hotCache.remove(key)) != null) {
+          changedHotEntriesCache.put(key, value);
+        }
       }
 
       for (Integer key : changedHotKeys) {
@@ -269,10 +279,11 @@ final class PlaybackInfoCache extends AdapterDataObserver {
   // Dude I wanna test this thing >.<
   @Override public void onItemRangeMoved(final int fromPos, final int toPos, int itemCount) {
     if (fromPos == toPos) return;
+
     final int low = fromPos < toPos ? fromPos : toPos;
     final int high = fromPos + toPos - low;
     final int shift = fromPos < toPos ? -1 : 1;  // how item will be shifted due to the move
-
+    PlaybackInfo value;
     // [1] Migrate cold cache.
     if (container.getCacheManager() != null) {
       // 1.1 Extract subset of keys only:
@@ -283,7 +294,9 @@ final class PlaybackInfoCache extends AdapterDataObserver {
       // 1.2 Extract entries from cold cache to a temp cache.
       final Map<Object, PlaybackInfo> changeColdEntries = new HashMap<>();
       for (Integer key : changedColdKeys) {
-        changeColdEntries.put(key, coldCache.remove(coldKeyToOrderMap.get(key)));
+        if ((value = coldCache.remove(coldKeyToOrderMap.get(key))) != null) {
+          changeColdEntries.put(key, value);
+        }
       }
 
       // 1.2 Update cold Cache with new keys
@@ -310,7 +323,7 @@ final class PlaybackInfoCache extends AdapterDataObserver {
 
       Map<Integer, PlaybackInfo> changedHotEntriesCache = new HashMap<>();
       for (Integer key : changedHotKeys) {
-        changedHotEntriesCache.put(key, hotCache.remove(key));
+        if ((value = hotCache.remove(key)) != null) changedHotEntriesCache.put(key, value);
       }
 
       for (Integer key : changedHotKeys) {
@@ -335,13 +348,14 @@ final class PlaybackInfoCache extends AdapterDataObserver {
 
   @NonNull final PlaybackInfo getPlaybackInfo(int position) {
     PlaybackInfo info = hotCache != null ? hotCache.get(position) : null;
-    if (info != null && info == SCRAP) {  // has hot cache, but was SCRAP.
+    if (info == SCRAP) {  // has hot cache, but was SCRAP.
       info = container.playerInitializer.initPlaybackInfo(position);
     }
 
     Object key = getKey(position);
-    return info != null ? info :  //
-        key != null ? coldCache.get(key) : container.playerInitializer.initPlaybackInfo(position);
+    info = info != null ? info : (key != null ? coldCache.get(key) : null);
+    if (info == null) info = container.playerInitializer.initPlaybackInfo(position);
+    return info;
   }
 
   // Call by Container#savePlaybackInfo and that method is called right before any pausing.
