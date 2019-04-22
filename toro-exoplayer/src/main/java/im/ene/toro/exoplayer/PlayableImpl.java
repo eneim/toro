@@ -184,11 +184,10 @@ class PlayableImpl implements Playable {
   }
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    checkNotNull(player, "Playable#setVolumeInfo(): Player is null!");
     boolean changed = !this.playbackInfo.getVolumeInfo().equals(checkNotNull(volumeInfo));
     if (changed) {
       this.playbackInfo.getVolumeInfo().setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
+      if (player != null) ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
     }
     return changed;
   }
