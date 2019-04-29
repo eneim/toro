@@ -17,7 +17,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-  ext.kotlin_version = '1.3.30'
+  ext.kotlin_version = '1.3.31'
   repositories {
     google()
     mavenCentral()
@@ -27,7 +27,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.0-alpha12'
+    classpath 'com.android.tools.build:gradle:3.4.0'
     classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
@@ -72,8 +72,8 @@ allprojects {
     releaseRepoName = 'Toro'
     releaseUserOrg = 'eneimlabs'
     releaseGroupId = 'im.ene.toro3'
-    releaseVersion = '3.6.3.2905-SNAPSHOT'
-    releaseVersionCode = 306032905 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
+    releaseVersion = '3.7.0.2905-SNAPSHOT'
+    releaseVersionCode = 307002905 /* Major * 10^8  + Minor * 10^6 + Patch * 10^4 + ExoPlayer ver */
     releaseWebsite = 'https://github.com/eneim/toro'
     releaseLicense = ['Apache-2.0']
 
