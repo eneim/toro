@@ -229,7 +229,8 @@ final class YouTubePlayerHelper extends ToroPlayerHelper
 
   @Override public void onError(YouTubePlayer.ErrorReason reason) {
     // if (BuildConfig.DEBUG) throw new RuntimeException("YouTubePlayer Error: " + reason);
-    getErrorListeners().onError(new RuntimeException(reason.toString()));
+    Exception error = new RuntimeException(reason.toString());
+    getErrorListeners().onError(error);
     if (ytFragment != null && ytFragment.isAdded()) {
       Toast.makeText(ytFragment.requireContext(), "Error: " + reason, Toast.LENGTH_SHORT).show();
     }
