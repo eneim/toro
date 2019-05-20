@@ -124,7 +124,7 @@ class PlayableImpl implements Playable {
     this.setPlayerView(null);
     if (this.player != null) {
       // reset volume to default
-      ToroExo.setVolumeInfo(this.player, new VolumeInfo(false, 1.f));
+      ToroExo.setVolumeInfo(this.player, new VolumeInfo(true, 1.f));
       this.player.stop(true);
       if (listenerApplied) {
         player.removeListener(listeners);
