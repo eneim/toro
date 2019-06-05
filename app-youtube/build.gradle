@@ -135,6 +135,7 @@ dependencies {
   debugImplementation "com.squareup.leakcanary:leakcanary-android:${rootProject.ext.leackCanary}"
   releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
   testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${rootProject.ext.leackCanary}"
+  // implementation 'com.squareup.leakcanary:leaksentry:2.0-alpha-2'
 
   // implementation "com.android.support:multidex:1.0.3"
 }
