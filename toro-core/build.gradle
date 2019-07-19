@@ -25,7 +25,7 @@ android {
     versionCode releaseVersionCode
     versionName "v" + releaseVersion
 
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     buildConfigField("String", "LIB_NAME", "\"" + "ToroLib, v" + releaseVersion + "\"")
   }
 
@@ -43,17 +43,17 @@ android {
 }
 
 dependencies {
-  implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}"
+  implementation 'com.google.android.material:material:1.0.0'
+  implementation 'androidx.recyclerview:recyclerview:1.0.0'
+  implementation 'androidx.annotation:annotation:1.0.0'
 
   // doc "com.android.support:support-annotations:${rootProject.ext.supportLibraryVersion}:sources"
   // doc "com.android.support:recyclerview-v7:${rootProject.ext.supportLibraryVersion}:sources"
 
   testImplementation 'junit:junit:4.12'
   testImplementation "org.mockito:mockito-core:2.22.0"
-  androidTestImplementation 'com.android.support.test:runner:1.0.2'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+  androidTestImplementation 'androidx.test:runner:1.1.0'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 }
 
 ext {

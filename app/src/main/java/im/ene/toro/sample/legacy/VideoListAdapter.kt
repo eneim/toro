@@ -16,8 +16,8 @@
 
 package im.ene.toro.sample.legacy
 
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import im.ene.toro.CacheManager
 
 /**

@@ -16,10 +16,10 @@
 
 package im.ene.toro.sample.pagers;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import im.ene.toro.sample.Deck;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.intro.IntroFragment;

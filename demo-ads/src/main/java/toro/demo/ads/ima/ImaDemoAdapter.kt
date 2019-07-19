@@ -16,9 +16,9 @@
 
 package toro.demo.ads.ima
 
-import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import toro.demo.ads.R
 import toro.demo.ads.common.BaseViewHolder

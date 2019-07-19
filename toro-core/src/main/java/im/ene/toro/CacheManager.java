@@ -16,9 +16,9 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import java.util.LinkedHashMap;

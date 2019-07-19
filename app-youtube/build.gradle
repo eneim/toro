@@ -43,11 +43,11 @@ android {
 
   defaultConfig {
     applicationId "im.ene.toro.youtube"
-    minSdkVersion rootProject.ext.demoMinSDK //rootProject.ext.minSupportSDKVersion
+    minSdkVersion 26
     targetSdkVersion rootProject.ext.androidVersion
     versionCode releaseVersionCode
     versionName "v" + releaseVersion
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     vectorDrawables.useSupportLibrary = true
     buildConfigField("String", "API_KEY", "\"${toro_youtube_apikey}\"")
@@ -97,16 +97,16 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation project(':toro-core')
 
-  implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation 'com.google.android.material:material:1.0.0'
+  implementation 'androidx.appcompat:appcompat:1.0.0'
+  implementation 'androidx.cardview:cardview:1.0.0'
 
   implementation "com.google.apis:google-api-services-youtube:v3-rev205-${rootProject.ext.googleApiClient}"
   implementation "com.google.http-client:google-http-client-android:${rootProject.ext.googleApiClient}"
   implementation "com.google.api-client:google-api-client-android:${rootProject.ext.googleApiClient}"
   implementation "com.google.api-client:google-api-client-gson:${rootProject.ext.googleApiClient}"
 
-  implementation "android.arch.lifecycle:extensions:${rootProject.ext.archLibraryVersion}"
+  implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
   implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
   annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glide}"

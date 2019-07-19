@@ -17,10 +17,10 @@
 package im.ene.toro.youtube;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import java.util.HashMap;

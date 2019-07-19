@@ -16,10 +16,10 @@
 
 package toro.demo.exoplayer.basic
 
-import android.support.v4.util.Pair
-import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.util.Pair
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.ArrayList

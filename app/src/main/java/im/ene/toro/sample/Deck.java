@@ -16,8 +16,8 @@
 
 package im.ene.toro.sample;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import im.ene.toro.sample.basic.BasicListFragment;
 import im.ene.toro.sample.complex.ComplexListFragment;
 import im.ene.toro.sample.flexible.FlexibleListFragment;

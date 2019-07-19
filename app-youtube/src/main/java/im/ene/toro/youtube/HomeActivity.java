@@ -16,18 +16,18 @@
 
 package im.ene.toro.youtube;
 
-import android.arch.lifecycle.ViewModelProviders;
+import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.toro.CacheManager;
 import im.ene.toro.PlayerSelector;
@@ -35,7 +35,7 @@ import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
 import java.io.IOException;
 
-import static android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL;
+import static androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL;
 import static im.ene.toro.youtube.common.ScreenHelper.shouldUseBigPlayer;
 
 public class HomeActivity extends AppCompatActivity
@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity
     if (state == null) manifestOrientation = getRequestedOrientation();
 
     // Prepare Container
-    playerManager = new YouTubePlayerManager(getSupportFragmentManager(), this);
+    playerManager = new YouTubePlayerManager(getFragmentManager(), this);
     adapter = new YouTubePlaylistAdapter(playerManager);
     int spanCount = getResources().getInteger(R.integer.span_count);
     layoutManager = new StaggeredGridLayoutManager(spanCount, VERTICAL);
@@ -79,7 +79,7 @@ public class HomeActivity extends AppCompatActivity
     selector = container.getPlayerSelector();
 
     initData = state != null ? state.getParcelable(STATE_INIT_DATA) : null;
-    YouTubePlayerDialog bigPlayer = (YouTubePlayerDialog) getSupportFragmentManager() //
+    YouTubePlayerDialog bigPlayer = (YouTubePlayerDialog) getFragmentManager() //
         .findFragmentByTag(YouTubePlayerDialog.TAG);
     YouTubePlayerDialog.InitData temp = bigPlayer != null ? bigPlayer.getDataFromArgs() : null;
 
@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity
       } else {
         if (bigPlayer != null) bigPlayer.dismissAllowingStateLoss();
         bigPlayer = YouTubePlayerDialog.newInstance(initData);
-        bigPlayer.show(getSupportFragmentManager(), YouTubePlayerDialog.TAG);
+        bigPlayer.show(getFragmentManager(), YouTubePlayerDialog.TAG);
       }
     }
 
@@ -147,7 +147,7 @@ public class HomeActivity extends AppCompatActivity
   @Override protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     if (initData != null) outState.putParcelable(STATE_INIT_DATA, initData);
-    Fragment fragment = getSupportFragmentManager().findFragmentByTag(YouTubePlayerDialog.TAG);
+    Fragment fragment = getFragmentManager().findFragmentByTag(YouTubePlayerDialog.TAG);
     if (fragment instanceof YouTubePlayerDialog) {
       YouTubePlayerDialog.InitData data = ((YouTubePlayerDialog) fragment).getLatestData();
       outState.putParcelable(STATE_SAVED_DATA, data);

@@ -17,9 +17,9 @@
 package im.ene.toro.sample.legacy
 
 import android.net.Uri
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import im.ene.toro.ToroPlayer
 import im.ene.toro.ToroUtil
 import im.ene.toro.helper.ToroPlayerHelper

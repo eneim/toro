@@ -16,7 +16,7 @@
 
 package im.ene.toro.youtube.common;
 
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**

@@ -17,9 +17,9 @@
 package im.ene.toro.youtube;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 
@@ -37,7 +37,7 @@ public class SinglePlayerActivity extends AppCompatActivity {
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    fragment = (ToroYouTubePlayerFragment) getSupportFragmentManager()  //
+    fragment = (ToroYouTubePlayerFragment) getFragmentManager()  //
         .findFragmentById(R.id.player_fragment);
 
     if (fragment != null) {

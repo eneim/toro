@@ -16,8 +16,8 @@
 
 package toro.demo.ads.common
 
-import android.support.v7.widget.RecyclerView.ViewHolder
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 
 /**
  * @author eneim (2018/08/21).

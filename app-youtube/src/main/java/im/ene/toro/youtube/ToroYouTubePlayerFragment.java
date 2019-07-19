@@ -17,16 +17,16 @@
 package im.ene.toro.youtube;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
-import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import android.view.ViewGroup;
+import com.google.android.youtube.player.YouTubePlayerFragment;
 
 /**
  * @author eneim (2017/12/07).
  */
 
-public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
+public class ToroYouTubePlayerFragment extends YouTubePlayerFragment {
 
   // This instance lives out of the lifecycle callbacks, but must be released and cleared before
   // any destroying event (onDestroyView/onDestroy)
@@ -44,9 +44,9 @@ public class ToroYouTubePlayerFragment extends YouTubePlayerSupportFragment {
     return "YouT:Fragment{" + "helper=" + playerHelper + '}';
   }
 
-  @Override public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
+  @Override public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
     if (this.playerHelper != null) this.playerHelper.ytFragment = this;
+    return super.onCreateView(layoutInflater, viewGroup, bundle);
   }
 
   @Override public void onStop() {

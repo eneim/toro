@@ -18,13 +18,13 @@ package im.ene.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams;
 import im.ene.toro.widget.Container;
 
 /**

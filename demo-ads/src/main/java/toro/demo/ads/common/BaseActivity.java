@@ -16,7 +16,7 @@
 
 package toro.demo.ads.common;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * @author eneim (2018/08/21).

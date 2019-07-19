@@ -16,9 +16,9 @@
 
 package toro.demo.mopub;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author eneim (2018/03/13).

@@ -16,7 +16,7 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import im.ene.toro.annotations.Sorted;
 import im.ene.toro.widget.Container;
 import java.util.Collection;

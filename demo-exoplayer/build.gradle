@@ -29,7 +29,7 @@ android {
     targetSdkVersion rootProject.ext.androidVersion
     versionCode releaseVersionCode
     versionName "v" + releaseVersion
-    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     vectorDrawables.useSupportLibrary = true
   }
@@ -66,9 +66,9 @@ dependencies {
   //noinspection GradleDependency
   implementation "com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}"
 
-  implementation "com.android.support:design:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibraryVersion}"
-  implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibraryVersion}"
+  implementation 'com.google.android.material:material:1.0.0'
+  implementation 'androidx.appcompat:appcompat:1.0.0'
+  implementation 'androidx.cardview:cardview:1.0.0'
   // implementation "com.android.support:support-vector-drawable:${rootProject.ext.supportLibraryVersion}"
   implementation "androidx.constraintlayout:constraintlayout:${rootProject.ext.constrainLayoutVersion}"
 
@@ -77,15 +77,15 @@ dependencies {
   //noinspection GradleDependency
   implementation 'io.reactivex.rxjava2:rxjava:2.2.2'
 
-  implementation 'com.jakewharton:butterknife:8.8.1'
-  kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+  implementation 'com.jakewharton:butterknife:10.1.0'
+  kapt 'com.jakewharton:butterknife-compiler:10.1.0'
 
-  implementation "android.arch.lifecycle:extensions:${rootProject.ext.archLibraryVersion}"
-  kapt "android.arch.lifecycle:compiler:${rootProject.ext.archLibraryVersion}"
+  implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+  kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 
   implementation 'com.google.android:flexbox:1.0.0'
 
   testImplementation 'junit:junit:4.12'
-  androidTestImplementation 'com.android.support.test:runner:1.0.2'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+  androidTestImplementation 'androidx.test:runner:1.1.0'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
 }

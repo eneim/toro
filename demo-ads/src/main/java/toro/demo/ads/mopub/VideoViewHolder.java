@@ -17,9 +17,9 @@
 package toro.demo.ads.mopub;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;

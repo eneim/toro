@@ -16,21 +16,20 @@
 
 package im.ene.toro.youtube;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -81,7 +80,7 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
   Callback callback;
   Fragment fragment;
 
-  final FragmentLifecycleCallbacks callbacks = new FragmentLifecycleCallbacks() {
+  final FragmentManager.FragmentLifecycleCallbacks callbacks = new FragmentManager.FragmentLifecycleCallbacks() {
 
     @Override public void onFragmentStarted(FragmentManager fm, Fragment f) {
       if (f == fragment && (f instanceof ToroYouTubePlayerFragment)) {
@@ -99,7 +98,7 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
 
   @Override public void onDismiss(DialogInterface dialog) {
     super.onDismiss(dialog);
-    if (initData != null) requireActivity().setRequestedOrientation(initData.returnOrientation);
+    if (initData != null) getActivity().setRequestedOrientation(initData.returnOrientation);
   }
 
   InitData getDataFromArgs() {

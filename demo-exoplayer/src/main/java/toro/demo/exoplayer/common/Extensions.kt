@@ -18,11 +18,11 @@ package toro.demo.exoplayer.common
 
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import android.support.v7.widget.AppCompatTextView
 import android.text.Html
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.BulletSpan
+import androidx.appcompat.widget.AppCompatTextView
 
 /**
  * @author eneim (2018/01/26).
