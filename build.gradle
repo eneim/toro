@@ -58,7 +58,7 @@ allprojects {
     google()
     mavenCentral()
     jcenter()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/'}
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
     maven { url "https://s3.amazonaws.com/moat-sdk-builds" }
   }
