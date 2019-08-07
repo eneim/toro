@@ -16,7 +16,7 @@
 
 package toro.demo.ads.common;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * @author eneim (2018/08/21).

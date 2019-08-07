@@ -17,11 +17,10 @@
 package im.ene.toro.widget;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.AdapterDataObserver;
 import android.util.SparseArray;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import im.ene.toro.CacheManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -47,8 +46,9 @@ import static im.ene.toro.widget.Common.ORDER_COMPARATOR_INT;
  * properly manage the {@link PlaybackInfo} of detached {@link ToroPlayer} and restore it to
  * previous state after being re-attached.
  */
-@SuppressWarnings({ "unused" }) @SuppressLint("UseSparseArrays") final class PlaybackInfoCache
-    extends AdapterDataObserver {
+@SuppressWarnings({ "unused" })
+@SuppressLint("UseSparseArrays") //
+final class PlaybackInfoCache extends RecyclerView.AdapterDataObserver {
 
   @NonNull private final Container container;
   // Cold cache represents the map between key obtained from CacheManager and PlaybackInfo. If the

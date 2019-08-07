@@ -17,7 +17,6 @@
 package toro.demo.ads.ima
 
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ui.PlayerView
@@ -33,7 +32,10 @@ import toro.demo.ads.common.BaseViewHolder
  * @author eneim (2018/08/22).
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class ImaVideoViewHolder(itemView: View, builder: ImaAdsLoader.Builder) : BaseViewHolder(itemView), ToroPlayer {
+class ImaVideoViewHolder(
+  itemView: View,
+  builder: ImaAdsLoader.Builder
+) : BaseViewHolder(itemView), ToroPlayer {
 
   var helper: AdsExoPlayerViewHelper? = null
   val exoPlayerView: PlayerView = itemView.findViewById(R.id.playerView)
@@ -48,9 +50,14 @@ class ImaVideoViewHolder(itemView: View, builder: ImaAdsLoader.Builder) : BaseVi
     return helper?.latestPlaybackInfo ?: PlaybackInfo()
   }
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
-    (helper ?: AdsExoPlayerViewHelper(this, mediaUri, null,
-        adLoader, null).also { helper = it }).initialize(container, playbackInfo)
+  override fun initialize(
+    container: Container,
+    playbackInfo: PlaybackInfo
+  ) {
+    (helper ?: AdsExoPlayerViewHelper(
+        this, mediaUri, null,
+        adLoader, null
+    ).also { helper = it }).initialize(container, playbackInfo)
   }
 
   override fun play() {

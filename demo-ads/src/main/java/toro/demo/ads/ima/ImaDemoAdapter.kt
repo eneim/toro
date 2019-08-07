@@ -16,9 +16,9 @@
 
 package toro.demo.ads.ima
 
-import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import toro.demo.ads.R
 import toro.demo.ads.common.BaseViewHolder
@@ -31,13 +31,22 @@ class ImaDemoAdapter(private val builder: ImaAdsLoader.Builder) : Adapter<BaseVi
     const val ITEM_COUNT = 150
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-    val itemView = LayoutInflater.from(parent.context).inflate(R.layout.vh_video_player, parent,
-        false)
+  override fun onCreateViewHolder(
+    parent: ViewGroup,
+    viewType: Int
+  ): BaseViewHolder {
+    val itemView = LayoutInflater.from(parent.context)
+        .inflate(
+            R.layout.vh_video_player, parent,
+            false
+        )
     return ImaVideoViewHolder(itemView, builder)
   }
 
-  override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+  override fun onBindViewHolder(
+    holder: BaseViewHolder,
+    position: Int
+  ) {
     holder.onBind(position)
   }
 

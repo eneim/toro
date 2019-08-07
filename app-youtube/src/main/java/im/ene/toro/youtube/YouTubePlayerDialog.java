@@ -21,16 +21,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.FragmentLifecycleCallbacks;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -46,6 +44,7 @@ import im.ene.toro.youtube.common.BlackBoardDialogFragment;
  * @author eneim (2017/12/08).
  */
 
+@SuppressWarnings("WeakerAccess")
 public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
 
   public static final String TAG = "YouT:BigPlayer";
@@ -81,21 +80,22 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
   Callback callback;
   Fragment fragment;
 
-  final FragmentLifecycleCallbacks callbacks = new FragmentLifecycleCallbacks() {
+  final FragmentManager.FragmentLifecycleCallbacks callbacks =
+      new FragmentManager.FragmentLifecycleCallbacks() {
 
-    @Override public void onFragmentStarted(FragmentManager fm, Fragment f) {
-      if (f == fragment && (f instanceof ToroYouTubePlayerFragment)) {
-        maybeInitPlayer((ToroYouTubePlayerFragment) f);
-      }
-    }
+        @Override public void onFragmentStarted(@NonNull FragmentManager fm, @NonNull Fragment f) {
+          if (f == fragment && (f instanceof ToroYouTubePlayerFragment)) {
+            maybeInitPlayer((ToroYouTubePlayerFragment) f);
+          }
+        }
 
-    @Override public void onFragmentStopped(FragmentManager fm, Fragment f) {
-      if (f == fragment && player != null) {
-        player.release();
-        player = null;
-      }
-    }
-  };
+        @Override public void onFragmentStopped(@NonNull FragmentManager fm, @NonNull Fragment f) {
+          if (f == fragment && player != null) {
+            player.release();
+            player = null;
+          }
+        }
+      };
 
   @Override public void onDismiss(DialogInterface dialog) {
     super.onDismiss(dialog);
@@ -141,11 +141,15 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
     if (callback != null) callback.onBigPlayerCreated();
     initializedListener = new YouTubePlayer.OnInitializedListener() {
       @Override public void onInitializationSuccess(YouTubePlayer.Provider provider,
-          YouTubePlayer youTubePlayer, boolean b) {
+          YouTubePlayer youTubePlayer, boolean restored) {
         player = youTubePlayer;
-        if (initData != null) {
-          player.setShowFullscreenButton(false);
-          player.loadVideo(initData.videoId, (int) initData.playbackInfo.getResumePosition());
+        if (restored) {
+          youTubePlayer.play();
+        } else {
+          if (initData != null) {
+            player.setShowFullscreenButton(false);
+            player.loadVideo(initData.videoId, (int) initData.playbackInfo.getResumePosition());
+          }
         }
       }
 
@@ -181,7 +185,7 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
     throw new RuntimeException("Not Supported.");
   }
 
-  final void maybeInitPlayer(@NonNull final ToroYouTubePlayerFragment fragment) {
+  void maybeInitPlayer(@NonNull final ToroYouTubePlayerFragment fragment) {
     final View view = fragment.getView();
     if (view == null) return;
     view.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
@@ -192,7 +196,7 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
     });
   }
 
-  YouTubePlayer.OnInitializedListener initializedListener;
+  @SuppressWarnings("WeakerAccess") YouTubePlayer.OnInitializedListener initializedListener;
 
   public interface Callback {
 
@@ -204,8 +208,8 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
   static class InitData implements Parcelable {
 
     final int adapterOrder;
-    final String videoId;
-    final PlaybackInfo playbackInfo;
+    @NonNull final String videoId;
+    @NonNull final PlaybackInfo playbackInfo;
     // Original orientation of requested Activity, used for restoring the orientation.
     final int returnOrientation;
 
@@ -230,8 +234,12 @@ public final class YouTubePlayerDialog extends BlackBoardDialogFragment {
 
     InitData(Parcel in) {
       this.adapterOrder = in.readInt();
-      this.videoId = in.readString();
-      this.playbackInfo = in.readParcelable(PlaybackInfo.class.getClassLoader());
+      String videoId = in.readString();
+      if (videoId == null) videoId = "";
+      this.videoId = videoId;
+      PlaybackInfo playbackInfo = in.readParcelable(PlaybackInfo.class.getClassLoader());
+      if (playbackInfo == null) playbackInfo = new PlaybackInfo();
+      this.playbackInfo = playbackInfo;
       this.returnOrientation = in.readInt();
     }
 

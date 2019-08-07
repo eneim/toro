@@ -21,14 +21,14 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.RestrictTo;
-import android.support.annotation.StringRes;
-import android.support.v4.util.Pools;
 import android.text.TextUtils;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+import androidx.annotation.StringRes;
+import androidx.core.util.Pools;
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
@@ -264,7 +264,7 @@ public final class ToroExo {
   }
 
   // Share the code of setting Volume. For use inside library only.
-  @SuppressWarnings("WeakerAccess") @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
+  @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) //
   public static void setVolumeInfo(@NonNull SimpleExoPlayer player,
       @NonNull VolumeInfo volumeInfo) {
     if (player instanceof ToroExoPlayer) {

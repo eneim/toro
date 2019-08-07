@@ -21,16 +21,14 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
@@ -49,16 +47,17 @@ import java.util.Collections;
 import java.util.List;
 import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
-import static android.support.v7.widget.helper.ItemTouchHelper.DOWN;
-import static android.support.v7.widget.helper.ItemTouchHelper.LEFT;
-import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
-import static android.support.v7.widget.helper.ItemTouchHelper.UP;
+import static androidx.recyclerview.widget.ItemTouchHelper.DOWN;
+import static androidx.recyclerview.widget.ItemTouchHelper.LEFT;
+import static androidx.recyclerview.widget.ItemTouchHelper.RIGHT;
+import static androidx.recyclerview.widget.ItemTouchHelper.UP;
 import static im.ene.toro.sample.SinglePlayerActivity.createIntent;
 
 /**
  * @author eneim (7/6/17).
  */
 
+@SuppressWarnings("WeakerAccess")
 public class FlexibleListFragment extends BaseFragment {
 
   static final int RQ_PLAYBACK_INFO = 100;
@@ -112,11 +111,10 @@ public class FlexibleListFragment extends BaseFragment {
           }
         }
 
+        // FIXME weird behavior when changing to AndroidX (may not be issue of AndroidX).
         Intent intent = createIntent(requireContext(), position, media.mediaUri,  //
             content, info, viewSize, videoSize, true);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation( //
-            requireActivity(), view, ViewCompat.getTransitionName(view));
-        startActivityForResult(intent, RQ_PLAYBACK_INFO, options.toBundle());
+        // startActivityForResult(intent, RQ_PLAYBACK_INFO);
       }
     });
     container.setAdapter(adapter);
@@ -124,12 +122,14 @@ public class FlexibleListFragment extends BaseFragment {
 
     itemTouchHelper = new ItemTouchHelper(  //
         new ItemTouchHelper.SimpleCallback(UP | DOWN | LEFT | RIGHT, 0) {
-          @Override public boolean onMove(RecyclerView recyclerView, //
-              RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+          @Override public boolean onMove(@NonNull RecyclerView recyclerView, //
+              @NonNull RecyclerView.ViewHolder viewHolder,
+              @NonNull RecyclerView.ViewHolder target) {
             return adapter.swap(viewHolder.getAdapterPosition(), target.getAdapterPosition());
           }
 
-          @Override public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+          @Override
+          public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
           }
         });
@@ -171,7 +171,6 @@ public class FlexibleListFragment extends BaseFragment {
       // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
       // which will cause our setup doesn't work well. We need a delay to make things work.
       handler.postDelayed(() -> {
-        //noinspection ConstantConditions
         if (container != null) container.setPlayerSelector(selector);
       }, 500);
     } else {
@@ -220,7 +219,6 @@ public class FlexibleListFragment extends BaseFragment {
     // Using TabLayout has a downside: once we click to a tab to change page, there will be no animation,
     // which will cause our setup doesn't work well. We need a delay to make things work.
     handler.postDelayed(() -> {
-      //noinspection ConstantConditions
       if (container != null) container.setPlayerSelector(selector);
     }, 500);
   }

@@ -16,10 +16,10 @@
 
 package im.ene.toro.widget;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static im.ene.toro.widget.Common.allowsToPlay;
 import static im.ene.toro.widget.Common.findFirst;
 import static java.util.Collections.singletonList;

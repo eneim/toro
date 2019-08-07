@@ -56,7 +56,7 @@
   </style>
 
   <integer name="grid_span">1</integer>
-  <string name="layout_manager">android.support.v7.widget.GridLayoutManager</string>
+  <string name="layout_manager">GridLayoutManager</string>
 
   <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 

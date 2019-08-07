@@ -20,14 +20,13 @@ import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
 import java.util.Set;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;

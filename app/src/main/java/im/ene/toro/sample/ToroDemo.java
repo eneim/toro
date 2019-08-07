@@ -18,7 +18,7 @@ package im.ene.toro.sample;
 
 import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
+import androidx.multidex.MultiDex;
 import com.squareup.leakcanary.LeakCanary;
 import im.ene.toro.exoplayer.Config;
 import im.ene.toro.exoplayer.MediaSourceBuilder;

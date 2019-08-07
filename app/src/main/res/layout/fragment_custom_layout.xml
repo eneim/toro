@@ -21,7 +21,7 @@
     android:layout_height="match_parent"
     >
 
-  <android.support.v4.widget.Space
+  <Space
       android:id="@+id/dummy_space"
       android:layout_width="match_parent"
       android:layout_height="12dp"
@@ -35,11 +35,11 @@
       android:layout_below="@id/dummy_space"
       />
 
-  <android.support.v4.view.ViewPager
+  <androidx.viewpager.widget.ViewPager
       android:id="@+id/place_holder"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_alignParentBottom="true"
       android:layout_below="@id/player_container"
+      android:layout_alignParentBottom="true"
       />
 </RelativeLayout>

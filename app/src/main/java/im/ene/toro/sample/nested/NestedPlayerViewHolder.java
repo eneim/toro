@@ -17,8 +17,8 @@
 package im.ene.toro.sample.nested;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.view.View;
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.PlayerView;

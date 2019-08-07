@@ -17,7 +17,7 @@
 package im.ene.toro.sample.legacy
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import im.ene.toro.sample.R
 import im.ene.toro.sample.common.BaseActivity
 import im.ene.toro.widget.Container

@@ -25,5 +25,5 @@
     android:clipToPadding="false"
     android:orientation="horizontal"
     android:padding="8dp"
-    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
     />

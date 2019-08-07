@@ -16,7 +16,7 @@
 
 package im.ene.toro;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import im.ene.toro.annotations.Sorted;
 import im.ene.toro.widget.Container;
 import java.util.Collection;
@@ -34,22 +34,22 @@ import static java.util.Collections.singletonList;
 /**
  * @author eneim | 6/2/17.
  *
- *         PlayerSelector is a convenient class to help selecting the players to start Media
- *         playback.
+ * PlayerSelector is a convenient class to help selecting the players to start Media
+ * playback.
  *
- *         On specific event of RecyclerView, such as Child view attached/detached, scroll, the
- *         Collection of players those are available for a playback will change. PlayerSelector is
- *         responded to select a specific number of players from that updated Collection to start a
- *         new playback or pause an old playback if the corresponding Player is not selected
- *         anymore.
+ * On specific event of RecyclerView, such as Child view attached/detached, scroll, the
+ * Collection of players those are available for a playback will change. PlayerSelector is
+ * responded to select a specific number of players from that updated Collection to start a
+ * new playback or pause an old playback if the corresponding Player is not selected
+ * anymore.
  *
- *         Client should implement a custom PlayerSelecter and set it to the Container for expected
- *         behaviour. By default, Toro comes with linear selection implementation (the Selector
- *         that will iterate over the Collection and select the players from top to bottom until a
- *         certain condition is fullfilled, for example the maximum of player count is reached).
+ * Client should implement a custom PlayerSelecter and set it to the Container for expected
+ * behaviour. By default, Toro comes with linear selection implementation (the Selector
+ * that will iterate over the Collection and select the players from top to bottom until a
+ * certain condition is fullfilled, for example the maximum of player count is reached).
  *
- *         Custom Selector can have more complicated selecting logics, for example: among 2n + 1
- *         playable widgets, select n players in the middles ...
+ * Custom Selector can have more complicated selecting logics, for example: among 2n + 1
+ * playable widgets, select n players in the middles ...
  */
 
 @SuppressWarnings("unused") //
