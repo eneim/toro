@@ -1,6 +1,17 @@
 Changelog
 ===========
 
+3.7.0.2905-A1 (2019/10/18)
+-----------------------
+
+This release is a middle-stage release to insist the full release of 3.7.0-2010005.
+
+This alpha release contains the following significant changes:
+
+- Migrate to AndroidX. Toro will now depends on AndroidX and other latest Jetpack libraries.
+- Update ExoPlayer to 2.9.5. As said, the target will be ExoPlayer 2.10.5. Since ExoPlayer 2.10.x is update with many things may not work well with 2.9.x, this release can also be helpful for those who depends on 2.9.5 for long term.
+- ``ToroPlayerHelper`` and ``Playable`` interface now have ``setPlaybackInfo`` method to support manual ``PlaybackInfo`` setup. Default implementation classes are updated with this change.
+
 3.6.2.2903 (2019/01/18)
 -----------------------
 
