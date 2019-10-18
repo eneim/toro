@@ -16,8 +16,8 @@
 
 package im.ene.toro.sample.legacy
 
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import im.ene.toro.CacheManager
 
 /**
@@ -30,12 +30,17 @@ class VideoListAdapter : RecyclerView.Adapter<VideoViewHolder>(), CacheManager {
 
   override fun getItemCount() = mediaList.size
 
-  override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+  override fun onBindViewHolder(
+    holder: VideoViewHolder,
+    position: Int
+  ) {
     holder.bind(mediaList[position])
   }
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = //
-      VideoViewHolder.newInstance(parent)
+  override fun onCreateViewHolder(
+    parent: ViewGroup,
+    viewType: Int
+  ) = VideoViewHolder.newInstance(parent)
 
   override fun getKeyForOrder(order: Int) = order
 

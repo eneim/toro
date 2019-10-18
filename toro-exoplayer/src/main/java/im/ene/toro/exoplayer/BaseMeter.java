@@ -17,8 +17,8 @@
 package im.ene.toro.exoplayer;
 
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -39,11 +39,11 @@ public final class BaseMeter<T extends BandwidthMeter> implements BandwidthMeter
   @NonNull protected final T bandwidthMeter;
   @NonNull protected final TransferListener transferListener;
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) //
   /**
    * @deprecated use {@link #BaseMeter(BandwidthMeter)} instead.
    */
-  @Deprecated
+  @SuppressWarnings({ "unused" }) //
+  @Deprecated //
   public BaseMeter(@NonNull T bandwidthMeter, @NonNull TransferListener transferListener) {
     this(bandwidthMeter);
   }

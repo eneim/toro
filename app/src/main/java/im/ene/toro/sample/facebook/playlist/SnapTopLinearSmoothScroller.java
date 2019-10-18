@@ -17,8 +17,8 @@
 package im.ene.toro.sample.facebook.playlist;
 
 import android.content.Context;
-import android.support.v7.widget.LinearSmoothScroller;
 import android.util.DisplayMetrics;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 
 /**
  * @author eneim (7/8/17).

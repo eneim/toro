@@ -20,14 +20,13 @@ import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.android.exoplayer2.C;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.State;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
-import java.util.HashSet;
 import java.util.Set;
 
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
@@ -58,6 +57,7 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
 
   @State int playerState = State.STATE_IDLE;
   boolean playWhenReady = false;  // mimic the ExoPlayer
+  // TODO merge this into playbackInfo field.
   final VolumeInfo volumeInfo = new VolumeInfo(false, 1f);
 
   public LegacyVideoViewHelper(ToroPlayer player, @NonNull Uri mediaUri) {
@@ -180,6 +180,17 @@ public class LegacyVideoViewHelper extends ToroPlayerHelper {
   @NonNull @Override public PlaybackInfo getLatestPlaybackInfo() {
     updateResumePosition();
     return new PlaybackInfo(C.INDEX_UNSET, playbackInfo.getResumePosition());
+  }
+
+  @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
+    this.playbackInfo.setVolumeInfo(playbackInfo.getVolumeInfo());
+    this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
+    this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
+
+    if (this.playbackInfo.getResumePosition() >= 0) {
+      this.playerView.seekTo((int) this.playbackInfo.getResumePosition());
+    }
+    this.setVolumeInfo(this.playbackInfo.getVolumeInfo());
   }
 
   @Override public void setVolume(float volume) {

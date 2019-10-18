@@ -17,11 +17,11 @@
 package toro.demo.ads.ima
 
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
@@ -38,12 +38,18 @@ class ImaDemoFragment : BaseFragment(), AdEventListener {
     fun newInstance() = ImaDemoFragment()
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-      savedInstanceState: Bundle?): View? {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
     return inflater.inflate(R.layout.fragment_recycler_view, container, false)
   }
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+  override fun onViewCreated(
+    view: View,
+    savedInstanceState: Bundle?
+  ) {
     super.onViewCreated(view, savedInstanceState)
     val container = view.findViewById<Container>(R.id.native_recycler_view)
     container.layoutManager = LinearLayoutManager(requireContext())

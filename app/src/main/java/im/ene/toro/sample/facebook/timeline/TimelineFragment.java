@@ -19,16 +19,17 @@ package im.ene.toro.sample.facebook.timeline;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import butterknife.BindView;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -42,7 +43,6 @@ import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.sample.facebook.playlist.MoreVideosFragment;
 import im.ene.toro.widget.Container;
 import java.util.List;
-import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim | 6/18/17.

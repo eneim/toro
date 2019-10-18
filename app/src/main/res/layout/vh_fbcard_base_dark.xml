@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -42,7 +42,7 @@
         android:gravity="center_vertical"
         android:padding="4dp"
         >
-      <android.support.v7.widget.AppCompatImageView
+      <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/fb_user_icon"
           android:layout_width="40dp"
           android:layout_height="40dp"
@@ -54,8 +54,8 @@
       <LinearLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_marginLeft="40dp"
           android:layout_marginStart="40dp"
+          android:layout_marginLeft="40dp"
           android:orientation="vertical"
           android:padding="4dp"
           >
@@ -116,29 +116,29 @@
         android:minHeight="40dp"
         android:orientation="horizontal"
         >
-      <android.support.v7.widget.AppCompatTextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/fb_button_like"
+          style="@style/Facebook.Button.Feed"
           android:layout_width="0dp"
           android:layout_height="match_parent"
           android:layout_weight="1"
           android:text="@string/fb_button_like"
-          style="@style/Facebook.Button.Feed"
           />
-      <android.support.v7.widget.AppCompatTextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/fb_button_comment"
+          style="@style/Facebook.Button.Feed"
           android:layout_width="0dp"
           android:layout_height="match_parent"
           android:layout_weight="1"
           android:text="@string/fb_button_comment"
-          style="@style/Facebook.Button.Feed"
           />
-      <android.support.v7.widget.AppCompatTextView
+      <androidx.appcompat.widget.AppCompatTextView
           android:id="@+id/fb_button_share"
+          style="@style/Facebook.Button.Feed"
           android:layout_width="0dp"
           android:layout_height="match_parent"
           android:layout_weight="1"
           android:text="@string/fb_button_share"
-          style="@style/Facebook.Button.Feed"
           />
     </LinearLayout>
   </LinearLayout>
@@ -150,4 +150,4 @@
       android:background="#cc000000"
       />
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

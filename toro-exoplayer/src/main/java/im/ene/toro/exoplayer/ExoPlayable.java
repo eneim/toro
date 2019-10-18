@@ -17,9 +17,9 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -107,7 +107,7 @@ public class ExoPlayable extends PlayableImpl {
   protected void onErrorMessage(@NonNull String message) {
     // Sub class can have custom reaction about the error here, including not to show this toast
     // (by not calling super.onErrorMessage(message)).
-    if (this.errorListeners != null && this.errorListeners.size() > 0) {
+    if (this.errorListeners.size() > 0) {
       this.errorListeners.onError(new RuntimeException(message));
     } else if (playerView != null) {
       Toast.makeText(playerView.getContext(), message, Toast.LENGTH_SHORT).show();

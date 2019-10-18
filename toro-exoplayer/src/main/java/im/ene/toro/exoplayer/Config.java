@@ -16,9 +16,9 @@
 
 package im.ene.toro.exoplayer;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.ObjectsCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.util.ObjectsCompat;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory.ExtensionRendererMode;
 import com.google.android.exoplayer2.LoadControl;
@@ -63,7 +63,8 @@ public final class Config {
 
   @SuppressWarnings("WeakerAccess") //
   Config(int extensionMode, @NonNull BaseMeter meter, @NonNull LoadControl loadControl,
-      @Nullable DataSource.Factory dataSourceFactory, @NonNull MediaSourceBuilder mediaSourceBuilder,
+      @Nullable DataSource.Factory dataSourceFactory,
+      @NonNull MediaSourceBuilder mediaSourceBuilder,
       @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, @Nullable Cache cache) {
     this.extensionMode = extensionMode;
     this.meter = meter;

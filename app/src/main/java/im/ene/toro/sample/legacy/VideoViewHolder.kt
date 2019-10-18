@@ -17,9 +17,9 @@
 package im.ene.toro.sample.legacy
 
 import android.net.Uri
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import im.ene.toro.ToroPlayer
 import im.ene.toro.ToroUtil
 import im.ene.toro.helper.ToroPlayerHelper
@@ -35,7 +35,8 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
 
   companion object {
     fun newInstance(viewGroup: ViewGroup) = VideoViewHolder(
-        inflater(viewGroup.context).inflate(R.layout.view_holder_legacy_basic, viewGroup, false))
+        inflater(viewGroup.context).inflate(R.layout.view_holder_legacy_basic, viewGroup, false)
+    )
   }
 
   private val videoView: ToroVideoView = itemView.findViewById(R.id.video_view) as ToroVideoView
@@ -46,7 +47,10 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ToroP
 
   override fun getCurrentPlaybackInfo() = playerHelper?.latestPlaybackInfo ?: PlaybackInfo()
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
+  override fun initialize(
+    container: Container,
+    playbackInfo: PlaybackInfo
+  ) {
     if (mediaUri == null) throw NullPointerException("MediaUri is null.")
     if (playerHelper == null) {
       playerHelper = LegacyVideoViewHelper(this, mediaUri!!)

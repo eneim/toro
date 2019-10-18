@@ -39,8 +39,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package com.ramotion.cardslider;
 
-import android.support.annotation.Nullable;
 import android.view.View;
+import androidx.annotation.Nullable;
 
 /**
  * Card transformer interface for {@link CardSliderLayoutManager}.

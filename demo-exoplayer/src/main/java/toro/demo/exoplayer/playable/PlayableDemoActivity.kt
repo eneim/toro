@@ -18,11 +18,11 @@ package toro.demo.exoplayer.playable
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import butterknife.ButterKnife
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.DebugTextViewHelper
@@ -41,8 +41,8 @@ import toro.demo.exoplayer.R
 class PlayableDemoActivity : AppCompatActivity() {
   companion object {
     private val video =
-    // Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4");
-        Uri.parse("file:///android_asset/bbb/video.mp4")
+      // Uri.parse("https://cdn.jwplayer.com/videos/SMd5tDhS-cSpmBcaY.mp4");
+      Uri.parse("file:///android_asset/bbb/video.mp4")
   }
 
   var playable: Playable? = null
@@ -55,7 +55,8 @@ class PlayableDemoActivity : AppCompatActivity() {
       playable = null
     }
 
-    ToroExo.with(this).cleanUp()
+    ToroExo.with(this)
+        .cleanUp()
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +68,8 @@ class PlayableDemoActivity : AppCompatActivity() {
     if (playable == null) {
       playable = ExoPlayable(
           /* DemoApp.exoCreator */ // un-comment to use custom ExoCreator
-          ToroExo.with(this).defaultCreator, video, "mp4")
+          ToroExo.with(this).defaultCreator, video, "mp4"
+      )
           .also {
             it.prepare(true)
             it.play()
@@ -105,27 +107,32 @@ class PlayableDemoActivity : AppCompatActivity() {
     buttonContainer.removeAllViews()
     val inflater = LayoutInflater.from(buttonContainer.context)
 
-    buttonContainer.addCustomButton(inflater, "Play", { playable!!.play() })
-    buttonContainer.addCustomButton(inflater, "Pause", { playable!!.pause() })
-    buttonContainer.addCustomButton(inflater, "Mute",
-        { playable!!.volumeInfo = VolumeInfo(true, 0.0F) })
-    buttonContainer.addCustomButton(inflater, "Un Mute",
-        { playable!!.volumeInfo = VolumeInfo(false, 1.0F) })
+    buttonContainer.addCustomButton(inflater, "Play") { playable!!.play() }
+    buttonContainer.addCustomButton(inflater, "Pause") { playable!!.pause() }
+    buttonContainer.addCustomButton(
+        inflater, "Mute"
+    ) { playable!!.volumeInfo = VolumeInfo(true, 0.0F) }
+    buttonContainer.addCustomButton(
+        inflater, "Un Mute"
+    ) { playable!!.volumeInfo = VolumeInfo(false, 1.0F) }
 
     // Immediately reset current playback and start it all over again
-    buttonContainer.addCustomButton(inflater, "Replay", {
+    buttonContainer.addCustomButton(inflater, "Replay") {
       if (playable != null) (playable as Playable).apply {
         this.pause()
         this.reset()
         this.play()
       }
-    })
+    }
   }
 }
 
 // A extension function for our ViewGroup.
-fun ViewGroup.addCustomButton(inflater: LayoutInflater, name: String,
-    action: (View) -> Unit) {
+fun ViewGroup.addCustomButton(
+  inflater: LayoutInflater,
+  name: String,
+  action: (View) -> Unit
+) {
   (inflater.inflate(R.layout.widget_debug_button, this, false) as Button)
       .apply {
         this.text = name

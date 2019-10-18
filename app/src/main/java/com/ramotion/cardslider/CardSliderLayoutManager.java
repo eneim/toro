@@ -44,15 +44,15 @@ import android.content.res.TypedArray;
 import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 import im.ene.toro.sample.R;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -179,10 +179,12 @@ import java.util.LinkedList;
       final LinkedList<Integer> removedPositions = new LinkedList<>();
       for (int i = 0, cnt = getChildCount(); i < cnt; i++) {
         final View child = getChildAt(i);
-        final boolean isRemoved =
-            ((RecyclerView.LayoutParams) child.getLayoutParams()).isItemRemoved();
-        if (isRemoved) {
-          removedPositions.add(getPosition(child));
+        if (child != null) {
+          final boolean isRemoved =
+              ((RecyclerView.LayoutParams) child.getLayoutParams()).isItemRemoved();
+          if (isRemoved) {
+            removedPositions.add(getPosition(child));
+          }
         }
       }
 
@@ -268,7 +270,8 @@ import java.util.LinkedList;
     startSmoothScroll(scroller);
   }
 
-  @Override public void onItemsRemoved(RecyclerView recyclerView, int positionStart, int count) {
+  @Override
+  public void onItemsRemoved(@NonNull RecyclerView recyclerView, int positionStart, int count) {
     final int anchorPos = getActiveCardPosition();
     if (positionStart + count <= anchorPos) {
       scrollRequestedPosition = anchorPos - 1;

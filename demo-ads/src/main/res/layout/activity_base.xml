@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -25,7 +25,7 @@
     tools:context=".DemoActivity"
     >
 
-  <android.support.design.widget.AppBarLayout
+  <com.google.android.material.appbar.AppBarLayout
       android:id="@+id/app_bar"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
       android:theme="@style/AppTheme.AppBarOverlay"
       >
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -41,21 +41,21 @@
         app:popupTheme="@style/AppTheme.PopupOverlay"
         />
 
-  </android.support.design.widget.AppBarLayout>
+  </com.google.android.material.appbar.AppBarLayout>
 
-  <android.support.v4.widget.NestedScrollView
+  <androidx.core.widget.NestedScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       >
-    <android.support.v7.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="8dp"
         >
 
-      <android.support.v7.widget.AppCompatButton
+      <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/startMopubDemo"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
           android:text="@string/screen_mopub"
           />
 
-      <android.support.v7.widget.AppCompatButton
+      <androidx.appcompat.widget.AppCompatButton
           android:id="@+id/startImaDemo"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -73,6 +73,6 @@
           android:text="@string/screen_ima"
           />
 
-    </android.support.v7.widget.LinearLayoutCompat>
-  </android.support.v4.widget.NestedScrollView>
-</android.support.design.widget.CoordinatorLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+  </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

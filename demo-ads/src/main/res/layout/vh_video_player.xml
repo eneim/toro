@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,7 +26,7 @@
     app:cardPreventCornerOverlap="true"
     >
 
-  <android.support.v7.widget.LinearLayoutCompat
+  <androidx.appcompat.widget.LinearLayoutCompat
       android:id="@+id/playerContainer"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         app:use_controller="false"
         app:player_layout_id="@layout/toro_exo_player_view"
         >
-      <android.support.v7.widget.AppCompatImageView
+      <androidx.appcompat.widget.AppCompatImageView
           android:id="@+id/posterView"
           android:layout_width="match_parent"
           android:layout_height="match_parent"
@@ -54,7 +54,7 @@
           />
     </com.google.android.exoplayer2.ui.PlayerView>
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -63,5 +63,5 @@
         android:text="@string/large_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         />
-  </android.support.v7.widget.LinearLayoutCompat>
-</android.support.v7.widget.CardView>
+  </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.cardview.widget.CardView>

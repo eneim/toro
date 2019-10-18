@@ -19,17 +19,17 @@ package im.ene.toro.sample.facebook.playlist;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.State;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.State;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -125,10 +125,10 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
     }
   }
 
-  Unbinder unbinder;
+  private Unbinder unbinder;
   @BindView(R.id.recycler_view) Container container;
-  RecyclerView.LayoutManager layoutManager;
-  MoreVideosAdapter adapter;
+  private RecyclerView.LayoutManager layoutManager;
+  @SuppressWarnings("WeakerAccess") MoreVideosAdapter adapter;
 
   @Nullable @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -215,7 +215,7 @@ public class MoreVideosFragment extends BlackBoardDialogFragment
     // If there is DialogFragment showing, we save stuff from it.
     Fragment playerFragment =
         getChildFragmentManager().findFragmentByTag(BigPlayerFragment.FRAGMENT_TAG);
-    if (playerFragment != null && playerFragment instanceof BigPlayerFragment) {
+    if (playerFragment instanceof BigPlayerFragment) {
       Bundle playerBundle = ((BigPlayerFragment) playerFragment).getCurrentState();
       outState.putBundle(STATE_KEY_BIG_PLAYER_BUNDLE, playerBundle);
     }
