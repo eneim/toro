@@ -30,7 +30,7 @@
       android:theme="@style/AppTheme.AppBarOverlay"
       >
 
-    <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
+    <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,7 +38,6 @@
         app:contentScrim="?attr/colorPrimary"
         app:expandedTitleMarginBottom="24dp"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
-        app:maxLines="4"
         app:toolbarId="@+id/toolbar"
         >
 
@@ -50,7 +49,7 @@
           app:popupTheme="@style/AppTheme.PopupOverlay"
           />
 
-    </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
   </com.google.android.material.appbar.AppBarLayout>
 
   <im.ene.toro.widget.Container

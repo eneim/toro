@@ -18,10 +18,10 @@ package im.ene.toro.sample.legacy
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import im.ene.toro.sample.R
 import im.ene.toro.sample.common.BaseActivity
 import im.ene.toro.widget.Container
-import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
 
 /**
  * @author eneim (6/26/17).

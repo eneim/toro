@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import butterknife.BindView;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.annotations.Sorted;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim (7/1/17).

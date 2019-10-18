@@ -39,7 +39,7 @@ android {
 
 dependencies {
   implementation project(':toro-core')
-  implementation 'androidx.appcompat:appcompat:1.0.2'
+  implementation 'androidx.appcompat:appcompat:1.1.0'
   implementation ("com.google.android.exoplayer:exoplayer:${rootProject.ext.exoPlayer2Version}") {
     exclude group: 'com.android.support'
   }
@@ -50,7 +50,7 @@ dependencies {
   }
 
   implementation 'androidx.recyclerview:recyclerview:1.0.0'
-  implementation 'androidx.annotation:annotation:1.0.2'
+  implementation 'androidx.annotation:annotation:1.1.0'
 
   testImplementation 'junit:junit:4.12'
   androidTestImplementation 'androidx.test.ext:junit:1.1.1'

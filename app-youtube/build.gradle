@@ -98,15 +98,15 @@ dependencies {
   implementation project(':toro-core')
 
   implementation 'com.google.android.material:material:1.0.0'
-  implementation 'androidx.appcompat:appcompat:1.0.2'
+  implementation 'androidx.appcompat:appcompat:1.1.0'
   implementation 'androidx.cardview:cardview:1.0.0'
 
-  implementation "com.google.apis:google-api-services-youtube:v3-rev209-${rootProject.ext.googleApiClient}"
+  implementation "com.google.apis:google-api-services-youtube:v3-rev20190827-${rootProject.ext.googleApiClient}"
   implementation "com.google.http-client:google-http-client-android:${rootProject.ext.googleApiClient}"
   implementation "com.google.api-client:google-api-client-android:${rootProject.ext.googleApiClient}"
   implementation "com.google.api-client:google-api-client-gson:${rootProject.ext.googleApiClient}"
 
-  implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+  implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
   implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
   annotationProcessor "com.github.bumptech.glide:compiler:${rootProject.ext.glide}"
@@ -116,7 +116,7 @@ dependencies {
     exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
   })
 
-  implementation "io.reactivex.rxjava2:rxjava:2.2.8"
+  implementation "io.reactivex.rxjava2:rxjava:2.2.13"
 
   // implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 

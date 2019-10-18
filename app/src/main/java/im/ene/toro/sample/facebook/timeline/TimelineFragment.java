@@ -29,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import butterknife.BindView;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.media.PlaybackInfo;
@@ -42,7 +43,6 @@ import im.ene.toro.sample.facebook.player.BigPlayerFragment;
 import im.ene.toro.sample.facebook.playlist.MoreVideosFragment;
 import im.ene.toro.widget.Container;
 import java.util.List;
-import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * @author eneim | 6/18/17.

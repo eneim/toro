@@ -33,6 +33,7 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
+// Making YouTube SDK plays well with AndroidX
 public final class YouTubePlayerContainerView extends FrameLayout
     implements YouTubePlayer.Provider, LifecycleObserver {
 

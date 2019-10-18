@@ -66,9 +66,9 @@ dependencies {
   implementation fileTree(dir: 'libs', include: ['*.jar'])
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-  implementation 'androidx.annotation:annotation:1.0.2'
+  implementation 'androidx.annotation:annotation:1.1.0'
   implementation 'com.google.android.material:material:1.0.0'
-  implementation 'androidx.appcompat:appcompat:1.0.2'
+  implementation 'androidx.appcompat:appcompat:1.1.0'
   implementation 'androidx.cardview:cardview:1.0.0'
 
   implementation project(':toro-core')
@@ -87,8 +87,8 @@ dependencies {
     transitive = true
   }
 
-  implementation "com.google.android.gms:play-services-ads:17.2.1"
-  implementation "com.google.android.gms:play-services-base:17.0.0"
+  implementation "com.google.android.gms:play-services-ads:18.2.0"
+  implementation "com.google.android.gms:play-services-base:17.1.0"
   implementation 'androidx.browser:browser:1.0.0'
 
   implementation "com.github.bumptech.glide:glide:${rootProject.ext.glide}"
