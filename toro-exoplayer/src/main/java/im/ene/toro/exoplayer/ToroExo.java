@@ -128,7 +128,7 @@ public final class ToroExo {
   }
 
   @SuppressWarnings("WeakerAccess") public final Config getDefaultConfig() {
-    if (defaultConfig == null) defaultConfig = new Config.Builder().build();
+    if (defaultConfig == null) defaultConfig = new Config.Builder(context).build();
     return defaultConfig;
   }
 

@@ -18,6 +18,7 @@ package im.ene.toro.exoplayer;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,13 +29,31 @@ import im.ene.toro.annotations.Beta;
 import im.ene.toro.helper.ToroPlayerHelper;
 
 /**
- * A {@link ToroPlayerHelper} to integrate ExoPlayer IMA Extension. Work together with {@link AdsPlayable}.
+ * A {@link ToroPlayerHelper} to integrate ExoPlayer IMA Extension. Work together with {@link
+ * AdsPlayable}.
  *
  * @author eneim (2018/08/22).
  * @since 3.6.0.2802
  */
-@Beta //
+@SuppressWarnings("unused") @Beta //
 public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
+
+  static class DefaultAdViewProvider implements AdsLoader.AdViewProvider {
+
+    @NonNull final ViewGroup viewGroup;
+
+    DefaultAdViewProvider(@NonNull ViewGroup viewGroup) {
+      this.viewGroup = viewGroup;
+    }
+
+    @Override public ViewGroup getAdViewGroup() {
+      return this.viewGroup;
+    }
+
+    @Override public View[] getAdOverlayViews() {
+      return new View[0];
+    }
+  }
 
   private static AdsPlayable createPlayable(  ///
       ToroPlayer player,      //
@@ -42,9 +61,9 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       Uri contentUri,         //
       String fileExt,         //
       AdsLoader adsLoader,    //
-      ViewGroup adContainer   //
+      AdsLoader.AdViewProvider adViewProvider   //
   ) {
-    return new AdsPlayable(creator, contentUri, fileExt, player, adsLoader, adContainer);
+    return new AdsPlayable(creator, contentUri, fileExt, player, adsLoader, adViewProvider);
   }
 
   private static AdsPlayable createPlayable(  //
@@ -53,11 +72,11 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       Uri contentUri,         //
       String fileExt,         //
       AdsLoader adsLoader,    //
-      ViewGroup adContainer   //
+      AdsLoader.AdViewProvider adViewProvider   //
   ) {
     Context context = player.getPlayerView().getContext();
     return createPlayable(player, ToroExo.with(context).getCreator(config), contentUri, fileExt,
-        adsLoader, adContainer);
+        adsLoader, adViewProvider);
   }
 
   private static AdsPlayable createPlayable(  //
@@ -65,11 +84,11 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       Uri contentUri,         //
       String fileExt,         //
       AdsLoader adsLoader,    //
-      ViewGroup adContainer   //
+      AdsLoader.AdViewProvider adViewProvider   //
   ) {
     Context context = player.getPlayerView().getContext();
     return createPlayable(player, ToroExo.with(context).getDefaultCreator(), contentUri, fileExt,
-        adsLoader, adContainer);
+        adsLoader, adViewProvider);
   }
 
   // Neither ExoCreator nor Config are provided.
@@ -79,6 +98,7 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
    *
    * @param adContainer if {@code null} then overlay of {@link PlayerView} will be used.
    */
+  @Deprecated
   public AdsExoPlayerViewHelper(        //
       @NonNull ToroPlayer player,       //
       @NonNull Uri uri,                 //
@@ -86,7 +106,19 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       @NonNull AdsLoader adsLoader,     //
       @Nullable ViewGroup adContainer   //
   ) {
-    super(player, createPlayable(player, uri, fileExt, adsLoader, adContainer));
+    super(player,
+        createPlayable(player, uri, fileExt, adsLoader,
+            adContainer != null ? new DefaultAdViewProvider(adContainer) : null));
+  }
+
+  public AdsExoPlayerViewHelper(        //
+      @NonNull ToroPlayer player,       //
+      @NonNull Uri uri,                 //
+      @Nullable String fileExt,         //
+      @NonNull AdsLoader adsLoader,     //
+      @Nullable AdsLoader.AdViewProvider adViewProvider   //
+  ) {
+    super(player, createPlayable(player, uri, fileExt, adsLoader, adViewProvider));
   }
 
   // ExoCreator is provided.
@@ -96,6 +128,7 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
    *
    * @param adContainer if {@code null} then overlay of {@link PlayerView} will be used.
    */
+  @Deprecated
   public AdsExoPlayerViewHelper(        //
       @NonNull ToroPlayer player,       //
       @NonNull Uri uri,                 //
@@ -104,9 +137,20 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       @Nullable ViewGroup adContainer,  //
       @NonNull ExoCreator creator       //
   ) {
-    super(player, createPlayable(player, creator, uri, fileExt, adsLoader, adContainer));
+    super(player, createPlayable(player, creator, uri, fileExt, adsLoader,
+        adContainer != null ? new DefaultAdViewProvider(adContainer) : null));
   }
 
+  public AdsExoPlayerViewHelper(        //
+      @NonNull ToroPlayer player,       //
+      @NonNull Uri uri,                 //
+      @Nullable String fileExt,         //
+      @NonNull AdsLoader adsLoader,     //
+      @Nullable AdsLoader.AdViewProvider adViewProvider,  //
+      @NonNull ExoCreator creator       //
+  ) {
+    super(player, createPlayable(player, creator, uri, fileExt, adsLoader, adViewProvider));
+  }
   // Config is provided.
 
   /**
@@ -114,6 +158,7 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
    *
    * @param adContainer if {@code null} then overlay of {@link PlayerView} will be used.
    */
+  @Deprecated
   public AdsExoPlayerViewHelper(        //
       @NonNull ToroPlayer player,       //
       @NonNull Uri uri,                 //
@@ -122,6 +167,18 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       @Nullable ViewGroup adContainer,  //
       @NonNull Config config            //
   ) {
-    super(player, createPlayable(player, config, uri, fileExt, adsLoader, adContainer));
+    super(player, createPlayable(player, config, uri, fileExt, adsLoader,
+        adContainer != null ? new DefaultAdViewProvider(adContainer) : null));
+  }
+
+  public AdsExoPlayerViewHelper(        //
+      @NonNull ToroPlayer player,       //
+      @NonNull Uri uri,                 //
+      @Nullable String fileExt,         //
+      @NonNull AdsLoader adsLoader,     //
+      @Nullable AdsLoader.AdViewProvider adViewProvider,  //
+      @NonNull Config config            //
+  ) {
+    super(player, createPlayable(player, config, uri, fileExt, adsLoader, adViewProvider));
   }
 }

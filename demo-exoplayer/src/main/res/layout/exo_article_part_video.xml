@@ -31,7 +31,7 @@
       app:resize_mode="fixed_width"
       app:shutter_background_color="?attr/colorButtonNormal"
       app:surface_type="surface_view"
-      app:use_controller="true"
+      app:use_controller="false"
       />
 
   <androidx.appcompat.widget.AppCompatTextView

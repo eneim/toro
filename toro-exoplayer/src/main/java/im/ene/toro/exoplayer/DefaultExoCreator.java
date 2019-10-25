@@ -59,14 +59,17 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   private final DataSource.Factory mediaDataSourceFactory;  // stateless
   private final DataSource.Factory manifestDataSourceFactory; // stateless
 
-  @SuppressWarnings("unchecked")  //
   public DefaultExoCreator(@NonNull ToroExo toro, @NonNull Config config) {
     this.toro = checkNotNull(toro);
     this.config = checkNotNull(config);
     trackSelector = new DefaultTrackSelector();
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-    renderersFactory = new DefaultRenderersFactory(this.toro.context, config.extensionMode);
+
+    DefaultRenderersFactory tempFactory = new DefaultRenderersFactory(this.toro.context);
+    tempFactory.setExtensionRendererMode(config.extensionMode);
+    renderersFactory = tempFactory;
+
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -82,7 +85,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     this(with(context), config);
   }
 
-  @SuppressWarnings("SimplifiableIfStatement") @Override public boolean equals(Object o) {
+  @SuppressWarnings("SimplifiableIfStatement")
+  @Override public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
@@ -118,7 +122,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
     return new ToroExoPlayer(toro.context, renderersFactory, trackSelector, loadControl,
-        new DefaultBandwidthMeter(), config.drmSessionManager, Util.getLooper());
+        new DefaultBandwidthMeter.Builder(toro.context).build(), config.drmSessionManager,
+        Util.getLooper());
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
