@@ -197,7 +197,7 @@ If you need to enable proguard in your app, put below rules to your proguard-rul
 
 By default, **toro**'s Container will always start a playback from beginning.
  
-The implementation is simple: create a class implementing ```CacheManager```, then set it to the Container using ```Container#setCacheManager(CacheManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/features/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
+The implementation is simple: create a class implementing ```CacheManager```, then set it to the Container using ```Container#setCacheManager(CacheManager)```. Sample code can be found in [TimelineAdapter.java](/app/src/main/java/im/ene/toro/sample/facebook/timeline/TimelineAdapter.java). Note that here I implement the interface right into the Adapter for convenience. It can be done without Adapter. There is one thing worth noticing: a matching between **playback order** with its cached **playback info** should be unique.
 
 #### 2. Multiple simultaneous playback
 
