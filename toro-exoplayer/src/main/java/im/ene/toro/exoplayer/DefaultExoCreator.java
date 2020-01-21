@@ -21,10 +21,14 @@ import android.net.Uri;
 import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.util.ObjectsCompat;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsCollector;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -34,6 +38,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.Util;
 import java.io.IOException;
 
@@ -58,18 +63,19 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
   private final RenderersFactory renderersFactory;  // stateless
   private final DataSource.Factory mediaDataSourceFactory;  // stateless
   private final DataSource.Factory manifestDataSourceFactory; // stateless
+  private final DrmSessionManager<FrameworkMediaCrypto> drmSessionManager; // stateless
+  private final Clock clock; // stateless
 
   public DefaultExoCreator(@NonNull ToroExo toro, @NonNull Config config) {
     this.toro = checkNotNull(toro);
     this.config = checkNotNull(config);
-    trackSelector = new DefaultTrackSelector();
+    trackSelector = new DefaultTrackSelector(this.toro.context);
     loadControl = config.loadControl;
     mediaSourceBuilder = config.mediaSourceBuilder;
-
-    DefaultRenderersFactory tempFactory = new DefaultRenderersFactory(this.toro.context);
-    tempFactory.setExtensionRendererMode(config.extensionMode);
-    renderersFactory = tempFactory;
-
+    drmSessionManager = config.drmSessionManager;
+    clock = config.clock;
+    renderersFactory = new DefaultRenderersFactory(this.toro.context)
+        .setExtensionRendererMode(config.extensionMode);
     DataSource.Factory baseFactory = config.dataSourceFactory;
     if (baseFactory == null) {
       baseFactory = new DefaultHttpDataSourceFactory(toro.appName, config.meter);
@@ -98,7 +104,9 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     if (!mediaSourceBuilder.equals(that.mediaSourceBuilder)) return false;
     if (!renderersFactory.equals(that.renderersFactory)) return false;
     if (!mediaDataSourceFactory.equals(that.mediaDataSourceFactory)) return false;
-    return manifestDataSourceFactory.equals(that.manifestDataSourceFactory);
+    if (!manifestDataSourceFactory.equals(that.manifestDataSourceFactory)) return false;
+    if (!ObjectsCompat.equals(drmSessionManager, that.drmSessionManager)) return false;
+    return clock.equals(that.clock);
   }
 
   @Override public int hashCode() {
@@ -109,6 +117,8 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
     result = 31 * result + renderersFactory.hashCode();
     result = 31 * result + mediaDataSourceFactory.hashCode();
     result = 31 * result + manifestDataSourceFactory.hashCode();
+    result = 31 * result + (drmSessionManager != null ? drmSessionManager.hashCode() : 0);
+    result = 31 * result + clock.hashCode();
     return result;
   }
 
@@ -122,13 +132,13 @@ public class DefaultExoCreator implements ExoCreator, MediaSourceEventListener {
 
   @NonNull @Override public SimpleExoPlayer createPlayer() {
     return new ToroExoPlayer(toro.context, renderersFactory, trackSelector, loadControl,
-        new DefaultBandwidthMeter.Builder(toro.context).build(), config.drmSessionManager,
-        Util.getLooper());
+        new DefaultBandwidthMeter.Builder(toro.context).build(),
+        new AnalyticsCollector(clock), clock, Util.getLooper());
   }
 
   @NonNull @Override public MediaSource createMediaSource(@NonNull Uri uri, String fileExt) {
     return mediaSourceBuilder.buildMediaSource(this.toro.context, uri, fileExt, new Handler(),
-        manifestDataSourceFactory, mediaDataSourceFactory, this);
+        manifestDataSourceFactory, mediaDataSourceFactory, drmSessionManager, this);
   }
 
   @NonNull @Override //

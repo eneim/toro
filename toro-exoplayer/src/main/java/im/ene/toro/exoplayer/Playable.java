@@ -253,6 +253,11 @@ public interface Playable {
 
     }
 
+    @Override
+    public void onSurfaceSizeChanged(int width, int height) {
+
+    }
+
     @Override public void onRenderedFirstFrame() {
 
     }
@@ -277,6 +282,13 @@ public interface Playable {
       for (EventListener eventListener : this) {
         eventListener.onVideoSizeChanged(width, height, unAppliedRotationDegrees,
             pixelWidthHeightRatio);
+      }
+    }
+
+    @Override
+    public void onSurfaceSizeChanged(int width, int height) {
+      for (EventListener eventListener : this) {
+        eventListener.onSurfaceSizeChanged(width, height);
       }
     }
 

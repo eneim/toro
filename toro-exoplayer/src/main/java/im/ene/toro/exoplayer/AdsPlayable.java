@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -39,7 +40,7 @@ import im.ene.toro.annotations.Beta;
 @Beta //
 public class AdsPlayable extends ExoPlayable {
 
-  static class FactoryImpl implements AdsMediaSource.MediaSourceFactory {
+  static class FactoryImpl implements MediaSourceFactory {
 
     @NonNull final ExoCreator creator;
     @NonNull final ToroPlayer player;
@@ -104,7 +105,7 @@ public class AdsPlayable extends ExoPlayable {
 
   private static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
       ToroPlayer player, AdsLoader adsLoader, AdsLoader.AdViewProvider adViewProvider,
-      AdsMediaSource.MediaSourceFactory factory) {
+      MediaSourceFactory factory) {
     MediaSource original = creator.createMediaSource(uri, fileExt);
     View playerView = player.getPlayerView();
     if (!(playerView instanceof PlayerView)) {
