@@ -248,6 +248,7 @@ class PlayableImpl implements Playable {
 
     if (!sourcePrepared) {
       ensurePlayer(); // sourcePrepared is set to false only when player is null.
+      beforePrepareMediaSource();
       player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
       sourcePrepared = true;
     }
@@ -277,5 +278,10 @@ class PlayableImpl implements Playable {
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
+  }
+
+  // Trick to inject to the Player creation event.
+  // Required for AdsLoader to set Player.
+  protected void beforePrepareMediaSource() {
   }
 }

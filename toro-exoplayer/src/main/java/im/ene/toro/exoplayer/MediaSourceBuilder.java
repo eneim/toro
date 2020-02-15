@@ -23,10 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.ContentType;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -74,7 +74,7 @@ public interface MediaSourceBuilder {
               .createMediaSource(uri);
           break;
         case C.TYPE_OTHER:
-          result = new ExtractorMediaSource.Factory(mediaDataSourceFactory) //
+          result = new ProgressiveMediaSource.Factory(mediaDataSourceFactory) //
               .createMediaSource(uri);
           break;
         default:

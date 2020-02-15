@@ -56,7 +56,7 @@ class ImaVideoViewHolder(
   ) {
     (helper ?: AdsExoPlayerViewHelper(
         this, mediaUri, null,
-        adLoader, null
+        adLoader, null, exoPlayerView
     ).also { helper = it }).initialize(container, playbackInfo)
   }
 
@@ -73,9 +73,7 @@ class ImaVideoViewHolder(
   }
 
   override fun release() {
-    helper?.run {
-      this.release()
-    }
+    helper?.release()
   }
 
   override fun wantsToPlay() = ToroUtil.visibleAreaOffset(this, itemView.parent) >= 0.75

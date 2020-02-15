@@ -61,7 +61,7 @@
   <string name="ad_unit_id_native">11a17b188668469fb0412708c3d16813</string>
   <string name="swipe_text"><![CDATA[< Swipe Left & Right >]]></string>
 
-  <string name="ima_content_url"><![CDATA[http://rmcdn.2mdn.net/MotifFiles/html/1248596/android_1330378998288.mp4]]></string>
+  <string name="ima_content_url"><![CDATA[https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8]]></string>
 
   <string name="ima_ad_tag_url">
     <![CDATA[
