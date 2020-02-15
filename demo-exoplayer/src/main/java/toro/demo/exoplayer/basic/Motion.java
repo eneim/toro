@@ -17,7 +17,7 @@
 package toro.demo.exoplayer.basic;
 
 import android.content.Context;
-import android.support.v4.util.Pair;
+import androidx.core.util.Pair;
 import io.reactivex.Observable;
 import java.io.BufferedReader;
 import java.io.IOException;

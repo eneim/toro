@@ -16,11 +16,11 @@
 
 package im.ene.toro.youtube;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import java.util.ArrayList;

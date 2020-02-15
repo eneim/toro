@@ -17,9 +17,9 @@
 package toro.demo.ads.mopub;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
@@ -28,10 +28,13 @@ import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.helper.ToroPlayerHelper;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.widget.Container;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import toro.demo.ads.R;
 import toro.demo.ads.common.BaseViewHolder;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author eneim (2018/08/21).
@@ -49,7 +52,7 @@ class VideoViewHolder extends BaseViewHolder implements ToroPlayer, ToroPlayer.E
     playerView = itemView.findViewById(R.id.playerView);
     posterView = itemView.findViewById(R.id.posterView);
     playerView.removeView(posterView);
-    playerView.getOverlayFrameLayout().addView(posterView);
+    requireNonNull(playerView.getOverlayFrameLayout()).addView(posterView);
   }
 
   @NonNull @Override public View getPlayerView() {
@@ -126,7 +129,7 @@ class VideoViewHolder extends BaseViewHolder implements ToroPlayer, ToroPlayer.E
     if (payload instanceof Uri) {
       this.mediaUri = (Uri) payload;
     } else {
-      this.mediaUri = Uri.parse("https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8");
+      this.mediaUri = Uri.parse("https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8");
     }
 
     Glide.with(itemView)

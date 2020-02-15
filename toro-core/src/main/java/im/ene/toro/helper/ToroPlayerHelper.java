@@ -19,10 +19,10 @@ package im.ene.toro.helper;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.CallSuper;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
+import androidx.annotation.CallSuper;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.RestrictTo;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroPlayer.EventListener;
 import im.ene.toro.ToroPlayer.State;
@@ -42,7 +42,6 @@ import static im.ene.toro.ToroUtil.checkNotNull;
  *
  * @author eneim | 6/11/17.
  */
-@SuppressWarnings("WeakerAccess") //
 public abstract class ToroPlayerHelper {
 
   private final Handler handler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
@@ -134,7 +133,6 @@ public abstract class ToroPlayerHelper {
     this.player = player;
   }
 
-  @SuppressWarnings("ConstantConditions")
   public final void addPlayerEventListener(@NonNull EventListener listener) {
     getEventListeners().add(checkNotNull(listener));
   }
@@ -189,6 +187,8 @@ public abstract class ToroPlayerHelper {
    * @return latest {@link PlaybackInfo} of current Player.
    */
   @NonNull public abstract PlaybackInfo getLatestPlaybackInfo();
+
+  public abstract void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo);
 
   @CallSuper
   public void addOnVolumeChangeListener(@NonNull ToroPlayer.OnVolumeChangeListener listener) {

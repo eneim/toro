@@ -31,10 +31,10 @@
       app:resize_mode="fixed_width"
       app:shutter_background_color="?attr/colorButtonNormal"
       app:surface_type="surface_view"
-      app:use_controller="true"
+      app:use_controller="false"
       />
 
-  <android.support.v7.widget.AppCompatTextView
+  <androidx.appcompat.widget.AppCompatTextView
       android:id="@+id/playerStatus"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

@@ -17,10 +17,9 @@
 package im.ene.toro.sample.flexible;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
@@ -45,7 +44,6 @@ public class FlexiblePlayerViewHolder extends RecyclerView.ViewHolder implements
 
   ExoPlayerViewHelper helper;
   Uri mediaUri;
-  View.OnClickListener clickListener;
 
   @BindView(R.id.player) PlayerView playerView;
 
@@ -55,8 +53,7 @@ public class FlexiblePlayerViewHolder extends RecyclerView.ViewHolder implements
   }
 
   public void setClickListener(View.OnClickListener clickListener) {
-    this.clickListener = clickListener;
-    itemView.setOnClickListener(clickListener);
+    // itemView.setOnClickListener(clickListener);
     playerView.setOnClickListener(clickListener);
   }
 
@@ -103,7 +100,7 @@ public class FlexiblePlayerViewHolder extends RecyclerView.ViewHolder implements
     return getAdapterPosition();
   }
 
-  @Override public String toString() {
+  @NonNull @Override public String toString() {
     return "ExoPlayer{" + hashCode() + " " + getAdapterPosition() + "}";
   }
 

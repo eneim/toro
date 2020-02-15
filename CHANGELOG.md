@@ -1,6 +1,30 @@
 Changelog
 ===========
 
+3.7.0.2010003 (2020/02/15)
+-----------------------
+
+This release is to support ExoPlayer *2.10.3*. This will be the last version of ExoPlayer *2.10.x* to be supported. From next release, *Toro* will support
+ExoPlayer *2.11.2* and newer.
+
+- **[Update]**: ExoPlayer to 2.10.3. Related classes are updated with backward compatibility and some deprecation to *Toro* implementations.
+- **[Update]**: Demo for mopub now uses mopub *5.10.0* for Android.
+- **[Update]**: AdsExoPlayerViewHelper now requires *AdsLoader.AdViewProvider* instead of *ViewGroup* as `adsContainer`. This is to update with ExoPlayer 2.10.3.
+- **[Update]**: `Config` construction now allow to pass `Context`, and creating new `Config` with `Context` is recommended way.
+
+Some other changes may require migration effort, please feel free to create **Github Issues**.
+
+3.7.0.2905-A1 (2019/10/18)
+-----------------------
+
+This release is a middle-stage release to insist the full release of ~3.7.0-2010005~ 3.7.0-2010003.
+
+This alpha release contains the following significant changes:
+
+- Migrate to AndroidX. Toro will now depends on AndroidX and other latest Jetpack libraries.
+- Update ExoPlayer to 2.9.5. As said, the target will be ExoPlayer ~2.10.5~ 2.10.3. Since ExoPlayer 2.10.x is update with many things may not work well with 2.9.x, this release can also be helpful for those who depends on 2.9.5 for long term.
+- ``ToroPlayerHelper`` and ``Playable`` interface now have ``setPlaybackInfo`` method to support manual ``PlaybackInfo`` setup. Default implementation classes are updated with this change.
+
 3.6.2.2903 (2019/01/18)
 -----------------------
 

@@ -15,14 +15,14 @@
   ~ limitations under the License.
   -->
 
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-  <android.support.design.widget.AppBarLayout
+  <com.google.android.material.appbar.AppBarLayout
       android:id="@+id/app_bar"
       android:layout_width="match_parent"
       android:layout_height="@dimen/app_bar_height"
@@ -30,7 +30,7 @@
       android:theme="@style/AppTheme.AppBarOverlay"
       >
 
-    <net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout
+    <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -38,11 +38,10 @@
         app:contentScrim="?attr/colorPrimary"
         app:expandedTitleMarginBottom="24dp"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
-        app:maxLines="4"
         app:toolbarId="@+id/toolbar"
         >
 
-      <android.support.v7.widget.Toolbar
+      <androidx.appcompat.widget.Toolbar
           android:id="@+id/toolbar"
           android:layout_width="match_parent"
           android:layout_height="?attr/actionBarSize"
@@ -51,8 +50,8 @@
           app:title="@string/title_demo_basic"
           />
 
-    </net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout>
-  </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+  </com.google.android.material.appbar.AppBarLayout>
 
   <im.ene.toro.widget.Container
       android:id="@+id/player_container"
@@ -61,4 +60,4 @@
       app:layout_behavior="@string/appbar_scrolling_view_behavior"
       />
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

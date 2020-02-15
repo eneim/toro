@@ -18,19 +18,18 @@ package im.ene.toro.sample.nested;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import butterknife.BindView;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import im.ene.toro.PlayerSelector;
 import im.ene.toro.sample.R;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.widget.Container;
-import net.opacapp.multilinecollapsingtoolbar.CollapsingToolbarLayout;
 
 /**
  * A list of content that contains a {@link Container} as one of its child. We gonna use a

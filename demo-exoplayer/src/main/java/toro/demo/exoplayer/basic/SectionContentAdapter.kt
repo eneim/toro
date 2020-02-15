@@ -16,10 +16,10 @@
 
 package toro.demo.exoplayer.basic
 
-import android.support.v4.util.Pair
-import android.support.v7.widget.RecyclerView.Adapter
+import androidx.core.util.Pair
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView.Adapter
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.ArrayList
@@ -41,7 +41,7 @@ class SectionContentAdapter : Adapter<BaseViewHolder>() {
         val oldLength = this.elements.size
         this.elements.clear()
         super.notifyItemRangeRemoved(0, oldLength)
-        elements.forEach { it -> Motion.flatten(this.elements, it.second) }
+        elements.forEach { Motion.flatten(this.elements, it.second) }
         super.notifyItemRangeInserted(0, this.elements.size)
     }
 

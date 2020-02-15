@@ -36,7 +36,10 @@ import java.util.regex.Pattern
 /**
  * @author eneim (2018/01/23).
  */
-internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
+internal class VideoViewHolder(
+  inflater: LayoutInflater,
+  parent: ViewGroup
+) :
     BaseViewHolder(inflater.inflate(R.layout.exo_article_part_video, parent, false)),
     ToroPlayer {
 
@@ -44,6 +47,8 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
     val ratioRegex = Pattern.compile("(\\d)+\\.(\\d+)")!!
     const val defaultRatio = 100 * 165.78F / 360F // magic number.
   }
+
+  val app = itemView.context.applicationContext as DemoApp
 
   private val playerFrame by lazy { itemView as AspectRatioFrameLayout }
   private val player = itemView.findViewById(R.id.player) as PlayerView
@@ -55,9 +60,11 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
   override fun bind(item: Any?) {
     super.bind(item)
-    val videoUrl = (item as Element).select("video > source[type=video/mp4]").attr("src")
+    val videoUrl = (item as Element).select("video > source[type=video/mp4]")
+        .attr("src")
     if (videoUrl !== null) videoUri = Uri.parse(videoUrl)
-    val style = item.getElementsByClass("qp-ui-video-player-mouse").attr("style")
+    val style = item.getElementsByClass("qp-ui-video-player-mouse")
+        .attr("style")
     if (style !== null) {
       val match = ratioRegex.matcher(style)
       var ratio = if (match.find()) match.group().toFloat() else null
@@ -70,8 +77,11 @@ internal class VideoViewHolder(inflater: LayoutInflater, parent: ViewGroup) :
 
   override fun getCurrentPlaybackInfo() = helper?.latestPlaybackInfo ?: PlaybackInfo()
 
-  override fun initialize(container: Container, playbackInfo: PlaybackInfo) {
-    if (helper == null) helper = ExoPlayerViewHelper(this, videoUri!!, null, DemoApp.config!!)
+  override fun initialize(
+    container: Container,
+    playbackInfo: PlaybackInfo
+  ) {
+    if (helper == null) helper = ExoPlayerViewHelper(this, videoUri!!, null, app.config)
     if (listener == null) {
       listener = object : EventListener {
         override fun onFirstFrameRendered() {

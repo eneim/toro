@@ -16,10 +16,12 @@
 
 package toro.demo.exoplayer.basic
 
-import android.support.v7.widget.AppCompatTextView
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.ViewCompat
+import androidx.core.widget.TextViewCompat
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.safety.Whitelist

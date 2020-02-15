@@ -16,10 +16,11 @@
 
 package im.ene.toro.sample.pagers;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import im.ene.toro.sample.Deck;
 import im.ene.toro.sample.common.BaseFragment;
 import im.ene.toro.sample.intro.IntroFragment;
@@ -52,7 +53,8 @@ public class SubPagerAdapter extends FragmentStatePagerAdapter {
 
   private Fragment primaryItem;
 
-  @Override public void setPrimaryItem(ViewGroup container, int position, Object object) {
+  @Override
+  public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
     super.setPrimaryItem(container, position, object);
     if (object instanceof Fragment) primaryItem = (Fragment) object;
     if (primaryItem != null) {

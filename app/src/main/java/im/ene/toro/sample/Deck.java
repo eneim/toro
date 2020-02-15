@@ -16,8 +16,8 @@
 
 package im.ene.toro.sample;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import im.ene.toro.sample.basic.BasicListFragment;
 import im.ene.toro.sample.complex.ComplexListFragment;
 import im.ene.toro.sample.flexible.FlexibleListFragment;
@@ -27,7 +27,7 @@ import im.ene.toro.sample.nested.NestedListFragment;
 /**
  * @author eneim | 6/6/17.
  *
- *         A "Deck" to "present" some demonstrations. Naming by the context, no big deal.
+ * A "Deck" to "present" some demonstrations. Naming by the context, no big deal.
  */
 
 public final class Deck {
@@ -48,15 +48,10 @@ public final class Deck {
       throw new ToroDemoException(e.getLocalizedMessage(), e);
     }
 
-    if (fragment != null) {
-      activity.getSupportFragmentManager().beginTransaction() //
-          .replace(android.R.id.content, fragment).commit();
-    } else {
-      activity.finish();
-    }
+    activity.getSupportFragmentManager().beginTransaction() //
+        .replace(android.R.id.content, fragment).commit();
   }
 
-  @SuppressWarnings("WeakerAccess") //
   public static Fragment createFragment(Class<? extends Fragment> fragmentClass)
       throws ToroDemoException {
     Fragment fragment;

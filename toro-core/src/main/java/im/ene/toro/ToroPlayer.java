@@ -16,9 +16,9 @@
 
 package im.ene.toro;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.view.View;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.media.VolumeInfo;
 import im.ene.toro.widget.Container;

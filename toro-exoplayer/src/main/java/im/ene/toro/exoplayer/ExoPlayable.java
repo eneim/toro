@@ -17,9 +17,9 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -44,6 +44,7 @@ import static im.ene.toro.exoplayer.ToroExo.toro;
  * @since 3.4.0
  */
 
+@SuppressWarnings("WeakerAccess")
 public class ExoPlayable extends PlayableImpl {
 
   @SuppressWarnings("unused") private static final String TAG = "ToroExo:Playable";
@@ -51,8 +52,8 @@ public class ExoPlayable extends PlayableImpl {
   private EventListener listener;
 
   // Adapt from ExoPlayer demo.
-  @SuppressWarnings("WeakerAccess") protected boolean inErrorState = false;
-  @SuppressWarnings("WeakerAccess") protected TrackGroupArray lastSeenTrackGroupArray;
+  protected boolean inErrorState = false;
+  protected TrackGroupArray lastSeenTrackGroupArray;
 
   /**
    * Construct an instance of {@link ExoPlayable} from an {@link ExoCreator} and {@link Uri}. The
@@ -79,7 +80,6 @@ public class ExoPlayable extends PlayableImpl {
 
   @Override public void setPlayerView(@Nullable PlayerView playerView) {
     // This will also clear these flags
-    // TODO [20180301] double check this setup.
     if (playerView != this.playerView) {
       this.lastSeenTrackGroupArray = null;
       this.inErrorState = false;
@@ -103,18 +103,18 @@ public class ExoPlayable extends PlayableImpl {
     this.inErrorState = false;
   }
 
-  @SuppressWarnings({ "WeakerAccess", "unused" }) //
+  @SuppressWarnings({ "unused" }) //
   protected void onErrorMessage(@NonNull String message) {
     // Sub class can have custom reaction about the error here, including not to show this toast
     // (by not calling super.onErrorMessage(message)).
-    if (this.errorListeners != null && this.errorListeners.size() > 0) {
+    if (this.errorListeners.size() > 0) {
       this.errorListeners.onError(new RuntimeException(message));
     } else if (playerView != null) {
       Toast.makeText(playerView.getContext(), message, Toast.LENGTH_SHORT).show();
     }
   }
 
-  private class Listener extends DefaultEventListener {
+  class Listener extends DefaultEventListener {
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
@@ -188,7 +188,7 @@ public class ExoPlayable extends PlayableImpl {
     }
   }
 
-  @SuppressWarnings("WeakerAccess") static boolean isBehindLiveWindow(ExoPlaybackException error) {
+  static boolean isBehindLiveWindow(ExoPlaybackException error) {
     if (error.type != ExoPlaybackException.TYPE_SOURCE) return false;
     Throwable cause = error.getSourceException();
     while (cause != null) {

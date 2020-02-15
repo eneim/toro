@@ -17,11 +17,11 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
@@ -61,26 +61,49 @@ public class AdsPlayable extends ExoPlayable {
 
   @NonNull private final AdsLoader adsLoader;
   @NonNull private final FactoryImpl factory;
-  @Nullable private final ViewGroup adsContainer;
+  @Nullable private final AdsLoader.AdViewProvider adViewProvider;
+
+  /**
+   * @deprecated Use the constructors that use {@link AdsLoader.AdViewProvider} instead.
+   */
+  @Deprecated
+  public AdsPlayable(ExoCreator creator, Uri uri, String fileExt, ToroPlayer player,
+      @NonNull AdsLoader adsLoader, @Nullable final ViewGroup adsContainer) {
+    super(creator, uri, fileExt);
+    this.adsLoader = adsLoader;
+    this.adViewProvider = adsContainer == null ? null
+        : new AdsExoPlayerViewHelper.DefaultAdViewProvider(adsContainer);
+    this.factory = new FactoryImpl(this.creator, player);
+  }
 
   @SuppressWarnings("WeakerAccess")
   public AdsPlayable(ExoCreator creator, Uri uri, String fileExt, ToroPlayer player,
-      @NonNull AdsLoader adsLoader, @Nullable ViewGroup adsContainer) {
+      @NonNull AdsLoader adsLoader, @Nullable AdsLoader.AdViewProvider adViewProvider) {
     super(creator, uri, fileExt);
     this.adsLoader = adsLoader;
-    this.adsContainer = adsContainer;
+    this.adViewProvider = adViewProvider;
     this.factory = new FactoryImpl(this.creator, player);
   }
 
   @CallSuper
   @Override public void prepare(boolean prepareSource) {
     this.mediaSource = createAdsMediaSource(creator, mediaUri, fileExt, //
-        factory.player, adsLoader, adsContainer, factory);
+        factory.player, adsLoader, adViewProvider, factory);
     super.prepare(prepareSource);
   }
 
+  @Override protected void beforePrepareMediaSource() {
+    super.beforePrepareMediaSource();
+    adsLoader.setPlayer(player);
+  }
+
+  @Override public void release() {
+    adsLoader.setPlayer(null);
+    super.release();
+  }
+
   private static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
-      ToroPlayer player, AdsLoader adsLoader, ViewGroup adContainer,
+      ToroPlayer player, AdsLoader adsLoader, AdsLoader.AdViewProvider adViewProvider,
       AdsMediaSource.MediaSourceFactory factory) {
     MediaSource original = creator.createMediaSource(uri, fileExt);
     View playerView = player.getPlayerView();
@@ -89,6 +112,6 @@ public class AdsPlayable extends ExoPlayable {
     }
 
     return new AdsMediaSource(original, factory, adsLoader,
-        adContainer == null ? ((PlayerView) playerView).getOverlayFrameLayout() : adContainer);
+        adViewProvider == null ? (PlayerView) playerView : adViewProvider);
   }
 }

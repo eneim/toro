@@ -17,10 +17,10 @@
 package im.ene.toro.youtube;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 import im.ene.toro.ToroPlayer;
 import im.ene.toro.ToroUtil;
 import java.util.HashMap;
@@ -56,7 +56,7 @@ final class YouTubePlayerManager {
     YouTubePlayerHelper helper = this.helpers.get(player);
     // Dirty helper, remove the Fragment first.
     if (helper != null && helper.ytFragment != null) {
-      manager.beginTransaction().remove(helper.ytFragment).commitNow();
+      manager.beginTransaction().remove(helper.ytFragment).commitNowAllowingStateLoss();
     }
 
     if (helper == null) {
@@ -67,7 +67,7 @@ final class YouTubePlayerManager {
 
     ToroYouTubePlayerFragment fragment = ToroYouTubePlayerFragment.newInstance();
     fragment.setPlayerHelper(helper);
-    manager.beginTransaction().replace(viewId, fragment).commitAllowingStateLoss();
+    manager.beginTransaction().replace(viewId, fragment).commitNowAllowingStateLoss();
     return helper;
   }
 
@@ -76,7 +76,7 @@ final class YouTubePlayerManager {
     YouTubePlayerHelper helper = this.helpers.remove(player);
     if (helper != null) {
       if (helper.ytFragment != null) {  // Not been released by Fragment lifecycle.
-        manager.beginTransaction().remove(helper.ytFragment).commitNow();
+        manager.beginTransaction().remove(helper.ytFragment).commitNowAllowingStateLoss();
       } else {
         // Should not happen. We always try to release the helper by Fragment's life-cycle.
         helper.release();

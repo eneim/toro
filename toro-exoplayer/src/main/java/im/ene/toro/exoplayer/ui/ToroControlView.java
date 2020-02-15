@@ -18,11 +18,11 @@ package im.ene.toro.exoplayer.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerControlView;
@@ -234,6 +234,9 @@ public class ToroControlView extends PlayerControlView {
 
   private class ComponentListener
       implements OnClickListener, TimeBar.OnScrubListener, ToroPlayer.OnVolumeChangeListener {
+
+    ComponentListener() {
+    }
 
     @Override public void onClick(View v) {
       Player player = ToroControlView.super.getPlayer();

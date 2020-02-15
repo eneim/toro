@@ -18,7 +18,7 @@ package im.ene.toro.media;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.FloatRange;
+import androidx.annotation.FloatRange;
 
 /**
  * Information about volume of a playback. There are a few state this class could show:

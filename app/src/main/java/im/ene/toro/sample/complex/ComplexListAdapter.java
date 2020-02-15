@@ -16,11 +16,11 @@
 
 package im.ene.toro.sample.complex;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author eneim (7/1/17).
@@ -31,7 +31,8 @@ class ComplexListAdapter extends RecyclerView.Adapter<ComplexPlayerViewHolder> {
   @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") //
   private MediaList mediaList = new MediaList();
 
-  @NonNull @Override public ComplexPlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  @NonNull @Override
+  public ComplexPlayerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(ComplexPlayerViewHolder.LAYOUT_RES, parent, false);
     return new ComplexPlayerViewHolder(view);

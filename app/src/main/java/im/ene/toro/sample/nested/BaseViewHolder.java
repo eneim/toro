@@ -16,8 +16,8 @@
 
 package im.ene.toro.sample.nested;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * @author eneim (7/1/17).

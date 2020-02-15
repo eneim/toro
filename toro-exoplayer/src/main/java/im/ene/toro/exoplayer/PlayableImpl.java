@@ -17,9 +17,9 @@
 package im.ene.toro.exoplayer;
 
 import android.net.Uri;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
@@ -153,7 +153,7 @@ class PlayableImpl implements Playable {
   @CallSuper @Override public void setPlaybackInfo(@NonNull PlaybackInfo playbackInfo) {
     this.playbackInfo.setResumeWindow(playbackInfo.getResumeWindow());
     this.playbackInfo.setResumePosition(playbackInfo.getResumePosition());
-    this.playbackInfo.setVolumeInfo(playbackInfo.getVolumeInfo());
+    this.setVolumeInfo(playbackInfo.getVolumeInfo());
 
     if (player != null) {
       ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
@@ -184,11 +184,10 @@ class PlayableImpl implements Playable {
   }
 
   @Override public boolean setVolumeInfo(@NonNull VolumeInfo volumeInfo) {
-    checkNotNull(player, "Playable#setVolumeInfo(): Player is null!");
     boolean changed = !this.playbackInfo.getVolumeInfo().equals(checkNotNull(volumeInfo));
     if (changed) {
       this.playbackInfo.getVolumeInfo().setTo(volumeInfo.isMute(), volumeInfo.getVolume());
-      ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
+      if (player != null) ToroExo.setVolumeInfo(player, this.playbackInfo.getVolumeInfo());
     }
     return changed;
   }
@@ -249,6 +248,7 @@ class PlayableImpl implements Playable {
 
     if (!sourcePrepared) {
       ensurePlayer(); // sourcePrepared is set to false only when player is null.
+      beforePrepareMediaSource();
       player.prepare(mediaSource, playbackInfo.getResumeWindow() == C.INDEX_UNSET, false);
       sourcePrepared = true;
     }
@@ -278,5 +278,10 @@ class PlayableImpl implements Playable {
     if (haveResumePosition) {
       player.seekTo(playbackInfo.getResumeWindow(), playbackInfo.getResumePosition());
     }
+  }
+
+  // Trick to inject to the Player creation event.
+  // Required for AdsLoader to set Player.
+  protected void beforePrepareMediaSource() {
   }
 }

@@ -18,13 +18,12 @@ package im.ene.toro;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import im.ene.toro.widget.Container;
 
 /**
@@ -104,10 +103,10 @@ public final class ToroUtil {
       final Container.BehaviorCallback callback) {
     container.setBehaviorCallback(callback);
     ViewGroup.LayoutParams params = container.getLayoutParams();
-    if (params instanceof LayoutParams) {
-      CoordinatorLayout.Behavior temp = ((LayoutParams) params).getBehavior();
+    if (params instanceof CoordinatorLayout.LayoutParams) {
+      CoordinatorLayout.Behavior temp = ((CoordinatorLayout.LayoutParams) params).getBehavior();
       if (temp != null) {
-        ((LayoutParams) params).setBehavior(new Container.Behavior(temp));
+        ((CoordinatorLayout.LayoutParams) params).setBehavior(new Container.Behavior(temp));
       }
     }
   }

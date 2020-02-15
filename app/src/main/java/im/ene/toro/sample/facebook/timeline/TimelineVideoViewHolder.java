@@ -17,11 +17,10 @@
 package im.ene.toro.sample.facebook.timeline;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import im.ene.toro.ToroPlayer;
@@ -44,7 +43,6 @@ import static java.lang.String.format;
  * @author eneim | 6/18/17.
  */
 
-@SuppressWarnings("WeakerAccess") //
 public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroPlayer {
 
   @BindView(R.id.fb_video_player) PlayerView playerView;
@@ -65,7 +63,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   }
 
   @Override public void setClickListener(View.OnClickListener clickListener) {
-    super.setClickListener(clickListener);
+    // super.setClickListener(clickListener); <-- do not need click listener on itemView.
     playerView.setOnClickListener(clickListener);
     userIcon.setOnClickListener(clickListener);
   }
