@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2018 Nam Nguyen, nam@ene.im
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,6 +58,12 @@
         />
 
   </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+
+  <FrameLayout
+      android:id="@id/exo_ad_overlay"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 
   <FrameLayout
       android:id="@id/exo_overlay"

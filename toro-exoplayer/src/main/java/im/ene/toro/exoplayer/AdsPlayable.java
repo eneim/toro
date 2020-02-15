@@ -92,6 +92,16 @@ public class AdsPlayable extends ExoPlayable {
     super.prepare(prepareSource);
   }
 
+  @Override protected void beforePrepareMediaSource() {
+    super.beforePrepareMediaSource();
+    adsLoader.setPlayer(player);
+  }
+
+  @Override public void release() {
+    adsLoader.setPlayer(null);
+    super.release();
+  }
+
   private static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
       ToroPlayer player, AdsLoader adsLoader, AdsLoader.AdViewProvider adViewProvider,
       AdsMediaSource.MediaSourceFactory factory) {

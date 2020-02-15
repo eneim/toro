@@ -116,6 +116,7 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       @NonNull Uri uri,                 //
       @Nullable String fileExt,         //
       @NonNull AdsLoader adsLoader,     //
+      @Nullable ViewGroup adContainer,   // will be ignored
       @Nullable AdsLoader.AdViewProvider adViewProvider   //
   ) {
     super(player, createPlayable(player, uri, fileExt, adsLoader, adViewProvider));
@@ -146,6 +147,7 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       @NonNull Uri uri,                 //
       @Nullable String fileExt,         //
       @NonNull AdsLoader adsLoader,     //
+      @Nullable ViewGroup adContainer,  // will be ignored
       @Nullable AdsLoader.AdViewProvider adViewProvider,  //
       @NonNull ExoCreator creator       //
   ) {
@@ -176,6 +178,7 @@ public class AdsExoPlayerViewHelper extends ExoPlayerViewHelper {
       @NonNull Uri uri,                 //
       @Nullable String fileExt,         //
       @NonNull AdsLoader adsLoader,     //
+      @Nullable ViewGroup adContainer,  // will be ignored
       @Nullable AdsLoader.AdViewProvider adViewProvider,  //
       @NonNull Config config            //
   ) {
