@@ -235,6 +235,9 @@ public class ToroControlView extends PlayerControlView {
   private class ComponentListener
       implements OnClickListener, TimeBar.OnScrubListener, ToroPlayer.OnVolumeChangeListener {
 
+    ComponentListener() {
+    }
+
     @Override public void onClick(View v) {
       Player player = ToroControlView.super.getPlayer();
       if (!(player instanceof SimpleExoPlayer)) return;

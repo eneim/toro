@@ -49,7 +49,7 @@ dependencies {
     exclude group: 'com.android.support'
   }
 
-  implementation 'androidx.recyclerview:recyclerview:1.0.0'
+  implementation 'androidx.recyclerview:recyclerview:1.1.0'
   implementation 'androidx.annotation:annotation:1.1.0'
 
   testImplementation 'junit:junit:4.12'
