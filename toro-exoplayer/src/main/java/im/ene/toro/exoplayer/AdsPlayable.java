@@ -23,6 +23,7 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
@@ -48,6 +49,12 @@ public class AdsPlayable extends ExoPlayable {
     FactoryImpl(@NonNull ExoCreator creator, @NonNull ToroPlayer player) {
       this.creator = creator;
       this.player = player;
+    }
+
+    @Override
+    public MediaSourceFactory setDrmSessionManager(DrmSessionManager<?> drmSessionManager) {
+      // does nothing, DrmSessionManager is used inside ExoCreator
+      return this;
     }
 
     @Override public MediaSource createMediaSource(Uri uri) {
