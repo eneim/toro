@@ -146,7 +146,7 @@ public class ExoPlayable extends PlayableImpl {
           // Special case for decoder initialization failures.
           MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
               (MediaCodecRenderer.DecoderInitializationException) cause;
-          if (decoderInitializationException.decoderName == null) {
+          if (decoderInitializationException.codecInfo == null) {
             if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
               errorString = toro.getString(R.string.error_querying_decoders);
             } else if (decoderInitializationException.secureDecoderRequired) {
@@ -158,7 +158,7 @@ public class ExoPlayable extends PlayableImpl {
             }
           } else {
             errorString = toro.getString(R.string.error_instantiating_decoder,
-                decoderInitializationException.decoderName);
+                decoderInitializationException.codecInfo.name);
           }
         }
       }

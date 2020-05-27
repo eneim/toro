@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.cache.Cache;
+import com.google.android.exoplayer2.util.Clock;
 import im.ene.toro.annotations.Beta;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
@@ -63,13 +64,15 @@ public final class Config {
   // If null, ExoCreator must come up with a default one.
   // This is to help customizing the Data source, for example using OkHttp extension.
   @Nullable final DataSource.Factory dataSourceFactory;
+  final Clock clock;
 
   @SuppressWarnings("WeakerAccess") //
   Config(@Nullable Context context, int extensionMode, @NonNull BaseMeter meter,
       @NonNull LoadControl loadControl,
       @Nullable DataSource.Factory dataSourceFactory,
       @NonNull MediaSourceBuilder mediaSourceBuilder,
-      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, @Nullable Cache cache) {
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, @Nullable Cache cache,
+      Clock clock) {
     this.context = context != null ? context.getApplicationContext() : null;
     this.extensionMode = extensionMode;
     this.meter = meter;
@@ -78,6 +81,7 @@ public final class Config {
     this.mediaSourceBuilder = mediaSourceBuilder;
     this.drmSessionManager = drmSessionManager;
     this.cache = cache;
+    this.clock = clock;
   }
 
   @Override public boolean equals(Object o) {
@@ -92,6 +96,7 @@ public final class Config {
     if (!mediaSourceBuilder.equals(config.mediaSourceBuilder)) return false;
     if (!ObjectsCompat.equals(drmSessionManager, config.drmSessionManager)) return false;
     if (!ObjectsCompat.equals(cache, config.cache)) return false;
+    if (!ObjectsCompat.equals(clock, config.clock)) return false;
     return ObjectsCompat.equals(dataSourceFactory, config.dataSourceFactory);
   }
 
@@ -103,6 +108,7 @@ public final class Config {
     result = 31 * result + (drmSessionManager != null ? drmSessionManager.hashCode() : 0);
     result = 31 * result + (cache != null ? cache.hashCode() : 0);
     result = 31 * result + (dataSourceFactory != null ? dataSourceFactory.hashCode() : 0);
+    result = 31 * result + (clock != null ? clock.hashCode() : 0);
     return result;
   }
 
@@ -112,7 +118,8 @@ public final class Config {
         .setExtensionMode(this.extensionMode)
         .setLoadControl(this.loadControl)
         .setMediaSourceBuilder(this.mediaSourceBuilder)
-        .setMeter(this.meter);
+        .setMeter(this.meter)
+        .setClock(this.clock);
   }
 
   /// Builder
@@ -144,6 +151,7 @@ public final class Config {
     private MediaSourceBuilder mediaSourceBuilder = MediaSourceBuilder.DEFAULT;
     private DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
     private Cache cache = null;
+    private Clock clock = Clock.DEFAULT;
 
     public Builder setExtensionMode(@ExtensionRendererMode int extensionMode) {
       this.extensionMode = extensionMode;
@@ -184,9 +192,14 @@ public final class Config {
       return this;
     }
 
+    public Builder setClock(Clock clock) {
+      this.clock = clock;
+      return this;
+    }
+
     public Config build() {
       return new Config(context, extensionMode, meter, loadControl, dataSourceFactory,
-          mediaSourceBuilder, drmSessionManager, cache);
+          mediaSourceBuilder, drmSessionManager, cache, clock);
     }
   }
 }

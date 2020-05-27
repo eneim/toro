@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.C.ContentType;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
@@ -48,6 +50,7 @@ public interface MediaSourceBuilder {
       @Nullable String fileExt, @Nullable Handler handler,
       @NonNull DataSource.Factory manifestDataSourceFactory,
       @NonNull DataSource.Factory mediaDataSourceFactory,
+      @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
       @Nullable MediaSourceEventListener listener);
 
   MediaSourceBuilder DEFAULT = new MediaSourceBuilder() {
@@ -55,27 +58,36 @@ public interface MediaSourceBuilder {
     public MediaSource buildMediaSource(@NonNull Context context, @NonNull Uri uri,
         @Nullable String ext, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
-        @NonNull DataSource.Factory mediaDataSourceFactory, MediaSourceEventListener listener) {
+        @NonNull DataSource.Factory mediaDataSourceFactory,
+        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
+        MediaSourceEventListener listener) {
       @ContentType int type = isEmpty(ext) ? inferContentType(uri) : inferContentType("." + ext);
       MediaSource result;
       switch (type) {
         case C.TYPE_SS:
-          result = new SsMediaSource.Factory( //
-              new DefaultSsChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)//
-              .createMediaSource(uri);
+          SsMediaSource.Factory factory =
+              new SsMediaSource.Factory(new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
+                  manifestDataSourceFactory);
+          if (drmSessionManager != null) factory.setDrmSessionManager(drmSessionManager);
+          result = factory.createMediaSource(uri);
           break;
         case C.TYPE_DASH:
-          result = new DashMediaSource.Factory(
-              new DefaultDashChunkSource.Factory(mediaDataSourceFactory), manifestDataSourceFactory)
-              .createMediaSource(uri);
+          DashMediaSource.Factory factory1 = new DashMediaSource.Factory(
+              new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
+              manifestDataSourceFactory);
+          if (drmSessionManager != null) factory1.setDrmSessionManager(drmSessionManager);
+          result = factory1.createMediaSource(uri);
           break;
         case C.TYPE_HLS:
-          result = new HlsMediaSource.Factory(mediaDataSourceFactory) //
-              .createMediaSource(uri);
+          HlsMediaSource.Factory factory2 = new HlsMediaSource.Factory(mediaDataSourceFactory);
+          if (drmSessionManager != null) factory2.setDrmSessionManager(drmSessionManager);
+          result =  factory2.createMediaSource(uri);
           break;
         case C.TYPE_OTHER:
-          result = new ProgressiveMediaSource.Factory(mediaDataSourceFactory) //
-              .createMediaSource(uri);
+          ProgressiveMediaSource.Factory factory3 =
+              new ProgressiveMediaSource.Factory(mediaDataSourceFactory);
+          if (drmSessionManager != null) factory3.setDrmSessionManager(drmSessionManager);
+          result =  factory3.createMediaSource(uri);
           break;
         default:
           throw new IllegalStateException("Unsupported type: " + type);
@@ -93,10 +105,11 @@ public interface MediaSourceBuilder {
         @Nullable String fileExt, @Nullable Handler handler,
         @NonNull DataSource.Factory manifestDataSourceFactory,
         @NonNull DataSource.Factory mediaDataSourceFactory,
+        @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
         @Nullable MediaSourceEventListener listener) {
       return new LoopingMediaSource(
           DEFAULT.buildMediaSource(context, uri, fileExt, handler, manifestDataSourceFactory,
-              mediaDataSourceFactory, listener));
+              mediaDataSourceFactory, drmSessionManager, listener));
     }
   };
 }

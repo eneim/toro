@@ -23,7 +23,9 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.source.ads.AdsLoader;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -39,7 +41,7 @@ import im.ene.toro.annotations.Beta;
 @Beta //
 public class AdsPlayable extends ExoPlayable {
 
-  static class FactoryImpl implements AdsMediaSource.MediaSourceFactory {
+  static class FactoryImpl implements MediaSourceFactory {
 
     @NonNull final ExoCreator creator;
     @NonNull final ToroPlayer player;
@@ -47,6 +49,12 @@ public class AdsPlayable extends ExoPlayable {
     FactoryImpl(@NonNull ExoCreator creator, @NonNull ToroPlayer player) {
       this.creator = creator;
       this.player = player;
+    }
+
+    @Override
+    public MediaSourceFactory setDrmSessionManager(DrmSessionManager<?> drmSessionManager) {
+      // does nothing, DrmSessionManager is used inside ExoCreator
+      return this;
     }
 
     @Override public MediaSource createMediaSource(Uri uri) {
@@ -104,7 +112,7 @@ public class AdsPlayable extends ExoPlayable {
 
   private static MediaSource createAdsMediaSource(ExoCreator creator, Uri uri, String fileExt,
       ToroPlayer player, AdsLoader adsLoader, AdsLoader.AdViewProvider adViewProvider,
-      AdsMediaSource.MediaSourceFactory factory) {
+      MediaSourceFactory factory) {
     MediaSource original = creator.createMediaSource(uri, fileExt);
     View playerView = player.getPlayerView();
     if (!(playerView instanceof PlayerView)) {
