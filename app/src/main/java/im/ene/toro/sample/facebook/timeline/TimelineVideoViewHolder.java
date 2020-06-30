@@ -29,6 +29,7 @@ import im.ene.toro.exoplayer.ExoPlayerViewHelper;
 import im.ene.toro.exoplayer.Playable;
 import im.ene.toro.media.PlaybackInfo;
 import im.ene.toro.sample.R;
+import im.ene.toro.sample.ToroDemo;
 import im.ene.toro.sample.common.MediaUrl;
 import im.ene.toro.sample.facebook.data.FbItem;
 import im.ene.toro.sample.facebook.data.FbVideo;
@@ -47,6 +48,8 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @BindView(R.id.fb_video_player) PlayerView playerView;
   @BindView(R.id.player_state) TextView state;
+  final ToroDemo toroApp;
+
   private final Playable.EventListener listener = new Playable.DefaultEventListener() {
     @Override public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
       super.onPlayerStateChanged(playWhenReady, playbackState);
@@ -58,6 +61,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   TimelineVideoViewHolder(View itemView) {
     super(itemView);
+    toroApp = (ToroDemo) itemView.getContext().getApplicationContext();
     itemText.setVisibility(View.GONE);
     playerView.setVisibility(View.VISIBLE);
   }
@@ -89,7 +93,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
   public void initialize(@NonNull Container container, @NonNull PlaybackInfo playbackInfo) {
     if (mediaUri == null) throw new IllegalStateException("mediaUri is null.");
     if (helper == null) {
-      helper = new ExoPlayerViewHelper(this, mediaUri);
+      helper = new ExoPlayerViewHelper(this, mediaUri, null, toroApp.config);
       helper.addEventListener(listener);
     }
     helper.initialize(container, playbackInfo);
