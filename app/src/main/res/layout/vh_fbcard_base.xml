@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2017 Nam Nguyen, nam@ene.im
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +31,8 @@
       android:id="@+id/fb_item_base"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:clickable="true"
+      android:focusable="true"
       android:orientation="vertical"
       >
 

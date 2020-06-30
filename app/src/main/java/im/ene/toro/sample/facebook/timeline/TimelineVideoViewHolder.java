@@ -64,7 +64,7 @@ public class TimelineVideoViewHolder extends TimelineViewHolder implements ToroP
 
   @Override public void setClickListener(View.OnClickListener clickListener) {
     // super.setClickListener(clickListener); <-- do not need click listener on itemView.
-    playerView.setOnClickListener(clickListener);
+    container.setOnClickListener(clickListener);
     userIcon.setOnClickListener(clickListener);
   }
 
